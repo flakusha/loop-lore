@@ -9,7 +9,7 @@
  * mutates its input — safe under any parallel/ordering mode.
  */
 import { describe, expect, test, } from "bun:test";
-import { filterActorsByKind, } from "./selection";
+import { filterActorsByKind, greetingOptions, } from "./selection";
 
 const alice = { id: "u1", display_name: "Alice", actor_type: "user", agent_type: "none", };
 const bob = { id: "c1", display_name: "Bob", actor_type: "character", agent_type: "none", };
@@ -52,5 +52,50 @@ describe("filterActorsByKind", () => {
     expect(filterActorsByKind(actors, "bogus",),).toEqual(actors,);
     expect(filterActorsByKind(actors, "",),).toEqual(actors,);
     expect(filterActorsByKind(actors, undefined as unknown as string,),).toEqual(actors,);
+  });
+});
+
+describe("greetingOptions", () => {
+  const actor = (alternate_greetings: string | null,) => ({ id: "c1", alternate_greetings, });
+
+  test("no selected character hides the picker", () => {
+    expect(greetingOptions([],),).toEqual([],);
+  });
+
+  test("a character with no greetings hides the picker", () => {
+    expect(greetingOptions([actor(null,),],),).toEqual([],);
+    expect(greetingOptions([actor("[]",),],),).toEqual([],);
+  });
+
+  test("one greeting yields a default option plus the alternate", () => {
+    expect(greetingOptions([actor('["Hi!"]',),],),).toEqual([
+      { value: "", label: "Default greeting", },
+      { value: "0", label: "Alternate greeting 1", },
+    ],);
+  });
+
+  test("multiple greetings yield one indexed option each", () => {
+    expect(greetingOptions([actor('["Hi!","Hello!","Hey!"]',),],),).toEqual([
+      { value: "", label: "Default greeting", },
+      { value: "0", label: "Alternate greeting 1", },
+      { value: "1", label: "Alternate greeting 2", },
+      { value: "2", label: "Alternate greeting 3", },
+    ],);
+  });
+
+  test("multiple selected characters hide the picker", () => {
+    expect(greetingOptions([actor('["Hi!"]',), actor('["Hey!"]',),],),).toEqual([],);
+  });
+
+  test("switching the selected character rebuilds its options", () => {
+    const first = greetingOptions([actor('["Alpha one","Alpha two"]',),],);
+    const second = greetingOptions([actor('["Beta only"]',),],);
+    expect(first.map((option,) => option.label),).toEqual([
+      "Default greeting",
+      "Alternate greeting 1",
+      "Alternate greeting 2",
+    ],);
+
+    expect(second.map((option,) => option.label),).toEqual(["Default greeting", "Alternate greeting 1",],);
   });
 });

@@ -64,6 +64,17 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
 }
 
 /**
+ * Read the greeting index selected for the current character. The picker's
+ * option values are zero-based indexes into that character's alternate_greetings;
+ * an empty value (or no picker) means the primary welcome message.
+ * @returns the selected index, or undefined for the primary greeting
+ */
+function readGreetingIndex(): number | undefined {
+  const value = $<HTMLSelectElement>("#greeting-select",)?.value;
+  return value && /^\d+$/.test(value,) ? Number(value,) : undefined;
+}
+
+/**
  * Collect the chat-creation payload from the form + UI state.
  * @param ctx
  * @param name
@@ -119,6 +130,8 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
     };
   }
 
+  const greetingIndex = readGreetingIndex();
+
   return {
     name,
     type: isVariant ? undefined : ctx.chatType?.value ?? "direct",
@@ -129,6 +142,7 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
     memoryCarry: memoryCarryMode,
     memoryCarryIds,
     templateId,
+    greetingIndex,
     ...fineTunePayload,
     ...(gmGuided && !isVariant && { gmConfig: { assistantRole: "gm", storyMode: true, }, }),
   };

@@ -6,7 +6,7 @@ import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";
 import { applyEntryVariant, } from "./entry-point";
 import { bindMemoryHandlers, } from "./memory";
-import { bindSelectionHandlers, } from "./selection";
+import { bindSelectionHandlers, updateGreetingPicker, } from "./selection";
 import { createCtx, type NewChatCtx, } from "./state";
 import { bindSubmitHandler, } from "./submit";
 
@@ -198,6 +198,8 @@ async function loadNewChatPageInner(form: HTMLFormElement | null,): Promise<void
   ctx.searchInput = $<HTMLInputElement>("#participant-search",);
   ctx.resultsEl = $<HTMLElement>("#participant-results",);
   ctx.selectedEl = $<HTMLElement>("#selected-participants",);
+  ctx.greetingGroup = $<HTMLElement>("#greeting-group",);
+  ctx.greetingSelect = $<HTMLSelectElement>("#greeting-select",);
   ctx.chatType = $<HTMLSelectElement>("#chat-type",);
   ctx.variantSelect = $<HTMLSelectElement>("#chat-variant",);
   ctx.form = $<HTMLFormElement>("#create-chat-form",);
@@ -259,4 +261,5 @@ async function loadNewChatPageInner(form: HTMLFormElement | null,): Promise<void
 
   bindMemoryHandlers(ctx,);
   bindSelectionHandlers(ctx,);
+  updateGreetingPicker(ctx,);
 }

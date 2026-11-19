@@ -28,6 +28,11 @@ import {
 import { resolveVariantOverrides, } from "./create-variant";
 import type { HandlerOpts, } from "./types";
 
+import { resolveGreeting, } from "../../characters/greetings";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
 interface AuthContext {
   userId: string | null;
@@ -88,20 +93,21 @@ async function resolveTemplate(
  * @param chatId
  * @param body
  * @param body.participantIds
+ * @param body.greetingIndex
  * @param opts
  * @param userId
  */
 async function seedWelcomeMessages(
   database: HandlerOpts["database"],
   chatId: string,
-  body: { participantIds?: string[] },
+  body: { participantIds?: string[]; greetingIndex?: number },
   opts: HandlerOpts,
   userId: string,
 ) {
   const characterActors = await database
     .selectFrom("chat_participants",)
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
-    .select(["chat_participants.actor_id", "actors.welcome_message",],)
+    .select(["chat_participants.actor_id", "actors.welcome_message", "actors.alternate_greetings",],)
     .where("chat_participants.chat_id", "=", chatId,)
     .where("actors.welcome_message", "is not", null,)
     .execute();
@@ -115,7 +121,7 @@ async function seedWelcomeMessages(
         actor_id: actor.actor_id,
         parent_id: null,
         role: MessageRole.Character,
-        content: actor.welcome_message!,
+        content: resolveGreeting(actor.alternate_greetings, actor.welcome_message!, body.greetingIndex,),
         key_id: null,
         content_type: MessageContentType.Text,
         content_format: MessageContentFormat.Markdown,

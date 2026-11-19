@@ -73,6 +73,7 @@ beforeEach(() => {
   els.set("#chat-visibility", makeEl(),);
   els.set("#chat-visual-novel", makeEl("", false,),);
   els.set("#chat-template", makeEl(),);
+  els.set("#greeting-select", makeEl(),);
   els.set('input[name="memory_carry"]:checked', makeEl("full",),);
 
   host.document = {
@@ -176,5 +177,29 @@ describeOrSkip("new-chat create payload", () => {
 
     const body = await submitForm("direct",);
     expect(body.gmConfig,).toBeUndefined();
+  });
+
+  test("no greeting picker omits greetingIndex", async () => {
+    els.delete("#greeting-select",);
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
+  });
+
+  test("the default greeting option omits greetingIndex", async () => {
+    els.get("#greeting-select",)!.value = "";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
+  });
+
+  test("a selected alternate greeting posts its zero-based index", async () => {
+    els.get("#greeting-select",)!.value = "2";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBe(2,);
+  });
+
+  test("a malformed greeting value omits greetingIndex", async () => {
+    els.get("#greeting-select",)!.value = "not-a-number";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
   });
 },);

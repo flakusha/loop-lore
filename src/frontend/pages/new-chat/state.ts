@@ -56,6 +56,8 @@ export interface NewChatCtx {
   form: HTMLFormElement | null;
   impersonateGroup: HTMLElement | null;
   impersonateToggle: HTMLInputElement | null;
+  greetingGroup: HTMLElement | null;
+  greetingSelect: HTMLSelectElement | null;
   memoryCarryGroup: HTMLElement | null;
   memorySelectiveList: HTMLElement | null;
   memoryCheckboxList: HTMLElement | null;
@@ -91,6 +93,8 @@ export function createCtx(): NewChatCtx {
     form: null,
     impersonateGroup: null,
     impersonateToggle: null,
+    greetingGroup: null,
+    greetingSelect: null,
     memoryCarryGroup: null,
     memorySelectiveList: null,
     memoryCheckboxList: null,

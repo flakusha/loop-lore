@@ -47,6 +47,8 @@ export const ChatCreateBody = t.Object({
   ],),),
   turnStrategy: t.Optional(TurnStrategySchema,),
   participantIds: t.Optional(t.Array(t.String(),),),
+  /** Zero-based alternate-greeting index; absent means the primary welcome message. */
+  greetingIndex: t.Optional(t.Number({ minimum: 0, },),),
   worldId: OptionalId,
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),

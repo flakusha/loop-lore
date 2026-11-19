@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { parseAlternateGreetings, } from "../../../characters/greetings";
 import { ActorType, AgentType, } from "../../../db/enums-core/actors";
 import { filterActors, } from "../shared";
 import { loadMemoriesForActor, } from "./memory";
@@ -32,6 +33,52 @@ export function filterActorsByKind(actors: KindableActor[], kind: string,): Kind
     default:
       return actors;
   }
+}
+
+/** A greeting option shown by the new-chat picker. */
+export interface GreetingOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * Build the picker options for the current selection. The picker is only
+ * meaningful for a single selected character carrying alternate greetings.
+ * @param selected - currently selected actor rows
+ * @returns options to render; empty when the picker should stay hidden
+ */
+export function greetingOptions(selected: any[],): GreetingOption[] {
+  if (selected.length !== 1) { return []; }
+  const alternates = parseAlternateGreetings(selected[0]?.alternate_greetings,);
+  if (alternates.length === 0) { return []; }
+  return [
+    { value: "", label: "Default greeting", },
+    ...alternates.map((_text, index,) => ({ value: String(index,), label: `Alternate greeting ${index + 1}`, })),
+  ];
+}
+
+/**
+ * Rebuild the greeting picker from the current selection, resetting to the
+ * primary greeting on every change — including a character switch.
+ * @param ctx
+ * @returns {void}
+ */
+export function updateGreetingPicker(ctx: NewChatCtx,): void {
+  const group = ctx.greetingGroup;
+  const select = ctx.greetingSelect;
+  if (!group || !select) { return; }
+
+  const options = greetingOptions(ctx.selected,);
+  group.style.display = options.length > 0 ? "" : "none";
+  select.replaceChildren();
+  for (const option of options) {
+    const el = document.createElement("option",);
+    el.value = option.value;
+    el.textContent = option.label;
+    select.append(el,);
+  }
+
+  select.value = "";
 }
 
 /**
@@ -157,6 +204,7 @@ export function removeParticipant(ctx: NewChatCtx, id: string,): void {
   ctx.selected = next;
   renderSelected(ctx,);
   updateMemoryCarryVisibility(ctx,);
+  updateGreetingPicker(ctx,);
   if (ctx.resultsEl) { ctx.resultsEl.style.display = "none"; }
   if (ctx.impersonateGroup && ctx.impersonateToggle) {
     ctx.impersonateGroup.style.display = ctx.selected.length === 1 ? "" : "none";
@@ -178,6 +226,7 @@ export function selectActor(ctx: NewChatCtx, actor: any,): void {
 
   renderSelected(ctx,);
   updateMemoryCarryVisibility(ctx,);
+  updateGreetingPicker(ctx,);
   if (ctx.searchInput) { ctx.searchInput.value = ""; }
   if (ctx.resultsEl) { ctx.resultsEl.style.display = "none"; }
   if (ctx.impersonateGroup && ctx.impersonateToggle) {
