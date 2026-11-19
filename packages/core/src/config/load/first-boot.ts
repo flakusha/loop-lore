@@ -136,6 +136,7 @@ export function generatePiiSecret(): string {
  * @param file - Candidate local config path.
  * @returns True when the file counts as an operator-owned config.
  */
+// TODO(env): bun-only — Bun.YAML validates the promotion file; route through the shared parser when a node target lands.
 function isUsableLocalConfig(directory: string, file: string,): boolean {
   if (file !== path.join(directory, FIRST_BOOT_FILE,)) { return true; }
   try {

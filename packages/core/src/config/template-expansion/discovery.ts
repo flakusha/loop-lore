@@ -44,6 +44,7 @@ export function findExpansionFile(cwd: string,): string | null {
  * @param filePath
  * @returns void
  */
+// TODO(env): bun-only — Bun.TOML/Bun.YAML parse expansion configs; add node parser resolution when a node target lands.
 export function parseExpansionFile(filePath: string,): ExpansionConfig {
   const content = readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);

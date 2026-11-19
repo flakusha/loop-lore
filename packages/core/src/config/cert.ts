@@ -73,6 +73,7 @@ export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOption
   const opensslBin = platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
 
   for (const bin of opensslBin) {
+    // TODO(env): bun-only — Bun.spawnSync is a Bun API; add a node child_process shim when a node target lands.
     try {
       const result = Bun.spawnSync([
         bin,

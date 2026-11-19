@@ -18,6 +18,8 @@ import { dlopen, FFIType, } from "bun:ffi";
 import { existsSync, } from "node:fs";
 import { join, } from "node:path";
 
+// TODO(env): bun-only — bun:ffi dlopen and import.meta.dir are the single FFI resolution point; add a node adapter here when a node target lands.
+
 /**
 ABI version the loader requires (packed `(major<<16)|(minor<<8)|patch`).
  */

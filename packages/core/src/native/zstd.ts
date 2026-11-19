@@ -42,6 +42,8 @@ interface BunZstd {
 
 const bunZstd = Bun as unknown as BunZstd;
 
+// TODO(env): bun-only — Bun.zstd*Sync is the fallback resolution point; add a node zstd shim here when a node target lands.
+
 /**
  * zstd-compress `data` — Rust cdylib when available, else Bun built-in.
  * @param data - Input bytes (empty is valid).

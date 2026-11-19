@@ -111,6 +111,7 @@ function findCharacterFiles(cwd: string,): string[] {
  * @param filePath
  * @returns void
  */
+// TODO(env): bun-only — Bun.TOML/Bun.YAML parse character files; add one node parser resolution when a node target lands.
 function parseCharacterFile(filePath: string,): CharacterFileData {
   const content = fs.readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,).toLowerCase();

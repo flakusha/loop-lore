@@ -165,6 +165,7 @@ export function findClassifierFiles(cwd: string,): string[] {
  * @param filePath
  * @returns void
  */
+// TODO(env): bun-only — Bun.TOML/Bun.YAML parse template files; add node parser resolution when a node target lands.
 export function parseTemplateFile(filePath: string,): Record<string, unknown> {
   const content = fs.readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);

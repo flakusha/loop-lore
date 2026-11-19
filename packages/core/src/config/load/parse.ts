@@ -91,6 +91,7 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
  * @throws {Error} If the file extension is unknown.
  * @returns {Record<string, unknown>}
  */
+// TODO(env): bun-only — Bun.YAML/Bun.TOML are the config parser resolution point; add node parsers here when a node target lands.
 export function parseFileContent(content: string, extension: string,): Record<string, unknown> {
   if (extension === "yaml" || extension === "yml") {
     return Bun.YAML.parse(content,) as Record<string, unknown>;
