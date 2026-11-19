@@ -2964,6 +2964,20 @@
     "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md",
     "status": "done"
   },
+  "BUG-COMFYUI-MODEL-FOLDER-COMMENTS-AND-MOCKS-MUST-MATCH-STOCK-SERVER-SHAPE": {
+    "hash": "13d3d27",
+    "extid": "BUG-COMFYUI-MODEL-FOLDER-COMMENTS-AND-MOCKS-MUST-MATCH-STOCK-SERVER-SHAPE",
+    "type": "BUG",
+    "title": "ComfyUI model-folder comments and mocks must match stock server shape",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-comfyui-model-folder-comments-and-mocks-must-match-stock-server-shape.md",
+    "status": "open",
+    "git_issue": "13d3d27"
+  },
   "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT",
@@ -8368,6 +8382,20 @@
     "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md",
     "status": "done"
   },
+  "BUG-PLUGIN-APPROVAL-MUST-BE-KEYED-BY-PLUGIN-NAME-AND-ORIGIN": {
+    "hash": "739f614",
+    "extid": "BUG-PLUGIN-APPROVAL-MUST-BE-KEYED-BY-PLUGIN-NAME-AND-ORIGIN",
+    "type": "BUG",
+    "title": "Plugin approval must be keyed by plugin name and origin",
+    "label": "bug",
+    "priority": "Critical",
+    "epic": "epic-plugin-system",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-approval-must-be-keyed-by-plugin-name-and-origin.md",
+    "status": "open",
+    "git_issue": "739f614"
+  },
   "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR": {
     "hash": "7c24397",
     "git_issue": "7c24397",
@@ -8839,6 +8867,20 @@
     "tags": [],
     "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
     "type": "BUG"
+  },
+  "BUG-REDUCED-MOTION-GLOBAL-FLOOR-MUST-BECOME-PER-RULE-HANDLING": {
+    "hash": "735a0ce",
+    "extid": "BUG-REDUCED-MOTION-GLOBAL-FLOOR-MUST-BECOME-PER-RULE-HANDLING",
+    "type": "BUG",
+    "title": "Reduced-motion global floor must become per-rule handling",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-frontend",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-reduced-motion-global-floor-must-become-per-rule-handling.md",
+    "status": "open",
+    "git_issue": "735a0ce"
   },
   "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS": {
     "epic": "",
@@ -10217,6 +10259,20 @@
     ],
     "title": "`DELETE /api/telemetry/analytics/purge` accepts unbounded `?days=` — admin can wipe instantly with `days=0`",
     "type": "BUG"
+  },
+  "BUG-TELEMETRY-RETENTION-DAYS-MUST-VALIDATE-NONPOSITIVE-AND-NON-NUMERIC-INPUT": {
+    "hash": "2387a37",
+    "extid": "BUG-TELEMETRY-RETENTION-DAYS-MUST-VALIDATE-NONPOSITIVE-AND-NON-NUMERIC-INPUT",
+    "type": "BUG",
+    "title": "Telemetry retention days must validate nonpositive and non-numeric input",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-telemetry",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-telemetry-retention-days-must-validate-nonpositive-and-non-numeric-input.md",
+    "status": "open",
+    "git_issue": "2387a37"
   },
   "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS": {
     "epic": "",
@@ -21670,8 +21726,14 @@
     "title": "Director timeline scene mapping",
     "label": "feat",
     "priority": "medium",
-    "epic": "",
-    "tags": [],
+    "epic": "epic-image-video-scenario-studio",
+    "tags": [
+      "director",
+      "video",
+      "fragments",
+      "comfyui",
+      "honkbox"
+    ],
     "source": ".plan/tickets/FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md",
     "status": "open"
   },
@@ -34408,6 +34470,20 @@
     "title": "Per-Scope Preferred Chat Context Window with Pre-Cap Degradation",
     "type": "TASK"
   },
+  "TASK-CHAT-DENSITY-LABELS-MUST-USE-COMPACT-STANDARD-COMFORTABLE": {
+    "hash": "b41d234",
+    "extid": "TASK-CHAT-DENSITY-LABELS-MUST-USE-COMPACT-STANDARD-COMFORTABLE",
+    "type": "TASK",
+    "title": "Chat density labels must use compact, standard, and comfortable",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-density-labels-must-use-compact-standard-comfortable.md",
+    "status": "open",
+    "git_issue": "b41d234"
+  },
   "TASK-CHAT-EXTERNAL-MUSIC-LINKING": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-CHAT-EXTERNAL-MUSIC-LINKING",
@@ -36253,6 +36329,24 @@
     "status": "Not Started",
     "git_issue": "be1f42a"
   },
+  "TASK-COMFYUI-LATENT-OUTPUT-BUCKET-CAPTURE": {
+    "hash": "dda589f",
+    "extid": "TASK-COMFYUI-LATENT-OUTPUT-BUCKET-CAPTURE",
+    "type": "TASK",
+    "title": "ComfyUI latent output bucket capture",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-latent-output-bucket-capture.md",
+    "status": "done",
+    "git_issue": "dda589f"
+  },
   "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS": {
     "hash": "a4f6771",
     "extid": "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS",
@@ -36271,6 +36365,24 @@
     "source": ".plan/tickets/TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md",
     "status": "Not Started",
     "git_issue": "a4f6771"
+  },
+  "TASK-COMFYUI-MODEL-DISCOVERY-AND-CONFIGURABLE-MODEL-NAMES": {
+    "hash": "dcb6c5c",
+    "extid": "TASK-COMFYUI-MODEL-DISCOVERY-AND-CONFIGURABLE-MODEL-NAMES",
+    "type": "TASK",
+    "title": "ComfyUI model discovery and configurable model names",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "models"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-model-discovery-and-configurable-model-names.md",
+    "status": "done",
+    "git_issue": "dcb6c5c"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -36340,6 +36452,24 @@
     "source": ".plan/tickets/TASK-comfyui-output-directory-config.md",
     "status": "Not Started",
     "git_issue": "f2b36c5"
+  },
+  "TASK-COMFYUI-OUTPUT-KIND-BY-FORMAT": {
+    "hash": "91f0779",
+    "extid": "TASK-COMFYUI-OUTPUT-KIND-BY-FORMAT",
+    "type": "TASK",
+    "title": "ComfyUI output kind by format",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-output-kind-by-format.md",
+    "status": "done",
+    "git_issue": "91f0779"
   },
   "TASK-COMFYUI-PARAMETER-FORM-RENDERER": {
     "hash": "9d82194",
@@ -36444,6 +36574,24 @@
     "tags": [],
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-TERMINAL-SINK-REGISTRY": {
+    "hash": "c07f141",
+    "extid": "TASK-COMFYUI-TERMINAL-SINK-REGISTRY",
+    "type": "TASK",
+    "title": "ComfyUI terminal sink registry",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "workflow"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-terminal-sink-registry.md",
+    "status": "done",
+    "git_issue": "c07f141"
   },
   "TASK-COMFYUI-WIRE-DELTAS-PAINTERI2V-PPM-HUNYUAN3D-WRAPPERS-PLYPRE": {
     "hash": "0724304",
@@ -37574,6 +37722,20 @@
     "tags": [],
     "title": "Coverage gate: true multi-worker fanout investigation",
     "type": "TASK"
+  },
+  "TASK-COVERAGE-MUST-BUCKET-PACKAGES-CORE-MODULES-SEPARATELY": {
+    "hash": "153d530",
+    "extid": "TASK-COVERAGE-MUST-BUCKET-PACKAGES-CORE-MODULES-SEPARATELY",
+    "type": "TASK",
+    "title": "Coverage must bucket `packages/core` modules separately",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-must-bucket-packages-core-modules-separately.md",
+    "status": "open",
+    "git_issue": "153d530"
   },
   "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT": {
     "epic": "(none — hygiene/self-contained)",
@@ -41877,6 +42039,39 @@
     ],
     "title": "Export Frontend Progress UI",
     "type": "TASK"
+  },
+  "TASK-EXPORT-GAP-GATE-MUST-INSPECT-CORE-EXPORTS": {
+    "hash": "ab1f62e",
+    "extid": "TASK-EXPORT-GAP-GATE-MUST-INSPECT-CORE-EXPORTS",
+    "type": "TASK",
+    "title": "Export-gap gate must inspect core exports",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-export-gap-gate-must-inspect-core-exports.md",
+    "status": "open",
+    "git_issue": "ab1f62e"
+  },
+  "TASK-EXPORT-PRODUCTION-MINIMAX-H3-WORKFLOW-JSONS": {
+    "hash": "2722132",
+    "extid": "TASK-EXPORT-PRODUCTION-MINIMAX-H3-WORKFLOW-JSONS",
+    "type": "TASK",
+    "title": "Export production MiniMax H3 workflow JSONs",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video",
+      "operator"
+    ],
+    "source": ".plan/tickets/TASK-export-production-minimax-h3-workflow-jsons.md",
+    "status": "open",
+    "git_issue": "2722132"
   },
   "TASK-EXPOSE-DEK-EXPORT-AND-IMPORT-OVER-THE-FEDERATION-WIRE-ROUTES": {
     "hash": "742e1ef",
@@ -46635,6 +46830,20 @@
     "tags": [],
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
+  },
+  "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST": {
+    "hash": "22b5def",
+    "extid": "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST",
+    "type": "TASK",
+    "title": "Honkbox generation-result delivery and remote-asset ingest",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-generation-result-delivery-and-asset-ingest.md",
+    "status": "done",
+    "git_issue": "22b5def"
   },
   "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD": {
     "hash": "ce6deca",
@@ -61017,6 +61226,20 @@
     ],
     "title": "Shared Schema Validation",
     "type": "TASK"
+  },
+  "TASK-SCOPED-COVERAGE-MUST-HANDLE-CORE-ONLY-DIFFS": {
+    "hash": "6fd3769",
+    "extid": "TASK-SCOPED-COVERAGE-MUST-HANDLE-CORE-ONLY-DIFFS",
+    "type": "TASK",
+    "title": "Scoped coverage must handle core-only diffs",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scoped-coverage-must-handle-core-only-diffs.md",
+    "status": "open",
+    "git_issue": "6fd3769"
   },
   "TASK-SCOPED-CREDENTIAL-MODEL-AND-API-KEY-TABLE": {
     "hash": "3b95e8b",

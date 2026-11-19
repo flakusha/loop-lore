@@ -29,6 +29,9 @@ buffered) on the way in; bearer auth is used for every honkbox call and the key 
 exposed to the browser; GPU admission ownership stays single-sided (`queue.gpuSlots > 0` ⇒
 honkbox admits, loop-lore holds no scheduler slot).
 
+git issue: 22b5def
+
+
 **Caveats:** honkbox-side prerequisites (artifact delivery mode, `job_result`/`job_progress`
 SSE frames, capability flags) land in the honkbox repo — this ticket is the consumer and
 must fail closed (named error) when they are absent; SSE is transition-only, so a missed

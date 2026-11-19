@@ -3,7 +3,7 @@
 
 # TASK: Export production MiniMax H3 workflow JSONs
 
-**Status:** Open
+**Status:** Not Started
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-image-video-scenario-studio
@@ -27,6 +27,9 @@ Naming rule `minimax-h3-<mode>-<purpose>-v<N>`; graphs pinned by workflow_hash i
 | minimax-h3-audio-fallback-v1 | opt-in video→sound pass | video_slot, prompt, seed |
 
 For every export:
+
+
+git issue: 2722132
 
 1. ComfyUI "Export (API)" format — UI-format JSON is skipped by the loader (loader.ts strict ingest).
 2. `{{var}}` placeholders are literal strings in node inputs; `reference_slots` is a JSON string consumed by LoadImage/mask paths.

@@ -3,7 +3,7 @@
 
 # TASK: EPIC release-1.0.0
 
-**Status:** in_progress
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 
