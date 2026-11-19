@@ -3,7 +3,7 @@
 
 # TASK: Honkbox generation-result delivery and remote-asset ingest
 
-**Status:** Proposed
+**Status:** Done
 **Scope:** Honkbox integration — SSE consumer, artifact client, remote-asset ingest
 **Priority:** medium
 **Effort:** Medium
@@ -70,6 +70,10 @@ the spec.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Verification (2026-11-20)
+
+`bun run typecheck`, `bun run typecheck:frontend`, `bun scripts/check-db-schemas.ts`, and 325 targeted tests (honkbox integration, asset validation, storage budgets, gallery views) green. Real-server loopback smoke proved chat turn, artifact-mode image job, matching SSE `job_result`, mid-run cancel, jobs/events/metrics routes and honkbox-owned GPU admission; asset-store creation/ingest is covered by isolated tests in `src/integrations/honkbox`.
