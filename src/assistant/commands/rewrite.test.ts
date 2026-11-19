@@ -153,8 +153,13 @@ describe("rewrite command", () => {
 
       expect(captured?.messages[0]?.content,).toContain("keep her sarcastic",);
       expect(result.systemMessage,).toContain("as directed",);
+      expect(result.systemMessage,).toContain("**Rewritten (custom instruction):**",);
+      expect(result.systemMessage,).not.toContain("(clear)",);
       expect(result.actionPayload,).toEqual(
-        expect.objectContaining({ instruction: "keep her sarcastic", },),
+        expect.objectContaining({
+          instruction: "keep her sarcastic",
+          style: "custom instruction",
+        },),
       );
 
       expect((result.actionPayload as Record<string, unknown>).applied,).toBeUndefined();

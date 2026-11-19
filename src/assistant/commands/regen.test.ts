@@ -87,6 +87,18 @@ describe("regen command", () => {
     expect(payload.applied,).toBeUndefined();
   });
 
+  it("preserves flag-like tokens in the free-text instruction", async () => {
+    let system = "";
+    await runRegenAction(["custom", "make", "it", "--snappy",], history, {
+      complete: async (req,) => {
+        system = String(req.messages[0]?.content ?? "",);
+        return { content: "snappy", };
+      },
+    },);
+
+    expect(system,).toContain("make it --snappy",);
+  });
+
   it("rejects an empty custom instruction with usage text", async () => {
     for (const args of [["custom",], ["custom", "   ",],]) {
       const result = await runRegenAction(args, history, {},);

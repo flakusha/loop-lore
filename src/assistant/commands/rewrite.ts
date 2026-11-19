@@ -63,6 +63,10 @@ export async function runRewrite(
     ? named.instruction.trim()
     : undefined;
 
+  // The preview label must name the actual direction: a free-text instruction
+  // is not a named style, so showing the default "clear" here would mislead.
+  const label = instruction !== undefined ? "custom instruction" : style;
+
   let targetId: string | undefined;
 
   let targetText: string | undefined;
@@ -140,7 +144,7 @@ export async function runRewrite(
     const applied = await deps.apply(targetId, final,);
     if (applied.ok) {
       return {
-        systemMessage: `**Rewritten (${style}) and applied.**\n\n${final}`,
+        systemMessage: `**Rewritten (${label}) and applied.**\n\n${final}`,
         actionPayload: {
           original: targetText,
           rewritten: final,
@@ -165,12 +169,12 @@ export async function runRewrite(
   }
 
   return {
-    systemMessage: `**Rewritten (${style}):**\n\n${final}` +
+    systemMessage: `**Rewritten (${label}):**\n\n${final}` +
       (fallback ? "\n\n[LLM unavailable — applied local heuristics only]" : ""),
     actionPayload: {
       original: targetText,
       rewritten: final,
-      style,
+      style: label,
       ...(instruction !== undefined ? { instruction, } : {}),
       ...(fallback ? { fallback: true, } : {}),
     },
