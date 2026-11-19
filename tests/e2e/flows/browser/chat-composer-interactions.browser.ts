@@ -248,14 +248,11 @@ describe("Composer interactions (B7)", () => {
     }
   }, 60_000,);
 
-  // PRODUCT BUG (BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c):
-  // the impersonate toggle can never activate —
-  // currentCharacter is only ever set by loadCharacterInfo (chat-utils/gallery.ts:211),
-  // which reads chat.character_id from GET /api/v1/chats/:id, but no chats route
-  // ever emits character_id (grep: 0 hits in src/routes outside blog). Probed
-  // live: currentCharacter stays null in direct AND group chats, toggleImpersonate
-  // warns "No chat or character selected" and .impersonation-banner stays hidden.
-  test.skip("impersonate toggle activates the banner and sending surfaces the server outcome as a toast", async () => {
+  // Re-enabled 2026-11-19: BUG-impersonate-toggle-can-never-activate-no-chats-route-emits-c
+  // shipped — GET /api/v1/chats/:id now emits character_id
+  // (src/routes/chats/manage.ts:89), so loadCharacterInfo can set
+  // currentCharacter and the toggle activates.
+  test("impersonate toggle activates the banner and sending surfaces the server outcome as a toast", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: ERROR_ALLOWLIST, },);
 
@@ -333,13 +330,12 @@ describe("Composer interactions (B7)", () => {
     }
   }, 60_000,);
 
-  // PRODUCT BUG (BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips):
-  // clicking the 🎞️ gif-picker button never opens
-  // the panel — probed live: after the click chatState._gifOpen is still false
-  // (and the panel testid never renders). gifPicker actions are merged into
-  // chatState (bootstrap.ts:96) and the unit tests pass, so the click handler
-  // and the merged state disagree at runtime (suspect an @click.outside closer
-  // swallowing the opening click). Pinned here as a skip until fixed.
+  // STILL BLOCKED (verified 2026-11-19): BUG-gif-picker-button-dead-in-real-chat-view-gifopen-never-flips
+  // is marked Done only by a registry-driven close (2026-10-26, git issue
+  // c926e5a); the runtime defect persists — E2E_SAFEGUARD=1 bun test this file
+  // times out waiting for [data-testid='gif-picker-panel'] after clicking the
+  // button. Keep skipped until the click path is actually fixed and the BUG
+  // ticket is reopened with a verified fix.
   test.skip("gif picker button opens the picker panel", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: ERROR_ALLOWLIST, },);

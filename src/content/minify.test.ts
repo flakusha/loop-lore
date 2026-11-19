@@ -1,5 +1,5 @@
 import { describe, expect, test, } from "bun:test";
-import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
+import { defaultHTMLOptions, minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
 
 describe("minifyText", () => {
   test("passes normal text through unchanged", () => {
@@ -215,5 +215,23 @@ describe("minifyJS", () => {
 
   test("throws on syntax error", async () => {
     await expect(minifyJS("const x = ;",),).rejects.toThrow();
+  });
+});
+
+describe("defaultHTMLOptions", () => {
+  test("pins the shared minifier contract used by build, runtime and parity gate", () => {
+    expect(defaultHTMLOptions,).toEqual({
+      collapseWhitespace: true,
+      collapseInlineTagWhitespace: true,
+      caseSensitive: true,
+      removeComments: true,
+      removeRedundantAttributes: true,
+      removeEmptyAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true,
+      minifyCSS: true,
+      minifyJS: true,
+    },);
   });
 });

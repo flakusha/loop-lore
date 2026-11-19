@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Browser E2E: Chat Branch Lifecycle (B1) — switch covered; merge/delete UI blocked
+ * Browser E2E: Chat Branch Lifecycle (B1) — switch covered; merge/delete E2E bodies pending
  *
  * Resource contract (parallel-safe by construction):
  *  - Creates its OWN chat, participants, messages, and branch rows under
@@ -16,12 +16,9 @@
  * Covered interaction: branch-menu-toggle → branch-row switch and
  * branch-panel-switch, asserting the message list swap + chats.active_branch_id.
  *
- * KNOWN PRODUCT BUGS (BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar,
- * BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass) block the rest of the
- * lifecycle: the merge/delete confirmation modals never initialize (no
- * _x_dataStack → x-show never applies), and the merge wizard never receives
- * its selected sources (merge-sources-next stays disabled). Those tests are
- * test.skip below.
+ * The merge/delete BUGs are Done and their fixes are in-tree; the remaining
+ * test.skip entries at the bottom are unimplemented empty placeholders, not
+ * product-blocked tests (see the inline note there).
  */
 
 import { type MessageRole, } from "@/db/enums";
@@ -233,16 +230,15 @@ describe("Chat branch lifecycle (B1)", () => {
     }
   }, 60_000,);
 
-  // ── Skipped: blocked by branch-panel UI defects
-  // (BUG-branch-merge-delete-confirm-modals-never-initialize-dead-mar,
-  // BUG-merge-wizard-dead-ends-at-step-1-selected-sources-never-pass). ──
-  // The merge/delete confirmation modals (branch-merge-confirm /
-  //     branch-delete-confirm) never initialize — the modal element has no
-  //     _x_dataStack, its x-show never registers, and even a programmatic
-  //     `deleteFor = id` write leaves display:none.
-  // The merge wizard opens but `sources` stays empty (openBranchMerge
-  //     writes chatState fields the wizard's x-data never reads), so
-  //     merge-sources-next stays disabled — the wizard dead-ends at step 1.
+  // ── Still skipped (2026-11-19): these three are EMPTY placeholders
+  // (`() => {}`) — there is no assertion to re-enable. Both blocking BUGs are
+  // Done and the fixes are in-tree: single x-data root now wraps both modals
+  // (src/components/chat/branch-list-panel.html:11-15, merge :105-139,
+  // delete :142-169); openBranchMerge seeds store.mergeSources BEFORE the open
+  // flag (src/frontend/alpine/chat-branch-merge.ts:42-62,
+  // src/frontend/stores/ui-store.ts:65-68). Implementing real E2E bodies
+  // against that shipped UI is a separate slice; unskipping empty callbacks
+  // would only manufacture green no-op tests.
 
   test.skip("panel merge consumes the source branch after branch-merge-confirm", () => {});
   test.skip("merge wizard walks sources → mode → preview → confirm", () => {});

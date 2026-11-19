@@ -11,16 +11,11 @@
  *    uploads; the per-file browser server is torn down in afterAll.
  *  - Passes alone and in any order relative to other browser files.
  *
- * KNOWN PRODUCT BUG (see BUG-memory-panel-never-renders-memories-in-any-chat-response-env
- * and BUG-memory-panel-fully-inert-in-direct-chats-participants-never-):
- *  GET /api/v1/actors/:id/memories answers { data: [...] } while the panel's
- *  loadMemories() reads body.items, so the memory list NEVER renders; and in
- *  direct chats _chatParticipants is never loaded at all, so the character
- *  actor (and therefore the whole panel) resolves to null. The row-level CRUD
- *  tests (edit / pin / approve / reject / delete buttons live inside memory
- *  rows) are test.skip until that is fixed. Create + audit remain covered:
- *  the create form POSTs directly (the POST itself works) and the audit tab
- *  has its own response parsing.
+ * The three memory-panel BUGs named in the original skip rationale are Done
+ * and their fixes are in-tree (see the inline note at the bottom). The row-level
+ * CRUD skips below are unimplemented empty placeholders, not live blocked
+ * tests: writing real E2E bodies against the shipped UI is a separate slice.
+ * Create is covered by a live test that asserts the persisted DB row.
  */
 
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
@@ -175,11 +170,13 @@ describe("Memory panel CRUD + audit (B2)", () => {
     }
   }, 60_000,);
 
-  // ── Skipped: blocked by the memories-list envelope bug
-  // (BUG-memory-panel-never-renders-memories-in-any-chat-response-env). ──
-  // Each of these drives a button that only exists inside a rendered memory
-  // row; with loadMemories() parsing {items} out of a {data} response the
-  // list is permanently empty, so there is no row to click.
+  // ── Still skipped (2026-11-19): EMPTY placeholders (`() => {}`) with no
+  // assertions. The blocking fixes are in-tree: loadMemories() reads
+  // `data.data` (src/frontend/alpine/memory-panel-core.ts:72,77), direct-chat
+  // participants are loaded (src/frontend/alpine/chat/world.ts:199-212), and
+  // GET .../memories/audit is mounted (src/routes/memory-audit.ts:56).
+  // Writing real E2E bodies against that shipped UI is a separate slice;
+  // unskipping empty callbacks would only manufacture green no-op tests.
 
   test.skip("saving an inline edit persists the new content", () => {});
   test.skip("pinning a memory persists the pinned flag", () => {});
@@ -187,12 +184,9 @@ describe("Memory panel CRUD + audit (B2)", () => {
   test.skip("rejecting a pending memory persists review_status rejected", () => {});
   test.skip("deleting a memory removes the row and the panel entry", () => {});
 
-  // Skipped: blocked by a third defect on the same surface
-  // (BUG-memory-audit-tab-always-404s-route-shape-mismatch).
-  // The audit tab fetches GET /api/v1/actors/:id/memories/audit?limit=25,
-  // which answers 404 (the backend mounts the audit route as
-  // .../memories/:memoryId/audit), so the list is always empty/error and the
-  // action filters have nothing to narrow. Evidence in
-  // BUG-memory-audit-tab-always-404s-route-shape-mismatch.
+  // Still skipped (2026-11-19): EMPTY placeholder; the audit route now exists
+  // (src/routes/memory-audit.ts:56) and the panel fetches it
+  // (src/frontend/alpine/memory-panel/audit.ts:41-49). Needs a real E2E body,
+  // not an unskip — see the note above.
   test.skip("audit tab lists this session's CRUD rows and the action filter narrows them", () => {});
 });
