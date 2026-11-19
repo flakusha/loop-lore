@@ -36,9 +36,9 @@ The DB layer (`001_init.ts:4121-4184`) enforces self-parent and cross-world on I
 
 - [x] Implementation in `src/locations/tree.ts` (not `src/rpg/location-tree/`).
 - [x] Typed exports, no `any` (`LocationTreeNode`, `LocationTreeBranch`, `InsertLocationInput`, `LocationMoveError`).
-- [x] `getAncestors` / `getDescendants` via recursive CTE (`tree.ts:184-221`).
-- [x] `insertLocation` enforces cross-world + depth <= 12 at the app layer (`tree.ts:113-146`).
-- [x] `moveSubtree` rejects self-parent, not-found, cross-world and cycle (`tree.ts:270-299`).
+- [x] `getAncestors` / `getDescendants` via recursive CTE (`tree.ts:185-222`).
+- [x] `insertLocation` enforces cross-world + depth <= 12 at the app layer (`tree.ts:114-150`).
+- [x] `moveSubtree` rejects self-parent, not-found, cross-world, cycle and depth overflow (`tree.ts:278-318`).
 - [x] Tests in `src/locations/tree.test.ts` cover ancestors, descendants, path repair and the move guards.
 - [x] `tree()` rows carry real `path`, numeric `depth`, `kind`, `mobility_mode`, `current_route_id`, `travel_progress` (`tree.ts:230-262`).
 
@@ -60,3 +60,8 @@ The DB layer (`001_init.ts:4121-4184`) enforces self-parent and cross-world on I
 - `tree()` projection at :238 includes `path`, `kind`, `mobility_mode`, `current_route_id`, `travel_progress`; `depth` computed at :256 as path separators minus 1.
 - `LOCATION_DEPTH_LIMIT` at `src/db/enums-story/world.ts:168`; cycle/depth are app-layer, no such triggers in `001_init.ts`.
 - Behavior covered by `src/locations/tree.test.ts`.
+
+## Verification Notes (2026-11-19)
+
+- `src/locations/tree.ts:278-318` `moveSubtree` now records the new parent's depth (`:304`) and rejects a subtree whose height would push it past `LOCATION_DEPTH_LIMIT` (`:311-313`) with `LocationMoveError("depth")`.
+- `src/locations/tree.test.ts` adds a deep-chain move that would land at depth 16 and asserts the rejection.

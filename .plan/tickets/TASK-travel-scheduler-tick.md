@@ -51,10 +51,11 @@ attached; clearing it is not in this lane's scope.
       schedule `*/2 * * * *` and `elapsedSeconds: 120`.
 - [x] Per-transport speed from `seconds_per_unit` (default 60) —
       `travel-engine.ts:91`, `001_init.ts:4082`.
-- [x] Loop wrap and non-loop terminal pin — `travel-engine.ts:97-106`.
-- [x] Stop crossing snaps coords and propagates riders — `travel-engine.ts:144-178`, `src/locations/positions.ts:130`.
+- [x] Loop wrap and non-loop terminal pin; each crossed integer stop emits
+      one arrival, and a docked transport emits no repeats (`travel-engine.ts:113-140`).
+- [x] Stop crossing snaps coords and propagates riders — `travel-engine.ts:155-216`, `src/locations/positions.ts:130`.
 - [x] Colon-style `transport:arrived` / `transport:departed` events appended
-      to `world_event_log` with dedupe key — `travel-engine.ts:180-214`.
+      to `world_event_log` with dedupe key — `travel-engine.ts:204-235`.
 - [x] Tests in `src/locations/travel-engine.test.ts`.
 
 ## Out of Scope
@@ -79,3 +80,9 @@ attached; clearing it is not in this lane's scope.
 - `src/cron/jobs.ts:246-258` registers `locations.tick` (:248), `*/2 * * * *` (:249), `elapsedSeconds: 120` (:254).
 - `grep current_route_id src/locations/travel-engine.ts` shows no nulling assignment — terminal completion keeps the route attached.
 - Behavior covered by `src/locations/travel-engine.test.ts`.
+
+## Verification Notes (2026-11-19)
+
+- `src/locations/travel-engine.ts:63-146` `tick` computes every crossed integer boundary (`:113-128`) and calls `applyStopArrival` once per crossing (`:135-138`); a pinned non-loop transport has no further crossings.
+- `:155-216` `applyStopArrival` maps a boundary to the stop index (`:168-172`), snaps coords, propagates riders via `src/locations/positions.ts:130`, and emits events (`:204-215`).
+- `src/locations/travel-engine.test.ts` covers three-stop loops, terminal pinning, docked idempotence, and loop departure events.
