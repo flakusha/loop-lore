@@ -25,6 +25,6 @@ directory holds inbound servers only.
 
 **Acceptance Criteria:**
 
-- [ ] Version-pinned invocation and capability probe covered by test
-- [ ] Timeout, exit-code check, provenance stamp, per-instance serialization tested
-- [ ] No MCP client added under `src/integrations/mcp/`
+- [x] Version-pinned invocation and capability probe covered by test
+- [x] Timeout, exit-code check, provenance stamp, per-instance serialization tested
+- [x] No MCP client added under `src/integrations/mcp/`
