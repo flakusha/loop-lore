@@ -3,7 +3,7 @@
 
 # TASK: MFA dedicated operator documentation
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-auth-access.md
@@ -26,3 +26,5 @@ MFA email/messenger delivery, factor enrollment and step-up verification are shi
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 26384e0 (registry tip: ec4726203 Konstantin Fedotov Close issue)
