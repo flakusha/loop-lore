@@ -3,7 +3,8 @@
 
 # TASK: Blender headless node bridge
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** local Blender headless capability probe and job bridge
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-creative-tool-bridge
