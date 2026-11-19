@@ -3257,6 +3257,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     config_json: col("text",),
+    origin: col("text",),
   },)
   // ── Turn & Story ──────────────────────────────────────────────
   .table("story_turns", {

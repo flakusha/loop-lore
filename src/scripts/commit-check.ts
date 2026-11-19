@@ -10,7 +10,8 @@
  *   cat .git/COMMIT_EDITMSG | bun run commit:lint  # Validate single commit (hook mode)
  *
  * Only validates TYPE - scope and length are warnings, not errors.
- * Supports: type(scope): subject, type!: subject (breaking change)
+ * Supports: type(scope): subject, type!: subject (breaking change),
+ * `Revert "subject"` / `revert("subject")` (git-generated reverts).
  */
 
 import { flag, object, runScript, withDefault, } from "../cli/parser";
@@ -28,6 +29,10 @@ createLogger({ level: "info", },);
 const log = (): Logger | null => getChildLogger("scripts/commit-check",);
 
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?(!)?:\s(.+)$/;
+// `git revert` writes `Revert "feat: add x"`; the hand-written equivalent is
+// `revert("feat: add x")`. Unwrap either to its inner subject so the regular
+// parser still vets the type instead of reading `Revert "feat` as one.
+const REVERT_PATTERN = /^(?:Revert\s+"(.+)"|revert\("(.+)"\))$/;
 const VALID_TYPES = [
   "feat",
   "fix",
@@ -107,7 +112,8 @@ function validateCommit(message: string,): CommitInfo {
   }
 
   const warnings: string[] = [];
-  const match = COMMIT_PATTERN.exec(firstLine,);
+  const revertMatch = REVERT_PATTERN.exec(firstLine,);
+  const match = COMMIT_PATTERN.exec(revertMatch?.[1] ?? revertMatch?.[2] ?? firstLine,);
 
   if (!match) {
     return {

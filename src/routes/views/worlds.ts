@@ -7,6 +7,7 @@ import { listTimelineEntries, } from "../../story/timeline/world-timeline";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { requireWorldAccess, } from "../worlds/access";
 import { visibleWorldsTo, } from "./access";
+import { escapeJsonForScript, } from "./escape-html";
 import { escapeHtml, htmlResponse, } from "./layout";
 import { renderTimelineEvents, TIMELINE_EVENT_CAP, } from "./world-timeline-events";
 import { loadWorldListCards, renderWorldCard, } from "./worlds-list";
@@ -205,9 +206,9 @@ async function serveWorldDetailContent(
   );
 
   return htmlResponse(
-    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${escapeHtml(worldId,)}', locations: ${
-      escapeHtml(locationsJson,)
-    }, templates: ${escapeHtml(templatesJson,)} })">
+    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: ${
+      escapeHtml(escapeJsonForScript(jsonStringifyOr(worldId,),),)
+    }, locations: ${escapeHtml(locationsJson,)}, templates: ${escapeHtml(templatesJson,)} })">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>
@@ -274,7 +275,9 @@ async function serveWorldDetailContent(
         </template>
       </div>
       <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4)">
-        <a href="/quests?worldId=${worldId}" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center">
+        <a href="/quests?worldId=${
+      escapeHtml(encodeURIComponent(worldId,),)
+    }" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center">
           View Quests
         </a>
       </div>

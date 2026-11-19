@@ -353,6 +353,7 @@ export async function insertPluginState(
     created_at?: string;
     updated_at?: string;
     config_json?: string | null;
+    origin?: string | null;
   },
 ): Promise<string> {
   const { ...restOpts } = opts as Record<string, unknown>;

@@ -176,13 +176,15 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
       }),
       select: (cols?: string[],) => ({
         where: () => ({
-          executeTakeFirst: async () => {
-            // Two single-row reads hit this chain: the plugin_state status
-            // read (approval) and the stored-config read.
-            if (cols?.includes("status",)) { return options.stateRow; }
-            if (options.configError !== undefined) { throw options.configError; }
-            return options.configRow;
-          },
+          // Approval and stored-config reads both scope by origin, so each
+          // single-row query has two WHERE clauses.
+          where: () => ({
+            executeTakeFirst: async () => {
+              if (cols?.includes("status",)) { return options.stateRow; }
+              if (options.configError !== undefined) { throw options.configError; }
+              return options.configRow;
+            },
+          }),
         }),
       }),
     }),
@@ -418,7 +420,7 @@ describe("loadSinglePlugin", () => {
     expect(registry.listPlugins(),).toEqual([],);
   });
 
-  test("reloading a name overwrites the registration and persists idempotently", async () => {
+  test("reloading a name from the same origin overwrites the registration and persists idempotently", async () => {
     const inserts: Array<Record<string, unknown>> = [];
     const conflictCols: string[] = [];
     const db = stubDb({ inserts, conflictCols, });
@@ -426,7 +428,9 @@ describe("loadSinglePlugin", () => {
     const dirB = makePluginDir({ "plugin.ts": dupPlugin("2.0.0",), });
 
     await loadSinglePlugin(db, "fixture-dup", dirA, "local",);
-    await loadSinglePlugin(db, "fixture-dup", dirB, "community",);
+    // Cross-origin reloads are rejected by the collision guard; same-origin
+    // reloads still overwrite, which is what this regression covers.
+    await loadSinglePlugin(db, "fixture-dup", dirB, "local",);
 
     expect(
       registry.listPlugins().filter((p,) => p.manifest.name === "fixture-dup",),
@@ -608,7 +612,7 @@ describe("dispatchPluginRoute", () => {
 // ── loadAllPlugins ─────────────────────────────────────────────
 
 describe("loadAllPlugins", () => {
-  test("applies persisted states and registers shipped plugins plus builtin tools", async () => {
+  test("registers shipped plugins plus builtin tools without blanket name-keyed preload", async () => {
     const inserts: Array<Record<string, unknown>> = [];
     const db = stubDb({
       states: [
@@ -620,8 +624,9 @@ describe("loadAllPlugins", () => {
 
     await loadAllPlugins(db,);
 
+    // Preload is gone: a persisted row for an unloaded name enables nothing.
     expect(registry.isEnabled("ghost-plugin"),).toBe(false,);
-    expect(registry.isEnabled("ghost-active"),).toBe(true,);
+    expect(registry.isEnabled("ghost-active"),).toBe(false,);
     // Real directory scan: the shipped dice-roller sample loads from plugins/core.
     expect(registry.getPlugin("dice-roller")?.origin,).toBe("core",);
     // Builtin core tools register on every boot.
@@ -742,6 +747,51 @@ describe("origin-scoped approval", () => {
     expect(await res?.text(),).toBe("core",);
   });
 
+  test("a community plugin cannot overwrite a same-name core registration", async () => {
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-core", "/collision/core", "core",), });
+    const communityDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-core", "/collision/community", "community",), });
+
+    await loadSinglePlugin(db, "fixture-collision-core", coreDir, "core",);
+    const warns: Array<{ message?: string; origin?: string; existingOrigin?: string }> = [];
+    setGlobalLogger({
+      ...nullLogger,
+      warn: (entry: unknown,) => { warns.push(entry as { message?: string; origin?: string; existingOrigin?: string },); },
+    },);
+
+    await loadSinglePlugin(db, "fixture-collision-core", communityDir, "community",);
+
+    expect(registry.getPlugin("fixture-collision-core",)?.origin,).toBe("core",);
+    expect(registry.getPlugin("fixture-collision-core",)?.directory,).toBe(coreDir,);
+    expect(registry.isEnabled("fixture-collision-core",),).toBe(true,);
+    expect(await persistedStatus("fixture-collision-core",),).toBe("active",);
+    const coreRes = await dispatchPluginRoute({ request: new Request("http://x/collision/core",), },);
+    expect(await coreRes?.text(),).toBe("core",);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/collision/community",), },),).toBeNull();
+    expect(warns.some((w,) =>
+      w.message?.includes("another origin")
+      && w.origin === "community"
+      && w.existingOrigin === "core",
+    ),).toBe(true,);
+  });
+
+  test("a community-first registration also wins over a later core claim", async () => {
+    // Precedence: first registration wins in either direction. Startup loads
+    // core first, so core normally owns a contested name; a caller that loads
+    // community first keeps that registration and the later core load is
+    // skipped, so no cross-origin replacement can inherit an approval row.
+    const communityDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-first", "/collision/first-community", "community",), });
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-first", "/collision/first-core", "core",), });
+
+    await loadSinglePlugin(db, "fixture-collision-first", communityDir, "community",);
+    await loadSinglePlugin(db, "fixture-collision-first", coreDir, "core",);
+
+    expect(registry.getPlugin("fixture-collision-first",)?.origin,).toBe("community",);
+    expect(registry.getPlugin("fixture-collision-first",)?.directory,).toBe(communityDir,);
+    expect(registry.isEnabled("fixture-collision-first",),).toBe(false,);
+    expect(await persistedStatus("fixture-collision-first",),).toBe("disabled",);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/collision/first-core",), },),).toBeNull();
+  });
+
   // BUG-fix-plugins-append-onload-registrations-to-manifest-registra:
   // a plugin declaring manifest apiRoutes AND registering routes from onLoad
   // must serve BOTH — the onLoad registration appends, never replaces.
@@ -798,7 +848,7 @@ describe("origin-scoped approval", () => {
     expect(globals().__llOnLoadRan,).toEqual(["once",],);
 
     // A second call (e.g. disable → enable) must not re-run the hook.
-    await initializePlugin({ db, manifest: registry.getPlugin("fixture-once")!.manifest, },);
+    await initializePlugin({ db, manifest: registry.getPlugin("fixture-once")!.manifest, origin: "core", },);
 
     expect(globals().__llOnLoadRan,).toEqual(["once",],);
   });
@@ -837,10 +887,10 @@ describe("origin-scoped approval", () => {
     expect(result.content,).toContain(STRICT_CODEGEN_FLAG,);
   });
 
-  test("an existing row decides regardless of origin", async () => {
+  test("an origin-matched row decides approval", async () => {
     await db
       .insertInto("plugin_state",)
-      .values({ name: "fixture-approval-vetoed", status: "disabled", },)
+      .values({ name: "fixture-approval-vetoed", origin: "core", status: "disabled", },)
       .execute();
 
     const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-approval-vetoed", "/approval/vetoed", "vetoed",), });
@@ -852,6 +902,84 @@ describe("origin-scoped approval", () => {
     expect(
       await dispatchPluginRoute({ request: new Request("http://x/approval/vetoed",), },),
     ).toBeNull();
+  });
+
+  test("an active core row does not authorize a same-name community plugin", async () => {
+    await db
+      .insertInto("plugin_state",)
+      .values({ name: "fixture-inherited-core", origin: "core", status: "active", },)
+      .execute();
+
+    // No core plugin is registered in memory: this is the persisted case a
+    // restart leaves behind, which the in-memory collision guard cannot see.
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-inherited-core", "/inherited/community", "community",), },);
+    await loadSinglePlugin(db, "fixture-inherited-core", dir, "community",);
+
+    expect(registry.getPlugin("fixture-inherited-core",)?.origin,).toBe("community",);
+    expect(registry.isEnabled("fixture-inherited-core",),).toBe(false,);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/inherited/community",), },),
+    ).toBeNull();
+
+    const row = await db
+      .selectFrom("plugin_state",)
+      .select(["origin", "status",],)
+      .where("name", "=", "fixture-inherited-core",)
+      .executeTakeFirst();
+
+    expect(row,).toMatchObject({ origin: "core", status: "active", },);
+  });
+
+  test("a NULL-origin backfill row does not enable community or local", async () => {
+    const fixtures = [
+      { name: "fixture-null-community", origin: "community" as const, path: "/backfill/community", },
+      { name: "fixture-null-local", origin: "local" as const, path: "/backfill/local", },
+    ];
+
+    for (const { name, origin, path } of fixtures) {
+      await db
+        .insertInto("plugin_state",)
+        .values({ name, status: "active", },)
+        .execute();
+
+      const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, path, "backfill",), },);
+      await loadSinglePlugin(db, name, dir, origin,);
+
+      expect(registry.isEnabled(name,),).toBe(false,);
+      expect(
+        await dispatchPluginRoute({ request: new Request(`http://x${path}`,), },),
+      ).toBeNull();
+    }
+  });
+
+  test("a core plugin still boots with no row on a fresh table", async () => {
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-fresh-core", "/fresh/core", "fresh",), },);
+    await loadSinglePlugin(db, "fixture-fresh-core", dir, "core",);
+
+    expect(registry.isEnabled("fixture-fresh-core",),).toBe(true,);
+    expect(await persistedStatus("fixture-fresh-core",),).toBe("active",);
+  });
+
+  test("same-origin approval still enables community and local plugins", async () => {
+    const fixtures = [
+      { name: "fixture-approved-community", origin: "community" as const, path: "/approved/community", },
+      { name: "fixture-approved-local", origin: "local" as const, path: "/approved/local", },
+    ];
+
+    for (const { name, origin, path } of fixtures) {
+      await db
+        .insertInto("plugin_state",)
+        .values({ name, origin, status: "active", },)
+        .execute();
+
+      const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, path, "approved",), },);
+      await loadSinglePlugin(db, name, dir, origin,);
+
+      expect(registry.isEnabled(name,),).toBe(true,);
+      expect(
+        await dispatchPluginRoute({ request: new Request(`http://x${path}`,), },),
+      ).not.toBeNull();
+    }
   });
 });
 

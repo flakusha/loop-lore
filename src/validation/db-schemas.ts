@@ -876,6 +876,7 @@ export const PluginStateSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   config_json: t.Optional(t.String(),),
+  origin: t.Optional(t.String(),),
 },);
 
 // ── request_results ────────────────────────────────────────────

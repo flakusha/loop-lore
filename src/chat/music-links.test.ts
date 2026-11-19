@@ -74,6 +74,44 @@ describe("MusicLinkService", () => {
     });
   });
 
+  describe("getEmbedHtml", () => {
+    test("keeps the iframe src for a legitimate YouTube Music URL", async () => {
+      expect(
+        await service.getEmbedHtml("https://music.youtube.com/watch?v=dQw4w9WgXcQ", "youtube_music",),
+      ).toBe(
+        '<iframe src="https://www.youtube.com/watch?v=dQw4w9WgXcQ" width="400" height="80" allow="autoplay" ' +
+          'frameborder="0" scrolling="no"></iframe>',
+      );
+    });
+
+    test("cannot break out of the src attribute with quotes or tags", async () => {
+      const html = await service.getEmbedHtml(
+        'https://music.youtube.com/watch?v=abc"><script>alert(1)</script>',
+        "youtube_music",
+      );
+
+      expect(html,).toBe(
+        '<iframe src="https://www.youtube.com/watch?v=abc%22%3E%3Cscript%3Ealert(1)%3C/script%3E" ' +
+          'width="400" height="80" allow="autoplay" frameborder="0" scrolling="no"></iframe>',
+      );
+
+      expect(html,).not.toContain('"><script>',);
+    });
+
+    test("emits an inert iframe for javascript: and backtick payloads", async () => {
+      const inert = '<iframe src="" width="400" height="80" allow="autoplay" ' +
+        'frameborder="0" scrolling="no"></iframe>';
+
+      expect(
+        await service.getEmbedHtml("javascript:alert(1)", "youtube_music",),
+      ).toBe(inert,);
+
+      expect(
+        await service.getEmbedHtml("https://music.youtube.com/watch?v=abc`onload=`alert(1)", "youtube_music",),
+      ).toBe(inert,);
+    });
+  });
+
   describe("store", () => {
     test("stores a link and returns row with correct fields", async () => {
       const row = await service.store({

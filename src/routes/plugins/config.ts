@@ -56,7 +56,7 @@ export function pluginConfigRoutes({ database, }: { database: Kysely<DB> }, pref
       async (ctx: any,) => {
         const resolved = resolvePlugin(ctx,);
         if ("error" in resolved) { return resolved.error; }
-        const config = await readStoredPluginConfig(database, resolved.plugin.manifest.name,);
+        const config = await readStoredPluginConfig(database, resolved.plugin.manifest.name, resolved.plugin.origin,);
         return jsonResponse({ config, },);
       },
       {

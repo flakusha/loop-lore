@@ -12,8 +12,8 @@
  * `dispatchHarnessTurn` run: the isolation gate, ToS guard, permission queue
  * and exec-log sit inside the dispatch — the queue never reaches around
  * them, and the enqueueing principal is re-presented to the gate at run
- * time (a policy flip between enqueue and run fails the turn, it does not
- * widen access).
+ * time: the caller's live role is re-resolved before dispatch, so a demotion
+ * between enqueue and run fails the turn instead of executing the stale role.
  *
  * State is DB rows (`harness_queue_turns`, migrations 100/105), not memory:
  * a crash loses at most this instance's in-flight turn (boot recovery fails
@@ -35,6 +35,7 @@ import { resolveInstanceSlug, } from "../../config/state-dir";
 import { HarnessQueueErrorCode, HarnessQueueTurnStatus, } from "../../db/enums";
 import { type DB, } from "../../db/schema";
 import { getChildLogger, type Logger, } from "../../logger";
+import { isAdminRole, resolveUserRole, } from "../../users/roles";
 import { toDate, } from "../../utils/date";
 import {
   dispatchHarnessTurn,
@@ -108,7 +109,7 @@ export interface CreateHarnessTurnQueueOptions {
 }
 
 /** Why the queue refused an operation. Machine-readable, never a thrown string. */
-export type HarnessQueueCode = "harness_disabled" | "empty_batch";
+export type HarnessQueueCode = "harness_disabled" | "empty_batch" | "role_changed";
 
 /** A refused queue operation. */
 export class HarnessQueueError extends Error {
@@ -218,6 +219,21 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
         throw new HarnessQueueError("harness_disabled", "the harness runtime is not composed",);
       }
 
+      // `requested_role` is an enqueue-time snapshot. Re-resolve the caller's
+      // live role the way the HTTP/command path does; a caller that was admin
+      // at enqueue but is not now fails closed before the gate can run under
+      // the stale role. The remaining gate checks still live in dispatch.
+      const currentRole = await resolveUserRole(options.database, row.requested_by,);
+      if (isAdminRole(row.requested_role,) && !isAdminRole(currentRole,)) {
+        throw new HarnessQueueError(
+          "role_changed",
+          `caller ${row.requested_by} is no longer authorized for harness role ${row.requested_role ?? "anonymous"}`,
+        );
+      }
+      // ponytail: check and dispatch are not atomic — a demotion inside that
+      // window still runs at the old role. Close it by re-resolving role from
+      // userId inside assertHarnessExecution (shared gate change, not this lane).
+
       const outcome = await dispatch({
         runtime,
         role: row.requested_role,
@@ -244,7 +260,11 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
       // Terminal: the dispatch refusal code is preserved verbatim; any other
       // throw is a turn failure. No retry — re-enqueue is the explicit retry.
       const code = error instanceof HarnessQueueError
-        ? error.code === "harness_disabled" ? HarnessQueueErrorCode.HarnessDisabled : HarnessQueueErrorCode.TurnFailed
+        ? error.code === "harness_disabled"
+          ? HarnessQueueErrorCode.HarnessDisabled
+          : error.code === "role_changed"
+          ? HarnessQueueErrorCode.RoleDenied
+          : HarnessQueueErrorCode.TurnFailed
         : error instanceof HarnessDispatchError
         ? error.code
         : HarnessQueueErrorCode.TurnFailed;

@@ -30,6 +30,11 @@ jobs:
     timeout-minutes: 90
     permissions:
       contents: read
+    # Same check runner as ci.yml's gates job: no .credentials.env on the
+    # runner and no signing step, so skip the preflight only (signing config
+    # is unchanged).
+    env:
+      CHECK_SKIP_GPG_PRECHECK: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

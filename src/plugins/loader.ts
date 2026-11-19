@@ -15,9 +15,9 @@
 
 import { readdirSync, existsSync } from "node:fs";
 import { isAbsolute, join } from "node:path";
-import type { Kysely, Selectable } from "kysely";
+import type { Kysely, } from "kysely";
 import { PluginStatus } from "../db/enums";
-import type { DB, PluginState } from "../db/schema";
+import type { DB, } from "../db/schema";
 import type { PluginLogger, PluginManifest, PluginOrigin } from "./types";
 import { registry } from "./registry";
 import { normalizePluginRoutePath, } from "./registry-policy";
@@ -71,7 +71,7 @@ function makeLogger(pluginName: string): PluginLogger {
  * Load all plugins from all 3 directories.
  * Call once at startup, after DB is ready.
  *
- * Checks plugin_state table for previously disabled plugins.
+ * Approval is decided per plugin by isPluginActive, scoped by (name, origin).
  * @param db
  * @param opts - load options (see {@link LoadAllPluginsOpts})
  * @returns Nothing.
@@ -82,21 +82,6 @@ export async function loadAllPlugins(
 ): Promise<void> {
   const log = getLogger();
   loadOrder.length = 0;
-
-  // Load persisted plugin states
-  let rawStates: Selectable<PluginState>[] = [];
-  try {
-    rawStates = await db
-      .selectFrom("plugin_state")
-      .selectAll()
-      .execute();
-  } catch {
-    // plugin_state may not exist yet on first boot — proceed with no states
-  }
-
-  for (const row of rawStates) {
-    registry.setEnabled(row.name, row.status === PluginStatus.Active,);
-  }
 
   for (const { origin, dir } of PLUGIN_DIRS) {
     const fullDir = join(import.meta.dir, "..", "..", dir);
@@ -299,6 +284,20 @@ export async function loadSinglePlugin(
       return;
     }
 
+    // First registration wins across origins. PLUGIN_DIRS loads core first, so
+    // core normally keeps its name; if a caller loads community-first, that
+    // registration stands and a later core load is skipped (no cross-origin
+    // replacement either way). Same-origin reloads still overwrite.
+    const existing = registry.getPlugin(manifest.name,);
+    if (existing && existing.origin !== origin) {
+      log.warn({
+        message: `Plugin name already registered by another origin — skipping`,
+        plugin: manifest.name, origin, existingOrigin: existing.origin, directory: pluginDir,
+      },);
+
+      return;
+    }
+
     registeredName = manifest.name;
     registry.register({ manifest, origin, directory: pluginDir, });
     // Approval is origin-scoped: a community/local plugin only runs once
@@ -311,7 +310,7 @@ export async function loadSinglePlugin(
     // an approved plugin. An unapproved one is inert: nothing is served while
     // it is disabled, and the admin enable route performs this deferred init.
     if (approved) {
-      await initializePlugin({ db, manifest, },);
+      await initializePlugin({ db, manifest, origin, },);
     } else {
       log.warn({ message: `Plugin is not approved — onLoad deferred until enabled`, plugin: manifest.name, origin });
     }
@@ -342,6 +341,7 @@ export async function loadSinglePlugin(
 export interface InitializePluginOpts {
   db: Kysely<DB>;
   manifest: PluginManifest;
+  origin: PluginOrigin;
 }
 
 /**
@@ -354,13 +354,14 @@ export interface InitializePluginOpts {
  * @param opts
  * @param opts.db
  * @param opts.manifest
+ * @param opts.origin - Origin whose stored config may be read
  */
-export async function initializePlugin({ db, manifest, }: InitializePluginOpts,): Promise<void> {
+export async function initializePlugin({ db, manifest, origin, }: InitializePluginOpts,): Promise<void> {
   if (initializedPlugins.has(manifest.name,) || typeof manifest.onLoad !== "function") { return; }
 
   // FEAT-051: merge any admin-stored config over manifest defaults so the
   // hook (and required-key enforcement) sees the effective config.
-  const storedConfig = await readStoredPluginConfig(db, manifest.name,);
+  const storedConfig = await readStoredPluginConfig(db, manifest.name, origin,);
 
   await manifest.onLoad({
     db,
@@ -444,7 +445,9 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
   try {
     await db
       .insertInto("plugin_state")
-      .values({ name, status, enabled_at: selfApproved ? new Date().toISOString() : null, })
+      .values({ name, origin, status, enabled_at: selfApproved ? new Date().toISOString() : null, })
+      // An existing row keeps its origin and admin decision; only explicit
+      // admin enable/config writes move a row to another origin.
       .onConflict((oc) => oc.column("name").doNothing(),)
       .execute();
   } catch (error) {
@@ -469,8 +472,15 @@ function isMissingPluginStateTable(error: unknown,): boolean {
 }
 
 /**
- * Whether a plugin may run. The persisted plugin_state row decides; a name
- * with no row falls back to origin, so only `core` self-approves on first sight.
+ * Whether a plugin may run. The persisted row is read by (name, origin), so
+ * an active core row cannot approve a same-name community/local plugin. A
+ * name/origin pair with no row falls back to the origin default: only `core`
+ * self-approves on first sight.
+ *
+ * Backfill policy (migration 111): pre-111 rows have NULL origin and match no
+ * origin. They never enable non-core plugins (admin re-approval required);
+ * core keeps its self-approval default when no matching row exists. The
+ * in-memory collision guard in loadSinglePlugin stays as defense in depth.
  *
  * Fails CLOSED on unexpected DB errors (BUG-ispluginactive-fails-open): a
  * transient fault must not re-approve an admin-disabled core plugin. Only the
@@ -486,6 +496,7 @@ async function isPluginActive({ db, name, origin, }: PluginApprovalOpts): Promis
       .selectFrom("plugin_state",)
       .select("status",)
       .where("name", "=", name,)
+      .where("origin", "=", origin,)
       .executeTakeFirst();
 
     if (row) { return row.status === PluginStatus.Active; }
@@ -502,7 +513,11 @@ async function isPluginActive({ db, name, origin, }: PluginApprovalOpts): Promis
     // plugin_state may not exist on first boot — fall through to the origin default.
   }
 
-  return origin === "core";
+  // No row (or pre-migration first boot): the only origin-dependent decision
+  // is the default. Log it with the origin so the fallback is auditable.
+  const approved = defaultPluginStatus(origin,) === PluginStatus.Active;
+  getLogger().debug({ message: `No plugin_state row — applying origin default`, plugin: name, origin, approved, },);
+  return approved;
 }
 
 /** Options for {@link dispatchPluginRoute}. */

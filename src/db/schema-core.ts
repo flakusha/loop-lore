@@ -175,6 +175,7 @@ export interface PluginState {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   config_json: string | null;
+  origin: string | null;
 }
 
 // ── request_results ────────────────────────────────────────────

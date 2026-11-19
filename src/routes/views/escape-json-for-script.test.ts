@@ -53,6 +53,21 @@ describe("escapeJsonForScript", () => {
 
     expect(escapeJsonForScript(JSON.stringify(original,),),).toBe(JSON.stringify(original,),);
   });
+
+  test("quote + angle payload in a worldId cannot leave a JSON string value", () => {
+    const worldId = `';"</script><img src=x onerror=alert(1)>`;
+    const value = escapeJsonForScript(JSON.stringify(worldId,),);
+
+    // JSON.stringify escapes the embedded double quote; the script escape
+    // removes raw angles. The apostrophe stays literal — harmless inside a
+    // double-quoted JSON/JS string.
+    expect(value.startsWith('"',),).toBe(true,);
+    expect(value.includes('\\"',),).toBe(true,);
+    expect(value.includes("<",),).toBe(false,);
+    expect(value.includes(">",),).toBe(false,);
+    expect(value.includes("</script>",),).toBe(false,);
+    expect(JSON.parse(value,),).toBe(worldId,);
+  });
 });
 
 describe("layout identity interpolation", () => {

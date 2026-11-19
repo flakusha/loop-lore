@@ -42,3 +42,28 @@ export function escapeJsonForScript(json: string,): string {
     .replaceAll("\u2028", "\\u2028",)
     .replaceAll("\u2029", "\\u2029",);
 }
+
+/**
+ * Escape a value that is interpolated into a quoted HTML attribute and also
+ * read back as a JS single-quoted string body (Alpine `x-data="fn('{{id}}')"`).
+ *
+ * HTML entities are decoded before the JS expression runs, so entity-only
+ * escaping is not enough: `&#39;` becomes a real quote inside the JS string.
+ * Backslash escapes survive HTML parsing and round-trip in both contexts.
+ *
+ * @param value - raw untrusted value
+ * @returns text safe in `attr="...'VALUE'..."` and plain `attr="VALUE"`
+ */
+export function escapeHtmlAndJsString(value: string,): string {
+  return value
+    .replaceAll("\\", "\\\\",)
+    .replaceAll("'", "\\u0027",)
+    .replaceAll("\n", "\\n",)
+    .replaceAll("\r", "\\r",)
+    .replaceAll("\u2028", "\\u2028",)
+    .replaceAll("\u2029", "\\u2029",)
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",);
+}

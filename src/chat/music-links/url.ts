@@ -50,28 +50,48 @@ export function toServiceUrl(url: string, _service: MusicService,): string {
 }
 
 /**
+ * Build a safe iframe src for a service URL.
+ *
+ * The URL is rebuilt from a parsed absolute URL so quotes, angle brackets and
+ * control characters are percent-encoded, then checked against the https
+ * scheme and the service host pattern. A suspicious input returns an empty
+ * string, rendering an inert iframe rather than injecting markup or allowing
+ * a foreign host.
  * @param url
  * @param service
- * @returns void
+ * @returns string
  */
 export function toEmbedSrc(url: string, service: MusicService,): string {
-  const clean = url.startsWith("http",) ? url : `https://${url}`;
+  const candidate = `https://${url.replace(/^https?:\/\//i, "",)}`;
+  let src: string;
+  try {
+    src = new URL(candidate,).href;
+  } catch {
+    return "";
+  }
+
+  if (!src.startsWith("https://",) || !SERVICES[service].pattern.test(src,)) {
+    return "";
+  }
+
   switch (service) {
     case "youtube_music":
-      return clean.replace("music.youtube.com", "www.youtube.com",);
+      src = src.replace("music.youtube.com", "www.youtube.com",);
+      break;
     case "apple_music": {
-      // Apple Music embeds use embed.com widget
-      const m = clean.match(/music\.apple\.com\/([\w-]+)\/([\w-]+)\/(\d+)/,);
+      const m = src.match(/music\.apple\.com\/([\w-]+)\/([\w-]+)\/(\d+)/,);
       if (m) {
-        return `https://embed.music.apple.com/${m[1]}/${m[2]}/${m[3]}`;
+        src = `https://embed.music.apple.com/${m[1]}/${m[2]}/${m[3]}`;
       }
 
-      return clean;
+      break;
     }
 
     default:
-      return clean;
+      break;
   }
+
+  return /^https:\/\/[^"<>`\u0000-\u001F]*$/.test(src,) ? src : "";
 }
 
 /** Service URL patterns + oEmbed endpoints (moved from ../music-links.ts). */

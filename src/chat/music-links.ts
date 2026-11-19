@@ -9,6 +9,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { escapeHtml, } from "../routes/views/escape-html";
 import { can, } from "../users/permissions";
 import { uid, } from "../utils";
 import type { MusicService, } from "../validation/schemas/music-links";
@@ -129,7 +130,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
     }
 
     // Fallback: construct iframe directly
-    const embedSrc = toEmbedSrc(url, service,);
+    const embedSrc = escapeHtml(toEmbedSrc(url, service,),);
     return `<iframe src="${embedSrc}" width="400" height="80" allow="autoplay" ` +
       `frameborder="0" scrolling="no"></iframe>`;
   }

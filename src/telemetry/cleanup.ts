@@ -22,6 +22,16 @@ export async function runRetentionCleanup(db: Kysely<DB>,): Promise<void> {
   if (!isTelemetryEnabled()) { return; }
 
   const days = getRetentionDays();
+  // Defense in depth: a non-positive window builds a future cutoff and
+  // deletes every row. Never reach the delete query with an invalid value.
+  if (!Number.isFinite(days,) || days <= 0) {
+    getLogger()
+      .child({ module: "telemetry", },)
+      .warn("Retention cleanup skipped: invalid retention days", { retentionDays: days, },);
+
+    return;
+  }
+
   const cutoff = new Date(Date.now() - days * 86_400_000,).toISOString();
 
   try {

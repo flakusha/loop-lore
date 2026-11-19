@@ -443,3 +443,99 @@ describe("end to end through the real dispatch", () => {
     expect(existsSync(execLog,),).toBe(true,);
   });
 });
+
+describe("authorization re-check at dispatch", () => {
+  it("refuses a queued turn when the caller is demoted before the pump", async () => {
+    // A zero-cap queue enqueues without claiming: the demotion lands before
+    // any pump resolves the role, so no timing race is involved.
+    const parked = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: () => FAKE_RUNTIME,
+      dispatch: stub.dispatch,
+      maxConcurrent: 0,
+    },);
+
+    await parked.enqueue({
+      requestedBy: userId,
+      requestedRole: "solo",
+      turns: [spec("omp", "stale-role",),],
+    },);
+
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: () => FAKE_RUNTIME,
+      dispatch: stub.dispatch,
+    },);
+
+    await active.recoverAndPump();
+    await active.idle();
+
+    // The stale role never reached dispatch; the row records why.
+    expect(stub.calls,).toHaveLength(0,);
+    expect((await rowsByPrompt()).get("stale-role",),).toMatchObject({
+      status: "failed",
+      error_code: "role_denied",
+      result_message_id: null,
+    },);
+  });
+
+  it("keeps pumping other callers after refusing a demoted turn", async () => {
+    const healthyId = `user-harness-queue-${tag}-healthy`;
+    await fixture.db.insertInto("users",).values({
+      id: healthyId,
+      username: `harness-queue-${tag}-healthy`,
+      display_name: "Harness Queue Healthy",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    // Both rows are queued before any queue pumps; only the first caller is
+    // demoted, so the second turn must still run.
+    await insertQueuedTurns(fixture.db, [
+      {
+        id: "t-stale",
+        batchId: "b-auth",
+        profile: "p1",
+        prompt: "stale",
+        chatId,
+        actorId,
+        requestedBy: userId,
+        requestedRole: "solo",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        id: "t-live",
+        batchId: "b-auth",
+        profile: "p2",
+        prompt: "live",
+        chatId,
+        actorId,
+        requestedBy: healthyId,
+        requestedRole: "solo",
+        createdAt: "2026-01-01T00:00:01.000Z",
+      },
+    ],);
+
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: () => FAKE_RUNTIME,
+      dispatch: stub.dispatch,
+    },);
+
+    await active.recoverAndPump();
+    await flush();
+
+    expect(stub.calls.map((call,) => call.prompt),).toEqual(["live",],);
+    stub.settle("live", "msg-live",);
+    await active.idle();
+
+    const rows = await rowsByPrompt();
+    expect(rows.get("stale",),).toMatchObject({ status: "failed", error_code: "role_denied", },);
+    expect(rows.get("live",),).toMatchObject({ status: "completed", result_message_id: "msg-live", },);
+  });
+});
