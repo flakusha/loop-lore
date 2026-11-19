@@ -54917,7 +54917,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-persist-generated-image-as-chat-background.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "epic": "epic-item-systems-unification",
@@ -58916,7 +58916,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-render-stored-chat-background-on-standard-chat-surface.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RENPY-EXPORT-BUTTON-IN-CHAT-LIST-BATCH-BAR": {
     "hash": "d2bbfa1",
