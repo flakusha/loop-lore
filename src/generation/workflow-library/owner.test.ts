@@ -89,4 +89,32 @@ describe("workflow seed owner resolution", () => {
     expect(outcome.imported,).toEqual([],);
     expect(outcome.skipped,).toEqual([],);
   });
+
+  it("declares requiredNodes derived from the seeded graph", async () => {
+    await insertUsers(db, "admin", "Admin", { id: "admin-1", role: "admin", },);
+    await seedWorkflowLibrary(db, SHIPPED_DIR,);
+
+    const rows = await db
+      .selectFrom("prompt_templates",)
+      .select(["id", "payload",],)
+      .where("modality", "=", "workflow",)
+      .execute();
+
+    expect(rows.length,).toBeGreaterThan(0,);
+    for (const row of rows) {
+      const stored = JSON.parse(row.payload,) as {
+        body: Record<string, { class_type: string }>;
+        requiredNodes: string[];
+      };
+
+      const graphClasses = [
+        ...new Set(
+          Object.values(stored.body,).map((node,) => node.class_type),
+        ),
+      ].toSorted();
+
+      expect(stored.requiredNodes,).toEqual(graphClasses,);
+      expect(stored.requiredNodes.length,).toBeGreaterThan(0,);
+    }
+  });
 });

@@ -133,7 +133,16 @@ async function readPayload(
       // `sd-server-provider` dispatches on this value.
       category: categoryFor(basename(path, ".json",),),
       parameters: deriveParameters(id, graph as WorkflowPayload["body"],),
-      requiredNodes: [],
+      // Declared from the graph itself (same derivation as the admin UI
+      // ingest): every seeded export carries the exact node classes its
+      // runtime needs, so the live `missingRequiredNodes` check on the admin
+      // surface can flag a workflow whose node pack is absent. An empty
+      // declaration would make that check vacuous.
+      requiredNodes: [
+        ...new Set(
+          Object.values(graph as WorkflowPayload["body"],).map((node,) => node.class_type),
+        ),
+      ].toSorted(),
     },
   };
 }
