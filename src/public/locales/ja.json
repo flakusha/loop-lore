@@ -2227,7 +2227,7 @@
     "rag-decompose": "Decompose a doc into chunks (/rag-decompose <doc-id>)",
     "rag-preview": "Preview an indexed doc (/rag-preview <doc-id>)",
     "rag-search": "Search indexed docs (/rag-search <query>)",
-    "regen": "Regenerate the last assistant message (/regen <try-again|add-details|more-concise>)",
+    "regen": "Regenerate the last assistant message (/regen <try-again|add-details|more-concise> | /regen custom <instruction>)",
     "rewrite": "Rewrite the last assistant message (/rewrite <instruction>)",
     "study": "Study a subject (/study <subject>)",
     "sum": "Summarize recent messages — alias for /summarize",

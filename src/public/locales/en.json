@@ -2409,7 +2409,7 @@
     "rag-decompose": "Decompose a doc into chunks (/rag-decompose <doc-id>)",
     "rag-preview": "Preview an indexed doc (/rag-preview <doc-id>)",
     "rag-search": "Search indexed docs (/rag-search <query>)",
-    "regen": "Regenerate the last assistant message (/regen <try-again|add-details|more-concise>)",
+    "regen": "Regenerate the last assistant message (/regen <try-again|add-details|more-concise> | /regen custom <instruction>)",
     "reroll-emotion": "Re-roll a character's emotion-avatar slots (/reroll-emotion [@Name] [emotion...])",
     "reunite": "Merge a split branch chat back into this chat (/reunite <secondaryChatId>)",
     "review": "Review entity data for completeness",

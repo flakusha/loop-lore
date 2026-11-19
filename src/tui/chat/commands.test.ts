@@ -269,7 +269,7 @@ it("shows the regen action vocabulary for /regen", async () => {
   harness.completer.update("/regen",);
   await settle();
 
-  expect(harness.completer.hint(),).toContain("<try-again|add-details|more-concise>",);
+  expect(harness.completer.hint(),).toContain("<try-again|add-details|more-concise|custom>",);
 });
 
 it("switches to the usage hint while arguments are being typed", async () => {

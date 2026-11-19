@@ -25,8 +25,8 @@ describe("regen command", () => {
     expect(getCommand("regen",),).toBeDefined();
   });
 
-  it("declares the three guided actions", () => {
-    expect(listMessageActions().map((a,) => a.id),).toEqual(["try-again", "add-details", "more-concise",],);
+  it("declares the four guided actions", () => {
+    expect(listMessageActions().map((a,) => a.id),).toEqual(["try-again", "add-details", "more-concise", "custom",],);
   });
 
   it("lists usage for unknown actions", async () => {
@@ -65,6 +65,47 @@ describe("regen command", () => {
     const result = await runRegenAction(["add-details",], history, {},);
     expect(result.systemMessage,).toContain("Improved:",);
     expect(result.systemMessage,).toContain("LLM unavailable",);
+  });
+
+  it("routes custom with a free-text instruction through the rewrite path", async () => {
+    let system = "";
+    const result = await runRegenAction(
+      ["custom", "redo,", "but", "keep", "her", "sarcastic",],
+      history,
+      {
+        complete: async (req,) => {
+          system = String(req.messages[0]?.content ?? "",);
+          return { content: "a sarcastic reply", };
+        },
+      },
+    );
+
+    expect(system,).toContain("redo, but keep her sarcastic",);
+    expect(result.systemMessage,).toContain("a sarcastic reply",);
+    const payload = (result.actionPayload ?? {}) as Record<string, unknown>;
+    expect(payload.instruction,).toBe("redo, but keep her sarcastic",);
+    expect(payload.applied,).toBeUndefined();
+  });
+
+  it("rejects an empty custom instruction with usage text", async () => {
+    for (const args of [["custom",], ["custom", "   ",],]) {
+      const result = await runRegenAction(args, history, {},);
+      expect(result.systemMessage,).toContain("/regen custom",);
+      expect(result.systemMessage,).toContain("instruction",);
+    }
+  });
+
+  it("rejects an over-long custom instruction", async () => {
+    const result = await runRegenAction(["custom", "x".repeat(501,),], history, {},);
+    expect(result.systemMessage,).toContain("too long",);
+    expect(result.systemMessage,).toContain("500",);
+  });
+
+  it("does not preview a heuristic rewrite when custom generation fails", async () => {
+    const result = await runRegenAction(["custom", "keep it terse",], history, {},);
+    expect(result.systemMessage,).toContain("could not be applied",);
+    expect(result.systemMessage,).not.toContain("LLM unavailable",);
+    expect(result.actionPayload,).toBeUndefined();
   });
 });
 

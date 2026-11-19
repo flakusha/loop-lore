@@ -73,7 +73,7 @@ export function parseSettledCommand(text: string,): string | null {
  * on purpose — the TUI is a thin HTTP client and imports no engine code —
  * with parity against the backend pinned by chat/commands.test.ts.
  */
-export const REGEN_ACTIONS = ["try-again", "add-details", "more-concise",] as const;
+export const REGEN_ACTIONS = ["try-again", "add-details", "more-concise", "custom",] as const;
 
 /**
  * The named-argument usage line for a command: the advertised valve specs
