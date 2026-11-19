@@ -48,15 +48,19 @@ export {
   cancelHonkboxJob,
   getHonkboxJobs,
   HonkboxCapabilityUnavailableError,
-  honkboxChatBaseUrl,
-  honkboxCustomProviderConfig,
-  honkboxImageBaseUrl,
   openHonkboxEventStream,
   runHonkboxChatTurn,
   runHonkboxImageJob,
   setupHonkboxCustomProvider,
 } from "./provider";
 export type {
-  HonkboxCustomProviderOptions,
   HonkboxDispatchOptions,
 } from "./provider";
+export {
+  honkboxChatBaseUrl,
+  honkboxCustomProviderConfig,
+  honkboxImageBaseUrl,
+} from "./provider-config";
+export type {
+  HonkboxCustomProviderOptions,
+} from "./provider-config";
