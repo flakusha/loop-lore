@@ -3,7 +3,7 @@
 
 # TASK: Message multi-select bulk actions
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Message multi-select bulk actions
 **Priority:** medium
 **Effort:** Medium
@@ -27,3 +27,5 @@ The gallery already ships the exact pattern to copy: multi-select state, batch d
 
 - Authorization must stay per-message (owner/participant checks) — a batch route MUST NOT widen access beyond what individual deletes allow.
 - Read-only lane evidence; verify against dev HEAD at implementation time.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue b1251df (registry tip: 165dc2351 Konstantin Fedotov Close issue)
