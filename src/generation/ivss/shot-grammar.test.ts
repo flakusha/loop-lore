@@ -40,6 +40,7 @@ describe("IVSS shot grammar", () => {
     expect(first.prompt,).toContain("[Shot 3] At 00:06.500 — Third beat",);
     expect(first.prompt,).toContain("Narration: Voice over",);
     expect(first.variables.duration_frames,).toBe(216,);
+    expect(first.variables.duration_seconds,).toBe(9,);
     expect(first.variables.seed,).toBe("9007199254740993",);
   });
 
@@ -49,6 +50,7 @@ describe("IVSS shot grammar", () => {
       "prompt",
       "timeline_data",
       "builder_state",
+      "duration_seconds",
       "seed",
     ].map((name,) => ({ name, type: "string", label: name, default: "", }));
 
@@ -58,6 +60,7 @@ describe("IVSS shot grammar", () => {
         "2": {
           class_type: "MiniMaxH3Director",
           inputs: {
+            duration: "{{duration_seconds}}",
             timeline_data: "{{timeline_data}}",
             builder_state: "{{builder_state}}",
             seed: "{{seed}}",
@@ -82,6 +85,13 @@ describe("IVSS shot grammar", () => {
     );
 
     expect(serialized,).toContain("9007199254740993",);
+    expect(graph,).toEqual(
+      expect.objectContaining({
+        "2": expect.objectContaining({
+          inputs: expect.objectContaining({ duration: 9, },),
+        },),
+      },),
+    );
 
     const builder = JSON.parse(compiled.variables.builder_state,) as {
       ref: { detailed_description: string; soundscape: string; music: string };

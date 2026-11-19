@@ -59,6 +59,7 @@ export interface ShotGrammarVariables {
   timeline_data: string;
   builder_state: string;
   duration_frames: number;
+  duration_seconds: number;
   seed: string;
 }
 
@@ -201,6 +202,7 @@ export function compileShotGrammar(
       timeline_data: timelineResult.value,
       builder_state: builderResult.value,
       duration_frames: durationFrames,
+      duration_seconds: durationSecs,
       seed: input.scene.seed ?? "",
     },
     truncated,
