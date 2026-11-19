@@ -13,6 +13,31 @@ nothing with each other. The separate federation mesh (`config.federation`,
 disabled by default) federates a host with REMOTE peers over the network; it
 does not make two instances on one machine share state (see "Known limits").
 
+## 1.0.0 scope (bounded)
+
+> **1.0.0 local multi-instance scope (bounded):** loop-lore supports multiple
+> *independent* instances on one machine. Each is selected by
+> `--instance <name>` / `LOOP_LORE_INSTANCE` and owns a complete separate state
+> root under `$XDG_STATE_HOME/loop-lore/<instance>/` — own SQLite database,
+> uploads, TLS certs, backups, harness exec log — so two instances never share
+> a database file or file handle. Each instance is a full application with its
+> own users, sessions and configuration.
+
+**IN 1.0.0:** instance selection, per-instance state isolation, the two-instance
+dev harness and runbook, and a release note stating the guarantee and its
+limits — see [CHANGELOG.md](../../CHANGELOG.md), `[1.0.0]` → Added →
+"Per-instance isolation".
+
+**OUT OF 1.0.0:** sharing or syncing state between instances; cross-instance
+messaging or federation (including two local instances peering over the
+federation mesh); any supervisor/orchestrator, controller or comm node;
+multi-process decomposition of the server; remote peers of any kind.
+
+Open hygiene items (bare-`PORT` slug coupling F18, instance-scoped
+`system_config` H4, permission-queue scope H5) stay tracked and are not release
+blockers for the isolation model: separate state roots mean separate
+`system_config` rows, queues and permission maps.
+
 ## The knobs
 
 | Knob | Meaning |
