@@ -8,6 +8,7 @@ import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
 import type { ChatGalleryBatchState, } from "./gallery-batch-state";
 import type { GifPickerState, } from "./gif-picker-state";
+import type { InitImageState, } from "./init-image-state";
 import type { ChatKeynavState, } from "./keynav-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
@@ -70,6 +71,7 @@ export interface ChatState
     GifPickerState,
     TurnSkipState,
     MessageActionsState,
+    InitImageState,
     StylePickerState,
     ChatTouchGestureState,
     ChatKeynavState,

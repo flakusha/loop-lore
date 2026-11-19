@@ -1,0 +1,41 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- img2img init-image affordance: attach a new image or clear the selection. -->
+<div
+  class="init-image-attachment"
+  x-show="$store.ui.hasActiveChat"
+  data-testid="init-image-attachment"
+>
+  <label class="init-image-label">
+    <span>Init image (img2img)</span>
+    <input
+      type="file"
+      accept="image/*"
+      data-testid="init-image-input"
+      @change="attachInitImage($event.target.files?.[0])"
+    />
+  </label>
+
+  <template x-if="_initImage?.assetId">
+    <span class="init-image-chip" data-testid="init-image-chip">
+      <span x-text="_initImage.filename"></span>
+      <button
+        type="button"
+        data-testid="init-image-clear"
+        @click="clearInitImage()"
+        aria-label="Clear init image"
+      >
+        ✕
+      </button>
+    </span>
+  </template>
+
+  <template x-if="_initImage?.uploading">
+    <span class="init-image-uploading" data-testid="init-image-uploading">Uploading…</span>
+  </template>
+
+  <template x-if="_initImage?.error">
+    <span class="init-image-error" role="alert" data-testid="init-image-error" x-text="_initImage.error"></span>
+  </template>
+</div>

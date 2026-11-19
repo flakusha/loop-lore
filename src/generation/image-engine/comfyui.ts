@@ -9,6 +9,7 @@ import { injectComfyUILora, } from "../lora/discovery-comfyui";
 import type { LoRAModel, } from "../lora/types";
 import { ComfyUIClient, } from "../providers/comfyui";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
+import { uploadImageToComfy, } from "../providers/comfyui-upload";
 import { loadComfyUIWorkflow, } from "../workflow-loader";
 import { failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
@@ -41,6 +42,32 @@ export async function generateComfyUI(
     return failure(`Invalid ComfyUI URL: ${validatedComfy.error}`, 400,);
   }
 
+  // img2img's LoadImage node needs an uploaded source; without one the
+  // substitution would submit an empty filename and produce garbage.
+  if (workflowName === "img2img" && !opts.initImage) {
+    return failure('The "img2img" workflow requires an init image', 400,);
+  }
+
+  let uploadedInitImage: string | undefined;
+  if (opts.initImage) {
+    // Filename derives from the asset id — never from caller input. The
+    // upload helper sets overwrite:true, so a re-run is idempotent.
+    try {
+      uploadedInitImage = await uploadImageToComfy(
+        sdConfig.baseUrl,
+        sdConfig.generationTimeout ?? 120_000,
+        opts.initImage.buffer,
+        `init-${opts.initImage.assetId}.png`,
+        opts.apiKey ?? sdConfig.apiKey,
+      );
+    } catch (error) {
+      return failure(
+        `Init image upload failed: ${error instanceof Error ? error.message : String(error,)}`,
+        502,
+      );
+    }
+  }
+
   let workflow = await loadComfyUIWorkflow(workflowName, {
     prompt: opts.prompt,
     negativePrompt: opts.negativePrompt,
@@ -50,6 +77,12 @@ export async function generateComfyUI(
     cfgScale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
     seed: opts.seed,
+    ...(opts.initImage
+      ? {
+        input_image: uploadedInitImage,
+        denoise_strength: opts.denoisingStrength ?? 0.7,
+      }
+      : {}),
   },);
 
   // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.

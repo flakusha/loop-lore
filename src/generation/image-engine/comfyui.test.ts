@@ -48,6 +48,58 @@ const OPTS = {
   outputFormat: "png",
 };
 
+/**
+ * Full fetch stub including /upload/image. Captures uploaded filenames and
+ * the body POSTed to /prompt so the img2img substitution is observable.
+ */
+function stubComfyRun(config: { uploadFail?: boolean; uploadName?: string } = {},) {
+  let submitted = "";
+  const uploadedNames: string[] = [];
+  const png = Buffer.from("comfy-png",);
+  globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+    const target = String(url,);
+    if (target.endsWith("/upload/image",)) {
+      if (config.uploadFail) {
+        return new Response(JSON.stringify({ error: "upload-boom", },), { status: 500, },);
+      }
+
+      const file = (init?.body as FormData | undefined)?.get("image",);
+      if (file instanceof File) { uploadedNames.push(file.name,); }
+      return new Response(JSON.stringify({ name: config.uploadName ?? "stored-init.png", },), { status: 200, },);
+    }
+
+    if (target.endsWith("/prompt",)) {
+      submitted = typeof init?.body === "string" ? init.body : "";
+      return new Response(JSON.stringify({ prompt_id: "p-init", },), { status: 200, },);
+    }
+
+    if (target.includes("/history/",)) {
+      return new Response(
+        JSON.stringify({
+          "p-init": {
+            prompt_id: "p-init",
+            status: "completed",
+            outputs: { "9": { images: [{ filename: "gen.png", subfolder: "", type: "output", },], }, },
+          },
+        },),
+        { status: 200, },
+      );
+    }
+
+    if (target.includes("/view",)) {
+      return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
+    }
+
+    throw new Error(`unexpected stub call: ${target}`,);
+  }) as typeof fetch;
+
+  return { uploadedNames, submitted: () => submitted, };
+}
+
+type SubmittedPrompt = {
+  prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
+};
+
 describe("generateComfyUI", () => {
   it("returns a 400 failure for an invalid base URL", async () => {
     const outcome = await generateComfyUI(
@@ -288,5 +340,62 @@ describe("generateComfyUI", () => {
 
     expect(outcome.ok,).toBe(true,);
     expect(authHeaders,).toEqual({ authorization: "Bearer config-key", },);
+  });
+
+  it("uploads the init image and substitutes input_image + denoise_strength", async () => {
+    const stub = stubComfyRun({ uploadName: "stored-init.png", },);
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      workflow: "img2img",
+      denoisingStrength: 0.42,
+      initImage: { assetId: "asset-42", buffer: Buffer.from("init-png",), },
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    // Filename is derived from the asset id, never from caller input.
+    expect(stub.uploadedNames,).toEqual(["init-asset-42.png",],);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.image,).toBe("stored-init.png",);
+    expect(parsed.prompt["6"]?.inputs.denoise,).toBe(0.42,);
+  });
+
+  it("does not upload when no init image is present", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, OPTS,);
+
+    expect(outcome.ok,).toBe(true,);
+    expect(stub.uploadedNames,).toEqual([],);
+    expect(stub.submitted(),).not.toContain("input_image",);
+  });
+
+  it("fails the generation when the init-image upload fails", async () => {
+    const stub = stubComfyRun({ uploadFail: true, },);
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      workflow: "img2img",
+      initImage: { assetId: "asset-42", buffer: Buffer.from("init-png",), },
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(502,);
+      expect(outcome.error,).toContain("Init image upload failed",);
+    }
+
+    // No workflow was submitted — the failure never silently fell back to txt2img.
+    expect(stub.submitted(),).toBe("",);
+  });
+
+  it("refuses the img2img workflow without an init image", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, { ...OPTS, workflow: "img2img", },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(400,);
+      expect(outcome.error,).toContain("requires an init image",);
+    }
+
+    expect(stub.submitted(),).toBe("",);
   });
 });

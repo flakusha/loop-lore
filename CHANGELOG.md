@@ -9,9 +9,17 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
+- **img2img init image can be attached from the chat composer** — the generation request accepts an `init_image` asset id; the server proves ownership and reads the bytes before uploading them to ComfyUI under a server-derived filename, and a missing or foreign asset fails before the provider runs. The ComfyUI path uploads only when an init image is present, substitutes the stored name into the `LoadImage` node and passes `denoising_strength`, and refuses the `img2img` workflow without a reference. The composer exposes attach/select/clear controls; selection is sent with `workflow: "img2img"` and dropped if the run cannot start.
 - **Ranking-based model-role autoroute is operator-configurable** — `generation.autorouteScenario` selects a use-case (`general`, `chat`, `coding`, `local`, `observed`) whose ranking rows fill unassigned model roles; explicit DB overrides, config roles and server defaults still win, and the admin model-roles response reports the active scenario.
 - **LLM-only validation chats carry a harness instruction** — the new-chat form exposes a validation-harness field for `llm_only` variants; the value is stored in `gm_config.validation.harness` and picked up by the existing prompt section without editing database rows.
 - **Operator guides for MFA and instance state** — enrollment/challenge/step-up and the backup/restore runbook are documented and linked from the guide index and API reference; the restore request body uses `confirmation: "RESTORE"`.
+
+
+### Fixed
+
+- **Admin destructive/config boundaries validate at the edge** — restore bodies, llama-swap config patches, and sd.cpp/ComfyUI delete names now use bounded central schemas, with validation failures answered as 400 instead of escaping as 422; the operator-entered name pattern has one shared definition.
+- **Admin panels call the versioned API** — backup and local-model fetches use `/api/v1/...` directly instead of relying on the unversioned 308 shim, and the Local Models tab probes both backends when opened.
+- **Uploads and TLS certificates stay in the runtime instance dir** — the shipped path defaults are anchored at `DATA_DIR`, which freezes at import time (before the effective server bind is known), so an unnamed instance wrote its uploads and certificates to `<state>/default/` while its database, exec log and backups went to `<state>/port-<port>/`. A configured path that lies under the frozen `DATA_DIR` (or carries the portable `${DATA_DIR}` placeholder the published schema emits) is now re-anchored onto the runtime instance dir; a custom absolute path is still used verbatim.
 
 ### Fixed
 
@@ -22,6 +30,16 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 ## [1.0.0] - 2026-11-18
 
 First stable release. An operator can install loop-lore, gate who runs what, import cards without silent loss, and run chat from a phone browser, with a finalize cadence fast enough to ship fixes the same day.
+
+
+### Added
+
+- **Per-instance isolation** — state, database, uploads and harness execution logs resolve under the effective server bind; a second instance on the same port fails loudly instead of silently splitting the address family.
+- **Harness and ACP integration** — repo-access tiers, delegation, MCP streamable HTTP, stdio proxy shims for MCP and ACP, an LSP stdio server, and a two-instance local-federation harness.
+- **MFA code channel** — factor enrollment, challenge issue/verify, destination binding to the enrolled factor, a production message bridge and a stdlib SMTP transport with fail-closed TLS.
+- **MFA operator setup and recovery documented** — SMTP/Telegram delivery, bot-token rotation and factor recovery are in the [MFA guide](docs/guide/mfa.md#setting-up-delivery-channels); Matrix delivery is deferred (no adapter ships).
+- **Operator surfaces** — database backup/restore, local-model discovery and setup for sd.cpp, ComfyUI and llama-swap, and MFA configuration, all reachable from the admin console.
+- **Frontend completion** — gallery, unified search, age gate, VN custom-typeable choices, settings and a mobile-ready web shell.
 
 ### Added
 

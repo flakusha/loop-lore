@@ -20,6 +20,7 @@ export type {
   ImageGenOptions,
   ImageGenOutcome,
   ImageGenSuccess,
+  InitImage,
 } from "./types";
 
 /**

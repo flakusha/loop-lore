@@ -17,6 +17,7 @@ import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
 import { chatGroup, } from "../chat-group";
+import { chatInitImage, } from "../chat-init-image";
 import { chatInvites, } from "../chat-invites";
 import { chatKeynav, } from "../chat-keynav";
 import { chatKeys, } from "../chat-keys";
@@ -93,6 +94,7 @@ export function chatState() {
     ...chatGenerations,
     ...chatVariants,
     ...chatStylePicker,
+    ...chatInitImage,
     ...chatActivity,
     ...chatManagement,
     ...chatEditing,

@@ -71,13 +71,25 @@ const actionHandlers: Record<string, ActionHandler> = {
       body.bindActorAvatar = payload.bindActorAvatar;
     }
 
-    await dispatchGenerationAction(
+    // img2img affordance: never submit while the init image is still
+    // uploading, and arm the workflow only when an asset is attached.
+    if (ctx._initImage?.uploading) {
+      ctx.$dispatch?.("show-toast", { type: "warning", message: "Init image upload is still in progress", },);
+      return;
+    }
+
+    const initBody = ctx.initImageBody?.() ?? {};
+    Object.assign(body, initBody,);
+    const submitted = await dispatchGenerationAction(
       ctx,
       "/api/v1/generation/image",
       body,
       "Image generation",
       chatId,
     );
+
+    // Drop a stale selection when the run could not be started.
+    if (!submitted && initBody.init_image) { ctx.clearInitImage?.(); }
   },
 
   "generate-video": async (ctx, payload, chatId,) => {

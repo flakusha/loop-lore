@@ -35,7 +35,7 @@ export async function dispatchGenerationAction(
   label: string,
   chatId: string,
   opts: { stream?: boolean } = {},
-) {
+): Promise<boolean> {
   const prompt = (body.prompt as string) ?? "";
   if (!prompt && !body.assetIds) {
     ctx.$dispatch?.("show-toast", {
@@ -43,7 +43,7 @@ export async function dispatchGenerationAction(
       message: t("toasts.actionNoInput", { action: label.toLowerCase(), },),
     },);
 
-    return;
+    return false;
   }
 
   try {
@@ -61,23 +61,31 @@ export async function dispatchGenerationAction(
       if (opts.stream === true) {
         ctx.connectGenerationSSE(chatId,);
       }
+
+      return true;
     } else if (res.status === 501) {
       ctx.$dispatch?.("show-toast", {
         type: "info",
         message: t("toasts.actionNotConfigured", { action: label, },),
       },);
+
+      return false;
     } else {
       const err = await res.json();
       ctx.$dispatch?.("show-toast", {
         type: "error",
         message: err.error || t("toasts.actionFailed", { action: label.toLowerCase(), },),
       },);
+
+      return false;
     }
   } catch {
     ctx.$dispatch?.("show-toast", {
       type: "error",
       message: t("toasts.actionNetworkError", { action: label.toLowerCase(), },),
     },);
+
+    return false;
   }
 }
 

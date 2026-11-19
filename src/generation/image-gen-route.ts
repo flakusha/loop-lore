@@ -3,7 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
-import { persistGeneratedImages, } from "../assets/service";
+import { getAssetData, getOwnedAsset, persistGeneratedImages, } from "../assets/service";
 import { bindGeneratedActorAvatar, } from "../characters/services/avatar-service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
@@ -15,7 +15,7 @@ import { getLogger, } from "../logger";
 import { resolveActorAccess, } from "../routes/actor-access";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
-import { generateImagesWithFailover, } from "./image-engine";
+import { generateImagesWithFailover, type InitImage, } from "./image-engine";
 import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
@@ -51,6 +51,8 @@ interface ImageGenBody {
   denoising_strength?: number;
   /** ComfyUI workflow name (filename without .json in configs/workflows/) */
   workflow?: string;
+  /** Owning asset id of the img2img init image (ComfyUI path only). */
+  init_image?: string;
   /** Optional LoRA model to inject into the generation pipeline. */
   lora?: LoRAConfig;
   /** User image-prompt template id — renders `context` into the prompt. */
@@ -165,6 +167,32 @@ export async function handleImageGeneration(
 
   const config = loadConfig();
 
+  // Init image (img2img): reference an asset by id only. Ownership is proven
+  // before any bytes are read, so a caller cannot name an arbitrary path or
+  // borrow another user's asset. A missing/foreign/deleted asset fails here.
+  let initImage: InitImage | undefined;
+  if (req.init_image) {
+    const owned = await getOwnedAsset(db, req.init_image, userId,);
+    if (!owned) {
+      return Response.json({ error: "Init image not found", status: 404, }, { status: 404, },);
+    }
+
+    let buffer: Buffer | null;
+    try {
+      buffer = await getAssetData(db, req.init_image, config.assets.uploadDir,);
+    } catch {
+      // Encrypted assets need a chat key this route does not carry — fail
+      // cleanly instead of leaking a decryption error to the caller.
+      return Response.json({ error: "Init image could not be read", status: 400, }, { status: 400, },);
+    }
+
+    if (!buffer) {
+      return Response.json({ error: "Init image not found", status: 404, }, { status: 404, },);
+    }
+
+    initImage = { assetId: req.init_image, buffer, };
+  }
+
   // Stored local-engine setups (admin setup surface) join the failover
   // candidates immediately — a stored setup replaces a config-file provider
   // with the same name. One indexed query per family; empty when the operator
@@ -213,6 +241,19 @@ export async function handleImageGeneration(
     );
   }
 
+  // An init image is meaningful only on the ComfyUI workflow path. Limit
+  // candidates so a non-ComfyUI failover target cannot silently run txt2img.
+  const editCandidates = initImage
+    ? sdCandidates.filter((p,) => p.apiFamily === "comfyui")
+    : sdCandidates;
+
+  if (initImage && editCandidates.length === 0) {
+    return Response.json(
+      { error: "An init image requires a ComfyUI generation provider", status: 400, },
+      { status: 400, },
+    );
+  }
+
   const n = Math.min(req.n ?? 1, 4,);
   const outputFormat = req.output_format ?? "png";
 
@@ -243,7 +284,7 @@ export async function handleImageGeneration(
   }
 
   const outcome = await generateImagesWithFailover(
-    sdCandidates,
+    editCandidates,
     "generate",
     {
       prompt,
@@ -259,6 +300,7 @@ export async function handleImageGeneration(
       hrScale: req.hr_scale,
       denoisingStrength: req.denoising_strength,
       workflow: req.workflow,
+      initImage,
       lora: req.lora,
     },
     userApiKeyResolver({ userId, config, db, },),
