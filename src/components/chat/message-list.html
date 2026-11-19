@@ -11,7 +11,8 @@
   :class="{ 'section-transfer-fx': _transferFx }"
 >
   {{> chat/message-list/_states.html }} {{> chat/message-list/_location-header.html }} {{>
-  chat/message-list/_turn-order.html }} {{> chat/message-list/_movement-events.html }}
+  chat/message-list/_turn-order.html }} {{> chat/message-list/_movement-events.html }} {{>
+  chat/message-list/_bulk-action-bar.html }}
 
   <template x-for="(msg, i) in groupedMessages" :key="msg.id">
     <div
@@ -23,7 +24,7 @@
       {{> chat/message-list/_section-divider.html }} {{> chat/message-list/_system-message.html }}
       <template x-if="msg.role !== 'system'">
         <div class="message-content">
-          {{> chat/message-list/_bubble-avatar.html }}
+          {{> chat/message-list/_bulk-checkbox.html }} {{> chat/message-list/_bubble-avatar.html }}
           <div class="bubble">
             {{> chat/message-list/_bubble-meta.html }} {{> chat/message-list/_bubble-thinking-tools.html }} {{>
             chat/message-list/_bubble-content-media.html }} {{> chat/message-list/_bubble-poll.html }} {{>

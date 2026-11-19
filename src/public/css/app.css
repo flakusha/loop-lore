@@ -4954,3 +4954,43 @@ img.nsfw-blur {
 .nsfw-reveal-btn:hover {
   background: color-mix(in srgb, var(--bg-primary) 70%, transparent);
 }
+
+/* Message multi-select bulk actions (44px touch targets) */
+.message-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.message-select input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent-color, #6c5ce7);
+}
+
+.bulk-action-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  border-bottom: 1px solid var(--border-color, #444);
+  background: var(--bg-primary, #1e1e1e);
+}
+
+.bulk-action-bar .btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.bulk-count {
+  margin-right: auto;
+  font-weight: 600;
+}

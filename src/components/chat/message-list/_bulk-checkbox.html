@@ -1,0 +1,13 @@
+<!-- Multi-select checkbox (bulk actions) — 44px touch target -->
+<label
+  class="message-select"
+  :class="{ 'selected': selectedMessageIds.includes(msg.id) }"
+  data-testid="message-select"
+>
+  <input
+    type="checkbox"
+    :checked="selectedMessageIds.includes(msg.id)"
+    @change="toggleMessageSelection(msg.id, $event.shiftKey)"
+    x-bind:aria-label="t('chats.bulkSelectMessage')"
+  />
+</label>

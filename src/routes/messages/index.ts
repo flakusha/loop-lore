@@ -5,6 +5,7 @@ import { Elysia, } from "elysia";
 import { aiActionRoutes, } from "./ai-action";
 import { archivingRoutes, } from "./archiving";
 import { attachRoutes, } from "./attach";
+import { bulkRoutes, } from "./bulk";
 import { createRoutes, } from "./create";
 import { forwardRoutes, } from "./forward";
 import { readRoutes, } from "./read";
@@ -29,5 +30,6 @@ export function messagesRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(aiActionRoutes(opts, prefix,),)
     .use(archivingRoutes(opts, prefix,),)
     .use(attachRoutes(opts, prefix,),)
-    .use(translationRoutes(opts, prefix,),);
+    .use(translationRoutes(opts, prefix,),)
+    .use(bulkRoutes(opts, prefix,),);
 }

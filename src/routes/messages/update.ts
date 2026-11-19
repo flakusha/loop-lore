@@ -22,6 +22,7 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
+import { authorizeMessageDelete, } from "./delete-authorization";
 import { isServiceError, log, serviceErrorToResponse, } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
@@ -43,27 +44,19 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         const rawQuery = (ctx.query as Record<string, unknown> | undefined) ?? {};
         const hardDelete = rawQuery.hard === "true" || rawQuery.hard === true;
 
-        const message = await database
-          .selectFrom("messages",)
-          .selectAll()
-          .where("id", "=", id,)
-          .executeTakeFirst();
+        // Shared guard: identical rules to the bulk-delete path, so a batch
+        // can never widen what a single delete allows.
+        const auth = await authorizeMessageDelete(database, id, actorId, ctx.userRole as string | null,);
+        if (!auth.ok) {
+          if (auth.reason === "forbidden") {
+            return jsonError({
+              message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
 
-        if (!message) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
-
-        const access = await checkChatAccess(database, message.chat_id, actorId, ctx.userRole as string | null,);
-        if (!access.ok) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
-
-        // Only the message author (or a chat admin) may delete or hide a
-        // message — a member must not wipe or hide rows they did not write
-        // (BUG-any-chat-participant-can-hard-delete-any-message,
-        // BUG-message-soft-delete-lets-any-chat-member-hide-any-member-s).
-        if (message.actor_id !== actorId && !can(ctx.userRole as string | null, "admin.chat",)) {
-          return jsonError({
-            message: ctx.t?.("messages.cannotEditMessage",) ?? "Cannot edit this message",
-            status: HttpStatus.Forbidden,
-            code: ErrorCode.Forbidden,
-          },);
+          return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",);
         }
 
         if (hardDelete) {
