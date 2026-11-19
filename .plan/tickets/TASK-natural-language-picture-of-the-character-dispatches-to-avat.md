@@ -3,7 +3,7 @@
 
 # TASK: natural language picture of the character dispatches to avatar
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-assistant-generation-extensions.md
@@ -19,10 +19,10 @@ The character picture affordance exists as /avatar, but natural-language phrasin
 
 **Acceptance Criteria:**
 
-- [ ] natural-language request generates and binds a character image
-- [ ] no regression to entity-spec generation
-- [ ] ownership and asset binding unchanged
+- [x] natural-language request generates and binds a character image
+- [x] no regression to entity-spec generation
+- [x] ownership and asset binding unchanged
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped on branch `avatar-by-language`: a narrow intent in `src/regex/intent.ts` routes "picture/image of <character>" to the existing `/avatar` command with the character identity anchor. `/make character` entity-spec generation is unchanged; ownership and asset binding stay inside the existing avatar path. Intent and command tests pass; the scoped check's remaining failures are pre-existing baseline debt (`tests - coverage gaps`) plus a load-induced browser flake that passes in isolation.
