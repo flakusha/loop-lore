@@ -36899,7 +36899,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-composer-up-down-recall-of-prior-typed-text.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
     "epic": "epic-npcs",
