@@ -21,7 +21,7 @@ import {
   HonkboxArtifactValidationError,
   putHonkboxArtifact,
 } from "./artifacts";
-import { type HonkboxProbeResult, parseHonkboxCapabilities, } from "./index";
+import { type HonkboxProbeSuccess, parseHonkboxCapabilities, } from "./index";
 import { ingestHonkboxJobResult, parseHonkboxJobEvent, } from "./result-ingest";
 
 const originalFetch = globalThis.fetch;
@@ -31,7 +31,7 @@ afterAll(() => {
 },);
 
 /** Probe with artifact delivery and a present storage data dir. */
-function deliveryProbe(): HonkboxProbeResult {
+function deliveryProbe(): HonkboxProbeSuccess {
   const parsed = parseHonkboxCapabilities({
     api_version: "v1",
     features: { artifact_delivery: true, },
