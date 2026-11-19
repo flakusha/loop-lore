@@ -3,7 +3,7 @@
 
 # FEAT: dedicated rerank model role and task signal with aux/general fallback routing
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-memory-knowledge-systems.md
@@ -27,3 +27,5 @@ Rerank resolves its model from env only; no reranking task signal or model role 
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-19 registry-driven close: git issue d195a7c (registry tip: cddea4137 Konstantin Fedotov Close issue)
