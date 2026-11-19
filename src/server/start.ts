@@ -26,6 +26,7 @@ import { maybeStartStdioProxyListener, } from "../integrations/inbound/stdio-pro
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, } from "../plugins";
+import { configureDocsNav, } from "../routes/views/layout";
 import {
   applyEnvironmentOverrides,
   seedConfiguredContent,
@@ -173,6 +174,8 @@ export async function start() {
   const serverLogger = logger.child({ module: "server", },);
 
   // ── Non-API request handler (views, docs, static files) ──
+  // Same resolved docs config drives /docs/ and the sidebar link.
+  configureDocsNav(config.docs?.enabled !== false,);
   const handleNonApiRequest = createNonApiHandler(config.docs,);
 
   // ── Elysia app (handles routing + transforms) ──────────────

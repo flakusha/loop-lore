@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Database, } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -22,8 +22,17 @@ try {
   /* already initialized */
 }
 
+// Resource contract: every test owns a fresh mkdtempSync dir and file DB;
+// afterEach closes the live handle and removes the dir. No shared paths.
 function makeDb(filePath: string,): Database {
   const db = new Database(filePath,);
+  db.exec(
+    "CREATE TABLE kysely_migration (name TEXT PRIMARY KEY, timestamp INTEGER NOT NULL, completed INTEGER NOT NULL);",
+  );
+
+  db.exec("INSERT INTO kysely_migration (name, timestamp, completed) VALUES ('001_init', 1, 1);",);
+  db.exec("CREATE TABLE chats (id TEXT PRIMARY KEY);",);
+  db.exec("CREATE TABLE messages (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL REFERENCES chats(id));",);
   db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL);",);
   return db;
 }
@@ -53,7 +62,11 @@ describe("db backup/restore service", () => {
     db = makeDb(livePath,);
   },);
 
-  afterAll(() => {
+  afterEach(() => {
+    try {
+      db.close();
+    } catch { /* closed by restoreDbBackup in that test */ }
+
     rmSync(dir, { recursive: true, force: true, },);
   },);
 
@@ -223,5 +236,15 @@ describe("db backup/restore service", () => {
 
     expect(() => validateSqliteSnapshot(empty,)).toThrow(InvalidSnapshotError,);
     expect(() => validateSqliteSnapshot(empty,)).toThrow(/no user tables/,);
+  });
+
+  test("validateSqliteSnapshot rejects a header-valid foreign SQLite database", () => {
+    const foreign = path.join(dir, "foreign.db",);
+    const foreignDb = new Database(foreign,);
+    foreignDb.exec("CREATE TABLE notes (id INTEGER PRIMARY KEY, body TEXT NOT NULL);",);
+    foreignDb.close();
+
+    expect(() => validateSqliteSnapshot(foreign,)).toThrow(InvalidSnapshotError,);
+    expect(() => validateSqliteSnapshot(foreign,)).toThrow(/loop-lore database/,);
   });
 });

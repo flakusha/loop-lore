@@ -39,6 +39,24 @@ export interface ScenarioRecommendation {
 }
 
 /**
+ * Canonical model identity from a ranking subject or a configured model id.
+ * Strips `provider:` prefixes and qualifier suffixes; keeps the namespaced
+ * identity plus its leaf so bare configured ids compare exactly, not by substring.
+ */
+function modelIdentity(value: string,): { full: string; leaf: string } {
+  const afterScheme = value.includes(":",) ? value.slice(value.indexOf(":",) + 1,) : value;
+  const segments = (afterScheme.split("|",)[0] ?? "").trim().toLowerCase().split("/",);
+  const leaf = segments[segments.length - 1] ?? "";
+  return { full: segments.join("/",), leaf, };
+}
+
+/** A bare configured id matches a namespaced ranking subject by exact leaf, never substring. */
+function sameModel(candidate: { full: string; leaf: string }, subject: { full: string; leaf: string },): boolean {
+  return subject.full === candidate.full ||
+    (!candidate.full.includes("/",) && subject.leaf === candidate.leaf);
+}
+
+/**
  * Resolve a model for a use-case scenario.
  *
  * Resolution order: an explicit override (when it names a candidate) wins
@@ -71,11 +89,11 @@ export async function recommendScenarioModel(
   let best: ScenarioRecommendation | null = null;
 
   for (const candidate of candidates) {
-    const needle = candidate.toLowerCase();
+    const identity = modelIdentity(candidate,);
     for (const row of rows) {
       if (row.expires_at !== null && toDate(row.expires_at,).getTime() <= now) { continue; }
-      const subject = row.subject_key.toLowerCase();
-      if (!subject.includes(needle,) && !needle.includes(subject.split("|",)[0] ?? "",)) { continue; }
+      const subject = modelIdentity(row.subject_key,);
+      if (!sameModel(identity, subject,)) { continue; }
       if (best === null || row.value > (best.value ?? Number.NEGATIVE_INFINITY)) {
         best = {
           modelId: candidate,

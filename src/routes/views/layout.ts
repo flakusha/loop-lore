@@ -19,33 +19,48 @@ import { resolvePluginMounts, } from "./plugin-mounts";
 const viewCache = new Map<string, string>();
 
 /**
- * Approach-A open-in-editor bootstrap (epic-browser-editor-support): the
- * editor scheme from `web.editor` and the absolute repo root the
- * `data-editor-path` anchors resolve against. Resolved lazily on the first
- * layout wrap and cached — loadConfig() needs the initialized logger, so a
- * module-scope read crashes tooling that imports this module without a
- * booted server (frontend template preflight), and a per-request read would
+ * Layout config resolved lazily on the first wrap and cached — loadConfig()
+ * needs the initialized logger, so a module-scope read crashes tooling that
+ * imports this module without a booted server, and a per-request read would
  * re-run template expansion on every page render.
  */
-let editorBootstrapCache: { scheme: string; fileRoot: string; terminalEnabled: boolean } | null = null;
+let layoutConfigCache: {
+  scheme: string;
+  fileRoot: string;
+  terminalEnabled: boolean;
+  docsEnabled: boolean;
+} | null = null;
 
-function editorBootstrap(): { scheme: string; fileRoot: string; terminalEnabled: boolean } {
-  editorBootstrapCache ??= {
+/** Server startup passes the same resolved `config.docs` used for /docs/ serving. */
+let docsNavOverride: boolean | null = null;
+
+/** Align the sidebar docs link with the server's docs gate. */
+export function configureDocsNav(enabled: boolean,): void {
+  docsNavOverride = enabled;
+}
+
+function layoutConfig(): {
+  scheme: string;
+  fileRoot: string;
+  terminalEnabled: boolean;
+  docsEnabled: boolean;
+} {
+  layoutConfigCache ??= {
     scheme: loadConfig().web.editor,
     fileRoot: resolve(VIEWS_DIR, "..", "..",),
     terminalEnabled: loadConfig().web.terminal.enabled,
+    docsEnabled: loadConfig().docs?.enabled !== false,
   };
 
-  return editorBootstrapCache;
+  return layoutConfigCache;
 }
 
 /**
- * Docs are served when DOCS_ENABLED is not explicitly "false" — matches the
- * gate in src/server/static-files.ts (handleDocsRequest). Keeping both on the
- * same condition means the sidebar link only appears when /docs/ responds.
+ * The nav follows the resolved docs config, not a second env-name guess.
+ * configureDocsNav lets startup pin the exact value passed to /docs/ serving.
  */
 function isDocsServed(): boolean {
-  return process.env.DOCS_ENABLED !== "false";
+  return docsNavOverride ?? layoutConfig().docsEnabled;
 }
 
 /**
@@ -90,16 +105,16 @@ function wrapWithLayout(
   // so they take the same </script> breakout escape as the ids below.
   layout = layout.replace(
     "{{editorScheme}}",
-    () => escapeJsonForScript(jsonStringifyOr(editorBootstrap().scheme, '"vscode"',),),
+    () => escapeJsonForScript(jsonStringifyOr(layoutConfig().scheme, '"vscode"',),),
   );
 
   layout = layout.replace(
     "{{editorFileRoot}}",
-    () => escapeJsonForScript(jsonStringifyOr(editorBootstrap().fileRoot, '""',),),
+    () => escapeJsonForScript(jsonStringifyOr(layoutConfig().fileRoot, '""',),),
   );
 
   // Approach-B terminal flag: plain boolean, no </script> breakout surface.
-  layout = layout.replace("{{webTerminalEnabled}}", () => (editorBootstrap().terminalEnabled ? "true" : "false"),);
+  layout = layout.replace("{{webTerminalEnabled}}", () => (layoutConfig().terminalEnabled ? "true" : "false"),);
 
   layout = layout.replace("{{docsNav}}", () => (isDocsServed() ? DOCS_NAV_HTML : ""),);
   // Both land in an inline <script> block (views/layout.html), so they get the

@@ -68,4 +68,35 @@ describe("recommendScenarioModel", () => {
     expect(SCENARIO_RANKINGS.general.metric,).toBe("quality_score",);
     expect(Object.keys(SCENARIO_RANKINGS,),).toContain("chat",);
   });
+
+  // Resource contract: each test owns one in-memory DB from createTestDb and
+  // closes it in finally; no shared paths or ordering dependence.
+  it("does not rank a model from a similarly named model's row", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await recordRanking(db, row({ subjectKey: "hf:org/model-a-mini", value: 0.99, },),);
+      expect(await recommendScenarioModel(db, "general", ["model-a",],),).toBeNull();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  it("matches a namespaced candidate to its exact ranking identity", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await recordRanking(
+        db,
+        row({
+          subjectKey: "hf:Qwen/Qwen3-4B|q4_k_m|ctx8192",
+          value: 0.8,
+        },),
+      );
+
+      const result = await recommendScenarioModel(db, "general", ["Qwen/Qwen3-4B",],);
+      expect(result?.modelId,).toBe("Qwen/Qwen3-4B",);
+      expect(result?.value,).toBe(0.8,);
+    } finally {
+      sqlite.close();
+    }
+  });
 });

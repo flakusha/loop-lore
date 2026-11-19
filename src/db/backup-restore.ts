@@ -95,8 +95,9 @@ export class InvalidSnapshotError extends Error {
 
 /**
  * Stronger pre-restore validation than the magic-header check: require a
- * passing `PRAGMA integrity_check` and at least one user table so a truncated
- * or schema-less but header-valid file cannot replace the live DB.
+ * passing `PRAGMA integrity_check`, at least one user table, and the loop-lore
+ * migration/chat/message tables so a foreign SQLite file cannot replace the
+ * live DB.
  * @throws InvalidSnapshotError (path-free message) when the file is unusable
  */
 export function validateSqliteSnapshot(p: string,): void {
@@ -113,12 +114,26 @@ export function validateSqliteSnapshot(p: string,): void {
       throw new InvalidSnapshotError("Snapshot failed SQLite integrity check",);
     }
 
-    const table = db.query<{ name: string }, []>(
-      "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' LIMIT 1;",
-    ).get();
+    const tables = new Set(
+      db.query<{ name: string }, []>(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';",
+      ).all().map((row,) => row.name),
+    );
 
-    if (!table) {
+    if (tables.size === 0) {
       throw new InvalidSnapshotError("Snapshot has no user tables",);
+    }
+
+    if (["kysely_migration", "chats", "messages",].some((name,) => !tables.has(name,))) {
+      throw new InvalidSnapshotError("Snapshot is not a loop-lore database",);
+    }
+
+    const applied = db.query<{ count: number }, []>(
+      "SELECT COUNT(*) AS count FROM kysely_migration;",
+    ).get()?.count ?? 0;
+
+    if (applied === 0) {
+      throw new InvalidSnapshotError("Snapshot has no applied migrations",);
     }
   } catch (err) {
     if (err instanceof InvalidSnapshotError) { throw err; }
