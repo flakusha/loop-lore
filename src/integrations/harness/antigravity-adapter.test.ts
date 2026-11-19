@@ -3,7 +3,8 @@
 
 /**
  * AntigravityAcpAdapter integration tests against the fake ACP server fixture
- * (`model` select id, `provider/id` wire values passed through verbatim).
+ * (`model` select id; bare agy ids namespaced to `provider/id`, qualified
+ * wire values passed through verbatim).
  *
  * Resource contract: per test, BOTH child processes are hard-killed in the
  * afterEach teardown (including failure paths): the fake-ACP fixture
@@ -62,6 +63,52 @@ describe("AntigravityAcpAdapter (fake ACP fixture, antigravity flavor)", () => {
     const server = serve({ FAKE_CONFIG_ID: "model", FAKE_MODELS: "google/gemini-2.5-flash", },);
     const adapter = makeAdapter({ command: server.argv, },);
     await expect(adapter.setModel("google/gemini-2.5-flash",),).resolves.toBeUndefined();
+    adapter.close();
+  });
+
+  it("namespaces bare agy ids and strips the prefix on the wire", async () => {
+    const server = serve({
+      FAKE_CONFIG_ID: "model",
+      FAKE_MODELS: "gemini-3.8-flash,claude-sonnet-4-6",
+      FAKE_REJECT_MODEL: "gemini-3.8-flash",
+    },);
+
+    const adapter = makeAdapter({ command: server.argv, },);
+    expect(await adapter.enumerateModels(),).toEqual([
+      "antigravity/gemini-3.8-flash",
+      "antigravity/claude-sonnet-4-6",
+    ],);
+    // The fixture rejects the BARE wire id: proof the core prefix was stripped.
+
+    await expect(adapter.setModel("antigravity/gemini-3.8-flash",),).rejects.toThrow();
+    adapter.close();
+  });
+
+  it("completes an edit-permission turn against the agy wire shape", async () => {
+    const server = serve({
+      FAKE_CONFIG_ID: "model",
+      FAKE_MODELS: "gemini-3.8-flash",
+      FAKE_PERMISSION: "1",
+      FAKE_REPLY: "DONE",
+    },);
+
+    let adapter: AntigravityAcpAdapter;
+    adapter = makeAdapter({
+      command: server.argv,
+      onPermissionRequest: (pending,) => {
+        expect(pending.kind,).toBe("edit",);
+        adapter.respondPermission({ outcome: "allow_once", },);
+      },
+    },);
+
+    const turn = await adapter.prompt("Create hello.txt containing hi.",);
+    expect(turn.stopReason,).toBe("end_turn",);
+    expect(turn.text,).toBe("DONE",);
+    expect(server.readLog(),).toContainEqual({
+      event: "permission_outcome",
+      outcome: { outcome: { outcome: "selected", optionId: "allow", }, },
+    },);
+
     adapter.close();
   });
 

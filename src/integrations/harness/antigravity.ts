@@ -4,13 +4,13 @@
 /**
  * antigravity.ts — Google Antigravity CLI's {@link HarnessAcpAdapter} (harness-specific).
  *
- * `agy acp` serves ACP (antigravity.google/docs/cli/acp). The model select
- * follows the ACP-v1 `model` config-option convention shared by opencode and
- * codex; values pass through verbatim (Antigravity advertises
- * `provider/id`-shaped ids, so Gemini arrives as `google/gemini-*`). If a
- * future `agy` release renames the option, enumerateModels degrades to [] and
- * setModel fails with a typed `model` error — probe, don't guess: verify with
- * a live `agy` before changing this id.
+ * `agy acp` serves stable ACP v1 with a `model` config option. Live agy 1.5.11
+ * advertises BARE ids (`gemini-3.8-flash`, `claude-sonnet-4-6`,
+ * `gpt-oss-120b-medium`) — no `provider/` prefix. Core ids must be
+ * `provider/id`, so bare ids are namespaced with `antigravity/` and stripped
+ * again on the way back to `session/set_config_option` (mirroring claude-code).
+ * If a future `agy` release renames the option, enumerateModels degrades to []
+ * and setModel fails with a typed `model` error — probe, don't guess.
  */
 
 import { type HarnessAcpAdapter, type HarnessAdapterCommandOptions, } from "./adapter-types";
@@ -19,9 +19,26 @@ import { GenericAcpAdapter, type GenericAcpOptions, } from "./generic-acp";
 /** Config option id the ACP-v1 `model` select convention uses. */
 const MODEL_CONFIG_ID = "model";
 
+/** Namespace prefixed to bare agy ids so core-facing ids stay `provider/id`. */
+const PROVIDER_PREFIX = "antigravity/";
+
 /** The Antigravity adapter: `model` select, verbatim ids, no quota. */
 export class AntigravityAcpAdapter extends GenericAcpAdapter {
   protected readonly modelConfigId = MODEL_CONFIG_ID;
+
+  /**
+   * Namespace bare agy ids; slash-containing wire values pass verbatim.
+   */
+  protected override toCoreModelId(wireModelId: string,): string {
+    return wireModelId.includes("/",) ? wireModelId : `${PROVIDER_PREFIX}${wireModelId}`;
+  }
+
+  /**
+   * Strip the `antigravity/` namespace; anything else passes verbatim.
+   */
+  protected override toWireModelId(modelId: string,): string {
+    return modelId.startsWith(PROVIDER_PREFIX,) ? modelId.slice(PROVIDER_PREFIX.length,) : modelId;
+  }
 
   /**
    * @param options - spawn argv + cwd; the handshake happens lazily on the
