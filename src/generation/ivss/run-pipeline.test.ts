@@ -305,6 +305,80 @@ describe("IVSS ComfyUI run pipeline", () => {
     expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
   });
 
+  const PLAIN_FRAGMENT_GRAPH: ComfyUIWorkflow = {
+    "1": { class_type: "StubSaveVideo", inputs: { prompt: "{{prompt}}", }, },
+  };
+
+  test("run without a captured latent fails loudly instead of a silent null", async () => {
+    const seeded = await seedScene();
+    // H2 shape: the run completes (video only) with no files-bucket latent
+    // package — the state every currently expressible H3 fragment graph lands
+    // in, since no installed node emits one. Unconditional gate: scenario
+    // fragments pin only workflow_id/hash, so there is no opt-out column.
+    const { client, } = makeClient({
+      async waitForFiles() {
+        return [{ kind: "video", file: { filename: "clip.webm", }, },];
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: async () => PLAIN_FRAGMENT_GRAPH,
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { throw new Error("expected latent failure",); }
+    expect(result.status,).toBe(502,);
+    expect(result.error,).toContain("latent_not_captured",);
+    expect(result.error,).toContain("GET /view",);
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).selectAll()
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Failed,);
+    expect(fragment.error,).toContain("latent_not_captured",);
+    expect(fragment.latent_asset_id,).toBeNull();
+    expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
+  });
+
+  test("run with a files-bucket latent package completes", async () => {
+    const seeded = await seedScene();
+    const { client, calls, } = makeClient({
+      async waitForFiles() {
+        return [
+          { kind: "video", file: { filename: "clip.webm", }, },
+          { kind: "other", file: { filename: "h3-state.safetensors", }, },
+        ];
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: async () => PLAIN_FRAGMENT_GRAPH,
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { throw new Error(result.error,); }
+    expect(result.latentAssetId,).toBeTruthy();
+    expect(calls.downloaded.map((file,) => file.filename),).toEqual(["clip.webm", "h3-state.safetensors",],);
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).selectAll()
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Completed,);
+    expect(fragment.latent_asset_id,).toBe(result.latentAssetId ?? null,);
+  });
+
   test("uploads scenario, scene and shot references before submit", async () => {
     const seeded = await seedScene();
     const shot = await seeded.db.selectFrom("scenario_shots",).select("id",)

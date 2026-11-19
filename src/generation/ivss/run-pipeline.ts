@@ -246,6 +246,31 @@ export async function startIvssFragmentRun(
           if (cancelled) { throw cancellation(); }
           const refs = raced.files;
 
+          const latentRef = refs.find((ref,) => LATENT_FILE_RE.test(ref.file.filename,));
+
+          // H2 mitigation (loud failure, not a silent null): every fragment
+          // operation depends on the latent package for resume/retake, and
+          // the fragment schema pins only workflow_id/hash — no opt-out
+          // exists, so a missing latent fails the run unconditionally with a
+          // named error before any asset is persisted. Verified node
+          // inventory (minimax-h3-export-cheatsheet-2026-11-19.md §6.3): no
+          // installed node writes an H3 NestedTensor latent package into the
+          // files bucket — ModelSaveKJ writes a MODEL dict, SaveLatent
+          // crashes on NestedTensor, and MiniMaxH3LQPackageSave returns only
+          // a package_path string (not an OUTPUT_NODE). The error names the
+          // operator's actual options.
+          if (!latentRef) {
+            const error = new Error(
+              `latent_not_captured: fragment workflow ${fragment.workflow_id} completed without a files-bucket latent package (.latent/.safetensors); ` +
+                "no installed ComfyUI node emits the H3 NestedTensor latent package to the files bucket " +
+                "(MiniMaxH3LQPackageSave returns package_path only, not an OUTPUT_NODE; ModelSaveKJ writes a MODEL dict, not a latent; SaveLatent crashes on NestedTensor). " +
+                "Options: a ComfyUI wrapper node re-emitting the LQ package as a ui files entry; loop-lore fetching a declared package_path via GET /view (subfolder=h3_lq_stash/...); or deferring latent_asset_id until one of those exists.",
+            ) as Error & { status: number };
+
+            error.status = 502;
+            throw error;
+          }
+
           const clipRef = refs.find((ref,) => ref.kind === "video");
           if (!clipRef) { throw new Error("ComfyUI workflow produced no video output",); }
           const clipBuffer = await opts.client.downloadFile(clipRef.file,);
@@ -267,7 +292,6 @@ export async function startIvssFragmentRun(
           if (!asset) { throw new Error("IVSS video asset persistence failed",); }
 
           let latentAssetId: string | undefined;
-          const latentRef = refs.find((ref,) => LATENT_FILE_RE.test(ref.file.filename,));
           if (latentRef) {
             const latentBuffer = await opts.client.downloadFile(latentRef.file,);
             const [latentPersisted,] = await persistGeneratedImages({

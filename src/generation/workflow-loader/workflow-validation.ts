@@ -18,6 +18,7 @@ export const TERMINAL_SINK_CLASSES: ReadonlySet<string> = new Set([
   "SaveAnimatedPNG",
   "SaveAnimatedWEBP",
   "SaveImage",
+  "SaveAudio",
   "SaveVideo",
   // Media sinks used by the pinned H3 workflow catalog.
   "DaSiWa_EnhancedVideoCombine",
