@@ -107,16 +107,8 @@ if (ISOLATED) {
     },
   }),);
 
-  mock.module("../federation/storage-quota", () => ({
-    ...realQuota,
-    assertGenerationFitsStorage: async () => {
-      if (quotaRefusal) { throw quotaRefusal; }
-    },
-  }),);
-
-  mock.module("../assets/service/persist-generated", () => ({
-    ...realPersist,
-    persistGeneratedImages: async (opts: {
+/** Provider snapshots handed to the engine, captured at dispatch time. */
+const videoEngineCalls: Array<Array<Record<string, unknown>>> = [];
       links: Array<{ entityType: string; entityId: string; label: string }>;
       assetType?: string;
     },) => {
@@ -173,10 +165,6 @@ async function submitAndPoll(body: unknown, db: Kysely<DB>, userId: string,): Pr
   return { submitStatus: submit.status, jobId: submitBody.data.jobId, terminal, };
 }
 
-describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
-  let testDb: TestDb;
-  let db: Kysely<DB>;
-
   beforeAll(async () => {
     testDb = await createTestDb();
     db = testDb.db;
@@ -185,14 +173,25 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     quotaRefusal = null;
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
   },);
-
   afterAll(() => destroyTestDb(testDb,));
 
   test("401 without an authenticated user", async () => {
     const res = await handleVideoGeneration({ prompt: "x", }, db,);
     expect(res.status,).toBe(401,);
   });
-
+  beforeAll(async () => {
+    testDb = await createTestDb();
+    db = testDb.db;
+    await insertUsers(db, "video-route-user", "Video Route User", { id: "video-route-user", } as never,);
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
+  },);
+  afterAll(() => destroyTestDb(testDb,));
+  test("401 without an authenticated user", async () => {
+    const res = await handleVideoGeneration({ prompt: "x", }, db,);
+    expect(res.status,).toBe(401,);
+  });
   test("400 when neither prompt nor template renders one", async () => {
     const res = await handleVideoGeneration({}, db, "video-route-user", "user",);
     expect(res.status,).toBe(400,);
@@ -527,7 +526,6 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
     lastPersistOpts = null;
   },);
-
   test("submit returns 202 + jobId immediately, poll reaches done", async () => {
     // Immediacy: the submit response returns while the render is still
     // in flight — the first poll must observe pending, not a settled job.
@@ -720,6 +718,107 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
         generationTimeout: 5_000,
       },
     ];
+  });
+
+  const configuredProviders = () => [
+    {
+      name: "video-test-provider",
+      baseUrl: "http://127.0.0.1:8188",
+      apiFamily: "comfyui",
+      workflow: "txt2video",
+      timeout: 1_000,
+      generationTimeout: 5_000,
+    },
+  ];
+
+  beforeAll(async () => {
+    selectionDb = await createTestDb();
+    selectionDbHandle = selectionDb.db;
+  },);
+  afterAll(() => destroyTestDb(selectionDb,));
+
+  beforeEach(() => {
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    videoProviders = configuredProviders();
+    resolvedWorkflowForTests = undefined;
+    workflowResolverCalls.length = 0;
+    videoEngineCalls.length = 0;
+  },);
+
+  afterEach(() => {
+    resolvedWorkflowForTests = undefined;
+    videoProviders = configuredProviders();
+  },);
+
+  test("stored selection reaches the engine without mutating config", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(workflowResolverCalls[0],).toMatchObject({
+      userId: "video-route-user",
+      useCase: "video.generate",
+      fallback: "txt2video",
+    },);
+
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("stored-video-wf",);
+    expect(videoProviders?.[0]?.workflow,).toBe("txt2video",);
+  });
+
+  test("explicit body workflow wins and skips the resolver", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+
+    const { terminal, } = await submitAndPoll(
+      { prompt: "a clip", workflow: "explicit-video-wf", },
+      selectionDbHandle,
+      "video-route-user",
+    );
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(0,);
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("explicit-video-wf",);
+    expect(videoProviders?.[0]?.workflow,).toBe("txt2video",);
+  });
+
+  test("overrides every configured provider on the per-request copy only", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+    videoProviders = [
+      {
+        name: "first",
+        baseUrl: "http://127.0.0.1:8188",
+        apiFamily: "comfyui",
+        workflow: "first-wf",
+        generationTimeout: 5_000,
+      },
+      {
+        name: "second",
+        baseUrl: "http://127.0.0.1:8189",
+        apiFamily: "comfyui",
+        workflow: "second-wf",
+        generationTimeout: 5_000,
+      },
+    ];
+
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(videoEngineCalls[0]?.map((provider,) => provider.workflow),).toEqual([
+      "stored-video-wf",
+      "stored-video-wf",
+    ],);
+
+    expect(videoProviders?.map((provider,) => provider.workflow),).toEqual(["first-wf", "second-wf",],);
+  });
+
+  test("falls back to the configured workflow when no selection resolves", async () => {
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("txt2video",);
   });
 },);
 
