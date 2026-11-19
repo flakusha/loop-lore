@@ -38,6 +38,7 @@ import "./info-bubble";
 import "./inventory";
 import "./inventory-offers";
 import "./inventory-trading";
+import "./ivss-authoring";
 import "./key-management";
 import "./keynav-help";
 import "./location-explorer";
