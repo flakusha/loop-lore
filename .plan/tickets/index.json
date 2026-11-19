@@ -27296,7 +27296,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-add-init-image-attachment-affordance.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
     "epic": "epic-nsfw-game-mechanics",
@@ -47234,7 +47234,7 @@
     "epic": "epic-reactive-actor-appearance",
     "tags": [],
     "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md",
-    "status": "Blocked"
+    "status": "done"
   },
   "TASK-IMGEDIT-IN-CHAT-COMMAND": {
     "hash": "6c1fecd",

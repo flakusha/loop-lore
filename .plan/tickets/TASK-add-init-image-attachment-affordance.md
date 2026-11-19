@@ -3,7 +3,7 @@
 
 # TASK: Add init-image attachment affordance
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Init-image backend plumbing plus UI affordance
 **Priority:** medium
 **Effort:** Medium
@@ -21,3 +21,5 @@ Give operators a user-facing way to attach or select the img2img init image, com
 - [ ] Test covers attach, clear, and missing-image cases.
 
 **Caveats:** TOCTOU: image upload must complete before submit. Security: existing upload authorization and size limits apply. Authorization: asset ownership enforced server-side. Parallelism: isolated UI test. Partial failure: clear selection on submit failure. Rollback: remove the affordance. Observability: upload errors surfaced in UI.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 4d84a63 (registry tip: 381e29a20 Konstantin Fedotov Close issue)

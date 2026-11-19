@@ -3,7 +3,7 @@
 
 # TASK: img2img init-image plumbing (prerequisite for the edit rung)
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Init-image backend plumbing plus UI affordance
 **Priority:** critical
 **Effort:** Medium
@@ -124,3 +124,4 @@ edges.
   Path A contract at `:44-49`
 - The same three prerequisites named for SAM3:
   `.plan/epics/epic-sam3-segmentation-integration.md:50-55`
+**Resolved:** 2026-11-19 registry-driven close: git issue e45d155 (registry tip: 5133a7928 Konstantin Fedotov Close issue)
