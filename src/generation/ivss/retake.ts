@@ -8,7 +8,7 @@
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { existsSync, } from "node:fs";
+import fs from "node:fs";
 import { getAssetFilePath, } from "../../assets/service/file-system";
 import { getOwnedAsset, } from "../../assets/service/read";
 import { FragmentStatus, } from "../../db/enums-generation";
@@ -151,7 +151,7 @@ export async function resolveRetakeLatent(opts: {
   if (!asset) { throw new Error("IVSS retake latent asset is missing or not owned by caller",); }
 
   const path = getAssetFilePath(opts.uploadDir, asset.storage_path,);
-  if (!existsSync(path,)) { throw new Error("IVSS retake latent file is missing on disk",); }
+  if (!fs.existsSync(path,)) { throw new Error("IVSS retake latent file is missing on disk",); }
 
   const url = opts.assetUrl ? await opts.assetUrl(asset.id,) : undefined;
   return { assetId: asset.id, path, ...(url ? { url, } : {}), parentTake: parent.take, };
