@@ -8,7 +8,7 @@
  */
 
 import { Glob, } from "bun";
-import { existsSync, } from "node:fs";
+import fs from "node:fs";
 import { homedir as osHomedir, } from "node:os";
 import { platform, } from "node:process";
 import { safeFetch, } from "../utils";
@@ -79,7 +79,7 @@ export function findBinary(
   const globSync = options.globSync ??
     ((pattern: string,) => Array.from(new Glob(pattern.slice(1,),).scanSync("/",), (p,) => `/${p}`,));
 
-  const exists = options.exists ?? existsSync;
+  const exists = options.exists ?? fs.existsSync;
 
   for (const candidate of BINARY_CANDIDATES[type]) {
     for (const actualName of getBinaryNameWithSuffix(candidate,)) {
