@@ -349,6 +349,25 @@ describe("LocationTreeService", () => {
       await expect(svc.moveSubtree(rootId, roomId,),).rejects.toThrow("move would create a cycle",);
     });
 
+    test("moveSubtree rejects a subtree that would exceed the depth ceiling", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const moveWorldId = await insertWorld("test-owner",);
+      let parent: string | null = null;
+      for (let depth = 0; depth <= 5; depth += 1) {
+        parent = await insertLocation(moveWorldId, `parent-${depth}`, parent,);
+      }
+
+      let chainRoot: string | null = null;
+      let chainHead = "";
+      for (let depth = 0; depth <= 10; depth += 1) {
+        chainRoot = await insertLocation(moveWorldId, `chain-${depth}`, chainRoot,);
+        if (depth === 0) { chainHead = chainRoot; }
+      }
+
+      // Parent at depth 5 + height 10 = depth 16, beyond LOCATION_DEPTH_LIMIT.
+      await expect(svc.moveSubtree(chainHead, parent!,),).rejects.toThrow("depth limit",);
+    });
+
     test("moveSubtree rejects unknown location or parent", async () => {
       const svc = new LocationTreeService(testDb.db,);
       await expect(svc.moveSubtree(randomUUID(), rootId,),).rejects.toThrow("location or parent not found",);

@@ -12,11 +12,11 @@
  *      kind='transport' AND mobility_mode='free' (moving).
  *   2. For each, look up the route's seconds_per_unit and stop count.
  *   3. Add (elapsed seconds / seconds_per_unit) to travel_progress.
- *   4. If progress >= stop_count, wrap to 0 (loop=1) or pin to stop_count-1
- *      (loop=0, transport arrives and waits).
- *   5. On a crossing, snap the transport's coords to the destination stop,
- *      move every rider's spatial position, and emit transport:arrived /
- *      transport:departed events.
+ *   4. For every integer stop boundary crossed, snap coords to that stop,
+ *      move riders, and emit transport:arrived. A loop wrap also emits
+ *      transport:departed; a non-loop transport pins at the last stop and
+ *      crossing no further boundaries, so a docked ship stops announcing.
+ *   5. Wrap to 0 (loop=1) or pin to stop_count-1 (loop=0).
  *
  * The function returns a summary — the cron body just logs and moves on.
  */
@@ -100,33 +100,44 @@ export class TravelTickEngine {
     for (const row of rows as unknown as ActiveTransport[]) {
       try {
         const units = elapsed / Math.max(row.seconds_per_unit, 1,);
-        const target = row.travel_progress + units;
+        const from = row.travel_progress;
+        const target = from + units;
         let next: number;
-        let crossing = false;
-        let wrapped = false;
+        const crossings: number[] = [];
         if (row.stop_count <= 1) {
           // Degenerate route — pin at 0.
           next = 0;
-        } else if (target >= row.stop_count) {
-          crossing = true;
-          if (row.loop === 1) {
-            next = (target as number) % row.stop_count;
-            wrapped = true;
-          } else {
-            next = row.stop_count - 1;
-            arrived += 1;
-          }
         } else {
-          next = target;
+          // At most one lap of arrivals per tick; a long tick still ends at the
+          // correct progress but does not replay historical stop events.
+          const lastBoundary = row.loop === 1
+            ? Math.floor(from,) + row.stop_count
+            : row.stop_count - 1;
+
+          const boundaryEnd = Math.min(Math.floor(target,), lastBoundary,);
+          for (
+            let boundary = Math.floor(from,) + 1;
+            boundary <= boundaryEnd;
+            boundary += 1
+          ) {
+            crossings.push(boundary,);
+          }
+
+          next = row.loop === 1
+            ? (target >= row.stop_count ? target % row.stop_count : target)
+            : Math.min(target, row.stop_count - 1,);
         }
 
         await this.db.updateTable("locations",).where("id", "=", row.id,).set({
           travel_progress: next,
         } as never,).execute();
 
-        if (crossing) {
-          await this.applyStopArrival(row, next, wrapped, tickIndex,);
+        for (const boundary of crossings) {
+          const wrapped = row.loop === 1 && boundary % row.stop_count === 0;
+          await this.applyStopArrival(row, boundary, next, wrapped, tickIndex,);
         }
+
+        if (crossings.length > 0) { arrived += 1; }
 
         advanced += 1;
       } catch {
@@ -138,11 +149,12 @@ export class TravelTickEngine {
   }
 
   /**
-   * The transport reached the end of its route — snap its coords to the
-   * destination stop, move every rider's spatial position, and log it.
+   * The transport crossed a stop boundary — snap its coords to that stop,
+   * move every rider's spatial position, and log it.
    */
   private async applyStopArrival(
     transport: ActiveTransport,
+    boundary: number,
     nextProgress: number,
     wrapped: boolean,
     tickIndex: number,
@@ -156,7 +168,10 @@ export class TravelTickEngine {
 
     if (stops.length === 0) { return; }
 
-    const stopIndex = Math.min(Math.floor(nextProgress,), stops.length - 1,);
+    const stopIndex = transport.loop === 1
+      ? boundary % stops.length
+      : Math.min(boundary, stops.length - 1,);
+
     const stopId = stops[stopIndex]!.location_id;
     const stopLoc = await this.db
       .selectFrom("locations",)

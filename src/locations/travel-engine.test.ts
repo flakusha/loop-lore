@@ -231,7 +231,8 @@ describe("TravelTickEngine", () => {
     await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
     const ship = await makeTransportKindLoc(worldId, "free",);
     await routes.attachTransport(ship, routeId,);
-    testDb.sqlite.run(`UPDATE locations SET travel_progress = 1 WHERE id = ?`, [ship,],);
+    // Start at the first stop; crossing to the terminal stop is the arrival.
+    testDb.sqlite.run(`UPDATE locations SET travel_progress = 0 WHERE id = ?`, [ship,],);
     addRider("rider-arrive", ship, a,);
 
     await engine.tick({ elapsedSeconds: 60, tickIndex: 3, },);
@@ -270,6 +271,69 @@ describe("TravelTickEngine", () => {
     expect(payload.stopId,).toBe(b,);
     expect(payload.progress,).toBe(1,);
     expect(payload.coords,).toEqual({ x: 7, y: 8, z: 9, },);
+  });
+
+  test("each crossed stop emits an arrival and moves riders with it", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "IslandLoop",
+      kind: "sea",
+      loop: true,
+      secondsPerUnit: 60,
+    },);
+
+    const a = await makeStop(worldId, "a", { x: 1, y: 1, z: 1, },);
+    const b = await makeStop(worldId, "b", { x: 2, y: 2, z: 2, },);
+    const c = await makeStop(worldId, "c", { x: 3, y: 3, z: 3, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    await routes.addStop({ routeId, locationId: c, stopOrder: 2, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+    addRider("rider-march", ship, a,);
+
+    const riderStop = () =>
+      (testDb.sqlite.query(
+        `SELECT spatial_location_id FROM actor_locations WHERE actor_id = ?`,
+      ).get("rider-march",) as { spatial_location_id: string }).spatial_location_id;
+
+    for (const [tickIndex, expected,] of [[1, b,], [2, c,], [3, a,],] as const) {
+      await engine.tick({ elapsedSeconds: 60, tickIndex, },);
+      expect(riderStop(),).toBe(expected,);
+    }
+
+    const arrivals = eventsFor(ship,).filter((e,) => e.event_type === "transport:arrived")
+      .sort((a, b,) => a.tick_index - b.tick_index);
+
+    expect(arrivals,).toHaveLength(3,);
+    expect(arrivals.map((e,) => (JSON.parse(e.payload,) as { stopId: string }).stopId),).toEqual([b, c, a,],);
+  });
+
+  test("a docked non-loop transport emits no repeat arrivals", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "Docked",
+      kind: "road",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    await routes.addStop({ routeId, locationId: await makeStop(worldId, "a",), stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: await makeStop(worldId, "b",), stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+
+    for (let tickIndex = 1; tickIndex <= 5; tickIndex += 1) {
+      await engine.tick({ elapsedSeconds: 60, tickIndex, },);
+    }
+
+    expect(eventsFor(ship,).filter((e,) => e.event_type === "transport:arrived"),).toHaveLength(1,);
   });
 
   test("loop wrap also emits a departure event", async () => {
