@@ -13,13 +13,19 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import {
   assertNoDoubleGpuAdmission,
   clearHonkboxCapabilitiesCache,
+  DEFAULT_HONKBOX_PROBE_TIMEOUT_MS,
   getHonkboxCapabilities,
+  HONKBOX_CAPABILITIES_PATH,
+  HONKBOX_FEATURE_KEYS,
+  HONKBOX_SUPPORTED_API_MAJOR,
   honkboxAdmissionDecision,
   HonkboxAdmissionError,
   honkboxCacheKey,
   honkboxCustomProviderConfig,
   isHonkboxFeatureEnabled,
+  normalizeHonkboxBaseUrl,
   parseHonkboxCapabilities,
+  peekHonkboxCapabilities,
   probeHonkboxCapabilities,
   refreshHonkboxCapabilities,
 } from "./index";
@@ -299,5 +305,44 @@ describe("single-side GPU admission", () => {
     },);
 
     expect(config.baseUrl,).toBe("http://127.0.0.1:9010/v1",);
+  });
+});
+
+describe("registry constants and URL helpers", () => {
+  test("wire-contract constants match the landed protocol", () => {
+    expect(HONKBOX_CAPABILITIES_PATH,).toBe("/capabilities",);
+    expect(DEFAULT_HONKBOX_PROBE_TIMEOUT_MS,).toBe(3_000,);
+    expect(HONKBOX_SUPPORTED_API_MAJOR,).toBe(1,);
+    expect([...HONKBOX_FEATURE_KEYS,],).toEqual([
+      "vision",
+      "controlnet",
+      "lora",
+      "video",
+      "jobs",
+      "events",
+      "vad",
+      "experimentalAshSd",
+      "imageOps",
+      "tools",
+      "recognition",
+    ],);
+  });
+
+  test("normalizeHonkboxBaseUrl trims and strips trailing slashes", () => {
+    expect(normalizeHonkboxBaseUrl("http://127.0.0.1:9010/v1/",),).toBe("http://127.0.0.1:9010/v1",);
+    expect(normalizeHonkboxBaseUrl("  http://127.0.0.1:9010/v1  ",),).toBe("http://127.0.0.1:9010/v1",);
+    expect(normalizeHonkboxBaseUrl("",),).toBe("",);
+  });
+
+  test("peekHonkboxCapabilities sees probed entries and misses unknown hosts", async () => {
+    expect(peekHonkboxCapabilities("http://127.0.0.1:9010/v1", "k",),).toBeUndefined();
+    await withMockFetch(() => capsResponse(), async () => {
+      const probed = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", apiKey: "k", },);
+      expect(probed.ok,).toBe(true,);
+      const hit = peekHonkboxCapabilities("http://127.0.0.1:9010/v1", "k",);
+      expect(hit?.ok,).toBe(true,);
+      expect(hit?.cached,).toBe(true,);
+      expect(peekHonkboxCapabilities("http://127.0.0.1:9010/v1", "other",),).toBeUndefined();
+    },);
   });
 });
