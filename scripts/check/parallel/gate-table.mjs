@@ -87,6 +87,11 @@ export const checks = {
   "format - native (rustfmt)": "bun run format:native:check",
 
   "md - lint": "bun run md:lint",
+
+  // RSI smoke gate: one in-memory app boot + health probe. Exits non-zero
+  // when the probe fails, so the fast CI loop fails with the app.
+  "smoke - app": "bun run smoke:app",
+
   // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
   // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
   "mermaid - lint (mmdlint)": "bun run mermaid:lint",

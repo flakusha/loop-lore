@@ -38,13 +38,18 @@ log()?.info("createApp succeeded",);
 const server = Bun.serve({ port: 0, fetch: app.fetch, },);
 log()?.info("Bun.serve started on port", { port: server.port, },);
 const result = await safeFetch(`http://localhost:${server.port}/api/health`,);
-log()?.info("Health check", { detail: result.ok ? result.status : result.error.message, },);
+if (!result.ok) {
+  log()?.error("Health check failed", result.error,);
+} else {
+  log()?.info("Health check", { detail: result.status, },);
+}
+
 server.stop();
 log()?.info("Server stopped",);
-// The log queue batches on a 100ms timer; drain it before the exit. A transport
-// rejection must not skip `process.exit(0)` — exit 0 is this script's contract.
+// The log queue batches on a 100ms timer; drain it before either exit. A failed
+// probe must fail the gate — this script is a gate, not a best-effort probe.
 await log()?.flush().catch(() => undefined);
-process.exit(0,);
+process.exit(result.ok ? 0 : 1,);
 
 /**
  * Module logger accessor — null if no logger is initialized.
