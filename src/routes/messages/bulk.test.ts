@@ -103,6 +103,7 @@ describe("bulkRoutes", () => {
   let db: Kysely<DB>;
   const owner = uid();
   const stranger = uid();
+  const outsider = uid();
   let chatA: string;
   let chatB: string;
 
@@ -111,6 +112,7 @@ describe("bulkRoutes", () => {
     ({ db, } = await createTestDb());
     await seedUser(db, owner, "Owner",);
     await seedUser(db, stranger, "Stranger",);
+    await seedUser(db, outsider, "Outsider",);
     chatA = uid();
     chatB = uid();
     await insertChats(db, "Chat A", owner, { id: chatA, } as never,);
@@ -139,6 +141,32 @@ describe("bulkRoutes", () => {
 
       expect(res.status,).toBe(401,);
     }
+  });
+
+  test("404 for a caller with no access to the chat on every bulk endpoint", async () => {
+    const app = makeApp(db, outsider,);
+    const target = await seedMessage(db, chatA, owner, "private",);
+    for (
+      const [action, body,] of [
+        ["delete", { ids: [target,], },],
+        ["section", { ids: [target,], sectionId: null, },],
+        ["export", { ids: [target,], format: "md", },],
+      ] as const
+    ) {
+      const res = await post(app, `/api/chats/${chatA}/messages/bulk/${action}`, body,);
+      expect(res.status,).toBe(404,);
+    }
+  });
+
+  test("non-owner participant cannot bulk-assign sections", async () => {
+    const target = await seedMessage(db, chatA, owner, "not mine",);
+    const res = await post(makeApp(db, stranger,), `/api/chats/${chatA}/messages/bulk/section`, {
+      ids: [target,],
+      sectionId: null,
+    },);
+
+    // Mirrors the single-message assign route: owner/admin only.
+    expect(res.status,).toBe(404,);
   });
 
   test("bulk delete reports mixed-selection partial failure", async () => {
