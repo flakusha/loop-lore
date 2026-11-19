@@ -30669,7 +30669,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-auto-generate-docs-reference-api-md-from-openapi-spec.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Auto-generate docs/reference/api.md from OpenAPI spec",
     "type": "TASK"
