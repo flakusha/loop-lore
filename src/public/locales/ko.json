@@ -564,9 +564,9 @@
       "save": "저장",
       "cancel": "취소",
       "errorEmpty": "탭은 비어 있을 수 없습니다.",
-      "errorTooLong": "탭은 최대 64자여야 합니다.",
+      "errorTooLong": "탭은 최대 {max}자여야 합니다.",
       "errorDuplicate": "중복된 탭: {tag}",
-      "errorTooMany": "최대 200개의 탭만 허용됩니다."
+      "errorTooMany": "최대 {max}개의 탭만 허용됩니다."
     },
     "providerWizard": {
       "title": "제공자 연결",

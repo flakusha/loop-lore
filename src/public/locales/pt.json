@@ -564,9 +564,9 @@
       "save": "Salvar",
       "cancel": "Cancelar",
       "errorEmpty": "As etiquetas não podem estar vazias.",
-      "errorTooLong": "As etiquetas devem ter no máximo 64 caracteres.",
+      "errorTooLong": "As etiquetas devem ter no máximo {max} caracteres.",
       "errorDuplicate": "Etiqueta duplicada: {tag}",
-      "errorTooMany": "No máximo 200 etiquetas são permitidas."
+      "errorTooMany": "No máximo {max} etiquetas são permitidas."
     },
     "providerWizard": {
       "title": "Conectar um provedor",

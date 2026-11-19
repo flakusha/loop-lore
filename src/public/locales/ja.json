@@ -564,9 +564,9 @@
       "save": "保存",
       "cancel": "キャンセル",
       "errorEmpty": "タグは空にできません。",
-      "errorTooLong": "タグは64文字以内にしてください。",
+      "errorTooLong": "タグは{max}文字以内にしてください。",
       "errorDuplicate": "重複したタグ: {tag}",
-      "errorTooMany": "タグは最大200個までです。"
+      "errorTooMany": "タグは最大{max}個までです。"
     },
     "providerWizard": {
       "title": "プロバイダーを接続",

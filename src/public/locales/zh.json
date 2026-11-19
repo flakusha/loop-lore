@@ -564,9 +564,9 @@
       "save": "保存",
       "cancel": "取消",
       "errorEmpty": "标签不能为空。",
-      "errorTooLong": "标签最多 64 个字符。",
+      "errorTooLong": "标签最多 {max} 个字符。",
       "errorDuplicate": "重复标签：{tag}",
-      "errorTooMany": "最多允许 200 个标签。"
+      "errorTooMany": "最多允许 {max} 个标签。"
     },
     "providerWizard": {
       "title": "连接提供商",

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 300
+// size-allow: 350
 
 /**
  * i18n Reconciliation Script
  *
  * Validates and reconciles locale files against en.json (source of truth).
- * Detects missing keys, extra keys, and structural mismatches.
+ * Detects missing keys, extra keys, structural mismatches, and placeholder drift.
  *
  * Usage:
  *   bun run scripts/i18n-reconcile.ts           # Check only
@@ -25,7 +25,7 @@ import { flag, object, option, optional, runScript, string, withDefault, } from 
 
 interface _Discrepancy {
   locale: string;
-  type: "missing" | "extra" | "type_mismatch";
+  type: "missing" | "extra" | "type_mismatch" | "placeholder_mismatch";
   key: string;
   expected?: unknown;
   actual?: unknown;
@@ -38,6 +38,7 @@ interface LocaleReport {
   missing: string[];
   extra: string[];
   typeMismatches: Array<{ key: string; expected: string; actual: string }>;
+  placeholderMismatches: Array<{ key: string; expected: string; actual: string }>;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -97,13 +98,26 @@ function setNestedValue(obj: Record<string, unknown>, path: string, value: unkno
   current[parts[parts.length - 1]!] = value;
 }
 
+/** @param value - locale leaf value
+ * @returns sorted `{placeholder}` tokens in the leaf */
+function placeholders(value: unknown,): string[] {
+  return typeof value === "string"
+    ? [...value.matchAll(/\{([^{}]+)\}/g,),].map((match,) => match[1]!).sort()
+    : [];
+}
+
 /**
  * Compare source and target locale files
  */
 function compareLocales(
   source: Record<string, unknown>,
   target: Record<string, unknown>,
-): { missing: string[]; extra: string[]; typeMismatches: Array<{ key: string; expected: string; actual: string }> } {
+): {
+  missing: string[];
+  extra: string[];
+  typeMismatches: Array<{ key: string; expected: string; actual: string }>;
+  placeholderMismatches: Array<{ key: string; expected: string; actual: string }>;
+} {
   const sourceFlat = flatten(source,);
   const targetFlat = flatten(target,);
 
@@ -113,6 +127,7 @@ function compareLocales(
   const missing: string[] = [];
   const extra: string[] = [];
   const typeMismatches: Array<{ key: string; expected: string; actual: string }> = [];
+  const placeholderMismatches: Array<{ key: string; expected: string; actual: string }> = [];
 
   // Find missing keys (in source but not in target)
   for (const key of sourceKeys) {
@@ -143,11 +158,21 @@ function compareLocales(
           expected: sourceType,
           actual: targetType,
         },);
+      } else if (typeof sourceVal === "string" && typeof targetVal === "string") {
+        const sourceTokens = placeholders(sourceVal,);
+        const targetTokens = placeholders(targetVal,);
+        if (sourceTokens.join(",",) !== targetTokens.join(",",)) {
+          placeholderMismatches.push({
+            key,
+            expected: sourceTokens.join(", ",) || "(none)",
+            actual: targetTokens.join(", ",) || "(none)",
+          },);
+        }
       }
     }
   }
 
-  return { missing, extra, typeMismatches, };
+  return { missing, extra, typeMismatches, placeholderMismatches, };
 }
 
 /**
@@ -232,7 +257,7 @@ function main() {
 
     try {
       const target = JSON.parse(readFileSync(localeFile, "utf-8",),) as Record<string, unknown>;
-      const { missing, extra, typeMismatches, } = compareLocales(source, target,);
+      const { missing, extra, typeMismatches, placeholderMismatches, } = compareLocales(source, target,);
 
       const matchedKeys = sourceKeys.length - missing.length;
 
@@ -243,14 +268,17 @@ function main() {
         missing,
         extra,
         typeMismatches,
+        placeholderMismatches,
       },);
 
-      if (missing.length > 0 || extra.length > 0 || typeMismatches.length > 0) {
+      if (missing.length > 0 || extra.length > 0 || typeMismatches.length > 0 || placeholderMismatches.length > 0) {
         hasDiscrepancies = true;
       }
 
       // Print report
-      if (missing.length === 0 && extra.length === 0 && typeMismatches.length === 0) {
+      if (
+        missing.length === 0 && extra.length === 0 && typeMismatches.length === 0 && placeholderMismatches.length === 0
+      ) {
         console.log(`${locale}.json:`,);
         console.log(`  OK: ${sourceKeys.length}/${sourceKeys.length} keys match\n`,);
       } else {
@@ -269,6 +297,13 @@ function main() {
         if (typeMismatches.length > 0) {
           console.log(`  FAIL: ${typeMismatches.length} type mismatch(es):`,);
           typeMismatches.forEach((m,) => console.log(`    - ${m.key}: expected ${m.expected}, got ${m.actual}`,));
+        }
+
+        if (placeholderMismatches.length > 0) {
+          console.log(`  FAIL: ${placeholderMismatches.length} placeholder mismatch(es):`,);
+          placeholderMismatches.forEach((m,) =>
+            console.log(`    - ${m.key}: expected ${m.expected}, got ${m.actual}`,)
+          );
         }
 
         console.log("",);

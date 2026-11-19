@@ -564,9 +564,9 @@
       "save": "حفظ",
       "cancel": "إلغاء",
       "errorEmpty": "يجب ألا تكون الوسوم فارغة.",
-      "errorTooLong": "يجب ألا تتجاوز الوسوم 64 حرفًا.",
+      "errorTooLong": "يجب ألا تتجاوز الوسوم {max} حرفًا.",
       "errorDuplicate": "وسم مكرر: {tag}",
-      "errorTooMany": "يُسمح بـ 200 وسم كحد أقصى."
+      "errorTooMany": "يُسمح بـ {max} وسم كحد أقصى."
     },
     "providerWizard": {
       "title": "ربط مزوّد",

@@ -564,9 +564,9 @@
       "save": "Speichern",
       "cancel": "Abbrechen",
       "errorEmpty": "Tags dürfen nicht leer sein.",
-      "errorTooLong": "Tags dürfen höchstens 64 Zeichen lang sein.",
+      "errorTooLong": "Tags dürfen höchstens {max} Zeichen lang sein.",
       "errorDuplicate": "Doppeltes Tag: {tag}",
-      "errorTooMany": "Höchstens 200 Tags sind erlaubt."
+      "errorTooMany": "Höchstens {max} Tags sind erlaubt."
     },
     "providerWizard": {
       "title": "Provider verbinden",

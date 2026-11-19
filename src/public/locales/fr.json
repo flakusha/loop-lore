@@ -564,9 +564,9 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "errorEmpty": "Les étiquettes doivent être non vides.",
-      "errorTooLong": "Les étiquettes doivent contenir au plus 64 caractères.",
+      "errorTooLong": "Les étiquettes doivent contenir au plus {max} caractères.",
       "errorDuplicate": "Étiquette en doublon : {tag}",
-      "errorTooMany": "Au plus 200 étiquettes sont autorisées."
+      "errorTooMany": "Au plus {max} étiquettes sont autorisées."
     },
     "providerWizard": {
       "title": "Connecter un fournisseur",
