@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, } from "elysia";
+import { type Context, Elysia, } from "elysia";
 import { getRuntimeConfig, } from "../../age-gate/controller";
 import { getStatus, } from "../../age-gate/service";
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
@@ -12,6 +12,7 @@ import {
   MessageRole,
 } from "../../db/enums";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
+import type { TranslatorFn, } from "../../i18n/types";
 import { getLogger, } from "../../logger";
 import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
 import { can, } from "../../users/permissions";
@@ -26,6 +27,15 @@ import {
 } from "../http-utils";
 import { resolveVariantOverrides, } from "./create-variant";
 import type { HandlerOpts, } from "./types";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+  t?: TranslatorFn;
+  rawBodyText?: string;
+}
+type Ctx = Context & AuthContext;
 
 // ── Helpers (extracted for cognitive complexity) ────────────
 
@@ -169,11 +179,12 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
     new Elysia({ name: "chats-create", },)
       .post(
         `${prefix}/chats`,
-        async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
+        async (ctx,) => {
+          const c = ctx as unknown as Ctx;
+          const userId = requireUserId(c,);
           if (typeof userId !== "string") { return userId; }
-          if (!can(ctx.userRole, "chat.create",)) {
-            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          if (!can(c.userRole, "chat.create",)) {
+            return forbidden(c.t?.("errors.forbidden",) ?? "Forbidden",);
           }
 
           const ageError = await checkAgeGate(database, userId,);
@@ -184,7 +195,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           // ── NSFW access gate ─────────────────────────────────
           const nsfwError = await checkNsfwAccessForParticipants(opts, userId, body.participantIds,);
           if (nsfwError) { return nsfwError; }
-          const rawBody = parseRawBody(ctx,);
+          const rawBody = parseRawBody(c,);
           const hasExplicit = (key: string,) => key in rawBody;
 
           const template = await resolveTemplate(database, body, rawBody, hasExplicit,);

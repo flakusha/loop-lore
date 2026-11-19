@@ -47,4 +47,8 @@ Alternatives considered: pruning the 20 decorative caps (rejected — deletes Re
 - [ ] `src/users/permissions.test.ts` contract passes with the new `import.own` rows.
 - [ ] Open question recorded: operator decision on the `moderator` matrix lines.
 
+**Open Questions:**
+
+- Operator decision pending: should `moderator` gain `character.create`, `world.create`, `export.own` and `import.own` in `DEFAULT_PERMISSIONS`? Tranche 1 leaves those lines absent; the matrix stays deny-closed for read-only roles.
+
 **Related:** TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative.md, epic-auth-access.md

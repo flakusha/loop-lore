@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, t, } from "elysia";
+import { type Context, Elysia, t, } from "elysia";
+import type { TranslatorFn, } from "../../i18n/types";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
@@ -17,6 +18,14 @@ import {
   handleUpdateWorld,
 } from "./worlds";
 import { handleDeleteWorld, } from "./worlds-delete";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+  t?: TranslatorFn;
+}
+type Ctx = Context & AuthContext;
 
 /**
  * @param opts
@@ -65,14 +74,15 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds`,
-      async (ctx: any,) => {
-        const { userId, userRole, } = extractAuth(ctx,);
+      async (ctx,) => {
+        const c = ctx as unknown as Ctx;
+        const { userId, userRole, } = extractAuth(c,);
         // Unauthenticated callers fall through to handleCreateWorld, which
         // returns the pinned 401 — the capability gate only judges callers
         // with an identity (deny-closed via can() for null/unknown roles).
         if (userId && !can(userRole, "world.create",)) {
           return jsonError({
-            message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+            message: c.t?.("errors.forbidden",) ?? "Forbidden",
             status: HttpStatus.Forbidden,
           },);
         }

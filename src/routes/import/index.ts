@@ -7,15 +7,22 @@
 // Handles import via multipart upload with auto-detection.
 // Supports CHARX asset auto-import (avatars, audio, etc.).
 
-import { Elysia, } from "elysia";
+import { type Context, Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { AuthConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import type { TranslatorFn, } from "../../i18n/types";
 import { authenticate, } from "../../middleware/auth";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { handleImport, } from "./handle";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  t?: TranslatorFn;
+}
+type Ctx = Context & AuthContext;
 
 /**
  * @param root0
@@ -33,7 +40,8 @@ export function importRoutes(
 ): Elysia {
   const uploadDir = config.assets?.uploadDir;
 
-  return new Elysia({ name: "import", },).post(`${prefix}/actors/import`, async (ctx: any,) => {
+  return new Elysia({ name: "import", },).post(`${prefix}/actors/import`, async (ctx,) => {
+    const c = ctx as unknown as Ctx;
     // authenticate directly before .derive()
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
     if (authResult instanceof Response) { return authResult; }
@@ -46,7 +54,7 @@ export function importRoutes(
 
     if (!can(authResult.context.userRole, "import.own",)) {
       return jsonError({
-        message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+        message: c.t?.("errors.forbidden",) ?? "Forbidden",
         status: HttpStatus.Forbidden,
       },);
     }
