@@ -28854,7 +28854,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-alternate-greeting-picker-at-chat-creation.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-AMBIENT-SOUND-SYSTEM": {
     "epic": "epic-audio-video-sound",
@@ -37506,6 +37506,34 @@
     "tags": [],
     "title": "Cover frontend VN pages: new-chat, quests, worlds",
     "type": "TASK"
+  },
+  "TASK-COVER-MESSAGE-BULK-TS-ALPINE-ACTION": {
+    "hash": "a51a3b0",
+    "git_issue": "a51a3b0",
+    "extid": "TASK-COVER-MESSAGE-BULK-TS-ALPINE-ACTION",
+    "type": "TASK",
+    "title": "Cover message-bulk.ts Alpine action",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-message-bulk-ts-alpine-action.md",
+    "status": "open"
+  },
+  "TASK-COVER-NEW-CHAT-SELECTION-TS-DOM-FUNCTIONS": {
+    "hash": "e0a81ea",
+    "git_issue": "e0a81ea",
+    "extid": "TASK-COVER-NEW-CHAT-SELECTION-TS-DOM-FUNCTIONS",
+    "type": "TASK",
+    "title": "Cover new-chat selection.ts DOM functions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-new-chat-selection-ts-dom-functions.md",
+    "status": "open"
   },
   "TASK-COVER-ROUTES-BATTLE-EQUIPMENT-AND-COMPARISONS-EXPORT-TO-THE-": {
     "hash": "5f09a48",
