@@ -90,7 +90,9 @@ document.addEventListener("htmx:after:init", (e: Event,) => {
   }
 
   triggerPageLoaders();
-  normalizeHeaderSlot();
+  // Hoist only after Alpine has bound the header to its x-data scope;
+  // moving it first makes view-scope expressions evaluate against body (BUG-alpine-init-hydration).
+  setTimeout(normalizeHeaderSlot, 0,);
 },);
 
 // Update document title from header title after navigation
