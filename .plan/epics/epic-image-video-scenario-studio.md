@@ -106,7 +106,7 @@ profiles last (after lineage/licensing land).
 
 | Ticket | Scope | AC (one line) |
 | ------ | ----- | ------------- |
-| `TASK-ivss-scenario-schema` | Migration: scenarios/scenes/shots/fragments + enums + generated artifacts; references/docs/annotations remain | Migration up/down green; 2 scenes × 3 shots with fragments round-trip; shot/fragment outside a scene rejected |
+| `TASK-ivss-scenario-schema` | Migrations: scenarios/scenes/shots/fragments + references/docs/annotations + enums + generated artifacts | Migration up/down green; scenes/shots/fragments/references/docs/annotations round-trip; scope and doc-kind constraints reject inconsistent rows |
 | `FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING` | Workflow-agnostic fragment manifest: scene → shots → render fragments, workflow pin, operation, prompt/gallery provenance, latent reuse, take/parent chain | Fragment pins workflow id/hash/version and assumes no H3 Director node; rerender creates a new take without touching siblings |
 | `TASK-ivss-scenario-crud-and-pages` | Routes + TypeBox schemas + world-edit-style pages (Scenario \| Shots \| References \| Runs tabs) + i18n | Owner/member CRUD with 401/403/404 matrix tested; page flow edits the same rows the assistant workflow reads |
 | `TASK-ivss-shot-grammar-assembler` | Compile scenes → resolved prompt (`[Shot N]` absolute-timestamp blocks + soundscape/music) + reference-slot assignment; budgeted assembly (`src/memory/budget.ts` pattern) | Assembler output byte-stable for fixed inputs; over-budget prompts are truncated per documented priority, never silently |

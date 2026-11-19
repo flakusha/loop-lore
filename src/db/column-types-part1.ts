@@ -159,4 +159,15 @@ export const PART_1: Record<string, Record<string, string>> = {
     "status": "FragmentStatus",
     "transition": "CutType",
   },
+  // 108_ivss_scenario_references_docs_annotations
+  "ScenarioReferences": {
+    "lane": "ReferenceLane",
+    "scope": "ReferenceScope",
+  },
+  "ScenarioDocs": {
+    "kind": "ScenarioDocKind",
+  },
+  "Annotations": {
+    "target_type": "AnnotationTargetType",
+  },
 };

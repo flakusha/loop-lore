@@ -179,6 +179,9 @@ const DOMAIN_MAP: Record<string, string> = {
   scenario_scenes: "generation",
   scenario_shots: "generation",
   scenario_fragments: "generation",
+  scenario_references: "generation",
+  scenario_docs: "generation",
+  annotations: "generation",
   synthetic_data: "synthetic",
   // Character
   character_permanent_traits: "character",

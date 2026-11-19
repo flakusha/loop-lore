@@ -6,12 +6,16 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  AnnotationTargetType,
   CancelReason,
   CancelSource,
   CutType,
   FragmentOperation,
   FragmentStatus,
   GenerationStatus,
+  ReferenceLane,
+  ReferenceScope,
+  ScenarioDocKind,
   ScenarioStatus,
   SceneMode,
   SceneStatus,
@@ -124,6 +128,52 @@ export interface ScenarioFragments {
   cut_in_ms: Generated<number>;
   cut_out_ms: number | null;
   error: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_references ────────────────────────────────────────────
+export interface ScenarioReferences {
+  id: string;
+  scenario_id: string;
+  scene_id: string | null;
+  shot_id: string | null;
+  scope: Generated<ReferenceScope>;
+  lane: ReferenceLane;
+  role: string | null;
+  asset_id: string;
+  sort_order: Generated<number>;
+  trim_in_ms: number | null;
+  trim_out_ms: number | null;
+  stream: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_docs ────────────────────────────────────────────
+export interface ScenarioDocs {
+  id: string;
+  scenario_id: string;
+  kind: ScenarioDocKind;
+  title: string | null;
+  body: string;
+  version: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── annotations ────────────────────────────────────────────
+export interface Annotations {
+  id: string;
+  target_type: AnnotationTargetType;
+  target_id: string;
+  author_id: string;
+  t0_ms: number;
+  t1_ms: number | null;
+  region: string | null;
+  body: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

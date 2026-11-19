@@ -13,6 +13,7 @@ import type {
   AdminOverrideAction,
   AgencyMode,
   AgentType,
+  AnnotationTargetType,
   AnomalyInteraction,
   AnomalyType,
   AssetAlphaStatus,
@@ -111,8 +112,11 @@ import type {
   QuestProgressStatus,
   QuestStatus,
   QuestType,
+  ReferenceLane,
+  ReferenceScope,
   RelationshipType,
   ResourceQuality,
+  ScenarioDocKind,
   ScenarioStatus,
   SceneMode,
   SceneStatus,
@@ -6629,6 +6633,90 @@ export async function insertScenarioFragments(
     operation,
     workflow_id,
     workflow_hash,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_references row. */
+export async function insertScenarioReferences(
+  db: Db,
+  scenario_id: string,
+  lane: ReferenceLane,
+  asset_id: string,
+  opts?: {
+    id?: string;
+    scene_id?: string | null;
+    shot_id?: string | null;
+    scope?: ReferenceScope;
+    role?: string | null;
+    sort_order?: number;
+    trim_in_ms?: number | null;
+    trim_out_ms?: number | null;
+    stream?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_references",).values({
+    id,
+    scenario_id,
+    lane,
+    asset_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_docs row. */
+export async function insertScenarioDocs(
+  db: Db,
+  scenario_id: string,
+  kind: ScenarioDocKind,
+  body: string,
+  opts?: { id?: string; title?: string | null; version?: number; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_docs",).values({
+    id,
+    scenario_id,
+    kind,
+    body,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a annotations row. */
+export async function insertAnnotations(
+  db: Db,
+  target_type: AnnotationTargetType,
+  target_id: string,
+  author_id: string,
+  t0_ms: number,
+  body: string,
+  opts?: {
+    id?: string;
+    t1_ms?: number | null;
+    region?: string | null;
+    resolved_at?: string | null;
+    resolved_by?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("annotations",).values({
+    id,
+    target_type,
+    target_id,
+    author_id,
+    t0_ms,
+    body,
     ...restOpts,
   } as any,).execute();
   return id;

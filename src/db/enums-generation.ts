@@ -175,3 +175,40 @@ export const FragmentStatus = {
 } as const;
 /** */
 export type FragmentStatus = (typeof FragmentStatus)[keyof typeof FragmentStatus];
+
+// ── IVSS references, docs and annotations ──────────────────
+export const ReferenceScope = {
+  Scenario: "scenario",
+  Scene: "scene",
+  Shot: "shot",
+} as const;
+/** */
+export type ReferenceScope = (typeof ReferenceScope)[keyof typeof ReferenceScope];
+
+export const ReferenceLane = {
+  Image: "image",
+  Video: "video",
+  Audio: "audio",
+} as const;
+/** */
+export type ReferenceLane = (typeof ReferenceLane)[keyof typeof ReferenceLane];
+
+export const ScenarioDocKind = {
+  Scenario: "scenario",
+  Plot: "plot",
+  Synopsis: "synopsis",
+  Soundscape: "soundscape",
+  Music: "music",
+} as const;
+/** */
+export type ScenarioDocKind = (typeof ScenarioDocKind)[keyof typeof ScenarioDocKind];
+
+export const AnnotationTargetType = {
+  Scenario: "scenario",
+  Scene: "scene",
+  Shot: "shot",
+  Fragment: "fragment",
+  Asset: "asset",
+} as const;
+/** */
+export type AnnotationTargetType = (typeof AnnotationTargetType)[keyof typeof AnnotationTargetType];

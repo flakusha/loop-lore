@@ -81,6 +81,9 @@ export const AssetLinkEntity = {
   Memory: "memory",
   Message: "message",
   Asset: "asset",
+  Scenario: "scenario",
+  Scene: "scenario_scene",
+  Shot: "scenario_shot",
 } as const;
 /** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];

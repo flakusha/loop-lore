@@ -19,7 +19,7 @@ the operation, seed (stored as text so values above 2^53 survive), cut window,
 prompt message and snapshot, gallery asset/caption, rendered video asset and a
 separate reusable latent asset, with a parent/take chain for re-render. Seeds
 are strings. `scenario_references`, `scenario_docs`, `annotations` and the
-`AssetLinkEntity` additions remain in this ticket's tail.
+`AssetLinkEntity` additions land in `108_ivss_scenario_references_docs_annotations.ts`.
 
 **Context:**
 The 2026-11-19 operator ruling in
@@ -30,7 +30,8 @@ The same ruling asks loop-lore to avoid full dependence on MiniMax H3 Director
 nodes, so the fragment row pins a workflow (id, hash, version) and an operation
 rather than a particular node pack. Prompt history rides the existing assistant
 chat surface; gallery metadata/captioning supplies review and discovery. The
-base tables and fragment row land in `107_ivss_scenario_fragments.ts`.
+base tables and fragment row land in `107_ivss_scenario_fragments.ts`; the
+reference, doc and annotation tail lands in `108_ivss_scenario_references_docs_annotations.ts`.
 
 **Acceptance Criteria:**
 
@@ -41,6 +42,6 @@ base tables and fragment row land in `107_ivss_scenario_fragments.ts`.
 - [x] Seed and take values above 2^53 round-trip exactly as text
 - [x] A re-render creates a new take with a parent-fragment link and does not
       delete sibling fragments; video and latent assets are distinct refs
-- [ ] `scenario_references`, `scenario_docs`, `annotations` and the
-      `AssetLinkEntity` additions land before this ticket is marked Done
-- [ ] Targeted tests and `bun run check` green
+- [x] `scenario_references`, `scenario_docs`, `annotations` and the
+      `AssetLinkEntity` additions land in migration 108
+- [x] Targeted tests and `bun run check` green

@@ -194,6 +194,20 @@ export const SCHEMA = new SchemaManifest()
     hour_bucket: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("annotations", {
+    id: col("text", { primaryKey: true, },),
+    target_type: col("text", { notNull: true, },),
+    target_id: col("text", { notNull: true, },),
+    author_id: col("text", { notNull: true, },),
+    t0_ms: col("integer", { notNull: true, },),
+    t1_ms: col("integer",),
+    region: col("text",),
+    body: col("text", { notNull: true, },),
+    resolved_at: col("text",),
+    resolved_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("assistant_quota_usage", {
     user_id: col("text", { primaryKey: true, },),
     window_start: col("text", { notNull: true, },),
@@ -1286,6 +1300,16 @@ export const SCHEMA = new SchemaManifest()
     max_value: col("integer",),
     effect: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("scenario_docs", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    kind: col("text", { notNull: true, },),
+    title: col("text",),
+    body: col("text", { notNull: true, },),
+    version: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("scenario_fragments", {
     id: col("text", { primaryKey: true, },),
     scene_id: col("text", { notNull: true, },),
@@ -1313,6 +1337,22 @@ export const SCHEMA = new SchemaManifest()
     cut_in_ms: col("integer", { notNull: true, hasDefault: true, },),
     cut_out_ms: col("integer",),
     error: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_references", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    scene_id: col("text",),
+    shot_id: col("text",),
+    scope: col("text", { notNull: true, hasDefault: true, },),
+    lane: col("text", { notNull: true, },),
+    role: col("text",),
+    asset_id: col("text", { notNull: true, },),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    trim_in_ms: col("integer",),
+    trim_out_ms: col("integer",),
+    stream: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)

@@ -23,6 +23,7 @@ export const AgencyDimensionSchema = t.UnionEnum([
 ],);
 export const AgencyModeSchema = t.UnionEnum(["free", "forced", "blocked", "skipped",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
+export const AnnotationTargetTypeSchema = t.UnionEnum(["scenario", "scene", "shot", "fragment", "asset",],);
 export const AnomalyInteractionSchema = t.UnionEnum(["optional", "required",],);
 export const AnomalyTypeSchema = t.UnionEnum(["positive", "negative", "neutral",],);
 export const ArousalLevelSchema = t.UnionEnum([
@@ -52,6 +53,9 @@ export const AssetLinkEntitySchema = t.UnionEnum([
   "memory",
   "message",
   "asset",
+  "scenario",
+  "scenario_scene",
+  "scenario_shot",
 ],);
 export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
 export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
@@ -564,6 +568,8 @@ export const QuestTypeSchema = t.UnionEnum([
   "social",
   "composite",
 ],);
+export const ReferenceLaneSchema = t.UnionEnum(["image", "video", "audio",],);
+export const ReferenceScopeSchema = t.UnionEnum(["scenario", "scene", "shot",],);
 export const RelationshipEventTypeSchema = t.UnionEnum([
   "met",
   "helped",
@@ -603,6 +609,7 @@ export const RpgQuestionTypeSchema = t.UnionEnum([
   "custom",
   "level_up",
 ],);
+export const ScenarioDocKindSchema = t.UnionEnum(["scenario", "plot", "synopsis", "soundscape", "music",],);
 export const ScenarioStatusSchema = t.UnionEnum(["draft", "active", "archived",],);
 export const SceneModeSchema = t.UnionEnum(["t2v", "i2v_ff", "i2v_flf", "v2v_edit", "continuation", "image",],);
 export const SceneStatusSchema = t.UnionEnum(["planned", "rendering", "ready", "failed",],);
@@ -4091,6 +4098,49 @@ export const ScenarioFragmentsSchema = t.Object({
   cut_in_ms: t.Optional(t.Number(),),
   cut_out_ms: t.Optional(t.Number(),),
   error: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── scenario_references ────────────────────────────────────────────
+export const ScenarioReferencesSchema = t.Object({
+  scenario_id: t.String(),
+  lane: ReferenceLaneSchema,
+  asset_id: t.String(),
+  scene_id: t.Optional(t.String(),),
+  shot_id: t.Optional(t.String(),),
+  scope: t.Optional(ReferenceScopeSchema,),
+  role: t.Optional(t.String(),),
+  sort_order: t.Optional(t.Number(),),
+  trim_in_ms: t.Optional(t.Number(),),
+  trim_out_ms: t.Optional(t.Number(),),
+  stream: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── scenario_docs ────────────────────────────────────────────
+export const ScenarioDocsSchema = t.Object({
+  scenario_id: t.String(),
+  kind: ScenarioDocKindSchema,
+  body: t.String(),
+  title: t.Optional(t.String(),),
+  version: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── annotations ────────────────────────────────────────────
+export const AnnotationsSchema = t.Object({
+  target_type: AnnotationTargetTypeSchema,
+  target_id: t.String(),
+  author_id: t.String(),
+  t0_ms: t.Number(),
+  body: t.String(),
+  t1_ms: t.Optional(t.Number(),),
+  region: t.Optional(t.String(),),
+  resolved_at: t.Optional(t.String(),),
+  resolved_by: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
