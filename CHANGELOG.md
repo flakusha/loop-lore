@@ -28,6 +28,7 @@ First stable release. An operator can install loop-lore, gate who runs what, imp
 - **Per-instance isolation** — state, database, uploads and harness execution logs resolve under the effective server bind; a second instance on the same port fails loudly instead of silently splitting the address family.
 - **Harness and ACP integration** — repo-access tiers, delegation, MCP streamable HTTP, stdio proxy shims for MCP and ACP, an LSP stdio server, and a two-instance local-federation harness.
 - **MFA code channel** — factor enrollment, challenge issue/verify, destination binding to the enrolled factor, a production message bridge and a stdlib SMTP transport with fail-closed TLS.
+- **MFA operator setup and recovery documented** — SMTP/Telegram delivery, bot-token rotation and factor recovery are in the [MFA guide](docs/guide/mfa.md#setting-up-delivery-channels); Matrix delivery is deferred (no adapter ships).
 - **Operator surfaces** — database backup/restore, local-model discovery and setup for sd.cpp, ComfyUI and llama-swap, and MFA configuration, all reachable from the admin console.
 - **Frontend completion** — gallery, unified search, age gate, VN custom-typeable choices, settings and a mobile-ready web shell.
 
