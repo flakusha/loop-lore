@@ -145,7 +145,7 @@ diagram rendering wired in:
 | Command | Purpose |
 | --- | --- |
 | `bun run docs:dev` | VitePress dev server (hot reload) |
-| `bun run docs:build` | Build static site to `docs/.vitepress/dist/` |
+| `bun run docs:build` | Regenerate the OpenAPI spec + `reference/api.md`, then build static site to `docs/.vitepress/dist/` |
 | `bun run docs:preview` | Preview the built site locally |
 | `bun run mermaid:lint` | Parse-validate mermaid fence blocks in `docs/` and `.plan/` |
 

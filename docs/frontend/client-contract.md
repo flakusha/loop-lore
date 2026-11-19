@@ -182,14 +182,15 @@ curl -s http://localhost:3000/api/v1/openapi/json > openapi.json
 npx openapi-typescript openapi.json --output src/client.ts
 ```
 
-No generated client is committed. The `api - doc drift` gate
-(`scripts/check/api-doc-drift.mjs`) fails when the served spec is no longer
-valid OpenAPI 3.1 or when `docs/reference/api.md` documents operations that do
-not exist in the spec. It also ratchets coverage of spec paths documented in
-`scripts/check/api-doc-drift-baseline.json`.
+No generated client is committed. `docs/reference/api.md` is generated from the
+served spec by `bun run openapi:md` (`scripts/generate-api-md.ts`); edit only its
+`api-reference:handwritten` region. The `api - doc drift` gate
+(`scripts/check/api-doc-drift.mjs`) regenerates both artifacts and fails when the
+committed markdown differs, when the spec is not valid OpenAPI 3.1, or when a
+`METHOD /api/...` operation named in the doc is absent from the spec.
 
-The spec must contain these paths (listed here as a client-side sanity check;
-they are covered by the `api - doc drift` gate's ratchet over ~700 baseline paths):
+The spec must contain these paths (client-side sanity check; the generated table
+lists every operation in the spec):
 
 | Path | Why required |
 |------|-------------|
