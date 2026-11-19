@@ -28,8 +28,8 @@ describe("findDeadNodes", () => {
   });
 
   it("flags an unreferenced node that is not a sink", () => {
-    // Shape taken from the operator's i-anima-0001.json reference: 60:45 is a
-    // stale CLIPLoader superseded by 60:61, and nothing links from it.
+    // A stale CLIPLoader superseded by another loader, with nothing linking
+    // from it, is dead even though a same-purpose node is wired in.
     const wf: ComfyUIWorkflow = {
       "60:45": { class_type: "CLIPLoader", inputs: { clip_name: "old.gguf", }, },
       "60:61": { class_type: "CLIPLoaderGGUF", inputs: { clip_name: "new.gguf", }, },
