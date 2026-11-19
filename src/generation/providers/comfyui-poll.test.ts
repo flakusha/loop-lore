@@ -50,4 +50,54 @@ describe("pollComfyResult output classification", () => {
 
     expect(await polledKinds(),).toEqual(["video", "other",],);
   });
+
+  test("maps an absolute package_path output to a view-fetchable latent descriptor", async () => {
+    stubHistory({
+      "9": { package_path: ["/home/user/comfy/output/h3_lq_stash/proj/shot1",], },
+    },);
+
+    const result = await pollComfyResult("http://x", "p1",);
+    expect(result.files,).toEqual([
+      {
+        kind: "other",
+        file: {
+          filename: "latent.safetensors",
+          subfolder: "h3_lq_stash/proj/shot1",
+          type: "output",
+        },
+      },
+    ],);
+  });
+
+  test("maps bare and output-prefixed package_path forms ending at the latent file", async () => {
+    stubHistory({
+      "9": { package_path: ["output/h3_lq_stash/proj/shot1/latent.safetensors",], },
+    },);
+
+    const result = await pollComfyResult("http://x", "p1",);
+    expect(result.files,).toEqual([
+      {
+        kind: "other",
+        file: {
+          filename: "latent.safetensors",
+          subfolder: "h3_lq_stash/proj/shot1",
+          type: "output",
+        },
+      },
+    ],);
+  });
+
+  test("ignores non-matching package_path strings and keeps bucket files first", async () => {
+    stubHistory({
+      "9": {
+        files: [{ filename: "h3-state.safetensors", },],
+        package_path: ["/tmp/elsewhere/latent.safetensors", "not a path", 42,],
+      },
+    },);
+
+    const result = await pollComfyResult("http://x", "p1",);
+    expect(result.files,).toEqual([
+      { kind: "other", file: { filename: "h3-state.safetensors", }, },
+    ],);
+  });
 });

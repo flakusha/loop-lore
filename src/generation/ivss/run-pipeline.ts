@@ -252,19 +252,17 @@ export async function startIvssFragmentRun(
           // operation depends on the latent package for resume/retake, and
           // the fragment schema pins only workflow_id/hash — no opt-out
           // exists, so a missing latent fails the run unconditionally with a
-          // named error before any asset is persisted. Verified node
-          // inventory (minimax-h3-export-cheatsheet-2026-11-19.md §6.3): no
-          // installed node writes an H3 NestedTensor latent package into the
-          // files bucket — ModelSaveKJ writes a MODEL dict, SaveLatent
-          // crashes on NestedTensor, and MiniMaxH3LQPackageSave returns only
-          // a package_path string (not an OUTPUT_NODE). The error names the
-          // operator's actual options.
+          // named error before any asset is persisted. The gate is now the
+          // safety net only: package_path capture (operator option (b),
+          // 2026-11-19) serves a MiniMaxH3LQPackageSave package via GET
+          // /view, and files-bucket entries are captured as before. The gate
+          // fires only when the graph produced neither source.
           if (!latentRef) {
             const error = new Error(
-              `latent_not_captured: fragment workflow ${fragment.workflow_id} completed without a files-bucket latent package (.latent/.safetensors); ` +
-                "no installed ComfyUI node emits the H3 NestedTensor latent package to the files bucket " +
-                "(MiniMaxH3LQPackageSave returns package_path only, not an OUTPUT_NODE; ModelSaveKJ writes a MODEL dict, not a latent; SaveLatent crashes on NestedTensor). " +
-                "Options: a ComfyUI wrapper node re-emitting the LQ package as a ui files entry; loop-lore fetching a declared package_path via GET /view (subfolder=h3_lq_stash/...); or deferring latent_asset_id until one of those exists.",
+              `latent_not_captured: fragment workflow ${fragment.workflow_id} completed without a captured latent package (.latent/.safetensors); ` +
+                "the graph produced neither a files-bucket latent entry nor a package_path output. " +
+                "Wire MiniMaxH3LQPackageSave (samples ← the sampled latent) into the fragment graph — loop-lore fetches its package via GET /view " +
+                "(or, fallback, a wrapper node re-emitting the package as a ui files entry).",
             ) as Error & { status: number };
 
             error.status = 502;

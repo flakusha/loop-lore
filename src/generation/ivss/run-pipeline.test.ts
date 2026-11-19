@@ -379,6 +379,57 @@ describe("IVSS ComfyUI run pipeline", () => {
     expect(fragment.latent_asset_id,).toBe(result.latentAssetId ?? null,);
   });
 
+  test("package_path-derived descriptor captures the latent (option b)", async () => {
+    const seeded = await seedScene();
+    // Option (b): the poll side maps the MiniMaxH3LQPackageSave package_path
+    // string output (absolute package-dir path under output/) into a /view
+    // descriptor; the pipeline downloads it like any files-bucket latent.
+    const { client, calls, } = makeClient({
+      async waitForFiles() {
+        return [
+          { kind: "video", file: { filename: "clip.webm", }, },
+          {
+            kind: "other",
+            file: {
+              filename: "latent.safetensors",
+              subfolder: "h3_lq_stash/proj/shot1",
+              type: "output",
+            },
+          },
+        ];
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: async () => PLAIN_FRAGMENT_GRAPH,
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(true,);
+    if (!result.ok) { throw new Error(result.error,); }
+    expect(result.latentAssetId,).toBeTruthy();
+    expect(calls.downloaded,).toEqual([
+      { filename: "clip.webm", },
+      {
+        filename: "latent.safetensors",
+        subfolder: "h3_lq_stash/proj/shot1",
+        type: "output",
+      },
+    ],);
+
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).selectAll()
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Completed,);
+    expect(fragment.latent_asset_id,).toBe(result.latentAssetId ?? null,);
+  });
+
   test("uploads scenario, scene and shot references before submit", async () => {
     const seeded = await seedScene();
     const shot = await seeded.db.selectFrom("scenario_shots",).select("id",)

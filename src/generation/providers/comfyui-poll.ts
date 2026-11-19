@@ -29,6 +29,44 @@ function isAnimatedMarker(value: unknown,): boolean {
 
 const VIDEO_CONTAINER_RE = /\.(mp4|webm|mkv|mov)$/i;
 
+/** Directory name MiniMaxH3LQPackageSave stashes packages under (stash.py:25). */
+const H3_STASH_DIR = "h3_lq_stash/";
+/** Latent file name inside every H3 LQ package (stash.py:26). */
+const H3_LATENT_FILENAME = "latent.safetensors";
+
+/**
+ * Map a `package_path` string output into a `/view`-fetchable descriptor.
+ * `MiniMaxH3LQPackageSave` returns `str(package_dir.resolve())` — an absolute
+ * path to the package DIRECTORY under ComfyUI's output dir (stash.py:812).
+ * Accepts the absolute form (split on the `/output/` segment) and bare
+ * output-relative forms (`h3_lq_stash/...`, optionally `output/`-prefixed,
+ * ending at the package dir or at `latent.safetensors`). Anything else —
+ * arbitrary strings, other filenames — yields undefined.
+ */
+export function latentPackageDescriptor(
+  raw: unknown,
+): ComfyUIOutputFile | undefined {
+  const value = Array.isArray(raw,) ? raw[0] : raw;
+  if (typeof value !== "string") { return undefined; }
+  const normalized = value.trim().replaceAll("\\", "/",);
+  const withoutOutputDir = normalized.includes("/output/",)
+    ? normalized.slice(normalized.lastIndexOf("/output/",) + "/output/".length,)
+    : normalized.replace(/^output\//, "",);
+
+  if (!withoutOutputDir.startsWith(H3_STASH_DIR,)) { return undefined; }
+  const remainder = withoutOutputDir.slice(H3_STASH_DIR.length,);
+  if (!remainder) { return undefined; }
+  const subfolder = remainder.endsWith(`/${H3_LATENT_FILENAME}`,)
+    ? `${H3_STASH_DIR}${remainder.slice(0, -H3_LATENT_FILENAME.length - 1,)}`
+    : `${H3_STASH_DIR}${remainder}`;
+
+  return {
+    filename: H3_LATENT_FILENAME,
+    subfolder,
+    type: "output",
+  };
+}
+
 /** Classify an `images`-bucket entry; stock SaveVideo lands there with a marker. */
 function isVideoImage(file: ComfyUIOutputFile, animated: boolean,): boolean {
   if (animated) { return true; }
@@ -67,6 +105,16 @@ function collectOutputFiles(
         files.push({ kind, file, },);
       }
     }
+
+    // MiniMaxH3LQPackageSave is not an OUTPUT_NODE; when a history entry
+    // carries its package_path string anyway, expose the latent file as an
+    // "other" descriptor AFTER the bucket entries so bucket files keep
+    // precedence (operator option (b), 2026-11-19).
+    const packageFile = latentPackageDescriptor(
+      (nodeOutput as { package_path?: unknown }).package_path,
+    );
+
+    if (packageFile) { files.push({ kind: "other", file: packageFile, },); }
   }
 
   return { images, files, };
