@@ -13,18 +13,20 @@ import {
   SceneMode,
   SceneStatus,
 } from "../../db/enums-generation";
-import type { IvssScenarioDetail, IvssScene, } from "./ivss-authoring";
 import { ivssAuthoring, } from "./ivss-authoring";
+import type { IvssScenarioDetail, IvssScene, } from "./ivss-authoring-types";
 
 const host = globalThis as unknown as {
   fetch: typeof fetch;
   document: { querySelector: (sel: string,) => unknown; cookie?: string };
   __USER_ID?: string;
+  confirm?: (message?: string,) => boolean;
 };
 
 const realFetch = host.fetch;
 const realDocument = host.document;
 const realUserId = host.__USER_ID;
+const realConfirm = host.confirm;
 
 afterEach(() => {
   host.fetch = realFetch;
@@ -33,6 +35,12 @@ afterEach(() => {
     delete host.__USER_ID;
   } else {
     host.__USER_ID = realUserId;
+  }
+
+  if (realConfirm === undefined) {
+    delete host.confirm;
+  } else {
+    host.confirm = realConfirm;
   }
 },);
 
@@ -173,5 +181,101 @@ describe("ivssAuthoring", () => {
 
     expect(calls,).toEqual([],);
     expect(page.error,).toContain("Sign in",);
+  });
+
+  test("createScenario posts the draft and selects the new scenario", async () => {
+    const calls = stubNetwork((url,) => url === "/api/v1/ivss/scenarios" ? { id: "s2", } : scenarioTree());
+    host.__USER_ID = "user-1";
+    const page = ivssAuthoring();
+    page.draftScenario = { worldId: "w1", title: "New", };
+
+    await page.createScenario();
+
+    expect(calls[0]?.url,).toBe("/api/v1/ivss/scenarios",);
+    expect(calls[0]?.method,).toBe("POST",);
+    expect(JSON.parse(calls[0]?.body ?? "null",),).toEqual({
+      worldId: "w1",
+      title: "New",
+    },);
+
+    expect(page.scenarioId,).toBe("s2",);
+  });
+
+  test("addShot posts the shot draft to the scene endpoint", async () => {
+    const calls = stubNetwork(() => scenarioTree());
+    host.__USER_ID = "user-1";
+    const page = ivssAuthoring();
+    page.scenarioId = "s1";
+    page.tree = scenarioTree();
+
+    await page.addShot("scene-a",);
+
+    expect(calls[0]?.url,).toBe("/api/v1/ivss/scenes/scene-a/shots",);
+    expect(calls[0]?.method,).toBe("POST",);
+    expect(JSON.parse(calls[0]?.body ?? "null",),).toEqual({
+      startMs: 0,
+      endMs: 2000,
+      description: "",
+      cutType: page.draftShot.cutType,
+    },);
+  });
+
+  test("addFragment binds the fragment to a shot when given", async () => {
+    const calls = stubNetwork(() => scenarioTree());
+    host.__USER_ID = "user-1";
+    const page = ivssAuthoring();
+    page.scenarioId = "s1";
+    page.tree = scenarioTree();
+
+    await page.addFragment("scene-a", "shot-1",);
+
+    expect(calls[0]?.url,).toBe("/api/v1/ivss/scenes/scene-a/fragments",);
+    expect(JSON.parse(calls[0]?.body ?? "null",),).toMatchObject({
+      operation: page.draftFragment.operation,
+      shotId: "shot-1",
+    },);
+  });
+
+  test("remove deletes the row after confirm", async () => {
+    const calls = stubNetwork(() => scenarioTree());
+    host.__USER_ID = "user-1";
+    host.confirm = () => true;
+    const page = ivssAuthoring();
+    page.scenarioId = "s1";
+    page.tree = scenarioTree();
+
+    await page.remove("scene", "scene-a",);
+
+    expect(calls[0]?.url,).toBe("/api/v1/ivss/scenes/scene-a",);
+    expect(calls[0]?.method,).toBe("DELETE",);
+  });
+
+  test("failed writes surface the error and clear busy", async () => {
+    stubNetwork(() => {
+      throw new Error("down",);
+    },);
+
+    host.__USER_ID = "user-1";
+    const page = ivssAuthoring();
+    page.scenarioId = "s1";
+    page.tree = scenarioTree();
+
+    await page.addScene();
+
+    expect(page.error,).toBe("down",);
+    expect(page.busy,).toBe(false,);
+  });
+
+  test("move ignores unknown shot and fragment ids", async () => {
+    const calls = stubNetwork(() => scenarioTree());
+    host.__USER_ID = "user-1";
+    const page = ivssAuthoring();
+    page.scenarioId = "s1";
+    page.tree = scenarioTree();
+
+    await page.move("shot", "nope", 1,);
+    await page.move("fragment", "nope", 1,);
+
+    expect(calls,).toEqual([],);
   });
 });
