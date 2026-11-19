@@ -14,6 +14,9 @@ openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # (no code change needed — model is free text). Or skip files entirely:
 # LLM_PROVIDER_BASE_URL=https://openrouter.ai/api/v1 LLM_PROVIDER_API_KEY=sk-or-... bun run start
 # anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
+# Honkbox is a Custom provider: same OpenAI-compatible shape, capabilities are
+# probed at setup (never assumed). The base URL must include /v1.
+# { name = "honkbox", label = "Honkbox", baseUrl = "http://127.0.0.1:9010/v1", apiKey = "...", model = "local-chat", timeout = 60000, retries = 2, allowUserApiKey = true }
 # sd = [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
 # video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout, models? }); localBox serializes one render per named box, omit = external (bypasses the gate)
 # Model pins are optional: unset roles are filled from the engine's /models folders.
@@ -24,6 +27,9 @@ openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # workflow = "minimax-h3-t2v-fragment-v1"
 # timeout = 30000
 # generationTimeout = 600000
+# llama-swap proxy variant (model `comfyui_auto` in config.llama-swap.example.yaml):
+# baseUrl = "http://127.0.0.1:7180/upstream/comfyui_auto"
+# Workflow names stay placeholders until the H3 workflow export lands.
 # [generation.providers.video.models]
 # clip = "umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 # diffusion = "MinimaxH3_i2v.safetensors"

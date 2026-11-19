@@ -34,10 +34,10 @@ import { ivssRunRoutes, } from "./run";
 const SECRET = "test-hmac-secret-0123456789";
 
 /** Config with a ComfyUI provider and a signing secret. */
-function makeConfig(): Config {
+function makeConfig(providerName = "comfyui",): Config {
   const config = createConfigSchema().defaults as Config;
   config.generation.providers.video = [{
-    name: "comfyui",
+    name: providerName,
     baseUrl: "http://127.0.0.1:8188",
     apiFamily: "comfyui",
     workflow: "h3-local",
@@ -160,7 +160,7 @@ describe("IVSS fragment run route", () => {
    * @param userId - injected authenticated caller
    * @returns app plus the first workflow variable snapshot
    */
-  function makeApp(userId: string | null,) {
+  function makeApp(userId: string | null, providerName?: string,) {
     let capture: ((vars: Record<string, string | number | boolean>,) => void) | undefined;
     const varsSeen = new Promise<Record<string, string | number | boolean>>(
       (resolve,) => {
@@ -172,7 +172,7 @@ describe("IVSS fragment run route", () => {
       .derive(() => ({ userId, userRole: "user", }))
       .use(ivssRunRoutes({
         database: fixture.db,
-        config: makeConfig(),
+        config: makeConfig(providerName,),
         uploadDir,
         createClient: () => stubClient(),
         loadWorkflow: async (_name, vars,) => {
@@ -222,6 +222,12 @@ describe("IVSS fragment run route", () => {
 
     expect(verified.valid,).toBe(true,);
     expect(String(vars.latent_path,),).toContain(`${latentId}.latent`,);
+  });
+
+  test("selects a ComfyUI provider by apiFamily, not its name", async () => {
+    const { app, } = makeApp(ownerId, "h3-local",);
+    const res = await app.handle(postRequest(fragmentId, {},),);
+    expect(res.status,).toBe(202,);
   });
 
   test("rejects a fragment owned by another user", async () => {

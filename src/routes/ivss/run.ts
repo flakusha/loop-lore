@@ -89,7 +89,7 @@ export function ivssRunRoutes(opts: {
 
       if (denied) { return denied; }
 
-      const video = providers.find((provider,) => provider.name === "comfyui");
+      const video = providers.find((provider,) => provider.apiFamily === "comfyui");
       if (!video) {
         return jsonError("No ComfyUI video provider configured", HttpStatus.ServiceUnavailable,);
       }
