@@ -150,6 +150,18 @@ export function failVideoJob(jobId: string, error: string, errorStatus: number,)
 }
 
 /**
+ * Mark a pending video job cancelled. The job store's public status set stays
+ * `pending | done | failed`; cancellation is a failed terminal with code 499
+ * so the existing poll route needs no new branch.
+ * @param jobId - the job to cancel
+ * @param reason - human-readable cancellation reason
+ * @returns true when the job was pending and is now terminal
+ */
+export function cancelVideoJob(jobId: string, reason = "cancelled",): boolean {
+  return failVideoJob(jobId, reason, 499,);
+}
+
+/**
  * Clear the store (tests only).
  * @returns {void}
  */
