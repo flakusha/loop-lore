@@ -3,7 +3,7 @@
 
 # TASK: composer Up Down recall of prior typed text
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-chat-composer-flows.md
@@ -19,11 +19,11 @@ Arrow keys are consumed by mention, command and model popovers, but there is no 
 
 **Acceptance Criteria:**
 
-- [ ] Up recalls last sent text when no popover is open
-- [ ] Down returns to the newer entry and then the empty draft
-- [ ] popover navigation takes precedence
-- [ ] history is scoped per chat
+- [x] Up recalls last sent text when no popover is open
+- [x] Down returns to the newer entry and then the empty draft
+- [x] popover navigation takes precedence
+- [x] history is scoped per chat
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Shipped on branch `composer-history`. Sent lines are pushed by `rememberComposerText` in `src/frontend/alpine/composer-history.ts`; `recallComposerHistory` walks the per-chat map, clamps the cursor at the ends, and saves the draft. Popover ownership is checked before recall. Focused tests cover recall, chat scoping, and popover precedence; scoped verification gate `bun run check --diff-base a7bef74b0` is green apart from pre-existing baseline debt in `tests - coverage gaps`.
