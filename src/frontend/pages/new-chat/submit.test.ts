@@ -179,6 +179,14 @@ describeOrSkip("new-chat create payload", () => {
     expect(body.gmConfig,).toBeUndefined();
   });
 
+  test("the guided llm_only variant keeps its gm_profile seed", async () => {
+    els.get("#chat-variant",)!.value = "llm_only_group_gm";
+    els.get("#chat-validation-harness",)!.value = "ignored";
+
+    const body = await submitForm("group",);
+    expect(body.gmConfig,).toBeUndefined();
+  });
+
   test("no greeting picker omits greetingIndex", async () => {
     els.delete("#greeting-select",);
     const body = await submitForm("direct",);

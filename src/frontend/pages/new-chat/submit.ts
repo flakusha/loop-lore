@@ -6,7 +6,7 @@ import { $, } from "../../dom";
 import { feFetch, } from "../../fe-fetch";
 import { showToast, } from "../../ui";
 import { getErrorMessage, } from "../shared";
-import type { NewChatCtx, } from "./state";
+import { hasValidationHarness, type NewChatCtx, } from "./state";
 
 /** Forms already carrying a submit listener; htmx re-entry re-runs the page loader. */
 const boundForms = new WeakSet<HTMLFormElement>();
@@ -119,7 +119,7 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   const isVariant = variant !== "standard";
   if (isVariant) { fineTunePayload.variant = variant; }
 
-  const harness = variant.startsWith("llm_only",)
+  const harness = hasValidationHarness(variant,)
     ? $<HTMLInputElement>("#chat-validation-harness",)?.value.trim()
     : undefined;
 

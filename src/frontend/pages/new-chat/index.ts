@@ -7,7 +7,7 @@ import { feFetch, } from "../../fe-fetch";
 import { applyEntryVariant, } from "./entry-point";
 import { bindMemoryHandlers, } from "./memory";
 import { bindSelectionHandlers, updateGreetingPicker, } from "./selection";
-import { createCtx, type NewChatCtx, } from "./state";
+import { createCtx, hasValidationHarness, type NewChatCtx, } from "./state";
 import { bindSubmitHandler, } from "./submit";
 
 /**
@@ -235,7 +235,7 @@ async function loadNewChatPageInner(form: HTMLFormElement | null,): Promise<void
 
     const harnessGroup = $<HTMLElement>("#validation-harness-group",);
     if (harnessGroup) {
-      harnessGroup.style.display = ctx.variantSelect.value.startsWith("llm_only",)
+      harnessGroup.style.display = hasValidationHarness(ctx.variantSelect.value,)
         ? ""
         : "none";
     }
