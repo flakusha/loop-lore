@@ -41889,7 +41889,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-expose-validation-harness-name.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A": {
     "hash": "229d7a3",
