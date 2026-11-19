@@ -3,7 +3,7 @@
 
 # TASK: re-enable stale skipped browser E2Es for shipped fixes
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-e2e-integration-testing.md
@@ -27,3 +27,5 @@ Several browser tests remain skipped even though their blocking BUGs are Done an
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 02b410d (registry tip: 0f1b6a099 Konstantin Fedotov Close issue)

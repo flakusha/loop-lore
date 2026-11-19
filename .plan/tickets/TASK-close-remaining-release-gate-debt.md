@@ -3,7 +3,7 @@
 
 # TASK: close remaining release gate debt
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-code-quality.md
@@ -26,3 +26,5 @@ Release checks remain red from a small set of known gate failures, and several s
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 65a5e31 (registry tip: a9a49a6ae Konstantin Fedotov Close issue)

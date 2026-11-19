@@ -35765,7 +35765,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-close-remaining-release-gate-debt.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CLOSE-THE-FIRST-BOOT-PII-CONFIG-GATE-AND-EXPOSE-SETUP-STATE": {
     "hash": "62be90c",
@@ -57297,7 +57297,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-re-enable-stale-skipped-browser-e2es-for-shipped-fixes.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR": {
     "epic": "epic-asset-transform-metadata",
