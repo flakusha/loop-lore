@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-389 of 1031 operations have no `summary`/`description` in the spec; those rows render as `—`.
+389 of 1032 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -175,6 +175,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/admin/audit | — |
 | GET | /api/v1/admin/audit/{id} | — |
 | POST | /api/v1/admin/audit/purge | — |
+| GET | /api/v1/admin/blender-status | Probe the local Blender binary |
 | GET | /api/v1/admin/character-overrides | List all character overrides |
 | DELETE | /api/v1/admin/character-overrides/{overrideId} | Delete a character override |
 | GET | /api/v1/admin/chats | — |

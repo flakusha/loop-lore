@@ -8,7 +8,14 @@
 import { afterEach, beforeEach, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
-import { __resetBlenderLocks, parseBlenderCapabilities, probeBlender, runBlenderJob, } from "./bridge";
+import {
+  __resetBlenderLocks,
+  BLENDER_STAGES,
+  parseBlenderCapabilities,
+  probeBlender,
+  REQUIRED_BLENDER_VERSION,
+  runBlenderJob,
+} from "./bridge";
 
 const TMP_ROOT = ".tmp/blender-bridge";
 mkdirSync(TMP_ROOT, { recursive: true, },);
@@ -200,4 +207,12 @@ test("separate instances are not serialized together", async () => {
 
   expect(results.every((result,) => result.ok),).toBe(true,);
   expect(readLines(logPath,),).toEqual(["start", "start", "end", "end",],);
+});
+
+test("pinned version and stage set stay in sync with the parser", () => {
+  expect(REQUIRED_BLENDER_VERSION,).toBe("4.5.15",);
+  expect([...BLENDER_STAGES,],).toEqual(["voxel-remesh", "quadriflow", "smart-uv", "bake", "export-glb",],);
+  const caps = parseBlenderCapabilities('BLENDER_CAP={"version":"4.5.15 LTS","stages":["bake"]}',);
+  expect(caps?.supported,).toBe(true,);
+  expect(caps?.stages,).toEqual(["bake",],);
 });
