@@ -175,6 +175,10 @@ const DOMAIN_MAP: Record<string, string> = {
   world_timescale_history: "story",
   // Generation
   generation_attempts: "generation",
+  scenarios: "generation",
+  scenario_scenes: "generation",
+  scenario_shots: "generation",
+  scenario_fragments: "generation",
   synthetic_data: "synthetic",
   // Character
   character_permanent_traits: "character",

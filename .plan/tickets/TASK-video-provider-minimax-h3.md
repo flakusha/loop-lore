@@ -1,51 +1,48 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Video provider — MiniMax H3 dispatch
+# TASK: MiniMax H3 local workflow provider
 
 **Status:** Not Started
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-video-generation
-**Related:** `TASK-video-gen-route.md`, `TASK-video-template-schema.md`, `FEAT-065-sub-video.md`, `TASK-assistant-third-party-api-integration.md`
-**Summary:** See ## Summary below.
-**Context:** See ## Context below.
-**Acceptance Criteria:** See ## Acceptance Criteria below.
+**Related:** `TASK-video-gen-route.md`, `TASK-video-template-schema.md`, `TASK-ivss-video-run-pipeline.md`, `FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md`, `TASK-hosted-video-and-audio-api-benchmark-tier.md`
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
-## Summary
+**Summary:**
+Expose MiniMax H3 as a local ComfyUI workflow provider behind the shipped video
+route: a checked-in API-format workflow row with a recorded hash and declared
+required nodes, dispatched through `runVideoRender` and the per-box serial gate.
+The hosted BYO-key API client originally specified here is deferred to the
+benchmark tier; this ticket never implements it.
 
-Implement the MiniMax H3 video provider client behind the video generation
-route (`TASK-video-gen-route.md`): payload build, async submit/poll, result
-download into the asset pipeline. This is the provider implementation — the
-dispatch-adapter layer in `TASK-assistant-third-party-api-integration.md`
-(which already names `minimax-h3` as a model family with a `dispatch.backend:
-api_call` target) stays untouched; this ticket fills the target it points at.
+**Context:**
+`epic-video-generation.md` already rescoped this ticket on 2026-10-29: local
+ComfyUI workflow runs replace the hosted API client as the default, and hosted
+providers stay behind BYOK consent. The 2026-11-18 H3 research confirms the
+local soft fork carries the H3 nodes and that core `SaveLatent` cannot handle
+H3 `NestedTensor` latents; use an H3-aware package node or a custom workflow.
+The 2026-11-19 operator direction is to avoid full dependence on the MiniMax H3
+Director node pack: it carries maintenance churn and has no precise per-fragment
+cut control by design. The provider row must therefore name a pinned workflow,
+not a node pack, and must accept custom workflows for render, re-render, prompt
+and latent save/load. The shipped converter (`src/generation/comfyui-converter/`)
+and fixture `v-0010-dasiwa-minimax.json` prove the transport shape but do not
+make that graph mandatory.
 
-## Context
+**Acceptance Criteria:**
 
-Scope boundary (do not duplicate): `TASK-assistant-third-party-api-integration.md`
-owns the `ThirdPartyAdapter` interface, the `third-party-adapters.yaml`
-registry, payload building from workflow steps + model-family presets
-(`configs/templates/workflows/model-families.yaml`), and routing through the
-LLM queue. Its Non-goals state explicitly: implementing actual API provider
-clients lives here (`epic-audio-video-sound.md` /
-`epic-assistant-generation-extensions.md`). The workflow config already
-references a `video-minimax-h3` workflow (`src/config/workflow-templates.test.ts:23`)
-and the runner test dispatches `{ model: "minimax-h3", prompt }` to
-`POST /api/generation/video` (`src/assistant/workflow-runner.test.ts:49-50`)
-— the dispatch side waits on this provider. Engine precedent is
-`generateSDCPP` (`src/generation/image-engine/sdcpp.ts:17-128`): async submit
-→ poll against `generationTimeout` → 504 on timeout. Auth model is BYO key per
-the third-party ticket (`auth: byo_key`).
-
-## Acceptance Criteria
-
-- [ ] `src/generation/image-engine/minimax.ts` (or `video-engine/` sibling)
-exports `generateMiniMaxH3(config, opts)` with `{ prompt, duration, resolution }`
-→ async job submit/poll/download, same outcome shape as `ImageGenOutcome`
-- [ ] BYO-key auth: key from user config, never logged; 401/429 from the
-provider surface as 502/429 with the provider message (sdcpp precedent `:71`)
-- [ ] Wired as a selectable video provider behind `handleVideoGeneration`
-  (route returns 501 only when no video provider is configured at all)
-- [ ] Unit tests: payload shape per minimax-h3 family, poll/timeout paths,
-auth-error mapping — no live API calls
+- [ ] A versioned workflow-library row declares its API-format hash, `{{var}}`
+      parameter map and `required_nodes`; ingest rejects a missing node with the
+      named node id, never a silent submit
+- [ ] Provider selection uses the existing `generation.providers.video` config
+      and `VideoApiFamily = comfyui`; no new provider family or BYO-key client
+- [ ] Dispatch goes through `runVideoRender`, `localBox` gate and the existing
+      pre-dispatch VRAM hook; the submit route keeps its 401/403/202 contract
+- [ ] A custom H3 workflow with explicit cut windows can be substituted by
+      workflow id without changing the provider code path
+- [ ] The hosted MiniMax API is untouched and remains in
+      `TASK-hosted-video-and-audio-api-benchmark-tier.md`
+- [ ] Unit tests cover payload build, missing-node rejection, poll/timeout and
+      failover against a stubbed ComfyUI — no live render or API call

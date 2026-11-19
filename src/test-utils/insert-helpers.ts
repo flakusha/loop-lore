@@ -32,6 +32,7 @@ import type {
   CraftingAttemptStatus,
   CraftingDiscipline,
   CraftingStationType,
+  CutType,
   DefaultState,
   DifficultyReroll,
   DifficultyState,
@@ -48,6 +49,8 @@ import type {
   FactionRole,
   FactorKind,
   FantasyCategory,
+  FragmentOperation,
+  FragmentStatus,
   GatheringNodeType,
   GenerationStatus,
   HarnessQueueErrorCode,
@@ -110,6 +113,9 @@ import type {
   QuestType,
   RelationshipType,
   ResourceQuality,
+  ScenarioStatus,
+  SceneMode,
+  SceneStatus,
   SeductionSkillCategory,
   ShadowNoteAuthorType,
   ShadowNoteStatus,
@@ -6501,6 +6507,128 @@ export async function insertAuthChallenges(
     nonce_hash,
     expires_at,
     created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenarios row. */
+export async function insertScenarios(
+  db: Db,
+  world_id: string,
+  owner_id: string,
+  title: string,
+  opts?: { id?: string; status?: ScenarioStatus; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenarios",).values({
+    id,
+    world_id,
+    owner_id,
+    title,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_scenes row. */
+export async function insertScenarioScenes(
+  db: Db,
+  scenario_id: string,
+  opts?: {
+    id?: string;
+    sort_order?: number;
+    location_id?: string | null;
+    mode?: SceneMode;
+    duration_frames?: number;
+    fps?: number;
+    seed?: string | null;
+    status?: SceneStatus;
+    generated_asset_id?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_scenes",).values({
+    id,
+    scenario_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_shots row. */
+export async function insertScenarioShots(
+  db: Db,
+  scene_id: string,
+  end_ms: number,
+  description: string,
+  opts?: {
+    id?: string;
+    sort_order?: number;
+    start_ms?: number;
+    cut_type?: CutType;
+    camera_json?: string | null;
+    narration?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_shots",).values({
+    id,
+    scene_id,
+    end_ms,
+    description,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_fragments row. */
+export async function insertScenarioFragments(
+  db: Db,
+  scene_id: string,
+  operation: FragmentOperation,
+  workflow_id: string,
+  workflow_hash: string,
+  opts?: {
+    id?: string;
+    shot_id?: string | null;
+    sort_order?: number;
+    status?: FragmentStatus;
+    workflow_version?: string | null;
+    node_versions?: string | null;
+    mode?: SceneMode | null;
+    seed?: string | null;
+    duration_frames?: number | null;
+    transition?: CutType;
+    prompt_message_id?: string | null;
+    prompt_snapshot?: string | null;
+    gallery_asset_id?: string | null;
+    caption?: string | null;
+    input_assets?: string | null;
+    output_asset_id?: string | null;
+    latent_asset_id?: string | null;
+    parent_fragment_id?: string | null;
+    take?: string;
+    cut_in_ms?: number;
+    cut_out_ms?: number | null;
+    error?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_fragments",).values({
+    id,
+    scene_id,
+    operation,
+    workflow_id,
+    workflow_hash,
     ...restOpts,
   } as any,).execute();
   return id;

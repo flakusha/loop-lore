@@ -142,4 +142,21 @@ export const PART_1: Record<string, Record<string, string>> = {
     "cancel_source": "CancelSource",
     "status": "GenerationStatus",
   },
+  // 107_ivss_scenario_fragments (workflow-agnostic director manifest)
+  "Scenarios": {
+    "status": "ScenarioStatus",
+  },
+  "ScenarioScenes": {
+    "mode": "SceneMode",
+    "status": "SceneStatus",
+  },
+  "ScenarioShots": {
+    "cut_type": "CutType",
+  },
+  "ScenarioFragments": {
+    "mode": "SceneMode",
+    "operation": "FragmentOperation",
+    "status": "FragmentStatus",
+    "transition": "CutType",
+  },
 };

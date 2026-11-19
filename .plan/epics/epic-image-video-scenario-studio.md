@@ -106,7 +106,8 @@ profiles last (after lineage/licensing land).
 
 | Ticket | Scope | AC (one line) |
 | ------ | ----- | ------------- |
-| `TASK-ivss-scenario-schema` | Migration: scenarios/scenes/shots/references/docs/annotations + enums + `AssetLinkEntity` values + sync artifacts | Migration up/down green; a scenario with 2 scenes × 3 shots + refs + docs round-trips; shots outside a scene rejected |
+| `TASK-ivss-scenario-schema` | Migration: scenarios/scenes/shots/fragments + enums + generated artifacts; references/docs/annotations remain | Migration up/down green; 2 scenes × 3 shots with fragments round-trip; shot/fragment outside a scene rejected |
+| `FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING` | Workflow-agnostic fragment manifest: scene → shots → render fragments, workflow pin, operation, prompt/gallery provenance, latent reuse, take/parent chain | Fragment pins workflow id/hash/version and assumes no H3 Director node; rerender creates a new take without touching siblings |
 | `TASK-ivss-scenario-crud-and-pages` | Routes + TypeBox schemas + world-edit-style pages (Scenario \| Shots \| References \| Runs tabs) + i18n | Owner/member CRUD with 401/403/404 matrix tested; page flow edits the same rows the assistant workflow reads |
 | `TASK-ivss-shot-grammar-assembler` | Compile scenes → resolved prompt (`[Shot N]` absolute-timestamp blocks + soundscape/music) + reference-slot assignment; budgeted assembly (`src/memory/budget.ts` pattern) | Assembler output byte-stable for fixed inputs; over-budget prompts are truncated per documented priority, never silently |
 | `TASK-ui-api-workflow-converter` | UI-format → API-format converter (subgraph flattening, promoted-widget substitution by index, link rewrite, hidden JSON widget preservation) — generic, library-level; **lives in `epic-comfyui-first-class-citizen.md`** (cross-linked) | v-0010 converts to a submittable API graph (fixture) and a subgraph-free reference workflow converts identically |
@@ -221,6 +222,7 @@ package's fork list:
 ## Related
 
 - [`TASK-ivss-scenario-schema.md`](../tickets/TASK-ivss-scenario-schema.md)
+- [`FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md`](../tickets/FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md) — workflow-agnostic fragment manifest (no hard H3 Director dependency)
 - [`TASK-ivss-scenario-crud-and-pages.md`](../tickets/TASK-ivss-scenario-crud-and-pages.md)
 - [`TASK-ivss-shot-grammar-assembler.md`](../tickets/TASK-ivss-shot-grammar-assembler.md)
 - [`TASK-ui-api-workflow-converter.md`](../tickets/TASK-ui-api-workflow-converter.md) — filed under `epic-comfyui-first-class-citizen.md`

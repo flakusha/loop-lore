@@ -145,6 +145,7 @@ export const CraftingStationTypeSchema = t.UnionEnum([
 export const CrossOriginEmbedderPolicySchema = t.UnionEnum(["require-corp", "credentialless",],);
 export const CrossOriginOpenerPolicySchema = t.UnionEnum(["same-origin", "same-origin-allow-popups",],);
 export const CrossOriginResourcePolicySchema = t.UnionEnum(["same-origin", "cross-origin",],);
+export const CutTypeSchema = t.UnionEnum(["hard_cut", "crossfade", "interpolated",],);
 export const DbTypeSchema = t.UnionEnum(["sqlite", "postgres",],);
 export const DefaultStateSchema = t.UnionEnum(["not_default", "default",],);
 export const DifficultyRerollSchema = t.UnionEnum(["none", "per_turn", "per_quest",],);
@@ -238,6 +239,26 @@ export const FantasyCategorySchema = t.UnionEnum([
   "service",
   "degradation",
   "praise",
+],);
+export const FragmentOperationSchema = t.UnionEnum([
+  "render",
+  "rerender",
+  "prompt",
+  "latent_save",
+  "latent_load",
+  "stitch",
+  "audio_fallback",
+  "postprocess",
+  "custom",
+],);
+export const FragmentStatusSchema = t.UnionEnum([
+  "planned",
+  "queued",
+  "running",
+  "completed",
+  "failed",
+  "cancelled",
+  "invalidated",
 ],);
 export const GameMasterTypeSchema = t.UnionEnum(["llm", "human", "hybrid",],);
 export const GatheringDisciplineSchema = t.UnionEnum([
@@ -582,6 +603,9 @@ export const RpgQuestionTypeSchema = t.UnionEnum([
   "custom",
   "level_up",
 ],);
+export const ScenarioStatusSchema = t.UnionEnum(["draft", "active", "archived",],);
+export const SceneModeSchema = t.UnionEnum(["t2v", "i2v_ff", "i2v_flf", "v2v_edit", "continuation", "image",],);
+export const SceneStatusSchema = t.UnionEnum(["planned", "rendering", "ready", "failed",],);
 export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
 export const SeductionSkillCategorySchema = t.UnionEnum([
   "foreplay",
@@ -4001,4 +4025,72 @@ export const AuthChallengesSchema = t.Object({
   created_at: t.Number(),
   attempts: t.Optional(t.Number(),),
   consumed: t.Optional(t.Number(),),
+},);
+
+// ── scenarios ────────────────────────────────────────────
+export const ScenariosSchema = t.Object({
+  world_id: t.String(),
+  owner_id: t.String(),
+  title: t.String(),
+  status: t.Optional(ScenarioStatusSchema,),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── scenario_scenes ────────────────────────────────────────────
+export const ScenarioScenesSchema = t.Object({
+  scenario_id: t.String(),
+  sort_order: t.Optional(t.Number(),),
+  location_id: t.Optional(t.String(),),
+  mode: t.Optional(SceneModeSchema,),
+  duration_frames: t.Optional(t.Number(),),
+  fps: t.Optional(t.Number(),),
+  seed: t.Optional(t.String(),),
+  status: t.Optional(SceneStatusSchema,),
+  generated_asset_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── scenario_shots ────────────────────────────────────────────
+export const ScenarioShotsSchema = t.Object({
+  scene_id: t.String(),
+  end_ms: t.Number(),
+  description: t.String(),
+  sort_order: t.Optional(t.Number(),),
+  start_ms: t.Optional(t.Number(),),
+  cut_type: t.Optional(CutTypeSchema,),
+  camera_json: t.Optional(t.String(),),
+  narration: t.Optional(t.String(),),
+},);
+
+// ── scenario_fragments ────────────────────────────────────────────
+export const ScenarioFragmentsSchema = t.Object({
+  scene_id: t.String(),
+  operation: FragmentOperationSchema,
+  workflow_id: t.String(),
+  workflow_hash: t.String(),
+  shot_id: t.Optional(t.String(),),
+  sort_order: t.Optional(t.Number(),),
+  status: t.Optional(FragmentStatusSchema,),
+  workflow_version: t.Optional(t.String(),),
+  node_versions: t.Optional(t.String(),),
+  mode: t.Optional(SceneModeSchema,),
+  seed: t.Optional(t.String(),),
+  duration_frames: t.Optional(t.Number(),),
+  transition: t.Optional(CutTypeSchema,),
+  prompt_message_id: t.Optional(t.String(),),
+  prompt_snapshot: t.Optional(t.String(),),
+  gallery_asset_id: t.Optional(t.String(),),
+  caption: t.Optional(t.String(),),
+  input_assets: t.Optional(t.String(),),
+  output_asset_id: t.Optional(t.String(),),
+  latent_asset_id: t.Optional(t.String(),),
+  parent_fragment_id: t.Optional(t.String(),),
+  take: t.Optional(t.String(),),
+  cut_in_ms: t.Optional(t.Number(),),
+  cut_out_ms: t.Optional(t.Number(),),
+  error: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
 },);

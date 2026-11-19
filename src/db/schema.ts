@@ -257,4 +257,8 @@ export interface DB {
   harness_queue_turns: import("./schema-core").HarnessQueueTurns;
   auth_factors: import("./schema-core").AuthFactors;
   auth_challenges: import("./schema-core").AuthChallenges;
+  scenarios: import("./schema-generation").Scenarios;
+  scenario_scenes: import("./schema-generation").ScenarioScenes;
+  scenario_shots: import("./schema-generation").ScenarioShots;
+  scenario_fragments: import("./schema-generation").ScenarioFragments;
 }
