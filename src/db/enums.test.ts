@@ -74,6 +74,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
     "summarization",
     "classifier",
     "translator",
+    "rerank",
   ],
   // enums-story
   TurnType: ["character_action", "narration", "gm_injection", "quest_update", "world_event",],
