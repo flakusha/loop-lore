@@ -95,6 +95,15 @@ describe("seedWorkflowLibrary", () => {
     expect(row.modality,).toBe("workflow",);
   });
 
+  it("operator image exports expose the generation placeholders", async () => {
+    for (const id of ["sdxl", "illustrious", "noob", "krea2", "moss", "anima",]) {
+      const graph = await Bun.file(join(SHIPPED_DIR, `${id}.json`,),).json();
+      const placeholders = collectPlaceholders(graph,);
+      expect(placeholders.has("prompt",),).toBe(true,);
+      expect(placeholders.has("negative_prompt",),).toBe(true,);
+    }
+  });
+
   it("is idempotent - a second run imports nothing new", async () => {
     const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
     expect(outcome.imported,).toEqual([],);

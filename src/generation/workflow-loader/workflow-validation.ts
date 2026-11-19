@@ -27,6 +27,7 @@ export const TERMINAL_SINK_CLASSES: ReadonlySet<string> = new Set([
   "DaSiWa_EnhancedVideoCombine",
   "DaSiWaH3ClipAssemble",
   "VHS_VideoCombine",
+  "SaveImageAdvanced",
   // Control/config nodes the converter submits unreferenced but live.
   ...UNREFERENCED_LIVE_CLASSES,
 ],);
