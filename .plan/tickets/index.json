@@ -41210,7 +41210,7 @@
       "multi-user"
     ],
     "source": ".plan/tickets/TASK-enforce-rbac-tranche-1-capability-gates-on-the-create-import.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
     "hash": "b64e902",
