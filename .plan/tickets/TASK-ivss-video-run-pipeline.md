@@ -32,7 +32,10 @@ Reference upload now reads scenario/scene/shot-scoped `scenario_references`
 rows, uploads owned asset bytes with `ComfyUIClient.uploadImage`, and sends
 `role = "mask"` rows through `POST /upload/mask` overlaying the preceding
 image. The stored names are passed to the workflow loader as
-`reference_slots`. honkbox render offload stays behind its own live flag.
+`reference_slots`. The honkbox backend is fail-closed: the landed capabilities
+contract advertises no video job route, so selecting it raises
+`HonkboxVideoOffloadError` before the fragment is claimed. An injected offload
+adapter can supply a render client when a live job route exists.
 
 **Acceptance Criteria:**
 
@@ -55,3 +58,6 @@ image. The stored names are passed to the workflow loader as
       the workflow variables
 - [x] Tests exercise the full flow against a stubbed ComfyUI, are per-test
       isolated, and targeted tests/gates are green
+- [x] Selecting the honkbox backend without a video job route fails before the
+      CAS claim (fragment stays Planned, no job, no ComfyUI submit), and an
+      injected adapter can supply the render client for that backend

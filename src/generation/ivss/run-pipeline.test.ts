@@ -22,7 +22,9 @@ import type { ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../
 import { cancelVideoJob, getVideoJob, listVideoJobs, } from "../video-jobs";
 import { uploadIvssReferences, } from "./reference-upload";
 import {
+  HonkboxVideoOffloadError,
   type IvssComfyClient,
+  type IvssHonkboxOffload,
   type IvssRunDispatch,
   type IvssWorkflowLoader,
   startIvssFragmentRun,
@@ -678,5 +680,60 @@ describe("IVSS ComfyUI run pipeline", () => {
     } finally {
       setGlobalLogger(priorLogger,);
     }
+  });
+
+  test("honkbox backend fails closed until a video job route exists", async () => {
+    const seeded = await seedScene();
+    const { client, calls, } = makeClient();
+    const loaded: Array<{ name: string; vars: Record<string, string | number | boolean> }> = [];
+
+    await expect(startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      videoBackend: "honkbox",
+      loadWorkflow: makeLoader(loaded,),
+      dispatch: immediateDispatch,
+    },),).rejects.toBeInstanceOf(HonkboxVideoOffloadError,);
+
+    expect(calls.submitted,).toHaveLength(0,);
+    expect(loaded,).toHaveLength(0,);
+    expect(listVideoJobs(seeded.ownerId,),).toHaveLength(0,);
+    const fragment = await seeded.db.selectFrom("scenario_fragments",).select("status",)
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(fragment.status,).toBe(FragmentStatus.Planned,);
+  });
+
+  test("honkbox offload adapter supplies the render client", async () => {
+    const seeded = await seedScene();
+    const local = makeClient();
+    const remote = makeClient();
+    const offload: IvssHonkboxOffload = async (request,) => {
+      expect(request.fragmentId,).toBe(seeded.fragmentId,);
+      expect(request.workflowId,).toBe("h3-local",);
+      return { ok: true, client: remote.client, };
+    };
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client: local.client,
+      videoBackend: "honkbox",
+      honkboxOffload: offload,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+    if (!result.ok) { throw new Error(result.error,); }
+
+    expect(remote.calls.submitted,).toHaveLength(1,);
+    expect(local.calls.submitted,).toHaveLength(0,);
+    expect(getVideoJob(handle.jobId,)?.status,).toBe("done",);
   });
 });

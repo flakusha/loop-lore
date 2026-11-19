@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 320
+// size-allow: 360
 
 /**
  * IVSS fragment run pipeline — one render fragment through local ComfyUI.
@@ -57,12 +57,49 @@ export type IvssWorkflowLoader = (
 /** Per-box gate seam; production uses `dispatchThroughVideoGate`. */
 export type IvssRunDispatch = (opts: VideoGateDispatchOptions,) => Promise<void>;
 
+/** What the renderer needs to decide whether honkbox can take a fragment. */
+export interface IvssHonkboxOffloadRequest {
+  readonly fragmentId: string;
+  readonly workflowId: string;
+  readonly prompt: string;
+}
+
+/** A honkbox adapter returns a client with the same render seam as ComfyUI. */
+export type IvssHonkboxOffloadDecision =
+  | { ok: true; client: IvssComfyClient }
+  | { ok: false; reason: string };
+
+export type IvssHonkboxOffload = (
+  request: IvssHonkboxOffloadRequest,
+) => Promise<IvssHonkboxOffloadDecision>;
+
+/** Raised when honkbox offload is selected but no video job route is available. */
+export class HonkboxVideoOffloadError extends Error {
+  constructor(message: string,) {
+    super(message,);
+    this.name = "HonkboxVideoOffloadError";
+  }
+}
+
+/**
+ * Landed honkbox capabilities advertise no video job route, so the default
+ * offload adapter fails closed instead of pretending to render.
+ */
+export const stubHonkboxVideoOffload: IvssHonkboxOffload = async () => ({
+  ok: false,
+  reason: "honkbox has no video job route in the landed contract; live offload is unavailable",
+});
+
 export interface StartIvssFragmentRunOptions {
   database: Kysely<DB>;
   uploadDir: string;
   ownerId: string;
   fragmentId: string;
   client: IvssComfyClient;
+  /** Backend for this render; honkbox is fail-closed until a video job route exists. */
+  videoBackend?: "comfyui" | "honkbox";
+  /** Consulted only when `videoBackend` is "honkbox". */
+  honkboxOffload?: IvssHonkboxOffload;
   providers?: VideoProviderConfig[];
   loadWorkflow?: IvssWorkflowLoader;
   dispatch?: IvssRunDispatch;
@@ -115,6 +152,7 @@ function cancellation(): Error & { status: number } {
 /**
  * Claim a fragment, register its job, and start the render.
  * @param opts - database, identity, client and injectable render seams
+ * @throws {HonkboxVideoOffloadError} When honkbox offload has no video job route
  * @throws {Error} When the fragment is missing or already claimed
  * @returns handle with a settled `done` promise and an idempotent `cancel`
  */
@@ -148,6 +186,19 @@ export async function startIvssFragmentRun(
     scene: { id: scene.id, mode: scene.mode, fps: scene.fps, seed, },
     shots,
   }, opts.maxPromptTokens === undefined ? {} : { maxTokens: opts.maxPromptTokens, },);
+
+  const backend = opts.videoBackend ?? "comfyui";
+  let renderClient = opts.client;
+  if (backend === "honkbox") {
+    const decision = await (opts.honkboxOffload ?? stubHonkboxVideoOffload)({
+      fragmentId: fragment.id,
+      workflowId: fragment.workflow_id,
+      prompt: compiled.prompt,
+    },);
+
+    if (!decision.ok) { throw new HonkboxVideoOffloadError(decision.reason,); }
+    renderClient = decision.client;
+  }
 
   // CAS claim: a queued/running/completed fragment is never submitted twice.
   const claimed = await db.updateTable("scenario_fragments",).set({
@@ -184,7 +235,7 @@ export async function startIvssFragmentRun(
   const tryCancelRemote = (): Promise<void> => {
     if (!promptId || remoteCancelStarted) { return Promise.resolve(); }
     remoteCancelStarted = true;
-    return opts.client.cancelExecution(promptId,).catch((error,) => {
+    return renderClient.cancelExecution(promptId,).catch((error,) => {
       log?.warn("IVSS ComfyUI cancel failed", {
         promptId,
         error: error instanceof Error ? error.message : String(error,),
@@ -216,7 +267,7 @@ export async function startIvssFragmentRun(
             scenarioId: scenario.id,
             sceneId: scene.id,
             shotId: fragment.shot_id,
-            client: opts.client,
+            client: renderClient,
           },);
 
           const encodedSlots = safeJsonStringify(slots,);
@@ -229,11 +280,11 @@ export async function startIvssFragmentRun(
           // Cancel during upload/load must win before the prompt is submitted.
           if (cancelled) { throw cancellation(); }
 
-          const submitted = await opts.client.submitWorkflow(workflow,);
+          const submitted = await renderClient.submitWorkflow(workflow,);
           promptId = submitted.prompt_id;
 
           const raced = await Promise.race([
-            opts.client.waitForFiles(promptId, timeoutMs,).then((files,) => ({ files, })),
+            renderClient.waitForFiles(promptId, timeoutMs,).then((files,) => ({ files, })),
             cancelSignal.then(() => ({ cancelled: true as const, })),
           ],);
 
@@ -271,7 +322,7 @@ export async function startIvssFragmentRun(
 
           const clipRef = refs.find((ref,) => ref.kind === "video");
           if (!clipRef) { throw new Error("ComfyUI workflow produced no video output",); }
-          const clipBuffer = await opts.client.downloadFile(clipRef.file,);
+          const clipBuffer = await renderClient.downloadFile(clipRef.file,);
           const mimeType = mimeFromExtension(clipRef.file.filename,);
           const extension = extensionForMime(mimeType,);
           const [persisted,] = await persistGeneratedImages({
@@ -291,7 +342,7 @@ export async function startIvssFragmentRun(
 
           let latentAssetId: string | undefined;
           if (latentRef) {
-            const latentBuffer = await opts.client.downloadFile(latentRef.file,);
+            const latentBuffer = await renderClient.downloadFile(latentRef.file,);
             const [latentPersisted,] = await persistGeneratedImages({
               database: db,
               uploadDir: opts.uploadDir,
