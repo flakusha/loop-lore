@@ -225,4 +225,13 @@ export const WAIVERS = {
     "floor": 20,
     "reason": "pre-existing DOM render/handler debt (renderSelected/renderResults/bindSelectionHandlers); branch adds tested pure helpers; 22.9 measured under diff-files; TASK-cover-new-chat-selection-ts-dom-functions",
   },
+  // Gate pass: the message-bulk-actions branch's Alpine selection/toolbar
+  // action (message-bulk.ts) needs a live DOM + Alpine runtime to exercise;
+  // the bulk routes underneath are covered at 98% by bulk.test.ts route
+  // tests. Dom-bound floor until Playwright DOM-coverage lands. Owning
+  // ticket: .plan/tickets/TASK-cover-message-bulk-ts-alpine-action.md
+  "frontend:src/frontend/alpine/chat-actions/message-bulk.ts": {
+    "floor": 25,
+    "reason": "Alpine selection/toolbar action needs live DOM + Alpine runtime (27.1 measured under diff-files); routes underneath at 98% via bulk.test.ts; TASK-cover-message-bulk-ts-alpine-action",
+  },
 };

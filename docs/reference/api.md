@@ -50,7 +50,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-386 of 1028 operations have no `summary`/`description` in the spec; those rows render as `—`.
+389 of 1031 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -441,6 +441,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/chats/{id}/messages/{messageId}/ai-action | — |
 | POST | /api/v1/chats/{id}/messages/{messageId}/forward | — |
 | POST | /api/v1/chats/{id}/messages/{messageId}/section | Assign a message to a section |
+| POST | /api/v1/chats/{id}/messages/bulk/delete | — |
+| POST | /api/v1/chats/{id}/messages/bulk/export | — |
+| POST | /api/v1/chats/{id}/messages/bulk/section | — |
 | POST | /api/v1/chats/{id}/messages/purge | — |
 | POST | /api/v1/chats/{id}/migrate | — |
 | POST | /api/v1/chats/{id}/moderate | — |

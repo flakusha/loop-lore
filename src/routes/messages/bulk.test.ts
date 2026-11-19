@@ -22,6 +22,7 @@ import {
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { bulkRoutes, } from "./bulk";
+import { authorizeMessageDelete, } from "./delete-authorization";
 
 const config = {} as Config;
 
@@ -261,5 +262,64 @@ describe("bulkRoutes", () => {
     expect(json.status,).toBe(200,);
     const payload = await json.json() as { messages: { id: string }[] };
     expect(payload.messages.map((m,) => m.id),).toEqual([inChat,],);
+  });
+});
+
+describe("authorizeMessageDelete", () => {
+  let db: Kysely<DB>;
+  const owner = uid();
+  const member = uid();
+  const outsider = uid();
+  let chat: string;
+  let ownMsg: string;
+  let memberMsg: string;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    await seedUser(db, owner, "Owner",);
+    await seedUser(db, member, "Member",);
+    await seedUser(db, outsider, "Outsider",);
+    chat = uid();
+    await insertChats(db, "Chat", owner, { id: chat, } as never,);
+    await db.insertInto("chat_participants",).values({
+      chat_id: chat,
+      actor_id: member,
+      role_in_chat: "member",
+    },).execute();
+
+    ownMsg = await seedMessage(db, chat, owner, "hello",);
+    memberMsg = await seedMessage(db, chat, member, "hi",);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("missing message collapses to not_found", async () => {
+    const res = await authorizeMessageDelete(db, uid(), owner, "user",);
+    expect(res,).toEqual({ ok: false, reason: "not_found", },);
+  });
+
+  test("caller without chat access sees not_found, not forbidden", async () => {
+    const res = await authorizeMessageDelete(db, ownMsg, outsider, "user",);
+    expect(res,).toEqual({ ok: false, reason: "not_found", },);
+  });
+
+  test("participant cannot delete another author's message", async () => {
+    const res = await authorizeMessageDelete(db, ownMsg, member, "user",);
+    expect(res,).toEqual({ ok: false, reason: "forbidden", },);
+  });
+
+  test("author can delete their own message", async () => {
+    const res = await authorizeMessageDelete(db, memberMsg, member, "user",);
+    expect(res,).toEqual({
+      ok: true,
+      message: { id: memberMsg, chat_id: chat, actor_id: member, },
+    },);
+  });
+
+  test("chat admin can delete any participant message", async () => {
+    const res = await authorizeMessageDelete(db, ownMsg, member, "admin",);
+    expect(res.ok,).toBe(true,);
   });
 });
