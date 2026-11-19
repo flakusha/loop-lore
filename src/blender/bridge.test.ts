@@ -52,6 +52,8 @@ test("probe reports pinned version and stage set from a fake Blender", async () 
     "--background",
     "--factory-startup",
     "-noaudio",
+    "--python-exit-code",
+    "1",
     "--python-expr",
     expect.any(String,),
   ],);
@@ -99,6 +101,36 @@ test("job checks exit codes and stamps provenance even on failure", async () => 
   expect(result.provenance?.scriptDigest,).toHaveLength(64,);
 });
 
+test("job passes strict Python exit codes and an opaque payload", async () => {
+  const recipe = join(dir, "recipe.py",);
+  writeFileSync(recipe, "# operator recipe\n",);
+  const argvPath = join(dir, "job-argv",);
+  const stub = writeStub("argv.sh", `printf '%s\\n' "$@" > ${argvPath}`,);
+
+  const result = await runBlenderJob({
+    binary: stub,
+    scriptPath: recipe,
+    stage: "bake",
+    params: { id: 7, },
+    timeoutMs: 2_000,
+  },);
+
+  expect(result.ok,).toBe(true,);
+  const argv = readLines(argvPath,);
+  expect(argv.slice(0, 8,),).toEqual([
+    "--background",
+    "--factory-startup",
+    "-noaudio",
+    "--python-exit-code",
+    "1",
+    "--python",
+    recipe,
+    "--",
+  ],);
+
+  expect(JSON.parse(argv[8] ?? "",),).toEqual({ stage: "bake", params: { id: 7, }, },);
+});
+
 test("job rejects non-recipes and unknown stages before spawning", async () => {
   const badPath = await runBlenderJob({ scriptPath: join(dir, "recipe.txt",), stage: "bake", },);
   expect(badPath.ok,).toBe(false,);
@@ -116,7 +148,7 @@ test("jobs on one instance run FIFO without overlap", async () => {
   writeFileSync(recipe, "# recipe\n",);
   const stub = writeStub(
     "job.sh",
-    `echo "start $7" >> ${logPath}; sleep 0.1; echo "end $7" >> ${logPath}; echo BLENDER_JOB=ok`,
+    `echo "start $9" >> ${logPath}; sleep 0.1; echo "end $9" >> ${logPath}; echo BLENDER_JOB=ok`,
   );
 
   const [first, second,] = await Promise.all([

@@ -190,7 +190,7 @@ export async function probeBlender(options: BlenderProbeOptions = {},): Promise<
   const binary = options.binary ?? "blender";
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const out = await runProcess(
-    [binary, "--background", "--factory-startup", "-noaudio", "--python-expr", PROBE_EXPR,],
+    [binary, "--background", "--factory-startup", "-noaudio", "--python-exit-code", "1", "--python-expr", PROBE_EXPR,],
     timeoutMs,
     digest(PROBE_EXPR,),
   );
@@ -248,7 +248,18 @@ export async function runBlenderJob(spec: BlenderJobSpec,): Promise<BlenderJobRe
     if (!serialized.ok) { return { ok: false, status: "invalid", message: serialized.error.message, }; }
 
     const out = await runProcess(
-      [binary, "--background", "--factory-startup", "-noaudio", "--python", spec.scriptPath, "--", serialized.value,],
+      [
+        binary,
+        "--background",
+        "--factory-startup",
+        "-noaudio",
+        "--python-exit-code",
+        "1",
+        "--python",
+        spec.scriptPath,
+        "--",
+        serialized.value,
+      ],
       timeoutMs,
       digest(spec.scriptPath,),
     );
