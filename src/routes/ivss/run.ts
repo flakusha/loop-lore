@@ -73,7 +73,7 @@ export function ivssRunRoutes(opts: {
   dispatch?: IvssRunDispatch;
 },) {
   const prefix = opts.prefix ?? "/api/v1";
-  const providers = opts.config.generation.providers.video ?? [];
+  const providers = opts.config.generation?.providers?.video ?? [];
 
   return new Elysia({ name: "ivss-run", },)
     .post(`${prefix}/ivss/fragments/:id/run`, async (ctx,) => {
