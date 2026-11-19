@@ -18,6 +18,7 @@ export const BINARY_CANDIDATES = {
   "llama-cpp": ["llama-server", "llama-server-vk",],
   "llama-swap": ["llama-swap",],
   "sd-cpp": ["sd-server",],
+  blender: ["blender",],
 } as const;
 
 /**
@@ -34,13 +35,18 @@ function getBinaryNameWithSuffix(name: string,): string[] {
 
 /**
  * @param type
+ * @param options - injectable PATH lookup for tests
  * @returns {string | null}
  */
-export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null {
+export function findBinary(
+  type: keyof typeof BINARY_CANDIDATES,
+  options: { which?: (name: string,) => string | null } = {},
+): string | null {
   const candidates = BINARY_CANDIDATES[type];
+  const which = options.which ?? Bun.which;
   for (const name of candidates) {
     for (const actualName of getBinaryNameWithSuffix(name,)) {
-      const result = Bun.which(actualName,);
+      const result = which(actualName,);
       if (result) { return result; }
     }
   }

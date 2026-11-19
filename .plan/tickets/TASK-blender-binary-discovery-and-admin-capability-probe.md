@@ -3,7 +3,7 @@
 
 # TASK: Blender binary discovery and admin capability probe
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-creative-tool-bridge
@@ -15,17 +15,17 @@ Wire the local Blender bridge into operator-visible discovery: add a 'blender' e
 
 **Context:**
 
-`src/blender/bridge.ts` now probes and runs Blender behind a fail-soft,
-serialized local boundary, but nothing discovers the binary or surfaces the
-verdict to an operator. `BINARY_CANDIDATES` has no `blender` entry; existing
-admin sweeps cover sd.cpp only. Probe patterns live in
-`src/integrations/harness/availability.ts` and
-`src/generation/lora/discovery.ts`.
+`src/blender/bridge.ts` probes and runs Blender behind a fail-soft, serialized
+local boundary. `src/blender/discovery.ts` caches one verdict with explicit
+refresh/reset seams and no TTL; `GET /api/admin/blender-status` surfaces it.
+The 4.5.15 system install is the production backend, so no launcher prefix is
+needed. Probe patterns were compared with `src/integrations/harness/availability.ts`
+and `src/generation/lora/discovery.ts`.
 
 **Acceptance Criteria:**
 
-- [ ] `BINARY_CANDIDATES` includes `blender`; lookup is injectable per test
-- [ ] An admin sweep/route reports pinned-version capability info or a structured failure reason
-- [ ] Probe verdicts are cached with distinct refresh/reset seams (no timeout/TTL conflation)
-- [ ] Tests use a fake command; no Blender binary is executed
-- [ ] No MCP client under `src/integrations/mcp/` and no new job-status vocabulary
+- [x] `BINARY_CANDIDATES` includes `blender`; lookup is injectable per test
+- [x] An admin sweep/route reports pinned-version capability info or a structured failure reason
+- [x] Probe verdicts are cached with distinct refresh/reset seams (no timeout/TTL conflation)
+- [x] Tests use injected probes; no Blender binary is executed
+- [x] No MCP client under `src/integrations/mcp/` and no new job-status vocabulary

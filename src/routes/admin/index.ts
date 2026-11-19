@@ -5,6 +5,7 @@ import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
+import { blenderStatusRoutes, } from "./blender-status";
 import { carriageRoutes, } from "./carriage";
 import { chatsRoutes, } from "./chats";
 import { comfyUISetupRoutes, } from "./comfyui-setup";
@@ -50,6 +51,7 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/setup/providers — list stored provider instances (no secrets)
  *   POST /api/admin/setup/providers — create or update a provider instance
  *   DELETE /api/admin/setup/providers/:name — delete a provider instance
+ *   GET  /api/admin/blender-status — cached local Blender capability verdict
  *   GET  /api/admin/sd-status/sdcpp — probe every sd.cpp instance (reachability, version, models)
  *   POST /api/admin/sd-status/sdcpp/setup — create or update an sd.cpp instance (probe-gated)
  *   DELETE /api/admin/sd-status/sdcpp/setup/:name — delete an sd.cpp instance
@@ -88,6 +90,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(modelRolesRoutes(opts, prefix,),)
       .use(modelCapabilitiesRoutes(opts, prefix,),)
       .use(newsRoutes(opts, prefix,),)
+      .use(blenderStatusRoutes(opts, prefix,),)
       .use(sdStatusRoutes(opts, prefix,),)
       .use(comfyUIStatusRoutes(opts, prefix,),)
       .use(sdCppSetupRoutes(opts, prefix,),)
