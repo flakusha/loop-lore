@@ -13,7 +13,7 @@ Status: core implemented (upload, linking, serving, visibility, sharing, signed 
 - Tables — `assets` + `asset_links` (polymorphic `entity_type`/`entity_id`/`label`) and `asset_shares` (indexed) in `src/db/migrations/001_init.ts`.
 - Visibility & sharing — `private|shared|public` visibility plus per-actor share records (`src/assets/service/shares.ts`); links and shares are independent (link = where an asset belongs, share = who can see it).
 - Signed URLs — `src/assets/signed-url.ts`: HMAC-SHA256 over `action:assetId:expiresAt`, default 900s expiry, constant-time verify; actions raw/download/thumb/compressed/matted.
-- Storage — local UUID-derived paths (`data/assets/raw/<2-char-prefix>/`, `variant-path.ts`); limits via `ASSET_MAX_*_SIZE` / `ASSET_ALLOWED_*_TYPES` env vars.
+- Storage — local UUID-derived paths (`data/assets/raw/<2-char-prefix>/`, `variant-path.ts`); limits via `config.assets.maxFileSize` and the MIME allowlist in `src/assets/service/validate.ts` (no `ASSET_MAX_*`/`ASSET_ALLOWED_*` env vars exist).
 - Media & labels — images JPEG/PNG/WebP/AVIF, audio Ogg/Opus/MP3/FLAC, video WebM/MP4; documented labels: avatar, portrait, bgm, scene, attachment, lore_image, voice_sample.
 
 ## Not implemented / aspirational

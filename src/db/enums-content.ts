@@ -28,6 +28,7 @@ export const AssetType = {
   Image: "image",
   Audio: "audio",
   Video: "video",
+  Model: "model",
   Memory: "memory",
   Other: "other",
 } as const;
@@ -110,6 +111,7 @@ export const StorageBudgetScope = {
   Image: "image",
   Audio: "audio",
   Video: "video",
+  Model: "model",
   Other: "other",
 } as const;
 /** */

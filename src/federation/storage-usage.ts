@@ -39,6 +39,7 @@ const CLASS_TO_ASSET_TYPE: Record<Exclude<StorageBudgetScope, "total">, AssetTyp
   image: AssetType.Image,
   audio: AssetType.Audio,
   video: AssetType.Video,
+  model: AssetType.Model,
   other: AssetType.Other,
 };
 

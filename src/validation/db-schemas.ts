@@ -59,7 +59,7 @@ export const AssetLinkEntitySchema = t.UnionEnum([
 ],);
 export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
 export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
-export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
+export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "model", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
 export const AudioApiFamilySchema = t.UnionEnum(["comfyui",],);
 export const AvailabilityStatusSchema = t.UnionEnum(["available", "restricted", "unavailable",],);
@@ -645,7 +645,7 @@ export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
 export const StationLocationSchema = t.UnionEnum(["player_home", "world", "guild", "portable",],);
 export const StorageAccessDenialSchema = t.UnionEnum(["not-allowed", "security-too-low", "cross-world",],);
 export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
-export const StorageBudgetScopeSchema = t.UnionEnum(["total", "image", "audio", "video", "other",],);
+export const StorageBudgetScopeSchema = t.UnionEnum(["total", "image", "audio", "video", "model", "other",],);
 export const StorageEvictionPolicySchema = t.UnionEnum(["none", "oldest-first",],);
 export const SyntheticDataStatusSchema = t.UnionEnum(["generated", "validated", "approved", "rejected", "archived",],);
 export const SyntheticDataTypeSchema = t.UnionEnum([

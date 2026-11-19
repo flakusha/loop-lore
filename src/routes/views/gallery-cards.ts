@@ -117,7 +117,8 @@ function thumbForAsset(a: { id: string; filename: string; assetType: AssetType; 
     }
 
     case "other":
-    case "memory": {
+    case "memory":
+    case "model": {
       return `<div class="file-icon">📄</div>`;
     }
   }
