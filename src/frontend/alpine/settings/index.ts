@@ -8,7 +8,8 @@ import { general, } from "./general";
 import { keynav, } from "./keynav";
 import { quota, } from "./quota";
 import { restartBanner, } from "./restart-banner";
-import type { LocaleInfoArray, QuotaGaugeResource, SettingsState, } from "./types";
+import type { LocaleInfoArray, QuotaGaugeResource, SettingsState, WorkflowCatalogEntry, } from "./types";
+import { workflows, } from "./workflows";
 
 settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
@@ -24,6 +25,8 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     inlinePreview: true,
     localInferenceOptIn: false,
     detailLevel: "Immersion",
+    workflowUseCases: [] as WorkflowCatalogEntry[],
+    workflowSelections: {} as Record<string, string>,
     provider: "OpenAI",
     providerList: [] as { name: string; label: string; status: string }[],
     providerListNotice: "",
@@ -59,5 +62,6 @@ settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
     ...backup(),
     ...restartBanner(),
     ...keynav(),
+    ...workflows(),
   };
 };

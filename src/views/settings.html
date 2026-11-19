@@ -2,7 +2,7 @@
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
 <!-- Settings Page -->
-<div class="app-layout" x-data="settingsPage()" x-init="init()">
+<div class="app-layout" x-data="settingsPage()" x-init="init(); loadWorkflowSelections()">
   <!--
     No id="header-slot": this header is server-rendered inside the
     settingsPage() x-data tree and its action buttons bind settingsPage
@@ -71,6 +71,17 @@
           id="tab-chat"
         >
           {{{t("settings.chat")}}}
+        </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'workflows' }"
+          @click="activeTab = 'workflows'"
+          role="tab"
+          :aria-selected="activeTab === 'workflows'"
+          id="tab-workflows"
+          data-testid="settings-tab-workflows"
+        >
+          {{{t("settings.workflows") || "Workflows"}}}
         </button>
         <button
           class="world-edit-tab"
@@ -155,7 +166,7 @@
       </div>
 
       <!-- Chat Tab -->
-      {{> settings/chat-panel.html }}
+      {{> settings/chat-panel.html }} {{> settings/workflows-panel.html }}
 
       <!-- API Tab -->
       {{> settings/api-panel.html }}

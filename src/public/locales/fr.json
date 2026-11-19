@@ -298,6 +298,7 @@
     "backupRestored": "Backup verified and restored.",
     "backupRecoverFailed": "Recovery failed: integrity check did not pass.",
     "backupConfirmRequired": "Recovery requires explicit confirmation.",
+    "workflows": "Workflows",
     "comfyuiModels": "ComfyUI video models"
   },
   "admin": {
