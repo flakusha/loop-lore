@@ -50,7 +50,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-386 of 1022 operations have no `summary`/`description` in the spec; those rows render as `—`.
+386 of 1028 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -698,6 +698,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | PUT | /api/v1/nsfw/moderation/world/{worldId} | — |
 | POST | /api/v1/nsfw/seduction/attempt | — |
 | GET | /api/v1/nsfw/skills/{actorId} | — |
+| GET | /api/v1/openapi/changelog | List OpenAPI contract changes (reserved) |
+| POST | /api/v1/openapi/diff | Diff two OpenAPI documents (reserved) |
+| POST | /api/v1/openapi/validate | Validate an OpenAPI document (reserved) |
 | GET | /api/v1/personas | — |
 | POST | /api/v1/personas | — |
 | DELETE | /api/v1/personas/{id} | — |
@@ -859,6 +862,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/settings/export | Export settings |
 | GET | /api/v1/setup/state | Setup state |
 | GET | /api/v1/tag-autocomplete | Tag autocomplete vocabulary |
+| GET | /api/v1/tasks | List offload tasks (reserved) |
+| GET | /api/v1/tasks/{id} | Get an offload task (reserved) |
+| POST | /api/v1/tasks/{id}/cancel | Cancel an offload task (reserved) |
 | GET | /api/v1/telemetry/analytics/daily | Get daily analytics |
 | GET | /api/v1/telemetry/analytics/errors | Get error analytics |
 | GET | /api/v1/telemetry/analytics/models | Get model analytics |
