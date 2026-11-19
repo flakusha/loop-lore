@@ -1,0 +1,303 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Tests for integrations/honkbox/capabilities.ts.
+ *
+ * Every test swaps globalThis.fetch (the safeFetch transport) and restores it
+ * afterwards. Covers: the landed Capabilities shape, the exact
+ * `{baseUrl}/capabilities` probe URL, unavailable/degraded contracts, the
+ * cached probe path and the single-owner GPU admission boundary.
+ */
+import { afterEach, describe, expect, test, } from "bun:test";
+import {
+  assertNoDoubleGpuAdmission,
+  clearHonkboxCapabilitiesCache,
+  getHonkboxCapabilities,
+  honkboxAdmissionDecision,
+  HonkboxAdmissionError,
+  honkboxCacheKey,
+  honkboxCustomProviderConfig,
+  isHonkboxFeatureEnabled,
+  parseHonkboxCapabilities,
+  probeHonkboxCapabilities,
+  refreshHonkboxCapabilities,
+} from "./index";
+
+const originalFetch = globalThis.fetch;
+
+afterEach(() => {
+  globalThis.fetch = originalFetch;
+  clearHonkboxCapabilitiesCache();
+},);
+
+/** Swap globalThis.fetch for the duration of `fn`. */
+async function withMockFetch(
+  handler: (url: string, init?: RequestInit,) => Response | Promise<Response>,
+  fn: () => Promise<void>,
+): Promise<void> {
+  globalThis.fetch =
+    (async (url: string | URL | Request, init?: RequestInit,) => handler(String(url,), init,)) as typeof fetch;
+
+  try {
+    await fn();
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+/** Landed `GET /v1/capabilities` document (honkbox api-types shape). */
+function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<string, unknown> {
+  return {
+    api_version: "v1",
+    server: { name: "honkbox", version: "0.9.0", },
+    features: {
+      vision: { built: true, models: 2, },
+      controlnet: { available: false, models: 0, },
+      lora: true,
+      video: false,
+      jobs: true,
+      events: true,
+      vad: false,
+      experimental_ash_sd: false,
+    },
+    formats: {
+      read: ["png", "jpeg",],
+      write: [{ format: "png", compression: false, }, { format: "jpeg", compression: true, },],
+      limits: {
+        output_compression: { min: 0, max: 100, applies_to: "jpeg", },
+        body_bytes: 20_971_520,
+      },
+    },
+    auth: { mode: "bearer", },
+    queue: {
+      gpu_slots: 1,
+      queue_wait_secs: 30,
+      retry_after_secs: 1,
+      kinds: [{ kind: "sd", queue_cap: 4, ttl_secs: 30, },],
+    },
+    image_ops: { ops: ["resize",], },
+    tools: {
+      tool_choice_honored: ["auto",],
+      tool_choice_clamped: ["none",],
+      tool_choice_named_function_clamped: true,
+      parallel_tool_calls: false,
+    },
+    recognition: { barcode: true, ocr: false, },
+    openapi: "/v1/openapi.json",
+    models: "/v1/models",
+    ...overrides,
+  };
+}
+
+/** JSON response with the landed document. */
+function capsResponse(doc: Record<string, unknown> = capabilitiesDoc(),): Response {
+  return new Response(JSON.stringify(doc,), { status: 200, },);
+}
+
+describe("parseHonkboxCapabilities", () => {
+  test("mirrors the landed Capabilities shape", () => {
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc(),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    const caps = parsed.capabilities;
+    expect(caps.apiVersion,).toBe("v1",);
+    expect(caps.server,).toEqual({ name: "honkbox", version: "0.9.0", },);
+    expect(caps.features.vision,).toEqual({ built: true, models: 2, },);
+    expect(caps.features.controlnet,).toEqual({ available: false, models: 0, },);
+    expect(caps.features.video,).toBe(false,);
+    expect(caps.features.jobs,).toBe(true,);
+    expect(caps.formats.read,).toEqual(["png", "jpeg",],);
+    expect(caps.formats.write,).toEqual([
+      { format: "png", compression: false, },
+      { format: "jpeg", compression: true, },
+    ],);
+
+    expect(caps.formats.limits.outputCompression,).toEqual({
+      min: 0,
+      max: 100,
+      appliesTo: "jpeg",
+    },);
+
+    expect(caps.auth.mode,).toBe("bearer",);
+    expect(caps.queue.gpuSlots,).toBe(1,);
+    expect(caps.queue.kinds,).toEqual([{ kind: "sd", queueCap: 4, ttlSecs: 30, },],);
+    expect(caps.imageOps?.ops,).toEqual(["resize",],);
+    expect(caps.tools?.parallelToolCalls,).toBe(false,);
+    expect(caps.recognition,).toEqual({ barcode: true, ocr: false, },);
+    expect(caps.openapi,).toBe("/v1/openapi.json",);
+    expect(caps.models,).toBe("/v1/models",);
+  });
+
+  test("defaults missing sections and rejects non-object bodies", () => {
+    expect(parseHonkboxCapabilities({ api_version: "v1", },).ok,).toBe(true,);
+    for (const body of [null, ["array",], "string", 42,]) {
+      const parsed = parseHonkboxCapabilities(body,);
+      expect(parsed.ok,).toBe(false,);
+      if (!parsed.ok) { expect(parsed.error,).toContain("not a JSON object",); }
+    }
+
+    const missingVersion = parseHonkboxCapabilities({},);
+    expect(missingVersion.ok,).toBe(false,);
+  });
+});
+
+describe("probeHonkboxCapabilities", () => {
+  test("successful probe GETs {baseUrl}/capabilities with the bearer key", async () => {
+    await withMockFetch((url, init,) => {
+      expect(url,).toBe("http://127.0.0.1:9010/v1/capabilities",);
+      const headers = new Headers(init?.headers,);
+      expect(headers.get("Authorization",),).toBe("Bearer k",);
+      return capsResponse();
+    }, async () => {
+      const probe = await probeHonkboxCapabilities({
+        baseUrl: "http://127.0.0.1:9010/v1///",
+        apiKey: "k",
+      },);
+
+      expect(probe.ok,).toBe(true,);
+      if (probe.ok) {
+        expect(probe.supported,).toBe(true,);
+        expect(probe.capabilities.apiVersion,).toBe("v1",);
+        expect(probe.warning,).toBeUndefined();
+      }
+    },);
+  });
+
+  test("unavailable capability: HTTP 404 is a structured failure", async () => {
+    await withMockFetch(
+      () => new Response("not found", { status: 404, },),
+      async () => {
+        const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(probe.ok,).toBe(false,);
+        if (!probe.ok) {
+          expect(probe.reason,).toBe("http-error",);
+          expect(probe.httpStatus,).toBe(404,);
+        }
+      },
+    );
+  });
+
+  test("network failure and blank base URL never throw", async () => {
+    const blank = await probeHonkboxCapabilities({ baseUrl: "   ", },);
+    expect(blank.ok,).toBe(false,);
+    if (!blank.ok) { expect(blank.reason,).toBe("invalid-base-url",); }
+
+    await withMockFetch(
+      () => {
+        throw new Error("ECONNREFUSED",);
+      },
+      async () => {
+        const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9/v1", },);
+        expect(probe.ok,).toBe(false,);
+        if (!probe.ok) { expect(probe.reason,).toBe("unreachable",); }
+      },
+    );
+  });
+
+  test("unknown major api_version warns and degrades all flags", async () => {
+    await withMockFetch(
+      () => capsResponse(capabilitiesDoc({ api_version: "v2", },),),
+      async () => {
+        const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(probe.ok,).toBe(true,);
+        if (probe.ok) {
+          expect(probe.supported,).toBe(false,);
+          expect(probe.warning,).toContain("v2",);
+          expect(isHonkboxFeatureEnabled(probe, "vision",),).toBe(false,);
+          expect(isHonkboxFeatureEnabled(probe, "jobs",),).toBe(false,);
+        }
+      },
+    );
+  });
+
+  test("feature gate returns false when a flag or optional section is absent", async () => {
+    const doc = capabilitiesDoc();
+    delete doc.image_ops;
+    delete doc.tools;
+    delete doc.recognition;
+    await withMockFetch(() => capsResponse(doc,), async () => {
+      const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      expect(isHonkboxFeatureEnabled(probe, "imageOps",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "tools",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "recognition",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "controlnet",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "video",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(undefined, "vision",),).toBe(false,);
+    },);
+  });
+});
+
+describe("capability cache", () => {
+  test("one probe per setup/refresh, keyed by baseUrl plus credential fingerprint", async () => {
+    let calls = 0;
+    await withMockFetch(() => {
+      calls += 1;
+      return capsResponse();
+    }, async () => {
+      const first = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", apiKey: "k", },);
+      const second = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", apiKey: "k", },);
+      expect(calls,).toBe(1,);
+      expect(second.ok && second.cached,).toBe(true,);
+
+      const fresh = await refreshHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", apiKey: "k", },);
+      expect(calls,).toBe(2,);
+      expect(fresh.ok && fresh.cached,).toBeFalsy();
+
+      await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", apiKey: "other", },);
+      expect(calls,).toBe(3,);
+
+      const key = honkboxCacheKey("http://127.0.0.1:9010/v1", "k",);
+      expect(key,).toContain("http://127.0.0.1:9010/v1",);
+      expect(key,).not.toContain("k",);
+      expect(first.ok,).toBe(true,);
+    },);
+  });
+
+  test("a failed refresh drops the stale entry", async () => {
+    let status = 200;
+    await withMockFetch(
+      () => status === 200 ? capsResponse() : new Response("down", { status: 503, },),
+      async () => {
+        await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        status = 503;
+        const failed = await refreshHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(failed.ok,).toBe(false,);
+        status = 200;
+        const reProbe = await getHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+        expect(reProbe.ok,).toBe(true,);
+        expect(reProbe.ok && reProbe.cached,).toBeFalsy();
+      },
+    );
+  });
+});
+
+describe("single-side GPU admission", () => {
+  test("a live ledger gives honkbox sole ownership; no ledger gives loop-lore", async () => {
+    await withMockFetch(() => capsResponse(), async () => {
+      const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
+      const caps = probe.ok ? probe.capabilities : undefined;
+      const decision = honkboxAdmissionDecision(caps,);
+      expect(decision.owner,).toBe("honkbox",);
+      expect(decision.localAdmissionDenied,).toBe(true,);
+      expect(decision.gpuSlots,).toBe(1,);
+      expect(() => assertNoDoubleGpuAdmission(decision, true,)).toThrow(HonkboxAdmissionError,);
+      expect(() => assertNoDoubleGpuAdmission(decision, false,)).not.toThrow();
+    },);
+
+    const fallback = honkboxAdmissionDecision(undefined,);
+    expect(fallback.owner,).toBe("loop-lore",);
+    expect(fallback.localAdmissionDenied,).toBe(false,);
+    expect(() => assertNoDoubleGpuAdmission(fallback, true,)).not.toThrow();
+  });
+
+  test("the Custom provider config keeps /v1 once for chat and the probe", () => {
+    const config = honkboxCustomProviderConfig({
+      baseUrl: "http://127.0.0.1:9010",
+      model: "llama",
+    },);
+
+    expect(config.baseUrl,).toBe("http://127.0.0.1:9010/v1",);
+  });
+});
