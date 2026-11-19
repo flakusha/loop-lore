@@ -3,7 +3,7 @@
 
 # TASK: Consume honkbox capabilities contract
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Honkbox registry, capability consumption, provider wiring
 **Priority:** medium
 **Effort:** Medium
@@ -26,3 +26,5 @@ Honkbox now serves GET /v1/capabilities (FEAT-capabilities-api, honkbox f44b3fc)
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 48bc41a (registry tip: de02c8016 Konstantin Fedotov Close issue)

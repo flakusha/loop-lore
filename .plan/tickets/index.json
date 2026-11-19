@@ -22378,7 +22378,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-honkbox-capability-descriptor-registry-and-feature-gate-help.md",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-HUMAN-HYBRID-GM-CONFIG-AUTHORING-D3": {
     "hash": "dcbd923",
@@ -37261,7 +37261,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-consume-honkbox-capabilities-contract.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CONSUME-SIDE-MCP-COMFYUI-LOCAL-BLENDER-MCP-NODES-AS-TOOLS": {
     "hash": "01b1c19",
@@ -46623,7 +46623,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-honkbox-provider-wiring-and-gpu-admission-ownership.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "epic": "epic-chat-lifecycle-moderation",

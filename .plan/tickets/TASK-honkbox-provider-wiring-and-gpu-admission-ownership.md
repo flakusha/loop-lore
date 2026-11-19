@@ -3,7 +3,7 @@
 
 # TASK: Honkbox provider wiring and GPU admission ownership
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Honkbox registry, capability consumption, provider wiring
 **Priority:** medium
 **Effort:** Medium
@@ -26,3 +26,5 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-19 registry-driven close: git issue a7794f8 (registry tip: b7382957f Konstantin Fedotov Close issue)

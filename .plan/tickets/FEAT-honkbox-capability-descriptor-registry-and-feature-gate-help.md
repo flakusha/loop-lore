@@ -3,7 +3,7 @@
 
 # FEAT: honkbox capability descriptor registry and feature gate helper
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-platform-integrations.md
@@ -31,3 +31,5 @@ Honkbox now serves the capabilities contract and an OpenAI-compatible chat compl
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 55f8fd5 (registry tip: 71e88e358 Konstantin Fedotov Close issue)
