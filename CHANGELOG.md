@@ -14,6 +14,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 - **Ranking-based model-role autoroute is operator-configurable** — `generation.autorouteScenario` selects a use-case (`general`, `chat`, `coding`, `local`, `observed`) whose ranking rows fill unassigned model roles; explicit DB overrides, config roles and server defaults still win, and the admin model-roles response reports the active scenario.
 - **LLM-only validation chats carry a harness instruction** — the new-chat form exposes a validation-harness field for `llm_only` variants; the value is stored in `gm_config.validation.harness` and picked up by the existing prompt section without editing database rows.
 - **Operator guides for MFA and instance state** — enrollment/challenge/step-up and the backup/restore runbook are documented and linked from the guide index and API reference; the restore request body uses `confirmation: "RESTORE"`.
+- **Local Blender 4.5.15 capability discovery and admin status** — PATH discovery, a cached version/stage probe with explicit refresh/reset seams, and `GET /api/admin/blender-status` with structured failure reasons; headless probe and job argv now use `--python-exit-code 1` so recipe exceptions cannot exit successfully.
 
 ### Fixed
 
