@@ -13,7 +13,7 @@ OpenAPI reference is generated from the live Elysia app at `src/elysia-app.ts` v
 
 - Routes from `src/routes/` are auto-discovered.
 - Schemas from `src/validation/schemas/` are emitted as TypeBox JSON Schema.
-- Regeneration: `bun run openapi && bun run openapi:md` (the latter runs `scripts/generate-api-md.ts`). `docs:build` runs both so a fresh clone has a spec to embed.
+- Regeneration: `bun run openapi && bun run openapi:md` (the latter runs `scripts/generate-api-md.ts`). `docs:build` runs both so a fresh clone has a current spec on disk for the generated page and for tooling.
 - Validation: the `api - doc drift` gate regenerates both artifacts and fails on a stale `api.md`, an invalid spec, or a phantom operation. `bun run schemas:check` validates the other generated schema artifacts.
 
 ## Technical Design

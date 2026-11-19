@@ -33,7 +33,7 @@ import { object, runScript, } from "../../src/cli/parser";
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SPEC_REL = "docs/reference/openapi.json";
 const DOC_REL = "docs/reference/api.md";
-const METHODS = ["get", "post", "put", "patch", "delete", "head", "options",];
+const METHODS = ["get", "post", "put", "patch", "delete", "head", "options", "trace",];
 
 runScript(object({},), {
   programName: "api-doc-drift",
