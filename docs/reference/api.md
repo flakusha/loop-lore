@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-390 of 1033 operations have no `summary`/`description` in the spec; those rows render as `—`.
+407 of 1050 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -609,6 +609,23 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/integrations/mcp/streamable | — |
 | POST | /api/v1/integrations/webhooks/{adapter} | — |
 | POST | /api/v1/invites/{code}/join | — |
+| DELETE | /api/v1/ivss/fragments/{id} | — |
+| PATCH | /api/v1/ivss/fragments/{id} | — |
+| POST | /api/v1/ivss/fragments/{id}/run | — |
+| POST | /api/v1/ivss/reorder | — |
+| GET | /api/v1/ivss/scenarios | — |
+| POST | /api/v1/ivss/scenarios | — |
+| GET | /api/v1/ivss/scenarios/{id} | — |
+| GET | /api/v1/ivss/scenarios/{id}/assemblies | — |
+| GET | /api/v1/ivss/scenarios/{id}/assembly | — |
+| POST | /api/v1/ivss/scenarios/{id}/assembly | — |
+| POST | /api/v1/ivss/scenarios/{id}/scenes | — |
+| DELETE | /api/v1/ivss/scenes/{id} | — |
+| PATCH | /api/v1/ivss/scenes/{id} | — |
+| POST | /api/v1/ivss/scenes/{id}/fragments | — |
+| POST | /api/v1/ivss/scenes/{id}/shots | — |
+| DELETE | /api/v1/ivss/shots/{id} | — |
+| PATCH | /api/v1/ivss/shots/{id} | — |
 | GET | /api/v1/keys | List actor encryption keys |
 | POST | /api/v1/keys | Generate a new named encryption key |
 | DELETE | /api/v1/keys/{id} | Revoke an encryption key |
