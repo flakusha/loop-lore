@@ -5,24 +5,25 @@
  * RSI agent API router (TASK-recursive-self-improvement-agent-api-router-
  * and-token-scope-).
  *
- * Mounts the `/api/v1/agent/*` surface. Ticket #5 owns ONLY the surface
- * shell + token auth: `GET /agent/whoami` is the single #5-owned route (the
- * guard's observable identity probe — lets an external agent confirm its
- * token id/scope before driving the capability routes). The business
- * sub-routes are separate tickets and intentionally ABSENT here (no stubs):
- *   #6 worktree spawn / TTY-free harness ops (`agent:worktree`)
- *   #7 check stream (`bun run check`) (`agent:check`)
- *   #8 commit + finalize (`agent:commit` / `agent:finalize`)
- * They hang off this plugin via the same `requireAgentScope(...)` guards.
+ * Mounts the `/api/v1/agent/*` surface. `GET /agent/whoami` is the identity
+ * probe; the two implemented capability sub-routes hang off the same plugin
+ * and share the `requireAgentScope(...)` guards:
+ *   #6 worktree spawn (`agent:worktree`) — TTY-free `git worktree add`
+ *   #7 check stream (`agent:check`) — `bun run check` over SSE
+ *   #8 commit + finalize (`agent:commit` / `agent:finalize`) remains a
+ *      separate ticket and is intentionally ABSENT here (no stubs).
  *
  * Every request is budgeted twice (ticket AC): 60 req/min per token and
  * 600 req/min global, via `src/middleware/rate-limit.ts`.
  */
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import type { Db, } from "../../db";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { jsonResponse, } from "../../routes/http-utils";
 import { requireAgentToken, type ResolvedAgentToken, } from "./auth";
+import { checkRoutes, } from "./check";
+import type { AgentRouteOpts, } from "./types";
+import { worktreeRoutes, } from "./worktree";
 
 /** Options threaded into the agent surface (limiter seams for tests). */
 export interface AgentApiOpts {
@@ -31,6 +32,12 @@ export interface AgentApiOpts {
   perTokenLimiter?: RateLimiter;
   /** Overrides the 600/min global limiter (test seam). */
   globalLimiter?: RateLimiter;
+  /** Git toplevel for worktree spawn (default: process.cwd()). */
+  repoRoot?: string;
+  spawnWorktree?: AgentRouteOpts["spawnWorktree"];
+  removeWorktree?: AgentRouteOpts["removeWorktree"];
+  measureDirectoryBytes?: AgentRouteOpts["measureDirectoryBytes"];
+  runCheck?: AgentRouteOpts["runCheck"];
 }
 
 /**
@@ -46,29 +53,32 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
     globalLimiter: opts.globalLimiter,
   };
 
-  return new Elysia({ name: "agent-api", },).guard(
-    { beforeHandle: requireAgentToken(deps,), },
-    (app,) =>
-      app.get(
-        `${prefix}/agent/whoami`,
-        async (ctx: unknown,) => {
-          const token = ctx as { agentToken: ResolvedAgentToken };
-          return jsonResponse({ data: { tokenId: token.agentToken.id, scope: token.agentToken.scope, }, },);
+  const subOpts: AgentRouteOpts = {
+    ...deps,
+    repoRoot: opts.repoRoot,
+    spawnWorktree: opts.spawnWorktree,
+    removeWorktree: opts.removeWorktree,
+    measureDirectoryBytes: opts.measureDirectoryBytes,
+    runCheck: opts.runCheck,
+  };
+
+  return new Elysia({ name: "agent-api", },)
+    .get(
+      `${prefix}/agent/whoami`,
+      async (ctx: unknown,) => {
+        const token = ctx as { agentToken: ResolvedAgentToken };
+        return jsonResponse({ data: { tokenId: token.agentToken.id, scope: token.agentToken.scope, }, },);
+      },
+      {
+        beforeHandle: [requireAgentToken(deps,),],
+        detail: {
+          summary: "Identify the presented agent token",
+          description:
+            "Echoes the resolved agent token id and its scope tier after token auth. The identity probe for the /api/v1/agent surface.",
+          tags: ["Agent API",],
         },
-        {
-          response: t.Object({
-            data: t.Object({
-              tokenId: t.String(),
-              scope: t.String(),
-            },),
-          },),
-          detail: {
-            summary: "Identify the presented agent token",
-            description:
-              "Echoes the resolved agent token id and its scope tier after token auth. The identity probe for the /api/v1/agent surface.",
-            tags: ["Agent API",],
-          },
-        },
-      ),
-  );
+      },
+    )
+    .use(worktreeRoutes(subOpts, prefix,),)
+    .use(checkRoutes(subOpts, prefix,),);
 }

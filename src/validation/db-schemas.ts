@@ -4198,3 +4198,14 @@ export const AgentTokensSchema = t.Object({
   revoked_at: t.Optional(t.String(),),
   last_used_at: t.Optional(t.String(),),
 },);
+
+// ── rsi_agent_worktrees ────────────────────────────────────────────
+export const RsiAgentWorktreesSchema = t.Object({
+  token_id: t.String(),
+  branch: t.String(),
+  path: t.String(),
+  disk_bytes: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  last_active_at: t.Optional(t.String(),),
+  removed_at: t.Optional(t.String(),),
+},);

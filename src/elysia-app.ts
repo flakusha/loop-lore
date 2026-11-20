@@ -46,6 +46,8 @@ import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
 import { governanceAfterHook, governanceBeforeHook, } from "./routes/v1/governance";
 
+import { gitWorktreeRemove, } from "./agent/api/worktree";
+import { startWorktreeCleanup, } from "./agent/cleanup";
 import { onValidationError, } from "./validation";
 
 /** */
@@ -82,6 +84,10 @@ export function createApp(deps: AppDeps,) {
   setStore(asyncStore,);
 
   const scheduler = startAppScheduler({ database, config, },);
+  const stopWorktreeCleanup = startWorktreeCleanup({
+    database,
+    removeWorktree: gitWorktreeRemove,
+  },);
 
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Error boundary: mark tracked requests as failed ───────
@@ -271,6 +277,7 @@ export function createApp(deps: AppDeps,) {
     },);
 
     scheduler.stop();
+    stopWorktreeCleanup();
   },);
 
   // ── API version resolver ───────────────────────────────────

@@ -2326,3 +2326,15 @@ export interface AgentTokens {
   revoked_at: string | null;
   last_used_at: string | null;
 }
+
+// ── rsi_agent_worktrees ────────────────────────────────────────────
+export interface RsiAgentWorktrees {
+  id: string;
+  token_id: string;
+  branch: string;
+  path: string;
+  disk_bytes: Generated<number>;
+  created_at: Generated<string>;
+  last_active_at: Generated<string>;
+  removed_at: string | null;
+}

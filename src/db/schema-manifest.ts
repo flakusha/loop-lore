@@ -1308,6 +1308,16 @@ export const SCHEMA = new SchemaManifest()
     max_value: col("integer",),
     effect: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("rsi_agent_worktrees", {
+    id: col("text", { primaryKey: true, },),
+    token_id: col("text", { notNull: true, },),
+    branch: col("text", { notNull: true, },),
+    path: col("text", { notNull: true, },),
+    disk_bytes: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_active_at: col("text", { notNull: true, hasDefault: true, },),
+    removed_at: col("text",),
+  },)
   .table("scenario_assemblies", {
     id: col("text", { primaryKey: true, },),
     scenario_id: col("text", { notNull: true, },),
