@@ -82,9 +82,55 @@ let resolvedWorkflowForTests: string | undefined;
   }),);
 /** Resolver calls, for precedence assertions. */
 const workflowResolverCalls: Array<Record<string, unknown>> = [];
-
 /** Provider snapshots handed to the engine, captured at dispatch time. */
 const videoEngineCalls: Array<Array<Record<string, unknown>>> = [];
+
+// ── Register mocks BEFORE importing the module under test ──────────────────────
+//
+// Bun's mock.module is process-global for a whole `bun test` invocation and
+// cannot be unmocked: without isolation these stubs leak into every later
+// test file (an unguarded config stub made the sibling template-route suite
+// see a configured video provider, so its "no provider -> 501" case saw the
+// async 202 submit instead). The repo convention for such files is
+// `describeOrSkip` + an ISOLATED guard: plain `bun test src/` skips
+// registration entirely, and the canonical gate (`bun run check` / `test:unit`)
+// runs with `--isolate`, where each file gets its own module registry and the
+// mocks cannot leak.
+if (ISOLATED) {
+  mock.module("../config/load", () => ({
+    ...realConfigLoad,
+    loadConfig: () => ({
+      ...structuredClone(createConfigSchema().defaults,),
+      assets: { uploadDir: "/tmp", },
+      generation: { providers: { video: videoProviders, }, },
+    }),
+  }),);
+
+  mock.module("./video-engine", () => ({
+    ...realVideoEngine,
+    generateVideoWithFailover: async (providers: Array<Record<string, unknown>>,) => {
+      videoEngineCalls.push(providers.map((provider,) => ({ ...provider, })),);
+      if (!engineOutcome.ok) { return engineOutcome; }
+
+      return {
+        ok: true,
+        buffer: Buffer.from("fake-video-bytes",),
+        mimeType: "video/mp4",
+        providerId: "comfyui:txt2video",
+      };
+    },
+  }),);
+
+  mock.module("../federation/storage-quota", () => ({
+    ...realQuota,
+    assertGenerationFitsStorage: async () => {
+      if (quotaRefusal) { throw quotaRefusal; }
+    },
+  }),);
+
+  mock.module("../assets/service/persist-generated", () => ({
+    ...realPersist,
+    persistGeneratedImages: async (opts: {
       links: Array<{ entityType: string; entityId: string; label: string }>;
       assetType?: string;
     },) => {
@@ -141,6 +187,10 @@ async function submitAndPoll(body: unknown, db: Kysely<DB>, userId: string,): Pr
   return { submitStatus: submit.status, jobId: submitBody.data.jobId, terminal, };
 }
 
+describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
+  let testDb: TestDb;
+  let db: Kysely<DB>;
+
   beforeAll(async () => {
     testDb = await createTestDb();
     db = testDb.db;
@@ -149,25 +199,14 @@ async function submitAndPoll(body: unknown, db: Kysely<DB>, userId: string,): Pr
     quotaRefusal = null;
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
   },);
+
   afterAll(() => destroyTestDb(testDb,));
 
   test("401 without an authenticated user", async () => {
     const res = await handleVideoGeneration({ prompt: "x", }, db,);
     expect(res.status,).toBe(401,);
   });
-  beforeAll(async () => {
-    testDb = await createTestDb();
-    db = testDb.db;
-    await insertUsers(db, "video-route-user", "Video Route User", { id: "video-route-user", } as never,);
-    engineOutcome = { ok: true, };
-    quotaRefusal = null;
-    persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
-  },);
-  afterAll(() => destroyTestDb(testDb,));
-  test("401 without an authenticated user", async () => {
-    const res = await handleVideoGeneration({ prompt: "x", }, db,);
-    expect(res.status,).toBe(401,);
-  });
+
   test("400 when neither prompt nor template renders one", async () => {
     const res = await handleVideoGeneration({}, db, "video-route-user", "user",);
     expect(res.status,).toBe(400,);
@@ -502,6 +541,7 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
     lastPersistOpts = null;
   },);
+
   test("submit returns 202 + jobId immediately, poll reaches done", async () => {
     // Immediacy: the submit response returns while the render is still
     // in flight — the first poll must observe pending, not a settled job.
@@ -695,7 +735,13 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
       },
     ];
   });
+},);
 
+// ── Stored workflow selection (useCase: video.generate) ─────────────────────────
+
+describeOrSkip("handleVideoGeneration — workflow selection", () => {
+  let selectionDb: TestDb;
+  let selectionDbHandle: Kysely<DB>;
   const configuredProviders = () => [
     {
       name: "video-test-provider",
@@ -711,6 +757,7 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     selectionDb = await createTestDb();
     selectionDbHandle = selectionDb.db;
   },);
+
   afterAll(() => destroyTestDb(selectionDb,));
 
   beforeEach(() => {
@@ -761,6 +808,7 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
 
   test("overrides every configured provider on the per-request copy only", async () => {
     resolvedWorkflowForTests = "stored-video-wf";
+    const storedVideoWf = "stored-video-wf";
     videoProviders = [
       {
         name: "first",
@@ -782,8 +830,8 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
 
     expect(terminal["status"],).toBe("done",);
     expect(videoEngineCalls[0]?.map((provider,) => provider.workflow),).toEqual([
-      "stored-video-wf",
-      "stored-video-wf",
+      storedVideoWf,
+      storedVideoWf,
     ],);
 
     expect(videoProviders?.map((provider,) => provider.workflow),).toEqual(["first-wf", "second-wf",],);

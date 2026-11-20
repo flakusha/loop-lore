@@ -144,62 +144,7 @@ const defaultConfig = {
 // `test:unit`) runs with `--isolate`, where each file gets its own module
 // registry and the mocks cannot leak.
 let handleImageGeneration: typeof imageGenRoute.handleImageGeneration;
-
-if (ISOLATED) {
-  mock.module("../config/load", () => ({
-    ...realConfigLoad,
-    // Merge test overrides over full schema defaults: a bare defaultConfig
-    // drops required sections (server, db, auth, byoKey, dynamicResponse)
-    // for every later file in the process (e2e server boot, handler
-    // policy wiring). Test behavior unchanged — assets/generation still
-    // come from defaultConfig.
-    loadConfig: () => ({ ...structuredClone(createConfigSchema().defaults,), ...defaultConfig, }),
-  }),);
-
-  mock.module("./image-engine", () => ({
-    ...realImageEngine,
-    generateImages: mockGenerateImages,
-    generateImagesWithFailover: async (
-      ...args: Parameters<typeof realImageEngine.generateImagesWithFailover>
-    ) => {
-      failoverOptsCalls.push(args[2] as unknown as Record<string, unknown>,);
-      return realImageEngine.generateImagesWithFailover(...args,);
-    },
-  }),);
-
-  // Narrow mocks to the specific submodules the SUT imports. Mocking the
-  // whole `../assets/service` barrel would clobber
-  // detectAssetType/unlinkAsset/getAsset/etc.
-  mock.module("../assets/service/persist-generated", () => ({
-    ...realPersistGenerated,
-    persistGeneratedImages: mockPersistGeneratedImages,
-  }),);
-
-  // Avatar Dogfood slice 1: the binding op is mocked so the route tests
-  // exercise gating + plumbing; the op itself has its own real-DB suite
-  // (avatar-service/generated.test.ts).
-  mock.module("../characters/services/avatar-service", () => ({
-    ...realAvatarService,
-    bindGeneratedActorAvatar: mockBindGeneratedAvatar,
-  }),);
-
-  // No ../db/index stub (see NOTE above).
-
-  // Workflow selection is resolved in the route; stub it so tests pin the
-  // precedence contract without depending on config file contents.
-  mock.module("./workflow-selection", () => ({
-    resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
-      workflowResolverCalls.push(opts,);
-      return resolvedWorkflowForTests;
-    },
-  }),);
-
-  // Dynamic import is required: mock.module must be registered BEFORE the
-  // SUT module is evaluated, which a static import cannot guarantee.
-  ({ handleImageGeneration, } = await import("./image-gen-route"));
-}
-// ── Helpers ─────────────────────────────────────────────────────────────────────
-
+const realFailover = realImageEngine.generateImagesWithFailover;
 /**
  * A freshly MIGRATED test database for the cases that pass no explicit handle.
  * `handleImageGeneration` falls back to `getDatabase()`, which without an
@@ -679,6 +624,26 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       await db.destroy();
     }
   });
+
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+    generateError = null;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
+
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+    generateError = null;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
 },);
 
 // ── /image ComfyUI-first opt-in routing (TASK-sd-cpp-provider) ──────────────
@@ -801,6 +766,45 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
     }),);
   },);
 
+  afterEach(() => {
+    // State restore for later suites: this file's mock.module registrations
+    // are process-global and cannot be unregistered, so the LAST loadConfig
+    // wins for everything that runs afterwards. Re-register the gate-free
+    // openai config (the state test (7) established before this describe
+    // existed) after each routing test.
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
+          providers: {
+            ...structuredClone(createConfigSchema().defaults,).generation.providers,
+            sd: [
+              {
+                name: "test-openai",
+                label: "Test OpenAI",
+                baseUrl: "http://127.0.0.1:8080/v1",
+                apiFamily: "openai",
+                purpose: "generate",
+                defaults: {
+                  width: 512,
+                  height: 512,
+                  steps: 20,
+                  cfgScale: 7,
+                  negativePrompt: "",
+                  sampler: "Euler",
+                },
+                timeout: 30_000,
+                generationTimeout: 120_000,
+              },
+            ],
+          },
+        },
+      }),
+    }),);
+  },);
+
   it("knob ON orders the healthy ComfyUI instance ahead of the chain", async () => {
     stubDiscoveryProbesHealthy();
     mock.module("../config/load", () => ({
@@ -856,6 +860,12 @@ async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
     owner_id: "avatar-other",
   },).execute();
 }
+
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    bindAvatarCalls.length = 0;
+    bindError = null;
+  },);
 
 describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 1)", () => {
   beforeEach(() => {
@@ -951,6 +961,11 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
       await db.destroy();
     }
   });
+
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+  },);
 },);
 
 // ── setAsChatBackground: persist generated image as active chat background ──
