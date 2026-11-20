@@ -269,7 +269,6 @@ function stubDiscoveryProbesHealthy(): void {
   }) as typeof fetch;
 }
 
-describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     persistGeneratedCalls.length = 0;
@@ -279,9 +278,14 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
   },);
-
-  // (1) Opt-out: no lora field → generateImages called WITHOUT lora
-
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+    generateError = null;
+  },);
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  },);
   it("does NOT pass lora to generateImages when lora field is absent", async () => {
     stubDiscoveryProbesHealthy();
     const body = makeBody({ prompt: "no lora prompt", },);
@@ -689,7 +693,6 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       await db.destroy();
     }
   });
-},);
 
 describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
   beforeEach(() => {
@@ -909,7 +912,6 @@ async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
   },).execute();
 }
 
-describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 1)", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     bindAvatarCalls.length = 0;
@@ -1004,7 +1006,6 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
       await db.destroy();
     }
   });
-},);
 
 describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
   beforeEach(() => {
