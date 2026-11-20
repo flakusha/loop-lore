@@ -3,7 +3,7 @@
 
 # TASK: status and verify subcommands that report, never assert
 
-**Status:** Not Started
+**Status:** Done (worktree-only `2375d61b2`; 10 pass, 95.14% coverage, size/typecheck/dprint/eslint green)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-external-tooling-build
@@ -31,12 +31,12 @@ Create `scripts/tooling/status.ts`.
 
 ## Acceptance Criteria
 
-- [ ] `status` lists each installed variant with project, ref, accelerator, arch, install root, and artifact list.
-- [ ] `status` probes the real tree; it does not assume `bin/` + `lib64/` exists.
-- [ ] Artifact discovery follows the unversioned `.so` symlink rather than globbing version suffixes.
-- [ ] `verify --json` emits a machine-readable document with the same fields.
-- [ ] No output from either subcommand states or implies that a binary was run or tested.
-- [ ] Each reported artifact carries a source ref or an explicit "unknown" marker.
-- [ ] Neither subcommand launches, executes, or loads any built binary.
-- [ ] A colocated `scripts/tooling/status.test.ts` runs both subcommands against a fixture install tree (including a prefix with stale versioned libraries alongside the unversioned symlink) and asserts the JSON field set, reaching **>= 80% line coverage** of `status.ts` when measured with `bun test scripts/tooling/ --coverage` (see epic caveat: `bun run test:coverage` scopes to `tests/e2e/` + `src/`, and the gate buckets all of `scripts/**` under one `scripts` module), with no waiver filed for it.
-- [ ] The module passes `giwt plan check-file-size` at 250 code lines.
+- [x] `status` lists each installed variant with project, ref, accelerator, arch, install root, and artifact list.
+- [x] `status` probes the real tree; it does not assume `bin/` + `lib64/` exists.
+- [x] Artifact discovery follows the unversioned `.so` symlink rather than globbing version suffixes.
+- [x] `verify --json` emits a machine-readable document with the same fields.
+- [x] No output from either subcommand states or implies that a binary was run or tested.
+- [x] Each reported artifact carries a source ref or an explicit "unknown" marker.
+- [x] Neither subcommand launches, executes, or loads any built binary.
+- [x] A colocated `scripts/tooling/status.test.ts` runs both subcommands against a fixture install tree (including a prefix with stale versioned libraries alongside the unversioned symlink) and asserts the JSON field set, reaching **>= 80% line coverage** of `status.ts` when measured with `bun test scripts/tooling/ --coverage` (measured 95.14%), with no waiver filed for it.
+- [x] The module passes `giwt plan check-file-size` at 250 code lines.

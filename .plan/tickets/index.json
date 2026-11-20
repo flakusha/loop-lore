@@ -64328,7 +64328,7 @@
     "epic": "epic-external-tooling-build",
     "tags": [],
     "source": ".plan/tickets/TASK-tooling-build-status-verify.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TOOLING-BUILD-UNVERIFIED-MATRIX-DOCS": {
     "hash": "3481f10",
