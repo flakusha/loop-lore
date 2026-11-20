@@ -257,6 +257,27 @@ describeOrSkip("start", () => {
     expect(events,).toContain("unhandledRejection",);
   });
 
+  test("LOOP_LORE_WATCHDOG=1 skips crash handlers but keeps signal exits", async () => {
+    const previous = process.env.LOOP_LORE_WATCHDOG;
+    process.env.LOOP_LORE_WATCHDOG = "1";
+    try {
+      const port = findFreePort();
+      currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
+      await start();
+      const events = processOnCalls.map(([event,],) => event);
+      expect(events,).toContain("SIGTERM",);
+      expect(events,).toContain("SIGINT",);
+      expect(events,).not.toContain("uncaughtException",);
+      expect(events,).not.toContain("unhandledRejection",);
+    } finally {
+      if (previous === undefined) {
+        delete process.env.LOOP_LORE_WATCHDOG;
+      } else {
+        process.env.LOOP_LORE_WATCHDOG = previous;
+      }
+    }
+  });
+
   test("gates traffic with 503 until the plugins are loaded", async () => {
     const port = findFreePort();
     currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };

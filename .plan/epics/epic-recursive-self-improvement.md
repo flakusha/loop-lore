@@ -138,13 +138,20 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 
 ### Watchdog
 
-- [ ] Process supervisor (`src/server/watchdog/supervisor.ts`) — spawn, monitor, restart with backoff
-- [ ] Health/liveness/readiness probes (`src/server/health.ts` — `/health`, `/ready`)
-- [ ] State machine (starting -> healthy -> degraded -> crashed -> stopping)
+- [x] Process supervisor (`src/server/watchdog/supervisor.ts`) — spawn, monitor, restart with backoff
+- [ ] Health/liveness/readiness probes — already shipped separately in `src/routes/liveness.ts` (`/health/live` + `/health/ready`, opt-in via `config.observability.health.*`); the watchdog reuses those routes and owns no second probe surface.
+- [x] State machine (starting -> healthy -> degraded -> crashed -> stopping)
 - [ ] Crash telemetry persistence (`watchdog_events` table)
 - [ ] Admin surface (`GET /api/admin/watchdog`)
-- [ ] `bun run watchdog` CLI entrypoint
+- [x] `bun run watchdog` CLI entrypoint
 - [ ] `deploy/docker-compose.yml` `restart: unless-stopped` already wired (verified 2026-09-27)
+
+> **Scope collision (2026-11-20):** This epic owns process/watchdog lifecycle —
+> spawn, health monitoring, restart backoff, and graceful-stop state transitions in
+> `src/server/watchdog/`. `TASK-runtime-integrity-watchdog-crash-recovery`
+> (`.plan/epics/epic-runtime-integrity-fail-safes.md:301`) and `TASK-swarm-supervisor`
+> (`.plan/epics/epic-local-process-swarm.md:213`) **consume** supervisor state;
+> neither owns a second supervisor.
 
 ### Agent Development Loop
 

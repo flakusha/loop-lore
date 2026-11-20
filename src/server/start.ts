@@ -403,5 +403,9 @@ export async function start() {
     httpServer,
     httpsServer,
     logger,
+  }, {
+    // Under supervision an uncaught exception must stay a hard crash so the
+    // watchdog sees the non-zero exit. Signal-triggered clean exits are intact.
+    installCrashHandlers: process.env.LOOP_LORE_WATCHDOG !== "1",
   },);
 }

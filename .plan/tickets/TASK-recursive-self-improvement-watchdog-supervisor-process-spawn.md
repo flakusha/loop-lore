@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** High
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

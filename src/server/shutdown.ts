@@ -29,8 +29,19 @@ export interface ShutdownResources {
   logger: ReturnType<typeof getLogger>;
 }
 
+/** Shutdown wiring options. */
+export interface ShutdownOptions {
+  /** Under a watchdog, skip the crash handlers so an uncaught exception exits
+   * non-zero and the supervisor observes the crash instead of a graceful exit. */
+  installCrashHandlers?: boolean;
+}
+
 /** Register hard-exit, signal, and fatal-error shutdown handlers. */
-export function registerShutdownHandlers(resources: ShutdownResources,): void {
+export function registerShutdownHandlers(
+  resources: ShutdownResources,
+  options: ShutdownOptions = {},
+): void {
+  const { installCrashHandlers = true, } = options;
   const {
     domainConfigWatcher,
     backgroundServices,
@@ -85,26 +96,28 @@ export function registerShutdownHandlers(resources: ShutdownResources,): void {
     process.on("SIGHUP", () => runShutdown({ signal: "SIGHUP", exitCode: CLEAN_EXIT_CODE, },),);
   }
 
-  process.on("uncaughtException", (err,) => {
-    try {
-      // Pass the Error object (not String(err)) so the logger captures the
-      // full stack for maxStackBytes post-mortem analysis.
-      logger.fatal({ message: "Uncaught exception", }, err,);
-    } catch {
-      /* last resort */
-    }
+  if (installCrashHandlers) {
+    process.on("uncaughtException", (err,) => {
+      try {
+        // Pass the Error object (not String(err)) so the logger captures the
+        // full stack for maxStackBytes post-mortem analysis.
+        logger.fatal({ message: "Uncaught exception", }, err,);
+      } catch {
+        /* last resort */
+      }
 
-    runShutdown({ signal: "uncaughtException", exitCode: CRASH_EXIT_CODE, },);
-  },);
+      runShutdown({ signal: "uncaughtException", exitCode: CRASH_EXIT_CODE, },);
+    },);
 
-  process.on("unhandledRejection", (reason,) => {
-    try {
-      const err = reason instanceof Error ? reason : new Error(String(reason,),);
-      logger.fatal({ message: "Unhandled rejection", }, err,);
-    } catch {
-      /* last resort */
-    }
+    process.on("unhandledRejection", (reason,) => {
+      try {
+        const err = reason instanceof Error ? reason : new Error(String(reason,),);
+        logger.fatal({ message: "Unhandled rejection", }, err,);
+      } catch {
+        /* last resort */
+      }
 
-    runShutdown({ signal: "unhandledRejection", exitCode: CRASH_EXIT_CODE, },);
-  },);
+      runShutdown({ signal: "unhandledRejection", exitCode: CRASH_EXIT_CODE, },);
+    },);
+  }
 }
