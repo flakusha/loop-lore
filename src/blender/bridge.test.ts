@@ -7,7 +7,7 @@
  */
 import { afterEach, beforeEach, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
-import { join, } from "node:path";
+import { join, resolve, } from "node:path";
 import {
   __resetBlenderLocks,
   BLENDER_STAGES,
@@ -258,6 +258,11 @@ ops = _OpsRoot()
 app = _App()
 `;
 
+/** Proves the fake is adversarial: `hasattr` lies, only `dir()` tells the truth. */
+const HASATTR_PROBE = `import bpy
+print(hasattr(bpy.ops.object, "quadriflow_remesh"), hasattr(bpy.ops.object, "totally_bogus"))
+`;
+
 test.skipIf(!HAS_PYTHON,)(
   "probe advertises only operators the fake bpy namespace exposes via dir()",
   () => {
@@ -265,7 +270,15 @@ test.skipIf(!HAS_PYTHON,)(
     mkdirSync(fakeDir, { recursive: true, },);
     writeFileSync(join(fakeDir, "bpy.py",), FAKE_BPY, { encoding: "utf8", },);
 
-    const run = Bun.spawnSync([PYTHON_BIN, "-c", PROBE_EXPR,], {
+    // The probe expression is a python one-liner; run it as a script file so
+    // the fake `bpy` package on the search path is the one it imports. Python
+    // puts the script's own directory first on sys.path, so the fake wins over
+    // any real `bpy` install. Paths must be absolute: the fixture dir is
+    // relative to the repo root, and the child runs with `cwd` set to it.
+    const probePath = resolve(fakeDir, "probe.py",);
+    writeFileSync(probePath, `${PROBE_EXPR}\n`, { encoding: "utf8", },);
+
+    const run = Bun.spawnSync([PYTHON_BIN, probePath,], {
       cwd: fakeDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -280,14 +293,14 @@ test.skipIf(!HAS_PYTHON,)(
 
     // The fake makes `hasattr` true for everything, so an hasattr-based probe
     // would have advertised the missing operator too.
-    const hasattrRun = Bun.spawnSync(
-      [
-        PYTHON_BIN,
-        "-c",
-        "import bpy;print(hasattr(bpy.ops.object,'quadriflow_remesh'),hasattr(bpy.ops.object,'totally_bogus'))",
-      ],
-      { cwd: fakeDir, stdout: "pipe", stderr: "pipe", },
-    );
+    const hasattrPath = resolve(fakeDir, "hasattr_probe.py",);
+    writeFileSync(hasattrPath, HASATTR_PROBE, { encoding: "utf8", },);
+
+    const hasattrRun = Bun.spawnSync([PYTHON_BIN, hasattrPath,], {
+      cwd: fakeDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
 
     expect(hasattrRun.stdout.toString().trim(),).toBe("True True",);
   },
