@@ -36575,7 +36575,7 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "a533944"
   },
   "TASK-COMFYUI-NODE-ID-ALLOCATION": {
@@ -64368,6 +64368,23 @@
     "tags": [],
     "title": "Tooling Support & Improvement",
     "type": "TASK"
+  },
+  "TASK-TOOLING-REPORT-STORE-AND-INGEST-API": {
+    "hash": "c20e139",
+    "git_issue": "c20e139",
+    "extid": "TASK-TOOLING-REPORT-STORE-AND-INGEST-API",
+    "type": "TASK",
+    "title": "tooling report store and ingest API",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-recursive-self-improvement",
+    "project": "",
+    "tags": [
+      "harness",
+      "rsi"
+    ],
+    "source": ".plan/tickets/TASK-tooling-report-store-and-ingest-api.md",
+    "status": "done"
   },
   "TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION": {
     "epic": "epic-workflow-engine",

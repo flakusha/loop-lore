@@ -3,7 +3,7 @@
 
 # TASK: tooling report store and ingest API
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-recursive-self-improvement

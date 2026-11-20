@@ -3,7 +3,7 @@
 
 # TASK: UI API workflow converter
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** reopened 2026-11-20 for mode semantics — upstream mode 2 = muted, mode 4 = bypass; legacy mode 8 and any other unknown mode now fail loudly. Graph-level bypass passthrough is deferred pending the operator decision; mode-8 provenance is likewise an open question.
 **Priority:** medium
 **Effort:** Large
