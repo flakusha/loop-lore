@@ -12,8 +12,10 @@ import type { ImageEditTemplateConfig, } from "../config/sections/templates";
 import type { ComfyUIClient, } from "../generation/providers/comfyui";
 import { createLogger, } from "../logger";
 import type { NodeDiscovery, } from "./node-availability";
+import { templateAvailability, } from "./node-availability";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { handleTemplates, } from "./routes";
+import { buildTemplateList, } from "./template-list";
 import { registerConfigWorkflows, TemplateRegistry, } from "./template-registry";
 import type { WorkflowTemplate, } from "./types";
 
@@ -199,5 +201,67 @@ describe("ComfyUI node discovery cache", () => {
     const healthy = await empty.discoverNodes();
     expect(healthy.reachable,).toBe(true,);
     expect(healthy.nodes.size,).toBe(0,);
+  });
+});
+
+describe("template availability contract", () => {
+  test("non-comfyui backends are not checked", () => {
+    expect(templateAvailability({ id: "a", required_nodes: ["X",], }, null, null, null,),).toEqual({
+      available: true,
+      status: "not_checked",
+    },);
+  });
+
+  test("unreachable discovery marks templates unavailable", () => {
+    expect(templateAvailability({ id: "a", required_nodes: [], }, "comfyui", discovery([], false,), null,),).toEqual({
+      available: false,
+      status: "unreachable",
+    },);
+  });
+
+  test("allowed ids win without naming missing nodes", () => {
+    expect(
+      templateAvailability({ id: "a", required_nodes: ["X",], }, "comfyui", discovery(["X",],), new Set(["a",],),),
+    ).toEqual({
+      available: true,
+      status: "available",
+    },);
+  });
+
+  test("missing nodes name the absent classes", () => {
+    expect(templateAvailability({ id: "a", required_nodes: ["X", "Y",], }, "comfyui", discovery(["X",],), new Set(),),)
+      .toEqual({
+        available: false,
+        status: "missing_nodes",
+        missing_nodes: ["Y",],
+      },);
+  });
+
+  test("buildTemplateList projects summaries with availability", async () => {
+    const registry = new TemplateRegistry();
+    registry.register(template("a", ["X",],),);
+    registry.register(template("b", [],),);
+    const result = await buildTemplateList({ backend: "comfyui", category: null, }, {
+      registry,
+      discover: async () => discovery(["X",],),
+    },);
+
+    expect(result.node_discovery,).toEqual({ status: "ok", node_count: 1, },);
+    const byId = new Map(result.data.map((summary,) => [summary.id, summary,]),);
+    expect(byId.get("a",)?.availability.status,).toBe("available",);
+    expect(byId.get("b",)?.availability,).toEqual({ available: true, status: "available", },);
+    expect("build" in (byId.get("a",) ?? {}),).toBe(false,);
+  });
+
+  test("buildTemplateList reports unreachable discovery", async () => {
+    const registry = new TemplateRegistry();
+    registry.register(template("a", [],),);
+    const result = await buildTemplateList({ backend: "comfyui", category: null, }, {
+      registry,
+      discover: async () => discovery([], false,),
+    },);
+
+    expect(result.node_discovery,).toEqual({ status: "unreachable", node_count: 0, },);
+    expect(result.data[0]?.availability.status,).toBe("unreachable",);
   });
 });
