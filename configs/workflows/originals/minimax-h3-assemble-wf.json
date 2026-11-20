@@ -1,0 +1,11 @@
+{
+  "1": {
+    "inputs": {
+      "images": "{{segment_slots}}",
+      "frame_rate": "{{fps}}",
+      "filename_prefix": "loop-lore-minimax-h3-assembled",
+      "format": "video/h264-mp4"
+    },
+    "class_type": "VHS_VideoCombine"
+  }
+}

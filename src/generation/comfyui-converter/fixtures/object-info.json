@@ -1868,5 +1868,1527 @@
       "optional": []
     },
     "_source": "observed:workflow-pack-absent"
+  },
+  "AudioMerge": {
+    "input": {
+      "required": {
+        "audio1": [
+          "AUDIO"
+        ],
+        "audio2": [
+          "AUDIO"
+        ],
+        "merge_method": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "audio1",
+        "audio2",
+        "merge_method"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_audio.py"
+  },
+  "BatchImagesNode": {
+    "input": {
+      "required": {
+        "images": [
+          "COMFY_AUTOGROW_V3"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "images"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_post_processing.py"
+  },
+  "CFGGuider": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "positive": [
+          "CONDITIONING"
+        ],
+        "negative": [
+          "CONDITIONING"
+        ],
+        "cfg": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "positive",
+        "negative",
+        "cfg"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "ClipProjApply": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "projection": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "projection"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-ClipProj.py"
+  },
+  "ConditioningZeroOut": {
+    "input": {
+      "required": {
+        "conditioning": [
+          "CONDITIONING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "conditioning"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "EmptyLatentImage": {
+    "input": {
+      "required": {
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ],
+        "batch_size": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "batch_size"
+      ],
+      "optional": []
+    },
+    "_source": "pack:nodes.py"
+  },
+  "Image Load": {
+    "input": {
+      "required": {
+        "image": [
+          "COMBO"
+        ],
+        "RGBA": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {
+        "filename_text_extension": [
+          "BOOLEAN"
+        ],
+        "colour_space": [
+          "COMBO"
+        ],
+        "icc_mode": [
+          "COMBO"
+        ],
+        "path": [
+          "STRING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "RGBA"
+      ],
+      "optional": [
+        "filename_text_extension",
+        "colour_space",
+        "icc_mode",
+        "path"
+      ]
+    },
+    "_source": "pack:custom_nodes/was-node-suite-comfyui.py"
+  },
+  "ImageCompare": {
+    "input": {
+      "required": {
+        "compare_view": [
+          "IMAGECOMPARE"
+        ]
+      },
+      "optional": {
+        "image_a": [
+          "IMAGE"
+        ],
+        "image_b": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "compare_view"
+      ],
+      "optional": [
+        "image_a",
+        "image_b"
+      ]
+    },
+    "_source": "pack:comfy_extras/nodes_image_compare.py"
+  },
+  "JsonExtractString": {
+    "input": {
+      "required": {
+        "json_string": [
+          "STRING"
+        ],
+        "key": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "json_string",
+        "key"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_string.py"
+  },
+  "LatentUpscaleModelLoader": {
+    "input": {
+      "required": {
+        "model_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_hunyuan.py"
+  },
+  "LoadAudio": {
+    "input": {
+      "required": {
+        "audio": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "audio"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_audio.py"
+  },
+  "ManualSigmas": {
+    "input": {
+      "required": {
+        "sigmas": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "sigmas"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "MiniMaxH3ImageConditioning": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "prompt": [
+          "STRING"
+        ],
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "vae": [
+          "VAE"
+        ],
+        "images": [
+          "COMFY_AUTOGROW_V3"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "prompt",
+        "width",
+        "height"
+      ],
+      "optional": [
+        "vae",
+        "images"
+      ]
+    },
+    "_source": "pack:comfy_extras/nodes_minimax_h3.py"
+  },
+  "NGAIProvider": {
+    "input": {
+      "required": {
+        "source": [
+          "STRING"
+        ],
+        "provider": [
+          "COMBO"
+        ],
+        "base_url": [
+          "STRING"
+        ],
+        "model": [
+          "STRING"
+        ],
+        "api_key_env": [
+          "STRING"
+        ],
+        "vision": [
+          "BOOLEAN"
+        ],
+        "audio": [
+          "BOOLEAN"
+        ],
+        "timeout_seconds": [
+          "INT"
+        ],
+        "max_tokens": [
+          "INT"
+        ],
+        "keep_alive": [
+          "INT"
+        ],
+        "temperature": [
+          "FLOAT"
+        ],
+        "top_p": [
+          "FLOAT"
+        ],
+        "top_k": [
+          "INT"
+        ],
+        "min_p": [
+          "FLOAT"
+        ],
+        "frequency_penalty": [
+          "FLOAT"
+        ],
+        "presence_penalty": [
+          "FLOAT"
+        ],
+        "seed": [
+          "INT"
+        ],
+        "fixed_seed": [
+          "BOOLEAN"
+        ],
+        "model_text": [
+          "STRING"
+        ],
+        "model_caption": [
+          "STRING"
+        ],
+        "model_audio": [
+          "STRING"
+        ]
+      },
+      "optional": {
+        "clip": [
+          "CLIP"
+        ],
+        "local_model": [
+          "COMBO"
+        ],
+        "local_type": [
+          "COMBO"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "source",
+        "provider",
+        "base_url",
+        "model",
+        "api_key_env",
+        "vision",
+        "audio",
+        "timeout_seconds",
+        "max_tokens",
+        "keep_alive",
+        "temperature",
+        "top_p",
+        "top_k",
+        "min_p",
+        "frequency_penalty",
+        "presence_penalty",
+        "seed",
+        "fixed_seed",
+        "model_text",
+        "model_caption",
+        "model_audio"
+      ],
+      "optional": [
+        "clip",
+        "local_model",
+        "local_type"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGContextAudio": {
+    "input": {
+      "required": {
+        "audio": [
+          "COMBO"
+        ],
+        "name": [
+          "STRING"
+        ],
+        "description": [
+          "STRING"
+        ],
+        "content": [
+          "COMBO"
+        ],
+        "usage": [
+          "COMBO"
+        ],
+        "preserve": [
+          "COMBO"
+        ],
+        "speaker": [
+          "STRING"
+        ]
+      },
+      "optional": {
+        "audio_in": [
+          "AUDIO"
+        ],
+        "trim_start": [
+          "FLOAT"
+        ],
+        "trim_end": [
+          "FLOAT"
+        ],
+        "context_id": [
+          "STRING"
+        ],
+        "color": [
+          "STRING"
+        ],
+        "content_roles": [
+          "STRING"
+        ],
+        "usage_roles": [
+          "STRING"
+        ],
+        "context_options": [
+          "STRING"
+        ],
+        "ai_provider": [
+          "NG_AI_PROVIDER"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "audio",
+        "name",
+        "description",
+        "content",
+        "usage",
+        "preserve",
+        "speaker"
+      ],
+      "optional": [
+        "audio_in",
+        "trim_start",
+        "trim_end",
+        "context_id",
+        "color",
+        "content_roles",
+        "usage_roles",
+        "context_options",
+        "ai_provider"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGContextConnector": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "vae": [
+          "VAE"
+        ],
+        "audio_vae": [
+          "VAE"
+        ]
+      },
+      "optional": {
+        "model_fl2va": [
+          "MODEL"
+        ],
+        "model_ref2va": [
+          "MODEL"
+        ],
+        "ai_provider": [
+          "NG_AI_PROVIDER"
+        ],
+        "context_text": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "context_image": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "context_video": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "context_audio": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "preview_vae": [
+          "VAE"
+        ],
+        "model_patch": [
+          "MODEL_PATCH"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "vae",
+        "audio_vae"
+      ],
+      "optional": [
+        "model_fl2va",
+        "model_ref2va",
+        "ai_provider",
+        "context_text",
+        "context_image",
+        "context_video",
+        "context_audio",
+        "preview_vae",
+        "model_patch"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGContextImage": {
+    "input": {
+      "required": {
+        "image": [
+          "COMBO"
+        ],
+        "name": [
+          "STRING"
+        ],
+        "description": [
+          "STRING"
+        ],
+        "content": [
+          "COMBO"
+        ],
+        "usage": [
+          "COMBO"
+        ],
+        "preserve": [
+          "COMBO"
+        ]
+      },
+      "optional": {
+        "image_in": [
+          "IMAGE"
+        ],
+        "context_id": [
+          "STRING"
+        ],
+        "color": [
+          "STRING"
+        ],
+        "content_roles": [
+          "STRING"
+        ],
+        "usage_roles": [
+          "STRING"
+        ],
+        "context_options": [
+          "STRING"
+        ],
+        "ai_provider": [
+          "NG_AI_PROVIDER"
+        ],
+        "subject_ids": [
+          "STRING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "name",
+        "description",
+        "content",
+        "usage",
+        "preserve"
+      ],
+      "optional": [
+        "image_in",
+        "context_id",
+        "color",
+        "content_roles",
+        "usage_roles",
+        "context_options",
+        "ai_provider",
+        "subject_ids"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGContextText": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING"
+        ],
+        "name": [
+          "STRING"
+        ],
+        "description": [
+          "STRING"
+        ],
+        "content": [
+          "COMBO"
+        ],
+        "usage": [
+          "COMBO"
+        ],
+        "preserve": [
+          "COMBO"
+        ]
+      },
+      "optional": {
+        "text_in": [
+          "STRING"
+        ],
+        "context_id": [
+          "STRING"
+        ],
+        "color": [
+          "STRING"
+        ],
+        "content_roles": [
+          "STRING"
+        ],
+        "usage_roles": [
+          "STRING"
+        ],
+        "context_options": [
+          "STRING"
+        ],
+        "ai_provider": [
+          "NG_AI_PROVIDER"
+        ],
+        "subject_ids": [
+          "STRING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "name",
+        "description",
+        "content",
+        "usage",
+        "preserve"
+      ],
+      "optional": [
+        "text_in",
+        "context_id",
+        "color",
+        "content_roles",
+        "usage_roles",
+        "context_options",
+        "ai_provider",
+        "subject_ids"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGGuide": {
+    "input": {
+      "required": {
+        "chapter": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "chapter"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGH3Director": {
+    "input": {
+      "required": {
+        "context": [
+          "NG_DIRECTOR_INPUT"
+        ],
+        "idea": [
+          "STRING"
+        ],
+        "shots": [
+          "STRING"
+        ],
+        "project_seconds": [
+          "FLOAT"
+        ],
+        "chunk_seconds": [
+          "FLOAT"
+        ],
+        "width": [
+          "INT"
+        ],
+        "height": [
+          "INT"
+        ],
+        "mode": [
+          "COMBO"
+        ],
+        "continuity": [
+          "COMBO"
+        ],
+        "pin_frames": [
+          "COMBO"
+        ],
+        "soundscape": [
+          "STRING"
+        ],
+        "music": [
+          "STRING"
+        ],
+        "style": [
+          "COMBO"
+        ],
+        "seed": [
+          "INT"
+        ],
+        "steps": [
+          "INT"
+        ],
+        "sampler_name": [
+          "COMBO"
+        ],
+        "scheduler": [
+          "COMBO"
+        ],
+        "shift_video": [
+          "FLOAT"
+        ],
+        "shift_audio": [
+          "FLOAT"
+        ],
+        "resize_method": [
+          "COMBO"
+        ],
+        "ref_image_size": [
+          "COMBO"
+        ]
+      },
+      "optional": {
+        "prepend_text": [
+          "STRING"
+        ],
+        "continue_from": [
+          "STRING"
+        ],
+        "duration_seconds": [
+          "FLOAT"
+        ],
+        "prompt_override": [
+          "STRING"
+        ],
+        "resume": [
+          "BOOLEAN"
+        ],
+        "resume_delete_done": [
+          "BOOLEAN"
+        ],
+        "control_strength": [
+          "FLOAT"
+        ],
+        "control_start": [
+          "FLOAT"
+        ],
+        "control_end": [
+          "FLOAT"
+        ],
+        "models": [
+          "STRING"
+        ],
+        "output": [
+          "COMBO"
+        ],
+        "spectrum": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "context",
+        "idea",
+        "shots",
+        "project_seconds",
+        "chunk_seconds",
+        "width",
+        "height",
+        "mode",
+        "continuity",
+        "pin_frames",
+        "soundscape",
+        "music",
+        "style",
+        "seed",
+        "steps",
+        "sampler_name",
+        "scheduler",
+        "shift_video",
+        "shift_audio",
+        "resize_method",
+        "ref_image_size"
+      ],
+      "optional": [
+        "prepend_text",
+        "continue_from",
+        "duration_seconds",
+        "prompt_override",
+        "resume",
+        "resume_delete_done",
+        "control_strength",
+        "control_start",
+        "control_end",
+        "models",
+        "output",
+        "spectrum"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGProjectRender": {
+    "input": {
+      "required": {
+        "sequence": [
+          "NG_DIRECTOR_RESULT"
+        ]
+      },
+      "optional": {
+        "upscale_model": [
+          "LATENT_UPSCALE_MODEL"
+        ],
+        "upscale_2k": [
+          "BOOLEAN"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "sequence"
+      ],
+      "optional": [
+        "upscale_model",
+        "upscale_2k"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "NGStoryboard": {
+    "input": {
+      "required": {
+        "board": [
+          "STRING"
+        ],
+        "rendered": [
+          "STRING"
+        ]
+      },
+      "optional": {
+        "context": [
+          "NG_DIRECTOR_INPUT"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "board",
+        "rendered"
+      ],
+      "optional": [
+        "context"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-minimaxh3-director.py"
+  },
+  "PreviewAny": {
+    "input": {
+      "required": {
+        "source": [
+          "*"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "source"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_preview_any.py"
+  },
+  "PrimitiveBoolean": {
+    "input": {
+      "required": {
+        "value": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "value"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_primitive.py"
+  },
+  "PrimitiveFloat": {
+    "input": {
+      "required": {
+        "value": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "value"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_primitive.py"
+  },
+  "PrimitiveStringMultiline": {
+    "input": {
+      "required": {
+        "value": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "value"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_primitive.py"
+  },
+  "QwenImage21Cache": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "device": [
+          "COMBO"
+        ],
+        "dtype": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "device",
+        "dtype"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_qwen.py"
+  },
+  "RandomNoise": {
+    "input": {
+      "required": {
+        "noise_seed": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "noise_seed"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_custom_sampler.py"
+  },
+  "ResizeImageMaskNode": {
+    "input": {
+      "required": {
+        "input": [
+          "COMFY_MATCHTYPE_V3"
+        ],
+        "resize_type": [
+          "COMFY_DYNAMICCOMBO_V3"
+        ],
+        "scale_method": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "input",
+        "resize_type",
+        "scale_method"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_post_processing.py"
+  },
+  "SaveAnimatedWEBP": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ],
+        "fps": [
+          "FLOAT"
+        ],
+        "lossless": [
+          "BOOLEAN"
+        ],
+        "quality": [
+          "INT"
+        ],
+        "method": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "filename_prefix",
+        "fps",
+        "lossless",
+        "quality",
+        "method"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_images.py"
+  },
+  "SaveImageAdvanced": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ],
+        "format": [
+          "COMFY_DYNAMICCOMBO_V3"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "filename_prefix",
+        "format"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_images.py"
+  },
+  "SaveVideo": {
+    "input": {
+      "required": {
+        "video": [
+          "VIDEO"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ],
+        "format": [
+          "COMFY_DYNAMICCOMBO_V3"
+        ]
+      },
+      "optional": {
+        "codec": [
+          "COMFY_DYNAMICCOMBO_V3"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "video",
+        "filename_prefix",
+        "format"
+      ],
+      "optional": [
+        "codec"
+      ]
+    },
+    "_source": "pack:comfy_extras/nodes_video.py"
+  },
+  "StringReplace": {
+    "input": {
+      "required": {
+        "string": [
+          "STRING"
+        ],
+        "find": [
+          "STRING"
+        ],
+        "replace": [
+          "STRING"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "string",
+        "find",
+        "replace"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_string.py"
+  },
+  "TextEncodeQwenImage21": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "prompt": [
+          "STRING"
+        ],
+        "negative_prompt": [
+          "STRING"
+        ],
+        "resolution": [
+          "INT"
+        ],
+        "images": [
+          "COMFY_AUTOGROW_V3"
+        ]
+      },
+      "optional": {
+        "vae": [
+          "VAE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "prompt",
+        "negative_prompt",
+        "resolution",
+        "images"
+      ],
+      "optional": [
+        "vae"
+      ]
+    },
+    "_source": "pack:comfy_extras/nodes_qwen.py"
+  },
+  "TextGenerateV2": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "prompt": [
+          "STRING"
+        ],
+        "max_length": [
+          "INT"
+        ],
+        "sampling_mode": [
+          "COMFY_DYNAMICCOMBO_V3"
+        ]
+      },
+      "optional": {
+        "images": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "videos": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "audios": [
+          "COMFY_AUTOGROW_V3"
+        ],
+        "thinking": [
+          "BOOLEAN"
+        ],
+        "use_default_template": [
+          "BOOLEAN"
+        ],
+        "mtp": [
+          "COMBO"
+        ],
+        "system_prompt": [
+          "STRING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "prompt",
+        "max_length",
+        "sampling_mode"
+      ],
+      "optional": [
+        "images",
+        "videos",
+        "audios",
+        "thinking",
+        "use_default_template",
+        "mtp",
+        "system_prompt"
+      ]
+    },
+    "_source": "pack:comfy_extras/nodes_textgen.py"
+  },
+  "TrimAudioDuration": {
+    "input": {
+      "required": {
+        "audio": [
+          "AUDIO"
+        ],
+        "start_index": [
+          "FLOAT"
+        ],
+        "duration": [
+          "FLOAT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "audio",
+        "start_index",
+        "duration"
+      ],
+      "optional": []
+    },
+    "_source": "pack:comfy_extras/nodes_audio.py"
+  },
+  "UnetLoaderGGUF": {
+    "input": {
+      "required": {
+        "unet_name": [
+          "COMBO"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "unet_name"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/ComfyUI-GGUF.py"
+  },
+  "VHS_VideoCombine": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "frame_rate": [
+          "FLOAT"
+        ],
+        "loop_count": [
+          "INT"
+        ],
+        "filename_prefix": [
+          "STRING"
+        ],
+        "format": [
+          "COMBO"
+        ],
+        "pingpong": [
+          "BOOLEAN"
+        ],
+        "save_output": [
+          "BOOLEAN"
+        ]
+      },
+      "optional": {
+        "audio": [
+          "AUDIO"
+        ],
+        "meta_batch": [
+          "VHS_BatchManager"
+        ],
+        "vae": [
+          "VAE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "frame_rate",
+        "loop_count",
+        "filename_prefix",
+        "format",
+        "pingpong",
+        "save_output"
+      ],
+      "optional": [
+        "audio",
+        "meta_batch",
+        "vae"
+      ]
+    },
+    "_source": "pack:custom_nodes/comfyui-videohelpersuite.py"
+  },
+  "WASImageCompare": {
+    "input": {
+      "required": {
+        "image_a": [
+          "IMAGE"
+        ],
+        "image_b": [
+          "IMAGE"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "image_a",
+        "image_b"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/was-node-suite-comfyui.py"
+  },
+  "WASLLMComplete": {
+    "input": {
+      "required": {
+        "llm": [
+          "WAS_LLM"
+        ],
+        "prompt": [
+          "STRING"
+        ],
+        "max_tokens": [
+          "INT"
+        ]
+      },
+      "optional": {
+        "system_prompt": [
+          "STRING"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "audio": [
+          "AUDIO"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "llm",
+        "prompt",
+        "max_tokens"
+      ],
+      "optional": [
+        "system_prompt",
+        "image",
+        "audio"
+      ]
+    },
+    "_source": "pack:custom_nodes/was-node-suite-comfyui.py"
+  },
+  "WASLLMGGUFLoader": {
+    "input": {
+      "required": {
+        "model": [
+          "COMBO,STRING"
+        ],
+        "mmproj": [
+          "COMBO,STRING"
+        ],
+        "n_ctx": [
+          "INT"
+        ],
+        "gpu_layers": [
+          "INT"
+        ],
+        "flash_attn": [
+          "BOOLEAN"
+        ],
+        "chat_format": [
+          "COMBO"
+        ],
+        "temperature": [
+          "FLOAT"
+        ],
+        "top_p": [
+          "FLOAT"
+        ],
+        "top_k": [
+          "INT"
+        ],
+        "min_p": [
+          "FLOAT"
+        ],
+        "repeat_penalty": [
+          "FLOAT"
+        ],
+        "seed": [
+          "INT"
+        ],
+        "max_tokens": [
+          "INT"
+        ]
+      },
+      "optional": {}
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "mmproj",
+        "n_ctx",
+        "gpu_layers",
+        "flash_attn",
+        "chat_format",
+        "temperature",
+        "top_p",
+        "top_k",
+        "min_p",
+        "repeat_penalty",
+        "seed",
+        "max_tokens"
+      ],
+      "optional": []
+    },
+    "_source": "pack:custom_nodes/was-node-suite-comfyui.py"
+  },
+  "WASLLMUnload": {
+    "input": {
+      "required": {},
+      "optional": {
+        "llm": [
+          "WAS_LLM"
+        ],
+        "embedding": [
+          "WAS_LLM_EMBEDDING"
+        ],
+        "passthrough": [
+          "*"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [],
+      "optional": [
+        "llm",
+        "embedding",
+        "passthrough"
+      ]
+    },
+    "_source": "pack:custom_nodes/was-node-suite-comfyui.py"
   }
 }

@@ -18,6 +18,18 @@ export type SubstitutionVars = Record<string, string | number | boolean>;
 /** What a single string input can become after substitution. */
 export type SubstitutionValue = string | number | boolean;
 
+/** Options for {@link substituteWorkflow}. */
+export interface SubstituteOptions {
+  /**
+   * Expand `{a|b|{c|d}}` variant groups: innermost-first, one seeded pick
+   * each. Default false — variant braces pass through literally (opt-in).
+   * Expansion runs after `{{...}}` interpolation, so prompt vars may carry
+   * variants. `{{...}}` spans are never treated as variants.
+   */
+  expandVariants?: boolean;
+  /** Seed for variant picks. Defaults to numeric `vars.seed`, else random. */
+  variantSeed?: number;
+}
 /**
  * The substituted shape of `T`.
  *
@@ -36,6 +48,48 @@ const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
 /** Match pattern for a string that is *exactly* one {{variable}} */
 const WHOLE_PLACEHOLDER_RE = /^\{\{([^}]+)\}\}$/;
 
+/** Innermost single-brace group. Only groups containing `|` expand. */
+const INNER_VARIANT_RE = /\{([^{}]*)\}/g;
+
+/** mulberry32 — small seeded PRNG for deterministic variant picks. */
+function mulberry32(seed: number,): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6D2B79F5) >>> 0;
+    let mixed = Math.imul(state ^ (state >>> 15), state | 1,);
+    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61,);
+    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4_294_967_296;
+  };
+}
+
+/** Pick the variant seed: explicit option, else numeric `vars.seed`, else random. */
+function resolveVariantSeed(options: SubstituteOptions, vars: SubstitutionVars,): number {
+  if (typeof options.variantSeed === "number") { return options.variantSeed; }
+  return typeof vars.seed === "number" ? vars.seed : Math.floor(Math.random() * 2_147_483_647,);
+}
+
+/**
+ * Expand `{a|b|{c|d}}` groups innermost-first with one seeded pick each.
+ * Groups without `|` and unbalanced braces pass through untouched.
+ * @param str - Interpolated string to expand
+ * @param rng - Seeded pick source (one per top-level substitute call)
+ * @throws Never
+ */
+function expandVariants(str: string, rng: () => number,): string {
+  let current = str;
+  for (;;) {
+    let changed = false;
+    const next = current.replace(INNER_VARIANT_RE, (match, group,) => {
+      const choices = String(group,).split("|",);
+      if (choices.length < 2) { return match; }
+      changed = true;
+      return choices[Math.floor(rng() * choices.length,)]!;
+    },);
+
+    if (!changed) { return current; }
+    current = next;
+  }
+}
 /**
  * Every `{{placeholder}}` name appearing anywhere in a JSON-compatible value.
  *
@@ -77,27 +131,39 @@ export function collectPlaceholders(obj: unknown,): Set<string> {
  * Strings containing `{{...}}` are processed. All other types pass through unchanged.
  * @param obj - JSON value to process (object, array, string, number, boolean, null)
  * @param vars - Variable map for simple replacements
+ * @param options - Variant expansion opt-in (default: off)
  * @returns New object with placeholders replaced; string leaves may widen to
  *   the substituted variable's own type
  */
 export function substituteWorkflow<T,>(
   obj: T,
   vars: SubstitutionVars,
+  options: SubstituteOptions = {},
+): Substituted<T> {
+  const rng = options.expandVariants === true ? mulberry32(resolveVariantSeed(options, vars,),) : null;
+  return substituteDeep(obj, vars, rng,);
+}
+
+/** Inner recursion: threads the shared pick source. */
+function substituteDeep<T,>(
+  obj: T,
+  vars: SubstitutionVars,
+  rng: (() => number) | null,
 ): Substituted<T> {
   if (obj === null || obj === undefined) { return obj as Substituted<T>; }
 
   if (typeof obj === "string") {
-    return substituteValue(obj, vars,) as Substituted<T>;
+    return substituteValue(obj, vars, rng,) as Substituted<T>;
   }
 
   if (Array.isArray(obj,)) {
-    return Array.from(obj, (item,) => substituteWorkflow(item, vars,),) as Substituted<T>;
+    return Array.from(obj, (item,) => substituteDeep(item, vars, rng,),) as Substituted<T>;
   }
 
   if (typeof obj === "object") {
     const result: Record<string, unknown> = {};
     for (const [key, value,] of Object.entries(obj as Record<string, unknown>,)) {
-      result[key] = substituteWorkflow(value, vars,);
+      result[key] = substituteDeep(value, vars, rng,);
     }
 
     return result as Substituted<T>;
@@ -106,7 +172,6 @@ export function substituteWorkflow<T,>(
   // Numbers, booleans, null — pass through
   return obj as Substituted<T>;
 }
-
 /**
  * Substitute a single string value.
  *
@@ -123,23 +188,30 @@ export function substituteWorkflow<T,>(
  *
  * @param str - String containing `{{...}}` placeholders
  * @param vars - Variable map
+ * @param rng - Shared pick source, null when expansion is off
  * @returns The typed value, or a string when interpolating
  */
-function substituteValue(str: string, vars: SubstitutionVars,): string | number | boolean {
+function substituteValue(str: string, vars: SubstitutionVars, rng: (() => number) | null,): string | number | boolean {
   // Fast path: no placeholders
-  if (!str.includes("{{",)) { return str; }
+  if (!str.includes("{{",)) {
+    return rng !== null && str.includes("{",) ? expandVariants(str, rng,) : str;
+  }
 
   const whole = WHOLE_PLACEHOLDER_RE.exec(str,);
   if (whole) {
     const key = whole[1]!.trim();
     // Unknown variable → empty string (preserves workflow structure)
-    return key in vars ? vars[key]! : "";
+    if (!(key in vars)) { return ""; }
+    const value = vars[key]!;
+    return typeof value === "string" && rng !== null ? expandVariants(value, rng,) : value;
   }
 
-  return str.replaceAll(PLACEHOLDER_RE, (_match, path,) => {
+  const interpolated = str.replaceAll(PLACEHOLDER_RE, (_match, path,) => {
     const key = path.trim();
     return key in vars ? String(vars[key],) : "";
   },);
+
+  return rng !== null ? expandVariants(interpolated, rng,) : interpolated;
 }
 
 /**

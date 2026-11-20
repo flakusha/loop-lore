@@ -7,6 +7,7 @@ import { describe, expect, it, } from "bun:test";
 import {
   applyNodeOverrides,
   buildSubstitutionVars,
+  type SubstituteOptions,
   substituteWorkflow,
 } from "./workflow-substitutor.js";
 
@@ -67,6 +68,47 @@ describe("substituteWorkflow", () => {
   });
 });
 
+describe("substituteWorkflow variant expansion", () => {
+  it("passes variant braces through literally unless opted in", () => {
+    expect(substituteWorkflow("a {x|y} b", {},),).toBe("a {x|y} b",);
+    expect(substituteWorkflow("{{prompt}}", { prompt: "{x|y}", },),).toBe("{x|y}",);
+  });
+
+  it("picks one option per group, deterministically per seed", () => {
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 7, };
+    const first = substituteWorkflow("a {x|y} b", {}, opts,);
+    expect(["a x b", "a y b",],).toContain(first,);
+    expect(substituteWorkflow("a {x|y} b", {}, opts,),).toBe(first,);
+  });
+
+  it("resolves nested groups innermost-first", () => {
+    const out = substituteWorkflow("{a|{b|c}}", {}, { expandVariants: true, variantSeed: 3, },);
+    expect(["a", "b", "c",],).toContain(out,);
+    expect(out,).not.toContain("{",);
+  });
+
+  it("expands variants carried inside prompt vars", () => {
+    const out = substituteWorkflow("{{prompt}}", { prompt: "{red|blue} car", }, {
+      expandVariants: true,
+      variantSeed: 1,
+    },);
+
+    expect(["red car", "blue car",],).toContain(out,);
+  });
+
+  it("shares one pick sequence across a whole workflow", () => {
+    const wf = { a: "{x|y}", b: "{p|q}", };
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 5, };
+    expect(substituteWorkflow(wf, {}, opts,),).toEqual(substituteWorkflow(wf, {}, opts,),);
+  });
+
+  it("leaves pipeless braces, unbalanced braces, and plain vars alone", () => {
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 1, };
+    expect(substituteWorkflow("{foo}", {}, opts,),).toBe("{foo}",);
+    expect(substituteWorkflow("{a|b", {}, opts,),).toBe("{a|b",);
+    expect(substituteWorkflow("{{prompt}}", { prompt: "cat", }, opts,),).toBe("cat",);
+  });
+});
 describe("applyNodeOverrides", () => {
   const workflow = { "5": { class_type: "CLIPTextEncode", inputs: { text: "old", cfg: 1, }, }, };
   it("returns a new top-level workflow with merged inputs", () => {

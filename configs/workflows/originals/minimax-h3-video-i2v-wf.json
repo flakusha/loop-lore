@@ -1,0 +1,286 @@
+{
+  "6": {
+    "inputs": {
+      "clip": [
+        "23",
+        0
+      ],
+      "vae": [
+        "16",
+        0
+      ],
+      "audio_vae": [
+        "17",
+        0
+      ],
+      "model_fl2va": [
+        "49",
+        0
+      ],
+      "model_ref2va": [
+        "14",
+        0
+      ],
+      "context_text.text_0": [
+        "26",
+        0
+      ],
+      "context_text.text_1": [
+        "33",
+        0
+      ],
+      "context_text.text_2": [
+        "34",
+        0
+      ],
+      "context_image.image_0": [
+        "7",
+        0
+      ],
+      "preview_vae": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "NGContextConnector",
+    "_meta": {
+      "cnr_id": "minimaxh3-director",
+      "ver": "90325669a6f447855b75a4da2a6b01e127b62e31"
+    }
+  },
+  "7": {
+    "inputs": {
+      "image": "{{input_image}}",
+      "name": "",
+      "description": "",
+      "content": "character",
+      "usage": "reference",
+      "preserve": "high",
+      "color": "#ed333b",
+      "content_roles": "[\"character\",\"outfit\",\"style\",\"face\"]",
+      "usage_roles": "[\"reference\"]",
+      "context_options": "",
+      "subject_ids": ""
+    },
+    "class_type": "NGContextImage",
+    "_meta": {
+      "cnr_id": "minimaxh3-director",
+      "ver": "90325669a6f447855b75a4da2a6b01e127b62e31"
+    }
+  },
+  "10": {
+    "inputs": {
+      "upscale_2k": true,
+      "sequence": [
+        "46",
+        0
+      ],
+      "upscale_model": [
+        "48",
+        0
+      ]
+    },
+    "class_type": "NGProjectRender",
+    "_meta": {
+      "cnr_id": "minimaxh3-director",
+      "ver": "90325669a6f447855b75a4da2a6b01e127b62e31"
+    }
+  },
+  "11": {
+    "inputs": {
+      "video": [
+        "10",
+        0
+      ],
+      "filename_prefix": "loop-lore-minimax-h3-ref2va",
+      "format": "auto",
+      "codec": "h264"
+    },
+    "class_type": "SaveVideo"
+  },
+  "14": {
+    "inputs": {
+      "unet_name": "{{unet_name_ref}}",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Model: References (ref2va)",
+      "cnr_id": "comfy-core",
+      "ver": "0.42.0"
+    }
+  },
+  "16": {
+    "inputs": {
+      "vae_name": "{{vae_name}}"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Video VAE",
+      "cnr_id": "comfy-core",
+      "ver": "0.42.0"
+    }
+  },
+  "17": {
+    "inputs": {
+      "vae_name": "{{audio_vae_name}}"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Audio VAE",
+      "cnr_id": "comfy-core",
+      "ver": "0.42.0"
+    }
+  },
+  "18": {
+    "inputs": {
+      "vae_name": "pixel_space"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Preview VAE",
+      "cnr_id": "comfy-core",
+      "ver": "0.42.0"
+    }
+  },
+  "23": {
+    "inputs": {
+      "clip_name": "{{clip_name}}",
+      "type": "auto",
+      "projection": "mmh3-8b-ClipProj-v3.1-mlp.safetensors",
+      "device": "cuda:0",
+      "mode": "streaming"
+    },
+    "class_type": "ClipProjLoader",
+    "_meta": {}
+  },
+  "26": {
+    "inputs": {
+      "text": "",
+      "name": "Scene Setup",
+      "description": "",
+      "content": "shot",
+      "usage": "scene",
+      "preserve": "high",
+      "context_id": "#96d3ab",
+      "color": "#7acdbb",
+      "content_roles": "",
+      "usage_roles": "",
+      "context_options": "",
+      "subject_ids": ""
+    },
+    "class_type": "NGContextText",
+    "_meta": {}
+  },
+  "33": {
+    "inputs": {
+      "text": "[camera_motion]\nDynamic and energetic. No vertical (Yaw) rotation.\nFollows music rhythm.\n[rules]\nNon-linear, shuffled sequence. Do not use one continuous shot per scene; mix multiple angles and cuts within the listed scenes for high energy.\nPrecise lip-syncing to female vocals.",
+      "name": "Camera",
+      "description": "",
+      "content": "shot",
+      "usage": "rule",
+      "preserve": "high",
+      "context_id": "#83b9b2",
+      "color": "#abd3c7",
+      "content_roles": "",
+      "usage_roles": "",
+      "context_options": "",
+      "subject_ids": ""
+    },
+    "class_type": "NGContextText",
+    "_meta": {}
+  },
+  "34": {
+    "inputs": {
+      "text": "[music]\nExternal music source provided for lyrics and rhythm reference. Do not generate music during execution.\n[action]\n@Nyxara dances or walks with high energy and confidence.[ambience]\nAdd the ambient sounds that are following the generated content.\n",
+      "name": "General",
+      "description": "",
+      "content": "shot",
+      "usage": "instruction",
+      "preserve": "high",
+      "context_id": "#64bcae",
+      "color": "#64bcae",
+      "content_roles": "",
+      "usage_roles": "",
+      "context_options": "",
+      "subject_ids": ""
+    },
+    "class_type": "NGContextText",
+    "_meta": {}
+  },
+  "35": {
+    "inputs": {
+      "text": "[rules]\nTry to maintain shot vs render part consistency to avoid extreme overlaps >22 frames (\"change just after the seam\" warning)\n",
+      "name": "",
+      "description": "",
+      "content": "shot",
+      "usage": "rule",
+      "preserve": "high",
+      "context_id": "#abd3c7",
+      "color": "#96d3ab",
+      "content_roles": "",
+      "usage_roles": "",
+      "context_options": "",
+      "subject_ids": ""
+    },
+    "class_type": "NGContextText",
+    "_meta": {}
+  },
+  "46": {
+    "inputs": {
+      "idea": "{{prompt}}",
+      "shots": "{{shots}}",
+      "project_seconds": "{{duration_seconds}}",
+      "chunk_seconds": 0,
+      "width": "{{width}}",
+      "height": "{{height}}",
+      "mode": "ref2va",
+      "continuity": "video_audio",
+      "pin_frames": "22",
+      "soundscape": "{{soundscape}}",
+      "music": "N/A",
+      "style": "None",
+      "seed": "{{seed}}",
+      "steps": "{{steps}}",
+      "sampler_name": "{{sampler}}",
+      "scheduler": "{{scheduler}}",
+      "shift_video": 12,
+      "shift_audio": 3,
+      "resize_method": "crop",
+      "ref_image_size": "max",
+      "continue_from": "",
+      "prompt_override": "",
+      "resume": true,
+      "resume_delete_done": true,
+      "control_strength": 1,
+      "control_start": 0,
+      "control_end": 1,
+      "output": "video",
+      "spectrum": true,
+      "context": [
+        "6",
+        0
+      ],
+      "duration_seconds": "{{duration_seconds}}"
+    },
+    "class_type": "NGH3Director",
+    "_meta": {
+      "cnr_id": "minimaxh3-director",
+      "ver": "90325669a6f447855b75a4da2a6b01e127b62e31"
+    }
+  },
+  "48": {
+    "inputs": {
+      "model_name": "{{upscale_model}}"
+    },
+    "class_type": "LatentUpscaleModelLoader",
+    "_meta": {}
+  },
+  "49": {
+    "inputs": {
+      "unet_name": "{{unet_name}}"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {}
+  }
+}
