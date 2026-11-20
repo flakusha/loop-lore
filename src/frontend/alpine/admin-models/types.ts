@@ -41,6 +41,15 @@ export interface PluginInfo {
   routeCount: number;
 }
 
+/** A plugin manifest present on disk but not registered yet. */
+export interface DiscoverInfo {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  origin: string;
+}
+
 export type { ModelInfo, };
 
 /** */
@@ -88,6 +97,8 @@ export interface ModelsState {
   expandProvider: string;
   pluginList: PluginInfo[];
   loadingPlugins: boolean;
+  discoverList: DiscoverInfo[];
+  loadingDiscover: boolean;
   sdStatus: "running" | "stopped" | "unknown";
   sdPort: number;
   sdLatencyMs: number | null;
@@ -120,6 +131,9 @@ export interface ModelsState {
   loadSdStatus(): Promise<void>;
   loadPlugins(): Promise<void>;
   togglePlugin(name: string, enable: boolean,): Promise<void>;
+  loadDiscover(): Promise<void>;
+  installPlugin(name: string,): Promise<void>;
+  unloadPlugin(name: string,): Promise<void>;
   loadSdConfig(): Promise<void>;
   saveSdConfig(): Promise<void>;
   loadModelCapabilities(): Promise<void>;

@@ -5,7 +5,7 @@
 
 # Plugin System Specification
 
-Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO management API, NO sandbox, NO examples.
+Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO sandbox, NO examples.
 
 ## Implemented
 
@@ -13,6 +13,7 @@ Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/
 - Plugin manifest: `plugin.ts`/`.js` exporting the `Plugin` interface; `PluginContext` provided on `onLoad()`.
 - Naming: plugins kebab-case, tools snake_case, agent roles kebab-case, events dot-separated (`chat.message.created`).
 - UI component mount points: web-capable components (`type` `web`/`both`) render as inert host containers (`data-plugin-component` / `data-plugin-location` plus HTML-escaped `props` JSON) at `chat.header` / `chat.sidebar` / `chat.composer` (`src/views/chat.html`) and `admin.dashboard` (`src/views/admin.html`); `GET /api/plugins/ui-components` (admin) lists them with an optional `?location=` filter. TUI-only components are never mounted into web views.
+- Registry API (admin-only): `GET /api/plugins`, `GET /api/plugins/discover`, `POST /api/plugins/install` (`{ name }`), `DELETE /api/plugins/:name` (disabled plugins only), `POST /api/plugins/:name/enable`, `POST /api/plugins/:name/disable`, `GET`/`PUT /api/plugins/:name/config`.
 
 ## Extension points (design)
 
@@ -34,7 +35,6 @@ tag is neither a sandbox nor a boundary; stronger isolation is future work
 
 ## Not implemented / aspirational
 
-- Registry API: `GET /api/plugins`, `POST /api/plugins/install`, `DELETE /api/plugins/:name`, enable/disable, manifest/config get/put.
 - Security model: sandboxing (Firecracker/WASM), network/file allowlists, per-execution resource limits, declared-permission grants, signed community publishers.
 - Standard tool categories.
 

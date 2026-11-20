@@ -261,6 +261,89 @@ describe("pluginState fetch", () => {
     await pluginState.togglePlugin!.call(ctx, "pl", false,);
     expect(toasts[0]?.type,).toBe("error",);
   });
+
+  test("loadDiscover stores the list and clears loading", async () => {
+    mockFetch(200, [{ name: "new", origin: "community", version: "1.0.0", description: "d", author: "a", },],);
+    const ctx = { ...pluginState, discoverList: [], loadingDiscover: false, };
+    await pluginState.loadDiscover!.call(ctx,);
+    expect(ctx.discoverList,).toHaveLength(1,);
+    expect(ctx.loadingDiscover,).toBe(false,);
+  });
+
+  test("installPlugin posts the name and refreshes both lists", async () => {
+    mockFetch(200, { ok: true, },);
+    let loaded = 0;
+    let discovered = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {
+        discovered++;
+      },
+    };
+
+    await pluginState.installPlugin!.call(ctx, "pl",);
+    expect(calls[0]!.url,).toBe("/api/v1/plugins/install",);
+    expect(calls[0]!.opts.method,).toBe("POST",);
+    expect(String(calls[0]!.opts.body,),).toBe('{"name":"pl"}',);
+    expect(loaded,).toBe(1,);
+    expect(discovered,).toBe(1,);
+  });
+
+  test("installPlugin toasts the server error without refreshing", async () => {
+    mockFetch(409, { error: "Plugin already installed", },);
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.installPlugin!.call(ctx, "pl",);
+    expect(toasts[0],).toEqual({ type: "error", message: "Plugin already installed", },);
+    expect(loaded,).toBe(0,);
+  });
+
+  test("unloadPlugin deletes by name and refreshes both lists", async () => {
+    mockFetch(200, { ok: true, },);
+    let loaded = 0;
+    let discovered = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {
+        discovered++;
+      },
+    };
+
+    await pluginState.unloadPlugin!.call(ctx, "pl",);
+    expect(calls[0]!.url,).toBe("/api/v1/plugins/pl",);
+    expect(calls[0]!.opts.method,).toBe("DELETE",);
+    expect(loaded,).toBe(1,);
+    expect(discovered,).toBe(1,);
+  });
+
+  test("unloadPlugin surfaces the disabled precondition message", async () => {
+    mockFetch(400, { error: "Plugin must be disabled before uninstalling", },);
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.unloadPlugin!.call(ctx, "pl",);
+    expect(toasts[0],).toEqual({ type: "error", message: "Plugin must be disabled before uninstalling", },);
+    expect(loaded,).toBe(0,);
+  });
 });
 
 describe("sdState fetch", () => {

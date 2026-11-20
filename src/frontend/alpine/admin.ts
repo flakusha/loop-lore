@@ -185,6 +185,7 @@ adminGlobals.adminPage = function() {
 
         case "plugins": {
           this.loadPlugins();
+          this.loadDiscover();
           break;
         }
 

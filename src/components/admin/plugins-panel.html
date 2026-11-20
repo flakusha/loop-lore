@@ -45,10 +45,48 @@
                   Enable
                 </button>
               </template>
+              <button class="btn btn-danger btn-xs" :disabled="p.enabled" @click="unloadPlugin(p.name)">
+                Unload
+              </button>
             </div>
           </div>
         </template>
       </div>
     </div>
   </template>
+  <div style="padding: var(--space-6); border-top: 1px solid var(--border-default, #e9ecef)">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3)">
+      <strong>Discover</strong>
+      <button class="btn btn-secondary btn-xs" @click="loadDiscover()">Refresh</button>
+    </div>
+    <template x-if="loadingDiscover">
+      <div style="font-size: 12px; color: var(--text-secondary)">Loading...</div>
+    </template>
+    <template x-if="!loadingDiscover && discoverList.length === 0">
+      <div style="font-size: 12px; color: var(--text-secondary)">No undiscovered plugins</div>
+    </template>
+    <div style="display: grid; gap: var(--space-3)">
+      <template x-for="p in discoverList" :key="p.origin + ':' + p.name">
+        <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); display: flex; justify-content: space-between; align-items: center">
+          <div>
+            <strong x-text="p.name"></strong>
+            <span
+              style="font-size: 12px; color: var(--text-secondary); margin-left: var(--space-2)"
+              x-text="'v' + p.version"
+            ></span>
+            <span
+              style="font-size: 11px; color: var(--text-secondary); margin-left: var(--space-2)"
+              x-text="'(' + p.origin + ')'"
+            ></span>
+            <div
+              style="font-size: 12px; color: var(--text-secondary); margin-top: 2px"
+              x-text="p.description"
+            >
+            </div>
+          </div>
+          <button class="btn btn-primary btn-xs" @click="installPlugin(p.name)">Install</button>
+        </div>
+      </template>
+    </div>
+  </div>
 </div>
