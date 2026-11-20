@@ -8,6 +8,7 @@
 import { afterEach, expect, test, } from "bun:test";
 import {
   discoverPython,
+  type PythonDiscoveryOptions,
   refreshPythonDiscovery,
   resetPythonDiscovery,
 } from "./discovery";
@@ -82,7 +83,7 @@ test("failed probe keeps the bridge status vocabulary", async () => {
 
 test("discovery caches; refresh probes again", async () => {
   let probed = 0;
-  const options = {
+  const options: PythonDiscoveryOptions = {
     findBinary: () => "/usr/bin/python3",
     probe: async (options,) => {
       probed += 1;
