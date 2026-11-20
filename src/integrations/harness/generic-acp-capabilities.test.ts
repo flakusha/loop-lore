@@ -58,7 +58,7 @@ describe("GenericAcpAdapter initialize capabilities (fake ACP fixture)", () => {
     await adapter.enumerateModels();
 
     const params = initializeParams(server.readLog(),);
-    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: true, }, },);
+    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: true, writeTextFile: false, }, },);
   });
 
   it("advertises no fs bridge without a reader and no terminal bridge at all", async () => {
@@ -69,7 +69,40 @@ describe("GenericAcpAdapter initialize capabilities (fake ACP fixture)", () => {
     await adapter.enumerateModels();
 
     const params = initializeParams(server.readLog(),);
-    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: false, }, },);
+    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: false, writeTextFile: false, }, },);
     expect(params?.clientCapabilities,).not.toHaveProperty("terminal",);
+  });
+
+  it("advertises fs.writeTextFile when a writer is injected", async () => {
+    const server = serve({ FAKE_MODELS: "m", FAKE_LOG_PARAMS: "1", },);
+    const adapter = new OmpAcpAdapter({
+      command: server.argv,
+      requestTimeoutMs: LIVE_TIMEOUT_MS,
+      readTextFile: async () => "file body",
+      writeTextFile: async () => {},
+    },);
+
+    adapters.push(adapter,);
+
+    await adapter.enumerateModels();
+
+    const params = initializeParams(server.readLog(),);
+    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: true, writeTextFile: true, }, },);
+  });
+
+  it("advertises no write bridge with a reader but no writer", async () => {
+    const server = serve({ FAKE_MODELS: "m", FAKE_LOG_PARAMS: "1", },);
+    const adapter = new OmpAcpAdapter({
+      command: server.argv,
+      requestTimeoutMs: LIVE_TIMEOUT_MS,
+      readTextFile: async () => "file body",
+    },);
+
+    adapters.push(adapter,);
+
+    await adapter.enumerateModels();
+
+    const params = initializeParams(server.readLog(),);
+    expect(params?.clientCapabilities,).toEqual({ fs: { readTextFile: true, writeTextFile: false, }, },);
   });
 });

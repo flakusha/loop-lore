@@ -3,7 +3,7 @@
 
 # TASK: ACP session/new MCP handoff and fs write file
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp

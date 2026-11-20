@@ -13,6 +13,7 @@
  * adapter-types.ts.
  */
 
+import { isAbsolute, } from "node:path";
 import { getChildLogger, } from "../../logger";
 import { narrowSessionUpdate, } from "./acp-session-update";
 import {
@@ -30,7 +31,7 @@ import {
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
 import { advertisedPermissionOptions, answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
-import { TurnTranscriptCollector, } from "./turn-transcript";
+import { type HarnessTurnTranscript, TurnTranscriptCollector, } from "./turn-transcript";
 
 /** ACP protocol version the adapter speaks. */
 const PROTOCOL_VERSION = 1;
@@ -63,6 +64,25 @@ function sliceRequestedLines(text: string, line: unknown, limit: unknown,): stri
 
   const lines = text.split("\n",);
   return lines.slice(first, max === null ? lines.length : first + max,).join("\n",);
+}
+
+/**
+ * Resolve the extra workspace roots for `session/new`, rejecting a relative
+ * entry locally before the request goes out (a harness would resolve it
+ * against its own cwd — never what the profile meant).
+ * @param dirs - the profile-configured roots, when any
+ * @returns the roots, verbatim
+ * @throws {HarnessAcpError} kind `session` when an entry is not an absolute path.
+ */
+export function resolveAdditionalDirectories(dirs: string[] | undefined,): string[] {
+  const list = dirs ?? [];
+  for (const dir of list) {
+    if (typeof dir !== "string" || dir.trim() === "" || !isAbsolute(dir,)) {
+      throw new HarnessAcpError("session", `additionalDirectories must be absolute paths (got "${String(dir,)}")`,);
+    }
+  }
+
+  return [...list,];
 }
 
 /**
@@ -121,6 +141,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   } | null = null;
   /** Resolves once the in-flight prompt request has been written to the wire; `cancel` orders on it. */
   private promptDispatched: Promise<void> = Promise.resolve();
+  /** The mode the session last confirmed via `session/set_mode`; null when never set. */
+  private modeId: string | null = null;
 
   /**
    * @param options - spawn argv + cwd; the handshake is lazy (typed probe failure).
@@ -216,6 +238,114 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       configId: this.modelConfigId,
       value: wireModelId,
     },);
+  }
+
+  /**
+   * The mode the session last confirmed via `session/set_mode`; null before
+   * the first successful call.
+   * @returns the confirmed mode id, or null.
+   */
+  currentModeId(): string | null {
+    return this.modeId;
+  }
+
+  /**
+   * Switch the session's mode (plan/act) via `session/set_mode`.
+   * @param modeId - the mode id, or omitted for the profile-configured default
+   * @returns the harness's reply (its confirmed mode when it echoes one)
+   * @throws {HarnessAcpError} kind `session` when no mode id is known or the harness rejects it
+   */
+  async setMode(modeId?: string,): Promise<unknown> {
+    const id = modeId ?? this.opts.mode;
+    if (!id) {
+      throw new HarnessAcpError("session", "no mode id: pass one or configure the profile's mode",);
+    }
+
+    try {
+      const sessionId = (await this.ensureSession()).sessionId;
+      const result = await this.rpc!.request("session/set_mode", { sessionId, modeId: id, },) as {
+        currentModeId?: unknown;
+      } | null;
+
+      const confirmed = result && typeof result.currentModeId === "string" && result.currentModeId !== ""
+        ? result.currentModeId
+        : id;
+
+      this.modeId = confirmed;
+      return result;
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Sessions the harness remembers, via `session/list`.
+   * @returns session ids with their cwd, when the harness reports one.
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async listSessions(): Promise<Array<{ sessionId: string; cwd: string | null }>> {
+    try {
+      await this.ensureTransport();
+      const result = await this.rpc!.request("session/list", {},) as {
+        sessions?: Array<{ sessionId?: unknown; cwd?: unknown }>;
+      } | null;
+
+      const sessions = Array.isArray(result?.sessions,) ? result.sessions : [];
+      return sessions.flatMap((entry,) =>
+        typeof entry?.sessionId === "string" && entry.sessionId !== ""
+          ? [{ sessionId: entry.sessionId, cwd: typeof entry.cwd === "string" ? entry.cwd : null, },]
+          : []
+      );
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Re-attach to a remembered session via `session/resume`, without replay:
+   * the transcript restarts empty and the next prompt continues the session.
+   * @param sessionId - the remembered session id
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async resumeSession(sessionId: string,): Promise<void> {
+    try {
+      await this.ensureTransport();
+      const result = await this.rpc!.request("session/resume", { sessionId, },);
+      this.transcript = new TurnTranscriptCollector();
+      this.session = { sessionId, options: result, };
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Re-attach to a remembered session via `session/load`, replaying its
+   * history: the harness re-emits `session/update` notifications, which the
+   * engine folds into a fresh transcript.
+   * @param sessionId - the remembered session id
+   * @returns the replayed transcript
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async loadSession(sessionId: string,): Promise<HarnessTurnTranscript> {
+    try {
+      await this.ensureTransport();
+      // Bind the target id BEFORE the request: the replay notifications name
+      // it, and the foreign-session filter drops anything not naming the
+      // bound session. The previous binding is restored on failure.
+      const previous = this.session;
+      this.session = { sessionId, options: previous?.options ?? null, };
+      this.transcript = new TurnTranscriptCollector();
+      try {
+        const result = await this.rpc!.request("session/load", { sessionId, },);
+        this.session = { sessionId, options: result, };
+        return this.transcript.snapshot();
+      } catch (error) {
+        this.session = previous;
+        throw error;
+      }
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
   }
 
   /**
@@ -349,6 +479,15 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   }
 
   /**
+   * Ensure the transport is up without establishing a session: list/resume/
+   * load run against a REMEMBERED id, so they must not mint a fresh one.
+   * @throws {HarnessAcpError} on spawn/initialize failure
+   */
+  private async ensureTransport(): Promise<void> {
+    if (!this.rpc) { await this.ensureSession(); }
+  }
+
+  /**
    * Ensure the process is spawned and the session established.
    * @returns sessionId plus the session/new response (for configOptions).
    * @throws {HarnessAcpError} on spawn/initialize/session failure
@@ -400,12 +539,24 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       await this.rpc.request("initialize", {
         protocolVersion: PROTOCOL_VERSION,
         clientInfo: { name: "loop-lore", version: "1", },
-        clientCapabilities: { fs: { readTextFile: this.opts.readTextFile !== undefined, }, },
+        // Capabilities are advertised only when a handler exists: an omitted
+        // bridge reads as UNSUPPORTED, so a bridge without a handler must
+        // never be advertised.
+        clientCapabilities: {
+          fs: {
+            readTextFile: this.opts.readTextFile !== undefined,
+            writeTextFile: this.opts.writeTextFile !== undefined,
+          },
+        },
       },);
 
+      // Absolute roots ride `session/new`; a relative entry is rejected
+      // locally before the request goes out.
+      const additionalDirectories = resolveAdditionalDirectories(this.opts.additionalDirectories,);
       const session = await this.rpc.request("session/new", {
         cwd: this.opts.cwd ?? process.cwd(),
-        mcpServers: [],
+        mcpServers: this.opts.mcpServers ?? [],
+        ...(additionalDirectories.length > 0 ? { additionalDirectories, } : {}),
       },) as {
         sessionId?: unknown;
       };
@@ -431,8 +582,8 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
   /**
    * Serve one server-originated request: permission asks park on the engine
-   * until `respondPermission`, fs-read asks go through the injected reader,
-   * anything else answers unsupported. The permission slot stays SINGLE per
+   * until `respondPermission`, fs bridge asks go through the injected
+   * reader/writer, anything else answers unsupported. The permission slot stays SINGLE per
    * connection on purpose (harnesses serialize asks; a concurrent ask is
    * refused with the protocol's `cancelled` outcome) — multiplexing across
    * profiles is the runtime queue's job, not this engine's.
@@ -472,6 +623,24 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       return promise;
     }
 
+    if (method === "fs/read_text_file" || method === "fs/write_text_file") {
+      return this.handleFsRequest(method, params,);
+    }
+
+    return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+  }
+
+  /**
+   * Serve one server-originated fs bridge request: reads go through the
+   * injected reader, writes through the injected writer. Either bridge
+   * answers `-32601` unsupported without its handler — the capability is
+   * advertised only when the handler exists, so this is the harness
+   * ignoring the contract, not a loop-lore gap.
+   * @param method - `fs/read_text_file` or `fs/write_text_file`
+   * @param params - raw request params
+   * @returns the response result payload.
+   */
+  private handleFsRequest(method: string, params: unknown,): Promise<unknown> {
     if (method === "fs/read_text_file") {
       const reader = this.opts.readTextFile;
       if (!reader) {
@@ -489,7 +658,24 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       }));
     }
 
-    return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+    const writer = this.opts.writeTextFile;
+    if (!writer) {
+      return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+    }
+
+    const request = params as { path?: unknown; content?: unknown } | null;
+    const path = request?.path;
+    if (typeof path !== "string") {
+      return Promise.reject(new JsonRpcRequestError("fs/write_text_file missing path", -32602,),);
+    }
+
+    const content = request?.content;
+    if (typeof content !== "string") {
+      return Promise.reject(new JsonRpcRequestError("fs/write_text_file missing content", -32602,),);
+    }
+
+    // The spec's WriteTextFileResponse carries only `_meta`: success is `{}`.
+    return writer(path, content,).then(() => ({}));
   }
 
   /**

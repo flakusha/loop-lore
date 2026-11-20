@@ -62,6 +62,22 @@ export interface AcpProfileHealth {
   cooldownMs?: number;
 }
 
+/**
+ * One MCP server handed to the harness agent via ACP `session/new` (stdio
+ * only — the passthrough is verbatim, so an http/sse entry has no wire
+ * mapping yet; add one when a profile needs it).
+ */
+export interface McpServerConfig {
+  /** Server name, as the agent sees it. */
+  name: string;
+  /** Spawn argv head for a stdio server. */
+  command: string;
+  /** Spawn argv tail. */
+  args?: string[];
+  /** Environment entries for the spawned server. */
+  env?: Array<{ name: string; value: string }>;
+}
+
 /** One external harness profile: how to spawn it and what it offers. */
 export interface AcpProfileConfig {
   /** loop-lore-local identifier; unique across the profiles list. */
@@ -87,6 +103,22 @@ export interface AcpProfileConfig {
    * directory; a path with `..` traversal is rejected at config load.
    */
   sandboxRoot?: string;
+  /**
+   * MCP servers the agent connects to (ACP `session/new` `mcpServers`,
+   * verbatim). Absent/empty = the agent gets none.
+   */
+  mcpServers?: McpServerConfig[];
+  /**
+   * Extra workspace roots handed to the agent (ACP `session/new`
+   * `additionalDirectories`). Every entry must be absolute — a relative
+   * entry is rejected locally before the request goes out.
+   */
+  additionalDirectories?: string[];
+  /**
+   * Default mode id for ACP `session/set_mode` (e.g. omp plan/act). Absent
+   * = the adapter sends only an explicitly passed id.
+   */
+  mode?: string;
   /**
    * Explicit user acknowledgement that driving this profile for RPG/other
    * non-chat functionalities may conflict with the provider's ToS when the

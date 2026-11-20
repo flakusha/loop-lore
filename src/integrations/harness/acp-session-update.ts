@@ -16,6 +16,8 @@
  *   `{ update: { sessionUpdate: "tool_call_update", toolCallId, status?, content?, rawOutput? } }`
  * - `usage_update`:
  *   `{ update: { sessionUpdate: "usage_update", used, size, cost?: { amount, currency } } }`
+ * - `current_mode_update`:
+ *   `{ update: { sessionUpdate: "current_mode_update", currentModeId } }`
  */
 
 import { jsonStringifyOr, } from "../../utils";
@@ -24,6 +26,7 @@ import { jsonStringifyOr, } from "../../utils";
 export type HarnessTurnEvent =
   | { type: "text"; text: string }
   | { type: "thinking"; text: string }
+  | { type: "mode"; modeId: string }
   | {
     type: "tool-call";
     toolCallId: string;
@@ -123,9 +126,10 @@ function toolContentText(content: unknown,): string {
 
 /**
  * Narrow a raw ACP `session/update` notification payload to the events
- * loop-lore persists. Unknown variants (plan, current_mode_update, ...) and
- * malformed payloads yield no events — they are telemetry-only for now;
- * `usage_update` is kept as a usage event (the reported cost is USD).
+ * loop-lore persists. Unknown variants (plan, ...) and malformed payloads
+ * yield no events — they are telemetry-only for now; `usage_update` is kept
+ * as a usage event (the reported cost is USD) and `current_mode_update` as a
+ * mode event (the mode the agent switched to).
  * @param params - the notification params, untrusted
  * @returns the narrowed events; empty when the payload carries none
  */
@@ -197,6 +201,11 @@ export function narrowSessionUpdate(params: unknown,): HarnessTurnEvent[] {
     },);
 
     return events;
+  }
+
+  if (variant === "current_mode_update") {
+    const modeId = asString(update.currentModeId,);
+    return modeId ? [{ type: "mode", modeId, },] : [];
   }
 
   if (variant === "usage_update") {

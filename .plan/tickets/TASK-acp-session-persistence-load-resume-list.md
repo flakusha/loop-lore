@@ -3,7 +3,7 @@
 
 # TASK: ACP session persistence load resume list
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-external-harness-acp

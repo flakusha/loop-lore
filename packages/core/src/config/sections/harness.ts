@@ -8,7 +8,7 @@
 // non-`provider/id` models, duplicate profile names).
 
 import { type Stats, statSync, } from "node:fs";
-import { resolve, } from "node:path";
+import { isAbsolute, resolve, } from "node:path";
 import {
   type AcpProfileConfig,
   HARNESS_CAPABILITIES,
@@ -125,6 +125,16 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
 
   if (p.sandboxRoot !== undefined) { validateSandboxRoot(p.name, p.sandboxRoot,); }
 
+  if (p.mcpServers !== undefined) { validateMcpServers(p.name, p.mcpServers,); }
+
+  if (p.additionalDirectories !== undefined) { validateAdditionalDirectories(p.name, p.additionalDirectories,); }
+
+  if (p.mode !== undefined && (typeof p.mode !== "string" || p.mode.trim() === "")) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].mode must be a non-empty string`,
+    );
+  }
+
   if (p.tosGrayzoneAcknowledged !== undefined && typeof p.tosGrayzoneAcknowledged !== "boolean") {
     throw new Error(
       `harness.acp.profiles["${p.name}"].tosGrayzoneAcknowledged must be a boolean`,
@@ -189,6 +199,75 @@ function validateSandboxRoot(name: string, root: string,): void {
 
   if (!stats.isDirectory()) {
     throw new Error(`harness.acp.profiles["${name}"].sandboxRoot "${root}" is not a directory`,);
+  }
+}
+
+/**
+ * Validate one profile's MCP servers: non-empty name/command per entry, with
+ * string argv and `{name,value}` env entries when present.
+ * @param name - profile name (for the error message)
+ * @param servers - the configured servers
+ * @throws {Error} If the list or an entry is malformed.
+ */
+function validateMcpServers(name: string, servers: AcpProfileConfig["mcpServers"],): void {
+  if (!Array.isArray(servers,)) {
+    throw new Error(`harness.acp.profiles["${name}"].mcpServers must be an array`,);
+  }
+
+  for (const entry of servers) { validateMcpServer(name, entry,); }
+}
+
+/**
+ * Validate one MCP server entry.
+ * @param name - profile name (for the error message)
+ * @param entry - the server entry
+ * @throws {Error} If the entry is malformed.
+ */
+function validateMcpServer(name: string, entry: NonNullable<AcpProfileConfig["mcpServers"]>[number],): void {
+  const prefix = `harness.acp.profiles["${name}"].mcpServers[]`;
+  if (typeof entry?.name !== "string" || entry.name.trim() === "") {
+    throw new Error(`${prefix} entry is missing a non-empty name`,);
+  }
+
+  if (typeof entry?.command !== "string" || entry.command === "") {
+    throw new Error(`${prefix} "${entry.name}" is missing a command`,);
+  }
+
+  if (entry.args !== undefined && (!Array.isArray(entry.args,) || entry.args.some((a,) => typeof a !== "string"))) {
+    throw new Error(`${prefix} "${entry.name}".args must be a string array`,);
+  }
+
+  if (
+    entry.env !== undefined && (!Array.isArray(entry.env,) ||
+      entry.env.some((e,) => typeof e?.name !== "string" || typeof e?.value !== "string"))
+  ) {
+    throw new Error(`${prefix} "${entry.name}".env must be a {name,value} array`,);
+  }
+}
+
+/**
+ * Validate one profile's additional directories: every entry an absolute
+ * path. Fail closed at config load — the adapter also rejects a relative
+ * entry before `session/new` goes out (defense in depth).
+ * @param name - profile name (for the error message)
+ * @param dirs - the configured roots
+ * @throws {Error} If an entry is empty or not absolute.
+ */
+function validateAdditionalDirectories(name: string, dirs: AcpProfileConfig["additionalDirectories"],): void {
+  if (!Array.isArray(dirs,)) {
+    throw new Error(`harness.acp.profiles["${name}"].additionalDirectories must be an array`,);
+  }
+
+  for (const dir of dirs) {
+    if (typeof dir !== "string" || dir.trim() === "") {
+      throw new Error(`harness.acp.profiles["${name}"].additionalDirectories must be non-empty paths`,);
+    }
+
+    if (!isAbsolute(dir,)) {
+      throw new Error(
+        `harness.acp.profiles["${name}"].additionalDirectories must be absolute (got "${dir}")`,
+      );
+    }
   }
 }
 
@@ -274,6 +353,23 @@ export const harnessMeta = {
                 type: "string",
                 description:
                   'Directory the profile\'s permission asks are judged against (must exist; no ".." traversal). Absent = the process cwd',
+              },
+              mcpServers: {
+                type: "array",
+                description:
+                  "MCP servers handed to the harness agent via session/new (stdio name/command/args/env, verbatim)",
+                items: { type: "object", },
+              },
+              additionalDirectories: {
+                type: "array",
+                items: { type: "string", },
+                description:
+                  "Extra absolute workspace roots handed to the agent via session/new (relative entries are rejected)",
+              },
+              mode: {
+                type: "string",
+                description:
+                  "Default mode id for session/set_mode (e.g. plan/act); absent = only explicitly passed ids are sent",
               },
             },
           },

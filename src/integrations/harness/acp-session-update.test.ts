@@ -161,6 +161,18 @@ describe("narrowSessionUpdate", () => {
       error: false,
     },);
   });
+
+  it("narrows a current_mode_update to a mode event", () => {
+    const events = narrowSessionUpdate({
+      update: { sessionUpdate: "current_mode_update", currentModeId: "plan", },
+    },);
+
+    expect(events,).toEqual([{ type: "mode", modeId: "plan", },],);
+  });
+
+  it("drops a current_mode_update without a mode id", () => {
+    expect(narrowSessionUpdate({ update: { sessionUpdate: "current_mode_update", }, },),).toEqual([],);
+  });
 });
 
 describe("isTerminalToolStatus", () => {

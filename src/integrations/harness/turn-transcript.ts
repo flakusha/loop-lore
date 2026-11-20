@@ -43,6 +43,8 @@ export interface HarnessTurnTranscript {
   text: string;
   /** Reasoning chunks, in arrival order. */
   thinking: string[];
+  /** Mode ids the agent switched to, in arrival order. */
+  modes: string[];
   /** Tool calls, in first-seen order (a later update replaces an entry in place). */
   toolCalls: HarnessToolCall[];
   /** Tool results, in first-seen order (a later terminal update replaces an entry in place). */
@@ -51,7 +53,7 @@ export interface HarnessTurnTranscript {
 
 /** An empty transcript — for adapters that report no streamed content. */
 export function emptyTurnTranscript(): HarnessTurnTranscript {
-  return { text: "", thinking: [], toolCalls: [], toolResults: [], };
+  return { text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], };
 }
 
 /**
@@ -62,6 +64,7 @@ export function emptyTurnTranscript(): HarnessTurnTranscript {
 export class TurnTranscriptCollector {
   private text = "";
   private thinking: string[] = [];
+  private modes: string[] = [];
   private calls: HarnessToolCall[] = [];
   private results: HarnessToolResult[] = [];
 
@@ -74,6 +77,11 @@ export class TurnTranscriptCollector {
 
     if (event.type === "thinking") {
       this.thinking.push(event.text,);
+      return;
+    }
+
+    if (event.type === "mode") {
+      this.modes.push(event.modeId,);
       return;
     }
 
@@ -90,6 +98,7 @@ export class TurnTranscriptCollector {
     return {
       text: this.text,
       thinking: [...this.thinking,],
+      modes: [...this.modes,],
       toolCalls: this.calls.map((call,) => ({ ...call, })),
       toolResults: this.results.map((result,) => ({ ...result, })),
     };

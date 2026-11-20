@@ -31,7 +31,7 @@
  * HarnessRuntime.acp as the config input.
  */
 
-import { open, } from "node:fs/promises";
+import { open, writeFile, } from "node:fs/promises";
 import { resolve, } from "node:path";
 import type { HarnessAcpConfig, } from "../../config/schema/harness";
 import { PathOutsideScopeError, resolveWithinScope, } from "../../harness/worktree-scope";
@@ -165,6 +165,52 @@ export async function readSandboxedText(root: string, path: string,): Promise<st
 }
 
 /**
+ * Write a file for an agent's `fs/write_text_file` ask, confined to the
+ * profile's sandbox root — the same scope guard as the read bridge
+ * (`resolveWithinScope`), so a traversal or an escaping symlink is refused
+ * and a raw filesystem error never reaches the agent.
+ *
+ * Like the read bridge, the write is NOT routed through the permission
+ * queue: the spec gives a file write no ask, so the bridge answers it
+ * directly and confines it to the very root the asks are judged against.
+ * @param root - the sandbox root the write is confined to
+ * @param path - the path the agent asked for
+ * @param content - the text to write
+ * @throws {JsonRpcRequestError} when the path escapes the root, names a secret file, or the write fails
+ */
+export async function writeSandboxedText(root: string, path: string, content: string,): Promise<void> {
+  if (isSecretBasename(path,)) {
+    log()?.warn("harness fs write refused — secret file basename", { root, path, },);
+    throw new JsonRpcRequestError("the requested file is a secret file and cannot be written", -32000,);
+  }
+
+  let resolved: string;
+  try {
+    resolved = await resolveWithinScope(root, path,);
+  } catch (error) {
+    const outside = error instanceof PathOutsideScopeError;
+    log()?.warn(
+      outside
+        ? "harness fs write refused — path outside the sandbox root"
+        : "harness fs write refused — sandbox root unusable",
+      { root, path, },
+    );
+
+    throw new JsonRpcRequestError(
+      outside ? "path is outside the sandbox root" : "the sandbox root could not be resolved",
+      -32000,
+    );
+  }
+
+  try {
+    await writeFile(resolved, content, "utf8",);
+  } catch {
+    log()?.warn("harness fs write failed", { root, path, },);
+    throw new JsonRpcRequestError("the requested file could not be written", -32000,);
+  }
+}
+
+/**
  * The configured sandbox root for one profile, resolved absolute. Absent =
  * undefined, so the caller keeps its own default (the connection cwd, then
  * the process cwd) — the knob only overrides the root when set.
@@ -190,8 +236,9 @@ function sandboxRootFor(acp: HarnessAcpConfig, profile: string,): string | undef
  * `process.cwd()` — the same default the adapter hands to session/new.
  * A configured root also becomes the adapter's cwd, so the agent works in
  * the very directory its asks are judged against, and it confines the
- * `fs/read_text_file` bridge — the advertised capability is backed by a real
- * reader, not by a bridge that answers "unsupported". With no configured
+ * `fs/read_text_file` and `fs/write_text_file` bridges — the advertised
+ * capabilities are backed by real handlers, not by bridges that answer
+ * "unsupported". With no configured
  * root the bridge therefore serves the PROCESS cwd: the very directory the
  * permission asks are judged against, so the bridge never reaches further
  * than the permission surface does.
@@ -206,14 +253,19 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
   const permissions = new PermissionQueue({ connection: (profile,) => registry?.connection(profile,), },);
   const queueFactory: HarnessAdapterFactory = (profile, command, opts,) => {
     const configured = sandboxRootFor(options.acp, profile,);
-    // The read bridge is confined to the SAME root the asks are judged
-    // against, so the advertised `fs.readTextFile` capability is backed. ACP
-    // routes no permission ask through a file read (see readSandboxedText).
+    // The read/write bridges are confined to the SAME root the asks are
+    // judged against, so the advertised `fs` capabilities are backed. ACP
+    // routes no permission ask through a file read or write.
     const root = configured ?? opts?.cwd ?? process.cwd();
+    const configuredProfile = options.acp.profiles.find((p,) => p.name === profile);
     return baseFactory(profile, command, {
       ...opts,
       cwd: configured ?? opts?.cwd,
       readTextFile: (path,) => readSandboxedText(root, path,),
+      writeTextFile: (path, content,) => writeSandboxedText(root, path, content,),
+      mcpServers: configuredProfile?.mcpServers ?? opts?.mcpServers,
+      additionalDirectories: configuredProfile?.additionalDirectories ?? opts?.additionalDirectories,
+      mode: configuredProfile?.mode ?? opts?.mode,
       onPermissionRequest: (pending,) => {
         void permissions
           .submit({

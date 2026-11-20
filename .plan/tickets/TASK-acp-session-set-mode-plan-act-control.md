@@ -3,7 +3,7 @@
 
 # TASK: ACP session set_mode plan act control
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
