@@ -3,7 +3,7 @@
 
 # TASK: Python bridge core: generic python3 subprocess bridge
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
