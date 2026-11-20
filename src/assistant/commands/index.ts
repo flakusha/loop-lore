@@ -28,6 +28,7 @@ import "./harness-verbs";
 import "./heal";
 import "./help";
 import "./image";
+import "./imgedit";
 import "./impersonate";
 import "./import";
 import "./improve";

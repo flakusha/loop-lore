@@ -3,7 +3,7 @@
 
 # TASK: imgedit in-chat command
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-generation-extensions
@@ -36,7 +36,7 @@ reach `templateRegistry` [INFERENCE on /image internals — review matrix row 4]
 **Acceptance Criteria:**
 
 - [ ] `/imgedit <template> [prompt]` runs the template via the service layer
-- [ ] Unknown template → clear error message, no partial job left behind
-- [ ] Result/action payload renders in chat (single + group)
-- [ ] Unit tests: command dispatch → service call, error paths (missing template,
+- [x] Unknown template → clear error message, no partial job left behind
+- [x] Result/action payload renders in chat (single + group)
+- [x] Unit tests: command dispatch → service call, error paths (missing template,
       missing input image) covered

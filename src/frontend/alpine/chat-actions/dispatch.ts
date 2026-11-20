@@ -94,6 +94,21 @@ const actionHandlers: Record<string, ActionHandler> = {
     if (!submitted && initBody.init_image) { ctx.clearInitImage?.(); }
   },
 
+  "imgedit": async (ctx, payload, chatId,) => {
+    const params = (payload?.params as Record<string, unknown>) ?? {};
+    const body: Record<string, unknown> = {
+      template_id: (payload?.template_id as string) ?? "",
+      backend: (payload?.backend as string) ?? "comfyui",
+      params,
+      chatId,
+      // Only the shared helper's guard reads this; the image-edit route
+      // reads the prompt from params and ignores the extra top-level field.
+      prompt: params.prompt,
+    };
+
+    if (typeof payload?.messageId === "string") { body.messageId = payload.messageId; }
+    await dispatchGenerationAction(ctx, "/api/v1/image-edit/run", body, "Image edit", chatId,);
+  },
   "generate-video": async (ctx, payload, chatId,) => {
     await dispatchGenerationAction(
       ctx,
