@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1055 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1056 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -172,6 +172,8 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/admin/actors/{actorId}/overrides | Create a character override |
 | GET | /api/v1/admin/age-gate | — |
 | PUT | /api/v1/admin/age-gate | — |
+| POST | /api/v1/admin/agent-tokens | Mint an RSI agent token |
+| DELETE | /api/v1/admin/agent-tokens/{id} | Revoke an RSI agent token |
 | GET | /api/v1/admin/audit | — |
 | GET | /api/v1/admin/audit/{id} | — |
 | POST | /api/v1/admin/audit/purge | — |
@@ -290,6 +292,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/agency/balance | Read an actor's story point balance |
 | POST | /api/v1/agency/earn | Credit story points to an actor |
 | POST | /api/v1/agency/spend | Debit story points from an actor |
+| GET | /api/v1/agent/whoami | Identify the presented agent token |
 | GET | /api/v1/analytics/characters | — |
 | GET | /api/v1/analytics/chats/{chatId} | — |
 | GET | /api/v1/analytics/comparisons | List recent comparisons |

@@ -22,6 +22,7 @@ export const AgencyDimensionSchema = t.UnionEnum([
   "ludic",
 ],);
 export const AgencyModeSchema = t.UnionEnum(["free", "forced", "blocked", "skipped",],);
+export const AgentTokenScopeSchema = t.UnionEnum(["agent:worktree", "agent:check", "agent:commit", "agent:finalize",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
 export const AnnotationTargetTypeSchema = t.UnionEnum(["scenario", "scene", "shot", "fragment", "asset",],);
 export const AnomalyInteractionSchema = t.UnionEnum(["optional", "required",],);
@@ -4187,4 +4188,13 @@ export const ToolingReportsSchema = t.Object({
   dedupe_key: t.Optional(t.String(),),
   count: t.Optional(t.Number(),),
   last_seen: t.Optional(t.String(),),
+},);
+
+// ── agent_tokens ────────────────────────────────────────────
+export const AgentTokensSchema = t.Object({
+  token_hash: t.String(),
+  scope: AgentTokenScopeSchema,
+  created_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+  last_used_at: t.Optional(t.String(),),
 },);

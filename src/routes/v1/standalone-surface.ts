@@ -20,6 +20,7 @@
  * `/api/v1` memory-audit route.
  */
 import { Elysia, } from "elysia";
+import { agentApiRoutes, } from "../../agent/api/router";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { createMcpRoutes, } from "../../integrations/loop-lore-facade/mcp/routes";
 import { createFacadeRoutes, } from "../../integrations/loop-lore-facade/routes";
@@ -31,7 +32,6 @@ import { locationExplorerRoutes, } from "../location-explorer";
 import { omniSearchRoutes, } from "../omni-search";
 import { storyOrchestrationRoutes, } from "../story-orchestration";
 import { capabilityManifestRoutes, } from "./capabilities";
-
 /**
  * @param opts
  * @returns Elysia plugin carrying the standalone v1 modules + the facade
@@ -42,6 +42,13 @@ export function standaloneSurface(opts: RegisterPluginsOpts,) {
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
   return new Elysia({ name: "v1-standalone", },)
+    // ── RSI agent API (agent-api-router ticket) ────────────────
+    // Mounted IN the v1 barrel (single mount): the surface authenticates via
+    // scoped agent_tokens (requireAgentScope in the route guards — 401/403/
+    // 429 in the guard), not the session chain; /api/agent/* is allowlisted
+    // in require-auth-guard for the same reason. Sub-route tickets (#6/#7/#8)
+    // hang their routes off this plugin.
+    .use(agentApiRoutes({ database, }, prefix,),)
     .use(agencyRoutes({ database: handleOpts.database, }, prefix,),)
     .use(locationExplorerRoutes(handleOpts, prefix,),)
     .use(gameStateRoutes(handleOpts, prefix,),)

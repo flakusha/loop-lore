@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Caveats:** Scope = ticket #5 only — router shell + token auth + admin mint/revoke + migration 114; the #6/#7/#8 business sub-routes are intentionally absent (no stubs); `GET /api/v1/agent/whoami` is the sole #5-owned agent route; the `migrations - ordering` gate is red in this worktree until the sibling branches holding 112/113 land (gapless-prefix check).
 **Priority:** High
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

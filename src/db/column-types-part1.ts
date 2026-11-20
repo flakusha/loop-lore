@@ -133,9 +133,13 @@ export const PART_1: Record<string, Record<string, string>> = {
     "asset_class": "StorageBudgetScope",
     "eviction_policy": "StorageEvictionPolicy",
   },
-  // 095_integration_tokens (ADR-credentials-issuer-model admin-scoped slice)
+  // 097_integration_tokens (ADR-credentials-issuer-model admin-scoped slice)
   "IntegrationTokens": {
     "scopes": "IntegrationTokenScope",
+  },
+  // 114_rsi_agent_tokens (RSI agent API scope tiers)
+  "AgentTokens": {
+    "scope": "AgentTokenScope",
   },
   "GenerationAttempts": {
     "cancel_reason": "CancelReason",

@@ -8,6 +8,7 @@ import type { Generated, } from "kysely";
 import type {
   ActorType,
   AgencyMode,
+  AgentTokenScope,
   AgentType,
   AnomalyInteraction,
   AnomalyType,
@@ -2314,4 +2315,14 @@ export interface ToolingReports {
   dedupe_key: string | null;
   count: Generated<number>;
   last_seen: string | null;
+}
+
+// ── agent_tokens ────────────────────────────────────────────
+export interface AgentTokens {
+  id: string;
+  token_hash: string;
+  scope: AgentTokenScope;
+  created_at: Generated<string>;
+  revoked_at: string | null;
+  last_used_at: string | null;
 }
