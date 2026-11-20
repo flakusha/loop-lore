@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress (first slice landed: `b80a68efb` — migration 117 + transition seam + admin read; no production writer yet)
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure
@@ -41,11 +41,11 @@ Kysely migration for `watchdog_events` table; sink that records every state tran
 
 ## Acceptance Criteria
 
-- [ ] Migration applies + reverses cleanly (`bun run db:migrate` + `bun run db:migrate down`)
+- [x] Migration applies + reverses cleanly (`117_watchdog_events.ts`; roundtrip suite green; 399 pass / 0 fail verification set)
 - [ ] Every state transition from #2 lands as a row in `watchdog_events`
 - [ ] `GET /api/admin/watchdog` returns last 100 events ordered by `created_at DESC` (admin-scoped)
-- [ ] Schema regen picks up the new table (`bun run db:sync-schema`)
-- [ ] Migration test passes (covered by `src/db/migrations.test.ts`)
+- [x] Schema regen picks up the new table (`db - schema gate` + `schemas:check` green; columns differ deliberately from the ticket sketch: `event_kind`/`decision_kind` CHECK text + `at_ms` instead of state/pid/exit-code columns, no AUTOINCREMENT per roundtrip policy)
+- [x] Migration test passes (covered by `src/db/migrations.test.ts`; 399 pass / 0 fail across the 6-file verification set)
 
 ## Files
 
