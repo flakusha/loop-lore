@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { randomUUID, } from "node:crypto";
 import type { ImageProviderConfig, } from "../../config/schema";
 import { getLogger, type Logger, } from "../../logger";
 import { validateProviderUrl, } from "../../utils/url-validation";
@@ -119,6 +120,15 @@ export async function generateComfyUI(
     // BYO key for reverse-proxy-fronted engines — the same auth seam the
     // sd.cpp and video paths use (Bearer; absent for stock ComfyUI).
     apiKey: opts.apiKey ?? sdConfig.apiKey,
+    clientId: randomUUID(),
+    onProgress: (event,) => {
+      log()?.child({ module: "image-engine/comfyui.progress", },).debug("ComfyUI progress", {
+        promptId: event.promptId,
+        value: event.value,
+        max: event.max,
+        node: event.node,
+      },);
+    },
   },);
 
   const buffers = await comfyClient.runWorkflow(workflow,);

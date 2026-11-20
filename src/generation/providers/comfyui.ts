@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 380
+// size-allow: 400
 
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
@@ -16,6 +16,7 @@ import {
   pollComfyResult,
   waitForComfyFiles,
 } from "./comfyui-poll";
+import { type ComfyUIProgressEvent, subscribeProgress, } from "./comfyui-progress";
 import { type ComfyUIMaskOriginalRef, uploadImageToComfy, uploadMaskToComfy, } from "./comfyui-upload";
 
 /** */
@@ -110,6 +111,10 @@ export interface ComfyUIClientOptions {
    * ComfyUI is unauthenticated, so this stays undefined for local engines.
    */
   apiKey?: string;
+  /** Per-call id echoed in /prompt and in the progress socket's client filter. */
+  clientId?: string;
+  /** Optional progress sink; events are already filtered to this client's prompt. */
+  onProgress?: (event: ComfyUIProgressEvent,) => void;
 }
 
 /** */
@@ -118,6 +123,8 @@ export class ComfyUIClient {
   private timeout: number;
   private pollIntervalMs: number;
   private apiKey?: string;
+  private clientId?: string;
+  private onProgress?: (event: ComfyUIProgressEvent,) => void;
 
   /**
    * @param options - client options (baseUrl, timeout, poll interval, credential)
@@ -128,6 +135,8 @@ export class ComfyUIClient {
     this.timeout = options.timeout ?? 120_000;
     this.pollIntervalMs = options.pollIntervalMs ?? 500;
     this.apiKey = options.apiKey;
+    this.clientId = options.clientId;
+    this.onProgress = options.onProgress;
 
     const validated = validateProviderUrl(this.baseUrl,);
     if (!validated.ok) {
@@ -151,7 +160,7 @@ export class ComfyUIClient {
     const resp = await fetch(url, {
       method: "POST",
       headers: this.authHeaders(),
-      body: jsonStringifyOr({ prompt: workflow, },),
+      body: jsonStringifyOr({ prompt: workflow, ...(this.clientId ? { client_id: this.clientId, } : {}), },),
       signal: AbortSignal.timeout(this.timeout,),
     },);
 
@@ -192,11 +201,25 @@ export class ComfyUIClient {
     promptId: string,
     timeoutMs?: number,
   ): Promise<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[]> {
-    return waitForComfyFiles(this.baseUrl, promptId, {
-      timeoutMs: timeoutMs ?? this.timeout,
-      pollIntervalMs: this.pollIntervalMs,
-      apiKey: this.apiKey,
-    },);
+    const progress = this.clientId
+      ? subscribeProgress({
+        baseUrl: this.baseUrl,
+        clientId: this.clientId,
+        promptId,
+        onProgress: (event,) => this.onProgress?.(event,),
+        timeoutMs: this.timeout,
+      },)
+      : undefined;
+
+    try {
+      return await waitForComfyFiles(this.baseUrl, promptId, {
+        timeoutMs: timeoutMs ?? this.timeout,
+        pollIntervalMs: this.pollIntervalMs,
+        apiKey: this.apiKey,
+      },);
+    } finally {
+      progress?.close();
+    }
   }
 
   /**
