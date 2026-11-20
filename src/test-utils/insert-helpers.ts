@@ -6839,3 +6839,31 @@ export async function insertRsiAgentWorktrees(
   } as any,).execute();
   return id;
 }
+
+/** Insert a agent_actions row. */
+export async function insertAgentActions(
+  db: Db,
+  token_digest: string,
+  action: string,
+  result: string,
+  opts?: {
+    id?: number;
+    user_id?: string | null;
+    worktree_id?: string | null;
+    commit_hash?: string | null;
+    duration_ms?: number | null;
+    metadata?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("agent_actions",).values({
+    id,
+    token_digest,
+    action,
+    result,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1060 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1061 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -172,6 +172,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/admin/actors/{actorId}/overrides | Create a character override |
 | GET | /api/v1/admin/age-gate | — |
 | PUT | /api/v1/admin/age-gate | — |
+| GET | /api/v1/admin/agent-actions | List RSI agent API actions |
 | POST | /api/v1/admin/agent-tokens | Mint an RSI agent token |
 | DELETE | /api/v1/admin/agent-tokens/{id} | Revoke an RSI agent token |
 | GET | /api/v1/admin/audit | — |

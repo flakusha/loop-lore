@@ -194,6 +194,18 @@ export const SCHEMA = new SchemaManifest()
     hour_bucket: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("agent_actions", {
+    id: col("integer", { primaryKey: true, },),
+    token_digest: col("text", { notNull: true, },),
+    user_id: col("text",),
+    action: col("text", { notNull: true, },),
+    worktree_id: col("text",),
+    commit_hash: col("text",),
+    result: col("text", { notNull: true, },),
+    duration_ms: col("integer",),
+    metadata: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("agent_tokens", {
     id: col("text", { primaryKey: true, },),
     token_hash: col("text", { notNull: true, },),

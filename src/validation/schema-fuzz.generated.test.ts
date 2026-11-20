@@ -2949,4 +2949,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 468 schemas discovered across 581 module(s).
+// 468 schemas discovered across 582 module(s).

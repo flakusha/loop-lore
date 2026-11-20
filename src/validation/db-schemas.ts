@@ -4209,3 +4209,16 @@ export const RsiAgentWorktreesSchema = t.Object({
   last_active_at: t.Optional(t.String(),),
   removed_at: t.Optional(t.String(),),
 },);
+
+// ── agent_actions ────────────────────────────────────────────
+export const AgentActionsSchema = t.Object({
+  token_digest: t.String(),
+  action: t.String(),
+  result: t.String(),
+  user_id: t.Optional(t.String(),),
+  worktree_id: t.Optional(t.String(),),
+  commit_hash: t.Optional(t.String(),),
+  duration_ms: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);

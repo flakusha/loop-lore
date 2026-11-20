@@ -33,6 +33,7 @@ import {
 } from "../../middleware/rate-limit";
 import { forbiddenResponse, HttpStatus, unauthorizedResponse, } from "../../routes/http-utils";
 import { toDate, } from "../../utils/date";
+import { type AgentActionMarker, NO_AGENT_TOKEN_DIGEST, recordAgentAction, } from "../audit";
 
 /** Wire prefix separating agent tokens from every other bearer shape. */
 export const AGENT_TOKEN_PREFIX = "llra_";
@@ -76,6 +77,14 @@ export interface AgentAuthDeps {
  */
 export function hashAgentToken(rawToken: string,): string {
   return new Bun.CryptoHasher("sha256",).update(rawToken,).digest("hex",);
+}
+
+/** Short audit label for the sub-route a request targeted. */
+function agentActionName(request: Request,): string {
+  const pathname = new URL(request.url,).pathname;
+  const marker = "/agent/";
+  const at = pathname.indexOf(marker,);
+  return at === -1 ? pathname : (pathname.slice(at + marker.length,) || "unknown");
 }
 
 /**
@@ -165,39 +174,93 @@ function agentTokenGuard(
   // — Elysia's handler context is only structurally known inside the
   // framework; the guard narrows to request + token carrier itself.
   return async (ctx: any,) => {
-    const raw = extractBearerToken(ctx.request as Request,);
+    const request = ctx.request as Request;
+    const startedAt = Date.now();
+    const action = agentActionName(request,);
+    const raw = extractBearerToken(request,);
+    // One digest per request; the plaintext bearer never leaves this guard.
+    const digest = raw ? hashAgentToken(raw,).slice(0, 16,) : NO_AGENT_TOKEN_DIGEST;
     if (!raw) {
       log?.debug("agent request missing bearer token", {},);
+      await recordAgentAction(deps.database, {
+        tokenDigest: digest,
+        action,
+        result: "denied",
+        durationMs: Date.now() - startedAt,
+      },);
+
       return unauthorizedResponse("agent token required",);
     }
 
     // 401 covers missing/unknown/revoked alike — never reveal which.
     const token = await verifyAgentToken(deps.database, raw,);
     if (!token) {
-      log?.debug("agent token rejected", { hashPrefix: hashAgentToken(raw,).slice(0, 8,), },);
+      log?.debug("agent token rejected", { hashPrefix: digest.slice(0, 8,), },);
+      await recordAgentAction(deps.database, {
+        tokenDigest: digest,
+        action,
+        result: "denied",
+        durationMs: Date.now() - startedAt,
+      },);
+
       return unauthorizedResponse("invalid agent token",);
     }
 
     // Global budget first: one flooding token must not squeeze the shared
     // window only after per-token accounting.
     const globalResult = global.consume("global",);
-    if (!globalResult.allowed) { return rateLimitedResponse(globalResult,); }
+    if (!globalResult.allowed) {
+      await recordAgentAction(deps.database, {
+        tokenDigest: digest,
+        action,
+        result: "rate_limited",
+        durationMs: Date.now() - startedAt,
+      },);
+
+      return rateLimitedResponse(globalResult,);
+    }
 
     const tokenResult = perToken.consume(`token:${token.id}`,);
-    if (!tokenResult.allowed) { return rateLimitedResponse(tokenResult,); }
+    if (!tokenResult.allowed) {
+      await recordAgentAction(deps.database, {
+        tokenDigest: digest,
+        action,
+        result: "rate_limited",
+        durationMs: Date.now() - startedAt,
+      },);
+
+      return rateLimitedResponse(tokenResult,);
+    }
 
     if (requiredScope !== null && token.scope !== requiredScope) {
       log?.debug("agent token off-scope", {
         tokenId: token.id,
-        hashPrefix: hashAgentToken(raw,).slice(0, 8,),
+        hashPrefix: digest.slice(0, 8,),
         requiredScope,
         tokenScope: token.scope,
+      },);
+
+      await recordAgentAction(deps.database, {
+        tokenDigest: digest,
+        action,
+        result: "forbidden",
+        durationMs: Date.now() - startedAt,
       },);
 
       return forbiddenResponse("token lacks required scope",);
     }
 
+    const auditId = await recordAgentAction(deps.database, {
+      tokenDigest: digest,
+      action,
+      result: "allowed",
+    },);
+
     ctx.agentToken = token;
+    if (auditId !== null) {
+      (ctx as { __agentAudit?: AgentActionMarker }).__agentAudit = { auditId, startedAt, };
+    }
+
     return undefined;
   };
 }

@@ -2338,3 +2338,17 @@ export interface RsiAgentWorktrees {
   last_active_at: Generated<string>;
   removed_at: string | null;
 }
+
+// ── agent_actions ────────────────────────────────────────────
+export interface AgentActions {
+  id: Generated<number>;
+  token_digest: string;
+  user_id: string | null;
+  action: string;
+  worktree_id: string | null;
+  commit_hash: string | null;
+  result: string;
+  duration_ms: number | null;
+  metadata: string | null;
+  created_at: Generated<string>;
+}

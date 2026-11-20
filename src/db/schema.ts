@@ -269,4 +269,5 @@ export interface DB {
   tooling_reports: import("./schema-core").ToolingReports;
   agent_tokens: import("./schema-core").AgentTokens;
   rsi_agent_worktrees: import("./schema-core").RsiAgentWorktrees;
+  agent_actions: import("./schema-core").AgentActions;
 }

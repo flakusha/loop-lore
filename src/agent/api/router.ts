@@ -20,6 +20,7 @@ import { Elysia, } from "elysia";
 import type { Db, } from "../../db";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { jsonResponse, } from "../../routes/http-utils";
+import { type AgentActionMarker, finalizeAgentAction, } from "../audit";
 import { requireAgentToken, type ResolvedAgentToken, } from "./auth";
 import { checkRoutes, } from "./check";
 import type { AgentRouteOpts, } from "./types";
@@ -62,7 +63,29 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
     runCheck: opts.runCheck,
   };
 
+  /** Stamp the guard's row with the handler's final outcome. */
+  const closeAudit = async (ctx: unknown, result: string,): Promise<void> => {
+    const marker = (ctx as { __agentAudit?: AgentActionMarker }).__agentAudit;
+    if (!marker) { return; }
+    await finalizeAgentAction(opts.database, {
+      auditId: marker.auditId,
+      result,
+      durationMs: Date.now() - marker.startedAt,
+    },);
+  };
+
   return new Elysia({ name: "agent-api", },)
+    // Registered BEFORE the routes: Elysia wraps every route declared after
+    // the hook, including the mounted worktree/check sub-plugins. Guard
+    // rejections carry no marker — their result is already final.
+    .onAfterHandle(async (ctx,) => {
+      const response = (ctx as { response: unknown }).response;
+      const status = response instanceof Response ? response.status : 200;
+      await closeAudit(ctx, status >= 400 ? "failure" : "success",);
+    },)
+    .onError(async (ctx,) => {
+      await closeAudit(ctx, "failure",);
+    },)
     .get(
       `${prefix}/agent/whoami`,
       async (ctx: unknown,) => {
