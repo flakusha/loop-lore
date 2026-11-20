@@ -18,6 +18,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **Async spill files and TUI logs stay inside their instance** — the orphan-spill sweep and TUI file transport used CWD-relative `.tmp/` paths shared by every local instance, so one instance's retention could delete another's spill body while its row still pointed at the file. Both roots now resolve from `resolveInstanceDir()` at call time, so effective binds set during boot are honoured; a two-instance regression proves A's sweep leaves B's rows readable.
 - **Blender LTS builds satisfy the version pin** — the capability probe strips the `LTS` suffix from `bpy.app.version_string`, so an official `4.5.15 LTS` build is reported as supported instead of being rejected as an unknown version.
 - **Admin destructive/config boundaries validate at the edge** — restore bodies, llama-swap config patches, and sd.cpp/ComfyUI delete names now use bounded central schemas, with validation failures answered as 400 instead of escaping as 422; the operator-entered name pattern has one shared definition.
 - **Admin panels call the versioned API** — backup and local-model fetches use `/api/v1/...` directly instead of relying on the unversioned 308 shim, and the Local Models tab probes both backends when opened.

@@ -30,6 +30,7 @@ import {
   setOffloadDir,
   spill,
   spillFileStem,
+  spillRootDir,
   startOffloadDaemon,
 } from "./offload";
 
@@ -829,6 +830,77 @@ describe("pruneOrphanSpills — retention cap for unreferenced spill files", () 
     } finally {
       await ctx.db.destroy();
       ctx.sqlite.close();
+    }
+  });
+
+  test("one instance's sweep never deletes another instance's spill body", async () => {
+    const restoreEnv = (key: string, value: string | undefined,): void => {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    };
+
+    // The production failure: both instances used the same CWD-relative
+    // SPILL_ROOT, so A's orphan sweep deleted B's file while B's DB row still
+    // pointed at it. Two real instance slugs + one state root make the roots
+    // differ; A's sweep must see only its own tree.
+    const stateRoot = mkdtempSync(path.join(tmpdir(), "loop-lore-two-instances-",),);
+    const savedState = process.env.LOOP_LORE_STATE_DIR;
+    const savedInstance = process.env.LOOP_LORE_INSTANCE;
+    const ctxA = await createTestDb();
+    const ctxB = await createTestDb();
+    try {
+      process.env.LOOP_LORE_STATE_DIR = stateRoot;
+      process.env.LOOP_LORE_INSTANCE = "alpha";
+      resetOffloadDir();
+      const rootA = spillRootDir();
+      const fileA = await spill("shared-row-id", "alpha body",);
+
+      process.env.LOOP_LORE_INSTANCE = "bravo";
+      resetOffloadDir();
+      const rootB = spillRootDir();
+      const fileB = await spill("shared-row-id", "bravo body",);
+
+      expect(rootA,).not.toBe(rootB,);
+      expect(rootA,).toBe(path.join(stateRoot, "alpha", "spill",),);
+      expect(rootB,).toBe(path.join(stateRoot, "bravo", "spill",),);
+      expect(fileA.startsWith(rootA + path.sep,),).toBe(true,);
+      expect(fileB.startsWith(rootB + path.sep,),).toBe(true,);
+      // B's row points at B's file. A's sweep builds its reference set from
+      // A's DB only, so on a shared root this reference would NOT protect B.
+      await seedRequest(ctxB.db, {
+        id: "shared-row-id",
+        status: "complete",
+        completedAt: minutesAgo(1,),
+        offloadPath: fileB,
+      },);
+
+      const { utimesSync, } = await import("node:fs");
+      const old = new Date(Date.now() - 4 * TTL_MS,);
+      utimesSync(fileA, old, old,);
+      utimesSync(fileB, old, old,);
+
+      process.env.LOOP_LORE_INSTANCE = "alpha";
+      resetOffloadDir();
+      const pruned = await pruneOrphanSpills(ctxA.db, { ttlMs: TTL_MS, },);
+
+      expect(pruned,).toBe(1,);
+      expect(existsSync(fileA,),).toBe(false,);
+      expect(existsSync(fileB,),).toBe(true,);
+      expect(readOffloadedBody(fileB,),).toBe("bravo body",);
+      // A's DB never references B's path, so only root separation could have
+      // kept this file alive: the bug deletes it exactly here.
+    } finally {
+      restoreEnv("LOOP_LORE_STATE_DIR", savedState,);
+      restoreEnv("LOOP_LORE_INSTANCE", savedInstance,);
+      resetOffloadDir();
+      await ctxA.db.destroy();
+      ctxA.sqlite.close();
+      await ctxB.db.destroy();
+      ctxB.sqlite.close();
+      rmSync(stateRoot, { recursive: true, force: true, },);
     }
   });
 });

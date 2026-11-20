@@ -14,10 +14,11 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { existsSync, readFileSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { dirname, join, } from "node:path";
+import { resolveInstanceDir, } from "../config/state-dir";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { safeFetch, } from "../utils";
-import { AppShell, createTUIApp, TUI_LOG_PATH, TUIApp, } from "./app";
+import { AppShell, createTUIApp, TUIApp, tuiLogPath, } from "./app";
 import { bindGlobalKeys, } from "./app-keys";
 import type { KeyBindingHost, } from "./app-keys";
 import { AssetView, setFetch as setAssetFetch, } from "./asset-view";
@@ -309,9 +310,10 @@ describe("TUI logging", () => {
 
     await logger.flush();
 
-    expect(dirname(TUI_LOG_PATH,),).toBe(".tmp/tui",);
-    expect(existsSync(TUI_LOG_PATH,),).toBe(true,);
-    expect(readFileSync(TUI_LOG_PATH, "utf8",),).toContain(marker,);
+    const logPath = tuiLogPath();
+    expect(dirname(logPath,),).toBe(join(resolveInstanceDir(), "logs",),);
+    expect(existsSync(logPath,),).toBe(true,);
+    expect(readFileSync(logPath, "utf8",),).toContain(marker,);
   });
 
   // `createLogger` adopts the global root with `??=`: when a root already

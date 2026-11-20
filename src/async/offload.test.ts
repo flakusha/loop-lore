@@ -18,6 +18,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdtempSync, readdirSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { resolveInstanceDir, } from "../config/state-dir";
 import {
   offloadDir,
   offloadDiskBytes,
@@ -42,15 +43,12 @@ describe("offload helpers", () => {
     rmSync(dir, { recursive: true, force: true, },);
   },);
 
-  test("the default spill dir is a per-process namespace under the repo's .tmp/ root", () => {
+  test("the default spill dir is a per-process namespace under this instance's root", () => {
     // `resetOffloadDir()` restores the PRODUCTION default, so `offloadDir()`
     // below is the value the running app uses — not one this file chose.
     resetOffloadDir();
-    expect(SPILL_ROOT,).toContain(".tmp",);
-    expect(SPILL_ROOT,).toContain("async-store",);
-    // Structure, not a re-derived constant: the pre-fix flat shared
-    // `OFFLOAD_DIR` returns `SPILL_ROOT` itself here and fails both.
-    expect(path.dirname(offloadDir(),),).toBe(SPILL_ROOT,);
+    expect(SPILL_ROOT,).toBe(path.join(resolveInstanceDir(), "spill",),);
+    expect(path.dirname(offloadDir(),),).toBe(spillRootDir(),);
     expect(path.basename(offloadDir(),),).toBe(String(process.pid,),);
   });
 
@@ -148,10 +146,10 @@ describe("two independent stores on one database do not share a spill path", () 
 
     const proc = Bun.spawnSync({
       cmd: [process.execPath, "-e", script, path.join(import.meta.dir, "spill.ts",), id, cwd, mode,],
-      // The child's cwd decides where `SPILL_ROOT` (a CWD-relative
-      // `path.resolve`) lands, so an unrelated cwd keeps every byte of spill
-      // state out of the repo's `.tmp/async-store` and away from a running
-      // dev server's namespace.
+      // Pin the child's state root to its sandbox: the spill root is derived
+      // from `resolveInstanceDir()`, so an explicit env root keeps every byte
+      // out of the running app's instance and away from other suites.
+      env: { ...process.env, LOOP_LORE_STATE_DIR: cwd, LOOP_LORE_INSTANCE: "spawn-test", },
       cwd,
       timeout: 10_000,
     },);
@@ -206,11 +204,10 @@ describe("two independent stores on one database do not share a spill path", () 
     // `DEFAULT_DIR` to a flat `SPILL_ROOT` would put both children in one
     // directory and both assertions below would fail.
     //
-    // Hermetic by construction: the child's cwd is a fresh `mkdtemp`, and
-    // `SPILL_ROOT` is `path.resolve('.tmp', 'async-store')` resolved against
-    // the CWD AT IMPORT TIME — so the whole tree, root included, is created
-    // inside the sandbox and removed with it. The repo's `.tmp/async-store` is
-    // never written, so this cannot collide with a concurrent dev server.
+    // Hermetic by construction: each child gets the same fresh `mkdtemp` as
+    // its LOOP_LORE_STATE_DIR, so `SPILL_ROOT` resolves under that sandbox and
+    // the whole tree is removed with it. No running instance's spill dir is
+    // written, so this cannot collide with a concurrent dev server.
     const sandbox = mkdtempSync(path.join(tmpdir(), "loop-lore-c4-default-",),);
     try {
       const id = "criterion-4-default-namespace";
