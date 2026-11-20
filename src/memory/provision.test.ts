@@ -131,6 +131,31 @@ describe("provisionMemories — scope filtering", () => {
     expect(result.rejected[0]!.reason,).toBe("scope:timeline_mismatch",);
   });
 
+  test("harness memory denied without harness session context", () => {
+    const mem = makeMemory({ id: "m1", scope: "harness", },);
+    const result = provisionMemories([mem,], makeCtx(),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:harness_no_context",);
+  });
+
+  test("harness memory denied even with other scope context present", () => {
+    const mem = makeMemory({
+      id: "m1",
+      scope: "harness",
+      worldId: "world-1",
+      sourceChatId: "chat-root",
+      timelineId: "prime",
+    },);
+
+    const result = provisionMemories(
+      [mem,],
+      makeCtx({ partyChatIds: ["chat-root",], timelineId: "prime", },),
+    );
+
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:harness_no_context",);
+  });
+
   test("secret memories bypass party/timeline scope (trusted viewer)", () => {
     const mem = makeMemory({
       id: "m1",

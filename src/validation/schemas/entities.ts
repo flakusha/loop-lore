@@ -12,7 +12,7 @@ import { Name, } from "./primitives";
 // ── Entity routes (actor-items, memories, lore, notes) ─────
 
 /** Entity audience scope — mirrors `MemoryScope` in `src/memory/types.ts`. */
-export const EntityScopeSchema = t.UnionEnum(["character", "assistant", "world",],);
+export const EntityScopeSchema = t.UnionEnum(["character", "assistant", "world", "harness",],);
 export type EntityScope = Static<typeof EntityScopeSchema>;
 
 /** Memory extraction review workflow state (default-free union — see above). */
@@ -32,6 +32,7 @@ export const EntityScopeUpdateSchema = t.Union([
   t.Literal("character",),
   t.Literal("assistant",),
   t.Literal("world",),
+  t.Literal("harness",),
 ],);
 
 /**

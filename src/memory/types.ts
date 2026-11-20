@@ -4,7 +4,8 @@
 /**
  * Memory system types.
  *
- * Three memory scopes: character (per-actor), assistant (per-user), world (per-world).
+ * Memory scopes: character (per-actor), assistant (per-user), world (per-world),
+ * party (party lineage), timeline, harness (harness session).
  * Each memory has content, type, confidence, importance, and optional metadata.
  */
 
@@ -23,13 +24,17 @@ import type { ExtractionKind, MemoryType, } from "../db/enums-story";
  *   unrelated chats.
  * - `timeline`: timeline-shared — visible in every chat of the memory's
  *   timeline (`actor_memories.timeline_id`); never crosses timelines.
+ * - `harness`: harness-scoped — visible only in the same harness session/
+ *   instance. Denied by provisioning until a harness-session identifier is
+ *   threaded into `ProvisionContext` (S17).
  */
 export type MemoryScope =
   | "character"
   | "assistant"
   | "world"
   | "party"
-  | "timeline";
+  | "timeline"
+  | "harness";
 
 /** Memory privacy level — controls who can see this memory. */
 export type MemoryPrivacy = "public" | "shared" | "private" | "secret";
