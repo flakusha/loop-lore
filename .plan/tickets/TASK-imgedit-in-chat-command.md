@@ -3,7 +3,7 @@
 
 # TASK: imgedit in-chat command
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-assistant-generation-extensions
@@ -35,7 +35,7 @@ reach `templateRegistry` [INFERENCE on /image internals — review matrix row 4]
 
 **Acceptance Criteria:**
 
-- [ ] `/imgedit <template> [prompt]` runs the template via the service layer
+- [x] `/imgedit <template> [prompt]` runs the template via the service layer (landing `ccd494c1b`: template resolved through the service-layer registry; execution rides the existing `/api/v1/image-edit/run` route, which owns auth/BYOK — live-backend run deferred).
 - [x] Unknown template → clear error message, no partial job left behind
 - [x] Result/action payload renders in chat (single + group)
 - [x] Unit tests: command dispatch → service call, error paths (missing template,

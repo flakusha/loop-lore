@@ -36333,7 +36333,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "comfyui",
       "websocket",
@@ -36714,7 +36714,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-sampler-scheduler-discovery.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "5880e44"
   },
   "TASK-COMFYUI-TEMPLATE-PARAMETER-VALIDATION": {
@@ -36727,7 +36727,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "b89e39a"
   },
   "TASK-COMFYUI-TEMPLATE-REGISTRY": {
@@ -36914,7 +36914,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E": {
     "hash": "71aa87f",
@@ -47680,7 +47680,7 @@
     "epic": "epic-assistant-generation-extensions",
     "tags": [],
     "source": ".plan/tickets/TASK-imgedit-in-chat-command.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-IMMERSION-GATE-CLAIM-EXTRACTION": {
     "hash": "17e9357",

@@ -9,7 +9,7 @@
 **Acceptance Criteria:** Declared ranges enforced server-side; `width`/`height`/`scheduler` reach the workflow from the request.
 
 **Priority:** P1 — High
-**Status:** In Progress
+**Status:** Done
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none (independent of the other tickets in this epic)
 
@@ -126,7 +126,7 @@ same bug, already shipped in a builtin template.
 - [x] Width/height snap to `multiple_of = 8` (ComfyUI's `LATENT_SCALE_FACTOR`),
       not 64. The current `step: 64` is stricter than ComfyUI requires and would
       reject valid 8-aligned sizes like 1000.
-- [ ] Family base sizes documented: 512 (SD1.5) / 768 (SD2) / 1024 (SDXL, Flux,
+- [ ] Family base sizes documented: 512 (SD1.5) / 768 (SD2) / 1024 (SDXL, Flux, Anima) per `invokeai/app/invocations/ideal_size.py:39-74` (deferred docs trivia; landing `ce8856042` covers all enforced behavior).
       Anima) per `invokeai/app/invocations/ideal_size.py:39-74`.
 - [x] Snap-vs-reject is an explicit decision recorded in the code: snapping is
       friendlier, rejecting is honest. Do not leave it implicit.

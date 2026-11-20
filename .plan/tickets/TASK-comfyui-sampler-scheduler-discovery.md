@@ -6,10 +6,10 @@
 **Effort:** Small
 **Summary:** Sampler and scheduler value lists must come from the installed ComfyUI at runtime, not a hardcoded array and not InvokeAI's conflated enum.
 **Context:** Found by investigation 2026-09-27 (`docs/meta/research/comfyui-first-class-investigation.md` §4.1). Sampling a sampler the operator's ComfyUI does not have fails the whole graph at submit.
-**Acceptance Criteria:** Both enums discovered and cached; no hardcoded sampler list ships.
+**Acceptance Criteria:** Both enums discovered and cached; no hardcoded sampler list ships (landing `ce8856042`: shared 5-minute cache, `/nodes` exposure, 400 on out-of-enum before submit; the builtin `select` options remain advisory-only per line 68-70).
 
 **Priority:** P2 — Medium
-**Status:** In Progress
+**Status:** Done
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none
 
