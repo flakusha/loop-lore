@@ -11,6 +11,7 @@
 
 import { type ChildProcessWithoutNullStreams, spawn, } from "node:child_process";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
+import { scrubEnv, } from "./env-scrub";
 
 /** Options for the connection. */
 export interface JsonRpcProcessOptions {
@@ -176,7 +177,7 @@ export class JsonRpcProcess {
 
     let child: ChildProcessWithoutNullStreams;
     try {
-      child = spawn(cmd, args, { cwd: this.opts.cwd, stdio: ["pipe", "pipe", "pipe",], },);
+      child = spawn(cmd, args, { cwd: this.opts.cwd, stdio: ["pipe", "pipe", "pipe",], env: scrubEnv(), },);
     } catch (error) {
       this.closed = true;
       this.opts.onExit?.((error as Error).message,);

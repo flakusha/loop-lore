@@ -31,6 +31,7 @@
  */
 
 import { isWithinScope, } from "../../harness/worktree-scope";
+import { isSecretBasename, } from "./env-scrub";
 
 /** ACP tool-call kinds classified as reading the filesystem, not writing it. */
 export const READ_ONLY_TOOL_KINDS = ["read", "search", "fetch",] as const;
@@ -179,6 +180,14 @@ export async function classifyPermission(input: ClassifyPermissionInput,): Promi
   for (const candidate of [...strings.leaves, ...candidates.leaves,]) {
     if (!await isWithinScope(sandboxRoot, candidate,)) {
       return { decision: "require_approval", reason: `path outside sandbox cwd: ${candidate}`, };
+    }
+  }
+
+  // ponytail: the secret-basename deny sits immediately before auto-allow so
+  // an in-sandbox env.yaml / *.pem still needs a human decision.
+  for (const candidate of candidates.leaves) {
+    if (isSecretBasename(candidate,)) {
+      return { decision: "require_approval", reason: `read-only ask "${kind}" targets a secret file: ${candidate}`, };
     }
   }
 

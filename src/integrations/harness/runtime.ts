@@ -37,6 +37,7 @@ import type { HarnessAcpConfig, } from "../../config/schema/harness";
 import { PathOutsideScopeError, resolveWithinScope, } from "../../harness/worktree-scope";
 import { getChildLogger, } from "../../logger";
 import { type HarnessAdapterFactory, } from "./adapter-types";
+import { isSecretBasename, } from "./env-scrub";
 import { resolveAdapterFactory, } from "./flavor-factories";
 import { JsonRpcRequestError, } from "./jsonrpc-process";
 import { PermissionQueue, } from "./permission-queue";
@@ -120,9 +121,14 @@ const MAX_READ_BYTES = 1024 * 1024;
  * @param root - the sandbox root the read is confined to
  * @param path - the path the agent asked for
  * @returns the file's text
- * @throws {JsonRpcRequestError} when the path escapes the root or the read fails
+ * @throws {JsonRpcRequestError} when the path escapes the root, names a secret file, or the read fails
  */
-async function readSandboxedText(root: string, path: string,): Promise<string> {
+export async function readSandboxedText(root: string, path: string,): Promise<string> {
+  if (isSecretBasename(path,)) {
+    log()?.warn("harness fs read refused — secret file basename", { root, path, },);
+    throw new JsonRpcRequestError("the requested file is a secret file and cannot be read", -32000,);
+  }
+
   let resolved: string;
   try {
     resolved = await resolveWithinScope(root, path,);
