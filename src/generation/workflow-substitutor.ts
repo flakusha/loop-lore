@@ -258,6 +258,28 @@ export function applyNodeOverrides<T extends Record<string, unknown>,>(
  * @param params.cfgScale
  * @param params.sampler
  * @param params.scheduler
+ * @param params.seed
+ * @returns Substitution variable map
+ * @throws {RangeError} when width or height is not a positive multiple of 32
+ */
+function assertAlignedDimension(value: number, label: string,): void {
+  if (!Number.isInteger(value,) || value <= 0 || value % 32 !== 0) {
+    throw new RangeError(`${label} must be a positive multiple of 32 (got ${value},)`,);
+  }
+}
+/**
+ * Build substitution vars from image generation parameters.
+ *
+ * Maps common generation fields to template variable names.
+ * @param params - Generation parameters from the request
+ * @param params.prompt
+ * @param params.negativePrompt
+ * @param params.width
+ * @param params.height
+ * @param params.steps
+ * @param params.cfgScale
+ * @param params.sampler
+ * @param params.scheduler
  * @param params.denoise
  * @param params.seed
  * @param params.model - checkpoint file name (`{{model}}`)
@@ -285,6 +307,9 @@ export function buildSubstitutionVars(params: {
   lora?: string;
   [key: string]: unknown;
 },): SubstitutionVars {
+  assertAlignedDimension(params.width ?? 512, "width",);
+  assertAlignedDimension(params.height ?? 512, "height",);
+
   const vars: SubstitutionVars = {
     prompt: params.prompt,
     negative_prompt: params.negativePrompt ?? "",

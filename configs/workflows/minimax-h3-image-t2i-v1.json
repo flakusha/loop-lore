@@ -44,9 +44,9 @@
   },
   "32": {
     "inputs": {
-      "prompt": "",
-      "width": 3104,
-      "height": 3104,
+      "prompt": "{{prompt}}",
+      "width": "{{width}}",
+      "height": "{{height}}",
       "clip": [
         "30",
         0

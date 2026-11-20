@@ -115,4 +115,24 @@ describe("shipped workflow exports pre-submit flow", () => {
     for (const text of texts) { expect(["red car", "blue car",],).toContain(text,); }
     expect(second,).toEqual(first,);
   });
+
+  it("image.generate exports bind prompt, negative prompt and aligned dimensions", () => {
+    const defaults = JSON.parse(readFileSync("configs/workflow-defaults.json", "utf8",),) as {
+      "image.generate": { supported: string[] };
+    };
+
+    // MiniMax H3 has no negative conditioning input; its zero-out branch is
+    // the negative. Every other image.generate export has a negative slot.
+    const negativeOptional = new Set(["minimax-h3-image-t2i-v1",],);
+    for (const id of defaults["image.generate"].supported) {
+      const placeholders = collectPlaceholders(load(`${id}.json`,),);
+      for (const name of ["prompt", "width", "height",] as const) {
+        expect(placeholders.has(name,),).toBe(true,);
+      }
+
+      if (!negativeOptional.has(id,)) {
+        expect(placeholders.has("negative_prompt",),).toBe(true,);
+      }
+    }
+  });
 });

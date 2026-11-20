@@ -175,4 +175,10 @@ describe("buildSubstitutionVars", () => {
     expect(vars.lora,).toBe("style.safetensors",);
     expect(buildSubstitutionVars({ prompt: "cat", },).model,).toBe("model.safetensors",);
   });
+
+  it("rejects dimensions modern diffusion models cannot render", () => {
+    expect(() => buildSubstitutionVars({ prompt: "cat", width: 500, },)).toThrow(/multiple of 32/,);
+    expect(() => buildSubstitutionVars({ prompt: "cat", height: 768.5, },)).toThrow(RangeError,);
+    expect(() => buildSubstitutionVars({ prompt: "cat", width: 0, },)).toThrow(RangeError,);
+  });
 });

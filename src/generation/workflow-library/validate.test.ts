@@ -124,6 +124,38 @@ describe("validateWorkflowPayload", () => {
     expect(result.ok,).toBe(true,);
   });
 
+  it("rejects a half-bound LoRA placeholder slot", () => {
+    const body = {
+      ...GOOD_GRAPH,
+      "2": { ...GOOD_GRAPH["2"], inputs: { ...GOOD_GRAPH["2"].inputs, lora_1: "{{lora_1}}", }, },
+    };
+
+    const result = validateWorkflowPayload({ ...BASE, body, },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain("lora_1_weight",);
+      expect(result.errors.join(" ",),).toContain("lora_1_enabled",);
+    }
+  });
+
+  it("accepts a complete LoRA placeholder slot", () => {
+    const body = {
+      ...GOOD_GRAPH,
+      "2": {
+        ...GOOD_GRAPH["2"],
+        inputs: {
+          ...GOOD_GRAPH["2"].inputs,
+          lora_1: "{{lora_1}}",
+          lora_1_weight: "{{lora_1_weight}}",
+          lora_1_enabled: "{{lora_1_enabled}}",
+        },
+      },
+    };
+
+    const result = validateWorkflowPayload({ ...BASE, body, },);
+    expect(result.ok,).toBe(true,);
+  });
+
   it("rejects a node missing class_type or inputs", () => {
     const bad = validateWorkflowPayload({ ...BASE, body: { "1": { inputs: {}, }, }, },);
     expect(bad.ok,).toBe(false,);

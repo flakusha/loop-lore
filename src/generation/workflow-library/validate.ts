@@ -120,6 +120,24 @@ function loraSlotErrors(payload: WorkflowPayload,): string[] {
 }
 
 /**
+ * Future API exports carry LoRA slots as `{{lora_N}}` plus weight/enabled
+ * placeholders. A half-bound slot submits a literal model name or strength.
+ * @param placeholders - Placeholders found in the graph
+ */
+function loraPlaceholderErrors(placeholders: ReadonlySet<string>,): string[] {
+  const errors: string[] = [];
+  for (const name of placeholders) {
+    if (!/^lora_\d+$/.test(name,)) { continue; }
+    for (const suffix of ["weight", "enabled",] as const) {
+      if (!placeholders.has(`${name}_${suffix}`,)) {
+        errors.push(`${name} has no {{${name}_${suffix}}} placeholder`,);
+      }
+    }
+  }
+
+  return errors;
+}
+/**
  * Structural probe for the metadata half of a payload.
  * @param value
  */
@@ -195,8 +213,10 @@ export function validateWorkflowPayload(value: unknown, options: ValidateWorkflo
     }
   }
 
-  errors.push(...parameterErrors(payload.parameters, collectPlaceholders(graph,), boundNames,),);
+  const placeholders = collectPlaceholders(graph,);
+  errors.push(...parameterErrors(payload.parameters, placeholders, boundNames,),);
   errors.push(...loraSlotErrors(payload,),);
+  errors.push(...loraPlaceholderErrors(placeholders,),);
 
   // Same strict rule as the disk loader: reject, do not warn. Converted
   // mode exempts exactly the converter-reported ids — each must still be
