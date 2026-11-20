@@ -134,7 +134,6 @@ const BASELINE = [
   // `open` sits in the interceptor's WRITE member list, so a policed call
   // would judge a legitimate read against the assistant's write allowlist.
   "src/integrations/harness/runtime.ts",
-  "src/routes/assets.ts",
   "src/routes/characters/export.ts",
   "src/routes/views/character-edit-form.ts",
   "src/routes/views/constants.ts",
