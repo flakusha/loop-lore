@@ -58150,7 +58150,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "audit",
