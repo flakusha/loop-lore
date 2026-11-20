@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Dice Routes — POST /api/dice/roll
+ * Dice Routes — POST /api/v1/dice/roll
  *
  * Core game mechanic imported by plugin.ts as the apiRoutes handler.
  * Also exposes helpers for frontend/chat text-command detection.
@@ -15,7 +15,7 @@ import type { DiceRollResult, DiceError } from "./types";
 // ── Route handler (called by plugin dispatcher) ──────────────
 
 /**
- * Handle POST /api/dice/roll
+ * Handle POST /api/v1/dice/roll
  *
  * Body: { expression: string }  |  { text: string }
  *
@@ -23,7 +23,7 @@ import type { DiceRollResult, DiceError } from "./types";
  */
 export async function handleRoll(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/dice/roll" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/dice/roll" || request.method !== "POST") return null;
 
   let body: unknown;
   try {

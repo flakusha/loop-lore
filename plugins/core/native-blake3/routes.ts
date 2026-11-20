@@ -14,7 +14,7 @@
 import { getBlake3Status } from "../../../src/native";
 
 /**
- * GET /api/native/blake3/health
+ * GET /api/v1/native/blake3/health
  *
  * @returns JSON status: active implementation, native availability, ABI
  *   version, binary path, platform.

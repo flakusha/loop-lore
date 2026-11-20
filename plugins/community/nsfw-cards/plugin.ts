@@ -4,7 +4,7 @@
 /**
  * NSFW Cards Plugin — Community plugin for NSFW card games
  *
- * Registers POST /api/nsfw-cards/start and POST /api/nsfw-cards/play.
+ * Registers POST /api/v1/nsfw-cards/start and POST /api/v1/nsfw-cards/play.
  * Integrates with reputation system via intimacy tracking.
  * Multi-round seduction encounters with escalating intimacy.
  */
@@ -28,7 +28,7 @@ export const plugin: PluginManifest = {
     // via permission overrides — default-deny by design.
     context.registerApiRoute({
       method: "POST",
-      path: "/api/nsfw-cards/start",
+      path: "/api/v1/nsfw-cards/start",
       handler: handleStart,
       description: "Start a seduction encounter",
       requiresAuth: true,
@@ -37,7 +37,7 @@ export const plugin: PluginManifest = {
 
     context.registerApiRoute({
       method: "POST",
-      path: "/api/nsfw-cards/play",
+      path: "/api/v1/nsfw-cards/play",
       handler: handlePlay,
       description: "Play a seduction card",
       requiresAuth: true,

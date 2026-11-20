@@ -29,21 +29,21 @@ export const plugin: PluginManifest = {
     // Register API routes
     context.registerApiRoute({
       method: "POST",
-      path: "/api/card-battle/start",
+      path: "/api/v1/card-battle/start",
       handler: handleStart,
       description: "Start a new card battle",
     });
 
     context.registerApiRoute({
       method: "POST",
-      path: "/api/card-battle/play",
+      path: "/api/v1/card-battle/play",
       handler: handlePlay,
       description: "Play a card in an ongoing battle",
     });
 
     context.registerApiRoute({
       method: "GET",
-      path: "/api/card-battle/actions",
+      path: "/api/v1/card-battle/actions",
       handler: handleActions,
       description: "List available combat actions",
     });

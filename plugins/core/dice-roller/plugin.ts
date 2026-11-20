@@ -4,7 +4,7 @@
 /**
  * Dice Roller Plugin — Core plugin shipped with loop-lore
  *
- * Registers POST /api/dice/roll for RPG dice notation.
+ * Registers POST /api/v1/dice/roll for RPG dice notation.
  * Used as a sample / default plugin implementation.
  *
  * License: Apache-2.0 OR MIT
@@ -23,7 +23,7 @@ export const plugin: PluginManifest = {
   async onLoad(context) {
     context.registerApiRoute({
       method: "POST",
-      path: "/api/dice/roll",
+      path: "/api/v1/dice/roll",
       handler: handleRoll,
     });
   },

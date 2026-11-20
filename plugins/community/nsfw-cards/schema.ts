@@ -19,13 +19,13 @@ const HAND_SIZE_RANGE = { minimum: 3, maximum: 7 } as const;
 /** Inclusive bounds of the `cardPower` field. */
 const CARD_POWER_RANGE = { minimum: 1, maximum: 5 } as const;
 
-/** Body of POST /api/nsfw-cards/start. */
+/** Body of POST /api/v1/nsfw-cards/start. */
 const StartBody = Type.Object({
   difficulty: Type.Optional(Type.Union(SEDUCTION_DIFFICULTIES.map((difficulty) => Type.Literal(difficulty)))),
   handSize: Type.Optional(Type.Integer(HAND_SIZE_RANGE)),
 });
 
-/** Body of POST /api/nsfw-cards/play. */
+/** Body of POST /api/v1/nsfw-cards/play. */
 const PlayBody = Type.Object({
   cardIndex: Type.Number(),
   state: Type.Record(Type.String(), Type.Unknown()),
@@ -37,10 +37,10 @@ const ToolBody = Type.Object({
   cardPower: Type.Number(CARD_POWER_RANGE),
 });
 
-/** Resolved input of POST /api/nsfw-cards/start — defaults applied. */
+/** Resolved input of POST /api/v1/nsfw-cards/start — defaults applied. */
 type SeductionStartInput = Required<Static<typeof StartBody>>;
 
-/** Input of POST /api/nsfw-cards/play. */
+/** Input of POST /api/v1/nsfw-cards/play. */
 type SeductionPlayInput = Static<typeof PlayBody>;
 
 /** Input of the `play_seduction_card` tool. */
@@ -65,7 +65,7 @@ const TOOL_MESSAGES: Record<string, string> = {
 };
 
 /**
- * Parse the body of POST /api/nsfw-cards/start.
+ * Parse the body of POST /api/v1/nsfw-cards/start.
  *
  * @param body - the raw request body (undefined for an empty body)
  * @returns The resolved input, or the reason it was rejected.
@@ -85,7 +85,7 @@ export function parseStartBody(body: unknown): ParseResult<SeductionStartInput> 
 }
 
 /**
- * Parse the body of POST /api/nsfw-cards/play.
+ * Parse the body of POST /api/v1/nsfw-cards/play.
  *
  * @param body - the raw request body
  * @returns The validated input, or the reason it was rejected.

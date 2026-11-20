@@ -32,7 +32,7 @@ function collectRoutes(): RouteDefinition[] {
   return routes;
 }
 
-const START = "http://localhost/api/nsfw-cards/start";
+const START = "http://localhost/api/v1/nsfw-cards/start";
 
 describe("nsfw-cards route gating", () => {
   beforeEach(() => {
@@ -53,6 +53,9 @@ describe("nsfw-cards route gating", () => {
     const routes = collectRoutes();
     expect(routes.length,).toBeGreaterThanOrEqual(2,);
     for (const r of routes) {
+      // P0 regression: dispatch matches exact paths, so registration must use
+      // the versioned URL the assistant is told to call.
+      expect(["/api/v1/nsfw-cards/start", "/api/v1/nsfw-cards/play",],).toContain(r.path,);
       expect(r.requiresAuth,).toBe(true,);
       expect(r.permissions,).toContain("nsfw.play",);
     }
@@ -86,7 +89,7 @@ describe("nsfw-cards route gating", () => {
     const res = await handleStart(req,);
     expect(res?.status,).toBe(403,);
 
-    const reqPlay = new Request("http://localhost/api/nsfw-cards/play", {
+    const reqPlay = new Request("http://localhost/api/v1/nsfw-cards/play", {
       method: "POST",
       body: JSON.stringify({ state: { difficulty: "easy", handSize: 3, }, cardIndex: 0, },),
     },);
@@ -157,7 +160,7 @@ describe("nsfw-cards state round trip", () => {
 
     const started = (await startRes!.json()) as { state: SeductionState };
     const playRes = await handlePlay(
-      new Request("http://localhost/api/nsfw-cards/play", {
+      new Request("http://localhost/api/v1/nsfw-cards/play", {
         method: "POST",
         body: JSON.stringify({ state: started.state, cardIndex: 0, },),
       },),

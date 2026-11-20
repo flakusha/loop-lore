@@ -18,9 +18,9 @@ import { initBattle } from "./engine";
 import type { PluginContext, ToolDefinition } from "../../../src/plugins/types";
 import type { CardBattleState } from "./types";
 
-const START_URL = "http://x/api/card-battle/start";
-const PLAY_URL = "http://x/api/card-battle/play";
-const ACTIONS_URL = "http://x/api/card-battle/actions";
+const START_URL = "http://x/api/v1/card-battle/start";
+const PLAY_URL = "http://x/api/v1/card-battle/play";
+const ACTIONS_URL = "http://x/api/v1/card-battle/actions";
 
 /** The tool the plugin registers. */
 function collectTool(): ToolDefinition {

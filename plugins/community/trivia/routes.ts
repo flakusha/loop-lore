@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Trivia Routes — POST /api/trivia/start, POST /api/trivia/answer, GET /api/trivia/categories
+ * Trivia Routes — POST /api/v1/trivia/start, POST /api/v1/trivia/answer, GET /api/v1/trivia/categories
  */
 
 import { startSession, answerQuestion, getCurrentQuestion, getCategories } from "./engine";
@@ -42,13 +42,13 @@ function gcSessions(): void {
 }
 
 /**
- * Handle POST /api/trivia/start
+ * Handle POST /api/v1/trivia/start
  *
  * Body: { category?, difficulty?, questionCount? }
  */
 export async function handleStart(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/trivia/start" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/trivia/start" || request.method !== "POST") return null;
 
   const body = await readJsonBody(request);
   if (!body.ok) {
@@ -79,13 +79,13 @@ export async function handleStart(request: Request): Promise<Response | null> {
 }
 
 /**
- * Handle POST /api/trivia/answer
+ * Handle POST /api/v1/trivia/answer
  *
  * Body: { sessionId: string, answerIndex: number }
  */
 export async function handleAnswer(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/trivia/answer" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/trivia/answer" || request.method !== "POST") return null;
 
   const body = await readJsonBody(request);
   if (!body.ok) {
@@ -130,11 +130,11 @@ export async function handleAnswer(request: Request): Promise<Response | null> {
 }
 
 /**
- * Handle GET /api/trivia/categories
+ * Handle GET /api/v1/trivia/categories
  */
 export async function handleCategories(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/trivia/categories" || request.method !== "GET") return null;
+  if (url.pathname !== "/api/v1/trivia/categories" || request.method !== "GET") return null;
 
   return jsonResponse({
     categories: getCategories(),

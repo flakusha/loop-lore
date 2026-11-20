@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * RPS Routes — POST /api/rps/play, GET /api/rps/rules
+ * RPS Routes — POST /api/v1/rps/play, GET /api/v1/rps/rules
  */
 
 import { isValidChoice, playSingleRound, initGameState, playGameRound } from "./engine";
@@ -10,7 +10,7 @@ import { jsonResponse, jsonError, HttpStatus } from "../../../src/routes/http-ut
 import type { RPSPlayRequest, RPSPlayResponse } from "./types";
 
 /**
- * Handle POST /api/rps/play
+ * Handle POST /api/v1/rps/play
  *
  * Body: { choice: "rock"|"paper"|"scissors", bestOf?: number }
  *
@@ -19,7 +19,7 @@ import type { RPSPlayRequest, RPSPlayResponse } from "./types";
  */
 export async function handlePlay(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/rps/play" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/rps/play" || request.method !== "POST") return null;
 
   let body: unknown;
   try {
@@ -57,13 +57,13 @@ export async function handlePlay(request: Request): Promise<Response | null> {
 }
 
 /**
- * Handle GET /api/rps/rules
+ * Handle GET /api/v1/rps/rules
  *
  * Returns game rules and valid choices.
  */
 export async function handleRules(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/rps/rules" || request.method !== "GET") return null;
+  if (url.pathname !== "/api/v1/rps/rules" || request.method !== "GET") return null;
 
   return jsonResponse({
     game: "rock-paper-scissors",

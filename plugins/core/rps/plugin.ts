@@ -4,7 +4,7 @@
 /**
  * Rock-Paper-Scissors Plugin — Core plugin shipped with loop-lore
  *
- * Registers POST /api/rps/play and GET /api/rps/rules.
+ * Registers POST /api/v1/rps/play and GET /api/v1/rps/rules.
  * Supports single-round and best-of-N modes.
  * Integrates with chat via /rps text command detection.
  */
@@ -23,14 +23,14 @@ export const plugin: PluginManifest = {
     // Register API routes
     context.registerApiRoute({
       method: "POST",
-      path: "/api/rps/play",
+      path: "/api/v1/rps/play",
       handler: handlePlay,
       description: "Play a round of Rock-Paper-Scissors",
     });
 
     context.registerApiRoute({
       method: "GET",
-      path: "/api/rps/rules",
+      path: "/api/v1/rps/rules",
       handler: handleRules,
       description: "RPS game rules and valid choices",
     });

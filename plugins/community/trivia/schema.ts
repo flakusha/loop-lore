@@ -13,23 +13,23 @@ import type { Static, } from "@sinclair/typebox";
 import { parseSchema, type ParseResult, } from "../../validation";
 import { TRIVIA_CATEGORIES, TRIVIA_DIFFICULTIES, } from "./types";
 
-/** Body of POST /api/trivia/start. */
+/** Body of POST /api/v1/trivia/start. */
 const StartBody = Type.Object({
   category: Type.Optional(Type.Union(TRIVIA_CATEGORIES.map((category) => Type.Literal(category)))),
   difficulty: Type.Optional(Type.Union(TRIVIA_DIFFICULTIES.map((difficulty) => Type.Literal(difficulty)))),
   questionCount: Type.Optional(Type.Integer({ minimum: 1 })),
 });
 
-/** Body of POST /api/trivia/answer. */
+/** Body of POST /api/v1/trivia/answer. */
 const AnswerBody = Type.Object({
   sessionId: Type.String(),
   answerIndex: Type.Number(),
 });
 
-/** Resolved input of POST /api/trivia/start — defaults applied. */
+/** Resolved input of POST /api/v1/trivia/start — defaults applied. */
 type TriviaStartInput = Static<typeof StartBody> & { questionCount: number };
 
-/** Input of POST /api/trivia/answer. */
+/** Input of POST /api/v1/trivia/answer. */
 type TriviaAnswerInput = Static<typeof AnswerBody>;
 
 /** Field-level messages for the start body. */
@@ -46,7 +46,7 @@ const ANSWER_MESSAGES: Record<string, string> = {
 };
 
 /**
- * Parse the body of POST /api/trivia/start.
+ * Parse the body of POST /api/v1/trivia/start.
  *
  * @param body - the raw request body (undefined for an empty body)
  * @returns The resolved input, or the reason it was rejected.
@@ -67,7 +67,7 @@ export function parseStartBody(body: unknown): ParseResult<TriviaStartInput> {
 }
 
 /**
- * Parse the body of POST /api/trivia/answer.
+ * Parse the body of POST /api/v1/trivia/answer.
  *
  * @param body - the raw request body
  * @returns The validated input, or the reason it was rejected.

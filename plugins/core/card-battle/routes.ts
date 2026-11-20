@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Card Battle Routes — POST /api/card-battle/start, POST /api/card-battle/play, GET /api/card-battle/actions
+ * Card Battle Routes — POST /api/v1/card-battle/start, POST /api/v1/card-battle/play, GET /api/v1/card-battle/actions
  */
 
 import { initBattle, playBattleCard, cardToString } from "./engine";
@@ -22,7 +22,7 @@ const ACTION_DETAILS: Record<CombatCardAction, { name: string; description: stri
 };
 
 /**
- * Handle POST /api/card-battle/start
+ * Handle POST /api/v1/card-battle/start
  *
  * Body: { playerHp?: number, difficulty?: string, handSize?: number }
  *
@@ -30,7 +30,7 @@ const ACTION_DETAILS: Record<CombatCardAction, { name: string; description: stri
  */
 export async function handleStart(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/card-battle/start" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/card-battle/start" || request.method !== "POST") return null;
 
   const body = await readJsonBody(request);
   if (!body.ok) {
@@ -57,7 +57,7 @@ export async function handleStart(request: Request): Promise<Response | null> {
 }
 
 /**
- * Handle POST /api/card-battle/play
+ * Handle POST /api/v1/card-battle/play
  *
  * Body: { cardIndex: number, action: string, state: CardBattleState }
  *
@@ -65,7 +65,7 @@ export async function handleStart(request: Request): Promise<Response | null> {
  */
 export async function handlePlay(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/card-battle/play" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/card-battle/play" || request.method !== "POST") return null;
 
   const body = await readJsonBody(request);
   if (!body.ok) {
@@ -106,13 +106,13 @@ export async function handlePlay(request: Request): Promise<Response | null> {
 }
 
 /**
- * Handle GET /api/card-battle/actions
+ * Handle GET /api/v1/card-battle/actions
  *
  * Returns available combat actions and their descriptions.
  */
 export async function handleActions(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/card-battle/actions" || request.method !== "GET") return null;
+  if (url.pathname !== "/api/v1/card-battle/actions" || request.method !== "GET") return null;
 
   return jsonResponse({
     actions: COMBAT_ACTIONS.map((id) => ({ id, ...ACTION_DETAILS[id] })),

@@ -644,7 +644,7 @@ describe("loadAllPlugins", () => {
     // trivia registers its routes from `onLoad`, which an unapproved plugin
     // never runs — so it has nothing registered at all, let alone served.
     expect(registry.getPluginRoutes("trivia"),).toEqual([],);
-    expect(registry.getEnabledRoutes().map((r,) => r.path,),).not.toContain("/api/trivia/start",);
+    expect(registry.getEnabledRoutes().map((r,) => r.path,),).not.toContain("/api/v1/trivia/start",);
   });
 
   test("boots when plugin_state is missing and skips absent plugin dirs", async () => {

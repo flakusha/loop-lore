@@ -19,24 +19,24 @@ const HP_RANGE = { minimum: 10, maximum: 1000 } as const;
 /** Inclusive bounds of the `handSize` field. */
 const HAND_SIZE_RANGE = { minimum: 3, maximum: 7 } as const;
 
-/** Body of POST /api/card-battle/start. */
+/** Body of POST /api/v1/card-battle/start. */
 const StartBody = Type.Object({
   playerHp: Type.Optional(Type.Integer(HP_RANGE)),
   difficulty: Type.Optional(Type.Union(DIFFICULTIES.map((difficulty) => Type.Literal(difficulty)))),
   handSize: Type.Optional(Type.Integer(HAND_SIZE_RANGE)),
 });
 
-/** Body of POST /api/card-battle/play. */
+/** Body of POST /api/v1/card-battle/play. */
 const PlayBody = Type.Object({
   cardIndex: Type.Number(),
   action: Type.Union(COMBAT_ACTIONS.map((action) => Type.Literal(action))),
   state: Type.Record(Type.String(), Type.Unknown()),
 });
 
-/** Resolved input of POST /api/card-battle/start — defaults applied. */
+/** Resolved input of POST /api/v1/card-battle/start — defaults applied. */
 type CardBattleStartInput = Required<Static<typeof StartBody>>;
 
-/** Input of POST /api/card-battle/play. */
+/** Input of POST /api/v1/card-battle/play. */
 type CardBattlePlayInput = Static<typeof PlayBody>;
 
 /** Field-level messages for the start body. */
@@ -54,7 +54,7 @@ const PLAY_MESSAGES: Record<string, string> = {
 };
 
 /**
- * Parse the body of POST /api/card-battle/start.
+ * Parse the body of POST /api/v1/card-battle/start.
  *
  * @param body - the raw request body (undefined for an empty body)
  * @returns The resolved input, or the reason it was rejected.
@@ -75,7 +75,7 @@ export function parseStartBody(body: unknown): ParseResult<CardBattleStartInput>
 }
 
 /**
- * Parse the body of POST /api/card-battle/play.
+ * Parse the body of POST /api/v1/card-battle/play.
  *
  * @param body - the raw request body
  * @returns The validated input, or the reason it was rejected.

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * NSFW Card Game Routes — POST /api/nsfw-cards/start, POST /api/nsfw-cards/play
+ * NSFW Card Game Routes — POST /api/v1/nsfw-cards/start, POST /api/v1/nsfw-cards/play
  */
 
 import { initSeduction, playSeductionCard, cardToString } from "./engine";
@@ -27,13 +27,13 @@ function nsfwDenial(caller?: PluginCaller): Response | null {
 }
 
 /**
- * Handle POST /api/nsfw-cards/start
+ * Handle POST /api/v1/nsfw-cards/start
  *
  * Body: { difficulty?, handSize? }
  */
 export async function handleStart(request: Request, caller?: PluginCaller): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/nsfw-cards/start" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/nsfw-cards/start" || request.method !== "POST") return null;
 
   const denial = nsfwDenial(caller,);
   if (denial) { return denial; }
@@ -69,13 +69,13 @@ export async function handleStart(request: Request, caller?: PluginCaller): Prom
 }
 
 /**
- * Handle POST /api/nsfw-cards/play
+ * Handle POST /api/v1/nsfw-cards/play
  *
  * Body: { state: SeductionState, cardIndex: number }
  */
 export async function handlePlay(request: Request, caller?: PluginCaller): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/nsfw-cards/play" || request.method !== "POST") return null;
+  if (url.pathname !== "/api/v1/nsfw-cards/play" || request.method !== "POST") return null;
 
   const denial = nsfwDenial(caller,);
   if (denial) { return denial; }

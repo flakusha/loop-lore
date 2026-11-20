@@ -5,7 +5,7 @@
  * Native BLAKE3 Plugin — core plugin wrapping the pre-compiled hot binary
  * sample.
  *
- * Registers a health probe (`GET /api/native/blake3/health`) exposing which
+ * Registers a health probe (`GET /api/v1/native/blake3/health`) exposing which
  * implementation is active (Rust cdylib vs pure-TS fallback) and the native
  * module status. This is the *integration sample* for pre-compiled code:
  * the actual hashing lives in `src/native/`, this plugin demonstrates how a
@@ -28,7 +28,7 @@ export const plugin: PluginManifest = {
   async onLoad(context) {
     context.registerApiRoute({
       method: "GET",
-      path: "/api/native/blake3/health",
+      path: "/api/v1/native/blake3/health",
       handler: handleBlake3Health,
     });
   },

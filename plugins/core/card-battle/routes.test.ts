@@ -10,9 +10,9 @@ import { handleStart, handlePlay, handleActions } from "./routes";
 import { initBattle } from "./engine";
 import type { CardBattleState } from "./types";
 
-const START_URL = "http://x/api/card-battle/start";
-const PLAY_URL = "http://x/api/card-battle/play";
-const ACTIONS_URL = "http://x/api/card-battle/actions";
+const START_URL = "http://x/api/v1/card-battle/start";
+const PLAY_URL = "http://x/api/v1/card-battle/play";
+const ACTIONS_URL = "http://x/api/v1/card-battle/actions";
 
 /** Helper: read JSON body from a Response. */
 async function json(res: Response | null): Promise<Record<string, unknown>> {
@@ -37,7 +37,7 @@ describe("handleStart", () => {
     });
 
     test("returns null for wrong path", async () => {
-      const res = await handleStart(new Request("http://x/api/card-battle/other", {
+      const res = await handleStart(new Request("http://x/api/v1/card-battle/other", {
         method: "POST",
         body: "{}",
       }));
@@ -262,7 +262,7 @@ describe("handlePlay", () => {
     });
 
     test("returns null for wrong path", async () => {
-      const res = await handlePlay(new Request("http://x/api/card-battle/wrong", {
+      const res = await handlePlay(new Request("http://x/api/v1/card-battle/wrong", {
         method: "POST",
         body: "{}",
       }));
@@ -471,7 +471,7 @@ describe("handleActions", () => {
     });
 
     test("returns null for wrong path", async () => {
-      const res = await handleActions(new Request("http://x/api/card-battle/action", {
+      const res = await handleActions(new Request("http://x/api/v1/card-battle/action", {
         method: "GET",
       }));
       expect(res).toBeNull();

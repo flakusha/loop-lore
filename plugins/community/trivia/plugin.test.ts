@@ -16,9 +16,9 @@ import { plugin } from "./plugin";
 import { handleStart, handleAnswer, handleCategories } from "./routes";
 import type { PluginContext, ToolDefinition } from "../../../src/plugins/types";
 
-const START_URL = "http://x/api/trivia/start";
-const ANSWER_URL = "http://x/api/trivia/answer";
-const CATEGORIES_URL = "http://x/api/trivia/categories";
+const START_URL = "http://x/api/v1/trivia/start";
+const ANSWER_URL = "http://x/api/v1/trivia/answer";
+const CATEGORIES_URL = "http://x/api/v1/trivia/categories";
 
 /** The tool the plugin registers. */
 function collectTool(): ToolDefinition {

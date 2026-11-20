@@ -27,21 +27,21 @@ export const plugin: PluginManifest = {
     // Register API routes
     context.registerApiRoute({
       method: "POST",
-      path: "/api/trivia/start",
+      path: "/api/v1/trivia/start",
       handler: handleStart,
       description: "Start a trivia session",
     });
 
     context.registerApiRoute({
       method: "POST",
-      path: "/api/trivia/answer",
+      path: "/api/v1/trivia/answer",
       handler: handleAnswer,
       description: "Answer a trivia question",
     });
 
     context.registerApiRoute({
       method: "GET",
-      path: "/api/trivia/categories",
+      path: "/api/v1/trivia/categories",
       handler: handleCategories,
       description: "List trivia categories and difficulties",
     });
