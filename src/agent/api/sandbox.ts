@@ -3,7 +3,7 @@
 
 /** Concurrency + disk caps for agent-owned worktrees. */
 import type { Kysely, } from "kysely";
-import { readdir, stat, } from "node:fs/promises";
+import fsp from "node:fs/promises";
 import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
 
@@ -45,7 +45,7 @@ export async function checkWorktreeCapacity(
 export async function measureDirectoryBytes(path: string,): Promise<number> {
   let entries;
   try {
-    entries = await readdir(path, { withFileTypes: true, },);
+    entries = await fsp.readdir(path, { withFileTypes: true, },);
   } catch {
     return 0;
   }
@@ -57,7 +57,7 @@ export async function measureDirectoryBytes(path: string,): Promise<number> {
       total += await measureDirectoryBytes(full,);
     } else if (entry.isFile()) {
       try {
-        total += (await stat(full,)).size;
+        total += (await fsp.stat(full,)).size;
       } catch {
         // file vanished mid-walk — ignore
       }

@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1061 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1062 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -283,6 +283,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | DELETE | /api/v1/admin/users/{id} | — |
 | GET | /api/v1/admin/users/{id} | Get user |
 | PATCH | /api/v1/admin/users/{id}/role | — |
+| GET | /api/v1/admin/watchdog/events | List recent watchdog events |
 | GET | /api/v1/admin/world-events | — |
 | GET | /api/v1/admin/worlds | — |
 | DELETE | /api/v1/admin/worlds/{id} | — |

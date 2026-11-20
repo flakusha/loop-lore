@@ -29,6 +29,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **/imgedit requires chat membership** — the image-edit command registered with no role gate, so viewers could spend GPU and write assets; it now requires `member` like its read-chat/write-asset sibling `/link`, and the frozen command vectors plus `commands.imgedit` locale key cover it.
 - **Shipped plugin routes answer at the `/api/v1/...` paths the assistant is told to call** — card-battle, trivia, dice-roller, rps, nsfw-cards and native-blake3 now register their routes with versioned paths and guard those same paths in their handlers, so the `/api/v1/...` URLs advertised in tool copy reach their handlers instead of 404-ing behind the unversioned `/api/*` → `/api/v1/*` redirect.
 - **Async spill files and TUI logs stay inside their instance** — the orphan-spill sweep and TUI file transport used CWD-relative `.tmp/` paths shared by every local instance, so one instance's retention could delete another's spill body while its row still pointed at the file. Both roots now resolve from `resolveInstanceDir()` at call time, so effective binds set during boot are honoured; a two-instance regression proves A's sweep leaves B's rows readable.
 - **Blender LTS builds satisfy the version pin** — the capability probe strips the `LTS` suffix from `bpy.app.version_string`, so an official `4.5.15 LTS` build is reported as supported instead of being rejected as an unknown version.

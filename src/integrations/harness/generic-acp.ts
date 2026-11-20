@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// size-allow: 330
+// Single protocol adapter class; structural split tracked as size debt (see ticket).
+// size-allow: 565
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**

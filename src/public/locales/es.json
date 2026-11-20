@@ -2251,7 +2251,8 @@
     "sfx": "Generate a sound effect from a text prompt (/sfx <prompt>)",
     "sound": "Generate a sound effect from a text prompt (/sound <prompt>) — alias for /sfx",
     "video": "Generate a video from a text prompt (/video <prompt>)",
-    "doctor": "Show setup health and next steps (/doctor)"
+    "doctor": "Show setup health and next steps (/doctor)",
+    "imgedit": "Edit the latest chat image with a template (/imgedit <template> [prompt])"
   },
   "participants": {
     "title": "Participants",

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 270
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 335
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
@@ -32,10 +33,6 @@ import {
 import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-types";
 
 import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 270
 
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before

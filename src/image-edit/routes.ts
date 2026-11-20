@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 275
+// Five cohesive edit endpoints + wiring; handlers stay with their route table.
+// size-allow: 330
 
 /**
  * Image Edit API Routes — ComfyUI + sd-server unified endpoints

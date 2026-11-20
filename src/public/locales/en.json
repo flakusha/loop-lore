@@ -2384,6 +2384,7 @@
     "hide": "Attempt to hide (/hide [location])",
     "impersonate": "Play as a character",
     "image": "Generate an image from a text prompt (/image <prompt>)",
+    "imgedit": "Edit the latest chat image with a template (/imgedit <template> [prompt])",
     "import": "Import a character card from an uploaded file (/import character <file>)",
     "improve": "Improve text with AI",
     "inventory": "Show a character's inventory (/inventory [char-id])",

@@ -103,5 +103,6 @@ export async function imgeditCommandHandler(
 }
 
 registerCommand("imgedit", imgeditCommandHandler, {
+  requiredRole: "member",
   capabilities: ["read-chat", "write-asset", "network",],
 },);

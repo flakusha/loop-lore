@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 300
+// Test fake: one fixture server for the ACP suites; split would scatter the fixture.
+// size-allow: 355
 
 /**
  * Fake ACP server fixture (test-only; imported exclusively by *.test.ts).

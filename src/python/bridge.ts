@@ -15,7 +15,7 @@
 
 import { spawn, } from "bun";
 import { createHash, } from "node:crypto";
-import { existsSync, } from "node:fs";
+import fs from "node:fs";
 import { join, relative, resolve, sep, } from "node:path";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
@@ -100,7 +100,7 @@ function digest(value: string,): string {
 function venvBinary(venvPath: string | undefined, binary: string | undefined,): string | null {
   if (!venvPath) { return binary ?? "python3"; }
   const candidate = join(venvPath, "bin", "python",);
-  return existsSync(candidate,) ? candidate : null;
+  return fs.existsSync(candidate,) ? candidate : null;
 }
 
 async function withInstanceLock<T,>(key: string, fn: () => Promise<T>,): Promise<T> {

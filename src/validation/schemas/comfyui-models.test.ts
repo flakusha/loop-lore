@@ -32,9 +32,15 @@ describe("ComfyUIModelsResponse", () => {
       clip: ["a.safetensors",],
       diffusion: [],
       vae: [],
+      checkpoint: [],
+      clip_vision: [],
+      loras: [],
       clipRole: role,
       diffusionRole: role,
       vaeRole: role,
+      checkpointRole: role,
+      clipVisionRole: role,
+      lorasRole: role,
     };
 
     expect(Value.Check(ComfyUIModelsResponse, valid,),).toBe(true,);

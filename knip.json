@@ -148,7 +148,9 @@
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
     "rustup", // Rust toolchain (scripts/build-native.ts) -- external, not npm
     "rustc", // native cdylib compile (scripts/build-native.ts) -- external, not npm
-    "wasm-bindgen" // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
+    "wasm-bindgen", // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
+    "verify", // status-tooling fixture argv (scripts/tooling/status.test.ts) -- a `run()` subcommand string, not a binary
+    "bogus" // status-tooling fixture argv (scripts/tooling/status.test.ts) -- the unknown-subcommand probe string, not a binary
   ],
   "ignore": [
     "src/**",

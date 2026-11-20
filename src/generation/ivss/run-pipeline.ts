@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 420
+// One fragment-run pipeline; types stay with the pipeline they describe.
+// size-allow: 455
 
 /**
  * IVSS fragment run pipeline — one render fragment through local ComfyUI.
