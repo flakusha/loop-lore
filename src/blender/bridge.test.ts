@@ -4,6 +4,10 @@
 /**
  * Fake-command coverage for the headless bridge. No Blender binary is ever
  * executed; each test writes a shell stub that prints a fixed document.
+ *
+ * Resource contract: each test owns a unique `mkdtemp` fixture directory
+ * under `.tmp/blender-bridge`, removed in `afterEach`. Nothing is shared
+ * between tests, so the file is order-independent and parallel-safe.
  */
 import { afterEach, beforeEach, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
@@ -220,9 +224,17 @@ test("pinned version and stage set stay in sync with the parser", () => {
 
 const PYTHON_BIN = process.env.PYTHON_BIN ?? "python3";
 
+/**
+ * `Bun.spawnSync` throws when the binary is absent, so a missing python3 must
+ * be caught - otherwise the whole file dies instead of skipping.
+ */
 function pythonAvailable(): boolean {
-  const result = Bun.spawnSync([PYTHON_BIN, "--version",], { stdout: "pipe", stderr: "pipe", },);
-  return result.exitCode === 0;
+  try {
+    const result = Bun.spawnSync([PYTHON_BIN, "--version",], { stdout: "pipe", stderr: "pipe", },);
+    return result.exitCode === 0;
+  } catch {
+    return false;
+  }
 }
 
 const HAS_PYTHON = pythonAvailable();
@@ -258,9 +270,14 @@ ops = _OpsRoot()
 app = _App()
 `;
 
-/** Proves the fake is adversarial: `hasattr` lies, only `dir()` tells the truth. */
+/**
+ * Proves the fake is adversarial (`hasattr` lies, only `dir()` tells the truth)
+ * and that the fake module is the one actually imported - a real `bpy` pip
+ * package would otherwise shadow it and silently weaken the assertion.
+ */
 const HASATTR_PROBE = `import bpy
 print(hasattr(bpy.ops.object, "quadriflow_remesh"), hasattr(bpy.ops.object, "totally_bogus"))
+print(bpy.__file__)
 `;
 
 test.skipIf(!HAS_PYTHON,)(
@@ -302,6 +319,9 @@ test.skipIf(!HAS_PYTHON,)(
       stderr: "pipe",
     },);
 
-    expect(hasattrRun.stdout.toString().trim(),).toBe("True True",);
+    const hasattrOut = hasattrRun.stdout.toString().trim().split("\n",);
+    expect(hasattrOut[0],).toBe("True True",);
+    // The fake must be the imported module, not a real `bpy` install.
+    expect(hasattrOut[1],).toBe(resolve(fakeDir, "bpy.py",),);
   },
 );
