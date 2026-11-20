@@ -18,7 +18,7 @@
  * Every request is budgeted twice (ticket AC): 60 req/min per token and
  * 600 req/min global, via `src/middleware/rate-limit.ts`.
  */
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Db, } from "../../db";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { jsonResponse, } from "../../routes/http-utils";
@@ -55,6 +55,12 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
       },
       {
         beforeHandle: [requireAgentToken(deps,),],
+        response: t.Object({
+          data: t.Object({
+            tokenId: t.String(),
+            scope: t.String(),
+          },),
+        },),
         detail: {
           summary: "Identify the presented agent token",
           description:
