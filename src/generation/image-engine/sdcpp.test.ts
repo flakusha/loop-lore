@@ -193,7 +193,7 @@ describe("generateSDCPP", () => {
       seed: 1234,
       enableHr: true,
       hrScale: 2,
-      denoisingStrength: 0.6,
+      denoise: 0.6,
     },);
 
     const parsed = JSON.parse(body,) as Record<string, unknown>;

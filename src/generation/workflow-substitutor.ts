@@ -185,6 +185,8 @@ export function applyNodeOverrides<T extends Record<string, unknown>,>(
  * @param params.steps
  * @param params.cfgScale
  * @param params.sampler
+ * @param params.scheduler
+ * @param params.denoise
  * @param params.seed
  * @param params.model - checkpoint file name (`{{model}}`)
  * @param params.clip - text encoder (`{{clip}}`)
@@ -201,6 +203,8 @@ export function buildSubstitutionVars(params: {
   steps?: number;
   cfgScale?: number;
   sampler?: string;
+  scheduler?: string;
+  denoise?: number;
   seed?: number;
   model?: string;
   clip?: string;
@@ -217,6 +221,10 @@ export function buildSubstitutionVars(params: {
     steps: params.steps ?? 20,
     cfg_scale: params.cfgScale ?? 7,
     sampler: params.sampler ?? "euler",
+    // ponytail: stock-graph fallbacks; real values come from request options
+    // (scheduler) and discovered enums. `simple` ships with every ComfyUI.
+    scheduler: params.scheduler ?? "simple",
+    denoise: params.denoise ?? 1,
     seed: params.seed ?? Math.floor(Math.random() * 2_147_483_647,),
     // ponytail: keeps the stock graph's former literal when no pick is made;
     // replace with a per-role default when operators configure one.

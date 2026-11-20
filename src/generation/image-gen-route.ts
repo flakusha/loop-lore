@@ -49,6 +49,11 @@ interface ImageGenBody {
   chatId?: string;
   messageId?: string;
   size?: string;
+  /** Numeric dimensions; preferred over the openai-shaped `size`. */
+  width?: number;
+  height?: number;
+  /** ComfyUI scheduler axis, independent of `sampler_name`. */
+  scheduler?: string;
   n?: number;
   output_format?: string;
   steps?: number;
@@ -86,6 +91,25 @@ interface ImageGenBody {
    * checked by `chatId` above; without `chatId` this flag is a no-op.
    */
   setAsChatBackground?: boolean;
+}
+
+/**
+ * Resolve numeric dimensions from the request, falling back to the
+ * openai-shaped `size` only when neither numeric field was sent.
+ * @param req
+ * @returns dimensions, or a 400-ready error for a malformed `size`
+ */
+function resolveDimensions(req: ImageGenBody,): { width?: number; height?: number; error?: string } {
+  if (req.width !== undefined || req.height !== undefined || req.size === undefined) {
+    return { width: req.width, height: req.height, };
+  }
+
+  const match = /^(\d+)[xX](\d+)$/.exec(req.size.trim(),);
+  if (!match) {
+    return { error: `Invalid size "${req.size}": expected "WIDTHxHEIGHT"`, };
+  }
+
+  return { width: Number(match[1],), height: Number(match[2],), };
 }
 
 /**
@@ -226,6 +250,13 @@ export async function handleImageGeneration(
     return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
   }
 
+  // A malformed `size` is a 400 at the boundary, before any DB or provider
+  // work — never a silent fallback to the operator's config default.
+  const { width, height, error: sizeError, } = resolveDimensions(req,);
+  if (sizeError) {
+    return Response.json({ error: sizeError, status: 400, }, { status: 400, },);
+  }
+
   const config = loadConfig();
 
   // Init image (img2img): reference an asset by id only. Ownership is proven
@@ -351,6 +382,9 @@ export async function handleImageGeneration(
       prompt,
       n,
       size: req.size,
+      width,
+      height,
+      scheduler: req.scheduler,
       outputFormat,
       steps: req.steps,
       cfgScale: req.cfgScale,
@@ -359,7 +393,7 @@ export async function handleImageGeneration(
       seed: req.seed,
       enableHr: req.enable_hr,
       hrScale: req.hr_scale,
-      denoisingStrength: req.denoising_strength,
+      denoise: req.denoising_strength,
       workflow: req.workflow,
       initImage,
       lora: req.lora,

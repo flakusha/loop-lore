@@ -20,6 +20,11 @@ export interface ImageGenOptions {
   n: number;
   /** openai `size`, defaults to `widthxheight`. */
   size?: string;
+  /** Requested output size; each falls back to the provider config default. */
+  width?: number;
+  height?: number;
+  /** ComfyUI scheduler axis, independent of the sampler. */
+  scheduler?: string;
   /** "png" | "jpeg". */
   outputFormat: string;
   steps?: number;
@@ -29,7 +34,8 @@ export interface ImageGenOptions {
   seed?: number;
   enableHr?: boolean;
   hrScale?: number;
-  denoisingStrength?: number;
+  /** ComfyUI denoise widget; the HTTP boundary's `denoising_strength` aliases this. */
+  denoise?: number;
   /** ComfyUI workflow name (defaults to "txt2img"). */
   workflow?: string;
   /** Optional LoRA model to inject into the generation pipeline. */

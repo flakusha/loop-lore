@@ -14,6 +14,7 @@
  */
 
 import { getDatabase, } from "../db";
+import { discoverComfyUISampling, } from "../generation/comfyui-sampling";
 import { ensureWorkflowRegistry, } from "../generation/workflow-library";
 import { API_META, ErrorCode, HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import {
@@ -42,11 +43,14 @@ import type {
   ImageEditBackend,
   ImageEditProvider,
   ImageEditRequest,
+  WorkflowTemplate,
 } from "./types";
+import { hasSamplingParams, validateRunParams, } from "./validate-run-params";
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { loadConfig, } from "../config/load";
+import { pickSdProvider, } from "../config/schema";
 import type { DB, } from "../db/schema";
 
 // ── Provider instances ───────────────────────────────────────
@@ -74,6 +78,27 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
       throw new Error(`Unknown backend: ${backend as string}`,);
     }
   }
+}
+
+/** ComfyUI URL used for discovery — identical to the edit provider's pick. */
+function comfyBaseUrl(): string {
+  return pickSdProvider(loadConfig().generation.providers.sd, "edit",)?.baseUrl ??
+    "http://127.0.0.1:8188";
+}
+
+/**
+ * One validation pass over declared ranges and discovered sampling enums.
+ * Discovery only runs for templates that actually declare a sampling axis.
+ */
+async function validateRunParameters(
+  template: Pick<WorkflowTemplate, "parameters">,
+  params: Record<string, unknown>,
+): Promise<string[]> {
+  const sampling = hasSamplingParams(template,)
+    ? await discoverComfyUISampling(comfyBaseUrl(),)
+    : null;
+
+  return validateRunParams({ template, params, sampling, },);
 }
 
 // ── Route Handlers ───────────────────────────────────────────
@@ -164,6 +189,17 @@ export async function handleRun(
     },);
   }
 
+  // Declared ranges/select values and both discovered sampling axes are
+  // checked in one pass before build(). No shipped sampler array is used for
+  // validation: discovery is the only source of installed enum values.
+  const violations = await validateRunParameters(template, params,);
+  if (violations.length > 0) {
+    return jsonError({
+      message: `Invalid parameters: ${violations.join("; ",)}`,
+      status: HttpStatus.BadRequest,
+    },);
+  }
+
   try {
     // BYOK first: a stored user key wins, an absent row falls back to the
     // operator key, and a corrupt row throws ByoKeyDecryptError — aborting
@@ -218,8 +254,20 @@ export async function handleTemplates(
  */
 export async function handleNodes(): Promise<Response> {
   const discovery = await comfyuiProvider.discoverNodes();
+
+  const sampling = await discoverComfyUISampling(comfyBaseUrl(),);
+
+  // An unreachable ComfyUI is an advisory (empty dropdowns, validation
+  // skipped), not a 500 on a route that only wanted to populate a select.
+  const advisory = sampling.reachable
+    ? sampling.advisory
+    : `ComfyUI sampling discovery unavailable: ${sampling.advisory ?? "unreachable"}`;
+
   return jsonResponse({
     data: [...discovery.nodes,],
+    samplers: sampling.samplers,
+    schedulers: sampling.schedulers,
+    ...(advisory ? { advisory, } : {}),
     status: discovery.reachable ? "ok" : "unreachable",
   },);
 }

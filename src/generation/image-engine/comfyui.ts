@@ -72,11 +72,13 @@ export async function generateComfyUI(
   let workflow = await loadComfyUIWorkflow(workflowName, {
     prompt: opts.prompt,
     negativePrompt: opts.negativePrompt,
-    width: sdConfig.defaults.width,
-    height: sdConfig.defaults.height,
+    width: opts.width ?? sdConfig.defaults.width,
+    height: opts.height ?? sdConfig.defaults.height,
     steps: opts.steps ?? sdConfig.defaults.steps,
     cfgScale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
+    scheduler: opts.scheduler,
+    denoise: opts.denoise ?? 1,
     seed: opts.seed,
     model: opts.model ?? sdConfig.models?.checkpoint,
     clip: opts.clip ?? sdConfig.models?.clip,
@@ -86,7 +88,9 @@ export async function generateComfyUI(
     ...(opts.initImage
       ? {
         input_image: uploadedInitImage,
-        denoise_strength: opts.denoisingStrength ?? 0.7,
+        // The img2img graph's legacy widget name; both read the one `denoise`
+        // option, so the two widget names can never disagree.
+        denoise_strength: opts.denoise ?? 0.7,
       }
       : {}),
   },);

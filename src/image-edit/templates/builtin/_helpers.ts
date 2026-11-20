@@ -91,7 +91,7 @@ export function ksamplerNode(
         steps: (params.steps as number) ?? 20,
         cfg: (params.cfg_scale as number) ?? 7,
         sampler_name: opts.sampler ?? (params.sampler as string) ?? "euler",
-        scheduler: opts.scheduler ?? "normal",
+        scheduler: opts.scheduler ?? (params.scheduler as string) ?? "simple",
         denoise: opts.denoise ?? 1,
         model: opts.model,
         positive: opts.positive,

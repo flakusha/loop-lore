@@ -43,7 +43,7 @@
       "steps": "{{steps}}",
       "cfg": "{{cfg_scale}}",
       "sampler_name": "{{sampler}}",
-      "scheduler": "normal",
+      "scheduler": "{{scheduler}}",
       "denoise": "{{denoise_strength}}",
       "model": ["1", 0],
       "positive": ["2", 0],

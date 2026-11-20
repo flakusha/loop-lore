@@ -40,3 +40,16 @@ it("rejects a picked model with an invalid role extension", async () => {
   const body = await res.json() as { error: string };
   expect(body.error,).toContain("clip_vision",);
 });
+
+it("rejects a malformed openai size with 400 before any provider work", async () => {
+  const res = await handleImageGeneration(
+    { prompt: "x", size: "huge", },
+    undefined,
+    "user-1",
+  );
+
+  expect(res.status,).toBe(400,);
+  const body = await res.json() as { error: string };
+  expect(body.error,).toContain("size",);
+  expect(body.error,).toContain("huge",);
+});

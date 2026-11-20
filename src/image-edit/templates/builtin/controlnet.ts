@@ -60,10 +60,11 @@ export const controlnet: WorkflowTemplate = {
       max: 2,
       step: 0.1,
     },
-    { name: "width", type: "number", label: "Width", default: 512, min: 64, max: 2048, step: 64, },
-    { name: "height", type: "number", label: "Height", default: 512, min: 64, max: 2048, step: 64, },
+    { name: "width", type: "number", label: "Width", default: 512, min: 64, max: 2048, step: 8, },
+    { name: "height", type: "number", label: "Height", default: 512, min: 64, max: 2048, step: 8, },
     { name: "steps", type: "number", label: "Steps", default: 20, min: 1, max: 150, },
     { name: "cfg_scale", type: "number", label: "CFG Scale", default: 7, min: 1, max: 30, step: 0.5, },
+    { name: "scheduler", type: "string", label: "Scheduler", default: "simple", },
     { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2_147_483_647, },
   ],
   /**

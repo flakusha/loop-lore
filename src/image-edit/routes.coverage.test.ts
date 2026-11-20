@@ -264,8 +264,16 @@ describe("GET /api/v1/image-edit/nodes", () => {
     const res = await app.handle(new Request(`${BASE}/nodes`,),);
     expect(res.status,).toBe(200,);
 
-    const body = (await res.json()) as Envelope<string[]>;
+    const body = (await res.json()) as Envelope<string[]> & {
+      samplers: string[];
+      schedulers: string[];
+      advisory?: string;
+    };
+
     expect(Array.isArray(body.data,),).toBe(true,);
+    expect(Array.isArray(body.samplers,),).toBe(true,);
+    expect(Array.isArray(body.schedulers,),).toBe(true,);
+    expect(body.advisory,).toContain("ComfyUI",);
   });
 });
 

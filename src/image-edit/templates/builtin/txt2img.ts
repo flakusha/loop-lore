@@ -29,8 +29,11 @@ export const txt2img: WorkflowTemplate = {
       description: "Things to avoid in the generated image",
       default: "",
     },
-    { name: "width", type: "number", label: "Width", default: 512, min: 64, max: 2048, step: 64, },
-    { name: "height", type: "number", label: "Height", default: 512, min: 64, max: 2048, step: 64, },
+    // ponytail: ComfyUI's LATENT_SCALE_FACTOR is 8, so align to 8 (not 64).
+    // Decision: reject off-grid sizes rather than snap — silently changing a
+    // requested size produces a different image. UIs may snap before sending.
+    { name: "width", type: "number", label: "Width", default: 512, min: 64, max: 2048, step: 8, },
+    { name: "height", type: "number", label: "Height", default: 512, min: 64, max: 2048, step: 8, },
     { name: "steps", type: "number", label: "Steps", default: 20, min: 1, max: 150, },
     { name: "cfg_scale", type: "number", label: "CFG Scale", default: 7, min: 1, max: 30, step: 0.5, },
     {
@@ -38,6 +41,8 @@ export const txt2img: WorkflowTemplate = {
       type: "select",
       label: "Sampler",
       default: "euler",
+      // Advisory editor UX only: discovery from /object_info supersedes this
+      // list, and server-side validation never reads these options.
       options: [
         { label: "Euler", value: "euler", },
         { label: "Euler a", value: "euler_ancestral", },
@@ -46,6 +51,14 @@ export const txt2img: WorkflowTemplate = {
         { label: "DDIM", value: "ddim", },
         { label: "LMS", value: "lms", },
       ],
+    },
+    {
+      name: "scheduler",
+      type: "string",
+      label: "Scheduler",
+      default: "simple",
+      description:
+        "Installed schedulers come from ComfyUI /object_info; a select can populate from GET /image-edit/nodes.",
     },
     {
       name: "seed",

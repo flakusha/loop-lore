@@ -160,6 +160,6 @@ describeOrSkip("image-gen-route init image", () => {
     expect(initImage?.assetId,).toBe("owned-asset",);
     expect(initImage?.buffer.toString("utf8",),).toBe(INIT_BYTES.toString("utf8",),);
     expect(capturedOpts[0]?.workflow,).toBe("img2img",);
-    expect(capturedOpts[0]?.denoisingStrength,).toBe(0.5,);
+    expect(capturedOpts[0]?.denoise,).toBe(0.5,);
   });
 },);

@@ -26,8 +26,8 @@ export async function generateSDAPI(
   const sdPayload = safeJsonStringify({
     prompt: opts.prompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt ?? "",
-    width: sdConfig.defaults.width,
-    height: sdConfig.defaults.height,
+    width: opts.width ?? sdConfig.defaults.width,
+    height: opts.height ?? sdConfig.defaults.height,
     steps: opts.steps ?? sdConfig.defaults.steps,
     cfg_scale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler_name: opts.samplerName ?? sdConfig.defaults.sampler,

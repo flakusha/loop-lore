@@ -63,8 +63,8 @@ export async function generateSDCPP(
   const sdcppPayload = safeJsonStringify({
     prompt: effectivePrompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt,
-    width: sdConfig.defaults.width,
-    height: sdConfig.defaults.height,
+    width: opts.width ?? sdConfig.defaults.width,
+    height: opts.height ?? sdConfig.defaults.height,
     steps: opts.steps ?? sdConfig.defaults.steps,
     cfg_scale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
@@ -73,7 +73,7 @@ export async function generateSDCPP(
     output_format: outputFormat,
     enable_hr: opts.enableHr ?? false,
     hr_scale: opts.hrScale,
-    denoising_strength: opts.denoisingStrength,
+    denoising_strength: opts.denoise,
   },);
 
   // Job status carries base64 images — can exceed safeFetch's default size cap.

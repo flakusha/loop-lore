@@ -374,7 +374,7 @@ describe("generateComfyUI", () => {
     const outcome = await generateComfyUI(CONFIG, {
       ...OPTS,
       workflow: "img2img",
-      denoisingStrength: 0.42,
+      denoise: 0.42,
       initImage: { assetId: "asset-42", buffer: Buffer.from("init-png",), },
     },);
 
@@ -384,6 +384,36 @@ describe("generateComfyUI", () => {
     const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
     expect(parsed.prompt["4"]?.inputs.image,).toBe("stored-init.png",);
     expect(parsed.prompt["6"]?.inputs.denoise,).toBe(0.42,);
+  });
+
+  it("prefers request width/height/scheduler/denoise in the graph", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      width: 768,
+      height: 1024,
+      scheduler: "karras",
+      denoise: 0.8,
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.width,).toBe(768,);
+    expect(parsed.prompt["4"]?.inputs.height,).toBe(1024,);
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("karras",);
+    expect(parsed.prompt["5"]?.inputs.denoise,).toBe(0.8,);
+  });
+
+  it("falls back to config dimensions when the request omits them", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, OPTS,);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.width,).toBe(128,);
+    expect(parsed.prompt["4"]?.inputs.height,).toBe(128,);
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("simple",);
+    expect(parsed.prompt["5"]?.inputs.denoise,).toBe(1,);
   });
 
   it("does not upload when no init image is present", async () => {
