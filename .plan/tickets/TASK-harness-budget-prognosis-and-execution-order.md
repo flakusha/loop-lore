@@ -29,8 +29,8 @@ Wave-0 slug enabler below is already shipped.
   (H3, epic `epic-deployment-topologies.md`).
 
 - Remaining findings (`.tmp/research/06-next-steps-proposal.md` §2 table):
-  H2 queue replays stale role snapshot (S, authz, bites single-instance
-  too — `src/integrations/harness/queue.ts:213` `role: row.requested_role`);
+  H2 stale role snapshot — FIXED (live role re-check landed; the residual
+  check/dispatch atomicity window is filed as `BUG-harness-queue-role-recheck-dispatch-race`);
   H4 `system_config` overrides are global rows (M —
   `src/admin/config.ts:48` `selectAll`, no instance scope); H5 permission
   queue is a process-local Map (M —
@@ -59,7 +59,7 @@ Wave-0 slug enabler below is already shipped.
 | # | item | one-line why | must land first | cost |
 |---|---|---|---|---|
 | 1 | H1 claim ignores affected rows | double-executed turns = duplicated model spend + side effects; head of the queue-store chain | none | M |
-| 2 | H2 stale role snapshot | the only authz defect that bites single-instance (wrong role executed) | none (sequence with #5 — same file `queue.ts`) | S |
+| 2 | H2 stale role snapshot (FIXED; residual = queue-atomicity BUG) | live re-check landed; only the check/dispatch window remains, tracked in the new BUG | none | S |
 | 3 | H16 boot recovery kills peer turns | booting instance B fails instance A's live turns (data loss / double charge) | H1 (owner column written at claim) | M |
 | 4 | H17 per-profile lock process-local | two instances drive one ACP profile concurrently (session corruption) | H1 + H16 (owner + cross-process claim) | M |
 | 5 | H3 silent port split by family | second instance binds same port on the other family, no EADDRINUSE, no log; independent track | landed slug/port-conflict work only | M |
@@ -71,7 +71,7 @@ Wave-0 slug enabler below is already shipped.
 **Model-capability note (mechanical = fast-worker-safe, judgment = good-worker-needed):**
 
 - H1 mechanical — copy the `numUpdatedRows` pattern already in `cancelQueuedTurn`; two-connection test.
-- H2 small but judgment — one-line area (`queue.ts:213`), but the fix chooses the authz source of truth for "current role".
+- H2 was small but judgment — one-line area (`queue.ts:213`); live re-check landed, residual atomicity is its own BUG, no longer ranked here.
 - H16 judgment — schema migration + recovery scoping + orphaned-turn (dead-owner) policy.
 - H17 judgment — check-and-claim atomicity and the `(profile, status)` index design.
 - H3 mechanical — pin one family, log `host:port`, two-server EADDRINUSE regression test.
@@ -86,7 +86,7 @@ File-sharing constraint: H1/H16 share `queue-store.ts`; H2/H17 share
 `queue.ts`. Same-file items sequence; cross-file tracks parallelize.
 
 1. H1 (queue-store.ts claim) — one worker; unblocks 3 + 4.
-2. H2 (queue.ts dispatch role) — SMALL authz win; lands before 5 to avoid same-file collision (different function, same file — sequence, do not parallelize).
+2. H2 — CLOSED. Live re-check landed; residual check/dispatch atomicity is `BUG-harness-queue-role-recheck-dispatch-race` (separate lane).
 3. H16 (queue-store.ts owner column + migration) — same worker as 1, right after it.
 4. H3 (start.ts bind family) — parallel with 1-3, different worker OK (mechanical).
 5. H17 (queue.ts DB-backed exclusion + index) — after 1 + 3 and sequenced after 2 (same file).
