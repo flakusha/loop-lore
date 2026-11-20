@@ -21901,6 +21901,20 @@
     "title": "Expose full VN settings from spec",
     "type": "FEAT"
   },
+  "FEAT-EXPOSE-NEW-HONKBOX-CAPABILITY-KEYS": {
+    "hash": "b424d3c",
+    "git_issue": "b424d3c",
+    "extid": "FEAT-EXPOSE-NEW-HONKBOX-CAPABILITY-KEYS",
+    "type": "FEAT",
+    "title": "Expose new honkbox capability keys",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-expose-new-honkbox-capability-keys.md",
+    "status": "open"
+  },
   "FEAT-EXTRA-MODEL-PATHS-YAML-CONFIG": {
     "hash": "2feaa09",
     "git_issue": "2feaa09",
@@ -24440,6 +24454,20 @@
     "tags": [],
     "title": "Parallelize bun test invocations - isolate pins suite to one core",
     "type": "FIX"
+  },
+  "FIX-RECONCILE-HONKBOX-INTEGRATION-TICKET-TEXT": {
+    "hash": "bab3379",
+    "git_issue": "bab3379",
+    "extid": "FIX-RECONCILE-HONKBOX-INTEGRATION-TICKET-TEXT",
+    "type": "FIX",
+    "title": "Reconcile honkbox integration ticket text",
+    "label": "fix",
+    "priority": "low",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FIX-reconcile-honkbox-integration-ticket-text.md",
+    "status": "open"
   },
   "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
     "epic": "epic-chat-product-features",
