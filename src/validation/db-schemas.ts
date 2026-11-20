@@ -4169,3 +4169,22 @@ export const AssetUserPreferencesSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── tooling_reports ────────────────────────────────────────────
+export const ToolingReportsSchema = t.Object({
+  source: t.String(),
+  category: t.String(),
+  ts: t.Optional(t.String(),),
+  tool: t.Optional(t.String(),),
+  attempt: t.Optional(t.Number(),),
+  max_attempts: t.Optional(t.Number(),),
+  detail: t.Optional(t.String(),),
+  duration_ms: t.Optional(t.Number(),),
+  profile: t.Optional(t.String(),),
+  branch: t.Optional(t.String(),),
+  git_sha: t.Optional(t.String(),),
+  instance_id: t.Optional(t.String(),),
+  dedupe_key: t.Optional(t.String(),),
+  count: t.Optional(t.Number(),),
+  last_seen: t.Optional(t.String(),),
+},);

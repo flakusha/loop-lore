@@ -1501,6 +1501,24 @@ export const SCHEMA = new SchemaManifest()
     duration_ms: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("tooling_reports", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    ts: col("text", { notNull: true, hasDefault: true, },),
+    source: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    tool: col("text", { notNull: true, hasDefault: true, },),
+    attempt: col("integer",),
+    max_attempts: col("integer",),
+    detail: col("text", { notNull: true, hasDefault: true, },),
+    duration_ms: col("integer",),
+    profile: col("text",),
+    branch: col("text",),
+    git_sha: col("text",),
+    instance_id: col("text", { notNull: true, hasDefault: true, },),
+    dedupe_key: col("text",),
+    count: col("integer", { notNull: true, hasDefault: true, },),
+    last_seen: col("text",),
+  },)
   .table("trade_history", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

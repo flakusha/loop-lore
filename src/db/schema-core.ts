@@ -2295,3 +2295,23 @@ export interface AssetUserPreferences {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── tooling_reports ────────────────────────────────────────────
+export interface ToolingReports {
+  id: Generated<string>;
+  ts: Generated<string>;
+  source: string;
+  category: string;
+  tool: Generated<string>;
+  attempt: number | null;
+  max_attempts: number | null;
+  detail: Generated<string>;
+  duration_ms: number | null;
+  profile: string | null;
+  branch: string | null;
+  git_sha: string | null;
+  instance_id: Generated<string>;
+  dedupe_key: string | null;
+  count: Generated<number>;
+  last_seen: string | null;
+}

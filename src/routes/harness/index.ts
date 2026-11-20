@@ -35,6 +35,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 import { harnessRunFiles, type SandboxFilesError, } from "./files";
 import { resultSchema, runIdParams, taskTypeSchema, } from "./query-schema";
+import { reportRoutes, } from "./reports";
 import { settingsWithAvailability, unknownFlavor, } from "./settings-view";
 
 /**
@@ -95,6 +96,7 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
   // back into the server.
   const denied = { 403: ErrorResponse, } as const;
   return new Elysia({ name: "harness", },)
+    .use(reportRoutes({ database, }, prefix,),)
     .guard({ beforeHandle: guard, }, (app,) =>
       app
         .get(`${prefix}/harness/runs`, async (ctx,) => {

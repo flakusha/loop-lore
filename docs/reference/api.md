@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1053 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1055 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -586,6 +586,8 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/harness/queue | — |
 | POST | /api/v1/harness/queue | — |
 | POST | /api/v1/harness/queue/turns/{id}/cancel | — |
+| GET | /api/v1/harness/reports | List tooling failure reports |
+| POST | /api/v1/harness/reports | Store a tooling failure report |
 | GET | /api/v1/harness/runs | — |
 | GET | /api/v1/harness/runs/{runId} | — |
 | GET | /api/v1/harness/runs/{runId}/files | — |

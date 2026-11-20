@@ -6767,3 +6767,36 @@ export async function insertAssetUserPreferences(
   } as any,).execute();
   return (restOpts as Record<string, unknown>).user_id as string;
 }
+
+/** Insert a tooling_reports row. */
+export async function insertToolingReports(
+  db: Db,
+  source: string,
+  category: string,
+  opts?: {
+    id?: string;
+    ts?: string;
+    tool?: string;
+    attempt?: number | null;
+    max_attempts?: number | null;
+    detail?: string;
+    duration_ms?: number | null;
+    profile?: string | null;
+    branch?: string | null;
+    git_sha?: string | null;
+    instance_id?: string;
+    dedupe_key?: string | null;
+    count?: number;
+    last_seen?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("tooling_reports",).values({
+    id,
+    source,
+    category,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
