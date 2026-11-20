@@ -1069,7 +1069,7 @@
     "status": "Done"
   },
   "BUG-ASYNC-SPILL-AND-TUI-LOGS-ARE-CWD-RELATIVE-SO-LOCAL-INSTANCES": {
-    "hash": "pending",
+    "hash": "f8ccaea",
     "extid": "BUG-ASYNC-SPILL-AND-TUI-LOGS-ARE-CWD-RELATIVE-SO-LOCAL-INSTANCES",
     "type": "BUG",
     "title": "Async spill and TUI logs are cwd-relative so local instances collide",
@@ -1079,7 +1079,8 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-async-spill-and-tui-logs-are-cwd-relative-so-local-instances.md",
-    "status": "in_progress"
+    "status": "in_progress",
+    "git_issue": "f8ccaea"
   },
   "BUG-ASYNC-SPILL-OFFLOAD-DIR-IS-A-FIXED-CWD-RELATIVE-PATH-SHARED-": {
     "hash": "0114005",
@@ -5860,6 +5861,20 @@
     ],
     "source": ".plan/tickets/BUG-harness-queue-per-profile-serialization-is-process-local-not.md",
     "status": "done"
+  },
+  "BUG-HARNESS-QUEUE-ROLE-RECHECK-DISPATCH-RACE": {
+    "hash": "0e9cf3a",
+    "git_issue": "0e9cf3a",
+    "extid": "BUG-HARNESS-QUEUE-ROLE-RECHECK-DISPATCH-RACE",
+    "type": "BUG",
+    "title": "harness queue role recheck dispatch race",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harness-queue-role-recheck-dispatch-race.md",
+    "status": "open"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
@@ -26637,6 +26652,34 @@
     "title": "Achievements enum revival — promote service-layer to db barrel",
     "type": "TASK"
   },
+  "TASK-ACP-ADDITIONALDIRECTORIES-SUPPORT": {
+    "hash": "ab96118",
+    "git_issue": "ab96118",
+    "extid": "TASK-ACP-ADDITIONALDIRECTORIES-SUPPORT",
+    "type": "TASK",
+    "title": "ACP additionalDirectories support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-additionaldirectories-support.md",
+    "status": "open"
+  },
+  "TASK-ACP-CANCEL-REQUEST-TRANSPORT-SUPPORT": {
+    "hash": "7a85e75",
+    "git_issue": "7a85e75",
+    "extid": "TASK-ACP-CANCEL-REQUEST-TRANSPORT-SUPPORT",
+    "type": "TASK",
+    "title": "ACP cancel_request transport support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-cancel-request-transport-support.md",
+    "status": "open"
+  },
   "TASK-ACP-CLAUDE-CODE-ADAPTER": {
     "hash": "44122d6",
     "extid": "TASK-ACP-CLAUDE-CODE-ADAPTER",
@@ -26678,6 +26721,34 @@
     "source": ".plan/tickets/TASK-acp-driver-module.md",
     "status": "done"
   },
+  "TASK-ACP-ELICITATION-CREATE-FORM-SUPPORT": {
+    "hash": "b7b0301",
+    "git_issue": "b7b0301",
+    "extid": "TASK-ACP-ELICITATION-CREATE-FORM-SUPPORT",
+    "type": "TASK",
+    "title": "ACP elicitation create form support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-elicitation-create-form-support.md",
+    "status": "open"
+  },
+  "TASK-ACP-PLAN-EVENTS-SUPPORT": {
+    "hash": "ef3a0bf",
+    "git_issue": "ef3a0bf",
+    "extid": "TASK-ACP-PLAN-EVENTS-SUPPORT",
+    "type": "TASK",
+    "title": "ACP plan events support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-plan-events-support.md",
+    "status": "open"
+  },
   "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION": {
     "hash": "9b543e6",
     "git_issue": "9b543e6",
@@ -26704,6 +26775,48 @@
     "source": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
     "status": "done"
   },
+  "TASK-ACP-SESSION-NEW-MCP-HANDOFF-AND-FS-WRITE-FILE": {
+    "hash": "424f6d6",
+    "git_issue": "424f6d6",
+    "extid": "TASK-ACP-SESSION-NEW-MCP-HANDOFF-AND-FS-WRITE-FILE",
+    "type": "TASK",
+    "title": "ACP session/new MCP handoff and fs write file",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-new-mcp-handoff-and-fs-write-file.md",
+    "status": "open"
+  },
+  "TASK-ACP-SESSION-PERSISTENCE-LOAD-RESUME-LIST": {
+    "hash": "0a65d93",
+    "git_issue": "0a65d93",
+    "extid": "TASK-ACP-SESSION-PERSISTENCE-LOAD-RESUME-LIST",
+    "type": "TASK",
+    "title": "ACP session persistence load resume list",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-persistence-load-resume-list.md",
+    "status": "open"
+  },
+  "TASK-ACP-SESSION-SET-MODE-PLAN-ACT-CONTROL": {
+    "hash": "79b3fa2",
+    "git_issue": "79b3fa2",
+    "extid": "TASK-ACP-SESSION-SET-MODE-PLAN-ACT-CONTROL",
+    "type": "TASK",
+    "title": "ACP session set_mode plan act control",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-set-mode-plan-act-control.md",
+    "status": "open"
+  },
   "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS": {
     "hash": "6297321",
     "git_issue": "6297321",
@@ -26719,6 +26832,20 @@
     ],
     "source": ".plan/tickets/TASK-acp-stdio-server-over-existing-chat-sessions.md",
     "status": "Not Started"
+  },
+  "TASK-ACP-V2-PROTOCOL-NEGOTIATION": {
+    "hash": "b7aaa37",
+    "git_issue": "b7aaa37",
+    "extid": "TASK-ACP-V2-PROTOCOL-NEGOTIATION",
+    "type": "TASK",
+    "title": "ACP v2 protocol negotiation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-v2-protocol-negotiation.md",
+    "status": "open"
   },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
@@ -46213,6 +46340,20 @@
     "source": ".plan/tickets/TASK-harness-mcp-server-surface.md",
     "status": "Not Started",
     "git_issue": "5e63952"
+  },
+  "TASK-HARNESS-MEMORY-SCOPE-FOR-EXEC-LOG-RECALL": {
+    "hash": "617da09",
+    "git_issue": "617da09",
+    "extid": "TASK-HARNESS-MEMORY-SCOPE-FOR-EXEC-LOG-RECALL",
+    "type": "TASK",
+    "title": "harness memory scope for exec log recall",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-memory-scope-for-exec-log-recall.md",
+    "status": "open"
   },
   "TASK-HARNESS-MERGE-COORDINATION": {
     "hash": "0a63dda",
