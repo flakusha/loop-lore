@@ -116,7 +116,6 @@ export interface ToolDefinition {
     params: Record<string, unknown>,
     ctx?: ToolExecutionContext,
   ) => Promise<ToolResult> | ToolResult;
-  permissions?: string[];
   timeoutMs?: number;
   /** Process requirement; see {@link ToolPolicyTag}. Never a sandbox. */
   policy?: ToolPolicyTag;
@@ -142,7 +141,6 @@ export interface AgentRoleDefinition {
   tools: string[];
   modelConfig?: Record<string, unknown>;
   memoryConfig?: Record<string, unknown>;
-  permissions?: string[];
 }
 
 /**

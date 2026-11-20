@@ -24,6 +24,7 @@ import { normalizePluginRoutePath, } from "./registry-policy";
 import { mergePluginConfig } from "./config-merge";
 import { defaultPluginStatus, readStoredPluginConfig, } from "./config-store";
 import { checkRouteAccess, type PluginCaller, } from "./route-access";
+import { warnOnInvalidManifest, } from "./manifest-validator";
 import { warnIfAccessFieldsAreInert, type LoadAllPluginsOpts, } from "./solo-mode-warning";
 import type { TranslatorFn, } from "../i18n/types";
 import { getLogger } from "../logger";
@@ -210,6 +211,8 @@ async function readPluginManifest(
     const mod = (await import(/* @vite-ignore */ pluginFile,)) as Record<string, unknown>;
     const manifest = mod.plugin as PluginManifest | undefined;
     if (!manifest?.name) { return undefined; }
+    const warn = (msg: string, meta?: Record<string, unknown>,): void => getLogger().warn(msg, meta,);
+    if (warnOnInvalidManifest(manifest, warn, { origin, },)) { return undefined; }
 
     return { manifest, origin, directory, };
   } catch (error) {
@@ -274,6 +277,11 @@ export async function loadSinglePlugin(
         { plugin: pluginName, origin, directory: pluginDir, },
       );
 
+      return;
+    }
+
+    const warn = (msg: string, meta?: Record<string, unknown>,): void => log.warn(msg, meta,);
+    if (warnOnInvalidManifest(manifest, warn, { plugin: pluginName, origin, directory: pluginDir, },)) {
       return;
     }
 
