@@ -13,18 +13,21 @@ export const chatUtilsGallery: ChatUtilsGallery = {
 
   getMediaStyle(asset: any, totalCount: number,): Record<string, string> {
     const style: Record<string, string> = {};
+    // Media sizing follows the chat detailLevel: "Basic" renders media more
+    // compactly; "Immersion" and "Detailed" share the default sizing.
+    const basic = (this as { detailLevel?: string }).detailLevel === "Basic";
     if (asset.type === "image" && asset.width && asset.height) {
       const ratio = asset.width / asset.height;
       if (totalCount === 1) {
         if (ratio > 1.78) {
           style.width = "100%";
-          style.maxHeight = "400px";
+          style.maxHeight = basic ? "240px" : "400px";
         } else if (ratio < 0.56) {
-          style.width = "40%";
+          style.width = basic ? "30%" : "40%";
           style.float = "right";
           style.marginLeft = "12px";
         } else {
-          style.width = "50%";
+          style.width = basic ? "35%" : "50%";
           style.float = "left";
           style.marginRight = "12px";
         }
