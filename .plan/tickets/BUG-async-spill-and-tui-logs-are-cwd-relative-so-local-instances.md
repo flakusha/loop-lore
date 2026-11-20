@@ -3,7 +3,7 @@
 
 # BUG: Async spill and TUI logs are cwd-relative so local instances collide
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Scope spill and TUI log roots to resolveInstanceDir() so concurrent local instances cannot delete each other's spill bodies
 **Priority:** high
 **Effort:** Medium
@@ -22,3 +22,5 @@ Two servers on one checkout share .tmp/async-store and .tmp/tui/tui.jsonl. Insta
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-20 registry-driven close: git issue f8ccaea (registry tip: 2ce0f1003 Konstantin Fedotov Close issue)

@@ -1079,7 +1079,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-async-spill-and-tui-logs-are-cwd-relative-so-local-instances.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "f8ccaea"
   },
   "BUG-ASYNC-SPILL-OFFLOAD-DIR-IS-A-FIXED-CWD-RELATIVE-PATH-SHARED-": {
@@ -46353,7 +46353,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-memory-scope-for-exec-log-recall.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-MERGE-COORDINATION": {
     "hash": "0a63dda",
