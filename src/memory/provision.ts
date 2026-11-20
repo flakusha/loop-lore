@@ -151,7 +151,8 @@ function evaluateMemory(
  * - `assistant`: visible to all users
  * - `party`: must originate in the consuming chat's party lineage
  * - `timeline`: must be bound to the consuming chat's timeline
- * - `harness`: denied — no harness session/instance in `ProvisionContext`
+ * - `harness`: must be bound to the consuming chat (`source_chat_id` ===
+ *   `chatId`); never leaks into unrelated chats
  * @param memory
  * @param ctx
  * @param privacy
@@ -192,11 +193,8 @@ function checkScope(
     }
 
     case "harness": {
-      // ponytail: ProvisionContext has no harness session/instance field, so
-      // harness memories always deny here. Upgrade: add harnessSessionId to
-      // ProvisionContext, thread it from the exec-log recall caller, and allow
-      // when the memory's harness session matches ctx.harnessSessionId.
-      return "scope:harness_no_context";
+      if (memory.sourceChatId && memory.sourceChatId === ctx.chatId) { return null; }
+      return "scope:harness_mismatch";
     }
 
     default: {

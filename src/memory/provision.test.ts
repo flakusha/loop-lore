@@ -131,14 +131,14 @@ describe("provisionMemories — scope filtering", () => {
     expect(result.rejected[0]!.reason,).toBe("scope:timeline_mismatch",);
   });
 
-  test("harness memory denied without harness session context", () => {
-    const mem = makeMemory({ id: "m1", scope: "harness", },);
-    const result = provisionMemories([mem,], makeCtx(),);
-    expect(result.accepted,).toHaveLength(0,);
-    expect(result.rejected[0]!.reason,).toBe("scope:harness_no_context",);
+  test("harness memory accepted when bound to the consuming chat", () => {
+    const mem = makeMemory({ id: "m1", scope: "harness", sourceChatId: "chat-1", },);
+    const result = provisionMemories([mem,], makeCtx({ chatId: "chat-1", },),);
+    expect(result.accepted,).toHaveLength(1,);
+    expect(result.rejected,).toHaveLength(0,);
   });
 
-  test("harness memory denied even with other scope context present", () => {
+  test("harness memory rejected in an unrelated chat (no cross-chat leakage)", () => {
     const mem = makeMemory({
       id: "m1",
       scope: "harness",
@@ -149,11 +149,18 @@ describe("provisionMemories — scope filtering", () => {
 
     const result = provisionMemories(
       [mem,],
-      makeCtx({ partyChatIds: ["chat-root",], timelineId: "prime", },),
+      makeCtx({ chatId: "chat-other", partyChatIds: ["chat-root",], timelineId: "prime", },),
     );
 
     expect(result.accepted,).toHaveLength(0,);
-    expect(result.rejected[0]!.reason,).toBe("scope:harness_no_context",);
+    expect(result.rejected[0]!.reason,).toBe("scope:harness_mismatch",);
+  });
+
+  test("harness memory rejected without a source chat binding", () => {
+    const mem = makeMemory({ id: "m1", scope: "harness", },);
+    const result = provisionMemories([mem,], makeCtx(),);
+    expect(result.accepted,).toHaveLength(0,);
+    expect(result.rejected[0]!.reason,).toBe("scope:harness_mismatch",);
   });
 
   test("secret memories bypass party/timeline scope (trusted viewer)", () => {

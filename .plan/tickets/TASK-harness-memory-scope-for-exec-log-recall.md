@@ -3,7 +3,7 @@
 
 # TASK: harness memory scope for exec log recall
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration
@@ -15,6 +15,6 @@
 
 **Acceptance Criteria:**
 
-- [ ] `harness` is a valid scope with ownership checks matching the other scopes.
-- [ ] Run summaries are embedded and recalled at harness turn start.
-- [ ] Tests cover scope isolation and no cross-chat leakage.
+- [x] `harness` is a valid scope with ownership checks matching the other scopes.
+- [x] Run summaries are embedded and recalled at harness turn start.
+- [x] Tests cover scope isolation and no cross-chat leakage.

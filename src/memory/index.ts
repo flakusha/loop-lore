@@ -23,6 +23,13 @@ export { extractFromBurst, } from "./extraction-burst";
 export { storeMemories, } from "./extraction-store";
 export type { MemoryProvenance, } from "./extraction-store";
 export {
+  buildHarnessMemoryPrefix,
+  formatExecRunSummary,
+  MAX_HARNESS_RECALL,
+  recallHarnessMemories,
+  storeHarnessRunSummary,
+} from "./harness-recall";
+export {
   expandMemoryContext,
   reconstructMessageChain,
   selectMemoriesWithExpansion,

@@ -9,11 +9,14 @@
  * 1. the isolation gate decides — master switch, the caller's admin role, and
  *    the admin-configured profile allowlist (the spawn argv is never the
  *    caller's);
- * 2. the composed runtime's selector runs the turn, pinned to the gated
+ * 2. prior run summaries recalled from harness-scoped memory prefix the
+ *    prompt (same chat only — the harness scope isolation boundary);
+ * 3. the composed runtime's selector runs the turn, pinned to the gated
  *    profile, so the failover walk cannot drift onto another one;
- * 3. the exec log records the run under the `harness` task type with the
- *    profile, tier and ACP session id;
- * 4. the turn's transcript lands as chat rows and its frames reach the chat's
+ * 4. the exec log records the run under the `harness` task type with the
+ *    profile, tier and ACP session id, and the run summary is embedded as a
+ *    harness-scoped memory for the next turn in this chat;
+ * 5. the turn's transcript lands as chat rows and its frames reach the chat's
  *    live buffer.
  *
  * Nothing here bypasses the ToS dispatch guard (the selector skips profiles
@@ -26,8 +29,14 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
 import { type TaskType, toHarnessTaskType, } from "../../generation/routing/task-signal";
-import { recordExecRun, } from "../../harness/exec-recorder";
+import { appendExecLog, } from "../../harness/exec-log";
+import { buildRunRecord, recordExecRun, } from "../../harness/exec-recorder";
 import { getChildLogger, type Logger, } from "../../logger";
+import {
+  buildHarnessMemoryPrefix,
+  recallHarnessMemories,
+  storeHarnessRunSummary,
+} from "../../memory/harness-recall";
 import { getHarnessAdminFileConfig, } from "./admin-settings";
 import { assertHarnessExecution, } from "./isolation-gate";
 import { type AttributedTurn, type TurnRequirement, } from "./profile-selector";
@@ -134,12 +143,18 @@ export async function dispatchHarnessTurn(
     turnId: turnKey,
   };
 
+  // Turn-start recall: prior run summaries for this chat prefix the prompt.
+  // Chat binding is the isolation boundary (harness scope provision).
+  const recalled = await recallHarnessMemories(options.database, options.actorId, options.chatId,);
+  const prefix = buildHarnessMemoryPrefix(recalled,);
+  const prompt = prefix ? `${prefix}\n${options.prompt}` : options.prompt;
+
   const startedAt = Date.now();
   let attributed: AttributedTurn;
   try {
     attributed = await options.runtime.selector.runTurn(
       requirement,
-      options.prompt,
+      prompt,
       options.runtime.factory,
     );
   } catch (error) {
@@ -155,7 +170,7 @@ export async function dispatchHarnessTurn(
   }
 
   const { result, } = attributed;
-  recordExecRun({
+  const okRecord = buildRunRecord({
     ...run,
     model: attributed.model,
     runMs: Date.now() - startedAt,
@@ -169,6 +184,11 @@ export async function dispatchHarnessTurn(
     acpSessionId: result.acpSessionId,
     msg: result.stopReason,
   },);
+
+  appendExecLog(okRecord,);
+  // Embed the run summary for the next turn in this chat. Best-effort:
+  // a memory write never fails the turn it summarizes.
+  await storeHarnessRunSummary(options.database, options.actorId, options.chatId, okRecord,);
 
   const sink = createHarnessTurnSink({
     database: options.database,

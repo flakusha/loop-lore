@@ -210,6 +210,45 @@ describe("dispatchHarnessTurn", () => {
     expect((refusal as HarnessDispatchError).code,).toBe("profile_unknown",);
   });
 
+  it("injects recalled run summaries at turn start and stores the new run", async () => {
+    const { factory, logs, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "the answer", }, },);
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "do the thing",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "do more",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    const prompts = logs.get("omp",)?.prompts ?? [];
+    expect(prompts,).toHaveLength(2,);
+    expect(prompts[0],).toBe("do the thing",);
+    expect(prompts[1]?.startsWith("<prior-harness-runs>\n",),).toBe(true,);
+    expect(prompts[1]?.endsWith("do more",),).toBe(true,);
+    expect(prompts[1],).toContain("harness omp run ok",);
+
+    const memories = await fixture.db.selectFrom("actor_memories",).selectAll()
+      .where("actor_id", "=", actorId,).where("scope", "=", "harness",).execute();
+
+    expect(memories,).toHaveLength(2,);
+  });
+
   it("surfaces a failed turn and records it in the exec log", async () => {
     const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], failPrompt: "prompt", }, },);
     const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
