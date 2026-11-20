@@ -45,7 +45,6 @@ describe("v-0010 Director workflow", () => {
   it("flattens to a submittable graph with colon-path ids", () => {
     const { graph, report, } = convertDirector();
     expect(report.nodeCount,).toBe(42,);
-    expect(report.bypassedDropped,).toEqual([],);
     expect(report.unresolvedInputs,).toEqual([],);
     for (const id of Object.keys(graph,)) {
       expect(id,).not.toContain("undefined",);
@@ -56,9 +55,12 @@ describe("v-0010 Director workflow", () => {
     expect(graph["1512:2738"],).toBeDefined();
   });
 
-  it("excludes muted nodes and prunes their consumers", () => {
+  it("drops upstream mode-4 bypass nodes and prunes their consumers", () => {
     const { graph, report, } = convertDirector();
-    expect(report.mutedDropped,).toEqual([
+    // Every non-executing node in this Operator save is mode 4 (bypass), not
+    // mode 2 (mute); mode-2 muting is covered in converter.test.ts.
+    expect(report.mutedDropped,).toEqual([],);
+    expect(report.bypassedDropped,).toEqual([
       "2760",
       "2753",
       "1512:2079",

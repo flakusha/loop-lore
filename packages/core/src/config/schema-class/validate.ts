@@ -3,7 +3,7 @@
 
 // src/config/schema-class/validate.ts — config validation
 import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
-import { isComfyUIModelName, } from "../schema/providers";
+import { COMFYUI_MODEL_EXTENSIONS, isComfyUIModelName, } from "../schema/providers";
 import { validateAcpProfiles, } from "../sections/harness";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
@@ -23,17 +23,22 @@ function validateByoKey(config: Config,): void {
  * @throws {Error} If a pinned ComfyUI model name is incompatible with its slot.
  */
 function validateComfyUIModels(config: Config,): void {
-  for (const provider of config.generation.providers.video ?? []) {
+  const providers = [
+    ...(config.generation.providers.video ?? []).map((provider,) => ({ provider, kind: "video", })),
+    ...(config.generation.providers.sd ?? []).map((provider,) => ({ provider, kind: "image", })),
+  ];
+  for (const { provider, kind, } of providers) {
     const models = provider.models;
     if (!models) { continue; }
     if (models.noVae && models.vae) {
-      throw new Error(`Video provider ${provider.name} sets models.noVae and models.vae — pick one`,);
+      throw new Error(`${kind} provider ${provider.name} sets models.noVae and models.vae — pick one`,);
     }
-    for (const role of ["clip", "diffusion", "vae",] as const) {
+
+    for (const role of Object.keys(COMFYUI_MODEL_EXTENSIONS,) as (keyof typeof COMFYUI_MODEL_EXTENSIONS)[]) {
       const name = models[role];
       if (name !== undefined && !isComfyUIModelName(role, name,)) {
         throw new Error(
-          `Invalid ComfyUI ${role} model "${name}" on video provider ${provider.name}`,
+          `Invalid ComfyUI ${role} model "${name}" on ${kind} provider ${provider.name}`,
         );
       }
     }

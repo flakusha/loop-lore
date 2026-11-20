@@ -9,6 +9,9 @@ export const ComfyUIModelSelectionSchema = t.Object(
     clip: t.Optional(t.String({ maxLength: 512, },),),
     diffusion: t.Optional(t.String({ maxLength: 512, },),),
     vae: t.Optional(t.String({ maxLength: 512, },),),
+    checkpoint: t.Optional(t.String({ maxLength: 512, },),),
+    clip_vision: t.Optional(t.String({ maxLength: 512, },),),
+    loras: t.Optional(t.String({ maxLength: 512, },),),
     noVae: t.Optional(t.Boolean(),),
   },
   { additionalProperties: false, },
@@ -16,6 +19,7 @@ export const ComfyUIModelSelectionSchema = t.Object(
 
 export const ComfyUIModelQuery = t.Object({
   provider: t.Optional(t.String({ maxLength: 128, },),),
+  kind: t.Optional(t.UnionEnum(["video", "image",],),),
 },);
 
 const ComfyUIModelRoleViewSchema = t.Object({
@@ -30,7 +34,13 @@ export const ComfyUIModelsResponse = t.Object({
   clip: t.Array(t.String(),),
   diffusion: t.Array(t.String(),),
   vae: t.Array(t.String(),),
+  checkpoint: t.Array(t.String(),),
+  clip_vision: t.Array(t.String(),),
+  loras: t.Array(t.String(),),
   clipRole: ComfyUIModelRoleViewSchema,
   diffusionRole: ComfyUIModelRoleViewSchema,
   vaeRole: ComfyUIModelRoleViewSchema,
+  checkpointRole: ComfyUIModelRoleViewSchema,
+  clipVisionRole: ComfyUIModelRoleViewSchema,
+  lorasRole: ComfyUIModelRoleViewSchema,
 });

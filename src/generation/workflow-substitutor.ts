@@ -186,6 +186,11 @@ export function applyNodeOverrides<T extends Record<string, unknown>,>(
  * @param params.cfgScale
  * @param params.sampler
  * @param params.seed
+ * @param params.model - checkpoint file name (`{{model}}`)
+ * @param params.clip - text encoder (`{{clip}}`)
+ * @param params.vae - VAE (`{{vae}}`)
+ * @param params.clip_vision - CLIP vision (`{{clip_vision}}`)
+ * @param params.lora - LoRA file name (`{{lora}}`)
  * @returns Substitution variable map
  */
 export function buildSubstitutionVars(params: {
@@ -197,6 +202,11 @@ export function buildSubstitutionVars(params: {
   cfgScale?: number;
   sampler?: string;
   seed?: number;
+  model?: string;
+  clip?: string;
+  vae?: string;
+  clip_vision?: string;
+  lora?: string;
   [key: string]: unknown;
 },): SubstitutionVars {
   const vars: SubstitutionVars = {
@@ -208,6 +218,13 @@ export function buildSubstitutionVars(params: {
     cfg_scale: params.cfgScale ?? 7,
     sampler: params.sampler ?? "euler",
     seed: params.seed ?? Math.floor(Math.random() * 2_147_483_647,),
+    // ponytail: keeps the stock graph's former literal when no pick is made;
+    // replace with a per-role default when operators configure one.
+    model: params.model ?? "model.safetensors",
+    ...(params.clip === undefined ? {} : { clip: params.clip, }),
+    ...(params.vae === undefined ? {} : { vae: params.vae, }),
+    ...(params.clip_vision === undefined ? {} : { clip_vision: params.clip_vision, }),
+    ...(params.lora === undefined ? {} : { lora: params.lora, }),
   };
 
   // Pass through any extra params

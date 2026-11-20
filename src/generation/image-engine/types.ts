@@ -34,6 +34,11 @@ export interface ImageGenOptions {
   workflow?: string;
   /** Optional LoRA model to inject into the generation pipeline. */
   lora?: LoRAConfig;
+  /** Picked model roles; fall back to the provider's config pins. */
+  model?: string;
+  clip?: string;
+  vae?: string;
+  clipVision?: string;
   /** Optional ComfyUI init/reference image for the img2img workflow. */
   initImage?: InitImage;
   /** BYO API key for this request (resolved user key). When set it overrides

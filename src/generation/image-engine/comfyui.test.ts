@@ -68,6 +68,14 @@ function stubComfyRun(config: { uploadFail?: boolean; uploadName?: string } = {}
       return new Response(JSON.stringify({ name: config.uploadName ?? "stored-init.png", },), { status: 200, },);
     }
 
+    if (target.endsWith("/object_info",)) {
+      return Response.json({
+        LoraLoader: {
+          input: { required: { lora_name: [["style-lora.safetensors",], {},], }, },
+        },
+      },);
+    }
+
     if (target.endsWith("/prompt",)) {
       submitted = typeof init?.body === "string" ? init.body : "";
       return new Response(JSON.stringify({ prompt_id: "p-init", },), { status: 200, },);
@@ -177,6 +185,25 @@ describe("generateComfyUI", () => {
     expect(parsed.prompt["2"]?.inputs.text,).toBe("a tiny castle",);
     expect(parsed.prompt["2"]?.class_type,).toBe("CLIPTextEncode",);
     expect(parsed.prompt["1"]?.class_type,).toBe("CheckpointLoaderSimple",);
+  });
+
+  it("submits picked model, sampler, seed and LoRA name", async () => {
+    const capture = stubComfyRun();
+    const outcome = await generateComfyUI({ ...CONFIG, baseUrl: "http://127.0.0.1:9/pick-test", }, {
+      ...OPTS,
+      model: "picked.ckpt",
+      samplerName: "dpmpp_2m",
+      seed: 123456,
+      lora: { name: "style-lora", strength: 0.7, backend: "comfyui", },
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(capture.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["1"]?.inputs["checkpoint_name"],).toBe("picked.ckpt",);
+    expect(parsed.prompt["5"]?.inputs["sampler_name"],).toBe("dpmpp_2m",);
+    expect(parsed.prompt["5"]?.inputs["seed"],).toBe(123456,);
+    const loraNodes = Object.values(parsed.prompt,).filter((node,) => node.class_type === "LoraLoader");
+    expect(loraNodes[0]?.inputs["lora_name"],).toBe("style-lora",);
   });
 
   it("injects a LoraLoader node when the LoRA is discovered on the backend", async () => {

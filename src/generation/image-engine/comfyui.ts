@@ -77,6 +77,11 @@ export async function generateComfyUI(
     cfgScale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
     seed: opts.seed,
+    model: opts.model ?? sdConfig.models?.checkpoint,
+    clip: opts.clip ?? sdConfig.models?.clip,
+    vae: opts.vae ?? sdConfig.models?.vae,
+    clip_vision: opts.clipVision ?? sdConfig.models?.clip_vision,
+    lora: opts.lora?.name,
     ...(opts.initImage
       ? {
         input_image: uploadedInitImage,

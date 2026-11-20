@@ -104,6 +104,48 @@ describe("GET /api/v1/comfyui/models", () => {
     expect(body.diffusionRole,).toMatchObject({ selected: "pinned.safetensors", source: "config", },);
     expect(body.vaeRole,).toMatchObject({ selected: "vae-a.safetensors", source: "discovery", },);
   });
+
+  test("exposes image-provider checkpoint, clip_vision and loras roles", async () => {
+    const config = makeConfig();
+    config.generation.providers.sd = [{
+      name: "img-local",
+      label: "Image Local",
+      baseUrl: "http://127.0.0.1:8189",
+      apiFamily: "comfyui",
+      defaults: { width: 512, height: 512, steps: 20, cfgScale: 7, sampler: "euler", },
+      timeout: 30_000,
+      generationTimeout: 600_000,
+      models: { checkpoint: "base.ckpt", },
+    },];
+
+    (globalThis as Record<string, unknown>).fetch = async (input: string | URL | Request,) => {
+      const path = new URL(String(input,),).pathname;
+      if (path === "/object_info") { return Response.json({},); }
+      if (path === "/models") { return Response.json(["checkpoints", "clip_vision", "loras",],); }
+      if (path === "/models/clip_vision") { return Response.json(["vision-a.safetensors",],); }
+      if (path === "/models/loras") { return Response.json(["style-a.safetensors",],); }
+      return Response.json(["base.ckpt",],);
+    };
+
+    const app = new Elysia({ name: "test-comfyui-image-models", },)
+      .derive(() => ({ userId: USER_ID, userRole: "user", }))
+      .use(comfyUIModelRoutes({ database: fixture.db, config, },),);
+
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/comfyui/models?kind=image&provider=img-local",),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      clip_vision: string[];
+      lorasRole: { selected: string | null; source: string };
+      checkpointRole: { selected: string | null; source: string };
+    };
+
+    expect(body.clip_vision,).toEqual(["vision-a.safetensors",],);
+    expect(body.lorasRole,).toMatchObject({ selected: "style-a.safetensors", source: "discovery", },);
+    expect(body.checkpointRole,).toMatchObject({ selected: "base.ckpt", source: "config", },);
+  });
 });
 
 describe("comfyUIModelConfigKey", () => {

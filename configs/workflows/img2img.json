@@ -1,7 +1,7 @@
 {
   "1": {
     "inputs": {
-      "checkpoint_name": "model.safetensors"
+      "checkpoint_name": "{{model}}"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": { "title": "Load Checkpoint" }

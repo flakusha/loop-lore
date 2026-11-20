@@ -22,6 +22,8 @@ import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
+import { validateLoRAConfig, } from "./lora/validation";
+import { assertComfyUIModelName, } from "./providers/comfyui-model-discovery";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
   applyImageTemplate,
@@ -63,6 +65,11 @@ interface ImageGenBody {
   init_image?: string;
   /** Optional LoRA model to inject into the generation pipeline. */
   lora?: LoRAConfig;
+  /** Picked ComfyUI model roles; each substitutes one graph placeholder. */
+  model?: string;
+  clip?: string;
+  vae?: string;
+  clip_vision?: string;
   /** User image-prompt template id — renders `context` into the prompt. */
   templateId?: string;
   /** {{variable}} values substituted into the template body. */
@@ -113,6 +120,30 @@ async function bindGeneratedVariants(
 }
 
 /**
+ * @param req - image request carrying optional model role picks
+ * @returns validation error, or null when every pick fits its role
+ */
+function invalidModelPick(req: ImageGenBody,): string | null {
+  for (
+    const [role, name,] of [
+      ["checkpoint", req.model,],
+      ["clip", req.clip,],
+      ["vae", req.vae,],
+      ["clip_vision", req.clip_vision,],
+    ] as const
+  ) {
+    if (name === undefined) { continue; }
+    try {
+      assertComfyUIModelName(role, name,);
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  return null;
+}
+
+/**
  * @param body
  * @param database
  * @param userId
@@ -129,6 +160,22 @@ export async function handleImageGeneration(
 
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
+
+  // Trust boundary: picked names/strengths reach ComfyUI graph inputs, so
+  // reject malformed values before any DB or provider work. ponytail: reuse
+  // validateLoRAConfig's permissive [0.1, 1] band while the operator's hard
+  // band is open — do not invent a stricter rule here.
+  if (req.lora) {
+    const loraError = validateLoRAConfig(req.lora,);
+    if (loraError) {
+      return Response.json({ error: loraError, status: 400, }, { status: 400, },);
+    }
+  }
+
+  const modelPickError = invalidModelPick(req,);
+  if (modelPickError) {
+    return Response.json({ error: modelPickError, status: 400, }, { status: 400, },);
   }
 
   // Authorization: when linked to a chat, only admin, creator, or a
@@ -316,6 +363,10 @@ export async function handleImageGeneration(
       workflow: req.workflow,
       initImage,
       lora: req.lora,
+      model: req.model,
+      clip: req.clip,
+      vae: req.vae,
+      clipVision: req.clip_vision,
     },
     userApiKeyResolver({ userId, config, db, },),
   );

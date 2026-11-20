@@ -97,6 +97,8 @@ export interface ImageProviderConfig {
   workflow?: string;
   /** Default generation parameters */
   defaults: ImageProviderDefaults;
+  /** Optional model folder pins; discovery fills any role left unset */
+  models?: ComfyUIModelSelection;
   /** Connection timeout in ms */
   timeout: number;
   /** Image generation timeout in ms */
@@ -132,6 +134,12 @@ export interface ComfyUIModelSelection {
   diffusion?: string;
   /** VAE file name in a ComfyUI model folder */
   vae?: string;
+  /** Checkpoint file name (checkpoint loaders; distinct from a bare diffusion model) */
+  checkpoint?: string;
+  /** CLIP-vision file name (image-conditioned models) */
+  clip_vision?: string;
+  /** LoRA file name */
+  loras?: string;
   /** Set for no-VAE models: skip VAE discovery and selection entirely */
   noVae?: boolean;
 }
@@ -141,6 +149,9 @@ export const COMFYUI_MODEL_EXTENSIONS = {
   clip: [".safetensors", ".gguf", ".sft",],
   diffusion: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
   vae: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  checkpoint: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  clip_vision: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  loras: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
 } as const;
 
 /** @param role - model slot

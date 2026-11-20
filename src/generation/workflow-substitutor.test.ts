@@ -96,4 +96,22 @@ describe("buildSubstitutionVars", () => {
     expect(vars.seed,).toBe(42,);
     expect(vars.model,).toBe("m",);
   });
+
+  it("binds picked model roles and LoRA name, keeping the stock default", () => {
+    const vars = buildSubstitutionVars({
+      prompt: "cat",
+      model: "base.ckpt",
+      clip: "clip.gguf",
+      vae: "vae.safetensors",
+      clip_vision: "vision.safetensors",
+      lora: "style.safetensors",
+    },);
+
+    expect(vars.model,).toBe("base.ckpt",);
+    expect(vars.clip,).toBe("clip.gguf",);
+    expect(vars.vae,).toBe("vae.safetensors",);
+    expect(vars.clip_vision,).toBe("vision.safetensors",);
+    expect(vars.lora,).toBe("style.safetensors",);
+    expect(buildSubstitutionVars({ prompt: "cat", },).model,).toBe("model.safetensors",);
+  });
 });

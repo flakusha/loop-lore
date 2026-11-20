@@ -20,6 +20,9 @@ const discovered: ComfyUIModelCandidates = {
   clip: ["clip-b.safetensors", "clip-a.safetensors",],
   diffusion: ["unet-a.safetensors",],
   vae: ["vae-a.safetensors", "vae-b.bin",],
+  checkpoint: ["base.ckpt",],
+  clip_vision: ["vision-a.safetensors",],
+  loras: ["style-a.safetensors",],
 };
 
 beforeAll(() => {
@@ -70,6 +73,57 @@ describe("discoverComfyUIModels", () => {
     expect(result.diffusion,).toEqual(["unet-a.safetensors",],);
     expect(result.vae,).toEqual(["vae-a.safetensors",],);
   });
+
+  test("registry keys supply checkpoint, clip_vision and loras candidates", async () => {
+    const client: ComfyUIModelClient = {
+      async listModelFolders() {
+        return ["checkpoints", "clip_vision", "loras",];
+      },
+      async listModelFolder(folder,) {
+        if (folder === "checkpoints") { return ["base.ckpt",]; }
+        if (folder === "clip_vision") { return ["vision-a.safetensors", "notes.json",]; }
+        return ["style-b.safetensors",];
+      },
+    };
+
+    const result = await discoverComfyUIModels(client,);
+    expect(result.checkpoint,).toEqual(["base.ckpt",],);
+    expect(result.clip_vision,).toEqual(["vision-a.safetensors",],);
+    expect(result.loras,).toEqual(["style-b.safetensors",],);
+  });
+
+  test("/object_info COMBO options win over folder aliases", async () => {
+    const listed: string[] = [];
+    const client: ComfyUIModelClient = {
+      async listModelFolders() {
+        return ["checkpoints", "clip_vision", "loras",];
+      },
+      async listModelFolder(folder,) {
+        listed.push(folder,);
+        return ["alias.safetensors",];
+      },
+      async getNodeInfo() {
+        return {
+          CLIPVisionLoader: {
+            input: { required: { clip_name: ["COMBO", { options: ["vision-live.safetensors",], },], }, },
+          },
+          LoraLoader: {
+            input: { required: { lora_name: [["style-live.safetensors",], {},], }, },
+          },
+          CheckpointLoaderSimple: {
+            input: { required: { ckpt_name: ["COMBO",], }, },
+          },
+        };
+      },
+    };
+
+    const result = await discoverComfyUIModels(client,);
+    expect(result.clip_vision,).toEqual(["vision-live.safetensors",],);
+    expect(result.loras,).toEqual(["style-live.safetensors",],);
+    // A bare COMBO carries no names, so the exact registry folder is listed.
+    expect(result.checkpoint,).toEqual(["alias.safetensors",],);
+    expect(listed,).toEqual(["checkpoints",],);
+  });
 });
 
 describe("resolveComfyUIModels", () => {
@@ -110,6 +164,26 @@ describe("resolveComfyUIModels", () => {
     expect(result.vaeRole,).toEqual({ candidates: [], selected: null, source: "none", },);
   });
 
+  test("image roles follow the same user/admin/config/discovery precedence", () => {
+    const result = resolveComfyUIModels({
+      discovered,
+      config: { checkpoint: "base.ckpt", },
+      admin: { loras: "style-a.safetensors", },
+      user: { clip_vision: "vision-a.safetensors", loras: "stale.safetensors", },
+    },);
+
+    expect(result.checkpointRole,).toEqual({
+      candidates: discovered.checkpoint,
+      selected: "base.ckpt",
+      source: "config",
+    },);
+
+    expect(result.clipVisionRole.selected,).toBe("vision-a.safetensors",);
+    expect(result.clipVisionRole.source,).toBe("user",);
+    expect(result.lorasRole.selected,).toBe("style-a.safetensors",);
+    expect(result.lorasRole.source,).toBe("admin",);
+  });
+
   test("rejects an incompatible config pin", () => {
     expect(() =>
       resolveComfyUIModels({
@@ -122,8 +196,16 @@ describe("resolveComfyUIModels", () => {
 
 describe("catalog constants", () => {
   test("roles cover every folder map key", () => {
-    expect([...COMFYUI_MODEL_ROLES,],).toEqual(["clip", "diffusion", "vae",],);
-    expect(Object.keys(COMFYUI_MODEL_FOLDERS,).sort(),).toEqual(["clip", "diffusion", "vae",],);
+    expect([...COMFYUI_MODEL_ROLES,],).toEqual([
+      "clip",
+      "diffusion",
+      "vae",
+      "checkpoint",
+      "clip_vision",
+      "loras",
+    ],);
+
+    expect(Object.keys(COMFYUI_MODEL_FOLDERS,).sort(),).toEqual([...COMFYUI_MODEL_ROLES,].sort(),);
   });
 
   test("re-exported extensions match the core provider schema", () => {

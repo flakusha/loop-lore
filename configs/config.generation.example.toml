@@ -34,6 +34,11 @@ openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # clip = "umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 # diffusion = "MinimaxH3_i2v.safetensors"
 # vae = "h3_vae.safetensors" # omit when the model has no VAE; set noVae = true instead
+# Image providers use the same role pins plus checkpoint/clip_vision/loras:
+# [generation.providers.sd.models]
+# checkpoint = "model.safetensors"
+# clip_vision = "vit.safetensors"
+# loras = "style.safetensors"
 # Dedicated translation providers (model = default TARGET language; usable
 # as the `generation.modelRoles.translator` provider):
 # deepl = { name = "deepl", label = "DeepL", authKey = "your-key:fx", freeTier = true, model = "en-us", timeout = 30000, retries = 3, allowUserApiKey = true }

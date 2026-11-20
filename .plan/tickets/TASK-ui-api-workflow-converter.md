@@ -3,8 +3,8 @@
 
 # TASK: UI API workflow converter
 
-**Status:** Done
-**Status Note:** merged to dev (src/generation/comfyui-converter/, fixtures, 21 tests), gates-verified by the owner 2026-10-30
+**Status:** In Progress
+**Status Note:** reopened 2026-11-20 for mode semantics — upstream mode 2 = muted, mode 4 = bypass; legacy mode 8 and any other unknown mode now fail loudly. Graph-level bypass passthrough is deferred pending the operator decision; mode-8 provenance is likewise an open question.
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-comfyui-first-class-citizen
@@ -40,10 +40,11 @@ Shipped implementation license-clean references (see `src/generation/comfyui-con
       subgraph lands on the inner `inputNode`'s target; outputs exit from the
       `outputNode`; global-subgraph references (by definition id from
       `GET /global_subgraphs`) are fetched and inlined.
-- [ ] Muted (`mode 2/4`) and bypassed (`mode 8`) nodes are excluded and their
-      consumers' dangling inputs pruned, matching frontend export; hidden JSON
-      widgets (`serialize !== false`) preserved; array widget values wrapped
-      `{__value__: [...]}`.
+- [x] Muted (`mode 2`) and bypassed (`mode 4`) nodes are excluded and their
+      consumers' dangling inputs pruned; unknown modes (including legacy mode
+      8) fail loudly. Hidden JSON widgets (`serialize !== false`) preserved;
+      array widget values wrapped `{__value__: [...]}`. Graph-level bypass
+      passthrough rewiring remains a separate operator decision.
 - [ ] The converter is a pure function over (workflow JSON, object_info
       snapshot) — unit-tested without a server; a subgraph-free reference
       workflow converts identically to its own editor-exported API form

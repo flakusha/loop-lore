@@ -13,6 +13,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { ComfyUIClient, } from "../generation/providers/comfyui";
 import {
+  COMFYUI_MODEL_ROLES,
   type ComfyUIModelOverrides,
   discoverComfyUIModels,
   resolveComfyUIModels,
@@ -39,7 +40,7 @@ function parseOverrides(raw: unknown,): ComfyUIModelOverrides | undefined {
   if (raw === null || typeof raw !== "object" || Array.isArray(raw,)) { return undefined; }
   const entry = raw as Record<string, unknown>;
   const out: ComfyUIModelOverrides = {};
-  for (const role of ["clip", "diffusion", "vae",] as const) {
+  for (const role of COMFYUI_MODEL_ROLES) {
     const name = entry[role];
     if (typeof name === "string" && isComfyUIModelName(role, name,)) { out[role] = name; }
   }
@@ -70,11 +71,15 @@ export function comfyUIModelRoutes(
       const userId = requireUserId(c,);
       if (typeof userId !== "string") { return userId; }
 
-      const allProviders = opts.config.generation.providers.video ?? [];
+      const kind = ctx.query.kind ?? "video";
+      const allProviders = kind === "image"
+        ? opts.config.generation.providers.sd ?? []
+        : opts.config.generation.providers.video ?? [];
+
       const wanted = ctx.query.provider;
       const provider = wanted ? allProviders.find((entry,) => entry.name === wanted) : allProviders[0];
       if (!provider) {
-        return jsonError(`Unknown ComfyUI video provider: ${wanted ?? "(none configured)"}`, HttpStatus.NotFound,);
+        return jsonError(`Unknown ComfyUI ${kind} provider: ${wanted ?? "(none configured)"}`, HttpStatus.NotFound,);
       }
 
       const client = new ComfyUIClient({
@@ -100,7 +105,7 @@ export function comfyUIModelRoutes(
 
       const view = resolveComfyUIModels({
         discovered,
-        config: provider.models as ComfyUIModelOverrides | undefined,
+        config: (provider as { models?: ComfyUIModelOverrides }).models,
         admin: parseAdminOverride(adminRaw,),
         user: parseOverrides(settings.comfyUiModels?.[provider.name],),
       },);
