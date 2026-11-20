@@ -238,7 +238,7 @@ afterEach(() => {
 
 describe("settings general init", () => {
   test("restores the six persisted preferences from localStorage", async () => {
-    storage.set("theme-reference", "no-icons",);
+    storage.set("theme-preference", "no-icons",);
     storage.set("locale", "fr",);
     storage.set("chat-enter-to-send", "0",);
     storage.set("chat-auto-scroll", "0",);

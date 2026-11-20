@@ -23,7 +23,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * @returns {Promise<void>}
      */
     async init() {
-      const savedTheme = storageGet("local", "theme-reference",);
+      const savedTheme = storageGet("local", "theme-preference",);
       if (savedTheme) { this.theme = savedTheme; }
       const savedLocale = storageGet("local", "locale",);
       if (savedLocale) { this.locale = savedLocale; }
