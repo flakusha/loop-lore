@@ -22,6 +22,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { adminSurface, } from "../v1/admin-surface";
 import { adminComfyuiWorkflowRoutes, } from "./index";
+import { licenseValue, paramsReviewedValue, } from "./shared";
 
 const PREFIX = "/api/v1";
 const BASE = `${PREFIX}/admin/comfyui-workflows`;
@@ -507,5 +508,20 @@ describe("admin ComfyUI workflow routes — modality scoping", () => {
 
     expect(del.status,).toBe(404,);
     expect((await rowById("llm-1",))?.name,).toBe("Chat",);
+  });
+});
+
+describe("write fences", () => {
+  it("trims the license and nulls blanks", () => {
+    expect(licenseValue("  MIT  ",),).toBe("MIT",);
+    expect(licenseValue("   ",),).toBeNull();
+    expect(licenseValue(undefined,),).toBeNull();
+    expect(licenseValue(42,),).toBeNull();
+  });
+
+  it("keeps the row value when params_reviewed is omitted", () => {
+    expect(paramsReviewedValue(undefined, 1,),).toBe(1,);
+    expect(paramsReviewedValue(true, 0,),).toBe(1,);
+    expect(paramsReviewedValue(false, 1,),).toBe(0,);
   });
 });
