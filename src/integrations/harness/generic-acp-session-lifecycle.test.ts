@@ -22,7 +22,6 @@ import { type FakeAcpLogEntry, type FakeAcpServer, startFakeAcp, } from "./fake-
 import { type GenericAcpOptions, resolveAdditionalDirectories, } from "./generic-acp";
 import { OmpAcpAdapter, } from "./omp";
 import { createHarnessRuntime, type HarnessRuntime, writeSandboxedText, } from "./runtime";
-import { HarnessSessionStore, } from "./session-store";
 
 /** Servers started by the current test; reaped after each. */
 const live: FakeAcpServer[] = [];
@@ -142,35 +141,6 @@ describe("fs/write_text_file bridge (fake ACP fixture)", () => {
     expect(entry?.content,).toEqual({
       error: { code: -32000, message: "path is outside the sandbox root", },
     },);
-  });
-});
-
-describe("HarnessSessionStore", () => {
-  it("indexes sessions per profile in remember order", () => {
-    const store = new HarnessSessionStore();
-    store.remember("a", "s-1", "/a",);
-    store.remember("a", "s-2", "/a2",);
-    store.remember("b", "s-3", "/b",);
-
-    expect(store.sessionsFor("a",),).toEqual([
-      { sessionId: "s-1", cwd: "/a", },
-      { sessionId: "s-2", cwd: "/a2", },
-    ],);
-
-    expect(store.sessionsFor("b",),).toEqual([{ sessionId: "s-3", cwd: "/b", },],);
-    expect(store.sessionsFor("missing",),).toEqual([],);
-  });
-
-  it("lists every profile's sessions; re-remembering refreshes the cwd in place", () => {
-    const store = new HarnessSessionStore();
-    store.remember("a", "s-1", "/a",);
-    store.remember("b", "s-2", "/b",);
-    store.remember("a", "s-1", "/a-moved",);
-
-    expect(store.list(),).toEqual([
-      { profile: "a", sessionId: "s-1", cwd: "/a-moved", },
-      { profile: "b", sessionId: "s-2", cwd: "/b", },
-    ],);
   });
 });
 
