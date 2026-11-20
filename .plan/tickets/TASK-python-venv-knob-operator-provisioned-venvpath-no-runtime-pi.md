@@ -3,7 +3,7 @@
 
 # TASK: Python venv knob: operator-provisioned venvPath, no runtime pip install
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp

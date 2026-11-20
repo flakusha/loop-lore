@@ -15,7 +15,8 @@
 
 import { spawn, } from "bun";
 import { createHash, } from "node:crypto";
-import { relative, resolve, sep, } from "node:path";
+import { existsSync, } from "node:fs";
+import { join, relative, resolve, sep, } from "node:path";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 /** What a probe learned from one python3 binary. */
@@ -39,6 +40,8 @@ export interface PythonProvenance {
 export interface PythonProbeOptions {
   /** Path or PATH name; injectable so tests never launch python. */
   binary?: string;
+  /** Operator-provisioned venv; its `bin/python` replaces `binary` when given. */
+  venvPath?: string;
   timeoutMs?: number;
 }
 
@@ -62,6 +65,8 @@ export interface PythonJobSpec {
   workdir?: string;
   /** Operator-configured root the workdir is confined to. */
   root?: string;
+  /** Operator-provisioned venv; its `bin/python` replaces `binary` when given. Dependencies are installed out of band by the operator — the bridge never runs `pip install` (no network, no arbitrary code in the request path). */
+  venvPath?: string;
   binary?: string;
   timeoutMs?: number;
   instanceId?: string;
@@ -84,6 +89,18 @@ const tails = new Map<string, Promise<void>>();
 /** @returns a JSON digest that pins the exact recipe invoked. */
 function digest(value: string,): string {
   return createHash("sha256",).update(value,).digest("hex",);
+}
+
+/**
+ * The interpreter for a probe or job: a named venv's `bin/python` wins over
+ * an explicit binary. POSIX layout only; Windows `Scripts/python.exe`
+ * arrives with the deferred `py -3` launcher work. Null when the named venv
+ * has no interpreter.
+ */
+function venvBinary(venvPath: string | undefined, binary: string | undefined,): string | null {
+  if (!venvPath) { return binary ?? "python3"; }
+  const candidate = join(venvPath, "bin", "python",);
+  return existsSync(candidate,) ? candidate : null;
 }
 
 async function withInstanceLock<T,>(key: string, fn: () => Promise<T>,): Promise<T> {
@@ -187,7 +204,15 @@ export function parsePythonCapabilities(stdout: string,): PythonCapabilityInfo |
  * Probe one local python3 binary. Never throws; every failure is a value.
  */
 export async function probePython(options: PythonProbeOptions = {},): Promise<PythonProbe> {
-  const binary = options.binary ?? "python3";
+  const binary = venvBinary(options.venvPath, options.binary,);
+  if (!binary) {
+    return {
+      ok: false,
+      status: "unavailable",
+      message: `venv python not found at ${join(options.venvPath ?? "", "bin", "python",)}`,
+    };
+  }
+
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const out = await runProcess([binary, "-c", PROBE_EXPR,], timeoutMs, digest(PROBE_EXPR,),);
 
@@ -215,6 +240,10 @@ export async function probePython(options: PythonProbeOptions = {},): Promise<Py
 
 function validateJob(spec: PythonJobSpec,): string | null {
   if (!spec.scriptPath.endsWith(".py",)) { return "recipe must be a .py file"; }
+  if (spec.venvPath && !venvBinary(spec.venvPath, undefined,)) {
+    return `venv python not found at ${join(spec.venvPath, "bin", "python",)}`;
+  }
+
   if (spec.workdir !== undefined) {
     if (spec.root === undefined) { return "workdir requires an operator-configured root"; }
     const scoped = relative(resolve(spec.root,), resolve(spec.root, spec.workdir,),);
@@ -233,7 +262,7 @@ export async function runPythonJob(spec: PythonJobSpec,): Promise<PythonJobResul
   if (invalid) { return { ok: false, status: "invalid", message: invalid, }; }
   const key = spec.instanceId ?? "default";
   return withInstanceLock(key, async () => {
-    const binary = spec.binary ?? "python3";
+    const binary = venvBinary(spec.venvPath, spec.binary,) ?? "python3";
     const timeoutMs = spec.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     const serialized = safeJsonStringify(spec.params ?? {},);
     if (!serialized.ok) { return { ok: false, status: "invalid", message: serialized.error.message, }; }

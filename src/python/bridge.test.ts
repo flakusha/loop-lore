@@ -6,7 +6,7 @@
  * ever executed; each test writes a shell stub that prints a fixed document.
  */
 import { afterEach, beforeEach, expect, test, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import {
   __resetPythonLocks,
@@ -183,4 +183,36 @@ test("parse drops lines without the marker", () => {
     version: "3.11.9",
     supported: true,
   },);
+});
+
+test("run uses the venv interpreter when provisioned", async () => {
+  const venv = join(dir, "venv",);
+  mkdirSync(join(venv, "bin",), { recursive: true, },);
+  const argvPath = join(dir, "argv",);
+  const stub = writeStub("venv-python", `printf '%s\\n' "$@" > ${argvPath}\necho ok`,);
+  renameSync(stub, join(venv, "bin", "python",),);
+  const recipe = writeRecipe();
+
+  const result = await runPythonJob({ scriptPath: recipe, venvPath: venv, },);
+  expect(result.ok,).toBe(true,);
+  expect(result.provenance?.binary,).toBe(join(venv, "bin", "python",),);
+  expect(readLines(argvPath,).slice(0, 2,),).toEqual([recipe, "--",],);
+});
+
+test("run rejects a venv without an interpreter", async () => {
+  const recipe = writeRecipe();
+  const result = await runPythonJob({ scriptPath: recipe, venvPath: join(dir, "novenv",), },);
+  expect(result,).toEqual({
+    ok: false,
+    status: "invalid",
+    message: `venv python not found at ${join(dir, "novenv", "bin", "python",)}`,
+  },);
+});
+
+test("probe reports unavailable for a venv without an interpreter", async () => {
+  const result = await probePython({ venvPath: join(dir, "novenv",), timeoutMs: 2_000, },);
+  expect(result.ok,).toBe(false,);
+  if (result.ok) { return; }
+  expect(result.status,).toBe("unavailable",);
+  expect(result.message,).toContain("venv python not found",);
 });
