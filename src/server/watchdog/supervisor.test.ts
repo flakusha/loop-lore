@@ -4,6 +4,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { Logger, } from "../../logger";
 import { restartBackoffMs, SUPERVISION_MAX_RESTARTS, } from "../../services/server-external-manager/supervise";
+import type { WatchdogTransition, } from "./state";
 import { createSupervisor, defaultProbe, defaultSpawn, } from "./supervisor";
 import type { SupervisedChild, WatchdogAlert, } from "./supervisor";
 
@@ -172,5 +173,68 @@ describe("watchdog supervisor", () => {
     expect(await supervisor.run(),).toBe(1,);
     expect(signals,).toEqual(["SIGTERM",],);
     expect(alerts,).toHaveLength(1,);
+  });
+
+  test("onTransition observes each crash decision with from/to/at", async () => {
+    const transitions: WatchdogTransition[] = [];
+    const supervisor = createSupervisor({
+      spawn: () => deadChild(1,),
+      logger: makeLogger(),
+      clock: fixedClock,
+      policy: { maxRestarts: 2, },
+      sleep: async () => {},
+      onTransition: (event,) => {
+        transitions.push(event,);
+      },
+    },);
+
+    expect(await supervisor.run(),).toBe(1,);
+    expect(transitions.map((t,) => t.decision.kind),).toEqual(["restart", "stop",],);
+    for (const t of transitions) {
+      expect(t.event_kind,).toBe("crash",);
+      expect(t.at,).toBe(1_000,);
+      expect(t.from.stopped,).toBe(false,);
+      expect(t.to,).not.toBe(t.from,);
+    }
+
+    expect(transitions[1]?.to.stopped,).toBe(true,);
+    expect(transitions[1]?.decision,).toMatchObject({
+      kind: "stop",
+      reason: "crash-threshold",
+      crashes: 2,
+    },);
+  });
+
+  test("onTransition observes probe kills", async () => {
+    const exit = Promise.withResolvers<number>();
+    const child: SupervisedChild = {
+      pid: 9,
+      exited: exit.promise,
+      signal: () => exit.resolve(1,),
+      kill: () => {},
+    };
+
+    const transitions: WatchdogTransition[] = [];
+    const supervisor = createSupervisor({
+      spawn: () => child,
+      logger: makeLogger(),
+      clock: fixedClock,
+      policy: { maxRestarts: 1, maxMisses: 2, probeIntervalMs: 60_000, },
+      probe: async () => false,
+      sleep: async () => {},
+      onTransition: (event,) => {
+        transitions.push(event,);
+      },
+    },);
+
+    expect(await supervisor.run(),).toBe(1,);
+    const killed = transitions.find((t,) => t.event_kind === "probe" && t.decision.kind === "kill");
+    expect(killed?.decision,).toMatchObject({
+      kind: "kill",
+      reason: "probe-misses",
+      misses: 2,
+    },);
+
+    expect(killed?.at,).toBe(1_000,);
   });
 });

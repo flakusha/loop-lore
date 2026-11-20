@@ -68,6 +68,21 @@ export type WatchdogDecision =
   | { kind: "stop"; reason: "crash-threshold"; crashes: number }
   | { kind: "wait" };
 
+/** Which watchdog fold produced a transition (the exec-log event kind). */
+export type WatchdogEventKind = "probe" | "crash";
+
+/**
+ * One observed state transition. Exec-log writers persist this verbatim —
+ * no second backoff or policy decision is made downstream.
+ */
+export interface WatchdogTransition {
+  event_kind: WatchdogEventKind;
+  from: WatchdogState;
+  to: WatchdogState;
+  decision: WatchdogDecision;
+  at: number;
+}
+
 /** Injected time sources — keeps tests deterministic (no wall-clock waits). */
 export interface WatchdogClock {
   now(): number;

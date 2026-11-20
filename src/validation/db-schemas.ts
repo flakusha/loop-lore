@@ -4222,3 +4222,14 @@ export const AgentActionsSchema = t.Object({
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── watchdog_events ────────────────────────────────────────────
+export const WatchdogEventsSchema = t.Object({
+  event_kind: t.String(),
+  decision_kind: t.String(),
+  at_ms: t.Number(),
+  created_at: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  misses: t.Optional(t.Number(),),
+  crashes: t.Optional(t.Number(),),
+},);

@@ -270,4 +270,5 @@ export interface DB {
   agent_tokens: import("./schema-core").AgentTokens;
   rsi_agent_worktrees: import("./schema-core").RsiAgentWorktrees;
   agent_actions: import("./schema-core").AgentActions;
+  watchdog_events: import("./schema-core").WatchdogEvents;
 }

@@ -2352,3 +2352,15 @@ export interface AgentActions {
   metadata: string | null;
   created_at: Generated<string>;
 }
+
+// ── watchdog_events ────────────────────────────────────────────
+export interface WatchdogEvents {
+  id: Generated<number>;
+  event_kind: string;
+  decision_kind: string;
+  at_ms: number;
+  created_at: Generated<string>;
+  reason: string | null;
+  misses: number | null;
+  crashes: number | null;
+}

@@ -33,6 +33,7 @@ import { setupProvidersRoutes, } from "./setup-providers";
 import { statsRoutes, } from "./stats";
 import { systemConfigRoutes, } from "./system-config";
 import { usersRoutes, } from "./users";
+import { watchdogRoutes, } from "./watchdog";
 import { worldEventsRoutes, } from "./world-events";
 import { worldsRoutes, } from "./worlds";
 
@@ -61,6 +62,7 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/model-news     — latest model news per feed family
  *   POST /api/admin/model-news/refresh — re-poll model news feeds
  *   GET  /api/admin/world-events?world_id=… — world simulation event log
+ *   GET  /api/admin/watchdog/events?limit=… — watchdog state-machine exec log
  *   GET  /api/admin/cron/jobs      — list scheduled job statuses
  *   POST /api/admin/cron/jobs/:name/run — manually trigger a job
  *   GET  /api/admin/resources/inference — list provisioned inference endpoints
@@ -80,40 +82,42 @@ import { worldsRoutes, } from "./worlds";
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
 export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
-  return (
-    new Elysia({ name: "admin", },)
-      .use(usersRoutes(opts, prefix,),)
-      .use(statsRoutes(opts, prefix,),)
-      .use(providersRoutes({ database: opts.database, }, prefix,),)
-      .use(reviewStatsRoutes(opts, prefix,),)
-      .use(resourcesRoutes(opts, prefix,),)
-      .use(modelRolesRoutes(opts, prefix,),)
-      .use(modelCapabilitiesRoutes(opts, prefix,),)
-      .use(newsRoutes(opts, prefix,),)
-      .use(blenderStatusRoutes(opts, prefix,),)
-      .use(sdStatusRoutes(opts, prefix,),)
-      .use(comfyUIStatusRoutes(opts, prefix,),)
-      .use(sdCppSetupRoutes(opts, prefix,),)
-      .use(comfyUISetupRoutes(opts, prefix,),)
-      .use(systemConfigRoutes(opts, prefix,),)
-      .use(setupProvidersRoutes(opts, prefix,),)
-      .use(worldsRoutes(opts, prefix,),)
-      .use(worldEventsRoutes(opts, prefix,),)
-      .use(itemPowerRoutes(opts, prefix,),)
-      .use(chatsRoutes(opts, prefix,),)
-      .use(carriageRoutes(opts, prefix,),)
-      .use(cronRoutes(opts, prefix,),)
-      .use(auditRoutes(opts, prefix,),)
-      .use(dangerZoneRoutes(opts, prefix,),)
-      .use(dbBackupRoutes(opts, prefix,),)
-      .use(effectiveConfigRoutes(opts, prefix,),)
-      .use(seedRoutes(opts, prefix,),)
-      .use(keyRotationRoutes(opts, prefix,),)
-      .use(auxTelemetryRoutes(opts, prefix,),)
-      .use(federationAdminRoutes(opts, prefix,),)
-      // Integration tokens (ADR credentials-issuer-model admin-scoped slice).
-      .use(integrationTokenRoutes(opts, prefix,),)
-      .use(llamaSwapRoutes(opts, prefix,),)
-      .use(mfaConfigRoutes(opts, prefix,),)
-  );
+  // Erase the accumulated Elysia generics before one more plugin; leaving the
+  // whole chain inline exceeds tsgo's instantiation depth.
+  const routes: Elysia = new Elysia({ name: "admin", },)
+    .use(usersRoutes(opts, prefix,),)
+    .use(statsRoutes(opts, prefix,),)
+    .use(providersRoutes({ database: opts.database, }, prefix,),)
+    .use(reviewStatsRoutes(opts, prefix,),)
+    .use(resourcesRoutes(opts, prefix,),)
+    .use(modelRolesRoutes(opts, prefix,),)
+    .use(modelCapabilitiesRoutes(opts, prefix,),)
+    .use(newsRoutes(opts, prefix,),)
+    .use(blenderStatusRoutes(opts, prefix,),)
+    .use(sdStatusRoutes(opts, prefix,),)
+    .use(comfyUIStatusRoutes(opts, prefix,),)
+    .use(sdCppSetupRoutes(opts, prefix,),)
+    .use(comfyUISetupRoutes(opts, prefix,),)
+    .use(systemConfigRoutes(opts, prefix,),)
+    .use(setupProvidersRoutes(opts, prefix,),)
+    .use(worldsRoutes(opts, prefix,),)
+    .use(worldEventsRoutes(opts, prefix,),)
+    .use(itemPowerRoutes(opts, prefix,),)
+    .use(chatsRoutes(opts, prefix,),)
+    .use(carriageRoutes(opts, prefix,),)
+    .use(cronRoutes(opts, prefix,),)
+    .use(auditRoutes(opts, prefix,),)
+    .use(dangerZoneRoutes(opts, prefix,),)
+    .use(dbBackupRoutes(opts, prefix,),)
+    .use(effectiveConfigRoutes(opts, prefix,),)
+    .use(seedRoutes(opts, prefix,),)
+    .use(keyRotationRoutes(opts, prefix,),)
+    .use(auxTelemetryRoutes(opts, prefix,),)
+    .use(federationAdminRoutes(opts, prefix,),)
+    // Integration tokens (ADR credentials-issuer-model admin-scoped slice).
+    .use(integrationTokenRoutes(opts, prefix,),)
+    .use(llamaSwapRoutes(opts, prefix,),)
+    .use(mfaConfigRoutes(opts, prefix,),);
+
+  return routes.use(watchdogRoutes(opts, prefix,),);
 }

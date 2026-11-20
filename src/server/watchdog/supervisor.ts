@@ -26,6 +26,7 @@ import type {
   WatchdogDecision,
   WatchdogPolicy,
   WatchdogState,
+  WatchdogTransition,
 } from "./state";
 
 /** The slice of a spawned child the supervisor needs. */
@@ -55,6 +56,8 @@ export interface WatchdogDeps {
   clock?: WatchdogClock;
   policy?: Partial<WatchdogPolicy>;
   alert?: (info: WatchdogAlert,) => void;
+  /** Observed state transitions for exec-log ingestion; default no-op. */
+  onTransition?: (transition: WatchdogTransition,) => void;
 }
 
 export interface Supervisor {
@@ -92,9 +95,18 @@ export function createSupervisor(deps: WatchdogDeps,): Supervisor {
 
   /** Apply a crash transition; returns true when the threshold stopped us. */
   const handleCrash = async (): Promise<boolean> => {
+    const from = state;
     const outcome = onCrash(state, policy, { now, jitter, },);
     state = outcome.state;
     const decision: WatchdogDecision = outcome.decision;
+    deps.onTransition?.({
+      event_kind: "crash",
+      from,
+      to: state,
+      decision,
+      at: now(),
+    },);
+
     if (decision.kind === "stop") {
       const info: WatchdogAlert = { crashes: decision.crashes, windowMs: policy.windowMs, at: now(), };
       deps.logger.fatal("Watchdog crash threshold reached — stopping", undefined, { ...info, },);
@@ -167,8 +179,17 @@ export function createSupervisor(deps: WatchdogDeps,): Supervisor {
           healthy = false;
         }
 
+        const from = state;
         const probed = onProbe(state, healthy, policy, { now, jitter, },);
         state = probed.state;
+        deps.onTransition?.({
+          event_kind: "probe",
+          from,
+          to: state,
+          decision: probed.decision,
+          at: now(),
+        },);
+
         if (probed.decision.kind !== "kill") {
           continue;
         }

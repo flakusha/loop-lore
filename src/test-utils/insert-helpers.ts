@@ -6867,3 +6867,23 @@ export async function insertAgentActions(
   } as any,).execute();
   return id;
 }
+
+/** Insert a watchdog_events row. */
+export async function insertWatchdogEvents(
+  db: Db,
+  event_kind: string,
+  decision_kind: string,
+  at_ms: number,
+  opts?: { id?: number; created_at?: string; reason?: string | null; misses?: number | null; crashes?: number | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("watchdog_events",).values({
+    id,
+    event_kind,
+    decision_kind,
+    at_ms,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

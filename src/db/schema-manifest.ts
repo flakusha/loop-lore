@@ -1655,6 +1655,16 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("watchdog_events", {
+    id: col("integer", { primaryKey: true, },),
+    event_kind: col("text", { notNull: true, },),
+    decision_kind: col("text", { notNull: true, },),
+    at_ms: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    reason: col("text",),
+    misses: col("integer",),
+    crashes: col("integer",),
+  },)
   .table("whitenotes", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),
