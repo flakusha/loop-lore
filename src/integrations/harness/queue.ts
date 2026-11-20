@@ -14,9 +14,10 @@
  * `maxConcurrent` turns in flight overall. Each turn is a full
  * `dispatchHarnessTurn` run: the isolation gate, ToS guard, permission queue
  * and exec-log sit inside the dispatch — the queue never reaches around
- * them, and the enqueueing principal is re-presented to the gate at run
- * time: the caller's live role is re-resolved before dispatch, so a demotion
- * between enqueue and run fails the turn instead of executing the stale role.
+ * them: the enqueueing principal is re-presented to the gate at run time,
+ * and the gate re-resolves the caller's live role immediately before
+ * admission, so a demotion between enqueue and run fails the turn instead
+ * of executing the stale role.
  *
  * State is DB rows (`harness_queue_turns`, migrations 100/105), not memory:
  * a crash loses at most this instance's in-flight turn (boot recovery fails
@@ -38,7 +39,6 @@ import { resolveInstanceSlug, } from "../../config/state-dir";
 import { HarnessQueueErrorCode, HarnessQueueTurnStatus, } from "../../db/enums";
 import { type DB, } from "../../db/schema";
 import { getChildLogger, type Logger, } from "../../logger";
-import { isAdminRole, resolveUserRole, } from "../../users/roles";
 import { toDate, } from "../../utils/date";
 import {
   dispatchHarnessTurn,
@@ -84,7 +84,7 @@ export interface HarnessQueueTurnSpec {
 export interface EnqueueHarnessTurnBatchOptions {
   /** The enqueueing user (the turn runs under their authority). */
   requestedBy: string;
-  /** The enqueueing principal's site role; the gate re-judges it at run time. */
+  /** The enqueueing principal's site role at enqueue time; kept as the audit snapshot. The gate re-resolves the live role at admission. */
   requestedRole: string | null;
   /** The turns to run; at least one. */
   turns: HarnessQueueTurnSpec[];
@@ -112,7 +112,7 @@ export interface CreateHarnessTurnQueueOptions {
 }
 
 /** Why the queue refused an operation. Machine-readable, never a thrown string. */
-export type HarnessQueueCode = "harness_disabled" | "empty_batch" | "role_changed";
+export type HarnessQueueCode = "harness_disabled" | "empty_batch";
 
 /** A refused queue operation. */
 export class HarnessQueueError extends Error {
@@ -222,20 +222,9 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
         throw new HarnessQueueError("harness_disabled", "the harness runtime is not composed",);
       }
 
-      // `requested_role` is an enqueue-time snapshot. Re-resolve the caller's
-      // live role the way the HTTP/command path does; a caller that was admin
-      // at enqueue but is not now fails closed before the gate can run under
-      // the stale role. The remaining gate checks still live in dispatch.
-      const currentRole = await resolveUserRole(options.database, row.requested_by,);
-      if (isAdminRole(row.requested_role,) && !isAdminRole(currentRole,)) {
-        throw new HarnessQueueError(
-          "role_changed",
-          `caller ${row.requested_by} is no longer authorized for harness role ${row.requested_role ?? "anonymous"}`,
-        );
-      }
-      // ponytail: check and dispatch are not atomic — a demotion inside that
-      // window still runs at the old role. Close it by re-resolving role from
-      // userId inside assertHarnessExecution (shared gate change, not this lane).
+      // `requested_role` is an enqueue-time audit snapshot, never an auth
+      // input: the dispatch re-resolves the caller's live role immediately
+      // before the gate, so no earlier verdict is consumed here.
 
       const outcome = await dispatch({
         runtime,
@@ -265,8 +254,6 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
       const code = error instanceof HarnessQueueError
         ? error.code === "harness_disabled"
           ? HarnessQueueErrorCode.HarnessDisabled
-          : error.code === "role_changed"
-          ? HarnessQueueErrorCode.RoleDenied
           : HarnessQueueErrorCode.TurnFailed
         : error instanceof HarnessDispatchError
         ? error.code

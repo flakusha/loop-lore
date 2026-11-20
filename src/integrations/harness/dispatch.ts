@@ -37,6 +37,7 @@ import {
   recallHarnessMemories,
   storeHarnessRunSummary,
 } from "../../memory/harness-recall";
+import { resolveUserRole, } from "../../users/roles";
 import { getHarnessAdminFileConfig, } from "./admin-settings";
 import { assertHarnessExecution, } from "./isolation-gate";
 import { type AttributedTurn, type TurnRequirement, } from "./profile-selector";
@@ -76,7 +77,11 @@ export class HarnessDispatchError extends Error {
 export interface DispatchHarnessTurnOptions {
   /** The composed runtime (`getHarnessRuntime()`), never a test-only build. */
   runtime: HarnessRuntime;
-  /** The caller's site role; the isolation gate denies anyone else. */
+  /**
+   * The caller's site role as seen by the caller (the enqueue-time snapshot
+   * on the queue path). Audit context only — the gate re-resolves the live
+   * role from the database immediately before admission and never trusts this.
+   */
   role: string | null;
   /** The authenticated user the execution is attributed to. */
   userId: string | null;
@@ -113,11 +118,16 @@ export interface DispatchHarnessTurnOutcome {
 export async function dispatchHarnessTurn(
   options: DispatchHarnessTurnOptions,
 ): Promise<DispatchHarnessTurnOutcome> {
+  // The live role is resolved here, immediately before admission, the way the
+  // HTTP layer does — never from the caller-presented `role`. A demotion
+  // between enqueue (or any earlier check) and this line fails closed below
+  // instead of executing at the old role.
+  const liveRole = await resolveUserRole(options.database, options.userId,);
   const gate = assertHarnessExecution({
     // The gate reads the whole `harness` section; the admin store keeps the
     // `acp` sub-config.
     config: { acp: getHarnessAdminFileConfig(), },
-    role: options.role,
+    role: liveRole,
     userId: options.userId,
     profileName: options.profile,
   },);

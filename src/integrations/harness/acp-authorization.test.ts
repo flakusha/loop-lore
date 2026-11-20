@@ -197,6 +197,8 @@ describe("ACP path — permission approval over the real wire", () => {
 
     const runtime = createHarnessRuntime({ acp, },);
 
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
     const refusal = await dispatchHarnessTurn({
       runtime,
       role: "user",

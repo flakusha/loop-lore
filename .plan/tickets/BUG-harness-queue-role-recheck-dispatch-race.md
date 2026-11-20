@@ -3,7 +3,7 @@
 
 # BUG: harness queue role recheck dispatch race
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-harness-integration

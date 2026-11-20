@@ -173,12 +173,40 @@ describe("dispatchHarnessTurn", () => {
     const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
     const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
 
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
     const refusal = await dispatchHarnessTurn({
       runtime,
       role: "user",
       userId,
       profile: "omp",
       prompt: "nope",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },).catch((error: unknown,) => error);
+
+    expect(refusal,).toBeInstanceOf(HarnessDispatchError,);
+    expect((refusal as HarnessDispatchError).code,).toBe("role_denied",);
+    const rows = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(rows,).toHaveLength(0,);
+    expect(execLines(),).toHaveLength(0,);
+  });
+
+  it("ignores a stale caller-presented admin role after demotion", async () => {
+    // The queue passes the enqueue-time snapshot as `role`; a demotion that
+    // lands before admission must still fail closed at the NEW role.
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    const refusal = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "stale",
       database: fixture.db,
       chatId,
       actorId,

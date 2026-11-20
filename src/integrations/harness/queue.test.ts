@@ -12,9 +12,10 @@
  * resetHarnessAdminSettings + resetExecLogPath (the integration e2e's temp
  * exec-log). The queue's drain machinery is per-INSTANCE, so one instance's
  * parked gates cannot hang another's idle(); every test settles everything
- * it enqueues, so no gates leak into sibling tests. The one end-to-end test
- * runs the REAL dispatchHarnessTurn over in-memory fake adapters and a temp
- * exec-log file (reset afterwards). No child process, no ports, no fixed
+ * it enqueues, so no gates leak into sibling tests. The end-to-end and
+ * authorization tests run the REAL dispatchHarnessTurn over in-memory fake
+ * adapters and a temp exec-log file (reset afterwards). No child process,
+ * no ports, no fixed
  * paths — order-independent under the parallel runner.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -27,6 +28,7 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "./admin-settings";
 import {
+  dispatchHarnessTurn,
   type DispatchHarnessTurnOptions,
   type DispatchHarnessTurnOutcome,
   HarnessDispatchError,
@@ -444,14 +446,27 @@ describe("end to end through the real dispatch", () => {
   });
 });
 
-describe("authorization re-check at dispatch", () => {
+describe("authorization at admission", () => {
+  /**
+   * Real dispatch throughout this block: only the production gate can prove
+   * what role a turn ran under. Seeds admin settings, a temp exec log and a
+   * composed runtime; queues run production dispatch by default.
+   */
+  function setupAuthRuntime(): void {
+    execLog = join(mkdtempSync(join(tmpdir(), "harness-queue-auth-",),), "executions.jsonl",);
+    setExecLogPath(execLog,);
+    initHarnessAdminSettings(acpConfig(),);
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "queued answer", }, },);
+    initHarnessRuntime(acpConfig(), factory,);
+  }
+
   it("refuses a queued turn when the caller is demoted before the pump", async () => {
     // A zero-cap queue enqueues without claiming: the demotion lands before
     // any pump resolves the role, so no timing race is involved.
+    setupAuthRuntime();
     const parked = createHarnessTurnQueue({
       database: fixture.db,
-      runtime: () => FAKE_RUNTIME,
-      dispatch: stub.dispatch,
+      runtime: getHarnessRuntime,
       maxConcurrent: 0,
     },);
 
@@ -465,20 +480,57 @@ describe("authorization re-check at dispatch", () => {
 
     const active = createHarnessTurnQueue({
       database: fixture.db,
-      runtime: () => FAKE_RUNTIME,
-      dispatch: stub.dispatch,
+      runtime: getHarnessRuntime,
     },);
 
     await active.recoverAndPump();
     await active.idle();
 
-    // The stale role never reached dispatch; the row records why.
-    expect(stub.calls,).toHaveLength(0,);
+    // The enqueue-time snapshot reached dispatch but authorized nothing: the
+    // gate judged the live (demoted) role and the row records why.
     expect((await rowsByPrompt()).get("stale-role",),).toMatchObject({
       status: "failed",
       error_code: "role_denied",
       result_message_id: null,
     },);
+
+    const staleMessages = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(staleMessages,).toHaveLength(0,);
+  });
+
+  it("runs a demotion inside the claim-to-admission window at the new role", async () => {
+    // Demote exactly where the old queue-side check used to sit: after the
+    // claim, before admission. The gate must still fail the turn closed.
+    setupAuthRuntime();
+    const demoteThenDispatch: HarnessQueueDispatch = async (options,) => {
+      await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+      const runtime = getHarnessRuntime();
+      if (!runtime) { throw new Error("auth test runtime not composed",); }
+      return dispatchHarnessTurn({ ...options, runtime, },);
+    };
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: getHarnessRuntime,
+      dispatch: demoteThenDispatch,
+    },);
+
+    await active.enqueue({
+      requestedBy: userId,
+      requestedRole: "solo",
+      turns: [spec("omp", "window-demotion",),],
+    },);
+
+    await active.idle();
+
+    expect((await rowsByPrompt()).get("window-demotion",),).toMatchObject({
+      status: "failed",
+      error_code: "role_denied",
+      result_message_id: null,
+    },);
+
+    const messages = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(messages,).toHaveLength(0,);
   });
 
   it("keeps pumping other callers after refusing a demoted turn", async () => {
@@ -498,7 +550,7 @@ describe("authorization re-check at dispatch", () => {
       {
         id: "t-stale",
         batchId: "b-auth",
-        profile: "p1",
+        profile: "omp",
         prompt: "stale",
         chatId,
         actorId,
@@ -509,7 +561,7 @@ describe("authorization re-check at dispatch", () => {
       {
         id: "t-live",
         batchId: "b-auth",
-        profile: "p2",
+        profile: "omp",
         prompt: "live",
         chatId,
         actorId,
@@ -519,23 +571,21 @@ describe("authorization re-check at dispatch", () => {
       },
     ],);
 
+    setupAuthRuntime();
+
     await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
 
     const active = createHarnessTurnQueue({
       database: fixture.db,
-      runtime: () => FAKE_RUNTIME,
-      dispatch: stub.dispatch,
+      runtime: getHarnessRuntime,
     },);
 
     await active.recoverAndPump();
-    await flush();
-
-    expect(stub.calls.map((call,) => call.prompt),).toEqual(["live",],);
-    stub.settle("live", "msg-live",);
     await active.idle();
 
     const rows = await rowsByPrompt();
     expect(rows.get("stale",),).toMatchObject({ status: "failed", error_code: "role_denied", },);
-    expect(rows.get("live",),).toMatchObject({ status: "completed", result_message_id: "msg-live", },);
+    expect(rows.get("live",),).toMatchObject({ status: "completed", },);
+    expect(rows.get("live",)?.result_message_id,).not.toBeNull();
   });
 });
