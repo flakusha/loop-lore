@@ -153,6 +153,25 @@ export class TemplateRegistry {
 export const templateRegistry = new TemplateRegistry();
 
 /**
+ * Collect the distinct node class types embedded in a config workflow graph.
+ * Config `nodes` are ComfyUI-shaped, so `class_type` is the authority on the
+ * node packs a template needs; an absent graph has nothing to derive from.
+ * @param nodes - Raw config graph, when the operator embedded one
+ * @returns the distinct, non-empty class types
+ */
+function requiredNodesFromGraph(nodes: Record<string, unknown> | undefined,): string[] {
+  if (!nodes) { return []; }
+
+  const types = new Set<string>();
+  for (const node of Object.values(nodes,)) {
+    const classType = (node as { class_type?: unknown } | null)?.class_type;
+    if (typeof classType === "string" && classType.length > 0) { types.add(classType,); }
+  }
+
+  return [...types,];
+}
+
+/**
  * Register workflow templates from config.
  *
  * Config workflows are definitions (id, name, category, backend).
@@ -176,7 +195,10 @@ export function registerConfigWorkflows(
       category: workflow.category as ImageEditCategory,
       backends: [workflow.backend as ImageEditBackend,],
       description: workflow.description,
-      required_nodes: [],
+      // Derive from the embedded graph so a workflow needing custom packs
+      // cannot pass node gating with a silent `[]`. A config with no `nodes`
+      // is exempt: its graph arrives at run time, so there is nothing to gate.
+      required_nodes: requiredNodesFromGraph(workflow.nodes,),
       parameters: [],
       build: () => (workflow.nodes as ComfyUIWorkflow) ?? {},
     };

@@ -25,17 +25,23 @@ import {
   validateImageEditBody,
 } from "../validation/schemas";
 import { resolveEditApiKey, } from "./credentials";
+import type { NodeDiscovery, } from "./node-availability";
 import { ComfyUIEditProvider, } from "./providers/comfyui-provider";
 import { ensureWorkflowFileTemplates, } from "./providers/comfyui-workflow-template";
 import { SDServerEditProvider, } from "./providers/sd-server-provider";
 import { authorizeRunLinkage, } from "./run-authz";
 import type { HandleRunAuth, } from "./run-authz";
-import { registerBuiltinTemplates, registerConfigWorkflows, templateRegistry, } from "./template-registry";
+import { buildTemplateList, } from "./template-list";
+import {
+  registerBuiltinTemplates,
+  registerConfigWorkflows,
+  type TemplateRegistry,
+  templateRegistry,
+} from "./template-registry";
 import type {
   ImageEditBackend,
   ImageEditProvider,
   ImageEditRequest,
-  WorkflowTemplate,
 } from "./types";
 
 import { Elysia, } from "elysia";
@@ -177,48 +183,45 @@ export async function handleRun(
 /**
  * GET /api/v1/image-edit/templates — List available templates
  *
- * Query params:
- *   backend  — filter by backend (comfyui | sd-server)
- *   category — filter by category (txt2img | img2img | inpaint | upscale | controlnet)
+ * Query params: `backend` and `category`. The response shape (including the
+ * per-template availability flag and the unreachable/zero-nodes distinction)
+ * is documented on {@link buildTemplateList}.
  * @param request
+ * @param deps - Injectable seams for tests; production uses the shared instances
  * @returns {Promise<Response>}
  */
-export async function handleTemplates(request: Request,): Promise<Response> {
+export async function handleTemplates(
+  request: Request,
+  deps: {
+    discovery?: () => Promise<NodeDiscovery>;
+    registry?: TemplateRegistry;
+  } = {},
+): Promise<Response> {
   await ensureWorkflowFileTemplates();
   const url = new URL(request.url,);
-  const backend = url.searchParams.get("backend",) as ImageEditBackend | null;
-  const category = url.searchParams.get("category",);
 
-  let templates: WorkflowTemplate[];
-
-  if (backend && category) {
-    templates = templateRegistry.listForBackend(backend,).filter((t,) => t.category === category);
-  } else if (backend) {
-    templates = templateRegistry.listForBackend(backend,);
-  } else if (category) {
-    templates = templateRegistry.listByCategory(category as WorkflowTemplate["category"],);
-  } else {
-    templates = templateRegistry.listAll();
-  }
-
-  // Return lightweight summaries (exclude build function)
-  const summaries = Array.from(templates, ({ build: _build, ...rest },) => rest,);
-
-  return jsonResponse({ data: summaries, },);
+  return jsonResponse(
+    await buildTemplateList({
+      backend: url.searchParams.get("backend",) as ImageEditBackend | null,
+      category: url.searchParams.get("category",),
+    }, {
+      registry: deps.registry ?? templateRegistry,
+      discover: deps.discovery ?? (() => comfyuiProvider.discoverNodes()),
+    },),
+  );
 }
 
 /**
  * GET /api/v1/image-edit/nodes — Discover installed ComfyUI nodes
+ * `status` distinguishes an unreachable server from an empty node list.
  * @returns {Promise<Response>}
  */
 export async function handleNodes(): Promise<Response> {
-  try {
-    const nodes = await comfyuiProvider.getInstalledNodes();
-    return jsonResponse({ data: [...nodes,], },);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error,);
-    return jsonError({ message: `Node discovery failed: ${message}`, status: HttpStatus.InternalServerError, },);
-  }
+  const discovery = await comfyuiProvider.discoverNodes();
+  return jsonResponse({
+    data: [...discovery.nodes,],
+    status: discovery.reachable ? "ok" : "unreachable",
+  },);
 }
 
 /**

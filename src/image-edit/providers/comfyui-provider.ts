@@ -18,6 +18,7 @@ import { pickSdProvider, } from "../../config/schema";
 import { getDatabase, } from "../../db";
 import { ComfyUIClient, } from "../../generation/providers/comfyui";
 import { getLogger, } from "../../logger";
+import type { NodeDiscovery, } from "../node-availability";
 import type {
   ImageEditBackend,
   ImageEditCategory,
@@ -44,20 +45,31 @@ const CAPABILITY_NODE_MAP: Record<ImageEditCategory, string[]> = {
   controlnet: ["ControlNetLoader", "ControlNetApply",],
 };
 
+/** Node discovery is re-queried at most once per minute. */
+const NODE_DISCOVERY_TTL_MS = 60_000;
+
+interface CachedNodeDiscovery {
+  result: NodeDiscovery;
+  expiresAt: number;
+}
+
 export class ComfyUIEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "comfyui";
 
-  private installedNodes: Set<string> | null = null;
+  private nodeCache: CachedNodeDiscovery | null = null;
 
   /** Where the referenced input assets live. Defaults to the configured upload dir. */
   readonly #uploadDir: string | undefined;
+  readonly #nodeCacheTtlMs: number;
 
   /**
    * @param options - Provider wiring
    * @param options.uploadDir - Directory the input assets live in; the config default when omitted
+   * @param options.nodeCacheTtlMs - Discovery cache lifetime; tests shorten it to exercise expiry
    */
-  constructor(options: { uploadDir?: string } = {},) {
+  constructor(options: { uploadDir?: string; nodeCacheTtlMs?: number } = {},) {
     this.#uploadDir = options.uploadDir;
+    this.#nodeCacheTtlMs = options.nodeCacheTtlMs ?? NODE_DISCOVERY_TTL_MS;
   }
 
   /**
@@ -109,19 +121,34 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return capabilities;
   }
 
-  async getInstalledNodes(): Promise<Set<string>> {
-    if (this.installedNodes) { return this.installedNodes; }
+  /**
+   * Single source of truth for `/object_info` discovery. Failures are cached
+   * as `reachable: false` for the same bounded TTL, so an unreachable server is
+   * never flattened into an empty but reachable node set.
+   * @returns the cached-or-fresh discovery result
+   */
+  async discoverNodes(): Promise<NodeDiscovery> {
+    if (this.nodeCache && this.nodeCache.expiresAt > Date.now()) {
+      return this.nodeCache.result;
+    }
 
+    let result: NodeDiscovery;
     try {
       const client = this.getClient();
       const nodeInfo = await client.getNodeInfo();
-      this.installedNodes = new Set(Object.keys(nodeInfo,),);
-      return this.installedNodes;
+      result = { reachable: true, nodes: new Set(Object.keys(nodeInfo,),), };
     } catch (error) {
       log().error({ message: "Failed to discover ComfyUI nodes", error: String(error,), },);
-      this.installedNodes = new Set();
-      return this.installedNodes;
+      result = { reachable: false, nodes: new Set(), };
     }
+
+    this.nodeCache = { result, expiresAt: Date.now() + this.#nodeCacheTtlMs, };
+    return result;
+  }
+
+  /** Legacy node-set view; callers that need failure semantics use `discoverNodes()`. */
+  async getInstalledNodes(): Promise<Set<string>> {
+    return (await this.discoverNodes()).nodes;
   }
 
   async getNodeInfo() {
@@ -129,12 +156,9 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return client.getNodeInfo();
   }
 
-  /** Force re-discovery of nodes */
-  /**
-   * @returns {void}
-   */
+  /** Invalidate the discovery cache; the only explicit refresh hook. */
   refreshNodes(): void {
-    this.installedNodes = null;
+    this.nodeCache = null;
   }
 
   /**
