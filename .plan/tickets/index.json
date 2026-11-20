@@ -26664,7 +26664,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-additionaldirectories-support.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-CANCEL-REQUEST-TRANSPORT-SUPPORT": {
     "hash": "7a85e75",
@@ -26678,7 +26678,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-cancel-request-transport-support.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-CLAUDE-CODE-ADAPTER": {
     "hash": "44122d6",
@@ -26733,7 +26733,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-elicitation-create-form-support.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-PLAN-EVENTS-SUPPORT": {
     "hash": "ef3a0bf",
@@ -26747,7 +26747,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-plan-events-support.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION": {
     "hash": "9b543e6",
@@ -26787,7 +26787,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-session-new-mcp-handoff-and-fs-write-file.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-SESSION-PERSISTENCE-LOAD-RESUME-LIST": {
     "hash": "0a65d93",
@@ -26801,7 +26801,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-session-persistence-load-resume-list.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-SESSION-SET-MODE-PLAN-ACT-CONTROL": {
     "hash": "79b3fa2",
@@ -26815,7 +26815,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-session-set-mode-plan-act-control.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS": {
     "hash": "6297321",
@@ -26845,7 +26845,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-v2-protocol-negotiation.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
