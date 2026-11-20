@@ -8,11 +8,16 @@ import {
   SUPERVISION_MAX_RESTARTS,
 } from "../../services/server-external-manager/supervise";
 import {
+  CRASH_WINDOW_MS,
   createState,
+  DEFAULT_GRACE_MS,
   DEFAULT_POLICY,
+  DEFAULT_PROBE_INTERVAL_MS,
+  DEFAULT_PROBE_TIMEOUT_MS,
   onCrash,
   onProbe,
   onSpawn,
+  RESET_AFTER_UPTIME_MS,
 } from "./state";
 import type { WatchdogClock, WatchdogDecision, WatchdogState, } from "./state";
 
@@ -23,6 +28,15 @@ describe("watchdog state machine", () => {
   test("defaults reuse the external-server budget and miss threshold", () => {
     expect(DEFAULT_POLICY.maxRestarts,).toBe(SUPERVISION_MAX_RESTARTS,);
     expect(DEFAULT_POLICY.maxMisses,).toBe(SUPERVISION_MAX_MISSES,);
+  });
+
+  test("policy defaults mirror the published watchdog constants", () => {
+    expect(DEFAULT_POLICY.windowMs,).toBe(CRASH_WINDOW_MS,);
+    expect(DEFAULT_POLICY.resetAfterUptimeMs,).toBe(RESET_AFTER_UPTIME_MS,);
+    expect(DEFAULT_POLICY.graceMs,).toBe(DEFAULT_GRACE_MS,);
+    expect(DEFAULT_POLICY.probeIntervalMs,).toBe(DEFAULT_PROBE_INTERVAL_MS,);
+    expect(DEFAULT_POLICY.probeTimeoutMs,).toBe(DEFAULT_PROBE_TIMEOUT_MS,);
+    expect(DEFAULT_PROBE_TIMEOUT_MS,).toBeLessThan(DEFAULT_PROBE_INTERVAL_MS,);
   });
 
   test("first crash schedules a restart with the shared backoff helper", () => {

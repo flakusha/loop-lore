@@ -4,7 +4,7 @@
 import { describe, expect, test, } from "bun:test";
 import type { Logger, } from "../../logger";
 import { restartBackoffMs, SUPERVISION_MAX_RESTARTS, } from "../../services/server-external-manager/supervise";
-import { createSupervisor, } from "./supervisor";
+import { createSupervisor, defaultProbe, defaultSpawn, } from "./supervisor";
 import type { SupervisedChild, WatchdogAlert, } from "./supervisor";
 
 function makeLogger(): Logger {
@@ -37,6 +37,19 @@ function deadChild(code: number,): SupervisedChild {
 }
 
 const fixedClock = { now: () => 1_000, jitter: () => 0, };
+
+describe("watchdog default seams", () => {
+  test("defaultProbe fails closed when no server is listening", async () => {
+    const probe = defaultProbe("http://127.0.0.1:1/health/live", 200,);
+    expect(await probe(),).toBe(false,);
+  });
+
+  test("defaultSpawn starts and reaps a real child", async () => {
+    const child = defaultSpawn({ rootDir: import.meta.dir, startPath: "--version", },);
+    expect(child.pid,).toBeGreaterThan(0,);
+    expect(await child.exited,).toBe(0,);
+  });
+});
 
 describe("watchdog supervisor", () => {
   test("restarts with the shared backoff and stops at the crash threshold", async () => {
