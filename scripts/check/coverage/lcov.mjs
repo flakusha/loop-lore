@@ -23,8 +23,8 @@ export function parseRecords(lcovPath,) {
 }
 
 /**
- * Aggregate LF/LH per module (top-level dir under `src/`; top-level files
- * bucket under `(root)`).
+ * Aggregate LF/LH per module (top-level dir under `src/` or
+ * `packages/core/src/`; top-level files bucket under `(root)`).
  * @param records
  */
 export function aggregateModules(records,) {
@@ -34,7 +34,7 @@ export function aggregateModules(records,) {
     const sf = r.match(/SF:(.+)/,)?.[1];
 
     if (!sf) { continue; }
-    const seg = sf.replace(/^src\//, "",).split("/",)[0];
+    const seg = sf.replace(/^(?:packages\/core\/)?src\//, "",).split("/",)[0];
     const mod = seg.includes(".",) ? "(root)" : seg;
     const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
 

@@ -70,6 +70,7 @@ import {
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SRC_DIR = path.join(PROJECT_ROOT, "src",);
+const CORE_SRC_DIR = path.join(PROJECT_ROOT, "packages", "core", "src",);
 const DEFAULT_BASELINE = path.join(import.meta.dir, "test-gaps-baseline.json",);
 
 /**
@@ -308,6 +309,8 @@ const TYPE_ONLY_STATEMENT = /\b(?:import|export)[ \t]+type[ \t]+[^;"']*["'][^"']
 function resolveSpecifier(spec, importerId,) {
   const joined = spec.startsWith("@/",)
     ? `src/${spec.slice(2,)}`
+    : spec.startsWith("@loop-lore/core/",)
+    ? `packages/core/src/${spec.slice("@loop-lore/core/".length,)}`
     : spec.startsWith(".",)
     ? path.posix.join(path.posix.dirname(importerId,), spec,)
     : null;
@@ -428,7 +431,10 @@ function main() {
   // stderr is the human channel and is dropped entirely under --json.
   const human = args.quiet ? () => {} : (line,) => console.error(line,);
   const baselinePath = path.resolve(args.baseline,);
-  const fresh = collectGaps(walk(SRC_DIR,),);
+  // Walk core alongside src: src/@loop-lore/core re-export shims define
+  // nothing themselves, so charging them for core exports would double-count.
+  const coreFiles = existsSync(CORE_SRC_DIR,) ? walk(CORE_SRC_DIR,) : [];
+  const fresh = collectGaps([...walk(SRC_DIR,), ...coreFiles,],);
 
   if (args.write) {
     const known = readBaselineIfPresent(baselinePath,);

@@ -18,6 +18,7 @@ import { spawnSync, } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, resolve, } from "node:path";
+import { aggregateModules, } from "./coverage/lcov.mjs";
 
 const SCRIPT_PATH = resolve(import.meta.dir, "coverage.mjs",);
 const tempDirs: string[] = [];
@@ -115,5 +116,19 @@ describe("coverage.mjs", () => {
 
   test("an undeclared flag is a parse error", () => {
     expect(runCoverage(FULL, ["--nope",],).status,).toBe(1,);
+  });
+});
+
+describe("aggregateModules", () => {
+  test("buckets packages/core/src modules by their core module, not `packages`", () => {
+    const modules = aggregateModules([
+      "SF:src/chat/service.ts\nLF:2\nLH:1\n",
+      "SF:packages/core/src/config/schema.ts\nLF:4\nLH:2\n",
+      "SF:packages/core/src/index.ts\nLF:1\nLH:1\n",
+    ],) as Record<string, { lf: number; lh: number }>;
+    expect(modules.chat,).toEqual({ lf: 2, lh: 1, },);
+    expect(modules.config,).toEqual({ lf: 4, lh: 2, },);
+    expect(modules["(root)"],).toEqual({ lf: 1, lh: 1, },);
+    expect(modules.packages,).toBeUndefined();
   });
 });

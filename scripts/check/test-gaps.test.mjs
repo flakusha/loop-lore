@@ -388,6 +388,19 @@ test("shrinking the baseline needs no flag; accepting new debt does", () => {
   expect(JSON.parse(accepted.written ?? "null",).gaps,).toEqual(["src/thing.ts#lonely",],);
 });
 
+test("core exports are scanned; a src re-export shim is not double-charged", () => {
+  const { code, err, } = scanFixture({
+    "packages/core/src/thing.ts": fn("coreCoveredFn",) + fn("coreUncoveredFn",),
+    // The shim defines nothing: `export * from` must yield no gap of its own.
+    "src/thing.ts": 'export * from "@loop-lore/core/thing";\n',
+    "src/thing.test.ts": 'import { coreCoveredFn, } from "@loop-lore/core/thing";\ncoreCoveredFn();\n',
+  },);
+  expect(code,).toBe(1,);
+  expect(err,).toContain("| packages/core/src/thing.ts#coreUncoveredFn |",);
+  expect(err,).not.toContain("| packages/core/src/thing.ts#coreCoveredFn |",);
+  expect(err,).not.toContain("| src/thing.ts#",);
+});
+
 test("a first write with no baseline on disk is not treated as accepting debt", () => {
   const { code, written, } = scanFixture({ "src/thing.ts": fn("lonely",), }, {
     args: ["--write-baseline",],
