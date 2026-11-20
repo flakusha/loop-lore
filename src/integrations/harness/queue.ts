@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 270
+// Cohesive turn queue: enqueue, claim, dispatch, recover, cancel.
+
 /**
  * queue.ts — the harness multi-agent turn queue
  * (TASK-harness-multi-agent-turn-queue).

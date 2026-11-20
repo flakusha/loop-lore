@@ -12,7 +12,7 @@
  */
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../../logger";
-import { escapeJsonForScript, } from "./escape-html";
+import { escapeHtmlAndJsString, escapeJsonForScript, } from "./escape-html";
 import { respond, } from "./layout";
 
 beforeAll(() => {
@@ -67,6 +67,21 @@ describe("escapeJsonForScript", () => {
     expect(value.includes(">",),).toBe(false,);
     expect(value.includes("</script>",),).toBe(false,);
     expect(JSON.parse(value,),).toBe(worldId,);
+  });
+});
+
+describe("escapeHtmlAndJsString", () => {
+  test("a quote-and-tag worldId cannot break out of an Alpine x-data attribute", () => {
+    const value = escapeHtmlAndJsString(`';"</script><img src=x onerror=alert(1)>`,);
+
+    expect(value,).toContain("\\u0027",);
+    expect(value,).toContain("&quot;",);
+    expect(value,).toContain("&lt;/script&gt;",);
+    expect(value.includes("</script>",),).toBe(false,);
+  });
+
+  test("backslashes are escaped before entity encoding so JS round-trips", () => {
+    expect(escapeHtmlAndJsString("a\\b&c",),).toBe("a\\\\b&amp;c",);
   });
 });
 
