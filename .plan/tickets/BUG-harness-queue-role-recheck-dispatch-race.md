@@ -15,6 +15,6 @@
 
 **Acceptance Criteria:**
 
-- [ ] Admission gate resolves role immediately before dispatch; no earlier verdict is consumed.
-- [ ] A demotion between enqueue and admission cannot execute at the old role.
-- [ ] Queued `requested_role` remains in the audit record.
+- [x] Admission gate resolves role immediately before dispatch; no earlier verdict is consumed.
+- [x] A demotion between enqueue and admission cannot execute at the old role.
+- [x] Queued `requested_role` remains in the audit record.

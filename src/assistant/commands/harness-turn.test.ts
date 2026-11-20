@@ -164,6 +164,8 @@ describe("/harness", () => {
     const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
     initHarnessRuntime(acpConfig(), factory,);
 
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
     const result = await getCommand("harness",)?.(
       ["omp", "hello",],
       { ...context(), userRole: "user", },
