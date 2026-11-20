@@ -24,7 +24,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 import { buildWorkflowPayload, readMeta, slotsColumn, uploadedGraph, uploadedUiWorkflow, } from "./payload";
 import { getWorkflowRow, } from "./rows";
-import { log, workflowGuard, workflowInvalid, workflowNotFound, } from "./shared";
+import { licenseValue, log, paramsReviewedValue, workflowGuard, workflowInvalid, workflowNotFound, } from "./shared";
 import { ingestErrors, ingestUpload, liveSnapshot, outputKindOf, } from "./ui-ingest";
 
 /** Open object so a bare graph (node-id keys) passes validation untouched. */
@@ -39,6 +39,8 @@ const UpdateBody = t.Object(
     requiredNodes: t.Optional(t.Array(t.String(),),),
     loraSlots: t.Optional(t.Array(t.Unknown(),),),
     expectedOutputKind: t.Optional(t.String(),),
+    license: t.Optional(t.Union([t.String(), t.Null(),],),),
+    params_reviewed: t.Optional(t.Boolean(),),
   },
   { additionalProperties: true, },
 );
@@ -69,6 +71,13 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
 
               const row = await getWorkflowRow(database, id,);
               if (!row) { return workflowNotFound(id,); }
+              // A missing fence key keeps the stored value; an explicit null,
+              // blank string or false clears its field without touching the other.
+              const license = body.license === undefined
+                ? row.license ?? null
+                : licenseValue(body.license,);
+
+              const paramsReviewed = paramsReviewedValue(body.params_reviewed, row.params_reviewed ?? 0,);
               const current = rowToPayload(row,);
               if (!current) {
                 return workflowInvalid(["stored payload is unreadable; re-upload the workflow",],);
@@ -132,6 +141,8 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   probe_status: ingested.row.probe_status ?? "passing",
                   lora_slots: slotsColumn(ingested.payload.loraSlots,),
                   min_vram: typeof body.min_vram === "number" ? body.min_vram : row.min_vram,
+                  license,
+                  params_reviewed: paramsReviewed,
                   updated_at: new Date().toISOString(),
                 },).where("id", "=", id,).where("modality", "=", "workflow",).execute();
 
@@ -190,6 +201,8 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 payload: serialized.payload,
                 lora_slots: slotsColumn(validated.payload.loraSlots,),
                 min_vram: typeof body.min_vram === "number" ? body.min_vram : row.min_vram,
+                license,
+                params_reviewed: paramsReviewed,
                 updated_at: new Date().toISOString(),
               },).where("id", "=", id,).where("modality", "=", "workflow",).execute();
 

@@ -64,6 +64,19 @@ async function postAsAdmin(
   return { status: res.status, json: text ? JSON.parse(text,) : {}, };
 }
 
+/** PUT a body as an admin and return the status. */
+async function putAsAdmin(path: string, body: unknown,): Promise<number> {
+  const res = await appFor("admin",).handle(
+    new Request(`http://localhost${path}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify(body,),
+    },),
+  );
+
+  return res.status;
+}
+
 /** A stored row, for direct assertion on what a handler wrote. */
 async function rowById(id: string,) {
   return db.selectFrom("prompt_templates",).selectAll().where("id", "=", id,).executeTakeFirst();
@@ -189,6 +202,60 @@ describe("admin ComfyUI workflow routes — create", () => {
     const { status, json, } = await postAsAdmin(BASE, { ...GRAPH, },);
     expect(status,).toBe(400,);
     expect(String(json.error,),).toContain("name is required",);
+  });
+});
+
+describe("admin ComfyUI workflow routes — license fence", () => {
+  it("records a trimmed license and the params-review flag on create", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Fenced",
+      ...GRAPH,
+      license: "  Apache-2.0  ",
+      params_reviewed: true,
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    expect(row?.license,).toBe("Apache-2.0",);
+    expect(row?.params_reviewed,).toBe(1,);
+  });
+
+  it("stores a blank license as null and an omitted review as 0", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Unfenced",
+      ...GRAPH,
+      license: "   ",
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    expect(row?.license,).toBeNull();
+    expect(row?.params_reviewed,).toBe(0,);
+  });
+
+  it("refuses wrong-typed fence fields at the boundary", async () => {
+    const badLicense = await postAsAdmin(BASE, {
+      name: "Bad license",
+      ...GRAPH,
+      license: 42,
+    },);
+
+    expect(badLicense.status,).toBeGreaterThanOrEqual(400,);
+    expect(badLicense.status,).toBeLessThan(500,);
+
+    const badReview = await postAsAdmin(BASE, {
+      name: "Bad review",
+      ...GRAPH,
+      params_reviewed: "yes",
+    },);
+
+    expect(badReview.status,).toBeGreaterThanOrEqual(400,);
+    expect(badReview.status,).toBeLessThan(500,);
+
+    const rows = await db.selectFrom("prompt_templates",).select("id",).execute();
+    expect(rows,).toEqual([],);
   });
 });
 
@@ -334,6 +401,69 @@ describe("admin ComfyUI workflow routes — read one / update", () => {
 
     expect(res.status,).toBe(200,);
     expect((await rowById("converted-1",))?.name,).toBe("Renamed",);
+  });
+
+  it("keeps the other fence field on a partial update", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Fenced",
+      ...GRAPH,
+      license: "MIT",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    expect(await putAsAdmin(`${BASE}/${id}`, { params_reviewed: false, },),).toBe(200,);
+    let row = await rowById(id,);
+    expect(row?.license,).toBe("MIT",);
+    expect(row?.params_reviewed,).toBe(0,);
+
+    expect(await putAsAdmin(`${BASE}/${id}`, { license: "  GPL-3.0-only  ", },),).toBe(200,);
+    row = await rowById(id,);
+    expect(row?.license,).toBe("GPL-3.0-only",);
+    expect(row?.params_reviewed,).toBe(0,);
+
+    // An explicit null clears only the license; the review flag stays put.
+    expect(await putAsAdmin(`${BASE}/${id}`, { license: null, params_reviewed: true, },),).toBe(200,);
+    row = await rowById(id,);
+    expect(row?.license,).toBeNull();
+    expect(row?.params_reviewed,).toBe(1,);
+  });
+
+  it("serves the recorded fence on the detail read", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Read fence",
+      ...GRAPH,
+      license: "BSD-3-Clause",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    const res = await appFor("admin",).handle(new Request(`http://localhost${BASE}/${id}`,),);
+    const json = await res.json() as { license: string; params_reviewed: number; probe_status: string };
+    expect(json.license,).toBe("BSD-3-Clause",);
+    expect(json.params_reviewed,).toBe(1,);
+    expect(json.probe_status,).toBe("unprobed",);
+  });
+
+  it("refuses an invalid fence update without changing the row", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Untouched",
+      ...GRAPH,
+      license: "MIT",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    const status = await putAsAdmin(`${BASE}/${id}`, { params_reviewed: 1, },);
+    expect(status,).toBeGreaterThanOrEqual(400,);
+    expect(status,).toBeLessThan(500,);
+
+    const row = await rowById(id,);
+    expect(row?.license,).toBe("MIT",);
+    expect(row?.params_reviewed,).toBe(1,);
   });
 });
 

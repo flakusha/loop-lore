@@ -26,6 +26,12 @@ export interface WorkflowSummary {
   enabled: string;
   min_vram: number | null;
   lora_slots: unknown;
+  /** Acceptance-probe state, so the editor can show the fence as recorded. */
+  probe_status: string;
+  /** License fence text; null until the operator records one. */
+  license: string | null;
+  /** Params-review fence, SQLite integer 0/1. */
+  params_reviewed: number;
   node_count: number;
   category: string | null;
   /** Declared requiredNodes the live server lacks; null when it is unreachable. */
@@ -91,6 +97,9 @@ export function toSummary(row: WorkflowDbRow, installed: ComfyUINodeInfo[] | nul
     enabled: row.enabled,
     min_vram: row.min_vram,
     lora_slots: row.lora_slots === null ? null : jsonParseOr<unknown>(row.lora_slots, null,),
+    probe_status: row.probe_status ?? "unprobed",
+    license: row.license ?? null,
+    params_reviewed: row.params_reviewed ?? 0,
     node_count: payload ? Object.keys(payload.body,).length : 0,
     category: payload?.category ?? null,
     missing_nodes: installed === null ? null : missingRequiredNodes(row, installed,),

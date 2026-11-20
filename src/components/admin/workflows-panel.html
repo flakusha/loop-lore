@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 <!-- Workflows Tab -->
 <div x-show="activeTab === 'workflows'">
   <div x-show="loadingWorkflows" class="empty-state" style="padding: var(--space-12)">
@@ -176,6 +179,25 @@
                   <option value="upscale">upscale</option>
                   <option value="controlnet">controlnet</option>
                 </select>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+              <div>
+                <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">license</label>
+                <input
+                  class="form-input"
+                  style="font-size: 13px"
+                  x-model="workflowForm.license"
+                  placeholder="e.g. MIT, Apache-2.0"
+                />
+              </div>
+              <div>
+                <label
+                  style="display: flex; align-items: center; gap: var(--space-2); font-size: 12px; font-weight: 500"
+                >
+                  <input type="checkbox" x-model="workflowForm.params_reviewed" />
+                  params reviewed
+                </label>
               </div>
             </div>
             <div>

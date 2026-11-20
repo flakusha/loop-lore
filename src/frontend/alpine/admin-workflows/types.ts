@@ -35,6 +35,8 @@ export interface WorkflowForm {
   model_family: string;
   min_vram: string;
   category: string;
+  license: string;
+  params_reviewed: boolean;
   requiredNodes: string;
   graph: string;
   parametersJson: string;
@@ -53,6 +55,8 @@ export function emptyWorkflowForm(): WorkflowForm {
     model_family: "",
     min_vram: "",
     category: "txt2img",
+    license: "",
+    params_reviewed: false,
     requiredNodes: "",
     graph: "",
     parametersJson: "",

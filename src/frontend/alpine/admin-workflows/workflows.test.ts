@@ -56,6 +56,9 @@ const row = {
   enabled: "enabled",
   min_vram: 12,
   lora_slots: null,
+  probe_status: "passing",
+  license: "MIT",
+  params_reviewed: 1,
   node_count: 2,
   category: "txt2img",
   missing_nodes: null,
@@ -247,6 +250,8 @@ describe("adminWorkflows.openWorkflowEdit", () => {
     expect(calls[0]!.url,).toBe("/api/v1/admin/comfyui-workflows/wf1",);
     expect(adminWorkflows.showWorkflowForm,).toBe(true,);
     expect(adminWorkflows.workflowForm.category,).toBe("img2img",);
+    expect(adminWorkflows.workflowForm.license,).toBe("MIT",);
+    expect(adminWorkflows.workflowForm.params_reviewed,).toBe(true,);
     expect(adminWorkflows.workflowForm.requiredNodes,).toBe("KSampler, SaveImage",);
     expect(adminWorkflows.workflowForm.min_vram,).toBe("12",);
     expect(JSON.parse(adminWorkflows.workflowForm.graph,),).toEqual({ "3": { class_type: "KSampler", inputs: {}, }, },);

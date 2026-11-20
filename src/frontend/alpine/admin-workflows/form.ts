@@ -41,6 +41,8 @@ export function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
     model_family: row.model_family ?? "",
     min_vram: row.min_vram === null ? "" : String(row.min_vram,),
     category: payload?.category ?? "txt2img",
+    license: row.license ?? "",
+    params_reviewed: row.params_reviewed === 1,
     requiredNodes: (payload?.requiredNodes ?? []).join(", ",),
     graph: payload ? pretty(payload.body,) : "",
     parametersJson: payload?.parameters?.length ? pretty(payload.parameters,) : "",
@@ -70,6 +72,8 @@ export function requestBody(
     description: form.description.trim(),
     model_family: form.model_family.trim(),
     category: form.category,
+    license: form.license.trim() === "" ? null : form.license.trim(),
+    params_reviewed: form.params_reviewed,
     requiredNodes: form.requiredNodes.split(",",).map((node,) => node.trim()).filter((node,) => node.length > 0),
     body: parsed.graph,
   };
