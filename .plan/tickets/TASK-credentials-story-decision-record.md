@@ -3,7 +3,7 @@
 
 # TASK: credentials-story-decision-record
 
-**Status:** Not Started
+**Status:** Done
 **Blocker:** HELD — ticket-file collision with dev: dev filed this ticket as `d7fd5c36a` (Not Started skeleton) while the branch re-filed it with the Done + Decision-record content (`85a5a3db9` ADR slice + `eedd65bb1` issuer-model ADR). Owner at landing: merge the ticket file toward the branch content (Done + ADR pointer), do NOT keep the dev skeleton. Next: land `credentials-decision-record`, then flip this ticket to Done with the landing sha.
 **Priority:** high
 **Effort:** Medium
@@ -24,3 +24,5 @@ Resolve epic-principal-scoped-credentials §5 Q4 (admin-issued scoped tokens vs 
 **Context:**
 
 (fill in before starting: why this change, constraints, alternatives considered.)
+
+**Resolved:** 2026-11-20 registry-driven close: git issue 70801ad (registry tip: 65828760f Konstantin Fedotov Auto-closed: appended .md marker marks TASK-CREDENTIALS-STORY-DECISION-)

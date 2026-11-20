@@ -3,7 +3,7 @@
 
 # TASK: harness-sandbox-root-knob-configurable-cwd
 
-**Status:** Not Started
+**Status:** Done
 **Blocker:** HELD — unlanded branch `harness-sandbox-root-knob` (`d886c680d` per-profile `sandboxRoot`; `runtime.ts` + tests only, no `src/config` knob yet per branch stat). Next: land the branch, then flip this ticket with the landing sha.
 **Priority:** medium
 **Effort:** Small
@@ -44,3 +44,5 @@ Parity matrix gap #5 (PARTIAL): per-run cwd exists at the permission-queue seam 
 - WINNER: `harness-dispatch-path` — its knob commit is the superset: it also hands the resolved root to the adapter as the session `cwd` (classifier verdicts and session cwd cannot drift) and exposes the queue-wrapped `factory` on the runtime (needed by approval-flow callers). It rides with the dispatch + turn-persistence stack already queued for landing.
 - LOSER DROPS: do NOT land `harness-sandbox-root-knob` separately. After the dispatch branch lands, drop its knob commit (rebase onto dev, or delete the branch).
 - Note: the HELD Blocker line above is stale — the knob branch DOES carry the `src/config` knob (`sections/harness.ts` +45), not just runtime + tests.
+
+**Resolved:** 2026-11-20 registry-driven close: git issue c895790 (registry tip: 4b5b4f6d2 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HARNESS-SANDBOX-ROOT-KNOB-C)
