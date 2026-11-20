@@ -56986,6 +56986,48 @@
     "source": ".plan/tickets/TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md",
     "status": "Not Started"
   },
+  "TASK-PYTHON-BRIDGE-CORE-GENERIC-PYTHON3-SUBPROCESS-BRIDGE": {
+    "hash": "2767f47",
+    "git_issue": "2767f47",
+    "extid": "TASK-PYTHON-BRIDGE-CORE-GENERIC-PYTHON3-SUBPROCESS-BRIDGE",
+    "type": "TASK",
+    "title": "Python bridge core: generic python3 subprocess bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-bridge-core-generic-python3-subprocess-bridge.md",
+    "status": "open"
+  },
+  "TASK-PYTHON-DISCOVERY-INTERPRETER-CANDIDATES-AND-CACHED-SNAPSHOT": {
+    "hash": "214ffec",
+    "git_issue": "214ffec",
+    "extid": "TASK-PYTHON-DISCOVERY-INTERPRETER-CANDIDATES-AND-CACHED-SNAPSHOT",
+    "type": "TASK",
+    "title": "Python discovery: interpreter candidates and cached snapshot",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-discovery-interpreter-candidates-and-cached-snapshot.md",
+    "status": "open"
+  },
+  "TASK-PYTHON-VENV-KNOB-OPERATOR-PROVISIONED-VENVPATH-NO-RUNTIME-PI": {
+    "hash": "1895d83",
+    "git_issue": "1895d83",
+    "extid": "TASK-PYTHON-VENV-KNOB-OPERATOR-PROVISIONED-VENVPATH-NO-RUNTIME-PI",
+    "type": "TASK",
+    "title": "Python venv knob: operator-provisioned venvPath, no runtime pip install",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-venv-knob-operator-provisioned-venvpath-no-runtime-pi.md",
+    "status": "open"
+  },
   "TASK-QUEST-LOG": {
     "epic": "epic-story-mode-ui",
     "extid": "TASK-QUEST-LOG",
