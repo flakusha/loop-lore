@@ -3,7 +3,7 @@
 
 # TASK: ACP plan events support
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-external-harness-acp

@@ -103,6 +103,8 @@ export interface AcpProfileConfig {
    * directory; a path with `..` traversal is rejected at config load.
    */
   sandboxRoot?: string;
+  /** ACP protocol version to request at initialize (default 1; 2 for v2-capable agents). */
+  protocolVersion?: number;
   /**
    * MCP servers the agent connects to (ACP `session/new` `mcpServers`,
    * verbatim). Absent/empty = the agent gets none.

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
  * turn-transcript.ts — the collector that folds one turn's ACP stream into a
@@ -9,7 +10,7 @@
  * transcript.
  */
 
-import { type HarnessContentEvent, isTerminalToolStatus, } from "./acp-session-update";
+import { type HarnessContentEvent, type HarnessPlanEntry, isTerminalToolStatus, } from "./acp-session-update";
 
 /** One tool call the harness reported, in the shape the message readers expect. */
 export interface HarnessToolCall {
@@ -37,6 +38,14 @@ export interface HarnessToolResult {
   error: boolean;
 }
 
+/** One agent-reported plan, in arrival order (a later update for one `planId` replaces it in place). */
+export interface HarnessTurnPlan {
+  /** v2 `planId`; null for the v1 `plan` variant, which carries none. */
+  planId: string | null;
+  /** Steps in the order the harness sent them. */
+  entries: HarnessPlanEntry[];
+}
+
 /** One turn's collected transcript. */
 export interface HarnessTurnTranscript {
   /** Assistant text chunks, concatenated in arrival order. */
@@ -49,11 +58,13 @@ export interface HarnessTurnTranscript {
   toolCalls: HarnessToolCall[];
   /** Tool results, in first-seen order (a later terminal update replaces an entry in place). */
   toolResults: HarnessToolResult[];
+  /** Agent plans, in first-seen order (a later update for one `planId` replaces it in place). */
+  plans?: HarnessTurnPlan[];
 }
 
 /** An empty transcript — for adapters that report no streamed content. */
 export function emptyTurnTranscript(): HarnessTurnTranscript {
-  return { text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], };
+  return { text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], plans: [], };
 }
 
 /**
@@ -67,6 +78,7 @@ export class TurnTranscriptCollector {
   private modes: string[] = [];
   private calls: HarnessToolCall[] = [];
   private results: HarnessToolResult[] = [];
+  private plans: HarnessTurnPlan[] = [];
 
   /** Fold one event into the transcript. */
   append(event: HarnessContentEvent,): void {
@@ -82,6 +94,11 @@ export class TurnTranscriptCollector {
 
     if (event.type === "mode") {
       this.modes.push(event.modeId,);
+      return;
+    }
+
+    if (event.type === "plan") {
+      this.appendPlan(event,);
       return;
     }
 
@@ -101,6 +118,7 @@ export class TurnTranscriptCollector {
       modes: [...this.modes,],
       toolCalls: this.calls.map((call,) => ({ ...call, })),
       toolResults: this.results.map((result,) => ({ ...result, })),
+      plans: this.plans.map((plan,) => ({ ...plan, entries: plan.entries.map((entry,) => ({ ...entry, })), })),
     };
   }
 
@@ -145,6 +163,19 @@ export class TurnTranscriptCollector {
       content: event.content,
       error: event.error,
     };
+  }
+
+  /** Record a plan; a later update for one `planId` replaces it in place (each `plan_update` is the whole plan). */
+  private appendPlan(event: Extract<HarnessContentEvent, { type: "plan" }>,): void {
+    if (event.planId === null) {
+      this.plans.push({ planId: null, entries: event.entries.map((entry,) => ({ ...entry, })), },);
+      return;
+    }
+
+    const index = this.plans.findIndex((plan,) => plan.planId === event.planId);
+    const record = { planId: event.planId, entries: event.entries.map((entry,) => ({ ...entry, })), };
+    if (index === -1) { this.plans.push(record,); }
+    else { this.plans[index] = record; }
   }
 
   /** The tool name remembered for a call, when the result omitted it. */

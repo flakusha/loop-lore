@@ -3,7 +3,7 @@
 
 # TASK: ACP v2 protocol negotiation
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-external-harness-acp

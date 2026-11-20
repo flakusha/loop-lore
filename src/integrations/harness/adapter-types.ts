@@ -258,6 +258,8 @@ export interface HarnessAdapterCommandOptions {
   cwd?: string;
   /** Per-request timeout in ms. */
   requestTimeoutMs?: number;
+  /** ACP protocol version to request at initialize (default 1; 2 for v2-capable flavors). */
+  protocolVersion?: number;
   /** Serves server-originated `fs/read_text_file` asks; without one the adapter answers them as unsupported. */
   readTextFile?: (path: string,) => Promise<string>;
   /**

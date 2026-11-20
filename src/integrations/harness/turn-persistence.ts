@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
  * turn-persistence.ts — persist one harness turn as chat-visible message rows.
  *
- * One assistant row per turn (text, `tool_calls`, `thinking`) and one
+ * One assistant row per turn (text, `tool_calls`, `thinking`, plans in
+ * `metadata`) and one
  * `tool_result` row per finished tool call. The rows follow the convention
  * `src/generation/generate-route/tool-execution.ts` established: tool results
  * carry `metadata.tool_call_id` / `tool_name` / `tool_error`, content is
@@ -154,6 +156,10 @@ export async function persistHarnessTurn(
     profile,
     acp_session_id: turn.acpSessionId,
     stop_reason: turn.stopReason,
+    // Agent plans ride the assistant row's metadata, next to `thinking`:
+    // the row has no plan column and the text/thinking columns keep the
+    // shapes the message readers parse.
+    plans: transcript.plans ?? [],
   },);
 
   assertValidWrite("messages", { status, visibility: MessageVisibility.Visible, },);

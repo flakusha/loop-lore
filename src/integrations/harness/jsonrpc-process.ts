@@ -54,6 +54,21 @@ export class JsonRpcRequestError extends Error {
   }
 }
 
+/** JSON-RPC error code for a request cancelled via `$/cancel_request` (LSP §5.1). */
+export const JSON_RPC_CANCELLED_CODE = -32800;
+
+/** A pending request cancelled by id — the transport stays usable. */
+export class JsonRpcRequestCancelledError extends JsonRpcRequestError {
+  /**
+   * @param message - cancellation detail
+   * @param data - optional cancellation data
+   */
+  constructor(message = "request cancelled", data?: unknown,) {
+    super(message, JSON_RPC_CANCELLED_CODE, data,);
+    this.name = "JsonRpcRequestCancelledError";
+  }
+}
+
 /** Pending request bookkeeping. */
 interface PendingEntry {
   resolve: (v: unknown,) => void;
@@ -122,6 +137,39 @@ export class JsonRpcProcess {
    */
   notify(method: string, params: Record<string, unknown>,): void {
     this.write({ jsonrpc: "2.0", method, params, },);
+  }
+
+  /** The ids of requests still awaiting a response (introspection for cancellation). */
+  pendingIds(): number[] {
+    return [...this.pending.keys(),];
+  }
+
+  /**
+   * Cancel one pending request by id: its promise rejects with a typed
+   * {@link JsonRpcRequestCancelledError} and a `$/cancel_request`
+   * notification goes on the wire so the peer drops the work too. Any other
+   * pending request is untouched and the transport stays usable.
+   * @param id - the request id to cancel
+   * @returns true when a pending request was cancelled.
+   */
+  cancelRequest(id: number,): boolean {
+    if (!this.cancelPending(id,)) { return false; }
+    this.write({ jsonrpc: "2.0", method: "$/cancel_request", params: { id, }, },);
+    return true;
+  }
+
+  /**
+   * Reject one pending request with the typed cancellation error.
+   * @param id - the pending request id
+   * @returns true when a pending request was cancelled.
+   */
+  private cancelPending(id: number,): boolean {
+    const p = this.pending.get(id,);
+    if (!p) { return false; }
+    this.pending.delete(id,);
+    clearTimeout(p.timer,);
+    p.reject(new JsonRpcRequestCancelledError(`request ${id} cancelled`,),);
+    return true;
   }
 
   /** Write one raw wire object; a dead pipe or unserializable payload tears the transport down via `onExit`. */
@@ -231,6 +279,16 @@ export class JsonRpcProcess {
 
     if (typeof msg.id !== "number") {
       if (typeof msg.method === "string") {
+        // A peer `$/cancel_request` cancels OUR pending request by id: reject
+        // it with the typed cancellation error without tearing down the
+        // transport (and without echoing a cancel back — that would loop).
+        if (msg.method === "$/cancel_request") {
+          const cancelId = (msg.params as { id?: unknown } | null)?.id;
+          if (typeof cancelId === "number") { this.cancelPending(cancelId,); }
+
+          return;
+        }
+
         this.opts.onNotification?.(msg.method, msg.params,);
       }
 

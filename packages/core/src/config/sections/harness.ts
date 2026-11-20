@@ -125,6 +125,15 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
 
   if (p.sandboxRoot !== undefined) { validateSandboxRoot(p.name, p.sandboxRoot,); }
 
+  if (
+    p.protocolVersion !== undefined &&
+    (!Number.isInteger(p.protocolVersion,) || p.protocolVersion < 1 || p.protocolVersion > 2)
+  ) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].protocolVersion must be 1 or 2`,
+    );
+  }
+
   if (p.mcpServers !== undefined) { validateMcpServers(p.name, p.mcpServers,); }
 
   if (p.additionalDirectories !== undefined) { validateAdditionalDirectories(p.name, p.additionalDirectories,); }
@@ -353,6 +362,11 @@ export const harnessMeta = {
                 type: "string",
                 description:
                   'Directory the profile\'s permission asks are judged against (must exist; no ".." traversal). Absent = the process cwd',
+              },
+              protocolVersion: {
+                type: "number",
+                description:
+                  "ACP protocol version to request at initialize (default 1; 2 negotiates v2 when the agent supports it)",
               },
               mcpServers: {
                 type: "array",

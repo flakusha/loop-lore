@@ -173,6 +173,74 @@ describe("narrowSessionUpdate", () => {
   it("drops a current_mode_update without a mode id", () => {
     expect(narrowSessionUpdate({ update: { sessionUpdate: "current_mode_update", }, },),).toEqual([],);
   });
+
+  it("narrows a v1 plan notification preserving entry order and priority", () => {
+    const events = narrowSessionUpdate({
+      sessionId: "s1",
+      update: {
+        sessionUpdate: "plan",
+        entries: [
+          { content: "Analyze the codebase", priority: "high", status: "pending", },
+          { content: "Write unit tests", priority: "medium", status: "pending", },
+        ],
+      },
+    },);
+
+    expect(events,).toEqual([{
+      type: "plan",
+      planId: null,
+      entries: [
+        { content: "Analyze the codebase", priority: "high", },
+        { content: "Write unit tests", priority: "medium", },
+      ],
+    },],);
+  });
+
+  it("narrows a v2 plan_update notification with its plan id", () => {
+    const events = narrowSessionUpdate({
+      sessionId: "s1",
+      update: {
+        sessionUpdate: "plan_update",
+        plan: {
+          type: "items",
+          planId: "plan-1",
+          entries: [
+            { content: "First step", priority: "high", status: "in_progress", },
+            { content: "Second step", priority: "low", status: "pending", },
+          ],
+        },
+      },
+    },);
+
+    expect(events,).toEqual([{
+      type: "plan",
+      planId: "plan-1",
+      entries: [
+        { content: "First step", priority: "high", },
+        { content: "Second step", priority: "low", },
+      ],
+    },],);
+  });
+
+  it("drops plan entries without readable content", () => {
+    expect(narrowSessionUpdate({
+      update: {
+        sessionUpdate: "plan",
+        entries: [
+          { priority: "high", status: "pending", },
+          { content: "Keep me", priority: "medium", },
+        ],
+      },
+    },),).toEqual([{
+      type: "plan",
+      planId: null,
+      entries: [{ content: "Keep me", priority: "medium", },],
+    },],);
+
+    expect(narrowSessionUpdate({
+      update: { sessionUpdate: "plan", entries: [{ priority: "high", },], },
+    },),).toEqual([],);
+  });
 });
 
 describe("isTerminalToolStatus", () => {

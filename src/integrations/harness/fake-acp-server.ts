@@ -10,8 +10,9 @@
  * `session/set_mode` (echoes `currentModeId`), `session/list`, `session/resume`
  * and `session/load` (replays one chunk), `session/prompt` (chunk notification
  * + stopReason/usage), `session/cancel`, and — server-originated, mid-prompt
- * — `session/request_permission`, `fs/read_text_file` and `fs/write_text_file`
- * client requests; `_omp/usage` answers quota probes.
+ * — `session/request_permission`, `elicitation/create`, `fs/read_text_file`
+ * and `fs/write_text_file` client requests; `_omp/usage` answers quota probes.
+ * `session/delete` answers the v2-only delete method.
  * Behavior is tuned through environment variables read at spawn time.
  *
  * The child appends one JSON line per observed client reaction (a cancel, a
@@ -78,6 +79,13 @@ const runPromptFlow = async (promptId) => {
     if (process.env.FAKE_PERMISSION_TWICE) { entries.push({ method: "session/request_permission", params: askParams("call-2") }); }
     await Promise.all(askClientBurst(entries,));
   }
+  if (process.env.FAKE_ELICITATION) {
+    const elicMode = process.env.FAKE_ELICITATION;
+    const elicParams = elicMode === "form"
+      ? { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, mode: "form", message: "Pick a strategy", requestedSchema: { type: "object", properties: { strategy: { type: "string", enum: ["conservative", "balanced"] } }, required: ["strategy"] } }
+      : { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, mode: elicMode, elicitationId: "elic-1", url: "https://example.com/connect?elicitationId=elic-1", message: "Authorize access." };
+    await Promise.all(askClientBurst([{ method: "elicitation/create", params: elicParams },],),);
+  }
   if (process.env.FAKE_READ_FILE) {
     const readParams = { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, path: process.env.FAKE_READ_FILE };
     if (process.env.FAKE_READ_FILE_LINE) { readParams.line = Number(process.env.FAKE_READ_FILE_LINE); }
@@ -137,7 +145,9 @@ process.stdin.on("data", (c) => {
       if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "initialize", params: m.params }); }
       if (process.env.FAKE_HANG) { continue; }
       if (process.env.FAKE_MALFORMED) { process.stdout.write("this is not json\n{broken\n"); continue; }
-      send({ jsonrpc: "2.0", id: m.id, result: { protocolVersion: 1, agentInfo: { name: "fake" } } });
+      const initResult = { protocolVersion: process.env.FAKE_PROTOCOL_VERSION ? Number(process.env.FAKE_PROTOCOL_VERSION) : 1, agentInfo: { name: "fake" } };
+      if (process.env.FAKE_CAPABILITIES) { initResult.capabilities = JSON.parse(process.env.FAKE_CAPABILITIES); }
+      send({ jsonrpc: "2.0", id: m.id, result: initResult });
     } else if (m.method === "session/new") {
       if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "session_new", params: m.params }); }
       if (process.env.FAKE_NO_SESSION) {
@@ -196,6 +206,9 @@ process.stdin.on("data", (c) => {
         sessionId: activeSession,
         configOptions: [{ id: configId, name: "Model", type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
       } });
+    } else if (m.method === "session/delete") {
+      logEvent({ event: "delete_session", sessionId: typeof m.params?.sessionId === "string" ? m.params.sessionId : null });
+      send({ jsonrpc: "2.0", id: m.id, result: {} });
     } else if (m.method === "session/prompt") {
       if (process.env.FAKE_EXIT_ON_PROMPT && m.params.prompt?.[0]?.text === process.env.FAKE_EXIT_ON_PROMPT) {
         process.exit(1);
@@ -238,6 +251,8 @@ export interface FakeAcpEnv {
   FAKE_MALFORMED?: string;
   /** Prompt TEXT that makes the child exit code=1 (matching prompts only). */
   FAKE_EXIT_ON_PROMPT?: string;
+  /** `elicitation/create` mode the prompt sends and awaits (`form` or `url`); unset sends none. */
+  FAKE_ELICITATION?: string;
   /** When set, session/prompt first sends `session/request_permission` and awaits the client's outcome. */
   FAKE_PERMISSION?: string;
   /** When set, the prompt response omits `usage` (the stable ACP v1 PromptResponse shape). */
@@ -270,6 +285,10 @@ export interface FakeAcpEnv {
   FAKE_WRITE_CONTENT?: string;
   /** cwd `session/list` reports for the remembered session; absent = null. */
   FAKE_LIST_CWD?: string;
+  /** protocolVersion the fake agent selects at initialize (default 1). */
+  FAKE_PROTOCOL_VERSION?: string;
+  /** JSON agent capabilities object included in the initialize result. */
+  FAKE_CAPABILITIES?: string;
 }
 
 /** One observed client reaction, as logged by the fixture child. */
@@ -279,6 +298,7 @@ export type FakeAcpLogEntry =
   | { event: "read_text"; path: string; content: unknown }
   | { event: "write_text"; path: string; content: unknown }
   | { event: "set_mode"; modeId: string | null }
+  | { event: "delete_session"; sessionId: string | null }
   | { event: "initialize"; params: Record<string, unknown> }
   | { event: "session_new"; params: Record<string, unknown> };
 
@@ -289,6 +309,7 @@ const LOG_EVENTS = new Set([
   "read_text",
   "write_text",
   "set_mode",
+  "delete_session",
   "initialize",
   "session_new",
 ],);

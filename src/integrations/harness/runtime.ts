@@ -263,6 +263,7 @@ export function createHarnessRuntime(options: CreateHarnessRuntimeOptions,): Har
       cwd: configured ?? opts?.cwd,
       readTextFile: (path,) => readSandboxedText(root, path,),
       writeTextFile: (path, content,) => writeSandboxedText(root, path, content,),
+      protocolVersion: configuredProfile?.protocolVersion ?? opts?.protocolVersion,
       mcpServers: configuredProfile?.mcpServers ?? opts?.mcpServers,
       additionalDirectories: configuredProfile?.additionalDirectories ?? opts?.additionalDirectories,
       mode: configuredProfile?.mode ?? opts?.mode,
