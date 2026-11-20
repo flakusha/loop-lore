@@ -27,6 +27,11 @@ const WORKFLOW_WITH_DEAD_NODE = {
   "5": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", cfg: 1, }, },
 };
 
+/** A Note-only stub: ComfyUI rejects Note at submit, so ingest must skip it. */
+const WORKFLOW_NOTE_ONLY = {
+  "1": { class_type: "Note", inputs: { text: "PLACEHOLDER", }, },
+};
+
 async function fixtures(): Promise<void> {
   await mkdir(DIR, { recursive: true, },);
   await writeFile(`${DIR}/txt2img.json`, JSON.stringify(WORKFLOW,),);
@@ -34,6 +39,7 @@ async function fixtures(): Promise<void> {
   await writeFile(`${DIR}/empty.json`, "{}",);
   await writeFile(`${DIR}/readme.txt`, "ignored",);
   await writeFile(`${DIR}/deadnode.json`, JSON.stringify(WORKFLOW_WITH_DEAD_NODE,),);
+  await writeFile(`${DIR}/noteonly.json`, JSON.stringify(WORKFLOW_NOTE_ONLY,),);
 }
 
 beforeAll(async () => {
@@ -62,7 +68,7 @@ describe("getWorkflowLoader", () => {
     createLogger({ level: "error", },);
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
-    // deadnode.json is skipped: its CLIPTextEncode is unreferenced and is not a sink.
+    // deadnode.json has a dead CLIPTextEncode; noteonly.json has no real sink.
     expect(await loader.listWorkflows(),).toEqual(["txt2img",],);
     const loaded = await loader.loadWorkflow({ name: "txt2img", vars: { prompt: "cat", }, },);
     expect(inputOf(loaded, "5",).text,).toBe("cat",);
@@ -73,6 +79,13 @@ describe("getWorkflowLoader", () => {
     const loader = getWorkflowLoader(DIR,);
     expect(await loader.listWorkflows(),).not.toContain("deadnode",);
     await expect(loader.loadWorkflow({ name: "deadnode", },),).rejects.toThrowError("not found",);
+  });
+
+  it("refuses to load a Note-only placeholder", async () => {
+    await fixtures();
+    const loader = getWorkflowLoader(DIR,);
+    expect(await loader.listWorkflows(),).not.toContain("noteonly",);
+    await expect(loader.loadWorkflow({ name: "noteonly", },),).rejects.toThrowError("not found",);
   });
 
   it("applies node overrides and returns raw workflows", async () => {

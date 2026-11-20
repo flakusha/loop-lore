@@ -40,6 +40,20 @@ import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 const DEFAULT_DIR = "configs/workflows";
 
 /**
+ * Sinks that make a graph a video workflow. The image-edit library has no
+ * video pipeline, so seeding one under a default `txt2img` category hands the
+ * image provider a graph it cannot submit. A node-class rule stays
+ * deterministic and leaves the shipped SaveImage/SaveImageAdvanced graphs
+ * alone.
+ */
+const VIDEO_SINK_CLASSES: ReadonlySet<string> = new Set([
+  "DaSiWaH3ClipAssemble",
+  "DaSiWa_EnhancedVideoCombine",
+  "SaveVideo",
+  "VHS_VideoCombine",
+],);
+
+/**
  * Category for a seeded file, from its name.
  *
  * A bare API-format graph has no category field. The shipped files are named
@@ -121,7 +135,15 @@ async function readPayload(
   const text = await readFile(path, "utf8",);
   const graph = jsonParseOr<unknown>(text, undefined,);
   if (graph === undefined) { return { ok: false, reason: "not valid JSON", }; }
-  if (!isValidWorkflow(graph,)) { return { ok: false, reason: "not a ComfyUI graph", }; }
+  if (!isValidWorkflow(graph,)) {
+    return { ok: false, reason: "not a loadable ComfyUI graph (needs a real output sink)", };
+  }
+
+  const classes = Object.values(graph as WorkflowPayload["body"],).map((node,) => node.class_type);
+  if (classes.some((classType,) => VIDEO_SINK_CLASSES.has(classType,))) {
+    return { ok: false, reason: "video workflow is not an image-edit template", };
+  }
+
   return {
     ok: true,
     payload: {
@@ -138,11 +160,7 @@ async function readPayload(
       // runtime needs, so the live `missingRequiredNodes` check on the admin
       // surface can flag a workflow whose node pack is absent. An empty
       // declaration would make that check vacuous.
-      requiredNodes: [
-        ...new Set(
-          Object.values(graph as WorkflowPayload["body"],).map((node,) => node.class_type),
-        ),
-      ].toSorted(),
+      requiredNodes: [...new Set(classes,),].toSorted(),
     },
   };
 }

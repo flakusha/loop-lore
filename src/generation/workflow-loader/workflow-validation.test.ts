@@ -3,7 +3,7 @@
 
 import { describe, expect, it, } from "bun:test";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
-import { findDeadNodes, } from "./workflow-validation";
+import { findDeadNodes, hasTerminalSink, isValidWorkflow, } from "./workflow-validation";
 
 describe("findDeadNodes", () => {
   it("returns nothing for a fully linked graph", () => {
@@ -57,7 +57,6 @@ describe("findDeadNodes", () => {
       const classType of [
         "SaveImage",
         "PreviewImage",
-        "Note",
         "SaveVideo",
         "DaSiWa_EnhancedVideoCombine",
         "DaSiWaH3ClipAssemble",
@@ -97,5 +96,29 @@ describe("findDeadNodes", () => {
 
   it("returns nothing for an empty graph", () => {
     expect(findDeadNodes({},),).toEqual([],);
+  });
+});
+
+describe("real sink requirement", () => {
+  it("rejects a Note-only placeholder", () => {
+    const wf: ComfyUIWorkflow = {
+      "1": { class_type: "Note", inputs: { text: "PLACEHOLDER", }, },
+    };
+
+    expect(hasTerminalSink(wf,),).toBe(false,);
+    expect(findDeadNodes(wf,),).toEqual([],); // tolerated, but not an output
+    expect(isValidWorkflow(wf,),).toBe(false,);
+  });
+
+  it("accepts a real graph carrying a Note annotation", () => {
+    const wf: ComfyUIWorkflow = {
+      "1": { class_type: "CLIPTextEncode", inputs: { text: "cat", }, },
+      "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+      "3": { class_type: "Note", inputs: { text: "annotation", }, },
+    };
+
+    expect(hasTerminalSink(wf,),).toBe(true,);
+    expect(findDeadNodes(wf,),).toEqual([],);
+    expect(isValidWorkflow(wf,),).toBe(true,);
   });
 });

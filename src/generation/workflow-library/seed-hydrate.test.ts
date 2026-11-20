@@ -11,7 +11,7 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { Kysely, } from "kysely";
-import { mkdtemp, writeFile, } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
@@ -105,6 +105,7 @@ describe("seedWorkflowLibrary", () => {
       JSON.stringify({
         "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "m", }, },
         "2": { class_type: "CLIPLoader", inputs: { clip_name: "c", }, },
+        "3": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
       },),
     );
 
@@ -116,6 +117,45 @@ describe("seedWorkflowLibrary", () => {
     const reasons = Object.fromEntries(outcome.skipped.map((s,) => [s.id, s.reason,]),);
     expect(reasons.notjson,).toBe("not valid JSON",);
     expect(reasons.deadnode,).toContain("2",);
+  });
+
+  it("skips Note-only stubs and video fragments, but keeps annotated image graphs", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "wf-seed-stub-",),);
+    try {
+      await writeFile(
+        join(dir, "noteonly.json",),
+        JSON.stringify({
+          "1": { class_type: "Note", inputs: { text: "PLACEHOLDER", }, },
+        },),
+      );
+
+      await writeFile(
+        join(dir, "t2v.json",),
+        JSON.stringify({
+          "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "m", }, },
+          "2": { class_type: "KSampler", inputs: { model: ["1", 0,], }, },
+          "3": { class_type: "SaveVideo", inputs: { images: ["2", 0,], }, },
+        },),
+      );
+
+      await writeFile(
+        join(dir, "annotated.json",),
+        JSON.stringify({
+          "1": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", }, },
+          "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+          "3": { class_type: "Note", inputs: { text: "annotation", }, },
+        },),
+      );
+
+      const outcome = await seedWorkflowLibrary(db, dir,);
+      expect(outcome.imported,).toContain("annotated",);
+
+      const reasons = Object.fromEntries(outcome.skipped.map((s,) => [s.id, s.reason,]),);
+      expect(reasons.noteonly,).toContain("output sink",);
+      expect(reasons.t2v,).toContain("video",);
+    } finally {
+      await rm(dir, { recursive: true, force: true, },);
+    }
   });
 
   it("imports nothing when no admin exists to own the rows", async () => {
@@ -144,10 +184,18 @@ describe("seeded workflow parameters", () => {
       const builtin = builtinTemplates.find((template,) => template.id === id)!;
       const placeholders = collectPlaceholders(payload.body,);
 
-      // The builtin declares more than the seeded graph can use (a LoRA slot
-      // is a node chain the static graph does not have), so the comparison is
-      // over the parameters the body actually has a placeholder for.
-      const expected = builtin.parameters.filter((parameter,) => placeholders.has(parameter.name,));
+      // Builtin metadata wins where it is declared. A placeholder it does not
+      // declare (the shipped graphs use {{model}} for the checkpoint) gets the
+      // plain-string fallback documented in deriveParameters.
+      const declared = new Set(builtin.parameters.map((parameter,) => parameter.name),);
+      const expected = [
+        ...builtin.parameters.filter((parameter,) => placeholders.has(parameter.name,)),
+        ...[...placeholders,]
+          .filter((name,) => !declared.has(name,))
+          .toSorted()
+          .map((name,) => ({ name, type: "string" as const, label: name, default: "", })),
+      ];
+
       expect(payload.parameters,).toEqual(expected,);
     }
   });
