@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** In Progress
+**Status:** Done
+**Landed:** dev `6b1d94fec` (feature) via finalize/split-path landing 2026-11-20; follow-ups `73493af9f` (typed whoami schema), `ebfd45f72`, `458b8bdfe`.
 **Caveats:** Scope = ticket #5 only — router shell + token auth + admin mint/revoke + migration 114; the #6/#7/#8 business sub-routes are intentionally absent (no stubs); `GET /api/v1/agent/whoami` is the sole #5-owned agent route; the `migrations - ordering` gate is red in this worktree until the sibling branches holding 112/113 land (gapless-prefix check).
 **Priority:** High
 **Effort:** (set per-ticket)

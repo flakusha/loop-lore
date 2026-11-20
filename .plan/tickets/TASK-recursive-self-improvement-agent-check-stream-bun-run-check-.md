@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** In Progress
+**Status:** Done
+**Landed:** dev `e5adbc696` (RSI #6/#7 landing tip, 2026-11-20; feature commit `49d72b9a6`).
 
 **Caveats:** Re-applied 2026-11-20 from the agent-api collision handover onto branch `agent-capability-routes` (SSE check stream over `bun run check --gates <csv>`). The worktreeId lookup is scoped to the caller token's own `rsi_agent_worktrees` rows (migration 115) — a foreign id is 404, never a cross-token read. Ticket index left untouched (linked-worktree deferral, reconciled post-merge).
 **Priority:** Medium

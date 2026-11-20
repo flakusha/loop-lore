@@ -58169,7 +58169,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "api",
@@ -58188,7 +58188,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "check",
@@ -58283,7 +58283,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "worktree",
