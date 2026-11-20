@@ -12,6 +12,7 @@ import {
   __resetBlenderLocks,
   BLENDER_STAGES,
   parseBlenderCapabilities,
+  PROBE_EXPR,
   probeBlender,
   REQUIRED_BLENDER_VERSION,
   runBlenderJob,
@@ -216,3 +217,78 @@ test("pinned version and stage set stay in sync with the parser", () => {
   expect(caps?.supported,).toBe(true,);
   expect(caps?.stages,).toEqual(["bake",],);
 });
+
+const PYTHON_BIN = process.env.PYTHON_BIN ?? "python3";
+
+function pythonAvailable(): boolean {
+  const result = Bun.spawnSync([PYTHON_BIN, "--version",], { stdout: "pipe", stderr: "pipe", },);
+  return result.exitCode === 0;
+}
+
+const HAS_PYTHON = pythonAvailable();
+
+/**
+ * Fake `bpy` whose operator namespaces answer `hasattr` for every name but
+ * expose only the listed operators through `dir()` - exactly how Blender's
+ * dynamic `bpy.ops` namespaces behave.
+ */
+const FAKE_BPY = `class _Ops:
+    def __init__(self, names):
+        self._names = list(names)
+
+    def __getattr__(self, name):
+        return object()
+
+    def __dir__(self):
+        return list(self._names)
+
+
+class _OpsRoot:
+    def __init__(self):
+        self.object = _Ops(["voxel_remesh", "bake"])
+        self.uv = _Ops(["smart_project"])
+        self.export_scene = _Ops(["gltf"])
+
+
+class _App:
+    version_string = "4.5.15 LTS"
+
+
+ops = _OpsRoot()
+app = _App()
+`;
+
+test.skipIf(!HAS_PYTHON,)(
+  "probe advertises only operators the fake bpy namespace exposes via dir()",
+  () => {
+    const fakeDir = join(dir, "fake-bpy",);
+    mkdirSync(fakeDir, { recursive: true, },);
+    writeFileSync(join(fakeDir, "bpy.py",), FAKE_BPY, { encoding: "utf8", },);
+
+    const run = Bun.spawnSync([PYTHON_BIN, "-c", PROBE_EXPR,], {
+      cwd: fakeDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
+
+    expect(run.exitCode,).toBe(0,);
+
+    const caps = parseBlenderCapabilities(run.stdout.toString(),);
+    expect(caps?.supported,).toBe(true,);
+    expect(caps?.stages,).toEqual(["voxel-remesh", "smart-uv", "bake", "export-glb",],);
+    expect(caps?.stages,).not.toContain("quadriflow",);
+
+    // The fake makes `hasattr` true for everything, so an hasattr-based probe
+    // would have advertised the missing operator too.
+    const hasattrRun = Bun.spawnSync(
+      [
+        PYTHON_BIN,
+        "-c",
+        "import bpy;print(hasattr(bpy.ops.object,'quadriflow_remesh'),hasattr(bpy.ops.object,'totally_bogus'))",
+      ],
+      { cwd: fakeDir, stdout: "pipe", stderr: "pipe", },
+    );
+
+    expect(hasattrRun.stdout.toString().trim(),).toBe("True True",);
+  },
+);

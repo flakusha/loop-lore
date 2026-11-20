@@ -73,8 +73,13 @@ export type BlenderJobResult =
     provenance?: BlenderProvenance;
   };
 
-const PROBE_EXPR =
-  "import bpy,json;stages={'voxel-remesh':hasattr(bpy.ops.object,'voxel_remesh'),'quadriflow':hasattr(bpy.ops.object,'quadriflow_remesh'),'smart-uv':hasattr(bpy.ops.uv,'smart_project'),'bake':hasattr(bpy.ops.object,'bake'),'export-glb':hasattr(bpy.ops.export_scene,'gltf')};print('BLENDER_CAP='+json.dumps({'version':bpy.app.version_string,'stages':[k for k,v in stages.items() if v]}))";
+/**
+ * Blender's operator namespaces are dynamic: `hasattr(bpy.ops.object, x)` is
+ * always true, so only `dir()` membership reflects the operators that really
+ * exist in the running build.
+ */
+export const PROBE_EXPR =
+  "import bpy,json;ns=[dir(bpy.ops.object),dir(bpy.ops.uv),dir(bpy.ops.export_scene)];stages={'voxel-remesh':'voxel_remesh' in ns[0],'quadriflow':'quadriflow_remesh' in ns[0],'smart-uv':'smart_project' in ns[1],'bake':'bake' in ns[0],'export-glb':'gltf' in ns[2]};print('BLENDER_CAP='+json.dumps({'version':bpy.app.version_string,'stages':[k for k,v in stages.items() if v]}))";
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const tails = new Map<string, Promise<void>>();
