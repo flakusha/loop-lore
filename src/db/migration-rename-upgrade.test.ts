@@ -410,8 +410,10 @@ describe("column rename upgrade path", () => {
 
     // 097_integration_tokens reuses `token_hash` for a DIFFERENT credential
     // (SHA-256 of the integration token, per that migration's header) — a new
-    // table, not a leftover of the 057 sessions.token_hash rename. Scope the
-    // scan to every other object so the old-name assertion stays intact.
+    // table, not a leftover of the 057 sessions.token_hash rename. So does
+    // 114_rsi_agent_tokens (SHA-256 of the agent bearer token, per its
+    // header). Scope the scan to every other object so the old-name
+    // assertion stays intact.
     const old = [
       "format_version",
       "password_hash",
@@ -420,7 +422,7 @@ describe("column rename upgrade path", () => {
       "fallback_chain",
     ];
 
-    const inScope = ddl.filter((d,) => !d.sql.includes("integration_tokens",));
+    const inScope = ddl.filter((d,) => !d.sql.includes("integration_tokens",) && !d.sql.includes("agent_tokens",));
 
     for (const name of old) {
       const hits = inScope.filter((d,) => d.sql.includes(name,));

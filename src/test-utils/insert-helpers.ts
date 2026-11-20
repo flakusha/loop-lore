@@ -6757,24 +6757,6 @@ export async function insertScenarioAssemblies(
   return id;
 }
 
-/** Insert a agent_tokens row. */
-export async function insertAgentTokens(
-  db: Db,
-  token_hash: string,
-  scope: AgentTokenScope,
-  opts?: { id?: string; created_at?: string; revoked_at?: string | null; last_used_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("agent_tokens",).values({
-    id,
-    token_hash,
-    scope,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a asset_user_preferences row. */
 export async function insertAssetUserPreferences(
   db: Db,
@@ -6815,6 +6797,24 @@ export async function insertToolingReports(
     id,
     source,
     category,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a agent_tokens row. */
+export async function insertAgentTokens(
+  db: Db,
+  token_hash: string,
+  scope: AgentTokenScope,
+  opts?: { id?: string; created_at?: string; revoked_at?: string | null; last_used_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("agent_tokens",).values({
+    id,
+    token_hash,
+    scope,
     ...restOpts,
   } as any,).execute();
   return id;

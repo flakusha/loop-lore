@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1056 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1058 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
