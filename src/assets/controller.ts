@@ -49,6 +49,7 @@ import {
 } from "../routes/http-utils";
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
+import { resolveEffectiveNaming, } from "./download-resolution";
 import { findMattedDerivative, } from "./matting-routes";
 import {
   handleServeCompressed,
@@ -327,6 +328,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           actorId: userId,
           actorRole: userRole,
           chatId,
+          naming: await resolveEffectiveNaming({
+            database,
+            config,
+            userId,
+            override: searchParams.get("naming",),
+          },),
           ...signedUrlAuth(searchParams, "download", config,),
         },);
       },)

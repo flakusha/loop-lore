@@ -32,6 +32,7 @@ export interface AssetRecord {
   duration_secs: number | null;
   alt_text: string | null;
   created_at: string;
+  content_hash: string | null;
   encryption_tier: string;
   encrypted_key_id: string | null;
   alpha_status: AssetAlphaStatus;

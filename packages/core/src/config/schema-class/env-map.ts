@@ -115,6 +115,7 @@ export const envMap = (): EnvMap => {
   map.ASSETS_UPLOAD_DIR = "assets.uploadDir";
   map.ASSETS_MAX_FILE_SIZE = "assets.maxFileSize";
   map.ASSETS_COMPRESSION = "assets.compression";
+  map.ASSETS_DOWNLOAD_NAMING = "assets.downloadNaming";
   map.ASSETS_SIGNED_URL_SECRET = "assets.signedUrlSecret";
   map.ASSETS_SIGNED_URL_EXPIRY_SECONDS = "assets.signedUrlExpirySeconds";
   map.ENABLE_ASSISTANT = "assistant.enabled";

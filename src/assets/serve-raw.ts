@@ -17,6 +17,7 @@ import { notFoundResponse, } from "../routes/http-utils";
 import { isEncryptedAsset, } from "./encryption";
 import { serveFile, } from "./serve-file";
 import { resolveForServe, type ServeRawOpts, } from "./serve-handlers";
+import { downloadFileName, type DownloadNaming, } from "./service";
 import { getAssetData, getAssetFilePath, } from "./service";
 
 /**
@@ -104,6 +105,7 @@ export async function handleServeRaw({
  * @param root0.actorId
  * @param root0.actorRole
  * @param root0.chatId
+ * @param root0.naming - download filename scheme; `raw` is the historical storage name.
  * @param root0.signedUrlSecret
  * @param root0.signedUrlToken
  * @param root0.signedUrlExpires
@@ -117,11 +119,12 @@ export async function handleDownload({
   actorId,
   actorRole,
   chatId,
+  naming = "raw",
   signedUrlSecret,
   signedUrlToken,
   signedUrlExpires,
   signedUrlAction,
-}: ServeRawOpts & { chatId?: string },): Promise<Response> {
+}: ServeRawOpts & { chatId?: string; naming?: DownloadNaming },): Promise<Response> {
   const resolved = await resolveForServe({
     database,
     assetId,
@@ -135,7 +138,7 @@ export async function handleDownload({
 
   if (resolved instanceof Response) { return resolved; }
   const { asset, } = resolved;
-  const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
+  const safeName = downloadFileName(asset, naming,);
 
   if (isEncryptedAsset(asset,)) {
     try {

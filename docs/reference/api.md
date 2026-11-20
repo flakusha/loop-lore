@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-407 of 1050 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1053 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -325,6 +325,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | PUT | /api/v1/assets/{id}/transform | — |
 | POST | /api/v1/assets/batch-delete | — |
 | POST | /api/v1/assets/batch-download | — |
+| POST | /api/v1/assets/download-all | — |
+| GET | /api/v1/assets/preferences | — |
+| PUT | /api/v1/assets/preferences | — |
 | POST | /api/v1/auth/factors | Enroll MFA factor |
 | POST | /api/v1/auth/factors/challenge | Issue MFA challenge |
 | POST | /api/v1/auth/factors/verify | Verify MFA factor |

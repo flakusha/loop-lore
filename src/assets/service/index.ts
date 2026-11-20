@@ -21,6 +21,16 @@ export {
   mimeFromExtension,
 } from "./detect";
 export {
+  DOWNLOAD_NAMING_MODES,
+  downloadFileName,
+  normalizeNamingMode,
+} from "./download-naming";
+export type { DownloadNaming, } from "./download-naming";
+export {
+  getDownloadNaming,
+  setDownloadNaming,
+} from "./download-preferences";
+export {
   getAssetFilePath,
 } from "./file-system";
 export {

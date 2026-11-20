@@ -6755,3 +6755,15 @@ export async function insertScenarioAssemblies(
   } as any,).execute();
   return id;
 }
+
+/** Insert a asset_user_preferences row. */
+export async function insertAssetUserPreferences(
+  db: Db,
+  opts: { user_id: string; download_naming?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("asset_user_preferences",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).user_id as string;
+}

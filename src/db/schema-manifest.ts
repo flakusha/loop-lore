@@ -2302,6 +2302,12 @@ export const SCHEMA = new SchemaManifest()
     focal_point_y: col("real",),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("asset_user_preferences", {
+    user_id: col("text", { primaryKey: true, },),
+    download_naming: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("assets", {
     id: col("text", { primaryKey: true, },),
     owner_id: col("text", { notNull: true, },),

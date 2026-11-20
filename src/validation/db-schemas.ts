@@ -4161,3 +4161,11 @@ export const ScenarioAssembliesSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── asset_user_preferences ────────────────────────────────────────────
+export const AssetUserPreferencesSchema = t.Object({
+  user_id: t.Optional(t.String(),),
+  download_naming: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);

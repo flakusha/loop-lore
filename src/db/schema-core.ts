@@ -2287,3 +2287,11 @@ export interface AuthChallenges {
   consumed: Generated<number>;
   created_at: number;
 }
+
+// ── asset_user_preferences ────────────────────────────────────────────
+export interface AssetUserPreferences {
+  user_id: string;
+  download_naming: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

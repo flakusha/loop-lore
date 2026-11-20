@@ -34,7 +34,7 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { handleServeCompressed, resolveAsset, signedUrlAuth, } from "./serve-handlers";
 import { handleDownload, handleServeRaw, } from "./serve-raw";
-import { createAsset, } from "./service";
+import { createAsset, getAsset, } from "./service";
 import { signAssetUrl, } from "./signed-url";
 import { makeMinimalPng, makeMinimalWebp, } from "./test-helpers";
 
@@ -496,6 +496,30 @@ describe("handleDownload", () => {
 
       expect(res.status,).toBe(400,);
       expect(await res.text(),).toBe("Encrypted asset requires chat context",);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("hash naming prefixes the content hash in the disposition", async () => {
+    const fx = await seed();
+    try {
+      const asset = await getAsset(fx.db, fx.assetId,);
+      const hash = (asset?.content_hash ?? "").slice(0, 8,);
+      expect(hash.length,).toBe(8,);
+      const res = await handleDownload({
+        database: fx.db,
+        assetId: fx.assetId,
+        uploadDir: fx.uploadDir,
+        actorId: fx.ownerId,
+        actorRole: "user",
+        naming: "hash",
+      },);
+
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("content-disposition",),).toBe(
+        `attachment; filename="${hash}_${fx.filename}"`,
+      );
     } finally {
       await cleanup(fx,);
     }

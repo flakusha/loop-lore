@@ -10,6 +10,7 @@ export const ASSETS_DEFAULTS = {
   uploadDir: `${DATA_DIR}/uploads`,
   maxFileSize: 10_485_760,
   compression: true,
+  downloadNaming: "raw",
   signedUrlSecret: "",
   signedUrlExpirySeconds: 900,
 };
@@ -20,6 +21,7 @@ export class AssetsSection {
   uploadDir = ASSETS_DEFAULTS.uploadDir;
   maxFileSize = ASSETS_DEFAULTS.maxFileSize;
   compression = ASSETS_DEFAULTS.compression;
+  downloadNaming: string = ASSETS_DEFAULTS.downloadNaming;
   signedUrlSecret? = ASSETS_DEFAULTS.signedUrlSecret;
   signedUrlExpirySeconds? = ASSETS_DEFAULTS.signedUrlExpirySeconds;
 
@@ -53,6 +55,13 @@ export const assetsMeta = {
       type: "boolean",
       default: ASSETS_DEFAULTS.compression,
       description: "Compress uploaded assets",
+    },
+    downloadNaming: {
+      type: "string",
+      enum: ["raw", "datetime", "hash", "datetime-hash",],
+      default: ASSETS_DEFAULTS.downloadNaming,
+      description:
+        "Download filename scheme (user asset_user_preferences.download_naming overrides it): raw app-storage name, datetime and/or content-hash prefix",
     },
     signedUrlSecret: {
       type: "string",
