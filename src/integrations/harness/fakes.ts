@@ -79,7 +79,7 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
         usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15, },
         costUsd: null,
         acpSessionId: "fake-session",
-        transcript: { text, thinking: [], toolCalls: [], toolResults: [], },
+        transcript: { text, thinking: [], modes: [], toolCalls: [], toolResults: [], },
       };
 
       return Promise.resolve(result,);
@@ -112,6 +112,10 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
     close: () => {
       log.closes += 1;
     },
+    setMode: () => Promise.resolve({},),
+    listSessions: () => Promise.resolve([],),
+    resumeSession: () => Promise.resolve(),
+    loadSession: () => Promise.resolve({ text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], },),
   };
 
   return { adapter, log, };

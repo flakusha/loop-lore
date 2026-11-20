@@ -20,6 +20,7 @@ function transcript(): HarnessTurnTranscript {
   return {
     text: "the answer",
     thinking: ["a thought",],
+    modes: [],
     toolCalls: [{ id: "tc-1", name: "grep", kind: "read", arguments: "{}", },],
     toolResults: [{ toolCallId: "tc-1", name: "grep", status: "completed", content: "ok", error: false, },],
   };
@@ -46,7 +47,7 @@ describe("harnessTurnFrames", () => {
   });
 
   it("skips an empty transcript", () => {
-    const frames = harnessTurnFrames({ text: "", thinking: [], toolCalls: [], toolResults: [], },);
+    const frames = harnessTurnFrames({ text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], },);
 
     expect(frames,).toEqual([],);
   });

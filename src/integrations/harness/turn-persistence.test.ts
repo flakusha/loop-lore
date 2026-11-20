@@ -39,6 +39,7 @@ function transcript(): HarnessTurnTranscript {
   return {
     text: "the answer",
     thinking: ["first thought",],
+    modes: [],
     toolCalls: [
       { id: "tc-1", name: "grep", kind: "read", arguments: '{"q":1}', },
       { id: "tc-2", name: "write", kind: "edit", arguments: "{}", },
