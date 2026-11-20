@@ -46,27 +46,29 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
     globalLimiter: opts.globalLimiter,
   };
 
-  return new Elysia({ name: "agent-api", },)
-    .get(
-      `${prefix}/agent/whoami`,
-      async (ctx: unknown,) => {
-        const token = ctx as { agentToken: ResolvedAgentToken };
-        return jsonResponse({ data: { tokenId: token.agentToken.id, scope: token.agentToken.scope, }, },);
-      },
-      {
-        beforeHandle: [requireAgentToken(deps,),],
-        response: t.Object({
-          data: t.Object({
-            tokenId: t.String(),
-            scope: t.String(),
-          },),
-        },),
-        detail: {
-          summary: "Identify the presented agent token",
-          description:
-            "Echoes the resolved agent token id and its scope tier after token auth. The identity probe for the /api/v1/agent surface.",
-          tags: ["Agent API",],
+  return new Elysia({ name: "agent-api", },).guard(
+    { beforeHandle: requireAgentToken(deps,), },
+    (app,) =>
+      app.get(
+        `${prefix}/agent/whoami`,
+        async (ctx: unknown,) => {
+          const token = ctx as { agentToken: ResolvedAgentToken };
+          return jsonResponse({ data: { tokenId: token.agentToken.id, scope: token.agentToken.scope, }, },);
         },
-      },
-    );
+        {
+          response: t.Object({
+            data: t.Object({
+              tokenId: t.String(),
+              scope: t.String(),
+            },),
+          },),
+          detail: {
+            summary: "Identify the presented agent token",
+            description:
+              "Echoes the resolved agent token id and its scope tier after token auth. The identity probe for the /api/v1/agent surface.",
+            tags: ["Agent API",],
+          },
+        },
+      ),
+  );
 }

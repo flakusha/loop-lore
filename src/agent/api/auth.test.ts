@@ -25,6 +25,7 @@ import {
   hashAgentToken,
   mintAgentToken,
   requireAgentScope,
+  requireAgentToken,
   verifyAgentToken,
 } from "./auth";
 import { agentApiRoutes, } from "./router";
@@ -127,6 +128,31 @@ describe("requireAgentScope — scope tiers", () => {
 
     expect(await guard(ctx,),).toBeUndefined();
     expect(ctx.agentToken?.scope,).toBe(AgentTokenScope.Commit,);
+  });
+});
+
+describe("requireAgentToken — scope-agnostic guard", () => {
+  test("any valid, unrevoked token passes without a scope tier", async () => {
+    const raw = await insertToken(AgentTokenScope.Finalize,);
+    const guard = requireAgentToken({ database: db, },);
+    const ctx = {
+      request: new Request("http://localhost/agent/whoami", {
+        headers: { authorization: `Bearer ${raw}`, },
+      },),
+    };
+
+    expect(await guard(ctx,),).toBeUndefined();
+  });
+
+  test("an unknown token is rejected 401 by the bare guard", async () => {
+    const guard = requireAgentToken({ database: db, },);
+    const ctx = {
+      request: new Request("http://localhost/agent/whoami", {
+        headers: { authorization: `Bearer llra_${crypto.randomUUID()}`, },
+      },),
+    };
+
+    expect((await guard(ctx,))!.status,).toBe(401,);
   });
 });
 
