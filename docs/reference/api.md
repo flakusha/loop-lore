@@ -946,6 +946,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/users/me | Get current user |
 | PUT | /api/v1/users/me | Update current user |
 | PATCH | /api/v1/users/me/settings | Patch current user settings |
+| GET | /api/v1/workflow-selections | List workflow selections |
 | POST | /api/v1/world-invites/{code}/join | — |
 | GET | /api/v1/worlds | List worlds |
 | POST | /api/v1/worlds | Create world |
