@@ -40,19 +40,22 @@
               <td x-text="w.id" style="font-size: 12px; color: var(--text-secondary)"></td>
               <td x-text="formatDate(w.created_at)"></td>
               <td>
-                <template x-if="confirmDeleteWorld !== w.id">
-                  <button class="btn btn-danger btn-xs" @click="confirmDeleteWorld = w.id">
-                    Delete
-                  </button>
-                </template>
-                <template x-if="confirmDeleteWorld === w.id">
-                  <div style="display: flex; gap: 4px">
-                    <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">Confirm</button>
-                    <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
-                      Cancel
+                <div style="display: flex; gap: 4px; align-items: center">
+                  <button class="btn btn-secondary btn-xs" @click="viewWorld(w.id)">Details</button>
+                  <template x-if="confirmDeleteWorld !== w.id">
+                    <button class="btn btn-danger btn-xs" @click="confirmDeleteWorld = w.id">
+                      Delete
                     </button>
-                  </div>
-                </template>
+                  </template>
+                  <template x-if="confirmDeleteWorld === w.id">
+                    <div style="display: flex; gap: 4px">
+                      <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">Confirm</button>
+                      <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
+                        Cancel
+                      </button>
+                    </div>
+                  </template>
+                </div>
               </td>
             </tr>
           </template>
@@ -81,6 +84,75 @@
           Next
         </button>
       </div>
+      <!-- World detail (GET /api/v1/admin/worlds/:id) + item power audit -->
+      <template x-if="worldDetail">
+        <div
+          style="margin-top: var(--space-4); padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)"
+          data-testid="world-detail"
+        >
+          <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
+            <h4 style="font-size: 15px; font-weight: 600; margin: 0" x-text="worldDetail.name"></h4>
+            <button class="btn btn-secondary btn-xs" @click="closeWorldDetail()">Close</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 160px 1fr; gap: var(--space-2); font-size: 13px">
+            <div style="color: var(--text-secondary)">ID</div>
+            <div><code style="font-size: 12px" x-text="worldDetail.id"></code></div>
+            <div style="color: var(--text-secondary)">Description</div>
+            <div x-text="worldDetail.description || '-'" style="white-space: pre-wrap"></div>
+            <div style="color: var(--text-secondary)">Owner</div>
+            <div><code style="font-size: 12px" x-text="worldDetail.owner_id || '-'"></code></div>
+            <div style="color: var(--text-secondary)">Created</div>
+            <div x-text="formatDate(worldDetail.created_at)"></div>
+            <div style="color: var(--text-secondary)">Updated</div>
+            <div x-text="formatDate(worldDetail.updated_at)"></div>
+            <div style="color: var(--text-secondary)">Locations</div>
+            <div x-text="worldDetail.locationCount ?? 0"></div>
+          </div>
+          <div style="margin-top: var(--space-4)">
+            <button
+              class="btn btn-secondary btn-xs"
+              :disabled="loadingPowerAudit || powerAuditWorldId === worldDetail.id"
+              @click="loadPowerAudit(worldDetail.id)"
+            >
+              <span x-show="!loadingPowerAudit">Run Item Power Audit</span>
+              <span x-show="loadingPowerAudit">…</span>
+            </button>
+          </div>
+          <template x-if="powerAuditWorldId === worldDetail.id">
+            <div style="margin-top: var(--space-3)">
+              <table class="admin-table" x-show="powerAudit.length > 0" data-testid="power-audit-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Rarity</th>
+                    <th>Stat Δ</th>
+                    <th>Drift</th>
+                    <th>Max Durability</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="row in powerAudit" :key="row.worldItemId">
+                    <tr>
+                      <td x-text="row.name"></td>
+                      <td x-text="row.category"></td>
+                      <td x-text="row.rarity"></td>
+                      <td x-text="row.maxStatDelta"></td>
+                      <td x-text="row.drift"></td>
+                      <td x-text="row.maxDurability"></td>
+                      <td x-text="row.score"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <div x-show="powerAudit.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+                No items ranked in this world.
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
   </template>
 </div>

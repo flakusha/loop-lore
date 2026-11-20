@@ -72,7 +72,73 @@
         <div style="display: flex; gap: var(--space-2)">
           <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('yaml')">Export YAML</button>
           <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('toml')">Export TOML</button>
+          <button class="btn btn-secondary btn-xs" @click="exportEffectiveConfig()">Export Effective (JSON)</button>
         </div>
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-top: var(--space-2)">
+          Effective export merges the live file config with stored <code>system_config</code> rows (stored wins on
+          overlap). Secret-adjacent keys are named in <code>omitted</code>, never included.
+        </div>
+      </div>
+      <!-- Scheduled Jobs Section (GET /api/v1/admin/cron/jobs) -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Scheduled Jobs</h3>
+        <div x-show="cronSchedulerUnavailable" class="empty-state" style="padding: var(--space-6)">
+          <div class="title">Scheduler not running</div>
+          <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-top: var(--space-1)">
+            The cron scheduler service is not active on this server, so job statuses are unavailable. Jobs will appear
+            here once the scheduler starts.
+          </div>
+        </div>
+        <template x-if="!cronSchedulerUnavailable">
+          <div>
+            <div
+              x-show="cronError"
+              style="font-size: 12px; color: #c00; margin-bottom: var(--space-2)"
+              x-text="cronError"
+            >
+            </div>
+            <table class="admin-table" x-show="cronJobs.length > 0">
+              <thead>
+                <tr>
+                  <th>Job</th>
+                  <th>Schedule</th>
+                  <th>Enabled</th>
+                  <th>Last Run</th>
+                  <th>Next Run</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="j in cronJobs" :key="j.name">
+                  <tr>
+                    <td x-text="j.name"></td>
+                    <td><code style="font-size: 12px" x-text="j.schedule"></code></td>
+                    <td x-text="j.enabled ? 'Yes' : 'No'"></td>
+                    <td x-text="formatDate(j.lastRunAt)"></td>
+                    <td x-text="formatDate(j.nextRunAt)"></td>
+                    <td>
+                      <button
+                        class="btn btn-secondary btn-xs"
+                        :disabled="runningCronJob === j.name"
+                        @click="runCronJob(j.name)"
+                      >
+                        <span x-show="runningCronJob !== j.name">Run</span>
+                        <span x-show="runningCronJob === j.name">…</span>
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <div
+              x-show="cronJobs.length === 0 && !loadingCronJobs && !cronError"
+              class="empty-state"
+              style="padding: var(--space-4)"
+            >
+              <div class="title">No scheduled jobs</div>
+            </div>
+          </div>
+        </template>
       </div>
       <!-- Import Section (TASK-frontend-setup-wizard) -->
       <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
