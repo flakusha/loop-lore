@@ -17,9 +17,10 @@
 ## 1.0.0 closeout note (2026-11-19)
 
 - **Shipped ACP surface:** seven flavors in `packages/core/src/config/schema/harness.ts:24-32` and `src/integrations/harness/flavor-factories.ts:29-37` (omp/opencode/codex/claude-code/hermes/openclaw/antigravity).
-- **OpenCode v2:** loop-lore's adapter serves stable ACP v1 (`src/integrations/harness/opencode.ts:7-12`); no v2 binary probe and no v2 adapter. Closeout labels the adapter **v1 only** and does not claim v2 parity (OpenCode v2 breaks plugin/server APIs: https://dev.opencode.ai/v2/docs/migrate-v1).
+- **OpenCode v2:** loop-lore's adapter serves stable ACP v1 (`src/integrations/harness/opencode.ts:7-12`). A local probe against the installed opencode v2.3.2 answers `protocolVersion: 1` for initialize requests carrying either 1 or 2 (`.tmp/research/acp-v2-decision-2026-11-19.md:11`); the v1 adapter is intentional, not a parity gap. Closeout labels the adapter **v1 only** (OpenCode v2 breaks plugin/server APIs: https://dev.opencode.ai/v2/docs/migrate-v1).
 - **Antigravity evidence:** ACP e2e confirmed only at fixture tier plus opt-in live **discovery** tier, no prompt turn in live tier (`.tmp/intercom/LANE-antigravity-acp-e2e.md:11-12`). No real in-repo code-editing or subagent/subspace run has been performed; do not claim real-run parity.
-- **Delegation parity:** `TASK-harness-subagent-delegation` remains Not Started; explicitly **descoped from 1.0.0** with real-run validation carried as post-1.0.0/RSI intake, because all four comparators ship spawn/steer/stop and loop-lore has no delegation infra (`epic-harness-integration.md:224-225`).
+- **Delegation parity:** slice 1 (`delegate_task` spawn/list/cancel via `src/integrations/loop-lore-facade/ops/delegation.ts`, landed `fdc71a153`) ships. `TASK-harness-subagent-delegation` tracks the remainder — steer/stop, reaping, agent tree, fan-out and context fork — explicitly **descoped from 1.0.0** with real-run validation carried as post-1.0.0/RSI intake. Do not claim steer/stop or real-run subagent parity.
+- **Release mechanics:** push and tag stay operator-owned (`TASK-epic-release-1-0-0.md:49`); this closeout claims no push, no tag, and no finalized branch.
 
 ## Summary
 

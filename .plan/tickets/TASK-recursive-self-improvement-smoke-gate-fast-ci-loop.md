@@ -29,7 +29,7 @@
 - [x] Failure surfaces in the same `.tmp/check-report.json` schema (the gate runner writes it; a failing run was observed before the smoke-app fix).
 - [x] Supplements the existing `pr-checks.yml` rather than replacing it.
 
-**Status note:** landed on branch `rsi-smoke-gate`, not finalized; ticket index reconciliation is post-merge.
+**Status note:** landed on dev as `29812b82b`; ticket index reconciliation is post-merge.
 
 ## Files
 

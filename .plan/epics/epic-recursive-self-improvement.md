@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Filed 2026-09-27 from a one-week sweep of `dev` commits (2026-09-20 -> 2026-09-27), `.plan/backlog-archive.md` open queues, and recurring failure clusters surfaced in the worktree log. Cross-references the existing `epic-resource-provision.md` (programmatic compute), `epic-testing-qa.md` (failure modes), `epic-code-quality.md` (size-debt cycle), and `epic-benchmark-ci-regression.md` (perf gates). No overlap with `epic-resource-provision.md` — that epic provisions **external** compute/credentials; this epic covers the **internal** watchdog + agent development loop that operates on `loop-lore` itself.
+**Status:** In Progress
+**Status Note:** Filed 2026-09-27 from a one-week sweep of `dev` commits (2026-09-20 -> 2026-09-27), `.plan/backlog-archive.md` open queues, and recurring failure clusters surfaced in the worktree log. Cross-references the existing `epic-resource-provision.md` (programmatic compute), `epic-testing-qa.md` (failure modes), `epic-code-quality.md` (size-debt cycle), and `epic-benchmark-ci-regression.md` (perf gates). No overlap with `epic-resource-provision.md` — that epic provisions **external** compute/credentials; this epic covers the **internal** watchdog + agent development loop that operates on `loop-lore` itself. Work started 2026-11-20: smoke gate landed on dev (`29812b82b`); watchdog supervisor slice landed in worktree `rsi-watchdog-supervisor` (`0278e607f`).
 
 **Priority:** High
 **Effort:** Very High
@@ -166,8 +166,8 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 
 ### CI/CD Loop
 
-- [ ] `bun run smoke` script — fast gate (target <=60s)
-- [ ] `.github/workflows/smoke.yml` — every commit to `dev`/PR; 60s timeout
+- [x] `bun run smoke` script — fast gate (target <=60s) — landed on dev `29812b82b`
+- [x] `.github/workflows/smoke.yml` — every commit to `dev`/PR; 60s timeout — landed on dev `29812b82b`
 - [ ] `.github/workflows/nightly.yml` — full `bun run check` + e2e + browser + perf-regression
 - [ ] `.github/workflows/watchdog-gate.yml` — triggered by webhook from the watchdog on threshold breach
 - [ ] Promote `size:strict` to blocking (lands `TASK-promote-size-check-to-ci`)

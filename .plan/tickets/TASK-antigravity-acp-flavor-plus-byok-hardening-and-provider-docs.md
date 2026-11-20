@@ -18,13 +18,13 @@ Review lane `.tmp/intercom/` notes: provider inventory showed OpenRouter as a pr
 
 **Acceptance Criteria:**
 
-- [ ] `antigravity` flavor registered, probe-clean against the fake ACP fixture, ToS-gated as subscription-backed
-- [ ] BYOK writes use the versioned envelope with key_version 2; boot warns loudly when BYOK is enabled without a server secret
-- [ ] OpenRouter commented example in configs plus free-model notes; provider docs updated
-- [ ] Tests passing
+- [x] `antigravity` flavor registered, probe-clean against the fake ACP fixture, ToS-gated as subscription-backed
+- [x] BYOK writes use the versioned envelope with key_version 2; boot warns loudly when BYOK is enabled without a server secret
+- [x] OpenRouter commented example in configs plus free-model notes; provider docs updated
+- [x] Tests passing
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
