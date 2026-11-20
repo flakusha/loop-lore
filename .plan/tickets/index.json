@@ -56998,7 +56998,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-python-bridge-core-generic-python3-subprocess-bridge.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-PYTHON-DISCOVERY-INTERPRETER-CANDIDATES-AND-CACHED-SNAPSHOT": {
     "hash": "214ffec",
@@ -57012,7 +57012,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-python-discovery-interpreter-candidates-and-cached-snapshot.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-PYTHON-VENV-KNOB-OPERATOR-PROVISIONED-VENVPATH-NO-RUNTIME-PI": {
     "hash": "1895d83",
@@ -57026,7 +57026,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-python-venv-knob-operator-provisioned-venvpath-no-runtime-pi.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-QUEST-LOG": {
     "epic": "epic-story-mode-ui",

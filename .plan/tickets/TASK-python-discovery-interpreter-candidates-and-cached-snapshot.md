@@ -3,7 +3,7 @@
 
 # TASK: Python discovery: interpreter candidates and cached snapshot
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
