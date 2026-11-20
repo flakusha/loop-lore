@@ -4,7 +4,7 @@
 # BUG: harness-f1-non-admin-providers-callers-swallow-403
 
 **Status:** Done
-**Blocker:** HELD — unlanded branch `harness-403-callers` (degraded-403 UI in `personas.ts`/`settings/general.ts` + shared `provider-list.ts`, 21 files). The admin-only contract stays decided (see the two Done BUGs in the ticket). Next: land the branch, then flip this ticket with the landing sha.
+**Landing:** landed on dev in `43e1c3f6a` (degraded-403 UI for personas/settings general via shared `provider-list.ts`). Admin-only provider-list contract unchanged.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-external-harness-acp
