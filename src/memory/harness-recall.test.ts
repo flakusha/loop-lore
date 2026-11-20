@@ -17,6 +17,7 @@ import { insertActors, } from "../test-utils/insert-helpers";
 import {
   buildHarnessMemoryPrefix,
   formatExecRunSummary,
+  MAX_HARNESS_RECALL,
   recallHarnessMemories,
   storeHarnessRunSummary,
 } from "./harness-recall";
@@ -105,6 +106,16 @@ describe("harness recall", () => {
     const recalled = await recallHarnessMemories(fixture.db, actorId, chatB,);
     expect(recalled,).toEqual([],);
     expect(buildHarnessMemoryPrefix(recalled,),).toBe("",);
+  });
+
+  it("caps default recall at MAX_HARNESS_RECALL, newest first", async () => {
+    for (let i = 0; i < MAX_HARNESS_RECALL + 1; i++) {
+      const stored = await storeHarnessRunSummary(fixture.db, actorId, chatA, runRecord({ task: `task-${i}`, },),);
+      expect(stored,).not.toBeNull();
+    }
+
+    const recalled = await recallHarnessMemories(fixture.db, actorId, chatA,);
+    expect(recalled,).toHaveLength(MAX_HARNESS_RECALL,);
   });
 
   it("dedupes an identical summary instead of storing twice", async () => {
