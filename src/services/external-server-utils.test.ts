@@ -182,6 +182,24 @@ describe("findBinary", () => {
 
     expect(path,).toBe("/opt/blender-fork/blender",);
   });
+
+  test("python resolves its PATH name without absolute candidates", () => {
+    const path = findBinary("python", {
+      which: (name,) => name === "python3" ? "/usr/bin/python3" : null,
+    },);
+
+    expect(path,).toBe("/usr/bin/python3",);
+  });
+
+  test("python returns null when python3 is absent (no absolute fallback)", () => {
+    const path = findBinary("python", {
+      which: () => null,
+      exists: () => true,
+      globSync: () => ["/opt/python3/bin/python",],
+    },);
+
+    expect(path,).toBeNull();
+  });
 });
 
 describe("isPortFree", () => {

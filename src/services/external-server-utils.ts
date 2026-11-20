@@ -33,6 +33,8 @@ export const BINARY_CANDIDATES = {
   "llama-swap": ["llama-swap",],
   "sd-cpp": ["sd-server",],
   blender: ["blender",],
+  /** PATH names only — venv interpreters arrive via explicit `spec.venvPath`, never glob discovery. */
+  python: ["python3",],
 } as const;
 
 /**
