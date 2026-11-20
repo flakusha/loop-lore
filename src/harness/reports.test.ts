@@ -19,8 +19,11 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-
 import {
   insertToolingReport,
   listToolingReports,
+  REPORT_CATEGORIES,
   REPORT_DETAIL_MAX_CHARS,
   REPORT_FIELD_MAX_CHARS,
+  REPORT_SOURCES,
+  REPORTS_DEFAULT_LIMIT,
   REPORTS_MAX_LIMIT,
   type ToolingReportInput,
   type ToolingReportRow,
@@ -32,6 +35,7 @@ import {
   resetReportSpoolPath,
   serializeReport,
   setReportSpoolPath,
+  writeReportSpool,
 } from "./reports-spool";
 
 /** Shared PARENT for per-test spool fixtures (repo .tmp/, never system temp). */
@@ -315,5 +319,31 @@ describe("report spool", () => {
     const result = await insertToolingReport(db, payload(),);
     expect(result.ok,).toBe(true,);
     expect(getReportSpoolPath(),).toBeNull();
+  });
+});
+
+describe("report vocabularies", () => {
+  it("pins the closed source/category sets and default limit", () => {
+    expect([...REPORT_SOURCES,],).toEqual(["assistant", "harness", "giwt", "check",],);
+    expect([...REPORT_CATEGORIES,],).toEqual([
+      "tooling_failure",
+      "retry_exhausted",
+      "persistent_failure",
+      "performance",
+    ],);
+
+    expect(REPORTS_DEFAULT_LIMIT,).toBe(50,);
+  });
+
+  it("writeReportSpool mirrors one row as a single JSONL line", async () => {
+    spoolDir = mkdtempSync(join(TMP_ROOT, "spool-direct-",),);
+    setReportSpoolPath(join(spoolDir, REPORTS_SPOOL_FILENAME,),);
+    const result = await insertToolingReport(db, payload({ dedupeKey: `k-${crypto.randomUUID()}`, },),);
+    expect(result.ok,).toBe(true,);
+    const stored = (result as { report: ToolingReportRow }).report;
+    writeReportSpool(stored,);
+    const lines = readFileSync(getReportSpoolPath()!, "utf8",).trim().split("\n",);
+    expect(lines.length,).toBe(2,);
+    expect(JSON.parse(lines[1]!,),).toEqual(serializeReport(stored,),);
   });
 });
