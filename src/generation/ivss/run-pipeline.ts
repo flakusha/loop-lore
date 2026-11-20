@@ -11,7 +11,7 @@
  * supplies the variables, and the shared asset/job services own persistence.
  */
 import type { Kysely, } from "kysely";
-import { randomUUID, } from "node:crypto";
+import { createHash, randomUUID, } from "node:crypto";
 import { extensionForMime, mimeFromExtension, } from "../../assets/service/detect";
 import { persistGeneratedImages, } from "../../assets/service/persist-generated";
 import type { VideoProviderConfig, } from "../../config/schema";
@@ -19,10 +19,12 @@ import { AssetType, } from "../../db/enums";
 import { AssetLinkEntity, } from "../../db/enums-content";
 import { FragmentStatus, SceneStatus, } from "../../db/enums-generation";
 import type { DB, } from "../../db/schema";
-import { getChildLogger, } from "../../logger";
+import { canonicalJSON, } from "../../hash/record-hash";
+import { getChildLogger, type Logger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 import { toDate, } from "../../utils/date";
-import type { ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
+import { cachedDiscovery, } from "../discovery-cache";
+import type { ComfyUINodeInfo, ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
 import type { ComfyUIMaskOriginalRef, } from "../providers/comfyui-upload";
 import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOptions, } from "../video-dispatch-gate";
 import { cancelVideoJob, completeVideoJob, failVideoJob, storeVideoJob, } from "../video-jobs";
@@ -47,6 +49,8 @@ export interface IvssComfyClient {
   cancelExecution(promptId?: string,): Promise<void>;
   uploadImage(buffer: Buffer, filename: string,): Promise<string>;
   uploadMask?(buffer: Buffer, filename: string, originalRef: ComfyUIMaskOriginalRef,): Promise<string>;
+  /** `/object_info` snapshot; the real client implements it, stubs may omit it. */
+  getNodeInfo?(): Promise<Record<string, ComfyUINodeInfo>>;
 }
 
 /** Resolve a pinned workflow name plus the shot-grammar variables to a graph. */
@@ -157,6 +161,55 @@ function cancellation(): Error & { status: number } {
 }
 
 /**
+ * Stable stamp over the discovered `/object_info` snapshot. A changed node
+ * pack or model list changes the hash, so the fragment records which
+ * installed nodes rendered it.
+ */
+function nodeVersionsStamp(info: Record<string, ComfyUINodeInfo>,): string | null {
+  const digest = createHash("sha256",).update(canonicalJSON(info,),).digest("hex",);
+  const encoded = safeJsonStringify({ object_info_sha256: digest, },);
+  return encoded.ok ? encoded.value : null;
+}
+
+/** Deadline failure for a run whose absolute wall-clock budget expired. */
+function deadlineExceeded(): Error & { status: number } {
+  const error = new Error("IVSS fragment run deadline exceeded",) as Error & { status: number };
+  error.status = 504;
+  return error;
+}
+
+/**
+ * Discover and hash the installed node snapshot. Fail-open: an unreachable
+ * ComfyUI leaves the stamp null rather than blocking the render.
+ * @param client - render client; may omit the `/object_info` seam
+ * @param baseUrl - cache key discriminator for the backend
+ * @param log - optional structured log sink
+ * @returns stable JSON stamp, or null when discovery is unavailable
+ */
+async function discoverNodeVersions(
+  client: IvssComfyClient,
+  baseUrl: string,
+  log: Logger | null,
+): Promise<string | null> {
+  if (!client.getNodeInfo) { return null; }
+  try {
+    const info = await cachedDiscovery<Record<string, ComfyUINodeInfo> | undefined>(
+      "ivss:node-versions:" + baseUrl,
+      async () => client.getNodeInfo?.(),
+      { shouldCache: (value,) => value !== undefined, },
+    );
+
+    return info ? nodeVersionsStamp(info,) : null;
+  } catch (error) {
+    log?.warn("IVSS node version discovery failed", {
+      error: error instanceof Error ? error.message : String(error,),
+    },);
+
+    return null;
+  }
+}
+
+/**
  * Claim a fragment, register its job, and start the render.
  * @param opts - database, identity, client and injectable render seams
  * @throws {HonkboxVideoOffloadError} When honkbox offload has no video job route
@@ -172,6 +225,9 @@ export async function startIvssFragmentRun(
   const timestamp = () => toDate(now(),).toISOString();
   const providers = opts.providers ?? [];
   const timeoutMs = opts.timeoutMs ?? 300_000;
+  // Absolute wall-clock budget from run start; the poll's own timer starts
+  // later, after upload/load, so it cannot be the only deadline.
+  const absoluteDeadline = now() + timeoutMs;
   const dispatch = opts.dispatch ?? dispatchThroughVideoGate;
   const load = opts.loadWorkflow ??
     (async (name, vars,): Promise<ComfyUIWorkflow> => getWorkflowLoader().loadWorkflow({ name, vars, },));
@@ -226,9 +282,17 @@ export async function startIvssFragmentRun(
     renderClient = decision.client;
   }
 
+  // The shared cache keeps discovery to one /object_info fetch per backend.
+  const nodeVersions = await discoverNodeVersions(
+    renderClient,
+    providers[0]?.baseUrl ?? "default",
+    log,
+  );
+
   // CAS claim: a queued/running/completed fragment is never submitted twice.
   const claimed = await db.updateTable("scenario_fragments",).set({
     status: FragmentStatus.Queued,
+    node_versions: nodeVersions,
     prompt_snapshot: compiled.prompt,
     seed,
     duration_frames: compiled.variables.duration_frames,
@@ -250,7 +314,7 @@ export async function startIvssFragmentRun(
     status: "pending",
     request: { prompt: compiled.prompt, },
     providers: [...providers,],
-    deadline: now() + timeoutMs,
+    deadline: absoluteDeadline,
     createdAt: now(),
   },);
 
@@ -321,10 +385,28 @@ export async function startIvssFragmentRun(
           const submitted = await renderClient.submitWorkflow(workflow,);
           promptId = submitted.prompt_id;
 
+          const remainingMs = Math.max(0, absoluteDeadline - now(),);
+          if (remainingMs === 0) {
+            await tryCancelRemote();
+            throw deadlineExceeded();
+          }
+
+          let clearDeadlineTimer: (() => void) | undefined;
+          const deadlineSignal = new Promise<{ deadline: true }>((resolve,) => {
+            const timer = setTimeout(() => resolve({ deadline: true, },), remainingMs,);
+            clearDeadlineTimer = () => clearTimeout(timer,);
+          },);
+
           const raced = await Promise.race([
             renderClient.waitForFiles(promptId, timeoutMs,).then((files,) => ({ files, })),
             cancelSignal.then(() => ({ cancelled: true as const, })),
-          ],);
+            deadlineSignal,
+          ],).finally(() => clearDeadlineTimer?.());
+
+          if ("deadline" in raced) {
+            await tryCancelRemote();
+            throw deadlineExceeded();
+          }
 
           if ("cancelled" in raced) {
             // Submitted before cancel landed: stop the remote render.
@@ -333,6 +415,13 @@ export async function startIvssFragmentRun(
           }
 
           if (cancelled) { throw cancellation(); }
+          // The poll can resolve just under its own timer while upload/load
+          // already consumed the budget — fail instead of persisting past it.
+          if (now() >= absoluteDeadline) {
+            await tryCancelRemote();
+            throw deadlineExceeded();
+          }
+
           const refs = raced.files;
 
           const latentRef = refs.find((ref,) => LATENT_FILE_RE.test(ref.file.filename,));

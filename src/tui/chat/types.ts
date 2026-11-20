@@ -9,6 +9,8 @@ export interface ChatMessage {
   role: string;
   content: string;
   actorName?: string;
+  /** Attachment descriptors echoed by the message API; rendered as a chip. */
+  attachments?: ReadonlyArray<{ assetId: string }>;
 }
 
 /** */

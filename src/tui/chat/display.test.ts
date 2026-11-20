@@ -137,4 +137,28 @@ describe("formatMessageLine", () => {
     expect(out,).toContain("{close}",);
     expect(out,).toContain("{open}",);
   });
+
+  it("renders a compact attachment chip with escaped asset id", () => {
+    const out = formatMessageLine(msg({
+      content: "look",
+      attachments: [{ assetId: "asset-{bold}-1234", },],
+    },),);
+
+    expect(out,).toBe("{bold}user{/bold}: look {bold}[1:asset-{open}b]{/bold}",);
+  });
+
+  it("keeps content plus chip within the 200-column budget", () => {
+    const out = formatMessageLine(msg({
+      content: "x".repeat(250,),
+      attachments: [{ assetId: "asset-1234", },],
+    },),);
+
+    const visible = out
+      .replaceAll("{open}", "{",)
+      .replaceAll("{close}", "}",)
+      .replace(/\{\/?bold\}/g, "",);
+
+    expect(Bun.stringWidth(visible.slice("user: ".length,),),).toBeLessThanOrEqual(203,);
+    expect(out,).toContain("[1:asset-12]",);
+  });
 });

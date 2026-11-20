@@ -18,7 +18,8 @@ import {
 } from "../../db/enums-generation";
 import { getLogger, type Logger, setGlobalLogger, } from "../../logger";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
-import type { ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
+import { clearCachedDiscovery, } from "../discovery-cache";
+import type { ComfyUINodeInfo, ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
 import { cancelVideoJob, getVideoJob, listVideoJobs, } from "../video-jobs";
 import { uploadIvssReferences, } from "./reference-upload";
 import {
@@ -52,6 +53,7 @@ describe("IVSS ComfyUI run pipeline", () => {
   let uploadDir: string;
 
   beforeEach(async () => {
+    clearCachedDiscovery("ivss:node-versions:",);
     fixture = await createTestDb();
     uploadDir = await mkdtemp(join(tmpdir(), "ivss-run-",),);
   },);
@@ -749,5 +751,154 @@ describe("IVSS ComfyUI run pipeline", () => {
     if (!decision.ok) {
       expect(decision.reason.length,).toBeGreaterThan(0,);
     }
+  });
+
+  const NODE_INFO: Record<string, ComfyUINodeInfo> = {
+    KSampler: {
+      name: "KSampler",
+      display_name: "KSampler",
+      category: "sampling",
+      input: { required: {}, optional: {}, },
+      output: [],
+      output_name: [],
+    },
+  };
+
+  test("stamps a stable /object_info hash at claim", async () => {
+    const seeded = await seedScene();
+    const { client, } = makeClient({
+      async getNodeInfo() {
+        return NODE_INFO;
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+      now: () => 1_700_000_000_000,
+    },);
+
+    const result = await handle.done;
+    if (!result.ok) { throw new Error(result.error,); }
+    const row = await seeded.db.selectFrom("scenario_fragments",).select("node_versions",)
+      .where("id", "=", seeded.fragmentId,).executeTakeFirstOrThrow();
+
+    expect(row.node_versions,).toMatch(/^\{"object_info_sha256":"[0-9a-f]{64}"\}$/,);
+  });
+
+  test("reuses the shared discovery cache for a second run", async () => {
+    const first = await seedScene();
+    let fetches = 0;
+    const firstClient = makeClient({
+      async getNodeInfo() {
+        fetches += 1;
+        return NODE_INFO;
+      },
+    },);
+
+    const firstHandle = await startIvssFragmentRun({
+      database: first.db,
+      uploadDir,
+      ownerId: first.ownerId,
+      fragmentId: first.fragmentId,
+      client: firstClient.client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+    },);
+
+    const firstResult = await firstHandle.done;
+    if (!firstResult.ok) { throw new Error(firstResult.error,); }
+
+    const second = await seedScene();
+    const secondClient = makeClient({
+      async getNodeInfo() {
+        fetches += 1;
+        throw new Error("cached discovery must not refetch",);
+      },
+    },);
+
+    const secondHandle = await startIvssFragmentRun({
+      database: second.db,
+      uploadDir,
+      ownerId: second.ownerId,
+      fragmentId: second.fragmentId,
+      client: secondClient.client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+    },);
+
+    const secondResult = await secondHandle.done;
+    expect(secondResult.ok,).toBe(true,);
+    expect(fetches,).toBe(1,);
+  });
+
+  test("absolute deadline stops a stuck poll and cancels the remote run", async () => {
+    const seeded = await seedScene();
+    const { client, calls, } = makeClient({
+      async waitForFiles(promptId,) {
+        calls.waited.push(promptId,);
+        await new Promise<void>((resolve,) => {
+          setTimeout(resolve, 1500,);
+        },);
+
+        return [{ kind: "video", file: { filename: "clip.webm", }, },];
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+      timeoutMs: 300,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { throw new Error("expected deadline",); }
+    expect(result.status,).toBe(504,);
+    expect(result.error,).toContain("deadline",);
+    expect(calls.cancelled,).toEqual(["prompt-1",],);
+    expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
+  });
+
+  test("enforces the absolute deadline after the poll resolves", async () => {
+    const seeded = await seedScene();
+    let clock = 1_700_000_000_000;
+    const { client, } = makeClient({
+      async waitForFiles() {
+        clock += 1000;
+        return [
+          { kind: "video", file: { filename: "clip.webm", }, },
+          { kind: "other", file: { filename: "h3-state.safetensors", }, },
+        ];
+      },
+    },);
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: makeLoader([],),
+      dispatch: immediateDispatch,
+      timeoutMs: 500,
+      now: () => clock,
+    },);
+
+    const result = await handle.done;
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { throw new Error("expected deadline",); }
+    expect(result.status,).toBe(504,);
+    expect(result.error,).toContain("deadline",);
   });
 });
