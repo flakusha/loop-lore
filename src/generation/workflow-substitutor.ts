@@ -225,7 +225,10 @@ export function buildSubstitutionVars(params: {
     // (scheduler) and discovered enums. `simple` ships with every ComfyUI.
     scheduler: params.scheduler ?? "simple",
     denoise: params.denoise ?? 1,
-    seed: params.seed ?? Math.floor(Math.random() * 2_147_483_647,),
+    // 53-bit fallback: matches Number.MAX_SAFE_INTEGER so any seed in range
+    // (ComfyUI's native seed widget is 64-bit) round-trips without precision
+    // loss or exponent/string artifacts.
+    seed: params.seed ?? Math.floor(Math.random() * 2 ** 53,),
     // ponytail: keeps the stock graph's former literal when no pick is made;
     // replace with a per-role default when operators configure one.
     model: params.model ?? "model.safetensors",

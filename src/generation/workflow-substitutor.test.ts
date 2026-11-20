@@ -97,6 +97,20 @@ describe("buildSubstitutionVars", () => {
     expect(vars.model,).toBe("m",);
   });
 
+  it("falls back to a 53-bit safe random seed", () => {
+    for (let i = 0; i < 200; i++) {
+      const seed = buildSubstitutionVars({ prompt: "cat", },).seed as number;
+      expect(Number.isInteger(seed,),).toBe(true,);
+      expect(seed,).toBeGreaterThanOrEqual(0,);
+      expect(seed,).toBeLessThan(2 ** 53,);
+      expect(seed,).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER,);
+      // No exponent/precision artifacts when stringified (JSON round-trip).
+      const stringified = JSON.stringify(seed,);
+      expect(stringified,).not.toMatch(/e|E/,);
+      expect(JSON.parse(stringified,),).toBe(seed,);
+    }
+  });
+
   it("binds picked model roles and LoRA name, keeping the stock default", () => {
     const vars = buildSubstitutionVars({
       prompt: "cat",
