@@ -1,9 +1,0 @@
-{
-  "1": {
-    "inputs": {
-      "text": "Qwen image edit placeholder workflow. Replace this file with the operator-supplied ComfyUI Export (API) graph for the Qwen edit model."
-    },
-    "class_type": "Note",
-    "_meta": { "title": "PLACEHOLDER — Qwen Edit" }
-  }
-}

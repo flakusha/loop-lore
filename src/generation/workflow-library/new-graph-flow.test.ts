@@ -2,11 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * New-graph promotion flow: the converted qwen-edit and MiniMax H3 reference
- * graphs through the pre-submit pipeline (shape, dead nodes, substitution,
- * validation) with realistic vars. The three video graphs pin the known
- * orphaned rule node 35 — promotion to `configs/workflows/` must wire or
- * drop it before the strict loader will ingest them.
+ * Shipped API-format exports through the pre-submit pipeline (shape, dead
+ * nodes, substitution, validation) with realistic vars. The two image-edit
+ * exports pin their unreferenced nodes until the operator wires or drops them.
  * @module new-graph-flow
  */
 import { describe, expect, it, } from "bun:test";
@@ -19,7 +17,7 @@ import {
 } from "../workflow-substitutor";
 import { validateWorkflowPayload, } from "./validate";
 
-const DIR = "configs/workflows/originals";
+const DIR = "configs/workflows";
 
 function load(name: string,): Record<string, unknown> {
   return JSON.parse(readFileSync(`${DIR}/${name}`, "utf8",),);
@@ -52,34 +50,43 @@ const FLOW_VARS = buildSubstitutionVars({
 },);
 
 const CLEAN_GRAPHS = [
-  ["qwen-edit-wf.json", "img2img",],
-  ["minimax-h3-image-wf.json", "txt2img",],
-  ["minimax-h3-audio-wf.json", "txt2img",],
-  ["minimax-h3-assemble-wf.json", "txt2img",],
+  "minimax-h3-image-t2i-v1.json",
+  "minimax-h3-audio-wf.json",
+  "minimax-h3-assemble-wf.json",
+  "minimax-h3-video-fl2va-v1.json",
+  "minimax-h3-video-fl2va-opt-v1.json",
+  "minimax-h3-video-ref2va-v1.json",
+  "minimax-h3-video-ref2va-opt-v1.json",
 ] as const;
 
-const VIDEO_GRAPHS = [
-  "minimax-h3-video-t2v-wf.json",
-  "minimax-h3-video-i2v-wf.json",
-  "minimax-h3-video-ref2va-wf.json",
+const DEAD_NODE_GRAPHS = [
+  ["minimax-h3-image-image-edit-v1.json", ["62",], "dead node(s) not linked into the graph: 62",],
+  ["qwen-image-2-1-image-edit-v1.json", ["472", "518",], "dead node(s) not linked into the graph: 472, 518",],
 ] as const;
 
-describe("new reference graphs pre-submit flow", () => {
-  for (const [name, category,] of CLEAN_GRAPHS) {
+describe("shipped workflow exports pre-submit flow", () => {
+  for (const name of CLEAN_GRAPHS) {
     it(`${name} has no dead nodes and validates after substitution`, () => {
       const graph = load(name,);
       expect(findDeadNodes(graph as never,),).toEqual([],);
       const substituted = substituteWorkflow(graph, FLOW_VARS,);
       expect([...collectPlaceholders(substituted,),],).toEqual([],);
-      expect(validateWorkflowPayload({ body: substituted as never, category, parameters: [], requiredNodes: [], },).ok,)
+      expect(
+        validateWorkflowPayload({
+          body: substituted as never,
+          category: "txt2img",
+          parameters: [],
+          requiredNodes: [],
+        },).ok,
+      )
         .toBe(true,);
     });
   }
 
-  for (const name of VIDEO_GRAPHS) {
-    it(`${name} pins the orphaned rule node 35 and nothing else`, () => {
+  for (const [name, dead, error,] of DEAD_NODE_GRAPHS) {
+    it(`${name} pins exactly its unreferenced nodes`, () => {
       const graph = load(name,);
-      expect(findDeadNodes(graph as never,),).toEqual(["35",],);
+      expect([...findDeadNodes(graph as never,),],).toEqual([...dead,],);
       const substituted = substituteWorkflow(graph, FLOW_VARS,);
       expect([...collectPlaceholders(substituted,),],).toEqual([],);
       const result = validateWorkflowPayload({
@@ -90,12 +97,12 @@ describe("new reference graphs pre-submit flow", () => {
       },);
 
       expect(result.ok,).toBe(false,);
-      if (!result.ok) { expect(result.errors,).toEqual(["dead node(s) not linked into the graph: 35",],); }
+      if (!result.ok) { expect(result.errors,).toEqual([error,],); }
     });
   }
 
-  it("expands prompt variants deterministically on a real graph", () => {
-    const graph = load("qwen-edit-wf.json",);
+  it("expands prompt variants deterministically on a real export", () => {
+    const graph = load("sdxl-v1.json",);
     const vars = { ...FLOW_VARS, prompt: "{red|blue} car", };
     const opts = { expandVariants: true, variantSeed: 1, } as const;
     const first = substituteWorkflow(graph, vars, opts,) as Record<string, { inputs: { text: string } }>;

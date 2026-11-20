@@ -23,6 +23,14 @@ import type { ValidateWorkflowOptions, } from "./validate";
 import { validateWorkflowPayload, } from "./validate";
 
 /**
+ * Category and builtin id behind a versioned export (`img2img-v1` -> `img2img`).
+ * @param id - workflow id from the file basename
+ */
+export function baseWorkflowId(id: string,): string {
+  return id.replace(/-v\d+$/, "",);
+}
+
+/**
  * The parameters a seeded graph needs: one per `{{placeholder}}` in its body.
  *
  * The metadata comes from the builtin template with the same id, so the
@@ -35,7 +43,7 @@ import { validateWorkflowPayload, } from "./validate";
  */
 export function deriveParameters(id: string, body: ComfyUIWorkflow,): TemplateParameter[] {
   const placeholders = collectPlaceholders(body,);
-  const builtin = builtinTemplates.find((template,) => template.id === id);
+  const builtin = builtinTemplates.find((template,) => template.id === baseWorkflowId(id,));
   const parameters: TemplateParameter[] = [];
   const declared = new Set<string>();
 

@@ -36,6 +36,19 @@ import { resetSeedOwnerForTests, seedWorkflowLibrary, } from "./seed";
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { baseWorkflowId, } from "./seed-parameters";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Library round-trip tests: seed -> read back -> hydrate -> build graph.
+ *
+ * These seams only break at boot, so they run against a real migrated SQLite
+ * DB rather than a stub. A temp dir is used for the bad-file case because the
+ * seed scans a directory, not a list of injected records.
+ */
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 /**
  * Library round-trip tests: seed -> read back -> hydrate -> build graph.
  *
@@ -88,15 +101,21 @@ describe("seedWorkflowLibrary", () => {
     resetSeedOwnerForTests();
     const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
     expect(outcome.imported.length,).toBeGreaterThan(0,);
-    expect(outcome.skipped,).toEqual([],);
+    // Operator exports with unreferenced ImageCompare / attention nodes are
+    // pinned here: the loader skips them until those nodes are wired or
+    // registered as live sinks. Deleting operator rule nodes is not this lane's call.
+    expect(outcome.skipped,).toEqual([
+      { id: "minimax-h3-image-image-edit-v1", reason: "dead node(s) not linked into the graph: 62", },
+      { id: "qwen-image-2-1-image-edit-v1", reason: "dead node(s) not linked into the graph: 472, 518", },
+    ],);
 
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     expect(row.owner_id,).toBe("admin-1",);
     expect(row.modality,).toBe("workflow",);
   });
 
   it("operator image exports expose the generation placeholders", async () => {
-    for (const id of ["sdxl", "illustrious", "noob", "krea2", "moss", "anima",]) {
+    for (const id of ["sdxl-v1", "illustrious-v1", "noob-v1", "krea2-v1", "moss-v1", "anima-v1",]) {
       const graph = await Bun.file(join(SHIPPED_DIR, `${id}.json`,),).json();
       const placeholders = collectPlaceholders(graph,);
       expect(placeholders.has("prompt",),).toBe(true,);
@@ -110,9 +129,17 @@ describe("seedWorkflowLibrary", () => {
     expect(outcome.imported,).toEqual([],);
     // The catalog grows as operators add ComfyUI exports; every shipped
     // `.json` is already in the library after the first test.
-    const shipped = (await readdir(SHIPPED_DIR,)).filter((entry,) => entry.endsWith(".json",));
-    expect(outcome.skipped.map((s,) => s.reason),).toEqual(
-      shipped.map(() => "already in library"),
+    const shipped = (await readdir(SHIPPED_DIR,)).filter((entry,) => entry.endsWith(".json",)).toSorted();
+    const deadNodeReasons: Record<string, string> = {
+      "minimax-h3-image-image-edit-v1": "dead node(s) not linked into the graph: 62",
+      "qwen-image-2-1-image-edit-v1": "dead node(s) not linked into the graph: 472, 518",
+    };
+
+    expect(outcome.skipped.map((s,) => [s.id, s.reason,]),).toEqual(
+      shipped.map((entry,) => {
+        const id = entry.replace(/\.json$/, "",);
+        return [id, deadNodeReasons[id] ?? "already in library",];
+      },),
     );
   });
 
@@ -197,7 +224,7 @@ describe("seedWorkflowLibrary", () => {
 
 describe("seeded workflow parameters", () => {
   it("declares the parameters the seeded graph's body needs", async () => {
-    const payload = rowToPayload(await workflowRowById("img2img",),);
+    const payload = rowToPayload(await workflowRowById("img2img-v1",),);
     expect(payload,).not.toBeNull();
 
     const placeholders = [...collectPlaceholders(payload!.body,),].toSorted();
@@ -205,9 +232,9 @@ describe("seeded workflow parameters", () => {
   });
 
   it("matches the builtin template's parameters - the two cannot drift", async () => {
-    for (const id of ["img2img", "txt2img",]) {
+    for (const id of ["img2img-v1", "txt2img-v1",]) {
       const payload = rowToPayload(await workflowRowById(id,),)!;
-      const builtin = builtinTemplates.find((template,) => template.id === id)!;
+      const builtin = builtinTemplates.find((template,) => template.id === baseWorkflowId(id,))!;
       const placeholders = collectPlaceholders(payload.body,);
 
       // Builtin metadata wins where it is declared. A placeholder it does not
@@ -227,7 +254,7 @@ describe("seeded workflow parameters", () => {
   });
 
   it("builds the seeded img2img workflow instead of throwing on unresolved placeholders", async () => {
-    const payload = rowToPayload(await workflowRowById("img2img",),)!;
+    const payload = rowToPayload(await workflowRowById("img2img-v1",),)!;
 
     const graph = buildWorkflowGraph(payload, { prompt: "a cat", input_image: "cat.png", seed: 1, },);
 
@@ -236,44 +263,44 @@ describe("seeded workflow parameters", () => {
   });
 
   it("repairs a row that was seeded before the parameters were derived", async () => {
-    const graph = await Bun.file(join(SHIPPED_DIR, "txt2img.json",),).json() as Record<string, unknown>;
+    const graph = await Bun.file(join(SHIPPED_DIR, "txt2img-v1.json",),).json() as Record<string, unknown>;
     await db
       .updateTable("prompt_templates",)
       .set({ payload: jsonStringifyOr({ body: graph, category: "txt2img", parameters: [], requiredNodes: [], },), },)
-      .where("id", "=", "txt2img",)
+      .where("id", "=", "txt2img-v1",)
       .execute();
 
     const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
 
-    expect(outcome.repaired,).toContain("txt2img",);
-    const repaired = rowToPayload(await workflowRowById("txt2img",),)!;
+    expect(outcome.repaired,).toContain("txt2img-v1",);
+    const repaired = rowToPayload(await workflowRowById("txt2img-v1",),)!;
     expect(repaired.parameters.length,).toBeGreaterThan(0,);
   });
 
   it("leaves a row the operator edited alone", async () => {
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     const payload = rowToPayload(row,)!;
     const edited = { ...payload, parameters: [param("prompt", "string", true,),], };
     await db
       .updateTable("prompt_templates",)
       .set({ payload: jsonStringifyOr(edited,), },)
-      .where("id", "=", "txt2img",)
+      .where("id", "=", "txt2img-v1",)
       .execute();
 
     const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
 
-    expect(outcome.repaired,).not.toContain("txt2img",);
-    const kept = rowToPayload(await workflowRowById("txt2img",),)!;
+    expect(outcome.repaired,).not.toContain("txt2img-v1",);
+    const kept = rowToPayload(await workflowRowById("txt2img-v1",),)!;
     expect(kept.parameters,).toEqual(edited.parameters,);
   });
 });
 
 describe("rowToTemplate", () => {
   it("projects a row into a runnable template", async () => {
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     const template = rowToTemplate(row,);
     expect(template,).toBeDefined();
-    expect(template?.id,).toBe("txt2img",);
+    expect(template?.id,).toBe("txt2img-v1",);
     expect(typeof template?.build,).toBe("function",);
     // The seed stamps txt2img because a bare graph carries no category.
     expect(template?.category,).toBe("txt2img",);
@@ -290,13 +317,13 @@ describe("rowToTemplate", () => {
       .where("modality", "=", "workflow",)
       .execute();
 
-    const img2img = stored.find((r,) => r.id === "img2img");
+    const img2img = stored.find((r,) => r.id === "img2img-v1");
     const parsed = JSON.parse(img2img?.payload ?? "{}",) as { category?: string };
     expect(parsed.category,).toBe("img2img",);
 
     const registry = new TemplateRegistry();
     await hydrateWorkflowRegistry(db, registry,);
-    expect(registry.get("img2img",)?.category,).toBe("img2img",);
+    expect(registry.get("img2img-v1",)?.category,).toBe("img2img",);
   });
 
   it("refuses to build a graph with unresolved placeholders", () => {
@@ -370,7 +397,7 @@ describe("buildWorkflowGraph", () => {
    * substitution tests have to run against a well-formed payload.
    */
   async function declaredPayload(): Promise<WorkflowPayload> {
-    const payload = rowToPayload(await workflowRowById("txt2img",),);
+    const payload = rowToPayload(await workflowRowById("txt2img-v1",),);
     expect(payload,).not.toBeNull();
     return { ...payload as WorkflowPayload, parameters: [param("width", "number", false,),], };
   }
@@ -397,14 +424,14 @@ describe("buildWorkflowGraph", () => {
 
 describe("probe checklist fields", () => {
   it("reads back sane defaults on a seeded row", async () => {
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     expect(row.probe_status,).toBe("unprobed",);
     expect(row.params_reviewed,).toBe(0,);
     expect(row.license,).toBeNull();
   });
 
   it("round-trips checklist updates", async () => {
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     await db
       .updateTable("prompt_templates",)
       .set({ probe_status: "passing", params_reviewed: 1, license: "CC-BY-4.0", },)
@@ -412,7 +439,7 @@ describe("probe checklist fields", () => {
       .execute();
 
     try {
-      const stored = await workflowRowById("txt2img",);
+      const stored = await workflowRowById("txt2img-v1",);
       expect(stored.probe_status,).toBe("passing",);
       expect(stored.params_reviewed,).toBe(1,);
       expect(stored.license,).toBe("CC-BY-4.0",);
@@ -431,7 +458,7 @@ describe("hydrateWorkflowRegistry", () => {
     const registry = new TemplateRegistry();
     const count = await hydrateWorkflowRegistry(db, registry,);
     expect(count,).toBeGreaterThan(0,);
-    expect(registry.listAll().map((t,) => t.id),).toContain("txt2img",);
+    expect(registry.listAll().map((t,) => t.id),).toContain("txt2img-v1",);
   });
 
   it("memoizes so repeated callers share one hydration", async () => {
@@ -452,7 +479,7 @@ describe("hydrateWorkflowRegistry", () => {
   });
 
   it("does not register a disabled row", async () => {
-    const row = await workflowRowById("txt2img",);
+    const row = await workflowRowById("txt2img-v1",);
     await db
       .updateTable("prompt_templates",)
       .set({ enabled: "disabled", },)

@@ -1,22 +1,21 @@
 {
   "image.generate": {
-    "default": "txt2img",
+    "default": "txt2img-v1",
     "supported": [
-      "txt2img",
-      "sdxl",
-      "illustrious",
-      "noob",
-      "krea2",
-      "moss",
-      "anima",
-      "minimax-h3-image"
+      "txt2img-v1",
+      "sdxl-v1",
+      "illustrious-v1",
+      "noob-v1",
+      "krea2-v1",
+      "moss-v1",
+      "anima-v1",
+      "minimax-h3-image-t2i-v1"
     ]
   },
   "image.edit": {
-    "default": "img2img",
+    "default": "img2img-v1",
     "supported": [
-      "img2img",
-      "qwen-edit"
+      "img2img-v1"
     ]
   },
   "video.generate": {

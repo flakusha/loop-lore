@@ -44,11 +44,11 @@ beforeAll(async () => {
   fixture = await createTestDb();
   db = fixture.db;
   userA = await insertUsers(db, "wf-user-a", "Workflow A", {
-    settings: settingsWith({ "image.generate": "krea2", "video.generate": "test:bogus", },),
+    settings: settingsWith({ "image.generate": "krea2-v1", "video.generate": "test:bogus", },),
   },);
 
   userB = await insertUsers(db, "wf-user-b", "Workflow B", {
-    settings: settingsWith({ "image.generate": "noob", },),
+    settings: settingsWith({ "image.generate": "noob-v1", },),
   },);
 
   bogusUser = await insertUsers(db, "wf-bogus", "Workflow Bogus", {
@@ -87,11 +87,19 @@ describe("getWorkflowDefaults", () => {
   test("operator workflow placeholders are assigned to use cases", () => {
     const defaults = getWorkflowDefaults();
     expect(defaults["image.generate"].supported,).toEqual(
-      expect.arrayContaining(["txt2img", "sdxl", "illustrious", "noob", "krea2", "moss", "minimax-h3-image",],),
+      expect.arrayContaining([
+        "txt2img-v1",
+        "sdxl-v1",
+        "illustrious-v1",
+        "noob-v1",
+        "krea2-v1",
+        "moss-v1",
+        "minimax-h3-image-t2i-v1",
+      ],),
     );
 
     expect(defaults["image.edit"].supported,).toEqual(
-      expect.arrayContaining(["img2img", "qwen-edit",],),
+      expect.arrayContaining(["img2img-v1",],),
     );
 
     expect(defaults["video.generate"].supported,).toEqual(
@@ -112,7 +120,7 @@ describe("getWorkflowDefaults", () => {
 describe("getUserWorkflowSelections", () => {
   test("reads stored ids and ignores malformed settings or missing users", async () => {
     const selections = await getUserWorkflowSelections(db, userA,);
-    expect(selections["image.generate"],).toBe("krea2",);
+    expect(selections["image.generate"],).toBe("krea2-v1",);
     expect(await getUserWorkflowSelections(db, malformedUser,),).toEqual({},);
     expect(await getUserWorkflowSelections(db, "missing-user",),).toEqual({},);
   });
@@ -126,7 +134,7 @@ describe("resolveWorkflowForUseCase", () => {
         userId: userA,
         useCase: "image.generate",
       },),
-    ).toBe("krea2",);
+    ).toBe("krea2-v1",);
   });
 
   test("unknown stored ids fall back to the config default, never through", async () => {
@@ -176,8 +184,8 @@ describe("getWorkflowCatalog", () => {
     const catalogB = await getWorkflowCatalog({ database: db, userId: userB, },);
 
     expect(catalogA.map((entry,) => entry.useCase),).toEqual(USE_CASES,);
-    expect(catalogA.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe("krea2",);
-    expect(catalogB.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe("noob",);
+    expect(catalogA.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe("krea2-v1",);
+    expect(catalogB.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe("noob-v1",);
 
     for (const entry of catalogA) {
       expect(entry.supported.length,).toBeGreaterThan(0,);
@@ -201,7 +209,7 @@ describe("GET /api/v1/workflow-selections", () => {
     const body = await res.json() as { useCases: Array<{ useCase: string; selected: string }> };
     expect(body.useCases,).toHaveLength(4,);
     expect(body.useCases.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe(
-      "noob",
+      "noob-v1",
     );
   });
 

@@ -1,9 +1,0 @@
-{
-  "1": {
-    "inputs": {
-      "text": "MiniMax H3 image placeholder workflow. Replace this file with the operator-supplied ComfyUI Export (API) graph for the MiniMax H3 image model."
-    },
-    "class_type": "Note",
-    "_meta": { "title": "PLACEHOLDER — MiniMax H3 Image" }
-  }
-}

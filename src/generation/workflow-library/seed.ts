@@ -36,7 +36,7 @@ import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, isValidWorkflow, } from "../workflow-loader/workflow-validation";
 import { BINDINGS_FILE, loadWorkflowBindings, parametersForSpec, } from "./binding-config";
 import type { WorkflowBindingConfig, WorkflowBindingSpec, } from "./bindings";
-import { deriveParameters, repairParameters, } from "./seed-parameters";
+import { baseWorkflowId, deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
 const DEFAULT_DIR = "configs/workflows";
@@ -69,7 +69,8 @@ const VIDEO_SINK_CLASSES: ReadonlySet<string> = new Set([
  * @param id - Workflow id (the file's basename)
  */
 function categoryFor(id: string,): ImageEditCategory {
-  return CATEGORIES.includes(id as ImageEditCategory,) ? id as ImageEditCategory : "txt2img";
+  const base = baseWorkflowId(id,);
+  return CATEGORIES.includes(base as ImageEditCategory,) ? base as ImageEditCategory : "txt2img";
 }
 
 /** What the seed did, for logging and for the boot caller. */
