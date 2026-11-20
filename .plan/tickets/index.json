@@ -5874,7 +5874,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-harness-queue-role-recheck-dispatch-race.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
