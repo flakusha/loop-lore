@@ -235,7 +235,7 @@ Env equivalents: `INTEGRATIONS_ENABLED`, `EMAIL_IMAP_HOST`, `EMAIL_SMTP_PASS`, `
 
 ### 9.1 What the current runtime provides
 
-Manifest (`PluginManifest`, `src/plugins/types.ts`): `name`, `version`, `description`, `author`, `homepage?`, `license?`, `onLoad?(ctx)`, `onUnload?()`, `tools?`, `agentRoles?`, `apiRoutes?`, `uiComponents?`, `eventHandlers?`, `migrations?`, `configSchema?`, `config?`, `characterRequirements?`. `PluginContext`: `db`, `config`, `logger`, `registerTool`, `registerAgentRole`, `registerApiRoute`, `registerUiComponent`, `registerEventHandler`. Lifecycle: `loadAllPlugins` → manifest → registry → `onLoad(ctx)` → persist `plugin_state`; reverse-order `onUnload()`. Event bus: `emitPluginEvent` wired to chat lifecycle (`chat.created/deleted/archived`, `message.variant.created`). Tool executor with timeout. Config merge. Mount-point lookup (`chat.header|sidebar|composer`, `admin.dashboard`). Admin API: `GET /api/plugins`, `POST /api/plugins/:name|disable`.
+Manifest (`PluginManifest`, `src/plugins/types.ts`): `name`, `version`, `description`, `author`, `homepage?`, `license?`, `onLoad?(ctx)`, `onUnload?()`, `tools?`, `agentRoles?`, `apiRoutes?`, `uiComponents?`, `eventHandlers?`, `migrations?`, `configSchema?`, `config?`, `characterRequirements?`. `PluginContext`: `db`, `config`, `logger`, `registerTool`, `registerAgentRole`, `registerApiRoute`, `registerUiComponent`, `registerEventHandler`. Lifecycle: `loadAllPlugins` → manifest → registry → `onLoad(ctx)` → persist `plugin_state`; reverse-order `onUnload()`. Event bus: `emitPluginEvent` wired to chat lifecycle (`chat.created/deleted/archived`, `message.variant.created`). Tool executor with timeout. Config merge. Mount-point lookup (`chat.header|sidebar|composer`, `admin.dashboard`). Admin API: `GET /api/v1/plugins`, `POST /api/v1/plugins/:name/enable`, `POST /api/v1/plugins/:name/disable`.
 
 ### 9.2 What integration plugins need (gaps → tickets)
 
@@ -247,7 +247,7 @@ Manifest (`PluginManifest`, `src/plugins/types.ts`): `name`, `version`, `descrip
 | Secret-access tokens (per-plugin credential reference, resolved by the host) | **Missing** | no secret injection; plugins would need raw config access |
 | Background timers / cron registration | **Missing** | no `registerTimer` on `PluginContext` |
 | Webhook mounting | **Partial** | `apiRoutes` can receive webhooks, but no HMAC-verified webhook-receiver helper |
-| UI component serving route | **Partial** | `getComponentsForMountPoint` lookup exists; no `GET /api/plugins/ui-components` route |
+| UI component serving route | **Shipped** | `GET /api/v1/plugins/ui-components` is mounted (`src/routes/plugins/index.ts:81-113`); it lists the components for a mount point |
 | Inbound event bus for adapter events | **Partial** | bus is chat-lifecycle-only; no `adapter.message.received` emission |
 
 These gaps are tracked by `TASK-plugin-host-contract-for-third-party-integration-plugins`.
