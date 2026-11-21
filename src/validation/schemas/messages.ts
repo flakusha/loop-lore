@@ -136,6 +136,27 @@ export const MessageListItemSchema = t.Object({
   created_at: t.String(),
 },);
 
+/**
+ * Variant sibling in the GET /messages/:id/variants array: the RAW message
+ * row plus render-time plaintext content. Unlike the list/single-message
+ * contract, attachments and tool_calls here are the STORED JSON strings
+ * (no enrichment runs on this path).
+ */
+export const MessageVariantItemSchema = t.Object({
+  id: Id,
+  chat_id: Id,
+  parent_id: t.Union([Id, t.Null(),],),
+  role: MessageRoleSchema,
+  content: t.String({ description: "Render-time plaintext content (transformed, or the decrypt-failure placeholder).", },),
+  content_type: MessageContentTypeSchema,
+  status: MessageStatusSchema,
+  visibility: MessageVisibilitySchema,
+  attachments: t.Union([t.String(), t.Null(),], { description: "Stored attachment JSON string (raw, unenriched on this route), or null.", },),
+  tool_calls: t.Union([t.String(), t.Null(),], { description: "Stored tool-call JSON string (raw), or null.", },),
+  swipe_index: t.Union([t.Number(), t.Null(),],),
+  created_at: t.String(),
+},);
+
 export const MusicLinkMessageSchema = t.Object({
   id: t.String(),
   chatId: t.String(),
