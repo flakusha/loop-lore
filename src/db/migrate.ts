@@ -251,7 +251,11 @@ async function migrate(): Promise<void> {
   await database.destroy();
 }
 
-// Run only when executed directly (bun run src/db/migrate.ts)
+// Run only when executed directly (bun run src/db/migrate.ts).
+// No top-level await here: CommonJS bytecode output (--bytecode) forbids TLA.
 if (import.meta.main) {
-  await migrate();
+  migrate().catch((error: unknown,) => {
+    getLogger().fatal("migration failed", error instanceof Error ? error : new Error(String(error,),),);
+    process.exit(1,);
+  },);
 }
