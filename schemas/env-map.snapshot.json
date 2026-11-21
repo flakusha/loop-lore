@@ -16,6 +16,7 @@
   "ASSISTANT_ENABLED": "assistant.enabled",
   "ASSISTANT_TRAVELPROMPTS": "assistant.travelPrompts",
   "ASSISTANT_SMARTREGENGATE": "assistant.smartRegenGate",
+  "ASSISTANT_GMTOOLKEYWORDGATE": "assistant.gmToolKeywordGate",
   "ASSISTANT_QUOTAWINDOWMS": "assistant.quotaWindowMs",
   "ASSISTANT_QUOTALIMITPERWINDOW": "assistant.quotaLimitPerWindow",
   "LOGGING_LEVEL": "logging.level",
