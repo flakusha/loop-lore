@@ -16,6 +16,7 @@ import { dbBackupRoutes, } from "./db-backup";
 import { effectiveConfigRoutes, } from "./effective-config";
 import { federationAdminRoutes, } from "./federation";
 import { integrationTokenRoutes, } from "./integration-tokens";
+import { integrityRoutes, } from "./integrity";
 import { itemPowerRoutes, } from "./item-power";
 import { keyRotationRoutes, } from "./key-rotation";
 import { llamaSwapRoutes, } from "./llama-swap";
@@ -119,5 +120,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
     .use(llamaSwapRoutes(opts, prefix,),)
     .use(mfaConfigRoutes(opts, prefix,),);
 
-  return routes.use(watchdogRoutes(opts, prefix,),);
+  return routes
+    .use(watchdogRoutes(opts, prefix,),)
+    .use(integrityRoutes(opts, prefix,),);
 }

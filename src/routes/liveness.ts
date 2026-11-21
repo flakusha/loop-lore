@@ -15,6 +15,8 @@ import { Elysia, } from "elysia";
 import { sql, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { getIntegrityState, } from "../integrity/state";
+import { toDate, } from "../utils/date";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const startTime = Date.now();
@@ -72,9 +74,19 @@ export function livenessRoutes(opts: LivenessOpts,): Elysia {
         },);
       }
 
+      const integrity = getIntegrityState();
       return jsonResponse({
         status: "ok",
         checks: { database: "ok", },
+        integrity: {
+          verdict: integrity.verdict,
+          detail: integrity.detail,
+          checkedAt: integrity.checkedAtMs === null
+            ? null
+            : toDate(integrity.checkedAtMs,).toISOString(),
+          uncleanShutdown: integrity.uncleanShutdown,
+          safeMode: integrity.safeMode,
+        },
         timestamp: new Date().toISOString(),
       },);
     }, {

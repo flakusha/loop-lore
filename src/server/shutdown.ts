@@ -8,6 +8,7 @@
 import { flushActiveStore, } from "../async";
 import { getScheduler, } from "../cron";
 import { closeHarnessRuntime, } from "../integrations/harness/runtime";
+import { clearBootSentinel, } from "../integrity/boot";
 import { getLogger, } from "../logger";
 import { unloadAllPlugins, } from "../plugins";
 
@@ -52,7 +53,10 @@ export function registerShutdownHandlers(
     logger,
   } = resources;
 
-  process.on("exit", () => {
+  process.on("exit", (code,) => {
+    // Only a clean exit clears the sentinel. Crashes/non-zero exits leave it
+    // in place so the next boot detects the unclean shutdown.
+    if (code === 0) { clearBootSentinel(); }
     serverManager.killAllSync();
     closeHarnessRuntime();
   },);

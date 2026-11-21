@@ -26,6 +26,7 @@ describe("cron default jobs", () => {
   test("catalog names and schedules are valid", () => {
     const jobs = defaultJobs();
     expect(jobs.map((j,) => j.name),).toEqual([
+      "integrity.check",
       "telemetry.retention",
       "chat.archive-expiration",
       "async.offload",

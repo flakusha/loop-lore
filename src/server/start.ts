@@ -23,6 +23,7 @@ import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
 import { applyStoredInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
 import { maybeStartStdioProxyListener, } from "../integrations/inbound/stdio-proxy-listener";
+import { runBootIntegrityGate, } from "../integrity/boot";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { loadAllPlugins, } from "../plugins";
@@ -143,6 +144,7 @@ export async function start() {
   initializeProviders(config,);
   initDefaultHooks();
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
   const database = getDatabase(resolveDbPath(process.env, config.server,),);
   const logger = getLogger();
   bindSharedQuotaEngine(database,);
@@ -212,6 +214,10 @@ export async function start() {
 
   await runMigrations(database,); // ensure DB schema ready before serving
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
+  // Unclean-shutdown detection + startup integrity gate. On a fail verdict
+  // this enters safe mode; the central request gate then rejects writes.
+  // Best-effort fs + a bounded PRAGMA quick_check; never blocks boot.
+  runBootIntegrityGate(serverLogger,);
 
   // Startup health check — scan after the schema exists so the boot scan
   // populates model_capabilities before the first request.

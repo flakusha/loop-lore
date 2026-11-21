@@ -4,6 +4,7 @@
 import type { loadConfig, } from "../config/load";
 import type { getDatabase, } from "../db/index";
 import type { TranslatorFn, } from "../i18n/types";
+import { isWriteBlocked, safeModeResponse, } from "../integrity/safe-mode";
 import type { getLogger, } from "../logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "../middleware";
 import { generateNonce, } from "../middleware/csp-nonce";
@@ -55,6 +56,12 @@ export function createRequestHandler(
 
     const taggedRequest = new Request(request, { headers, },);
     generateNonce(taggedRequest,);
+
+    // Safe mode blocks writes centrally (all routes + plugins); reads and
+    // health probes still serve. Verdict detail lives in the health endpoint.
+    if (isWriteBlocked(request.method,)) {
+      return safeModeResponse();
+    }
 
     let response = await app.fetch(taggedRequest,);
     response.headers.set("X-Request-Id", requestId,);

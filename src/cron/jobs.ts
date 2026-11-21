@@ -35,6 +35,15 @@ function trustByOriginOf(config: Config,): Record<string, Config["federation"]["
 export function defaultJobs(): CronJobDef[] {
   return [
     defineJob({
+      name: "integrity.check",
+      schedule: "*/5 * * * *",
+      enabled: true,
+      run: async ({ logger, },) => {
+        const { runScheduledIntegrityCheck, } = await import("../integrity/scheduled-check");
+        return runScheduledIntegrityCheck(logger,);
+      },
+    },),
+    defineJob({
       name: "telemetry.retention",
       schedule: "0 3 * * *",
       enabled: true,
