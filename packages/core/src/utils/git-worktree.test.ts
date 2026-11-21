@@ -106,6 +106,44 @@ describe("findMainRepoRoot", () => {
       rmSync(worktreeDir, { recursive: true, force: true, },);
     }
   });
+
+  test("returns its own root for a colocated jj checkout", () => {
+    const tempDir = join(tmpdir(), `test-jj-${Date.now()}-${Math.random()}`,);
+    mkdirSync(join(tempDir, ".jj",), { recursive: true, },);
+    try {
+      expect(findMainRepoRoot(tempDir,),).toBe(tempDir,);
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("returns its own root for a colocated pijul checkout beside a git dir", () => {
+    const tempDir = join(tmpdir(), `test-pijul-${Date.now()}-${Math.random()}`,);
+    mkdirSync(join(tempDir, ".git",), { recursive: true, },);
+    mkdirSync(join(tempDir, ".pijul",), { recursive: true, },);
+    try {
+      expect(findMainRepoRoot(tempDir,),).toBe(tempDir,);
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("git worktree detection wins over a non-git marker", () => {
+    const mainDir = join(tmpdir(), `test-main-jj-${Date.now()}-${Math.random()}`,);
+    const worktreeDir = join(tmpdir(), `test-wt-jj-${Date.now()}-${Math.random()}`,);
+    mkdirSync(join(mainDir, ".git",), { recursive: true, },);
+    mkdirSync(join(worktreeDir, ".jj",), { recursive: true, },);
+    writeFileSync(
+      join(worktreeDir, ".git",),
+      `gitdir: ${join(mainDir, ".git", "worktrees", "br",)}\n`,
+    );
+    try {
+      expect(findMainRepoRoot(worktreeDir,),).toBe(mainDir,);
+    } finally {
+      rmSync(mainDir, { recursive: true, force: true, },);
+      rmSync(worktreeDir, { recursive: true, force: true, },);
+    }
+  });
 });
 
 describeOrSkip("findMainRepoRoot stat-failure paths", () => {
