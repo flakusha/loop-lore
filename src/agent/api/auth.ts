@@ -149,12 +149,17 @@ export async function verifyAgentToken(
     return null;
   }
 
-  // A malformed expiry is never a reason to treat the token as valid: a
-  // timestamp that cannot be parsed (or is not in the future) fails closed
-  // into the guard's existing 401, before the usage stamp is written.
+  // Only canonical ISO instants (the mint's toISOString output) count: a
+  // loose string such as "12/31/9999" parses to a future date and must not
+  // extend a credential's lifetime. Anything malformed, unparseable or past
+  // fails closed into the guard's existing 401, before the usage stamp.
   if (row.expires_at !== null) {
     const expiresAt = toDate(row.expires_at,);
-    if (Number.isNaN(expiresAt.getTime(),) || expiresAt.getTime() <= Date.now()) {
+    if (
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(row.expires_at,) ||
+      Number.isNaN(expiresAt.getTime(),) ||
+      expiresAt.getTime() <= Date.now()
+    ) {
       log?.debug("agent token expired or malformed expiry", { tokenId: row.id, },);
       return null;
     }

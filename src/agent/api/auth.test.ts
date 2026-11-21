@@ -248,6 +248,17 @@ describe("agent token TTL — fail-closed expiry", () => {
     expect(await verifyAgentToken(db, raw,),).toBeNull();
   });
 
+  test("a loose future-parsing expiry is rejected as malformed", async () => {
+    const raw = await insertToken(AgentTokenScope.Check, {
+      // V8 parses this to year 9999 — a parseable but non-ISO stamp must
+      // never extend a token's lifetime.
+      expiresAt: "12/31/9999",
+    },);
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
+    expect(await verifyAgentToken(db, raw,),).toBeNull();
+  });
+
   test("a future expiry passes the same guard", async () => {
     const raw = await insertToken(AgentTokenScope.Check, {
       expiresAt: new Date(Date.now() + 60_000,).toISOString(),
