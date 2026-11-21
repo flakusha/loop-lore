@@ -376,6 +376,32 @@ configPath = "/tmp/llama-swap.yaml"
     }
   });
 
+  test("assistant.gmToolKeywordGate loads false and defaults to true when unset", () => {
+    setupConfigFiles({
+      "config.toml": `
+[assistant]
+gmToolKeywordGate = false
+`,
+    },);
+    try {
+      expect(loadConfig(tmpDir,).assistant.gmToolKeywordGate,).toBe(false,);
+    } finally {
+      cleanup();
+    }
+
+    setupConfigFiles({
+      "config.toml": `
+[server]
+port = 7171
+`,
+    },);
+    try {
+      expect(loadConfig(tmpDir,).assistant.gmToolKeywordGate,).toBe(true,);
+    } finally {
+      cleanup();
+    }
+  });
+
   test("rejects a bedrock provider config at load (no implementation exists)", () => {
     setupConfigFiles({
       "config.toml": `

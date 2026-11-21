@@ -15,6 +15,7 @@ export const ASSISTANT_DEFAULTS = {
   enabled: true,
   travelPrompts: false,
   smartRegenGate: false,
+  gmToolKeywordGate: true,
   ...ASSISTANT_QUOTA_DEFAULTS,
 };
 
@@ -23,6 +24,7 @@ export class AssistantSection {
   enabled = ASSISTANT_DEFAULTS.enabled;
   travelPrompts = ASSISTANT_DEFAULTS.travelPrompts;
   smartRegenGate = ASSISTANT_DEFAULTS.smartRegenGate;
+  gmToolKeywordGate = ASSISTANT_DEFAULTS.gmToolKeywordGate;
   quotaWindowMs = ASSISTANT_QUOTA_DEFAULTS.quotaWindowMs;
   quotaLimitPerWindow = ASSISTANT_QUOTA_DEFAULTS.quotaLimitPerWindow;
 
@@ -56,6 +58,12 @@ export const assistantMeta = {
       default: ASSISTANT_DEFAULTS.smartRegenGate,
       description:
         "Smart-regen decision gate: when enabled, /regen without an explicit action resolves by message-size heuristic to a plain re-roll or an alternate style instead of showing the usage menu",
+    },
+    gmToolKeywordGate: {
+      type: "boolean",
+      default: ASSISTANT_DEFAULTS.gmToolKeywordGate,
+      description:
+        "Keyword pre-gate for AUX GM-tool detection: default-on; on gate error it fails open (the AUX call proceeds), and it suppresses only the AUX detection call — never the slash-command GM-tool path",
     },
     quotaWindowMs: {
       type: "integer",
