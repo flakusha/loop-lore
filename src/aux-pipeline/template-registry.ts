@@ -185,4 +185,12 @@ export const AUX_CLASSIFICATION_TASKS: Readonly<Record<AuxTaskName, Classificati
     // Deterministic severity verdicts; one short label.
     call: { temperature: 0, maxTokens: 20, },
   },),
+  "minimax-prompt": defineClassificationTask({
+    task: "minimax-prompt",
+    purpose: null, // caller-built messages pin the exact FL/REF heading grammar
+    labels: [],
+    preferClassifier: false,
+    // Long structured rewrite (multi-heading, multi-shot), deterministic.
+    call: { timeoutMs: 15_000, maxTokens: 2000, temperature: 0, },
+  },),
 };

@@ -267,11 +267,36 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
-    expect(opts.lora,).toEqual(LORA_CONFIG,);
+    expect(opts.lora,).toEqual([LORA_CONFIG,],);
   });
 
-  // (3) Opt-in: ComfyUI backend selected + lora → passed through
+  it("normalizes a LoRA array and passes every entry through", async () => {
+    const configs = [
+      { name: "first", strength: 0.5, backend: "sd-server", },
+      { name: "second", strength: 0.6, backend: "sd-server", },
+    ];
 
+    const body = makeBody({ prompt: "array lora prompt", lora: configs, },);
+    await handleImageGeneration(body, await migratedDb(), "test-user",);
+
+    expect(generateImagesCalls.length,).toBeGreaterThan(0,);
+    const [, opts,] = generateImagesCalls[0]!;
+    expect(opts.lora,).toEqual(configs,);
+  });
+
+  it("rejects an invalid LoRA strength with 400 before generation", async () => {
+    const body = makeBody({
+      prompt: "bad strength",
+      lora: [{ name: "char", strength: 2, backend: "sd-server", },],
+    },);
+
+    const res = await handleImageGeneration(body, await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(400,);
+    const json = await res.json() as { error: string };
+    expect(json.error,).toContain("strength must be between",);
+    expect(generateImagesCalls.length,).toBe(0,);
+  });
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
@@ -319,7 +344,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
-    expect((opts.lora as Record<string, unknown>).name,).toBe("style_lora",);
+    expect((opts.lora as { name: string }[])[0]?.name,).toBe("style_lora",);
   });
 
   // (4) Missing prompt → HTTP 400

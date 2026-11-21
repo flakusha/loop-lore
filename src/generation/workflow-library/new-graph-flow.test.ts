@@ -135,4 +135,17 @@ describe("shipped workflow exports pre-submit flow", () => {
       }
     }
   });
+
+  it("MiniMax video exports bind exactly one {{prompt}} placeholder", () => {
+    const videoExports = [
+      "minimax-h3-video-fl2va-v1.json",
+      "minimax-h3-video-fl2va-opt-v1.json",
+      "minimax-h3-video-ref2va-v1.json",
+      "minimax-h3-video-ref2va-opt-v1.json",
+    ] as const;
+
+    for (const name of videoExports) {
+      expect([...collectPlaceholders(load(name,),),],).toEqual(["prompt",],);
+    }
+  });
 });

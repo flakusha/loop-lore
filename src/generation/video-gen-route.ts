@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 260
+// size-allow: 300
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).
@@ -12,10 +12,12 @@
  */
 import type { DB, } from "../db/schema";
 import type { Kysely, } from "kysely";
+import { callAux, } from "../aux-pipeline/runner";
+import { checkChatAccess, } from "../chat/service";
 import type { VideoProviderConfig, } from "../config/schema";
 import { ErrorCode, } from "../routes/http-utils/status";
+import { formatMinimaxPrompt, minimaxModeForWorkflow, } from "./minimax/prompt-format";
 import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
-import { checkChatAccess, } from "../chat/service";
 import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
 import { extensionForMime, } from "../assets/service/detect";
 import { forbiddenResponse, } from "../routes/http-utils";
@@ -94,6 +96,10 @@ interface VideoGenBody {
   workflow?: string;
   /** LoRA config when a structured caller supplies one — validated, not applied. */
   lora?: unknown;
+  /** Plain per-cut scenario for MiniMax FL/REF prompt conversion. */
+  details?: string;
+  shots?: string[];
+  references?: string[];
 }
 
 /**
@@ -233,6 +239,36 @@ export async function handleVideoGeneration(
   const requestProviders = workflow === undefined
     ? providers
     : providers.map((provider,) => ({ ...provider, workflow, }));
+
+  // MiniMax H3 FL/REF exports need the Director heading/shot grammar: a plain
+  // scenario would otherwise substitute into an unformatted prompt. Convert
+  // through the shared AUX seam (one retry inside) and fail closed on failure.
+  const minimaxMode = minimaxModeForWorkflow(workflow,);
+  if (minimaxMode) {
+    const converted = await formatMinimaxPrompt({
+      mode: minimaxMode,
+      details: req.details ?? prompt,
+      shots: req.shots,
+      references: req.references,
+      durationSeconds: req.seconds,
+    }, {
+      call: callAux,
+      config,
+      db,
+      userId,
+    },);
+
+    if (!converted.ok) {
+      return Response.json({
+        error: "minimax_prompt_format_unavailable",
+        status: 422,
+        reason: converted.reason,
+        ...(converted.missing ? { missing: converted.missing, } : {}),
+      }, { status: 422, },);
+    }
+
+    prompt = converted.prompt;
+  }
 
   // Async submit: the render runs as a floating promise so one HTTP
   // request is not held through a multi-minute ComfyUI render. The

@@ -30,6 +30,19 @@ import type {
 } from "../types";
 import { uploadImageParams, } from "./comfyui-image-upload";
 
+import { applyLoraSlots, resolveLoraSlotNode, } from "../../generation/lora/apply-slots";
+import { parseLoraString, } from "../templates/builtin/lora";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
+/**
+ * ComfyUI Image Edit Provider — Executes templates via ComfyUI API
+ *
+ * download generated images, and store them as assets.
+ * @module comfyui-provider
+ */
+
 let _log: ReturnType<typeof getLogger> | null = null;
 function log() {
   _log ??= getLogger();
@@ -204,7 +217,21 @@ export class ComfyUIEditProvider implements ImageEditProvider {
       chatId: request.chatId,
     },);
 
-    const workflow = template.build(params,);
+    let workflow = template.build(params,);
+
+    // Slot-style graphs carry their LoRAs in one node's rows. Graphs without
+    // such a node are left untouched: their template owns the LoraLoader path.
+    const slotNode = resolveLoraSlotNode(workflow,);
+    if (slotNode) {
+      const loras = parseLoraString((params.loras as string) ?? "",);
+      if (loras.length > 0) {
+        workflow = applyLoraSlots(
+          workflow,
+          slotNode,
+          loras.map((entry,) => ({ filename: entry.path, strength: entry.strength, })),
+        ) as ComfyUIWorkflow;
+      }
+    }
 
     onProgress?.({ status: "running", message: "Submitting to ComfyUI...", },);
 

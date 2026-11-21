@@ -24,7 +24,6 @@ import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
-import { validateLoRAConfig, } from "./lora/validation";
 import { assertComfyUIModelName, } from "./providers/comfyui-model-discovery";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
@@ -36,6 +35,15 @@ import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-typ
 import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
 
 import { resolveWorkflowForUseCase, } from "./workflow-selection";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 335
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 335
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
  * the output size is known. One 1024x1024 PNG is roughly this big; refusing
@@ -74,8 +82,8 @@ interface ImageGenBody {
   workflow?: string;
   /** Owning asset id of the img2img init image (ComfyUI path only). */
   init_image?: string;
-  /** Optional LoRA model to inject into the generation pipeline. */
-  lora?: LoRAConfig;
+  /** One or more LoRAs; a single object is accepted for compatibility. */
+  lora?: LoRAConfig | LoRAConfig[];
   /** Picked ComfyUI model roles; each substitutes one graph placeholder. */
   model?: string;
   clip?: string;
@@ -192,16 +200,9 @@ export async function handleImageGeneration(
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
   }
 
-  // Trust boundary: picked names/strengths reach ComfyUI graph inputs, so
-  // reject malformed values before any DB or provider work. ponytail: reuse
-  // validateLoRAConfig's permissive [0.1, 1] band while the operator's hard
-  // band is open — do not invent a stricter rule here.
-  if (req.lora) {
-    const loraError = validateLoRAConfig(req.lora,);
-    if (loraError) {
-      return Response.json({ error: loraError, status: 400, }, { status: 400, },);
-    }
-  }
+  // Normalize + validate LoRAs at the boundary; bad strengths never reach generation.
+  const lora = normalizeLoraConfigs(req.lora,);
+  if (!lora.ok) { return Response.json({ error: lora.error, status: 400, }, { status: 400, },); }
 
   const modelPickError = invalidModelPick(req,);
   if (modelPickError) {
@@ -330,7 +331,7 @@ export async function handleImageGeneration(
   // the families that refused it: an operator reading a 400 needs to know
   // which backend has to change.
   const sdCandidates = comfyUiFirstOrder(
-    req.lora
+    lora.configs
       ? configuredSd.filter((p,) => p.apiFamily === "comfyui" || p.apiFamily === "sdcpp")
       : configuredSd,
     config.generation.imageRouting?.comfyUiFirst,
@@ -421,7 +422,7 @@ export async function handleImageGeneration(
       denoise: req.denoising_strength,
       workflow,
       initImage,
-      lora: req.lora,
+      lora: lora.configs,
       model: req.model,
       clip: req.clip,
       vae: req.vae,

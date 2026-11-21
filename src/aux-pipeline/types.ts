@@ -25,7 +25,8 @@ export type AuxTaskName =
   | "rag-ask"
   | "carriage"
   | "adapt"
-  | "immersion-audit";
+  | "immersion-audit"
+  | "minimax-prompt";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {

@@ -234,7 +234,7 @@ describe("generateSDCPP", () => {
 
     const outcome = await generateSDCPP(CONFIG, {
       ...OPTS,
-      lora: { name: "char", strength: 0.8, backend: "sd-server", },
+      lora: [{ name: "char", strength: 0.8, backend: "sd-server", },],
     },);
 
     expect(outcome.ok,).toBe(true,);
@@ -265,11 +265,47 @@ describe("generateSDCPP", () => {
 
     const outcome = await generateSDCPP(CONFIG, {
       ...OPTS,
-      lora: { name: "missing", strength: 0.5, backend: "sd-server", },
+      lora: [{ name: "missing", strength: 0.5, backend: "sd-server", },],
     },);
 
     expect(outcome.ok,).toBe(true,);
     const parsed = JSON.parse(body,) as Record<string, unknown>;
     expect(parsed.prompt,).toBe("a castle",);
+  });
+
+  it("emits one prefix per LoRA in the array", async () => {
+    clearDiscoveryCache("sd-server",);
+    let body = "";
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const method = (init?.method ?? "GET").toUpperCase();
+      const target = String(url,);
+      if (target.endsWith("/sd-api/v1/models",)) {
+        return Response.json({
+          data: [
+            { id: "char.safetensors", object: "model", created: 1, owned_by: "test", },
+            { id: "style.safetensors", object: "model", created: 1, owned_by: "test", },
+          ],
+        },);
+      }
+
+      if (method === "POST") {
+        body = typeof init?.body === "string" ? init.body : "";
+        return Response.json({ id: "job-lora-multi", },);
+      }
+
+      return Response.json({ status: "done", images: [B64,], },);
+    }) as typeof fetch;
+
+    const outcome = await generateSDCPP(CONFIG, {
+      ...OPTS,
+      lora: [
+        { name: "char", strength: 0.6, backend: "sd-server", },
+        { name: "style.safetensors", strength: 0.4, backend: "sd-server", },
+      ],
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(body,) as Record<string, unknown>;
+    expect(parsed.prompt,).toBe("[lora:char:0.6] [lora:style.safetensors:0.4] a castle",);
   });
 });

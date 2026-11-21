@@ -40,8 +40,8 @@ export interface ImageGenOptions {
   denoise?: number;
   /** ComfyUI workflow name (defaults to "txt2img"). */
   workflow?: string;
-  /** Optional LoRA model to inject into the generation pipeline. */
-  lora?: LoRAConfig;
+  /** Optional LoRAs to inject into the generation pipeline. */
+  lora?: LoRAConfig[];
   /** Picked model roles; fall back to the provider's config pins. */
   model?: string;
   clip?: string;

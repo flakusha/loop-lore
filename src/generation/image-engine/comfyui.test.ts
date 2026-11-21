@@ -46,6 +46,8 @@ const OPTS = {
   prompt: "a tiny castle",
   n: 1,
   outputFormat: "png",
+  // The shipped catalog names exports with a -v1 suffix.
+  workflow: "txt2img-v1",
 };
 
 /**
@@ -466,5 +468,102 @@ describe("generateComfyUI", () => {
     }
 
     expect(stub.submitted(),).toBe("",);
+  });
+
+  it("fills qwen WAS slots with full filenames, not stripped names", async () => {
+    const config = { ...CONFIG, baseUrl: "http://127.0.0.1:9101", };
+    let submitted = "";
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/object_info",)) {
+        return Response.json({
+          LoraLoader: {
+            input: {
+              required: { lora_name: [["char.safetensors", "style.safetensors",], {},], },
+            },
+          },
+        },);
+      }
+
+      if (target.endsWith("/prompt",)) {
+        submitted = typeof init?.body === "string" ? init.body : "";
+        return Response.json({ prompt_id: "p-slot", },);
+      }
+
+      if (target.includes("/history/",)) {
+        return Response.json({
+          "p-slot": { prompt_id: "p-slot", status: "completed", outputs: {}, },
+        },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(config, {
+      ...OPTS,
+      workflow: "qwen-image-2-1-t2i-v1",
+      lora: [
+        { name: "char", strength: 0.6, backend: "comfyui", },
+        { name: "style.safetensors", strength: 0.4, backend: "comfyui", },
+      ],
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(submitted,) as {
+      prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
+    };
+
+    const slot = Object.values(parsed.prompt,).find(
+      (n,) => n.class_type === "WASPowerLoraLoader",
+    )!;
+
+    expect(slot.inputs["lora_1"],).toBe("char.safetensors",);
+    expect(slot.inputs["lora_1_weight"],).toBe(0.6,);
+    expect(slot.inputs["lora_1_enabled"],).toBe(true,);
+    expect(slot.inputs["lora_2"],).toBe("style.safetensors",);
+    expect(slot.inputs["lora_3"],).toBe("None",);
+    expect(slot.inputs["lora_3_enabled"],).toBe(false,);
+  });
+
+  it("returns a 400 when a requested LoRA is unknown on a slot graph", async () => {
+    const config = { ...CONFIG, baseUrl: "http://127.0.0.1:9102", };
+    let submitted = "";
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/object_info",)) {
+        return Response.json({
+          LoraLoader: {
+            input: { required: { lora_name: [["other.safetensors",], {},], }, },
+          },
+        },);
+      }
+
+      if (target.endsWith("/prompt",)) {
+        submitted = typeof init?.body === "string" ? init.body : "";
+        return Response.json({ prompt_id: "p-unknown", },);
+      }
+
+      if (target.includes("/history/",)) {
+        return Response.json({
+          "p-unknown": { prompt_id: "p-unknown", status: "completed", outputs: {}, },
+        },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(config, {
+      ...OPTS,
+      workflow: "qwen-image-2-1-t2i-v1",
+      lora: [{ name: "char", strength: 0.7, backend: "comfyui", },],
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(400,);
+      expect(outcome.error,).toContain("Unknown LoRA",);
+    }
+
+    expect(submitted,).toBe("",);
   });
 });

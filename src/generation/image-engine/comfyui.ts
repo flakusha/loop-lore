@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { randomUUID, } from "node:crypto";
-import type { ImageProviderConfig, } from "../../config/schema";
-import { getLogger, type Logger, } from "../../logger";
-import { validateProviderUrl, } from "../../utils/url-validation";
-import { discoverLoras, } from "../lora/discovery";
-import { injectComfyUILora, } from "../lora/discovery-comfyui";
-import type { LoRAModel, } from "../lora/types";
-import { ComfyUIClient, } from "../providers/comfyui";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
-import { uploadImageToComfy, } from "../providers/comfyui-upload";
-import { loadComfyUIWorkflow, } from "../workflow-loader";
-import { failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
+import type { ImageProviderConfig, } from "../../config/schema";
+import type { LoRAConfig, LoRAModel, } from "../lora/types";
+import { ComfyUIClient, } from "../providers/comfyui";
+import { applyLoraSlots, resolveLoraSlotFiles, resolveLoraSlotNode, } from "../lora/apply-slots";
+import { discoverLoras, } from "../lora/discovery";
+import { failure, ok, } from "./helpers";
+import { getLogger, type Logger, } from "../../logger";
+import { injectComfyUILora, } from "../lora/discovery-comfyui";
+import { loadComfyUIWorkflow, } from "../workflow-loader";
+import { randomUUID, } from "node:crypto";
+import { uploadImageToComfy, } from "../providers/comfyui-upload";
+import { validateProviderUrl, } from "../../utils/url-validation";
 
 /**
  * Lazily resolve the module logger (null before logger init).
@@ -27,6 +27,53 @@ function log(): Logger | null {
   }
 }
 
+/** Outcome of applying LoRAs to a loaded graph. */
+type LoraApplyResult = { ok: true; workflow: ComfyUIWorkflow } | { ok: false; error: string };
+
+/**
+ * Slot-capable nodes take the full discovered filename in their WAS rows;
+ * other graphs keep the legacy core LoraLoader injection path.
+ */
+async function applyRequestedLoras(
+  workflow: ComfyUIWorkflow,
+  loras: readonly LoRAConfig[],
+  baseUrl: string,
+): Promise<LoraApplyResult> {
+  const discovered = await discoverLoras("comfyui", baseUrl,);
+  const slotNode = resolveLoraSlotNode(workflow,);
+
+  if (!slotNode) {
+    for (const lora of loras) {
+      const found = discovered.models.some(
+        (m: LoRAModel,) => m.filename === lora.name || m.name === lora.name,
+      );
+
+      if (found) {
+        workflow = injectComfyUILora(workflow, lora.name, lora.strength,) as ComfyUIWorkflow;
+      } else {
+        log()?.warn(
+          "LoRA not found on backend, skipping injection",
+          { loraName: lora.name, backendUrl: baseUrl, },
+        );
+      }
+    }
+
+    return { ok: true, workflow, };
+  }
+
+  try {
+    return {
+      ok: true,
+      workflow: applyLoraSlots(
+        workflow,
+        slotNode,
+        resolveLoraSlotFiles(loras, discovered.models,),
+      ) as ComfyUIWorkflow,
+    };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  }
+}
 /**
  * Generate images via a ComfyUI workflow (loaded + substituted from disk).
  * @param sdConfig
@@ -95,27 +142,12 @@ export async function generateComfyUI(
       : {}),
   },);
 
-  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
-  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
-  if (opts.lora) {
-    const discovered = await discoverLoras("comfyui", sdConfig.baseUrl,);
-    const found = discovered.models.some(
-      (m: LoRAModel,) => m.name === opts.lora!.name,
-    );
-
-    if (found) {
-      // Cast: injectComfyUILora returns Record<string,unknown> which satisfies ComfyUIWorkflow
-      workflow = injectComfyUILora(
-        workflow,
-        opts.lora.name,
-        opts.lora.strength,
-      ) as ComfyUIWorkflow;
-    } else {
-      log()?.warn(
-        "LoRA not found on backend, skipping injection",
-        { loraName: opts.lora.name, backendUrl: sdConfig.baseUrl, },
-      );
-    }
+  // Slot graphs (the shipped qwen exports) take the full filename in their
+  // WAS rows; other graphs keep the existing core LoraLoader injection.
+  if (opts.lora && opts.lora.length > 0) {
+    const applied = await applyRequestedLoras(workflow, opts.lora, sdConfig.baseUrl,);
+    if (!applied.ok) { return failure(applied.error, 400,); }
+    workflow = applied.workflow;
   }
 
   const comfyClient = new ComfyUIClient({
