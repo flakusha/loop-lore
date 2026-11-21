@@ -55,6 +55,7 @@ import {
   insertAssets,
   insertChatParticipants,
   insertChats,
+  insertMessages,
   insertUsers,
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
@@ -242,6 +243,72 @@ describe("GET /api/v1/chats/:id/messages — chat/api.ts loadMessages reads", ()
     expect(body.data,).toHaveLength(1,);
     expect(body.pagination.pageSize,).toBe(1,);
     expect(body.pagination.totalPages,).toBeGreaterThan(1,);
+  });
+});
+
+// ── GET /api/v1/chats/:id/messages — attachments ───────────────────────────
+// `chat/types.ts` declares `attachments?: ReadonlyArray<{ assetId: string }>`
+// and `chat/display.ts` renders a chip off it (`attachments.length`,
+// `attachments[0].assetId`). The server serializer
+// (`src/routes/messages/helpers.ts` → `enrichAttachments`) resolves the stored
+// `messages.attachments` JSON into enriched descriptors, or `null` when the row
+// carries none — the field is always present on the row, never absent and
+// never `[]`. Both cases are pinned here so a dropped/renamed field or a
+// serializer that starts emitting `[]`/`undefined` fails loudly.
+describe("GET /api/v1/chats/:id/messages — the attachments field the ChatMessage type reads", () => {
+  let withAttachmentId: string;
+  let withoutAttachmentId: string;
+  let assetId: string;
+
+  beforeAll(async () => {
+    assetId = await insertAssets(
+      db,
+      userId,
+      "contract-attachment.png",
+      "image/png",
+      AssetType.Image,
+      512,
+      ".tmp/tui-api-contract/contract-attachment.png",
+    );
+
+    withAttachmentId = await insertMessages(db, chatId, userId, "user", "contract: turn with attachment", {
+      attachments: JSON.stringify([{ assetId, order: 0, caption: "", label: "message-attachment", },],),
+    },);
+
+    await insertAssetLinks(db, assetId, AssetLinkEntity.Message, withAttachmentId,);
+
+    withoutAttachmentId = await insertMessages(db, chatId, userId, "user", "contract: turn without attachment",);
+  },);
+
+  test("a message with a linked attachment carries the attachments array the chip renders", async () => {
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=200`,);
+    expect(res.status,).toBe(200,);
+
+    const body = (await res.json()) as { data: ChatMessage[] };
+    const row = body.data.find((m,) => m.id === withAttachmentId);
+    expect(row,).toBeDefined();
+
+    const attachments = row!.attachments;
+    expect(Array.isArray(attachments,),).toBe(true,);
+    expect(attachments,).toHaveLength(1,);
+    // The chip reads `assetId` off the first descriptor.
+    expect(typeof attachments![0]!.assetId,).toBe("string",);
+    expect(attachments![0]!.assetId,).toBe(assetId,);
+  });
+
+  test("a message without an attachment still carries the field, as null — not absent, not []", async () => {
+    const res = await call(`/api/v1/chats/${chatId}/messages?page=1&pageSize=200`,);
+    const body = (await res.json()) as { data: { id: string; attachments?: unknown }[] };
+    const row = body.data.find((m,) => m.id === withoutAttachmentId);
+    expect(row,).toBeDefined();
+
+    // The KEY is always present (the serializer writes it unconditionally) —
+    // its value is null when the row has no attachment. `chat/types.ts` types
+    // it as optional (undefined); both are falsy, so the TUI's
+    // `message.attachments?.length` guard reads them the same way.
+    expect("attachments" in row!,).toBe(true,);
+    expect(row!.attachments,).toBeNull();
+    expect(Array.isArray(row!.attachments,),).toBe(false,);
   });
 });
 
