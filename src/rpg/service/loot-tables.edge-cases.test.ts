@@ -89,15 +89,10 @@ describe("rollLootTable — quantity boundaries", () => {
     expect(result?.itemName,).toBe("Coin",);
   });
 
-  // PRODUCT BUG (edge-case sweep 2026-11-01): the quantity formula
-  // `min + floor(random * (max - min + 1))` goes negative-range for
-  // max < min — observed quantities 3..4 for min 5 / max 2, i.e. BELOW the
-  // configured minimum. addLootEntry performs no validation either.
-  // Correct behavior: clamp the roll into [min, max] (or reject inverted
-  // bounds at addLootEntry). Skipped so the suite stays green; see the report.
-  test.skip("inverted min/max quantity stays inside [min, max]", async () => {
+  test("inverted bounds are rejected on write; legacy rows roll the configured minimum", async () => {
     const tableId = await createLootTable({ database: db, }, { name: "Inverted", sourceType: "chest", },);
-    await addLootEntry({ database: db, }, {
+
+    await expect(addLootEntry({ database: db, }, {
       lootTableId: tableId,
       itemName: "Bugged Bundle",
       itemType: "junk",
@@ -105,21 +100,24 @@ describe("rollLootTable — quantity boundaries", () => {
       weight: 1,
       minQuantity: 5,
       maxQuantity: 2,
-    },);
+    },),).rejects.toThrow();
+
+    // Simulate a pre-guard row written straight to the table.
+    await db.insertInto("loot_entries",).values({
+      loot_table_id: tableId,
+      item_name: "Legacy Bundle",
+      description: null,
+      item_type: "junk",
+      weight: 1,
+      min_quantity: 5,
+      max_quantity: 2,
+    },).execute();
 
     const result = await withRandom(0.999999, () => rollLootTable({ database: db, }, tableId,),);
-    expect(result?.quantity,).toBeGreaterThanOrEqual(5,);
-    expect(result?.quantity,).toBeLessThanOrEqual(2,);
+    expect(result?.quantity,).toBe(5,);
   });
 
-  // PRODUCT BUG (edge-case sweep 2026-11-01): addLootEntry persists negative
-  // weights and adds them into loot_tables.total_weight. With entries of
-  // weights [10, -5] the recomputed walk total is 5, so random ∈ [0, 5)
-  // always resolves on the FIRST entry and the second is unreachable — the
-  // weighted distribution is silently corrupted.
-  // Correct behavior: reject weight < 0 (or clamp to 0) at addLootEntry.
-  // Skipped so the suite stays green; see the report.
-  test.skip("negative entry weights are rejected", async () => {
+  test("negative entry weights are rejected", async () => {
     const tableId = await createLootTable({ database: db, }, { name: "Negative", sourceType: "chest", },);
     await expect(addLootEntry({ database: db, }, {
       lootTableId: tableId,
