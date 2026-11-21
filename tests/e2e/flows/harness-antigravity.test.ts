@@ -19,6 +19,9 @@
  */
 
 import { afterEach, describe, expect, it, } from "bun:test";
+import { mkdtempSync, realpathSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import {
   createHarnessDriver,
   type HarnessDriver,
@@ -36,10 +39,16 @@ import {
 const fixtures: HarnessFixture[] = [];
 /** Drivers created by the current test; closed after each. */
 const drivers: HarnessDriver[] = [];
+/** Temp cwds for the live tier; removed even when the test throws. */
+const liveDirs: string[] = [];
 
 afterEach(async () => {
   while (drivers.length > 0) { drivers.pop()?.close(); }
   while (fixtures.length > 0) { await fixtures.pop()?.cleanup(); }
+  while (liveDirs.length > 0) {
+    const dir = liveDirs.pop();
+    if (dir !== undefined) { rmSync(dir, { recursive: true, force: true, },); }
+  }
 },);
 
 /** Open a fixture + antigravity-flavored driver, tracked for teardown. */
@@ -98,12 +107,20 @@ const describeLive = process.env.AGY_E2E_LIVE === "1" ? describe : describe.skip
 
 describeLive("Harness Antigravity live (agy acp on PATH)", () => {
   it("discovers models against the real binary", async () => {
-    const driver = await createHarnessDriver({
+    // Unique temp cwd, reaped in afterEach; parallel live runs cannot collide.
+    const cwd = mkdtempSync(join(tmpdir(), "loop-lore-antigravity-acp-",),);
+    liveDirs.push(cwd,);
+    const options: HarnessDriverOptions = {
       profile: "antigravity-live",
       command: ["agy", "acp",],
       flavor: "antigravity",
+      cwd,
       requestTimeoutMs: 60_000,
-    },);
+    };
+
+    expect(realpathSync(cwd,),).not.toBe(realpathSync(process.cwd(),),);
+    expect(options.cwd,).toBe(cwd,);
+    const driver = await createHarnessDriver(options,);
 
     drivers.push(driver,);
 
