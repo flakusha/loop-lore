@@ -33,6 +33,7 @@
         <div
           class="chat-background-backdrop"
           :style="backgroundImageUrl() ? { backgroundImage: 'url(' + backgroundImageUrl() + ')' } : {}"
+          :data-bg-type="backgroundType()"
           aria-hidden="true"
         >
         </div>

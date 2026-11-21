@@ -96,6 +96,30 @@ describe("chatBackgrounds.backgroundImageUrl", () => {
   });
 });
 
+describe("chatBackgrounds.backgroundType", () => {
+  const withType = (type: string,): ChatState =>
+    ({
+      ...chatBackgrounds,
+      _background: { ...row("bg-1", "asset-1",), type, },
+    }) as unknown as ChatState;
+
+  test("returns the stored type for every backend-known value", () => {
+    for (const type of ["static", "animated", "parallax", "particle", "video",]) {
+      expect(chatBackgrounds.backgroundType!.call(withType(type,),),).toBe(type,);
+    }
+  });
+
+  test("returns null for an unknown or future type", () => {
+    expect(chatBackgrounds.backgroundType!.call(withType("hologram",),),).toBeNull();
+  });
+
+  test("returns null when no background is assigned", () => {
+    const state = { ...chatBackgrounds, _background: null, } as unknown as ChatState;
+
+    expect(chatBackgrounds.backgroundType!.call(state,),).toBeNull();
+  });
+});
+
 describeOrSkip("chatBackgrounds.toggleBackgroundPanel", () => {
   test("opening the panel loads the backgrounds, closing does not", async () => {
     handler = async (url,) =>

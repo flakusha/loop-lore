@@ -2445,6 +2445,33 @@ body {
   pointer-events: none;
 }
 
+/* Type hints are styling only — no motion, autoplay, or particle effects.
+   Unknown types omit data-bg-type and keep the base (static) treatment. */
+.chat-background-backdrop[data-bg-type="static"] {
+  background-size: cover;
+}
+
+.chat-background-backdrop[data-bg-type="animated"] {
+  background-size: cover;
+  filter: blur(1px) saturate(1.25);
+}
+
+.chat-background-backdrop[data-bg-type="parallax"] {
+  background-size: auto 120%;
+  background-position: center 30%;
+}
+
+.chat-background-backdrop[data-bg-type="particle"] {
+  background-size: auto;
+  background-repeat: repeat;
+  filter: blur(0.5px);
+}
+
+.chat-background-backdrop[data-bg-type="video"] {
+  background-size: contain;
+  background-color: var(--bg-secondary);
+}
+
 /* Main message area - centered (scoped to chat container) */
 .chat-container .chat-area {
   max-width: var(--chat-width, 720px);
