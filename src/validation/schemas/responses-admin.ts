@@ -99,6 +99,31 @@ export const AdminWorldRow = Type.Object({
 export type AdminWorldRow = Static<typeof AdminWorldRow>;
 
 /**
+ * Body of GET /api/admin/worlds/:id — the full world row plus a location
+ * roll-up. Declares the stable admin-relevant subset; the handler spreads
+ * the raw row, so undeclared columns (lore, rules, rpg_* knobs, ...)
+ * remain additive. rpg_enabled is the stored numeric flag, not a boolean.
+ */
+export const AdminWorldDetail = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  description: Type.Union([Type.String(), Type.Null(),]),
+  owner_id: Type.String(),
+  publication_status: Type.String(),
+  kind: Type.String(),
+  visibility: Type.String(),
+  nsfw_override: Type.Union([Type.String(), Type.Null(),]),
+  rpg_enabled: Type.Number(),
+  created_at: Type.String(),
+  updated_at: Type.String(),
+  locationCount: Type.Number(),
+},);
+/**
+ *
+ */
+export type AdminWorldDetail = Static<typeof AdminWorldDetail>;
+
+/**
  * One `world_event_log` row (admin/world-events.ts). `payload` stays a
  * string: the log is an append-only record whose shape is owned by the
  * simulation that wrote it, so the admin surface reports it verbatim
