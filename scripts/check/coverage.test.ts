@@ -10,6 +10,7 @@
 // - READ-ONLY on the repo: coverage.mjs only reads the lcov file named by
 //   `--coverage-dir` (defaulting to `.tmp/coverage` UNDER the fixture cwd) and
 //   writes nothing. No test points it at a real repo path.
+//   `--files=` only adds read probes of named paths (absent under the fixture cwd).
 // - No ports, no globals, no ordering dependence; `tempDirs` is the only
 //   module-level state and it is drained after every test.
 
@@ -72,6 +73,30 @@ describe("coverage.mjs", () => {
     expect(result.stderr,).not.toContain("elysia-app.ts",);
     const report = JSON.parse(result.stdout,);
     expect(report.modules.map((row: { mod: string },) => row.mod).sort(),).toEqual(["(root)", "server",].sort(),);
+  });
+
+  test("--files buckets a core file by its real module floor", () => {
+    const result = runCoverage(
+      "TN:\nSF:packages/core/src/native/loader.ts\nLF:2\nLH:2\nend_of_record\n",
+      ["--floor=80", "--files=packages/core/src/native/loader.ts",],
+    );
+
+    expect(result.status,).toBe(0,);
+    const row = JSON.parse(result.stdout,).files[0];
+    expect(row.mod,).toBe("native",);
+    expect(row.floor,).toBe(77,);
+  });
+
+  test("--files buckets a top-level core file under (root)", () => {
+    const result = runCoverage(
+      "TN:\nSF:packages/core/src/index.ts\nLF:2\nLH:2\nend_of_record\n",
+      ["--floor=80", "--files=packages/core/src/index.ts",],
+    );
+
+    expect(result.status,).toBe(0,);
+    const row = JSON.parse(result.stdout,).files[0];
+    expect(row.mod,).toBe("(root)",);
+    expect(row.floor,).toBe(75,);
   });
 
   // Argv contract after the Optique migration. These pin the exact shapes

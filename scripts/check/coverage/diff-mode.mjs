@@ -41,7 +41,7 @@ export function runDiffFileMode({ diffFiles, records, floor, floorFor },) {
   const perFile = perFileStats(records,);
 
   const fileRows = diffFiles.map((f,) => {
-    const seg = f.startsWith("src/",) ? f.slice(4,).split("/",)[0] : f.split("/",)[0];
+    const seg = f.replace(/^(?:packages\/core\/)?src\//, "",).split("/",)[0];
     const mod = seg.includes(".",) ? "(root)" : seg;
     const hit = perFile[f];
     const generated = isGenerated(f,);
