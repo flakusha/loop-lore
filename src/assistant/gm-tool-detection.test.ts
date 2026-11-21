@@ -6,12 +6,16 @@
  */
 import { beforeAll, describe, expect, it, } from "bun:test";
 import { createLogger, } from "../logger";
+import { getRegexTelemetrySnapshot, resetRegexTelemetry, setRegexTelemetryEnabled, } from "../regex/telemetry";
+import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
+import { insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import {
   detectGmTool,
   gmToolKeywordGate,
   isGmToolKeywordGateEnabled,
   parseGmToolDetection,
 } from "./gm-tool-detection";
+import { executeGmToolRequest, } from "./gm-tool-execution";
 
 // ─── Setup ────────────────────────────────────────────────────
 
@@ -151,11 +155,69 @@ describe("isGmToolKeywordGateEnabled", () => {
     expect(isGmToolKeywordGateEnabled({ ...mockConfig, },),).toBe(true,);
   });
 
+  it("defaults to enabled for nested or null config", () => {
+    expect(isGmToolKeywordGateEnabled({ ...mockConfig, assistant: {}, },),).toBe(true,);
+    expect(isGmToolKeywordGateEnabled({ ...mockConfig, features: {}, },),).toBe(true,);
+    expect(isGmToolKeywordGateEnabled(null as any,),).toBe(true,);
+  });
+
   it("honours an explicit opt-out", () => {
     expect(isGmToolKeywordGateEnabled({ ...mockConfig, gmToolKeywordGate: false, },),).toBe(false,);
   });
 
   it("honours the legacy pre-gate key", () => {
     expect(isGmToolKeywordGateEnabled({ ...mockConfig, gmToolKeywordPreGate: false, },),).toBe(false,);
+  });
+});
+
+// The execution module owns the gate: a skip must short-circuit before AUX.
+describe("executeGmToolRequest keyword gate", () => {
+  it("skips non-tool prose before invoking the injected detector", async () => {
+    const fixture = await createTestDb();
+    const { db, } = fixture;
+    const userId = "user-gm-gate-test";
+    const chatId = "chat-gm-gate-test";
+    resetRegexTelemetry();
+    setRegexTelemetryEnabled(true,);
+
+    try {
+      await insertUsers(db, userId, "Gate User", { id: userId, },);
+      await insertActors(db, "Gate User", {
+        id: userId,
+        actor_type: "user",
+        user_id: userId,
+        owner_id: userId,
+      },);
+
+      await insertChats(db, "Gate Chat", userId, {
+        id: chatId,
+        gm_config: JSON.stringify({ assistantRole: "gm", },),
+      },);
+
+      let detectCalls = 0;
+      const outcome = await executeGmToolRequest({
+        database: db,
+        config: mockConfig,
+        actorId: userId,
+        chatId,
+        content: "The lantern flickered as we crossed the old stone bridge.",
+        detect: async () => {
+          detectCalls += 1;
+          return null;
+        },
+      },);
+
+      expect(outcome.handled,).toBe(false,);
+      expect(detectCalls,).toBe(0,);
+      expect(getRegexTelemetrySnapshot(),).toContainEqual({
+        pattern: "gm-tool:keyword-gate",
+        calls: 1,
+        matches: 0,
+      },);
+    } finally {
+      setRegexTelemetryEnabled(false,);
+      resetRegexTelemetry();
+      await destroyTestDb(fixture,);
+    }
   });
 });
