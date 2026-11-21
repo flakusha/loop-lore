@@ -95,6 +95,47 @@ export const MessagesQuery = t.Object({
   translateLocale: t.Optional(t.String({ minLength: 1, maxLength: 35, },),),
 },);
 
+/**
+ * One enriched attachment on a message item — mirrors the object
+ * enrichAttachments() builds in src/routes/messages/helpers.ts. All fields
+ * are always present; absence of attachments is expressed as a list-level
+ * null, never as an undefined field.
+ */
+export const MessageAttachmentSchema = t.Object({
+  assetId: t.String(),
+  order: t.Number(),
+  caption: t.String(),
+  label: t.String(),
+  url: t.String(),
+  thumbUrl: t.String(),
+  filename: t.String(),
+  mimeType: t.String(),
+  type: t.String(),
+  sizeBytes: t.Number(),
+  durationSecs: t.Number(),
+  width: t.Number(),
+  height: t.Number(),
+  nsfw: t.Boolean(),
+},);
+
+/**
+ * Enriched message item in the GET /chats/:id/messages list. Declares the
+ * fields the route guarantees; per-row extras (variant info, avatar bundle,
+ * read-time translations) are additive and intentionally not closed.
+ * attachments/tool_calls are null when absent — never undefined.
+ */
+export const MessageListItemSchema = t.Object({
+  id: Id,
+  chat_id: Id,
+  role: MessageRoleSchema,
+  content: t.String({ description: "Render-time plaintext content (transformed, or the decrypt-failure placeholder).", },),
+  attachments: t.Union([t.Array(MessageAttachmentSchema,), t.Null(),], { description: "Resolved attachment assets, or null when the message carries none.", },),
+  tool_calls: t.Union([t.Array(t.Any(),), t.Null(),], { description: "Persisted assistant tool calls, or null when none.", },),
+  tool_name: t.Union([t.String(), t.Null(),],),
+  tool_error: t.Boolean(),
+  created_at: t.String(),
+},);
+
 export const MusicLinkMessageSchema = t.Object({
   id: t.String(),
   chatId: t.String(),

@@ -7,6 +7,7 @@ import {
   ChatIdParams,
   ErrorResponse,
   MessageIdParams,
+  MessageListItemSchema,
   MessagesQuery,
   MessageVariantQuery,
 } from "../../validation/schemas";
@@ -63,7 +64,12 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         params: ChatIdParams,
         query: MessagesQuery,
         response: {
-          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          200: t.Object({
+            data: t.Array(MessageListItemSchema,),
+            total: t.Number(),
+            page: t.Number(),
+            pageSize: t.Number(),
+          },),
           401: ErrorResponse,
         },
         detail: {
