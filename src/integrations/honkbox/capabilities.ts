@@ -31,7 +31,7 @@ export const DEFAULT_HONKBOX_PROBE_TIMEOUT_MS = 3_000;
 /** Wire-contract major this client understands (`"v1"`). */
 export const HONKBOX_SUPPORTED_API_MAJOR = 1;
 
-/** Boolean capability keys the feature gate understands. */
+/** Capability keys the feature gate understands. */
 export const HONKBOX_FEATURE_KEYS = [
   "vision",
   "controlnet",
@@ -46,6 +46,8 @@ export const HONKBOX_FEATURE_KEYS = [
   "imageOps",
   "tools",
   "recognition",
+  "decisions",
+  "audio_cpp",
 ] as const;
 
 /** */
@@ -78,6 +80,13 @@ export interface HonkboxControlNetFeature {
   readonly models: number;
 }
 
+/** Compile-time audio.cpp surface (`FeatureFlags::audio_cpp`). */
+export interface HonkboxAudioCppFeature {
+  readonly built: boolean;
+  readonly sttFamilies: readonly string[];
+  readonly ttsFamilies: readonly string[];
+}
+
 /** All feature flags (`Capabilities::features`). */
 export interface HonkboxFeatureFlags {
   readonly vision: HonkboxVisionFeature;
@@ -90,6 +99,8 @@ export interface HonkboxFeatureFlags {
   readonly experimentalAshSd: boolean;
   readonly blender: boolean;
   readonly artifactDelivery: boolean;
+  readonly decisions?: boolean;
+  readonly audioCpp?: HonkboxAudioCppFeature;
 }
 
 /** One writable container (`Formats::write`). */
@@ -441,8 +452,8 @@ export async function refreshHonkboxCapabilities(
 
 /**
  * Feature gate: false for an unreachable/unsupported server or an absent
- * flag. Object-valued optional sections (`imageOps`, `tools`, `recognition`)
- * count as present only when the probe actually advertised them.
+ * flag. Object-valued optional sections (`imageOps`, `tools`, `recognition`,
+ * `audioCpp`) count as present only when the probe actually advertised them.
  * @param result - the cached or fresh probe outcome
  * @param key - the capability key to test
  * @returns whether the capability is enabled
@@ -468,6 +479,10 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.lora;
     case "video":
       return capabilities.features.video;
+    case "decisions":
+      return capabilities.features.decisions === true;
+    case "audio_cpp":
+      return capabilities.features.audioCpp?.built === true;
     case "jobs":
       return capabilities.features.jobs;
     case "events":
@@ -536,6 +551,7 @@ export function parseHonkboxCapabilities(
   const queue = asObject(doc.queue,);
   const vision = asObject(features?.vision,);
   const controlnet = asObject(features?.controlnet,);
+  const audioCpp = asObject(features?.audio_cpp,);
   const imageOps = asObject(doc.image_ops,);
   const tools = asObject(doc.tools,);
   const recognition = asObject(doc.recognition,);
@@ -561,6 +577,16 @@ export function parseHonkboxCapabilities(
         },
         lora: asBool(features?.lora,),
         video: asBool(features?.video,),
+        decisions: asBool(features?.decisions,),
+        ...(audioCpp
+          ? {
+            audioCpp: {
+              built: asBool(audioCpp.built,),
+              sttFamilies: asStringArray(audioCpp.stt_families,),
+              ttsFamilies: asStringArray(audioCpp.tts_families,),
+            },
+          }
+          : {}),
         jobs: asBool(features?.jobs,),
         events: asBool(features?.events,),
         vad: asBool(features?.vad,),

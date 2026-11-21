@@ -63,6 +63,8 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       controlnet: { available: false, models: 0, },
       lora: true,
       video: false,
+      decisions: false,
+      audio_cpp: { built: false, stt_families: [], tts_families: [], },
       jobs: true,
       events: true,
       vad: false,
@@ -114,6 +116,13 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.features.vision,).toEqual({ built: true, models: 2, },);
     expect(caps.features.controlnet,).toEqual({ available: false, models: 0, },);
     expect(caps.features.video,).toBe(false,);
+    expect(caps.features.decisions,).toBe(false,);
+    expect(caps.features.audioCpp,).toEqual({
+      built: false,
+      sttFamilies: [],
+      ttsFamilies: [],
+    },);
+
     expect(caps.features.jobs,).toBe(true,);
     expect(caps.formats.read,).toEqual(["png", "jpeg",],);
     expect(caps.formats.write,).toEqual([
@@ -135,6 +144,68 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.recognition,).toEqual({ barcode: true, ocr: false, },);
     expect(caps.openapi,).toBe("/v1/openapi.json",);
     expect(caps.models,).toBe("/v1/models",);
+  });
+
+  test("mirrors the feature-on audio.cpp + decisions snapshot", () => {
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc({
+      features: {
+        decisions: false,
+        audio_cpp: { built: true, stt_families: ["qwen3_asr",], tts_families: [], },
+      },
+    },),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    const caps = parsed.capabilities;
+    expect(caps.features.decisions,).toBe(false,);
+    expect(caps.features.audioCpp,).toEqual({
+      built: true,
+      sttFamilies: ["qwen3_asr",],
+      ttsFamilies: [],
+    },);
+
+    const probe = { ok: true, capabilities: caps, supported: true, latencyMs: 1, } as const;
+    expect(isHonkboxFeatureEnabled(probe, "decisions",),).toBe(false,);
+    expect(isHonkboxFeatureEnabled(probe, "audio_cpp",),).toBe(true,);
+  });
+
+  test("degrades absent and malformed new fields to false/empty", () => {
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc({
+      features: {
+        decisions: "yes",
+        audio_cpp: { built: true, stt_families: "qwen3_asr", },
+        future_flag: { built: true, },
+      },
+    },),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    const caps = parsed.capabilities;
+    expect(caps.features.decisions,).toBe(false,);
+    expect(caps.features.audioCpp,).toEqual({
+      built: true,
+      sttFamilies: [],
+      ttsFamilies: [],
+    },);
+
+    expect("future_flag" in caps.features,).toBe(false,);
+
+    const absent = parseHonkboxCapabilities(capabilitiesDoc({
+      features: { audio_cpp: "not-an-object", },
+    },),);
+
+    expect(absent.ok,).toBe(true,);
+    if (!absent.ok) { return; }
+    expect(absent.capabilities.features.audioCpp,).toBeUndefined();
+    expect("decisions" in absent.capabilities.features,).toBe(true,);
+    const absentProbe = {
+      ok: true,
+      capabilities: absent.capabilities,
+      supported: true,
+      latencyMs: 1,
+    } as const;
+
+    expect(isHonkboxFeatureEnabled(absentProbe, "audio_cpp",),).toBe(false,);
   });
 
   test("parses artifact delivery, storage and external tools", () => {
@@ -254,6 +325,9 @@ describe("probeHonkboxCapabilities", () => {
     delete doc.image_ops;
     delete doc.tools;
     delete doc.recognition;
+    const features = doc.features as Record<string, unknown>;
+    delete features.decisions;
+    delete features.audio_cpp;
     await withMockFetch(() => capsResponse(doc,), async () => {
       const probe = await probeHonkboxCapabilities({ baseUrl: "http://127.0.0.1:9010/v1", },);
       expect(isHonkboxFeatureEnabled(probe, "imageOps",),).toBe(false,);
@@ -261,6 +335,8 @@ describe("probeHonkboxCapabilities", () => {
       expect(isHonkboxFeatureEnabled(probe, "recognition",),).toBe(false,);
       expect(isHonkboxFeatureEnabled(probe, "controlnet",),).toBe(false,);
       expect(isHonkboxFeatureEnabled(probe, "video",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "decisions",),).toBe(false,);
+      expect(isHonkboxFeatureEnabled(probe, "audio_cpp",),).toBe(false,);
       expect(isHonkboxFeatureEnabled(undefined, "vision",),).toBe(false,);
     },);
   });
@@ -358,6 +434,8 @@ describe("registry constants and URL helpers", () => {
       "imageOps",
       "tools",
       "recognition",
+      "decisions",
+      "audio_cpp",
     ],);
   });
 

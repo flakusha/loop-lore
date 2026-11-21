@@ -65,4 +65,71 @@ describe("modelInfoFromOpenAi", () => {
     const info = modelInfoFromOpenAi({ id: "gpt-4o-mini", },);
     expect(info.paramSize,).toBeUndefined();
   });
+
+  test("carries nested modality alongside the untouched flat modalities", () => {
+    const info = modelInfoFromOpenAi({
+      id: "llama-vision",
+      modalities: ["text", "vision",],
+      modality: { input: ["text", "image",], output: ["text",], },
+    },);
+
+    expect(info.modalities,).toEqual(["text", "vision",],);
+    expect(info.modality,).toEqual({
+      input: ["text", "image",],
+      output: ["text",],
+    },);
+
+    expect(info.modalities,).toContain("vision",);
+    expect(info.modality?.input,).not.toContain("vision",);
+  });
+
+  test("maps one entry per honkbox model kind", () => {
+    const byKind: Record<string, { input: string[]; output: string[] }> = {
+      llm: { input: ["text", "image",], output: ["text",], },
+      sd: { input: ["text",], output: ["image",], },
+      stt: { input: ["audio",], output: ["text",], },
+      tts: { input: ["text",], output: ["audio",], },
+      embedding: { input: ["text",], output: [], },
+      ocr: { input: ["image",], output: ["text",], },
+      controlnet: { input: [], output: [], },
+      lora: { input: [], output: [], },
+      vae: { input: [], output: [], },
+    };
+
+    for (const [kind, expected,] of Object.entries(byKind,)) {
+      const info = modelInfoFromOpenAi({
+        id: `honkbox-${kind}`,
+        kind,
+        modality: expected,
+      },);
+
+      expect(info.modality,).toEqual(expected,);
+    }
+  });
+
+  test("drops malformed or partial nested modality", () => {
+    const malformed: unknown[] = [
+      "text",
+      null,
+      ["text",],
+      { input: ["text",], },
+      { output: ["text",], },
+      { input: "text", output: ["text",], },
+      { input: ["text", 42,], output: ["text",], },
+      { input: ["text",], output: { kind: "text", }, },
+    ];
+
+    for (const modality of malformed) {
+      expect(modelInfoFromOpenAi({ id: "plain", modality, },).modality,).toBeUndefined();
+    }
+
+    const flat = modelInfoFromOpenAi({
+      id: "plain",
+      modalities: ["text",],
+      modality: 7,
+    },);
+
+    expect(flat.modalities,).toEqual(["text",],);
+    expect(flat.modality,).toBeUndefined();
+  });
 });

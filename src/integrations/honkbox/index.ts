@@ -43,6 +43,7 @@ export type {
   GetHonkboxCapabilitiesOptions,
   HonkboxAdmissionDecision,
   HonkboxAdmissionOwner,
+  HonkboxAudioCppFeature,
   HonkboxAuth,
   HonkboxCapabilities,
   HonkboxCapabilityKey,
