@@ -80,6 +80,18 @@ describe("declared ranges", () => {
 
     expect(violations.some((message,) => message.includes("width",) && message.includes("8",)),).toBe(true,);
   });
+
+  it("accepts a 64-bit seed and rejects values past the widened max", () => {
+    const seed = 2 ** 53 - 1;
+    expect(validateRunParams({ template: txt2img, params: { seed, }, },),).toEqual([],);
+
+    const violations = validateRunParams({
+      template: txt2img,
+      params: { seed: 2 ** 53, },
+    },);
+
+    expect(violations.some((message,) => message.includes("seed",)),).toBe(true,);
+  });
 });
 
 describe("discovered sampling axes", () => {

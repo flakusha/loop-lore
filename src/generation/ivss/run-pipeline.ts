@@ -26,6 +26,7 @@ import { safeJsonStringify, } from "../../utils";
 import { toDate, } from "../../utils/date";
 import { cachedDiscovery, } from "../discovery-cache";
 import type { ComfyUINodeInfo, ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWorkflow, } from "../providers/comfyui";
+import { pickVideoSink, } from "../providers/comfyui-poll";
 import type { ComfyUIMaskOriginalRef, } from "../providers/comfyui-upload";
 import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOptions, } from "../video-dispatch-gate";
 import { cancelVideoJob, completeVideoJob, failVideoJob, storeVideoJob, } from "../video-jobs";
@@ -448,7 +449,7 @@ export async function startIvssFragmentRun(
             throw error;
           }
 
-          const clipRef = refs.find((ref,) => ref.kind === "video");
+          const clipRef = pickVideoSink(refs,);
           if (!clipRef) { throw new Error("ComfyUI workflow produced no video output",); }
           const clipBuffer = await renderClient.downloadFile(clipRef.file,);
           const mimeType = mimeFromExtension(clipRef.file.filename,);

@@ -66,7 +66,7 @@ export const txt2img: WorkflowTemplate = {
       label: "Seed",
       default: -1,
       min: -1,
-      max: 2_147_483_647,
+      max: 2 ** 53,
       description: "-1 for random",
     },
     {

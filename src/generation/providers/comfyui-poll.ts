@@ -74,6 +74,26 @@ function isVideoImage(file: ComfyUIOutputFile, animated: boolean,): boolean {
   return VIDEO_CONTAINER_RE.test(file.filename,);
 }
 
+/**
+ * Pick one deterministic video sink among classified refs. Preference order:
+ * real container (mp4/webm/mkv/mov), then video/* MIME, then any remaining
+ * video ref (animated webp and other marker-only sinks), else undefined.
+ * Pure — classification and the input array are untouched.
+ */
+export function pickVideoSink(
+  refs: readonly { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[],
+): { kind: ComfyUIOutputKind; file: ComfyUIOutputFile } | undefined {
+  const videos = refs.filter((ref,) => ref.kind === "video");
+  const withContainer = videos.find((ref,) => VIDEO_CONTAINER_RE.test(ref.file.filename,));
+  if (withContainer) { return withContainer; }
+
+  const withMime = videos.find(
+    (ref,) => typeof ref.file.format === "string" && ref.file.format.toLowerCase().startsWith("video/",),
+  );
+
+  return withMime ?? videos[0];
+}
+
 /** Terminal state of one prompt, or not-done-yet. */
 export interface ComfyUIPollResult {
   done: boolean;

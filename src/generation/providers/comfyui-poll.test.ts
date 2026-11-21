@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, describe, expect, test, } from "bun:test";
-import { latentPackageDescriptor, pollComfyResult, } from "./comfyui-poll";
+import { latentPackageDescriptor, pickVideoSink, pollComfyResult, } from "./comfyui-poll";
 
 const originalFetch = globalThis.fetch;
 
@@ -118,5 +118,29 @@ describe("latentPackageDescriptor", () => {
   test("rejects non-package strings", () => {
     expect(latentPackageDescriptor("not a path",),).toBeUndefined();
     expect(latentPackageDescriptor(42,),).toBeUndefined();
+  });
+});
+
+describe("pickVideoSink", () => {
+  const ref = (filename: string, format?: string,) => ({
+    kind: "video" as const,
+    file: { filename, ...(format ? { format, } : {}), },
+  });
+
+  test("prefers a real container over an animated webp", () => {
+    const animated = ref("frame.webp", "image/webp",);
+    const container = ref("clip.mkv",);
+    expect(pickVideoSink([animated, container,],),).toBe(container,);
+  });
+
+  test("prefers a video/* MIME over an animated webp", () => {
+    const animated = ref("frame.webp", "image/webp",);
+    const mime = ref("sink.bin", "video/quicktime",);
+    expect(pickVideoSink([animated, mime,],),).toBe(mime,);
+  });
+
+  test("returns undefined when no video ref exists", () => {
+    const still = { kind: "image" as const, file: { filename: "still.png", }, };
+    expect(pickVideoSink([still,],),).toBeUndefined();
   });
 });

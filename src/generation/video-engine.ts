@@ -17,6 +17,7 @@ import { mimeFromExtension, } from "../assets/service/detect";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getChildLogger, } from "../logger";
 import { ComfyUIClient, } from "./providers/comfyui";
+import { pickVideoSink, } from "./providers/comfyui-poll";
 import { loadComfyUIWorkflow, } from "./workflow-loader";
 
 /** Resolver for a provider's BYO API key, keyed by provider NAME — a key
@@ -136,7 +137,7 @@ async function runCandidate(
     // determines the mime type (mp4/webm/mkv differ per node pack).
     const { prompt_id, } = await client.submitWorkflow(workflow,);
     const refs = await client.waitForFiles(prompt_id,);
-    const clip = refs.find((f,) => f.kind === "video");
+    const clip = pickVideoSink(refs,);
     if (!clip) {
       return failure("ComfyUI workflow produced no video output", 503,);
     }

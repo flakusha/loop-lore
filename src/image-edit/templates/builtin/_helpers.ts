@@ -18,7 +18,7 @@ import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
  */
 export function resolveSeed(seedParam: unknown,): number {
   const seed = (seedParam as number | undefined) ?? -1;
-  return seed === -1 ? Math.floor(Math.random() * 2_147_483_647,) : seed;
+  return seed === -1 ? Math.floor(Math.random() * 2 ** 53,) : seed;
 }
 
 /**

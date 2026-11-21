@@ -56,7 +56,7 @@ export const inpaint: WorkflowTemplate = {
     { name: "steps", type: "number", label: "Steps", default: 20, min: 1, max: 150, },
     { name: "cfg_scale", type: "number", label: "CFG Scale", default: 7, min: 1, max: 30, step: 0.5, },
     { name: "scheduler", type: "string", label: "Scheduler", default: "simple", },
-    { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2_147_483_647, },
+    { name: "seed", type: "number", label: "Seed", default: -1, min: -1, max: 2 ** 53, },
   ],
   /**
    * @param {unknown} params
