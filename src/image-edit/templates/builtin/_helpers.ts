@@ -28,7 +28,7 @@ export function resolveSeed(seedParam: unknown,): number {
 export function checkpointNode(): ComfyUIWorkflow {
   return {
     "1": {
-      inputs: { checkpoint_name: "model.safetensors", },
+      inputs: { ckpt_name: "model.safetensors", },
       class_type: "CheckpointLoaderSimple",
       _meta: { title: "Load Checkpoint", },
     },

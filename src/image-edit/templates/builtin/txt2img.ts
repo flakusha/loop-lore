@@ -87,7 +87,7 @@ export const txt2img: WorkflowTemplate = {
 
     const baseNodes: ComfyUIWorkflow = {
       "1": {
-        inputs: { checkpoint_name: "model.safetensors", },
+        inputs: { ckpt_name: "model.safetensors", },
         class_type: "CheckpointLoaderSimple",
         _meta: { title: "Load Checkpoint", },
       },

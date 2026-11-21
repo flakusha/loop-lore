@@ -199,7 +199,7 @@ describe("generateComfyUI", () => {
 
     expect(outcome.ok,).toBe(true,);
     const parsed = JSON.parse(capture.submitted(),) as SubmittedPrompt;
-    expect(parsed.prompt["1"]?.inputs["checkpoint_name"],).toBe("picked.ckpt",);
+    expect(parsed.prompt["1"]?.inputs["ckpt_name"],).toBe("picked.ckpt",);
     expect(parsed.prompt["5"]?.inputs["sampler_name"],).toBe("dpmpp_2m",);
     expect(parsed.prompt["5"]?.inputs["seed"],).toBe(123456,);
     const loraNodes = Object.values(parsed.prompt,).filter((node,) => node.class_type === "LoraLoader");
