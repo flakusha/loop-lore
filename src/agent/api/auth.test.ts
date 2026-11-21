@@ -8,8 +8,9 @@
 // tokens — no shared rows, no shared limiter state. Matrix (verified, not
 // assumed): missing/unknown/revoked bearer -> 401; valid token with the
 // wrong scope -> 403; correct scope passes and the context carries the
-// resolved token; only the hash is at rest; 60/min per token and 600/min
-// global fire as 429 with the shared X-RateLimit-* headers.
+// resolved token; only the hash is at rest; expired/unparseable expiries
+// fail closed into 401; 60/min per token and 600/min global fire as 429
+// with the shared X-RateLimit-* headers.
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -21,6 +22,7 @@ import { createRateLimiter, type RateLimiter, } from "../../middleware/rate-limi
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import {
   AGENT_RATE_LIMITS,
+  AGENT_TOKEN_DEFAULT_TTL_MS,
   AGENT_TOKEN_PREFIX,
   hashAgentToken,
   mintAgentToken,
@@ -45,13 +47,17 @@ afterEach(async () => {
   await destroyTestDb(testDb,);
 },);
 
-/** Insert one agent-token row for a freshly generated plaintext. */
-async function insertToken(scope: AgentTokenScope,): Promise<string> {
+/** Insert one agent-token row; NULL expiry means "never expires". */
+async function insertToken(
+  scope: AgentTokenScope,
+  options: { expiresAt?: string | null } = {},
+): Promise<string> {
   const { raw, hash, } = mintAgentToken();
   await db.insertInto("agent_tokens",).values({
     id: crypto.randomUUID(),
     token_hash: hash,
     scope,
+    expires_at: options.expiresAt ?? null,
   },).execute();
 
   return raw;
@@ -215,5 +221,69 @@ describe("agent surface rate limits", () => {
     const blocked = await whoami(makeApp({ globalLimiter, },), raw,);
     expect(blocked.status,).toBe(429,);
     expect(blocked.headers.get("x-ratelimit-limit",),).toBe("600",);
+  });
+});
+
+describe("agent token TTL — fail-closed expiry", () => {
+  test("an expired token is 401 and leaves no usage stamp", async () => {
+    const raw = await insertToken(AgentTokenScope.Worktree, {
+      expiresAt: new Date(Date.now() - 60_000,).toISOString(),
+    },);
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
+    expect(await verifyAgentToken(db, raw,),).toBeNull();
+
+    const row = await db.selectFrom("agent_tokens",).select(["last_used_at",],)
+      .where("token_hash", "=", hashAgentToken(raw,),).executeTakeFirst();
+
+    expect(row!.last_used_at,).toBeNull();
+  });
+
+  test("an unparseable expiry is rejected, never inferred valid", async () => {
+    const raw = await insertToken(AgentTokenScope.Check, {
+      expiresAt: "not-a-timestamp",
+    },);
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
+    expect(await verifyAgentToken(db, raw,),).toBeNull();
+  });
+
+  test("a future expiry passes the same guard", async () => {
+    const raw = await insertToken(AgentTokenScope.Check, {
+      expiresAt: new Date(Date.now() + 60_000,).toISOString(),
+    },);
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(200,);
+    expect(await verifyAgentToken(db, raw,),).not.toBeNull();
+  });
+
+  test("mint stamps 24h by default and honours a positive override", async () => {
+    const before = Date.now();
+    const minted = mintAgentToken();
+    const after = Date.now();
+    const defaultMs = new Date(minted.expiresAt,).getTime();
+    expect(defaultMs,).toBeGreaterThanOrEqual(before + AGENT_TOKEN_DEFAULT_TTL_MS,);
+    expect(defaultMs,).toBeLessThanOrEqual(after + AGENT_TOKEN_DEFAULT_TTL_MS,);
+
+    const customBefore = Date.now();
+    const custom = mintAgentToken({ ttlMs: 60_000, },);
+    const customMs = new Date(custom.expiresAt,).getTime();
+    expect(customMs,).toBeGreaterThanOrEqual(customBefore + 60_000,);
+    expect(customMs,).toBeLessThanOrEqual(Date.now() + 60_000,);
+    expect(() => mintAgentToken({ ttlMs: 0, },)).toThrow(RangeError,);
+    expect(() => mintAgentToken({ ttlMs: Number.NaN, },)).toThrow(RangeError,);
+  });
+
+  test("revocation still wins over a future expiry", async () => {
+    const raw = await insertToken(AgentTokenScope.Commit, {
+      expiresAt: new Date(Date.now() + 60_000,).toISOString(),
+    },);
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(200,);
+    await db.updateTable("agent_tokens",)
+      .set({ revoked_at: new Date().toISOString(), },)
+      .where("token_hash", "=", hashAgentToken(raw,),).execute();
+
+    expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
   });
 });

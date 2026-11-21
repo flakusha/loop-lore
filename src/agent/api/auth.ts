@@ -9,7 +9,7 @@
  * the `/api/v1/agent/*` surface:
  *
  *   Authorization: Bearer <token>  ->  SHA-256 hex  ->  `agent_tokens` lookup
- *   ->  401 (missing / unknown / revoked)  ->  429 (rate limit)
+ *   ->  401 (missing / unknown / revoked / expired)  ->  429 (rate limit)
  *   ->  403 (valid token, wrong scope)  ->  continue with `ctx.agentToken`.
  *
  * At rest only the hash is stored; the plaintext exists for one response
@@ -43,6 +43,15 @@ const TOKEN_RANDOM_BYTES = 32;
 
 /** Throttle window for `last_used_at` writes — mirrors integration_tokens. */
 const LAST_USED_THROTTLE_MS = 5 * 60 * 1000;
+
+/** Ticket default lifetime: 24 hours, applied when a mint omits `ttlMs`. */
+export const AGENT_TOKEN_DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** Options for minting: lifetime is issuance policy, not a token shape. */
+export interface MintAgentTokenOptions {
+  /** Positive finite lifetime in milliseconds (default: 24h). */
+  ttlMs?: number;
+}
 
 /** Per-ticket budgets: 60 req/min per token, 600 req/min global. */
 export const AGENT_RATE_LIMITS: Readonly<{
@@ -90,18 +99,33 @@ function agentActionName(request: Request,): string {
 /**
  * Mint a fresh agent token: `llra_<32 random urlsafe base64 bytes>`.
  * The raw value is returned ONCE and only its hash may be persisted.
- * @returns the plaintext (`raw`) and its stored fingerprint (`hash`)
+ * @param options - optional lifetime override (default: 24h)
+ * @returns plaintext, hash and the stamped UTC expiry instant
+ * @throws {RangeError} when ttlMs is not positive finite, or too large to stamp
  */
-export function mintAgentToken(): { raw: string; hash: string } {
+export function mintAgentToken(
+  options: MintAgentTokenOptions = {},
+): { raw: string; hash: string; expiresAt: string } {
+  const ttlMs = options.ttlMs ?? AGENT_TOKEN_DEFAULT_TTL_MS;
+  if (!Number.isFinite(ttlMs,) || ttlMs <= 0) {
+    throw new RangeError("ttlMs must be a positive finite number of milliseconds",);
+  }
+
+  const expiresAt = toDate(Date.now() + ttlMs,);
+  if (Number.isNaN(expiresAt.getTime(),)) {
+    throw new RangeError("ttlMs produces an unrepresentable expiry instant",);
+  }
+
   const raw = `${AGENT_TOKEN_PREFIX}${randomBytes(TOKEN_RANDOM_BYTES,).toString("base64url",)}`;
-  return { raw, hash: hashAgentToken(raw,), };
+  return { raw, hash: hashAgentToken(raw,), expiresAt: expiresAt.toISOString(), };
 }
 
 /**
  * Verify a presented agent token fail-closed.
  * @param database - Kysely handle
  * @param rawToken - the presented bearer value (`llra_...`)
- * @returns the resolved row, or null when unknown or revoked
+ * @returns the resolved row, or null when unknown, revoked, expired or
+ * carrying an unparseable expiry
  */
 export async function verifyAgentToken(
   database: Kysely<DB>,
@@ -111,7 +135,7 @@ export async function verifyAgentToken(
   const hash = hashAgentToken(rawToken,);
   const row = await database
     .selectFrom("agent_tokens",)
-    .select(["id", "scope", "revoked_at", "last_used_at",],)
+    .select(["id", "scope", "revoked_at", "last_used_at", "expires_at",],)
     .where("token_hash", "=", hash,)
     .executeTakeFirst();
 
@@ -123,6 +147,17 @@ export async function verifyAgentToken(
   if (row.revoked_at !== null) {
     log?.debug("agent token revoked", { tokenId: row.id, hashPrefix: hash.slice(0, 8,), },);
     return null;
+  }
+
+  // A malformed expiry is never a reason to treat the token as valid: a
+  // timestamp that cannot be parsed (or is not in the future) fails closed
+  // into the guard's existing 401, before the usage stamp is written.
+  if (row.expires_at !== null) {
+    const expiresAt = toDate(row.expires_at,);
+    if (Number.isNaN(expiresAt.getTime(),) || expiresAt.getTime() <= Date.now()) {
+      log?.debug("agent token expired or malformed expiry", { tokenId: row.id, },);
+      return null;
+    }
   }
 
   // Throttled usage stamp (audit hygiene, not a security decision). A

@@ -25,7 +25,7 @@ import { safeJsonStringify, } from "../../utils";
 import { forbiddenResponse, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-/** TypeBox body for minting — the scope tier union is AgentTokenScope. */
+/** TypeBox body for minting — scope tier union plus optional lifetime. */
 const MintBody = t.Object({
   scope: t.Union([
     t.Literal("agent:worktree",),
@@ -33,6 +33,7 @@ const MintBody = t.Object({
     t.Literal("agent:commit",),
     t.Literal("agent:finalize",),
   ],),
+  ttlMs: t.Optional(t.Number({ minimum: 1, },),),
 },);
 
 const TokenParams = t.Object({ id: t.String({ minLength: 1, },), },);
@@ -86,19 +87,22 @@ export function agentTokenRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (typeof adminId !== "string") { return adminId; }
         if (!can(ctx.userRole ?? null, "admin.system",)) { return forbiddenResponse(); }
 
-        const body = ctx.body as { scope: AgentTokenScope };
-        const { raw, hash, } = mintAgentToken();
+        // MintBody's TypeBox number (minimum 1) rejects non-positive and
+        // non-finite values at the boundary; the mint also guards its seam.
+        const body = ctx.body as { scope: AgentTokenScope; ttlMs?: number };
+        const { raw, hash, expiresAt, } = mintAgentToken({ ttlMs: body.ttlMs, },);
         const id = crypto.randomUUID();
         await db.insertInto("agent_tokens",).values({
           id,
           token_hash: hash,
           scope: body.scope,
+          expires_at: expiresAt,
         },).execute();
 
         await auditTokenAction(db, "mint", adminId, id,);
 
         // The ONE response carrying the raw token — shown exactly once.
-        return jsonResponse({ data: { id, scope: body.scope, token: raw, }, },);
+        return jsonResponse({ data: { id, scope: body.scope, expiresAt, token: raw, }, },);
       },
       {
         body: MintBody,
@@ -106,13 +110,14 @@ export function agentTokenRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           data: t.Object({
             id: t.String(),
             scope: t.String(),
+            expiresAt: t.String(),
             token: t.String(),
           },),
         },),
         detail: {
           summary: "Mint an RSI agent token",
           description:
-            "Creates an agent_tokens row with the chosen scope tier and returns the plaintext bearer token exactly once; only the SHA-256 hash is stored. Rotation = DELETE the old token, then mint again.",
+            "Creates an agent_tokens row with the chosen scope tier and returns the plaintext bearer token exactly once; only the SHA-256 hash is stored. Lifetime defaults to 24h; ttlMs overrides it in positive finite milliseconds. Rotation = DELETE the old token, then mint again.",
           tags: ["Admin", "Agent API",],
         },
       },

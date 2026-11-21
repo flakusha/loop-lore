@@ -213,6 +213,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     revoked_at: col("text",),
     last_used_at: col("text",),
+    expires_at: col("text",),
   },)
   .table("annotations", {
     id: col("text", { primaryKey: true, },),

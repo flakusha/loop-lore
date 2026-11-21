@@ -4197,6 +4197,7 @@ export const AgentTokensSchema = t.Object({
   created_at: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
   last_used_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
 },);
 
 // ── rsi_agent_worktrees ────────────────────────────────────────────

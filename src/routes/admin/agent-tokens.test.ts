@@ -8,12 +8,13 @@
 // Authorization matrix (verified, not assumed): unauthenticated 401 ->
 // non-admin 403 -> admin mint/revoke; the raw token appears EXACTLY once
 // (mint response), the row stores only the hash, an out-of-vocabulary scope
-// is rejected, and a revoked token fails verifyAgentToken afterward.
+// is rejected, mint stamps a 24h expiry, and a revoked/expired token fails
+// verifyAgentToken afterward.
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { verifyAgentToken, } from "../../agent/api/auth";
+import { AGENT_TOKEN_DEFAULT_TTL_MS, verifyAgentToken, } from "../../agent/api/auth";
 import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -58,10 +59,20 @@ function handle(app: Elysia, method: string, path: string, body?: unknown,): Pro
   );
 }
 
-async function mint(app: Elysia, scope: string,): Promise<{ id: string; token: string }> {
-  const res = await handle(app, "POST", `${PREFIX}/admin/agent-tokens`, { scope, },);
+async function mint(
+  app: Elysia,
+  scope: string,
+  ttlMs?: number,
+): Promise<{ id: string; token: string; expiresAt: string }> {
+  const res = await handle(
+    app,
+    "POST",
+    `${PREFIX}/admin/agent-tokens`,
+    ttlMs === undefined ? { scope, } : { scope, ttlMs, },
+  );
+
   expect(res.status,).toBe(200,);
-  const body = await res.json() as { data: { id: string; token: string } };
+  const body = await res.json() as { data: { id: string; token: string; expiresAt: string } };
   return body.data;
 }
 
@@ -144,5 +155,70 @@ describe("agent-token admin CRUD — admin lifecycle", () => {
     expect(await verifyAgentToken(db, first.token,),).toBeNull();
     expect(await verifyAgentToken(db, second.token,),).not.toBeNull();
     expect(second.token,).not.toBe(first.token,);
+  });
+});
+
+describe("agent-token admin TTL", () => {
+  test("mint stamps a 24h expiry on the row and the response", async () => {
+    const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
+    const before = Date.now();
+    const { id, token, expiresAt, } = await mint(app, "agent:check",);
+    const after = Date.now();
+    const stampedMs = new Date(expiresAt,).getTime();
+    expect(stampedMs,).toBeGreaterThanOrEqual(before + AGENT_TOKEN_DEFAULT_TTL_MS,);
+    expect(stampedMs,).toBeLessThanOrEqual(after + AGENT_TOKEN_DEFAULT_TTL_MS,);
+
+    const row = await db.selectFrom("agent_tokens",).select(["expires_at",],)
+      .where("id", "=", id,).executeTakeFirst();
+
+    expect(row!.expires_at,).toBe(expiresAt,);
+    expect(await verifyAgentToken(db, token,),).not.toBeNull();
+  });
+
+  test("ttlMs override stamps a short lifetime that auth enforces", async () => {
+    const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
+    const before = Date.now();
+    const { id, token, expiresAt, } = await mint(app, "agent:check", 60_000,);
+    const stampedMs = new Date(expiresAt,).getTime();
+    expect(stampedMs,).toBeGreaterThanOrEqual(before + 60_000,);
+    expect(stampedMs,).toBeLessThanOrEqual(Date.now() + 60_000,);
+    expect(await verifyAgentToken(db, token,),).not.toBeNull();
+
+    // Age the row past its stamped expiry — no wall-clock sleep in tests.
+    await db.updateTable("agent_tokens",)
+      .set({ expires_at: new Date(Date.now() - 1000,).toISOString(), },)
+      .where("id", "=", id,).execute();
+
+    expect(await verifyAgentToken(db, token,),).toBeNull();
+  });
+
+  test("zero and negative ttlMs are rejected without minting a row", async () => {
+    const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
+    for (const ttlMs of [0, -1,]) {
+      const res = await handle(app, "POST", `${PREFIX}/admin/agent-tokens`, {
+        scope: "agent:check",
+        ttlMs,
+      },);
+
+      expect(res.status,).toBe(422,);
+    }
+
+    const rows = await db.selectFrom("agent_tokens",).select(["id",],).execute();
+    expect(rows,).toHaveLength(0,);
+  });
+
+  test("a non-finite ttlMs in raw JSON is rejected by body validation", async () => {
+    const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
+    const res = await app.handle(
+      new Request(`http://localhost${PREFIX}/admin/agent-tokens`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: '{"scope":"agent:check","ttlMs":1e309}',
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
+    const rows = await db.selectFrom("agent_tokens",).select(["id",],).execute();
+    expect(rows,).toHaveLength(0,);
   });
 });

@@ -2325,6 +2325,7 @@ export interface AgentTokens {
   created_at: Generated<string>;
   revoked_at: string | null;
   last_used_at: string | null;
+  expires_at: string | null;
 }
 
 // ── rsi_agent_worktrees ────────────────────────────────────────────
