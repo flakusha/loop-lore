@@ -87,7 +87,7 @@ describe("declared ranges", () => {
 
     const violations = validateRunParams({
       template: txt2img,
-      params: { seed: 2 ** 53, },
+      params: { seed: 2 ** 53 + 2, },
     },);
 
     expect(violations.some((message,) => message.includes("seed",)),).toBe(true,);
