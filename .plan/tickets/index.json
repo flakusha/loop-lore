@@ -62534,6 +62534,20 @@
     "title": "Split `src/generation/generate-route.ts` (736L)",
     "type": "TASK"
   },
+  "TASK-SPLIT-GENERIC-ACP-TS-PROTOCOL-ADAPTER-SIZE-DEBT": {
+    "hash": "531483c",
+    "git_issue": "531483c",
+    "extid": "TASK-SPLIT-GENERIC-ACP-TS-PROTOCOL-ADAPTER-SIZE-DEBT",
+    "type": "TASK",
+    "title": "Split generic-acp.ts protocol adapter (size debt)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-generic-acp-ts-protocol-adapter-size-debt.md",
+    "status": "open"
+  },
   "TASK-SPLIT-LOGGER-GOD-MODULE": {
     "epic": "epic-code-quality",
     "extid": "TASK-SPLIT-LOGGER-GOD-MODULE",
