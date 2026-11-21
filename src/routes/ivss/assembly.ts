@@ -10,7 +10,7 @@ import type { Kysely, } from "kysely";
 import type { Config, VideoProviderConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { assembleScenario, getAssembly, listAssemblies, } from "../../generation/ivss/assembly";
-import type { IvssComfyClient, } from "../../generation/ivss/run-pipeline";
+import type { IvssComfyClient, IvssWorkflowLoader, } from "../../generation/ivss/run-pipeline";
 import { ComfyUIClient, } from "../../generation/providers/comfyui";
 import { HttpStatus, type HttpStatusCode, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
@@ -50,6 +50,7 @@ export function ivssAssemblyRoutes(opts: {
   uploadDir: string;
   prefix?: string;
   createClient?: (video: VideoProviderConfig,) => IvssComfyClient;
+  loadWorkflow?: IvssWorkflowLoader;
 },) {
   const prefix = opts.prefix ?? "/api/v1";
 
@@ -110,6 +111,8 @@ export function ivssAssemblyRoutes(opts: {
           workflowId: ctx.body.workflowId,
           workflowHash: ctx.body.workflowHash,
           workflowVersion: ctx.body.workflowVersion,
+          timeoutMs: video.generationTimeout ?? 300_000,
+          ...(opts.loadWorkflow ? { loadWorkflow: opts.loadWorkflow, } : {}),
         },);
 
         // Defensive only: assembleScenario's done never rejects.

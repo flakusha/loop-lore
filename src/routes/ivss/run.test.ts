@@ -252,4 +252,40 @@ describe("IVSS fragment run route", () => {
     expect(text,).not.toContain("sig=",);
     expect(text,).not.toContain("latent_url",);
   });
+
+  test("passes the configured generationTimeout to the render wait", async () => {
+    let resolveTimeout!: (value: number | undefined,) => void;
+    const timeoutSeen = new Promise<number | undefined>((resolve,) => {
+      resolveTimeout = resolve;
+    },);
+
+    const config = makeConfig();
+    config.generation.providers.video![0]!.generationTimeout = 45_000;
+
+    const base = stubClient();
+    const client: IvssComfyClient = {
+      ...base,
+      async waitForFiles(promptId, timeoutMs,) {
+        resolveTimeout(timeoutMs,);
+        return await base.waitForFiles(promptId, timeoutMs,);
+      },
+    };
+
+    const app = new Elysia({ name: "test-ivss-run-timeout", },)
+      .derive(() => ({ userId: ownerId, userRole: "user", }))
+      .use(ivssRunRoutes({
+        database: fixture.db,
+        config,
+        uploadDir,
+        createClient: () => client,
+        loadWorkflow: async () => ({ "1": { class_type: "Stub", inputs: {}, }, }),
+        dispatch: async (runOpts,) => {
+          await runOpts.run?.();
+        },
+      },),);
+
+    const res = await app.handle(postRequest(fragmentId, {},),);
+    expect(res.status,).toBe(202,);
+    expect(await timeoutSeen,).toBe(45_000,);
+  });
 });

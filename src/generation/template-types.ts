@@ -100,6 +100,10 @@ export interface PromptTemplateRow {
   payload: string;
   created_at: string;
   updated_at: string;
+  /** Operator license fence; null until recorded. */
+  license: string | null;
+  /** Params-review fence, SQLite integer 0/1. */
+  params_reviewed: number;
 }
 
 /** Template summary served to list endpoints (rows + presets). */

@@ -192,4 +192,49 @@ describe("IVSS assembly routes", () => {
     expect(rows.map((row,) => row.version),).toEqual([2, 1,],);
     expect(rows[0]?.status,).toBe("pending",);
   });
+
+  test("POST passes the configured generationTimeout to the stitch wait", async () => {
+    let resolveTimeout!: (value: number | undefined,) => void;
+    const timeoutSeen = new Promise<number | undefined>((resolve,) => {
+      resolveTimeout = resolve;
+    },);
+
+    const config = makeConfig();
+    config.generation.providers.video![0]!.generationTimeout = 45_000;
+
+    const client: IvssComfyClient = {
+      async submitWorkflow() {
+        return { prompt_id: "prompt-stitch", };
+      },
+      async waitForFiles(_promptId, timeoutMs,) {
+        resolveTimeout(timeoutMs,);
+        return [];
+      },
+      async downloadFile() {
+        return Buffer.from("",);
+      },
+      async cancelExecution() {},
+      async uploadImage() {
+        return "clip";
+      },
+    };
+
+    const app = new Elysia({ name: "test-ivss-assembly-timeout", },)
+      .derive(() => ({ userId: ownerId, userRole: "user", }))
+      .use(ivssAssemblyRoutes({
+        database: fixture.db,
+        config,
+        uploadDir,
+        createClient: () => client,
+        loadWorkflow: async () => ({ "1": { class_type: "Stub", inputs: {}, }, }),
+      },),);
+
+    const res = await app.handle(postRequest(ownedScenarioId, {
+      workflowId: "wf",
+      workflowHash: "sha256:seed",
+    },),);
+
+    expect(res.status,).toBe(202,);
+    expect(await timeoutSeen,).toBe(45_000,);
+  });
 });

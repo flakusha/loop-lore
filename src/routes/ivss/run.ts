@@ -135,6 +135,7 @@ export function ivssRunRoutes(opts: {
           fragmentId: ctx.params.id,
           client,
           providers: [...providers,],
+          timeoutMs: video.generationTimeout ?? 300_000,
           ...(resumeFromFragmentId ? { resumeFromFragmentId, } : {}),
           ...(assetUrl ? { assetUrl, } : {}),
           ...(opts.loadWorkflow ? { loadWorkflow: opts.loadWorkflow, } : {}),

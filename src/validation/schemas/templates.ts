@@ -48,6 +48,8 @@ export const TemplateCreateBody = Type.Object({
   model_family: Type.Optional(Type.Union([Type.String(), Type.Null()],),),
   detail_level: Type.Optional(TemplateDetailLevelSchema,),
   payload: Type.Unknown(),
+  license: Type.Optional(Type.Union([Type.String(), Type.Null()],),),
+  params_reviewed: Type.Optional(Type.Boolean(),),
 },);
 
 /** */

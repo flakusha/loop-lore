@@ -28,6 +28,32 @@ export interface CreateTemplateInput {
   payload: unknown;
   /** Converter-reported live ids, exempt from the dead-node rule. */
   unreferencedLive?: readonly string[];
+  /** Operator license fence; written through every generic write path. */
+  license?: string | null;
+  /** Params-review fence: boolean on the wire, integer 0/1 in the row. */
+  params_reviewed?: boolean;
+}
+
+/**
+ * Fence fields mirror the admin ComfyUI surface: blank/absent license is null,
+ * the review flag is an integer 0/1, and an omitted key keeps the stored value.
+ */
+function fenceValues(
+  patch: Pick<CreateTemplateInput, "license" | "params_reviewed">,
+  current?: PromptTemplateRow,
+): { license: string | null; params_reviewed: number } {
+  let license = current?.license ?? null;
+  if (patch.license !== undefined) {
+    license = typeof patch.license === "string" && patch.license.trim() !== "" ? patch.license.trim() : null;
+  }
+
+  const params_reviewed = patch.params_reviewed === undefined
+    ? current?.params_reviewed ?? 0
+    : patch.params_reviewed
+    ? 1
+    : 0;
+
+  return { license, params_reviewed, };
 }
 
 /**
@@ -165,6 +191,7 @@ export async function createTemplate(
 ): Promise<PromptTemplateRow> {
   const serialized = serializeTemplateInput(input,);
   if (!serialized.ok) { throw new Error(serialized.error,); }
+  const fence = fenceValues(input,);
   const now = new Date().toISOString();
   const row: PromptTemplateRow = {
     id: uid(),
@@ -177,6 +204,7 @@ export async function createTemplate(
     payload: serialized.payload,
     created_at: now,
     updated_at: now,
+    ...fence,
   };
 
   await db.insertInto("prompt_templates",).values(row,).execute();
@@ -201,6 +229,7 @@ export async function updateTemplate(
 ): Promise<PromptTemplateRow | null> {
   const existing = await getOwnedTemplate(db, id, userId,);
   if (!existing) { return null; }
+  const fence = fenceValues(patch, existing,);
 
   const merged: CreateTemplateInput = {
     modality: patch.modality ?? existing.modality,
@@ -223,6 +252,7 @@ export async function updateTemplate(
       ...merged,
       description: merged.description ?? null,
       payload: serialized.payload,
+      ...fence,
       updated_at: new Date().toISOString(),
     },)
     .where("id", "=", id,).where("owner_id", "=", userId,)
