@@ -310,3 +310,36 @@ export async function listToolingReports(
 
   return { items, total: totalRow?.total ?? 0, };
 }
+
+/** Query for {@link listPersistentFailureClusters}; `instanceId` is REQUIRED. */
+export interface PersistentFailureClusterFilter {
+  /** Caller's instance slug — rows from any other instance are invisible. */
+  instanceId: string;
+  /** Minimum repeat count for a cluster (default 3). */
+  threshold?: number;
+}
+
+/**
+ * List this instance's persistent-failure cluster rows at or above `threshold`.
+ * Instance scope is mandatory, exactly as in {@link listToolingReports} — a
+ * shared DB must never leak another instance's clusters into a report.
+ * @param database - the Kysely DB handle
+ * @param filter - instance scope + minimum repeat count (default 3)
+ * @returns matching rows (the ingest upsert keeps one row per `dedupe_key`),
+ *   most frequent first
+ * @throws on DB failure.
+ */
+export async function listPersistentFailureClusters(
+  database: Kysely<DB>,
+  { instanceId, threshold = 3, }: PersistentFailureClusterFilter,
+): Promise<ToolingReportRow[]> {
+  return database
+    .selectFrom("tooling_reports",)
+    .selectAll()
+    .where("instance_id", "=", instanceId,)
+    .where("category", "=", "persistent_failure",)
+    .where("count", ">=", threshold,)
+    .orderBy("count", "desc",)
+    .orderBy("ts", "desc",)
+    .execute();
+}
