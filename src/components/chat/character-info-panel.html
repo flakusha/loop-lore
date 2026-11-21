@@ -33,6 +33,70 @@
       </div>
     </template>
 
+    <!-- Per-chat conversation stats (FEAT-059 AC3), loaded on panel open / chat switch -->
+    <div
+      class="rpg-stats-section"
+      x-data="chatAnalytics()"
+      x-effect="$store.ui.showCharacterInfo && activeChat && loadChatAnalytics(activeChat)"
+      data-testid="chat-analytics"
+    >
+      <div class="rpg-stats-header">
+        <h4 class="rpg-stats-title">Chat Stats</h4>
+        <button
+          class="btn btn-secondary btn-xs"
+          @click="activeChat && loadChatAnalytics(activeChat)"
+          title="Refresh chat stats"
+          data-testid="chat-analytics-refresh"
+        >↻</button>
+      </div>
+      <template x-if="chatStatsLoading">
+        <div class="rpg-stat-label" data-testid="chat-analytics-loading">Loading…</div>
+      </template>
+      <template x-if="chatStatsError">
+        <div class="rpg-stat-label" style="color: #c00" data-testid="chat-analytics-error" x-text="chatStatsError"></div>
+      </template>
+      <template x-if="!chatStatsLoading && !chatStatsError">
+        <div class="rpg-core-stats" data-testid="chat-analytics-data">
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Messages</span>
+            <span x-text="chatStats.totalMessages" data-testid="chat-analytics-messages"></span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Roles</span>
+            <span>
+              <span x-text="chatStats.userMessages" data-testid="chat-analytics-user"></span> /
+              <span x-text="chatStats.assistantMessages" data-testid="chat-analytics-assistant"></span> /
+              <span x-text="chatStats.systemMessages" data-testid="chat-analytics-system"></span>
+            </span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Tokens</span>
+            <span x-text="chatStats.totalTokens" data-testid="chat-analytics-tokens"></span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Avg length</span>
+            <span><span x-text="chatStats.avgMessageLength" data-testid="chat-analytics-avg-length"></span> chars</span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Active span</span>
+            <span><span x-text="chatStats.activeTimeSpanMs" data-testid="chat-analytics-span"></span> ms</span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Generations</span>
+            <span x-text="chatStats.totalGenerations" data-testid="chat-analytics-generations"></span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Avg latency</span>
+            <span><span x-text="chatStats.avgLatencyMs" data-testid="chat-analytics-latency"></span> ms</span>
+          </div>
+          <div class="rpg-stat-row">
+            <span class="rpg-stat-name">Est. cost</span>
+            <span>$<span x-text="chatStats.costEstimate" data-testid="chat-analytics-cost"></span></span>
+          </div>
+        </div>
+      </template>
+    </div>
+
     <!-- Mood Panel -->
     {{> chat/mood-panel.html }}
 

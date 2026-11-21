@@ -4,6 +4,7 @@
 // ── Chat page component (chat.html) — global bootstrap wiring ────
 import { jsonParseOr, } from "../json";
 import { mobileComposer, } from "../mobile-composer";
+import { chatAnalytics, } from "./analytics";
 import { chatState, } from "./bootstrap";
 
 const g = globalThis as Record<string, unknown>;
@@ -31,3 +32,5 @@ globalThis.chatState = chatState;
 // Mobile sticky bottom composer (WIRE-frontend-mobile-sticky-bottom-composer):
 // the partial's x-data="mobileComposer()" resolves it as a component.
 g.mobileComposer = mobileComposer;
+// Per-chat stats block in the character-info panel.
+g.chatAnalytics = chatAnalytics;
