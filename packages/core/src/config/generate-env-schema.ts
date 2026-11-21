@@ -8,8 +8,8 @@
 
 import { createLogger, } from "@/logger";
 import { safeJsonStringify, } from "@/utils";
-import { writeFileSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { mkdirSync, writeFileSync, } from "node:fs";
+import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import { envJsonSchema, } from "./schema-class";
 
@@ -18,10 +18,18 @@ const log = createLogger({ level: "info", },);
 
 /** */
 function main(): void {
-  const outputPath = `${__dirname}/@/schemas/env.schema.json`;
-  const r = safeJsonStringify(envJsonSchema(), 2,);
-  writeFileSync(outputPath, r.ok ? r.value : "{}",);
-  log.info(`Generated env schema: ${outputPath}`,);
+  const outputPath = resolve(__dirname, "..", "..", "..", "..", "schemas", "env.schema.json",);
+  try {
+    mkdirSync(dirname(outputPath,), { recursive: true, },);
+    const r = safeJsonStringify(envJsonSchema(), 2,);
+    writeFileSync(outputPath, r.ok ? r.value : "{}",);
+    log.info(`Generated env schema: ${outputPath}`,);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error,);
+    process.stderr.write(`Failed to write env schema: ${message}\n`,);
+    log.fatal(`Failed to write env schema: ${message}`,);
+    process.exit(1,);
+  }
 }
 
 main();

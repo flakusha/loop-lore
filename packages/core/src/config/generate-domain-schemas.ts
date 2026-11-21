@@ -10,8 +10,8 @@
 
 import { createLogger, } from "@/logger";
 import { safeJsonStringify, } from "@/utils";
-import { writeFileSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { mkdirSync, writeFileSync, } from "node:fs";
+import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import { jsonSchema, } from "./schema-class";
 
@@ -78,14 +78,18 @@ function main() {
     }
 
     // Write domain schema
-    const outputPath = `${__dirname}/@/schemas/config.${domain}.schema.json`;
+    const outputPath = resolve(__dirname, "..", "..", "..", "..", "schemas", `config.${domain}.schema.json`,);
     try {
+      mkdirSync(dirname(outputPath,), { recursive: true, },);
       const r = safeJsonStringify(domainSchema, 2,);
       writeFileSync(outputPath, r.ok ? r.value : "{}",);
       log.info(`Generated domain schema: ${outputPath}`,);
       generated++;
     } catch (error) {
-      log.error(`Failed to write domain schema ${domain}: ${error instanceof Error ? error.message : String(error,)}`,);
+      const message = error instanceof Error ? error.message : String(error,);
+      process.stderr.write(`Failed to write domain schema ${domain}: ${message}\n`,);
+      log.error(`Failed to write domain schema ${domain}: ${message}`,);
+      process.exit(1,);
     }
   }
 

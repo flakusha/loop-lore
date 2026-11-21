@@ -17,8 +17,8 @@
 
 import { createLogger, } from "@/logger";
 import { safeJsonStringify, } from "@/utils";
-import { writeFileSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { mkdirSync, writeFileSync, } from "node:fs";
+import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
 import { jsonSchema, } from "./schema-class";
 
@@ -127,13 +127,16 @@ function main() {
   tomlSchema.description = "JSON Schema optimized for TOML language servers (Taplo, Even Better TOML, Tombi)." +
     " Reference from config.toml via $schema key.";
 
-  const outputPath = `${__dirname}/@/schemas/loop-lore-config.toml.schema.json`;
+  const outputPath = resolve(__dirname, "..", "..", "..", "..", "schemas", "loop-lore-config.toml.schema.json",);
   try {
+    mkdirSync(dirname(outputPath,), { recursive: true, },);
     const r = safeJsonStringify(tomlSchema, 2,);
     writeFileSync(outputPath, r.ok ? r.value : "{}",);
     log.info(`Generated TOML schema: ${outputPath}`,);
   } catch (error) {
-    log.fatal(`Failed to write TOML schema: ${error instanceof Error ? error.message : String(error,)}`,);
+    const message = error instanceof Error ? error.message : String(error,);
+    process.stderr.write(`Failed to write TOML schema: ${message}\n`,);
+    log.fatal(`Failed to write TOML schema: ${message}`,);
     process.exit(1,);
   }
 }
