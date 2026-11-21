@@ -75,10 +75,11 @@ export interface QuotaConsumeDbParams {
  *    fresh insert and the accumulate when the cost would exceed the limit;
  *    `RETURNING` yields a row only when the deduction was applied.
  * @param params - handle, caller, cost, clock, and window settings
- * @returns the remaining units AFTER deduction, or null when the cost does not fit
+ * @returns the remaining units AFTER deduction, or null when the cost is negative/non-finite or does not fit
  */
 export function consumeQuotaDb(params: QuotaConsumeDbParams,): number | null {
   const { db, userId, cost, now, windowMs, limitPerWindow, } = params;
+  if (!Number.isFinite(cost,) || cost < 0) { return null; }
 
   db.run(
     `UPDATE assistant_quota_usage

@@ -94,6 +94,14 @@ describe("consumeQuotaDb", () => {
     expect(storedRow("u5",),).toBeNull();
   });
 
+  test("rejects negative and non-finite costs without touching the row", () => {
+    expect(deduct("u-negative", 5, T0,),).toBe(5,);
+    expect(deduct("u-negative", -5, T0,),).toBeNull();
+    expect(deduct("u-negative", Number.NaN, T0,),).toBeNull();
+    expect(storedRow("u-negative",),).toEqual({ used: 5, windowStart: String(T0,), },);
+    expect(deduct("u-negative", 5, T0,),).toBe(0,);
+  });
+
   test("rolls an expired window over lazily and re-anchors window_start", () => {
     deduct("u6", 10, T0,);
     expect(deduct("u6", 1, T0 + WINDOW - 1,),).toBeNull();
