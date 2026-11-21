@@ -13,7 +13,7 @@
  * hashed map) — so a change to either cannot drift silently.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { buildHashLookup, HASH_ALPHABET, injectContentHashes, } from "./hash-injection";
@@ -167,6 +167,40 @@ describe("buildHashLookup", () => {
       expect(lookup.get("css/style.css",),).toBe("css/style-de1b62f0.css",);
       // Unhashed siblings and HTML never enter the map — only 8-char hashes.
       expect(lookup.size,).toBe(2,);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+
+  test("picks the newest variant for a logical name regardless of readdir order", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-lookup-newest-",),);
+    try {
+      writeFileSync(join(sub, "app-aaaaaaaa.js",), "// stub",);
+      writeFileSync(join(sub, "app-bbbbbbbb.js",), "// stub",);
+      // Give the entry readdirSync lists last the older mtime: the previous
+      // last-write-wins implementation would then keep the stale bundle.
+      const variants = readdirSync(sub,).filter((entry,) => entry.startsWith("app-",));
+      expect(variants.length,).toBe(2,);
+      for (const [index, entry,] of variants.entries()) {
+        const stamp = new Date(index === 0 ? 2_000_000 : 1_000_000,);
+        utimesSync(join(sub, entry,), stamp, stamp,);
+      }
+
+      expect(buildHashLookup(sub,).get("app.js",),).toBe(variants[0],);
+    } finally {
+      rmSync(sub, { recursive: true, force: true, },);
+    }
+  });
+
+  test("breaks equal-mtime ties by filename", () => {
+    const sub = mkdtempSync(join(tmpdir(), "loop-lore-hash-lookup-tie-",),);
+    try {
+      writeFileSync(join(sub, "app-bbbbbbbb.js",), "// b",);
+      writeFileSync(join(sub, "app-aaaaaaaa.js",), "// a",);
+      const stamp = new Date(1_500_000,);
+      utimesSync(join(sub, "app-bbbbbbbb.js",), stamp, stamp,);
+      utimesSync(join(sub, "app-aaaaaaaa.js",), stamp, stamp,);
+      expect(buildHashLookup(sub,).get("app.js",),).toBe("app-aaaaaaaa.js",);
     } finally {
       rmSync(sub, { recursive: true, force: true, },);
     }

@@ -229,6 +229,11 @@ function resolveHashedVariant(publicPath: string,): string | null {
 
   const ext = name.slice(dot,);
   const stem = name.slice(0, dot,);
+  // Repeated builds leave several hashed siblings. Choose the newest by mtime
+  // so a bare name resolves to the current build; equal mtimes break by
+  // filename so the result never depends on readdirSync order.
+  let bestEntry: string | null = null;
+  let bestMtime = -Infinity;
   for (const entry of entries) {
     if (
       entry !== name &&
@@ -236,11 +241,25 @@ function resolveHashedVariant(publicPath: string,): string | null {
       entry.endsWith(ext,) &&
       HASHED_ASSET_PATTERN.test(entry,)
     ) {
-      return `${dir}/${entry}`;
+      let mtimeMs: number;
+      try {
+        mtimeMs = statSync(`${dir}/${entry}`,).mtimeMs;
+      } catch {
+        continue; // best-effort: a file that vanished is not a candidate
+      }
+
+      if (
+        bestEntry === null ||
+        mtimeMs > bestMtime ||
+        (mtimeMs === bestMtime && entry < bestEntry)
+      ) {
+        bestEntry = entry;
+        bestMtime = mtimeMs;
+      }
     }
   }
 
-  return null;
+  return bestEntry === null ? null : `${dir}/${bestEntry}`;
 }
 
 /**

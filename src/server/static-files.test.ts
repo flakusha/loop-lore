@@ -12,7 +12,7 @@
 
 import { afterAll, beforeEach, expect, mock, test, } from "bun:test";
 import { Elysia, } from "elysia";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
@@ -504,6 +504,34 @@ describeOrSkip("resolvePublicFilePath", () => {
     const fx = getFixtures();
     writeFixture(fx.public, "alpine-init-3c4f5a2b.js", "hashed",);
     expect(resolvePublicFilePath(fx.public, "/alpine-init.js",),).toBe(join(fx.public, "alpine-init-3c4f5a2b.js",),);
+  });
+
+  test("picks the newest hashed sibling regardless of readdirSync order", () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "alpine-init-aaaaaaaa.js", "old",);
+    writeFixture(fx.public, "alpine-init-bbbbbbbb.js", "new",);
+    // Give the entry readdirSync lists first the older mtime: the previous
+    // first-match implementation would then serve the stale bundle.
+    const variants = readdirSync(fx.public,).filter((entry,) => entry.startsWith("alpine-init-",));
+    expect(variants.length,).toBe(2,);
+    for (const [index, entry,] of variants.entries()) {
+      const stamp = new Date(index === 0 ? 1_000_000 : 2_000_000,);
+      utimesSync(join(fx.public, entry,), stamp, stamp,);
+    }
+
+    expect(resolvePublicFilePath(fx.public, "/alpine-init.js",),).toBe(join(fx.public, variants[1] ?? "",),);
+  });
+
+  test("breaks equal-mtime ties by filename", () => {
+    const fx = getFixtures();
+    writeFixture(fx.public, "alpine-init-bbbbbbbb.js", "b",);
+    writeFixture(fx.public, "alpine-init-aaaaaaaa.js", "a",);
+    const stamp = new Date(1_500_000,);
+    utimesSync(join(fx.public, "alpine-init-bbbbbbbb.js",), stamp, stamp,);
+    utimesSync(join(fx.public, "alpine-init-aaaaaaaa.js",), stamp, stamp,);
+    expect(resolvePublicFilePath(fx.public, "/alpine-init.js",),).toBe(
+      join(fx.public, "alpine-init-aaaaaaaa.js",),
+    );
   });
 
   test("returns null when nothing resolves", () => {
