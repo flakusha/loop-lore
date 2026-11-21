@@ -39,6 +39,39 @@ export const AdminChatRow = Type.Object({
  *
  */
 export type AdminChatRow = Static<typeof AdminChatRow>;
+
+/**
+ * Body of GET /api/admin/chats/:id — the full chat row plus roll-up fields.
+ * Declares the stable admin-relevant subset; the handler spreads the raw
+ * row, so undeclared columns (story_state, gm_config, ...) remain additive.
+ * is_pinned is the stored text flag ("0"/"1"), not a boolean.
+ */
+export const AdminChatDetail = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  type: Type.String(),
+  mode: Type.String(),
+  created_by: Type.String(),
+  world_id: Type.Union([Type.String(), Type.Null(),],),
+  is_pinned: Type.String(),
+  visibility: Type.String(),
+  encryption_level: Type.String(),
+  thinking_visibility: Type.String(),
+  created_at: Type.String(),
+  updated_at: Type.String(),
+  messageCount: Type.Number(),
+  participants: Type.Array(
+    Type.Object({
+      actor_id: Type.String(),
+      role_in_chat: Type.String(),
+      joined_at: Type.String(),
+    },),
+  ),
+},);
+/**
+ *
+ */
+export type AdminChatDetail = Static<typeof AdminChatDetail>;
 export const AdminUserRow = Type.Object({
   id: Type.String(),
   username: Type.String(),

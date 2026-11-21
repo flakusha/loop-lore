@@ -9,7 +9,11 @@ import {
   PaginationQuery,
   SuccessResponse,
 } from "../../validation/schemas";
-import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
+import {
+  AdminChatDetail,
+  AdminChatRow,
+  AdminPaginatedEnvelope,
+} from "../../validation/schemas/responses";
 import {
   ErrorCode,
   HttpStatus,
@@ -115,7 +119,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           },);
         },
-        { params: ChatIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
+        { params: ChatIdParams, response: { 200: AdminChatDetail, 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .patch(
         `${prefix}/admin/chats/:id`,
