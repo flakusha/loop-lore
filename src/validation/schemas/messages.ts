@@ -147,7 +147,7 @@ export const MessageVariantItemSchema = t.Object({
   chat_id: Id,
   parent_id: t.Union([Id, t.Null(),],),
   role: MessageRoleSchema,
-  content: t.String({ description: "Render-time plaintext content (transformed, or the decrypt-failure placeholder).", },),
+  content: t.String({ description: "Message content text: render-transformed on /variants, stored content on /variant select.", },),
   content_type: MessageContentTypeSchema,
   status: MessageStatusSchema,
   visibility: MessageVisibilitySchema,

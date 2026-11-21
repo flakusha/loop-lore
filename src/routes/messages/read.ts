@@ -247,7 +247,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       {
         params: MessageIdParams,
         query: MessageVariantQuery,
-        response: { 200: t.Any(), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        response: { 200: MessageVariantItemSchema, 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
       },
     );
 }
