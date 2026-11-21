@@ -137,6 +137,37 @@ describe("narrowSessionUpdate", () => {
     },],);
   });
 
+  it("accepts a numeric-string cost but no negative or non-numeric amount", () => {
+    const narrow = (amount: unknown,) =>
+      narrowSessionUpdate({
+        update: { sessionUpdate: "usage_update", cost: { amount, currency: "USD", }, },
+      },);
+
+    expect(narrow("0.0123",),).toEqual([{
+      type: "usage",
+      used: null,
+      size: null,
+      costUsd: 0.0123,
+      currency: "USD",
+    },],);
+
+    expect(narrow(-0.5,),).toEqual([{
+      type: "usage",
+      used: null,
+      size: null,
+      costUsd: null,
+      currency: "USD",
+    },],);
+
+    expect(narrow("not-a-number",),).toEqual([{
+      type: "usage",
+      used: null,
+      size: null,
+      costUsd: null,
+      currency: "USD",
+    },],);
+  });
+
   it("ignores malformed payloads and unknown variants", () => {
     expect(narrowSessionUpdate(null,),).toEqual([],);
     expect(narrowSessionUpdate({},),).toEqual([],);

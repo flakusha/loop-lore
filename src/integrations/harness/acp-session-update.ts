@@ -106,10 +106,16 @@ function asNumber(value: unknown,): number | null {
   return typeof value === "number" && Number.isFinite(value,) ? value : null;
 }
 
+/** Narrow a cost amount to a finite non-negative number; wire strings are accepted. */
+function asCostAmount(value: unknown,): number | null {
+  const amount = typeof value === "string" && value.trim() !== "" ? Number(value,) : value;
+  return typeof amount === "number" && Number.isFinite(amount,) && amount >= 0 ? amount : null;
+}
+
 /** Narrow a `usage_update` payload to its usage event (cost in USD). */
 function usageEvent(update: Record<string, unknown>,): HarnessTurnEvent[] {
   const cost = asRecord(update.cost,);
-  const amount = cost ? asNumber(cost.amount,) : null;
+  const amount = cost ? asCostAmount(cost.amount,) : null;
   const currency = cost ? asString(cost.currency,) : null;
   return [{
     type: "usage",
