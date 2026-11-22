@@ -213,6 +213,7 @@ export function validateWorkflowPayload(value: unknown, options: ValidateWorkflo
     }
   }
 
+// hint: Logic changed on both sides. Requires understanding intent of each change.
   const placeholders = collectPlaceholders(graph,);
   errors.push(...parameterErrors(payload.parameters, placeholders, boundNames,),);
   errors.push(...loraSlotErrors(payload,),);
