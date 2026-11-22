@@ -26,6 +26,21 @@ import { getConfigValue, } from "./config";
 import { ModelRole, } from "../db/enums-core";
 export type { ModelRole, } from "../db/enums-core";
 
+/**
+ * Warn through the structured logger when one is installed.
+ * @param message
+ * @param meta
+ */
+function warn(message: string, meta: Record<string, unknown>,): void {
+  try {
+    getLogger()
+      .child({ module: "model-roles", },)
+      .warn(message, meta,);
+  } catch {
+    // No root logger installed — the read still succeeds.
+  }
+}
+
 /** Roles manageable from the admin panel (subset of all ModelRole values). */
 export const VALID_ROLES = [
   ModelRole.Main,
@@ -140,9 +155,7 @@ export async function resolveModelRole(
     storedScenario = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,);
     storedRoles = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,);
   } catch (error) {
-    getLogger()
-      .child({ module: "model-roles", },)
-      .warn("Failed to read stored model-role config keys", { error: (error as Error).message, },);
+    warn("Failed to read stored model-role config keys", { error: (error as Error).message, },);
   }
 
   const storedValidScenario = storedScenario !== undefined &&
@@ -166,9 +179,7 @@ export async function resolveModelRole(
       return { role, provider: dbOverride.provider, model: dbOverride.model, source: "db", };
     }
   } catch (error) {
-    getLogger()
-      .child({ module: "model-roles", },)
-      .warn("Failed to read DB override", { role, error: (error as Error).message, },);
+    warn("Failed to read DB override", { role, error: (error as Error).message, },);
   }
 
   // 2. Config defaults

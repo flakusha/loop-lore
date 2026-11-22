@@ -9,7 +9,7 @@ import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
 import type { LLMProvider, } from "../generation/providers/types";
-import { createLogger, } from "../logger";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { recordRanking, } from "../models/rankings";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -142,9 +142,10 @@ describeReal("model-roles", () => {
       expect(resolved.model,).toBe("",);
     });
 
-    test("falls back to config when system_config is unavailable", async () => {
+    test("falls back to config without throwing when system_config and logger are unavailable", async () => {
       // Strict-review falsifying probe: a DB missing system_config used to throw
-      // from the two getConfigValue reads, breaking the file-header no-throw contract.
+      // from the two getConfigValue reads, breaking the file-header no-throw
+      // contract. PF-9 also removed the root logger, so the warn guard is covered.
       const unavailableDb = {
         selectFrom: (table: string,) => {
           if (table === "system_config") { throw new Error("no such table: system_config",); }
@@ -156,10 +157,16 @@ describeReal("model-roles", () => {
         modelRoles: { [ModelRole.Main]: { provider: "cfg-provider", model: "cfg-model", }, },
       },);
 
-      const resolved = await resolveModelRole(ModelRole.Main, config, unavailableDb,);
-      expect(resolved.source,).toBe("config",);
-      expect(resolved.provider,).toBe("cfg-provider",);
-      expect(resolved.model,).toBe("cfg-model",);
+      const previousLogger = getLogger();
+      setGlobalLogger(null as unknown as ReturnType<typeof getLogger>,);
+      try {
+        const resolved = await resolveModelRole(ModelRole.Main, config, unavailableDb,);
+        expect(resolved.source,).toBe("config",);
+        expect(resolved.provider,).toBe("cfg-provider",);
+        expect(resolved.model,).toBe("cfg-model",);
+      } finally {
+        setGlobalLogger(previousLogger,);
+      }
     });
 
     test("throws for a role outside VALID_ROLES", async () => {
