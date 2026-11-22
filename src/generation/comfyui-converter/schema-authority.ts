@@ -44,6 +44,7 @@ function liveInputNames(
 
   return { ok: true, names, };
 }
+
 /**
  * Read the bundled pinned snapshot.
  * @returns The `/object_info` fixture shipped with the converter
