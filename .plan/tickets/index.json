@@ -47013,6 +47013,22 @@
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
   },
+  "TASK-HONKBOX-FEATURE-KEYS-DECISIONS-FLIP-AND-FIZGIG-GATE": {
+    "hash": "e39340b",
+    "git_issue": "e39340b",
+    "extid": "TASK-HONKBOX-FEATURE-KEYS-DECISIONS-FLIP-AND-FIZGIG-GATE",
+    "type": "TASK",
+    "title": "Honkbox feature keys decisions flip and fizgig gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-feature-keys-decisions-flip-and-fizgig-gate.md",
+    "status": "open"
+  },
   "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST": {
     "hash": "22b5def",
     "extid": "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST",
@@ -47026,6 +47042,22 @@
     "source": ".plan/tickets/TASK-honkbox-generation-result-delivery-and-asset-ingest.md",
     "status": "done",
     "git_issue": "22b5def"
+  },
+  "TASK-HONKBOX-JOB-FRAME-ARTIFACT-METADATA-AND-JOBS-REPLAY": {
+    "hash": "9368a8d",
+    "git_issue": "9368a8d",
+    "extid": "TASK-HONKBOX-JOB-FRAME-ARTIFACT-METADATA-AND-JOBS-REPLAY",
+    "type": "TASK",
+    "title": "Honkbox job frame artifact metadata and jobs replay",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-job-frame-artifact-metadata-and-jobs-replay.md",
+    "status": "open"
   },
   "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD": {
     "hash": "ce6deca",
@@ -47057,6 +47089,22 @@
     "tags": [],
     "source": ".plan/tickets/TASK-honkbox-provider-wiring-and-gpu-admission-ownership.md",
     "status": "done"
+  },
+  "TASK-HONKBOX-RESIDENCY-CONTROL-PLANE-FOR-PRE-RENDER-RELEASE": {
+    "hash": "acdbc4a",
+    "git_issue": "acdbc4a",
+    "extid": "TASK-HONKBOX-RESIDENCY-CONTROL-PLANE-FOR-PRE-RENDER-RELEASE",
+    "type": "TASK",
+    "title": "Honkbox residency control plane for pre-render release",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-residency-control-plane-for-pre-render-release.md",
+    "status": "open"
   },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "epic": "epic-chat-lifecycle-moderation",
