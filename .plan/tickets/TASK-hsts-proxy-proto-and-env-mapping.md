@@ -45,3 +45,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1e/:123-124. `BUG-hsts-h
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 964db8d (registry tip: 06f62011b Konstantin Fedotov Auto-closed: appended .md marker marks TASK-HSTS-PROXY-PROTO-AND-ENV-MA)

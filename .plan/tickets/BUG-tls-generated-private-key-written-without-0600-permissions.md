@@ -44,3 +44,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §2 (Key permissions): the
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue adcbf2e (registry tip: 293cdc3a9 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-TLS-GENERATED-PRIVATE-KEY-WR)

@@ -10527,7 +10527,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-tls-generated-private-key-written-without-0600-permissions.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system",
@@ -21522,7 +21522,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-COMFYUI-WEBSOCKET-PROGRESS-CLIENT.md",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-COMFYUI-WORKFLOW-PATCH-ORIGINAL-MODE": {
     "hash": "34631bf",
@@ -26762,7 +26762,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-composition-root-wiring.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-DRIVER-MODULE": {
     "hash": "a727ddb",
@@ -36844,7 +36844,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "cefeb42"
   },
   "TASK-COMFYUI-WS-CLIENT-ID-PROGRESS-REFERENCE-GENERATION": {
@@ -37795,7 +37795,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-cookie-secure-default-from-effective-tls.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CORRECT-DEAD-FILE-REFERENCES-AND-STORE-SHAPE-DRIFT-IN-THE-IN": {
     "hash": "0a4df5c",
@@ -46450,7 +46450,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-model-discovery-ui-wiring-frontend-models-caller-cos.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-MODEL-ROUTING": {
     "hash": "ca8751c",
@@ -47282,7 +47282,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-hsts-proxy-proto-and-env-mapping.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HTML-DEDUP-AUDIT": {
     "epic": "epic-frontend-html-dedup-htmx-reuse",
@@ -48449,7 +48449,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-integration-tokens-expire-by-default.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT": {
     "hash": "9d39ebf",
@@ -49287,7 +49287,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-jwt-add-issuer-claim.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "epic-auth-access",
@@ -56391,7 +56391,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Production TLS modes BYO certs ACME and proxy termination",
     "type": "TASK"
@@ -60204,7 +60204,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-restrict-acp-strategy-enum-to-failover.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RESULT-GRADE-PERSISTENCE": {
     "hash": "b5fb1b1",
@@ -61840,7 +61840,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-secure-startup-operator-checklist.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI": {
     "hash": "2350e43",
@@ -64345,7 +64345,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-tls-missing-openssl-friendly-error-on-boot.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-TMP-JANITOR-AND-STALENESS-MARKERS": {
     "epic": "",

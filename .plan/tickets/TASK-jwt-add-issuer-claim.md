@@ -44,3 +44,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §2(f): JWT has no issuer 
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 88938c6 (registry tip: d6ec786ca Konstantin Fedotov Auto-closed: appended .md marker marks TASK-JWT-ADD-ISSUER-CLAIM done)

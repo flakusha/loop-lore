@@ -44,3 +44,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1c/:59-61. `BUG-bug-csrf
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 429d8b8 (registry tip: c6d81e07a Konstantin Fedotov Auto-closed: appended .md marker marks TASK-COOKIE-SECURE-DEFAULT-FROM-)

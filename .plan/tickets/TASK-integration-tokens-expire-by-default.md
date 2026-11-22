@@ -44,3 +44,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §2(f) and §3 (Secrets/au
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue be9affa (registry tip: 535a4fb9f Konstantin Fedotov Auto-closed: appended .md marker marks TASK-INTEGRATION-TOKENS-EXPIRE-B)

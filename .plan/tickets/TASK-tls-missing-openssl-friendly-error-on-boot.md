@@ -50,3 +50,5 @@ Alternatives considered: (a) folding into C6 — rejected, see scope decision; (
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 6981da3 (registry tip: 45a6e4246 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TLS-MISSING-OPENSSL-FRIENDL)

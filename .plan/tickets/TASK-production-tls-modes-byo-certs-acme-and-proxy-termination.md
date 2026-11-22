@@ -39,3 +39,4 @@ Replace the dev-only in-place self-signed path (src/config/cert.ts ensureTlsCert
 - [ ] ACME mode issues and renews end-to-end against staging CA in a drill; certs persisted under DATA_DIR/certs.
 - [ ] Proxy mode verified behind reverse proxy incl. WebSocket upgrade; trustProxy honored.
 
+**Resolved:** 2026-11-22 registry-driven close: git issue 680d81e (registry tip: a60623fc5 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-PRODUCTION-TLS-MODES-BYO-CE)

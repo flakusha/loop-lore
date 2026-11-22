@@ -43,3 +43,5 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §3 (Operator actions) enu
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 375ae56 (registry tip: 1f0a2fa9f Konstantin Fedotov Auto-closed: appended .md marker marks TASK-SECURE-STARTUP-OPERATOR-CHE)
