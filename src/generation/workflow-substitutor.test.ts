@@ -77,7 +77,6 @@ describe("substituteWorkflow variant expansion", () => {
   it("picks one option per group, deterministically per seed", () => {
     const opts: SubstituteOptions = { expandVariants: true, variantSeed: 7, };
     const first = substituteWorkflow("a {x|y} b", {}, opts,);
-// hint: Structural and logic conflict. Both design and behavior differ.
     expect(["a x b", "a y b",],).toContain(String(first,),);
     expect(substituteWorkflow("a {x|y} b", {}, opts,),).toBe(first,);
   });

@@ -269,6 +269,7 @@ function stubDiscoveryProbesHealthy(): void {
   }) as typeof fetch;
 }
 
+describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     persistGeneratedCalls.length = 0;
@@ -278,14 +279,9 @@ function stubDiscoveryProbesHealthy(): void {
   afterEach(() => {
     globalThis.fetch = originalFetch;
   },);
-  beforeEach(() => {
-    generateImagesCalls.length = 0;
-    persistGeneratedCalls.length = 0;
-    generateError = null;
-  },);
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-  },);
+
+  // (1) Opt-out: no lora field → generateImages called WITHOUT lora
+
   it("does NOT pass lora to generateImages when lora field is absent", async () => {
     stubDiscoveryProbesHealthy();
     const body = makeBody({ prompt: "no lora prompt", },);
@@ -693,6 +689,7 @@ function stubDiscoveryProbesHealthy(): void {
       await db.destroy();
     }
   });
+},);
 
 describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
   beforeEach(() => {
@@ -700,12 +697,12 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
     persistGeneratedCalls.length = 0;
     generateError = null;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   /** Config with an sdcpp provider listed AHEAD of a ComfyUI provider. */
   const sdThenComfyConfig = (comfyUiFirst: boolean | undefined,) => ({
@@ -814,7 +811,7 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
       }),
     }),);
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     // State restore for later suites: this file's mock.module registrations
@@ -854,7 +851,7 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
       }),
     }),);
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   it("knob ON orders the healthy ComfyUI instance ahead of the chain", async () => {
     stubDiscoveryProbesHealthy();
@@ -912,12 +909,13 @@ async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
   },).execute();
 }
 
+describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 1)", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     bindAvatarCalls.length = 0;
     bindError = null;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   it("binds persisted images as variants on an owned actor and returns avatarIds", async () => {
     const { db, } = await createTestDb();
@@ -1006,13 +1004,14 @@ async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
       await db.destroy();
     }
   });
+},);
 
 describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     persistGeneratedCalls.length = 0;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   /** Seed a user + a chat owned by that user (passes checkChatAccess). */
   async function seedBgChat(db: Kysely<DB>, userId: string, chatId: string,) {
@@ -1217,13 +1216,13 @@ describeOrSkip("handleImageGeneration — workflow selection", () => {
     failoverOptsCalls.length = 0;
     resolvedWorkflowForTests = undefined;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
     resolvedWorkflowForTests = undefined;
   },);
-// hint: Structural change (rename/retype). Check callers of this entity.
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   it("uses the resolved stored workflow when the body omits workflow", async () => {
     stubDiscoveryProbesHealthy();
