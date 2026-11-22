@@ -30,6 +30,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Fixed
 
+- **The rerank score is read from the field the server actually sends** — the rerank client only looked for `relevance_score`, so a honkbox `/v1/rerank` response (`{index, score, text}`) scored every entry as missing and the recall stage failed open to the cosine order. Both dialects are now accepted (`score` for honkbox, `relevance_score` for llama.cpp and llama-swap); an entry with neither numeric field is still rejected instead of ranking on garbage.
 - **Generic template writes record the workflow license fence** — the flat `/api/templates` create, patch and import paths now accept the same trimmed `license` and boolean `params_reviewed` as the admin workflow editor and persist both (SQLite 0/1), so workflow rows created outside the admin surface no longer bypass the operator checklist. Wrong-typed fence fields are rejected at the TypeBox boundary and an omitted field keeps the stored value.
 - **IVSS renders honour the configured video deadline** — the fragment-run and assembly routes pass `generation.providers.video[].generationTimeout` to the render pipeline instead of letting it fall back to the hardcoded 300-second default.
 - **/imgedit requires chat membership** — the image-edit command registered with no role gate, so viewers could spend GPU and write assets; it now requires `member` like its read-chat/write-asset sibling `/link`, and the frozen command vectors plus `commands.imgedit` locale key cover it.

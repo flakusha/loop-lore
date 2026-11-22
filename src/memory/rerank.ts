@@ -11,6 +11,10 @@
  *     shape at `{base}/rerank`, where base defaults to
  *     `https://openrouter.ai/api/v1`, plus a Bearer header.
  *
+ * The score field name differs per server: TEI-style `score` (honkbox
+ * `POST /v1/rerank`) vs Cohere/Jina-style `relevance_score` (llama.cpp,
+ * llama-swap).  Both are accepted here.
+ *
  * Rerank scores are model-specific and never comparable to cosine similarity
  * — callers fail open to the cosine ordering on any error.
  */
@@ -142,7 +146,9 @@ export async function rerankViaLlamaCpp(
   const apiKey = provider === "openrouter" ? resolveRerankApiKey(baseUrl,) : undefined;
 
   try {
-    const result = await safeFetch<{ results?: { index?: unknown; relevance_score?: unknown }[] }>(
+    const result = await safeFetch<
+      { results?: { index?: unknown; score?: unknown; relevance_score?: unknown }[] }
+    >(
       `${baseUrl.replace(/\/+$/, "",)}/rerank`,
       {
         method: "POST",
@@ -166,15 +172,22 @@ export async function rerankViaLlamaCpp(
 
     recordExec("ok", null,);
     const hits = payload.results.map((entry,) => {
-      const { index, relevance_score: score, } = entry;
+      const { index, } = entry;
       if (typeof index !== "number" || index < 0 || index >= docs.length) {
         recordExec("error", `result index ${String(index,)} out of range`,);
         throw new Error(`Rerank result index ${String(index,)} is out of range.`,);
       }
 
+      // Two score field names reach this client: TEI-style `score` (honkbox
+      // `POST /v1/rerank`) and Cohere/Jina-style `relevance_score` (llama.cpp,
+      // llama-swap).  Whichever the server sent is the contract; a payload
+      // with neither is malformed and fails the whole request.
+      const score = typeof entry.score === "number" ? entry.score : entry.relevance_score;
       if (typeof score !== "number") {
-        recordExec("error", "entry missing relevance_score",);
-        throw new Error("Rerank result entry is missing relevance_score.",);
+        recordExec("error", "entry missing score",);
+        throw new Error(
+          "Rerank result entry is missing a numeric score (score or relevance_score).",
+        );
       }
 
       return { index, score, };

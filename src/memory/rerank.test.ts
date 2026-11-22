@@ -21,8 +21,19 @@ import { insertModelRoleOverrides, } from "../test-utils/insert-helpers";
 import { OPENROUTER_BASE_URL, resolveBackgroundEndpoint, } from "./background-transport";
 import { rerankViaLlamaCpp, resolveRerankModel, } from "./rerank";
 
+/** One rerank result entry as either server dialect sends it. */
+interface FakeRerankEntry {
+  index: number;
+  /** TEI-style score (honkbox `POST /v1/rerank`). */
+  score?: number;
+  /** Cohere/Jina-style score (llama.cpp, llama-swap). */
+  relevance_score?: number;
+  /** Optional echoed text (honkbox `return_text`). */
+  text?: string;
+}
+
 /** Response the fake /rerank endpoint serves next (null → 500 error). */
-let nextRerank: { results: { index: number; relevance_score: number }[] } | { error: string } | null = null;
+let nextRerank: { results: FakeRerankEntry[] } | { error: string } | null = null;
 
 /** Raw 200-body override for malformed-response cases. */
 let rawBody: unknown;
@@ -141,10 +152,57 @@ describe("rerankViaLlamaCpp", () => {
     expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("index",);
   });
 
-  test("throws when a result entry lacks relevance_score", async () => {
+  test("throws when a result entry lacks a numeric score", async () => {
     rawBody = { results: [{ index: 0, },], };
 
-    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("relevance_score",);
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("score",);
+  });
+
+  test("maps a honkbox-shaped score field onto the hit score and orders by it", async () => {
+    // honkbox `POST /v1/rerank` returns `{ index, score, text }` per item —
+    // no `relevance_score` anywhere on the wire.
+    nextRerank = {
+      results: [
+        { index: 0, score: 0.2, text: "a", },
+        { index: 1, score: 0.9, text: "b", },
+        { index: 2, score: 0.5, text: "c", },
+      ],
+    };
+
+    const hits = await rerankViaLlamaCpp("who wrote it", ["a", "b", "c",], { topN: 3, },);
+
+    expect(hits,).toEqual([
+      { index: 1, score: 0.9, },
+      { index: 2, score: 0.5, },
+      { index: 0, score: 0.2, },
+    ],);
+  });
+
+  test("the honkbox score actually drives the order, not the server order", async () => {
+    // Deliberately unsorted by score: only a real score read can order these.
+    nextRerank = {
+      results: [
+        { index: 0, score: 0.1, },
+        { index: 1, score: 0.8, },
+        { index: 2, score: 0.4, },
+      ],
+    };
+
+    const hits = await rerankViaLlamaCpp("q", ["a", "b", "c",], { topN: 3, },);
+
+    expect(hits.map((hit,) => hit.index),).toEqual([1, 2, 0,],);
+  });
+
+  test("a garbage score is rejected instead of ranking on NaN", async () => {
+    rawBody = { results: [{ index: 0, score: "high", },], };
+
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("score",);
+  });
+
+  test("a non-numeric relevance_score is rejected too", async () => {
+    rawBody = { results: [{ index: 0, relevance_score: "0.5", },], };
+
+    expect(rerankViaLlamaCpp("q", ["a",], { topN: 1, },),).rejects.toThrow("score",);
   });
 });
 

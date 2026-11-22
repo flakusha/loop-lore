@@ -64,7 +64,9 @@ let nextOpenAIEmbedding: number[] | null = null;
 let lastOpenAIBody: { model?: string; input?: string } | undefined;
 
 /** Rerank response served next at /rerank (null → 500 error). */
-let nextRerank: { results: { index: number; relevance_score: number }[] } | null = null;
+let nextRerank:
+  | { results: { index: number; score?: unknown; relevance_score?: unknown }[] }
+  | null = null;
 
 /** Clear both captured-request bodies (helper keeps tsgo from narrowing the vars). */
 function resetEmbedBodies(): void {
@@ -494,6 +496,45 @@ describe("semanticRecall", () => {
     expect(matches[1]?.score,).toBeCloseTo(0.42, 5,);
     expect(matches[0]?.cosineScore,).toBeCloseTo(0.6, 4,);
     expect(matches[1]?.cosineScore,).toBeCloseTo(1, 4,);
+  });
+
+  test("a honkbox-shaped score field reorders the matches", async () => {
+    process.env.RERANK_MODEL = "bge-reranker-under-test";
+    nextEmbeddings = [[0.6, 0.8,],];
+    const texts: [string, string,][] = [
+      ["rerank-1", "blue text",],
+      ["rerank-2", "red text",],
+    ];
+
+    for (const [id, content,] of texts) {
+      await db.updateTable("actor_memories",).set({ content, },).where("id", "=", id,).execute();
+    }
+
+    await storeEmbedding(db, "rerank-1", new Float32Array([0.6, 0.8,],), "m",);
+    await storeEmbedding(db, "rerank-2", new Float32Array([1, 0,],), "m",);
+    // honkbox sends `score`, not `relevance_score`.
+    nextRerank = { results: [{ index: 1, score: 0.99, }, { index: 0, score: 0.42, },], };
+    rerankHits = 0;
+
+    const matches = await semanticRecall(db, ["rerank-1", "rerank-2",], "rerank me", 2, 0.3,);
+
+    expect(rerankHits,).toBe(1,);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-2", "rerank-1",],);
+    expect(matches[0]?.score,).toBeCloseTo(0.99, 5,);
+    expect(matches[1]?.score,).toBeCloseTo(0.42, 5,);
+  });
+
+  test("a garbage rerank score fails open to the cosine order", async () => {
+    process.env.RERANK_MODEL = "bge-reranker-under-test";
+    nextEmbeddings = [[0.6, 0.8,],];
+    nextRerank = { results: [{ index: 0, score: "high", },], };
+    rerankHits = 0;
+
+    const matches = await semanticRecall(db, ["rerank-1", "rerank-2",], "garbage score", 2, 0.3,);
+
+    expect(rerankHits,).toBe(1,);
+    expect(matches.map((m,) => m.memoryId),).toEqual(["rerank-1", "rerank-2",],);
+    expect(matches[0]?.score,).toBeCloseTo(1, 4,);
   });
 
   test("tiny rerank scores never overwrite the preserved cosine values", async () => {
