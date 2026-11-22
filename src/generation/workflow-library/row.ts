@@ -14,7 +14,9 @@ import type { WorkflowTemplate, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
 import type { ComfyUINodeInfo, ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
+import { assertGeneratedGraph, } from "../workflow-loader/generated-validation";
 import { collectPlaceholders, substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
+import { planWorkflowBindings, } from "./bindings";
 
 /** Probe gate state for a workflow library row. Re-exported from the DB enum. */
 export type { WorkflowProbeStatus, } from "../../db/enums-generation";
@@ -93,6 +95,15 @@ export function buildWorkflowGraph(
     }
   }
 
+  if (payload.bindings !== undefined) {
+    const planned = planWorkflowBindings(payload.bindings, payload.body, params,);
+    if (!planned.ok) {
+      throw new Error(`workflow bindings failed: ${planned.errors.join("; ",)}`,);
+    }
+
+    Object.assign(vars, planned.vars,);
+  }
+
   // Resolve the needed set from the *body*, before substitution: the
   // substitutor replaces an unknown placeholder with "", so scanning the output
   // would always come back clean.
@@ -105,7 +116,7 @@ export function buildWorkflowGraph(
   // "Missing" means the caller passed no such key at all. A key that was
   // supplied but held a non-primitive was deliberately dropped above, and that
   // path already has its own contract — it must not be reported as missing.
-  const provided = new Set(Object.keys(params,),);
+  const provided = new Set([...Object.keys(params,), ...Object.keys(vars,),],);
   const missing = [...collectPlaceholders(payload.body,),].filter((name,) => !provided.has(name,));
   if (payload.parameters.length === 0 && missing.length > 0) {
     throw new Error(
@@ -114,7 +125,12 @@ export function buildWorkflowGraph(
     );
   }
 
-  return substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
+  const graph = substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
+  if (payload.bindings !== undefined) {
+    assertGeneratedGraph(graph,);
+  }
+
+  return graph;
 }
 
 /**

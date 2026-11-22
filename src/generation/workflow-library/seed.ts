@@ -34,6 +34,8 @@ import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, isValidWorkflow, } from "../workflow-loader/workflow-validation";
+import { BINDINGS_FILE, loadWorkflowBindings, parametersForSpec, } from "./binding-config";
+import type { WorkflowBindingConfig, WorkflowBindingSpec, } from "./bindings";
 import { deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
@@ -131,6 +133,8 @@ async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
 async function readPayload(
   path: string,
   id: string,
+  spec?: WorkflowBindingSpec,
+  policy: WorkflowBindingConfig["bindingPolicy"] = "augment",
 ): Promise<{ ok: true; payload: WorkflowPayload } | { ok: false; reason: string }> {
   const text = await readFile(path, "utf8",);
   const graph = jsonParseOr<unknown>(text, undefined,);
@@ -154,7 +158,8 @@ async function readPayload(
       // Guessing txt2img unconditionally mislabelled img2img, and
       // `sd-server-provider` dispatches on this value.
       category: categoryFor(basename(path, ".json",),),
-      parameters: deriveParameters(id, graph as WorkflowPayload["body"],),
+      parameters: parametersForSpec(spec, deriveParameters(id, graph as WorkflowPayload["body"],), policy,),
+      ...(spec === undefined ? {} : { bindings: spec, }),
       // Declared from the graph itself (same derivation as the admin UI
       // ingest): every seeded export carries the exact node classes its
       // runtime needs, so the live `missingRequiredNodes` check on the admin
@@ -204,6 +209,10 @@ export async function seedWorkflowLibrary(
     return outcome;
   }
 
+  const loaded = await loadWorkflowBindings(dir,);
+  if (!loaded.ok) { log.warn("ignoring invalid bindings config", { dir, errors: loaded.errors, },); }
+  const config = loaded.ok ? loaded.config : null;
+
   const owner = await resolveOwner(database,);
   if (owner === null) {
     log.info("no admin user to own seeded workflows; skipping seed",);
@@ -211,7 +220,7 @@ export async function seedWorkflowLibrary(
   }
 
   for (const entry of entries.toSorted()) {
-    if (extname(entry,) !== ".json") { continue; }
+    if (extname(entry,) !== ".json" || entry === BINDINGS_FILE) { continue; }
     const id = entry.replace(/\.json$/, "",);
 
     const existing = await database
@@ -239,7 +248,13 @@ export async function seedWorkflowLibrary(
       continue;
     }
 
-    const read = await readPayload(join(dir, entry,), id,);
+    const read = await readPayload(
+      join(dir, entry,),
+      id,
+      config?.workflows[id],
+      config?.bindingPolicy ?? "augment",
+    );
+
     if (!read.ok) {
       log.warn("skipping workflow file", { id, reason: read.reason, },);
       outcome.skipped.push({ id, reason: read.reason, },);

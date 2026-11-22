@@ -92,9 +92,9 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               // ride along so labels survive the re-ingest.
               const uiUpload = uploadedUiWorkflow(body,);
               if (uiUpload) {
-                const snapshot = await liveSnapshot();
+                const snapshot = await liveSnapshot(uiUpload.nodes.map((node,) => node.type),);
                 if (!snapshot.ok) {
-                  return workflowInvalid([`ComfyUI is unreachable: ${snapshot.error}`,],);
+                  return workflowInvalid([`ComfyUI schema check failed: ${snapshot.error}`,],);
                 }
 
                 let ingested;

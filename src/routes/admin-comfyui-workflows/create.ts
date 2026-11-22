@@ -77,8 +77,8 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
   const paramsReviewed = paramsReviewedValue(body.params_reviewed, 0,);
   if (name.length === 0) { return workflowInvalid(["name is required",],); }
 
-  const snapshot = await liveSnapshot();
-  if (!snapshot.ok) { return workflowInvalid([`ComfyUI is unreachable: ${snapshot.error}`,],); }
+  const snapshot = await liveSnapshot(upload.nodes.map((node,) => node.type),);
+  if (!snapshot.ok) { return workflowInvalid([`ComfyUI schema check failed: ${snapshot.error}`,],); }
 
   const id = uid();
   let ingested: IngestResult;

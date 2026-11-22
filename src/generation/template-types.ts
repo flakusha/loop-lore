@@ -13,6 +13,7 @@ import type { ImageEditCategory, TemplateParameter, } from "../image-edit/types"
 import { safeJsonParse, } from "../utils";
 import { type ChainPayload, isChainPayloadShape, } from "./builder/chain-types";
 import type { ComfyUIWorkflow, } from "./providers/comfyui";
+import type { WorkflowBindingSpec, } from "./workflow-library/bindings";
 
 /** One ordered section of an LLM prompt template. */
 export interface LlmTemplateSection {
@@ -76,6 +77,8 @@ export interface WorkflowPayload {
   parameters: TemplateParameter[];
   /** Node class_types required; validated as a subset of installed nodes. */
   requiredNodes: string[];
+  /** Declarative parameter -> node input rules from api-bindings.json. */
+  bindings?: WorkflowBindingSpec;
   /** Declared LoRA slots; each must resolve to a real node in `body`. */
   loraSlots?: LoraSlot[];
 }

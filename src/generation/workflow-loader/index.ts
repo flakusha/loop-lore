@@ -25,5 +25,13 @@ export { findDeadNodes, isValidWorkflow, TERMINAL_SINK_CLASSES, } from "./workfl
 export { Graph, } from "./graph-builder";
 export type { GraphFinishOptions, GraphOptions, GraphResult, } from "./graph-builder";
 
+// ── Generated graph gate ───────────────────────────────────
+export {
+  assertGeneratedGraph,
+  type GeneratedGraphOptions,
+  type GeneratedGraphResult,
+  validateGeneratedGraph,
+} from "./generated-validation";
+
 // ── Public types ───────────────────────────────────────────
 export type { LoadWorkflowOptions, } from "./types";
