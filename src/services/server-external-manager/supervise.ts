@@ -21,6 +21,7 @@
 
 import { stop, } from "./lifecycle";
 import { probeInstance, } from "./probes";
+import { startHonkbox, } from "./start-honkbox";
 import { startLlamaCpp, startLlamaSwap, } from "./start-llama";
 import { startSdCpp, } from "./start-sd";
 import type {
@@ -161,6 +162,8 @@ export async function restartInstance(
       next = await startLlamaCpp(host, launch.opts,);
     } else if (launch.kind === "llama-swap") {
       next = await startLlamaSwap(host, launch.opts,);
+    } else if (launch.kind === "honkbox") {
+      next = await startHonkbox(host, launch.opts,);
     } else {
       next = await startSdCpp(host, launch.opts,);
     }

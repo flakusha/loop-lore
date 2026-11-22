@@ -180,6 +180,28 @@ export interface LlamaSwapAutoStartConfig {
 }
 
 /** */
+export interface HonkboxAutoStartConfig {
+  /** Enable auto-start of honkbox server */
+  enabled: boolean;
+  /** Port for `honkbox serve` (default: 9010, matching the honkbox provider example convention) */
+  port?: number;
+  /**
+   * Bind host for `honkbox serve` (default: 127.0.0.1). Honkbox itself refuses
+   * unauthenticated non-loopback binds, so keep this loopback — loop-lore
+   * never passes `--allow-unauthenticated-bind`.
+   */
+  host?: string;
+  /** Bearer credential for the honkbox OpenAI-compatible API (loopback servers usually need none) */
+  apiKey?: string;
+  /** Path to an optional honkbox config file, passed as `--config` */
+  configPath?: string;
+  /** Model alias exposed through the OpenAI-compatible API (default: "local-chat") */
+  model?: string;
+  /** Extra CLI args passed to `honkbox serve` */
+  extraArgs?: string[];
+}
+
+/** */
 export interface AutoStartConfig {
   /** Spawn llama.cpp server as child process at startup */
   llamaCpp?: LlamaCppAutoStartConfig;
@@ -187,4 +209,6 @@ export interface AutoStartConfig {
   llamaSwap?: LlamaSwapAutoStartConfig;
   /** Spawn sd-server as child process at startup */
   sdCpp?: SdCppAutoStartConfig;
+  /** Spawn honkbox server as child process at startup */
+  honkbox?: HonkboxAutoStartConfig;
 }

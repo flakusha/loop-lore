@@ -251,6 +251,15 @@ openaiCompatible = []
 # # taesdPath = "/path/to/taesd.safetensors"
 # # hiresUpscalersDir = "/path/to/upscalers"
 # # embdDir = "/path/to/embeddings"
+#
+# [generation.autoStart.honkbox]
+# enabled = true
+# port = 9010                          # GET /health readiness probe (60s timeout)
+# # host = "127.0.0.1"                 # loopback only — honkbox refuses unauthenticated non-loopback binds
+# # apiKey = "..."                     # bearer credential (loopback servers usually need none)
+# # configPath = "~/git-ai/honkbox/config.toml"  # ~ expands to $HOME
+# # model = "local-chat"               # model alias exposed via the OpenAI-compatible API
+# # extraArgs = ["--log-level", "debug"]
 # # photoMakerPath = "/path/to/photomaker.safetensors"
 # # upscaleModelPath = "/path/to/esrgan.safetensors"
 # # ── Performance ──

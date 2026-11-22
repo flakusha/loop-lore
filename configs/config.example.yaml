@@ -208,6 +208,16 @@ generation:
   #   # llamaSwap:
   #   #   enabled: true
   #   #   configPath: "~/git-ai/ai-scripts/llama-swap.yaml"  # ~ expands to $HOME
+  #   # ── honkbox server (auto-start) ───────────────────────
+  #   # honkbox:
+  #   #   enabled: true
+  #   #   port: 9010                         # GET /health readiness probe (60s timeout)
+  #   #   # host: 127.0.0.1                  # loopback only — honkbox refuses unauthenticated
+  #   #                                    # non-loopback binds
+  #   #   # apiKey: "..."                    # bearer credential (loopback usually needs none)
+  #   #   # configPath: "~/git-ai/honkbox/config.toml"  # ~ expands to $HOME
+  #   #   # model: local-chat                # model alias via the OpenAI-compatible API
+  #   #   # extraArgs: ["--log-level", "debug"]
 
 # ── BYO API Keys ──
 byoKey:

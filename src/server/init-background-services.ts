@@ -5,6 +5,11 @@ import type { Config, } from "../config/schema/config";
 import type { Db, } from "../db/index";
 import { OpenAiCompatibleProvider, registerProvider, } from "../generation";
 import { circuitBreaker, } from "../generation/providers/circuit-breaker";
+import {
+  getHonkboxCapabilities,
+  HONKBOX_FEATURE_KEYS,
+  isHonkboxFeatureEnabled,
+} from "../integrations/honkbox/capabilities";
 import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import type { Logger, } from "../logger/types";
 import { setRegexTelemetryEnabled, } from "../regex/telemetry";
@@ -198,6 +203,63 @@ export async function initBackgroundServices(
           const instance = await serverManager.startSdCpp(sdCppCfg,);
           if (!instance) {
             logger.warn("sd-cpp auto-start failed or skipped", { module: "server", },);
+          }
+        })(),
+      },);
+    }
+
+    const honkboxCfg = autoStart?.honkbox;
+    if (honkboxCfg?.enabled) {
+      const port = honkboxCfg.port ?? 9010;
+      logger.info("auto-starting honkbox", { module: "server", port, },);
+      initJobs.push({
+        name: "honkbox",
+        promise: (async () => {
+          const instance = await serverManager.startHonkbox({ ...honkboxCfg, port, },);
+          if (!instance) {
+            logger.warn("honkbox auto-start failed or skipped", { module: "server", },);
+            return;
+          }
+
+          // Supplemental provider: unlike llama.cpp, this never hijacks
+          // generation.defaultProvider / defaultModels.
+          registerProvider(
+            "honkbox",
+            new OpenAiCompatibleProvider({
+              name: "honkbox",
+              label: "Auto-started honkbox",
+              baseUrl: `http://127.0.0.1:${instance.port}/v1`,
+              model: honkboxCfg.model ?? "local-chat",
+              timeout: 60_000,
+              retries: 2,
+              allowUserApiKey: false,
+              ...(honkboxCfg.apiKey ? { apiKey: honkboxCfg.apiKey, } : {}),
+              models: {},
+            },),
+          );
+
+          circuitBreaker.register("honkbox",);
+
+          // Probe capabilities at setup — never assumed. A failed probe
+          // does NOT unregister the provider; honkbox features degrade off.
+          const probe = await getHonkboxCapabilities({
+            baseUrl: `http://127.0.0.1:${instance.port}/v1`,
+            ...(honkboxCfg.apiKey ? { apiKey: honkboxCfg.apiKey, } : {}),
+          },);
+
+          if (probe.ok) {
+            const features = HONKBOX_FEATURE_KEYS.filter((key,) => isHonkboxFeatureEnabled(probe, key,));
+            logger.info("honkbox capabilities probed", {
+              module: "server",
+              supported: probe.supported,
+              features,
+            },);
+          } else {
+            logger.warn("honkbox capabilities probe failed — provider stays registered", {
+              module: "server",
+              reason: probe.reason,
+              detail: probe.detail,
+            },);
           }
         })(),
       },);

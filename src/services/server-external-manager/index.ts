@@ -10,6 +10,7 @@ import {
 import {
   stopLivenessProbes as stopLivenessProbesDispatch,
 } from "./probes";
+import { startHonkbox as startHonkboxDispatch, } from "./start-honkbox";
 import {
   startLlamaCpp as startLlamaCppDispatch,
   startLlamaSwap as startLlamaSwapDispatch,
@@ -17,6 +18,7 @@ import {
 import { startSdCpp as startSdCppDispatch, } from "./start-sd";
 import { startSupervisedProbes as startSupervisedProbesDispatch, } from "./supervise";
 import type {
+  HonkboxOptions,
   LlamaCppOptions,
   LlamaSwapOptions,
   SdCppOptions,
@@ -25,6 +27,7 @@ import type {
 } from "./types";
 
 export type {
+  HonkboxOptions,
   LlamaCppOptions,
   LlamaSwapOptions,
   SdCppOptions,
@@ -99,6 +102,15 @@ export class ServerExternalManager implements ServerExternalHost {
    */
   async startSdCpp(opts: SdCppOptions,): Promise<ServerInstance | null> {
     return startSdCppDispatch(this, opts,);
+  }
+
+  /**
+   * Start honkbox server (`honkbox serve`) on given port.
+   * @param opts
+   * @returns the started instance, or null when it could not be started.
+   */
+  async startHonkbox(opts: HonkboxOptions,): Promise<ServerInstance | null> {
+    return startHonkboxDispatch(this, opts,);
   }
 
   /**

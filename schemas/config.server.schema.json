@@ -28,7 +28,7 @@
         },
         "publicOrigin": {
           "type": "string",
-          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN. REQUIRED when host is a wildcard address (0.0.0.0, ::): the instance then answers under names the config cannot enumerate, and the MCP transport's DNS-rebinding allowlist is derived from this origin (it answers 503 naming this knob when unset)."
         },
         "tls": {
           "type": "object",

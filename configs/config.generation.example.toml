@@ -17,6 +17,8 @@ openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # Honkbox is a Custom provider: same OpenAI-compatible shape, capabilities are
 # probed at setup (never assumed). The base URL must include /v1.
 # { name = "honkbox", label = "Honkbox", baseUrl = "http://127.0.0.1:9010/v1", apiKey = "...", model = "local-chat", timeout = 60000, retries = 2, allowUserApiKey = true }
+# Alternative: let loop-lore spawn honkbox itself via [generation.autoStart.honkbox]
+# (see config.example.toml) — the provider above is then registered automatically.
 # sd = [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
 # video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout, models? }); localBox serializes one render per named box, omit = external (bypasses the gate)
 # Model pins are optional: unset roles are filled from the engine's /models folders.

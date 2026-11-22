@@ -2,18 +2,19 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Subprocess, } from "bun";
-import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig, } from "../../config/schema";
+import type { HonkboxAutoStartConfig, LlamaCppAutoStartConfig, SdCppAutoStartConfig, } from "../../config/schema";
 import type { Logger, } from "../../logger";
 
 /** Launch config retained so supervision restarts via the same spawn path. */
 export type ServerLaunch =
   | { kind: "llama-cpp"; opts: LlamaCppOptions }
   | { kind: "llama-swap"; opts: LlamaSwapOptions }
-  | { kind: "sd-cpp"; opts: SdCppOptions };
+  | { kind: "sd-cpp"; opts: SdCppOptions }
+  | { kind: "honkbox"; opts: HonkboxOptions };
 
 /** */
 export interface ServerInstance {
-  type: "llama-cpp" | "llama-swap" | "sd-cpp";
+  type: "llama-cpp" | "llama-swap" | "sd-cpp" | "honkbox";
   process: Subprocess;
   port: number;
   pid: number;
@@ -32,6 +33,12 @@ export interface LlamaSwapOptions {
   configPath: string;
   /** Proxy listen port for `--listen` (default: 8080). */
   listenPort?: number;
+}
+
+/** */
+export interface HonkboxOptions extends Omit<HonkboxAutoStartConfig, "port"> {
+  /** Bind port (config default: 9010). */
+  port: number;
 }
 
 /** Per-instance supervision counters (in-memory only; reset on process restart). */

@@ -32,6 +32,7 @@ export const BINARY_CANDIDATES = {
   "llama-cpp": ["llama-server", "llama-server-vk",],
   "llama-swap": ["llama-swap",],
   "sd-cpp": ["sd-server",],
+  honkbox: ["honkbox",],
   blender: ["blender",],
   /** PATH names only — venv interpreters arrive via explicit `spec.venvPath`, never glob discovery. */
   python: ["python3",],
