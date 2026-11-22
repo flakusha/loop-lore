@@ -255,6 +255,31 @@ describe("seeded workflow parameters", () => {
     expect(inputsOf(graph, "CLIPTextEncode",)["text"],).toBe("a cat",);
   });
 
+  it("uses a declared default only when the caller omits the parameter", () => {
+    const payload: WorkflowPayload = {
+      body: {
+        "1": { class_type: "ModelAttentionBackend", inputs: { attention: "{{attention}}", }, },
+        "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+      },
+      category: "txt2img",
+      parameters: [{
+        name: "attention",
+        type: "string",
+        label: "Attention",
+        default: "comfy kitchen attention",
+      },],
+      requiredNodes: [],
+    };
+
+    const omitted = buildWorkflowGraph(payload, {},);
+
+    expect(omitted["1"]?.inputs?.attention,).toBe("comfy kitchen attention",);
+
+    const explicit = buildWorkflowGraph(payload, { attention: "custom attention", },);
+
+    expect(explicit["1"]?.inputs?.attention,).toBe("custom attention",);
+  });
+
   it("repairs a row that was seeded before the parameters were derived", async () => {
     const graph = await Bun.file(join(SHIPPED_DIR, "txt2img-v1.json",),).json() as Record<string, unknown>;
     await db

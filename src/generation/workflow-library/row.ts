@@ -74,6 +74,11 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
  * dropped rather than stringified — a `{{width}}` must not become "[object
  * Object]".
  *
+ * A declared parameter default fills only keys the caller omitted; an
+ * explicit caller value, even a falsy one, always wins. This keeps a restored
+ * placeholder such as `{{attention}}` at its shipped value when no request
+ * value is supplied.
+ *
  * Unresolved placeholders are an error, not an empty string. A library row
  * that declares no parameters (every seeded row does) would otherwise reach
  * ComfyUI with `text: ""` and no width, and the server would cheerfully return
@@ -88,8 +93,14 @@ export function buildWorkflowGraph(
   payload: WorkflowPayload,
   params: Record<string, unknown>,
 ): ComfyUIWorkflow {
+  const effective: Record<string, unknown> = { ...params, };
+  for (const parameter of payload.parameters) {
+    if (Object.hasOwn(effective, parameter.name,) || parameter.default === undefined) { continue; }
+    effective[parameter.name] = parameter.default;
+  }
+
   const vars: SubstitutionVars = {};
-  for (const [key, value,] of Object.entries(params,)) {
+  for (const [key, value,] of Object.entries(effective,)) {
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       vars[key] = value;
     }
@@ -113,10 +124,11 @@ export function buildWorkflowGraph(
   // zero-parameter template whose body has placeholders is a metadata gap, and
   // submitting it would send ComfyUI an empty prompt and return a blank image.
   //
-  // "Missing" means the caller passed no such key at all. A key that was
-  // supplied but held a non-primitive was deliberately dropped above, and that
-  // path already has its own contract — it must not be reported as missing.
-  const provided = new Set([...Object.keys(params,), ...Object.keys(vars,),],);
+  // "Missing" means neither the caller nor a declared default supplied the
+  // key. A key that was supplied but held a non-primitive was deliberately
+  // dropped above, and that path already has its own contract — it must not
+  // be reported as missing.
+  const provided = new Set([...Object.keys(effective,), ...Object.keys(vars,),],);
   const missing = [...collectPlaceholders(payload.body,),].filter((name,) => !provided.has(name,));
   if (payload.parameters.length === 0 && missing.length > 0) {
     throw new Error(
