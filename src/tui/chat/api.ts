@@ -6,7 +6,7 @@
 // parsing and the stale-chat guards all read the same page/pagination contract.
 import type { CommandValveSpec, } from "../../assistant/commands/valves";
 import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
-import { type ChatStreamSubscription, openChatStream, } from "./stream";
+import { openSendStream, } from "./stream";
 import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
@@ -70,24 +70,7 @@ export async function handleSend(
 
   // The POST blocks until generation finishes, so subscribe first: the server
   // replays its buffer plus live tokens over this same channel.
-  const streamChatId = host.chatId;
-  const stream: ChatStreamSubscription = openChatStream({
-    chatId: streamChatId,
-    sessionToken: host.sessionToken,
-    callbacks: {
-      onUpdate: (content,) => {
-        if (host.chatId !== streamChatId) { return; }
-        host.hideTyping();
-        host.setStreamContent?.(content,);
-      },
-      onDone: () => {
-        if (host.chatId === streamChatId) { host.setStreamContent?.(null,); }
-      },
-      onError: () => {
-        if (host.chatId === streamChatId) { host.setStreamContent?.(null,); }
-      },
-    },
-  },);
+  const stream = openSendStream(host,);
 
   try {
     const payload = attachments?.length

@@ -26,6 +26,8 @@ export interface CreateChatOptions {
   sessionToken?: string;
   /** Setup template id; omit for a blank chat. */
   templateId?: string;
+  /** Actor ids to seed as participants (e.g. a selected character). */
+  participantIds?: string[];
 }
 
 /**
@@ -41,7 +43,7 @@ export interface CreateChatOptions {
  * @throws never — all errors are captured in the result union
  */
 export async function createChat(options: CreateChatOptions,): Promise<ChatCreateResult> {
-  const { name, sessionToken, templateId, } = options;
+  const { name, sessionToken, templateId, participantIds, } = options;
 
   let response: Response;
   try {
@@ -52,7 +54,11 @@ export async function createChat(options: CreateChatOptions,): Promise<ChatCreat
         "Content-Type": "application/json",
         ...(sessionToken ? { Authorization: `Bearer ${sessionToken}`, } : {}),
       },
-      body: jsonStringifyOr(templateId ? { name, templateId, } : { name, },),
+      body: jsonStringifyOr({
+        name,
+        ...(templateId ? { templateId, } : {}),
+        ...(participantIds?.length ? { participantIds, } : {}),
+      },),
       signal: AbortSignal.timeout(30000,),
     },);
   } catch (error: unknown) {

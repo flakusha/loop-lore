@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 360
+// size-allow: 380
 /**
  * TUI Chat Widget (pi-tui)
  *
@@ -28,10 +28,11 @@ import {
   uploadAsset as uploadAssetDispatch,
 } from "./api";
 import type { ImageGenResult, MessageAttachment, UploadResult, } from "./api";
-import { dispatchBranchCommand, } from "./branch-commands";
+import { routeClientCommand, } from "./client-commands";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
 import { ChatInputField, } from "./input-field";
+import { applyStreamRow, } from "./stream-row";
 import { TranscriptPane, } from "./transcript";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
 
@@ -262,22 +263,7 @@ export class ChatWidget implements Component, ChatHost {
    * @param content - plain text from the SSE stream, or null to clear
    */
   setStreamContent(content: string | null,): void {
-    if (content === null) {
-      if (this.streamRow === null) { return; }
-      this.transcriptLines.splice(this.streamRow, 1,);
-      this.streamRow = null;
-      this.scrollToBottom();
-      return;
-    }
-
-    const line = `{cyan-fg}${escapeMarkup(content,)}{/cyan-fg}`;
-    if (this.streamRow === null) {
-      this.streamRow = this.transcriptLines.length;
-      this.transcriptLines.push(line,);
-    } else {
-      this.transcriptLines[this.streamRow] = line;
-    }
-
+    this.streamRow = applyStreamRow(this.streamRow, this.transcriptLines, content,);
     this.scrollToBottom();
   }
 
@@ -322,13 +308,9 @@ export class ChatWidget implements Component, ChatHost {
     // frontend's command-action dispatch, so `/image` and `/upload` are
     // handled here. Anything else goes through the normal send path (the
     // server still dispatches its own `/image` command for other clients).
-    // Branch / split / reunite are HTTP commands over the shipped chat
-    // routes, not message text the server should dispatch to the LLM.
-    if (
-      trimmed === "/branch" || trimmed.startsWith("/branch ",) ||
-      trimmed.startsWith("/split ",) || trimmed.startsWith("/reunite ",)
-    ) {
-      void dispatchBranchCommand(this, trimmed,);
+    // HTTP-backed branch/character commands are not message text for the LLM.
+    if (/^\/(branch|split|reunite|chars)(\s|$)/.test(trimmed,)) {
+      void routeClientCommand(this, trimmed,);
       return;
     }
 

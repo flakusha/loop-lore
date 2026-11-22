@@ -15,6 +15,7 @@
  * by the server's StreamBuffer — this client has no id/reconnect state.
  */
 import { API_BASE, } from "./api";
+import type { ChatHost, } from "./types";
 
 // Bound at import time: TUI unit tests replace globalThis.fetch with a queued
 // stub for the POST under test; the stream must not consume that same queue.
@@ -178,4 +179,34 @@ export function openChatStream(options: ChatStreamOptions,): ChatStreamSubscript
   })();
 
   return { close, };
+}
+
+/**
+ * Subscribe to the active chat stream for a send. Stale chats are ignored,
+ * the typing row yields to the first token, and every terminal event clears
+ * the live row. No chat id means no stream to open.
+ * @param host - chat widget host
+ * @returns a subscription the send closes when it settles
+ */
+export function openSendStream(host: ChatHost,): ChatStreamSubscription {
+  const chatId = host.chatId;
+  if (!chatId) { return { close: () => undefined, }; }
+
+  return openChatStream({
+    chatId,
+    sessionToken: host.sessionToken,
+    callbacks: {
+      onUpdate: (content,) => {
+        if (host.chatId !== chatId) { return; }
+        host.hideTyping();
+        host.setStreamContent?.(content,);
+      },
+      onDone: () => {
+        if (host.chatId === chatId) { host.setStreamContent?.(null,); }
+      },
+      onError: () => {
+        if (host.chatId === chatId) { host.setStreamContent?.(null,); }
+      },
+    },
+  },);
 }
