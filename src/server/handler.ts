@@ -42,7 +42,10 @@ export function createRequestHandler(
   logger: ReturnType<typeof getLogger>,
   database?: ReturnType<typeof getDatabase>,
 ): (request: Request,) => Promise<Response> {
-  const headerPolicy = new ResponseHeaderPolicy(config.headers,);
+  const headerPolicy = new ResponseHeaderPolicy(config.headers, {
+    trustProxy: config.server.trustProxy === true,
+  },);
+
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
   const handleResolver = database ? createHandleResolver(database,) : null;
   return async (request: Request,): Promise<Response> => {
