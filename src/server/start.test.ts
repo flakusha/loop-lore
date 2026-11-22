@@ -34,6 +34,7 @@ const processOnCalls: [string, (...args: unknown[]) => void,][] = [];
 // Gate for the plugin loader: a test can hold `loadAllPlugins` open to observe
 // the boot window (traffic must stay gated until the plugins are loaded).
 let pluginGate: Promise<void> | undefined;
+let tlsProvisionFailure: Error | null = null;
 
 // Per-test owned seams for the boot capability assertion (set/restored in the test).
 let bootDb: Kysely<DB> | undefined;
@@ -73,7 +74,16 @@ if (ISOLATED) {
     initAgeGate: () => {},
   }),);
 
-  mock.module("../config/cert", () => ({ ensureTlsCerts: () => null, }),);
+  mock.module("../config/cert", () => ({
+    ensureTlsCerts: () => {
+      if (tlsProvisionFailure) {
+        throw tlsProvisionFailure;
+      }
+
+      return null;
+    },
+  }),);
+
   mock.module("../config/load", () => ({ loadConfig: () => currentConfig, }),);
   mock.module("../cron", () => ({ getScheduler: () => ({ stop: () => {}, }), }),);
   mock.module(
@@ -220,6 +230,7 @@ if (ISOLATED) {
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
   mock.module("../config/hot-reload", () => ({
     watchDomainConfigs: () => ({ close() {}, __close() {}, }),
+    watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     stopWatchingDomainConfigs: () => {},
   }),);
 }
@@ -271,6 +282,7 @@ beforeEach(() => {
 
 afterEach(() => {
   process.on = originalOn;
+  tlsProvisionFailure = null;
 },);
 
 // ── Tests ────────────────────────────────────────────────────
@@ -359,6 +371,30 @@ describeOrSkip("start", () => {
     await expect(start(),).rejects.toThrow(/TLS certificates could not be provisioned/,);
   });
 
+  test("propagates the classified OpenSSL error and opens no listener", async () => {
+    const port = findFreePort();
+    const message =
+      "TLS certificate generation failed. OpenSSL is not installed (tried: openssl). Install OpenSSL or configure certs manually.";
+
+    tlsProvisionFailure = new Error(message,);
+    currentConfig = {
+      ...currentConfig,
+      server: {
+        port,
+        host: "127.0.0.1",
+        tls: { key: "/tmp/loop-lore-test/key.pem", cert: "/tmp/loop-lore-test/cert.pem", },
+      },
+    };
+
+    try {
+      await expect(start(),).rejects.toThrow(message,);
+      // A successful bind proves start() left no plaintext listener behind.
+      const probe = serve({ port, fetch: () => new Response("",), },);
+      probe.stop(true,);
+    } finally {
+      tlsProvisionFailure = null;
+    }
+  });
   test("exits non-zero on a crash-path shutdown and zero on a signal shutdown", async () => {
     const port = findFreePort();
     currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };

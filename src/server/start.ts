@@ -254,8 +254,26 @@ export async function start() {
   // ── TLS certificates (fail closed) ─────────────────────────
   // Provisioned before any listener starts: when TLS is configured and the
   // certificates cannot be provisioned we fail closed instead of silently
-  // downgrading to plaintext.
-  const tlsFiles = config.server.tls ? ensureTlsCerts(config.server.tls,) : null;
+  // downgrading to plaintext. Provisioning throws a classified error naming
+  // OpenSSL and the platform install hint — propagate it verbatim.
+  let tlsFiles: ReturnType<typeof ensureTlsCerts> = null;
+  if (config.server.tls) {
+    try {
+      tlsFiles = ensureTlsCerts(config.server.tls,);
+    } catch (error) {
+      const failure = error instanceof Error ? error : new Error(String(error,),);
+      serverLogger.fatal(
+        `TLS is configured but the certificates could not be provisioned — refusing to serve plaintext. ${failure.message}`,
+        failure,
+        { module: "server", tls: config.server.tls, },
+      );
+
+      throw new Error(
+        `TLS certificates could not be provisioned — refusing to start without HTTPS. ${failure.message}`,
+      );
+    }
+  }
+
   if (config.server.tls && !tlsFiles) {
     serverLogger.fatal(
       "TLS is configured but the certificates could not be provisioned — refusing to serve plaintext",

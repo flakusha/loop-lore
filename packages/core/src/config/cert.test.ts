@@ -29,6 +29,8 @@ import { resolveInstanceDir, } from "./state-dir";
 
 type SpawnSync = typeof Bun.spawnSync;
 
+const originalPlatform = process.platform;
+
 let originalSpawnSync: SpawnSync | undefined;
 let tempDir = "";
 
@@ -44,6 +46,7 @@ beforeEach(() => {
 
 afterEach(() => {
   Bun.spawnSync = originalSpawnSync as SpawnSync;
+  Object.defineProperty(process, "platform", { value: originalPlatform, configurable: true, },);
   if (tempDir && existsSync(tempDir,)) {
     rmSync(tempDir, { recursive: true, force: true, },);
   }
@@ -308,32 +311,37 @@ describe("ensureTlsCerts — generation path", () => {
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
   });
 
-  test("returns null when the only openssl binary fails (POSIX behavior)", () => {
+  test("throws a run-failure hint when the only openssl binary fails (POSIX)", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
     const keyPath = join(tempDir, "k3", "k.pem",);
     const certPath = join(tempDir, "k3", "c.pem",);
+    const binaries: string[] = [];
 
-    Bun.spawnSync = (() => {
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      binaries.push(String(cmd[0],),);
       return { success: false, stdout: Buffer.from("",), stderr: Buffer.from("err",), exitCode: 1, };
     }) as unknown as SpawnSync;
 
-    const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
-
-    expect(result,).toBeNull();
+    expect(() => ensureTlsCerts({ key: keyPath, cert: certPath, },)).toThrow(
+      /OpenSSL ran but certificate generation failed \(tried: openssl \(failed\)\)\. Check the certificate paths and permissions/,
+    );
+    expect(binaries,).toEqual(["openssl",],);
   });
 });
 
 describe("ensureTlsCerts — failure path", () => {
-  test("returns null when every openssl binary throws", () => {
+  test("throws the platform install hint when every openssl binary is missing", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
     const keyPath = join(tempDir, "fail", "k.pem",);
     const certPath = join(tempDir, "fail", "c.pem",);
 
     Bun.spawnSync = (() => {
-      throw new Error("no openssl anywhere",);
+      throw Object.assign(new Error("binary not found",), { code: "ENOENT", },);
     }) as unknown as SpawnSync;
 
-    const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
-
-    expect(result,).toBeNull();
+    expect(() => ensureTlsCerts({ key: keyPath, cert: certPath, },)).toThrow(
+      /OpenSSL is not installed \(tried: openssl \(not found\)\)\. Install OpenSSL or configure certs manually\./,
+    );
   });
 
   test("does not throw when mkdirSync hits an already-present parent", () => {
@@ -351,5 +359,79 @@ describe("ensureTlsCerts — failure path", () => {
     const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
 
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
+describe("ensureTlsCerts — OpenSSL classification", () => {
+  test("tries openssl.exe then openssl on Windows and reports both missing", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    const tried: string[] = [];
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      tried.push(String(cmd[0],),);
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "w", "k.pem",),
+        cert: join(tempDir, "w", "c.pem",),
+      },)
+    ).toThrow(/slproweb\.com\/products\/Win32OpenSSL\.html/,);
+    expect(tried,).toEqual(["openssl.exe", "openssl",],);
+  });
+
+  test("reports a run failure when the first Windows candidate is missing but the second fails", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    let call = 0;
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      call++;
+      if (call === 1) {
+        expect(cmd[0],).toBe("openssl.exe",);
+        throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+      }
+      expect(cmd[0],).toBe("openssl",);
+      return { success: false, stdout: Buffer.from("",), stderr: Buffer.from("err",), exitCode: 1, };
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "w2", "k.pem",),
+        cert: join(tempDir, "w2", "c.pem",),
+      },)
+    ).toThrow(
+      /OpenSSL ran but certificate generation failed \(tried: openssl\.exe \(not found\), openssl \(failed\)\)/,
+    );
+  });
+
+  test("does not try a second POSIX candidate after a missing binary", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const tried: string[] = [];
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      tried.push(String(cmd[0],),);
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "p", "k.pem",),
+        cert: join(tempDir, "p", "c.pem",),
+      },)
+    ).toThrow(/OpenSSL is not installed/,);
+    expect(tried,).toEqual(["openssl",],);
+  });
+
+  test("existing cert files produce no OpenSSL attempt or error", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    const keyPath = join(tempDir, "existing", "k.pem",);
+    const certPath = join(tempDir, "existing", "c.pem",);
+    writeCertFiles(keyPath, certPath,);
+    let spawnCalled = false;
+    Bun.spawnSync = (() => {
+      spawnCalled = true;
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(spawnCalled,).toBe(false,);
   });
 });

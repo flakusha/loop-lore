@@ -5,9 +5,8 @@
  * Self-signed TLS certificate generation.
  *
  * On first run (or when cert files are missing), generates ephemeral
- * development certificates using OpenSSL. Returns null when the
- * certificates cannot be provisioned — the caller decides whether to
- * continue without HTTPS.
+ * development certificates using OpenSSL. Throws a classified error when
+ * provisioning fails so boot can fail closed with an actionable message.
  *
  * Certificates are valid for 365 days and stored at the configured paths.
  */
@@ -15,7 +14,6 @@
 import { getLogger, } from "@/logger";
 import { existsSync, mkdirSync, } from "node:fs";
 import { dirname, } from "node:path";
-import { platform, } from "node:process";
 import { resolveInstancePath, } from "./instance-path";
 import type { TlsConfig, } from "./schema";
 import { resolveInstanceDir, } from "./state-dir";
@@ -48,7 +46,7 @@ export interface EnsureTlsCertsOptions {
  * onto the runtime instance dir; every other absolute path wins as-is.
  * @param configPath
  * @param opts
- * @returns TlsFiles paths if available, null if TLS is unavailable.
+ * @throws Error when provisioning fails, with the reason and platform hint.
  */
 export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOptions,): TlsFiles | null {
   const base = opts?.instanceDir ?? resolveInstanceDir(process.env,);
@@ -69,8 +67,13 @@ export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOption
   // Generate self-signed cert
   getTlsLog().info("Generating self-signed development certificate...",);
 
-  // On Windows, try openssl.exe as well
-  const opensslBin = platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
+  // On Windows, try openssl.exe as well. Read process.platform directly: the
+  // node:process named import is a static copy, so stubbing process.platform
+  // in tests would not change the candidate list.
+  const opensslBin = process.platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
+
+  type Attempt = { bin: string; missing: boolean };
+  const attempts: Attempt[] = [];
 
   for (const bin of opensslBin) {
     // TODO(env): bun-only — Bun.spawnSync is a Bun API; add a node child_process shim when a node target lands.
@@ -101,17 +104,24 @@ export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOption
         // instance dir the cert was just written to.
         return resolved;
       }
-    } catch {
-      // Try next binary
+
+      attempts.push({ bin, missing: false, },);
+    } catch (error) {
+      attempts.push({
+        bin,
+        missing: (error as NodeJS.ErrnoException | undefined)?.code === "ENOENT",
+      },);
     }
   }
 
-  const platformHint = platform === "win32"
+  const platformHint = process.platform === "win32"
     ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
     : "Install OpenSSL or configure certs manually.";
 
-  getTlsLog().warn(`Failed to generate certificate. ${platformHint}`,);
-  getTlsLog().warn("TLS certificates unavailable — HTTPS cannot be served.",);
+  const tried = attempts.map(({ bin, missing, },) => `${bin} (${missing ? "not found" : "failed"})`).join(", ",);
+  const detail = attempts.some(({ missing, },) => !missing)
+    ? `OpenSSL ran but certificate generation failed (tried: ${tried}). Check the certificate paths and permissions, or configure certs manually.`
+    : `OpenSSL is not installed (tried: ${tried}). ${platformHint}`;
 
-  return null;
+  throw new Error(`TLS certificate generation failed. ${detail}`,);
 }
