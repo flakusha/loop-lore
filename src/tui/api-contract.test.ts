@@ -21,6 +21,9 @@
  * | `GET  /api/v1/harness/runs`              | `harness/api.ts` loadRuns     |
  * | `GET  /api/v1/harness/runs/:runId`       | `harness/api.ts` loadRunDetail|
  *
+ * The "TUI endpoint inventory" section at the end pins all 31 method+path
+ * pairs the TUI calls; the five above remain the field-by-field contracts.
+ *
  * The field lists below are transcribed from those modules; the comment on each
  * assertion names the line that reads it. Renaming any of those fields fails
  * here instead of failing silently in a terminal.
@@ -527,5 +530,95 @@ describe("GET /api/v1/harness/runs/:runId — harness/api.ts loadRunDetail reads
     expect(row.result,).toBe(detail.result,);
     expect(row.costUsd,).toBe(detail.costUsd,);
     expect(detail,).not.toHaveProperty("runMs",);
+  });
+});
+
+// ── Full TUI endpoint inventory ───────────────────────────────────────────────
+// The five field-by-field contracts above stay authoritative for the payloads
+// they cover. This table pins the whole URL inventory: every `fetch` URL under
+// `src/tui/**` that maps to a shipped route must still exist on a real
+// `createApp()`. A rename or a dropped route fails here, even when the TUI
+// unit suites inject a fake fetch and stay green.
+interface TuiEndpoint {
+  method: string;
+  path: string;
+  caller: string;
+}
+
+const TUI_ENDPOINTS: TuiEndpoint[] = [
+  { method: "POST", path: "/api/v1/chats/:id/messages", caller: "chat/api.ts handleSend", },
+  { method: "GET", path: "/api/v1/chats/:id/messages", caller: "chat/api.ts loadMessages", },
+  { method: "GET", path: "/api/v1/commands", caller: "chat/api.ts loadCommands", },
+  { method: "POST", path: "/api/v1/generation/image", caller: "chat/api.ts generateImage", },
+  { method: "POST", path: "/api/v1/assets", caller: "chat/api.ts uploadAsset", },
+  { method: "GET", path: "/api/v1/chats", caller: "chat-picker.ts loadChats", },
+  { method: "GET", path: "/api/v1/chat-setup-templates", caller: "chat-picker.ts loadTemplates", },
+  { method: "POST", path: "/api/v1/chats", caller: "chat-create-api.ts createChat", },
+  { method: "GET", path: "/api/v1/assets", caller: "asset-view.ts loadAssets", },
+  { method: "POST", path: "/api/v1/assets/:id/links", caller: "asset-view.ts attachAsset", },
+  { method: "GET", path: "/api/v1/harness/runs", caller: "harness/api.ts loadRuns", },
+  { method: "GET", path: "/api/v1/harness/runs/:runId", caller: "harness/api.ts loadRunDetail", },
+  { method: "GET", path: "/api/v1/harness/stats", caller: "harness/api.ts loadStats", },
+  { method: "GET", path: "/api/v1/harness/permissions", caller: "harness/api.ts loadPermissions", },
+  { method: "POST", path: "/api/v1/harness/permissions/:id/approve", caller: "harness/api.ts decide approve", },
+  { method: "POST", path: "/api/v1/harness/permissions/:id/deny", caller: "harness/api.ts decide deny", },
+  { method: "GET", path: "/api/v1/admin/model-roles", caller: "models-api.ts loadRoles", },
+  { method: "GET", path: "/api/v1/admin/providers", caller: "models-api.ts loadProviders", },
+  { method: "GET", path: "/api/v1/admin/providers/:name/models", caller: "models-api.ts loadProviderModels", },
+  { method: "PUT", path: "/api/v1/admin/model-roles/:role", caller: "models-api.ts assignRole", },
+  { method: "DELETE", path: "/api/v1/admin/model-roles/:role", caller: "models-api.ts clearRole", },
+  { method: "POST", path: "/api/v1/admin/providers/rescan", caller: "models-api.ts rescanProviders", },
+  { method: "GET", path: "/api/v1/providers", caller: "models-api.ts loadPublicProviders", },
+  { method: "POST", path: "/api/v1/generation/test-connection", caller: "models-api.ts testProviderConnection", },
+  { method: "GET", path: "/api/v1/generation/stream/:chatId", caller: "chat/stream.ts openChatStream", },
+  { method: "GET", path: "/api/v1/chats/:id/branches", caller: "chat/branch-api.ts listBranches", },
+  { method: "POST", path: "/api/v1/chats/:id/branches", caller: "chat/branch-api.ts createBranch", },
+  { method: "POST", path: "/api/v1/chats/:id/branches/:branchId/merge", caller: "chat/branch-api.ts mergeBranch", },
+  { method: "POST", path: "/api/v1/chats/:id/split", caller: "chat/branch-api.ts splitChat", },
+  { method: "POST", path: "/api/v1/chats/:id/reunite", caller: "chat/branch-api.ts reuniteChats", },
+  { method: "GET", path: "/api/v1/actors", caller: "chat/characters-api.ts listCharacters", },
+];
+
+describe("TUI endpoint inventory — real createApp() route registry", () => {
+  test("every TUI-called URL resolves to a shipped route", () => {
+    const registered = new Set(app.routes.map((route,) => `${route.method} ${route.path}`),);
+    const missing = TUI_ENDPOINTS.filter((endpoint,) => !registered.has(`${endpoint.method} ${endpoint.path}`,)).map((
+      endpoint,
+    ) => `${endpoint.method} ${endpoint.path} (${endpoint.caller})`);
+
+    expect(missing,).toEqual([],);
+  });
+
+  test("the pin list is the full inventory, not a five-endpoint sample", () => {
+    expect(TUI_ENDPOINTS.length,).toBe(31,);
+  });
+});
+
+// ── New live contracts ────────────────────────────────────────────────────────
+describe("new TUI endpoints — payload fields the callers read", () => {
+  test("GET /api/v1/actors?type=character returns the rows the character command lists", async () => {
+    const res = await call("/api/v1/actors?type=character&page=1&pageSize=20",);
+    expect(res.status,).toBe(200,);
+
+    const body = (await res.json()) as { data?: unknown };
+    expect(Array.isArray(body.data,),).toBe(true,);
+    for (const actor of body.data as { id?: unknown; display_name?: unknown }[]) {
+      expect(typeof actor.id,).toBe("string",);
+      expect(typeof actor.display_name,).toBe("string",);
+    }
+  });
+
+  test("GET /api/v1/chats/:id/branches answers the branches envelope", async () => {
+    // The branch service re-checks chat access; the in-process derive resolves
+    // a solo caller that is not this fixture creator, so pin the shared chat
+    // as public for this last describe instead of seeding a second identity.
+    await db.updateTable("chats",).set({ visibility: "public", },).where("id", "=", chatId,).execute();
+
+    const res = await call(`/api/v1/chats/${chatId}/branches?limit=10`,);
+    expect(res.status,).toBe(200,);
+
+    const body = (await res.json()) as { data?: { branches?: unknown; nextCursor?: unknown } };
+    expect(Array.isArray(body.data?.branches,),).toBe(true,);
+    expect(body.data?.nextCursor === null || typeof body.data?.nextCursor === "string",).toBe(true,);
   });
 });
