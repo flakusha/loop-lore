@@ -35,6 +35,8 @@ export interface JwtPayload {
   exp: number;
   /** Session ID for revocation tracking */
   sid: string;
+  /** Issuer (env `AUTH_JWT_ISSUER`); absent in legacy mode when unset. */
+  iss?: string;
   /** Authentication methods (e.g. `["mfa-email"]`); absent = password only. */
   amr?: string[];
   /** Seconds since epoch when step-up MFA completed; absent = never. */
@@ -130,6 +132,17 @@ async function importSecretKey(secret: string,): Promise<CryptoKey> {
 // ── Public API ────────────────────────────────────────────────
 
 /**
+ * Resolve the configured JWT issuer. Read at call time so env changes
+ * apply without a reload and tests can stub per case.
+ * ponytail: env-only knob; promote to AuthConfig when the config shape
+ * is next extended.
+ */
+function configuredIssuer(): string | undefined {
+  const value = process.env.AUTH_JWT_ISSUER;
+  return value && value.length > 0 ? value : undefined;
+}
+
+/**
  * Sign a JWT token.
  * @param opts
  * @returns Signed JWT string (header.payload.signature)
@@ -137,12 +150,14 @@ async function importSecretKey(secret: string,): Promise<CryptoKey> {
 export async function signJwt(opts: SignJwtOpts,): Promise<string> {
   const header = { alg: "HS256", typ: "JWT", };
   const now = Math.floor(Date.now() / 1000,);
+  const issuer = configuredIssuer();
   const payload: JwtPayload = {
     sub: opts.userId,
     role: opts.role,
     iat: now,
     exp: now + opts.expiresInSeconds,
     sid: opts.sessionId,
+    ...(issuer === undefined ? {} : { iss: issuer, }),
     ...(opts.amr === undefined ? {} : { amr: opts.amr, }),
     ...(opts.authTime === undefined ? {} : { auth_time: opts.authTime, }),
   };
@@ -220,8 +235,6 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
       return { valid: false, error: "Invalid payload", };
     }
 
-    // TODO(auth): verify an issuer claim once the JWT contract gains `iss`;
-    // today authenticity is the HMAC signature plus session/user-row checks.
     const payload = parsed.value;
 
     // Required claims — token is useless without a subject, role, or session.
@@ -231,6 +244,13 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
       typeof payload.sid !== "string" || payload.sid.length === 0
     ) {
       return { valid: false, error: "Missing required claims", };
+    }
+
+    // Legacy mode (no env issuer) accepts tokens with or without `iss`.
+    // Once configured, a missing or mismatched issuer fails closed.
+    const expectedIssuer = configuredIssuer();
+    if (expectedIssuer !== undefined && payload.iss !== expectedIssuer) {
+      return { valid: false, error: "Invalid issuer", };
     }
 
     // Finite, future-dated expiration. A token missing `exp` or with a

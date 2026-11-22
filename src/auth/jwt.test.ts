@@ -284,3 +284,122 @@ describe("verifyJwt — JOSE header assertion (regression)", () => {
     }
   });
 });
+
+function newToken(): Promise<string> {
+  return signJwt({ secret: SECRET, userId: USER, role: ROLE, sessionId: SID, expiresInSeconds: 3600, },);
+}
+
+async function legacyPayloadToken(): Promise<string> {
+  return tokenWithPayload(JSON.stringify({
+    sub: USER,
+    role: ROLE,
+    sid: SID,
+    iat: 0,
+    exp: Math.floor(Date.now() / 1000,) + 3600,
+  },),);
+}
+
+/**
+ * @param token
+ */
+function payloadOf(token: string,): Record<string, unknown> {
+  const [, payloadB64,] = token.split(".",);
+  return JSON.parse(Buffer.from(payloadB64!, "base64url",).toString("utf8",),) as Record<string, unknown>;
+}
+
+/**
+ * Set AUTH_JWT_ISSUER for one case, restoring the prior value afterwards.
+ * @param issuer
+ * @param fn
+ */
+async function withIssuer<T,>(issuer: string | undefined, fn: () => Promise<T>,): Promise<T> {
+  const previous = process.env.AUTH_JWT_ISSUER;
+  if (issuer === undefined) {
+    delete process.env.AUTH_JWT_ISSUER;
+  } else {
+    process.env.AUTH_JWT_ISSUER = issuer;
+  }
+
+  try {
+    return await fn();
+  } finally {
+    if (previous === undefined) {
+      delete process.env.AUTH_JWT_ISSUER;
+    } else {
+      process.env.AUTH_JWT_ISSUER = previous;
+    }
+  }
+}
+
+describe("verifyJwt — issuer claim (regression)", () => {
+  test("signs iss into new tokens when an issuer is configured", async () => {
+    await withIssuer("loop-lore", async () => {
+      const token = await newToken();
+      expect(payloadOf(token,).iss,).toBe("loop-lore",);
+    },);
+  });
+
+  test("accepts a token with the configured issuer", async () => {
+    await withIssuer("loop-lore", async () => {
+      const token = await newToken();
+      const result = await verifyJwt({ secret: SECRET, token, },);
+      expect(result.valid,).toBe(true,);
+    },);
+  });
+
+  test("rejects a wrong issuer when one is configured", async () => {
+    const future = Math.floor(Date.now() / 1000,) + 3600;
+    const token = await tokenWithPayload(JSON.stringify({
+      sub: USER,
+      role: ROLE,
+      sid: SID,
+      iat: 0,
+      exp: future,
+      iss: "someone-else",
+    },),);
+
+    await withIssuer("loop-lore", async () => {
+      const result = await verifyJwt({ secret: SECRET, token, },);
+      expect(result.valid,).toBe(false,);
+      if (!result.valid) {
+        expect(result.error,).toBe("Invalid issuer",);
+      }
+    },);
+  });
+
+  test("rejects a missing issuer when one is configured", async () => {
+    const token = await legacyPayloadToken();
+
+    await withIssuer("loop-lore", async () => {
+      const result = await verifyJwt({ secret: SECRET, token, },);
+      expect(result.valid,).toBe(false,);
+      if (!result.valid) {
+        expect(result.error,).toBe("Invalid issuer",);
+      }
+    },);
+  });
+
+  test("legacy mode verifies pre-issuer tokens and signs without iss", async () => {
+    const legacyToken = await legacyPayloadToken();
+
+    await withIssuer(undefined, async () => {
+      const verified = await verifyJwt({ secret: SECRET, token: legacyToken, },);
+      expect(verified.valid,).toBe(true,);
+
+      const token = await newToken();
+      expect(payloadOf(token,).iss,).toBeUndefined();
+    },);
+  });
+
+  test("empty issuer env behaves as legacy mode", async () => {
+    const legacyToken = await legacyPayloadToken();
+
+    await withIssuer("", async () => {
+      const verified = await verifyJwt({ secret: SECRET, token: legacyToken, },);
+      expect(verified.valid,).toBe(true,);
+
+      const token = await newToken();
+      expect(payloadOf(token,).iss,).toBeUndefined();
+    },);
+  });
+});
