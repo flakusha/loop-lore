@@ -11,18 +11,18 @@
 
 **Summary:**
 
-Rerank resolves its model from env only; no reranking task signal or model role exists, and general is an autoroute scenario rather than a fallback role. Add the role/signal and reuse the existing resolver with env fallback.
+Rerank now resolves its model through `resolveModelRole` with the existing env chain as fallback, a `reranking` task signal exists, and `general` remains an autoroute scenario fallback rather than a model role. The filed premise (env-only resolution, no task signal, no role) was stale.
 
-**Evidence (dev 2026-11-18):** TaskType has no reranking (src/generation/routing/task-signal.ts:22,50-51); rerank reads RERANK_MODEL and env bases directly and never calls resolveModelRole (src/memory/rerank.ts:66-78); config roles are main/auxiliary/captioning/classifier/translator (packages/core/src/config/schema/generation.ts:135-151); general is an autoroute scenario (generation.ts:107-113); OpenRouter wire bypasses ModelRouter (rerank.ts:73-74).
+**Evidence (dev 2026-11-22):** rerank resolves via `resolveModelRole` with the env fallback chain (`src/memory/rerank.ts:66-78`); the `reranking` task signal is declared (`src/generation/routing/task-signal.ts:22,54-56`); coverage in `src/memory/rerank.test.ts` and `src/generation/routing/task-signal.test.ts`.
 
 **Scope:** add a reranking task signal and rerank capability; add an optional rerank role to modelRoles and its config menu; route via resolveModelRole with the existing env chain as fallback; send the OpenRouter wire through the router; keep fail-open when unconfigured.
 
 **Acceptance Criteria:**
 
-- [ ] configured rerank role wins over env fallback
-- [ ] legacy env-only setup still works unchanged
-- [ ] routing rule on the reranking signal actually fires
-- [ ] tests cover role resolution and wire base URL
+- [x] configured rerank role wins over env fallback (`src/memory/rerank.ts:66-78`)
+- [x] legacy env-only setup still works unchanged (env chain kept as the fallback path)
+- [x] routing rule on the reranking signal actually fires (`src/generation/routing/task-signal.ts:22,54-56`)
+- [x] tests cover role resolution and wire base URL (`src/memory/rerank.test.ts`, `src/generation/routing/task-signal.test.ts`)
 
 **Context:**
 

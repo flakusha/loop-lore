@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Filed 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package, on the 2026-10-28 user correction: ComfyUI is the **unified** generation backend across creative AND chat/avatar flows. Consumable before the video engine exists — authoring + payload preview run against a stubbed backend.
+**Status:** In Progress
+**Status Note:** Shipped on dev — scenario schema migrations 107/108/109, the scenario authoring API (`src/routes/ivss/authoring.ts`), the shot grammar compiler (`src/generation/ivss/shot-grammar.ts:95`), the fragment run pipeline (`src/generation/ivss/run-pipeline.ts:221`) and the authoring UI (`src/frontend/alpine/ivss-authoring.ts:75`, `src/views/ivss-authoring.html`). The browser mask/EDL/NLE tiers and the live video backend stay open. Filed 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package, on the 2026-10-28 user correction: ComfyUI is the **unified** generation backend across creative AND chat/avatar flows. Consumable before the video engine exists — authoring + payload preview run against a stubbed backend.
 **Priority:** Medium-High
 **Effort:** XL
 **Type:** Feature Epic

@@ -8,7 +8,7 @@
 **Effort:** Large
 **Epic:** epic-federation-offload-quotas.md
 
-**Summary:**
+**Status Note:**
 
 Operator-approved disposition (2026-11-18): Desirable / post-1.0.0. File now so the scope is recorded; do not pull this into 1.0.0.
 

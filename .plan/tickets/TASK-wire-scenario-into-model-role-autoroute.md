@@ -3,12 +3,11 @@
 
 # TASK: Wire scenario into model role autoroute
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** The scenario config side shipped — `generation.autorouteScenario` is declared (`packages/core/src/config/schema/generation.ts:130`), validated against the fixed vocabulary (`packages/core/src/config/schema-class/validate.ts:61-67`) and surfaced in the generation section meta (`packages/core/src/config/sections/generation/meta.ts:24`); the ranking plumbing exists (`src/admin/model-roles.ts:50-75`, `src/models/scenario-ranking.ts:55`). Still open: a production caller that supplies a scenario, and the admin-menu leg (`EDITABLE_KEY_MAP` in `packages/core/src/config/sections/menu-data.ts:11` does not accept the generation scenario keys yet).
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-model-rankings-history.md
-
-**Summary:**
 
 **Summary:**
 

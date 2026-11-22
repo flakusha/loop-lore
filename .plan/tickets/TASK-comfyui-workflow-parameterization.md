@@ -9,7 +9,8 @@
 **Acceptance Criteria:** All three fixes land with regression tests that fail on the current code.
 
 **Priority:** P0 — Critical
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Shipped on dev — typed placeholder substitution (`src/generation/workflow-substitutor.ts:16,128`), opaque-string node ids via the shared allocator (`src/generation/node-id.ts`, `src/generation/lora/discovery-comfyui.ts:198`) and dead-node detection; the epic records the regression boxes as ticked (`epic-comfyui-first-class-citizen.md:335-359`). The stale twin `FEAT-COMFYUI-TYPE-PRESERVING-SUBSTITUTION.md` still says Not Started.
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** existing `src/generation/workflow-substitutor.ts`, `src/generation/lora/discovery-comfyui.ts`
 

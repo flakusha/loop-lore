@@ -3,7 +3,8 @@
 
 # TASK: MCP server surface (stdio, operator-flagged)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Shipped on dev — the stdio inbound MCP server (`src/integrations/mcp/stdio-server.ts:21,141`) and the HTTP surface (`src/integrations/mcp/http-server.ts:52,441`) are live. The open legs are the operator export-flag filter decision and the trust-boundary write-up, not a missing transport.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-integration

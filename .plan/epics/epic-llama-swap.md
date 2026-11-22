@@ -3,7 +3,8 @@
 
 # EPIC: llama-swap Hub (lifecycle, config, rotation/exclusion, bench)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Shipped on dev — the llama-swap admin surface (`src/frontend/alpine/admin-llama-swap.ts`) and the local-provider discovery it feeds (`src/generation/image-engine/comfyui-discovery.ts`, `src/generation/image-engine/sdcpp-discovery.ts`) are live, and llama-swap is the 1.0.0 decision oracle (see the release tracker decision log). The "Not Started" header was stale.
 **Priority:** medium
 **Effort:** Large
 **Type:** Coordination Hub Epic

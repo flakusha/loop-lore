@@ -3,7 +3,8 @@
 
 # TASK: harness-model-discovery-ui-wiring-frontend-models-caller-cost-aware-selector
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Shipped on dev — the frontend caller consumes the discovered models (`src/frontend/alpine/admin-harness-models.ts:26-27,53`) and the cost tiebreak is live in the selector (`src/integrations/harness/profile-selector.ts:132-136` comparator, `:219-224` sort over discovered prices).
 **Amended (2026-11-21):** the frontend caller already exists — `src/frontend/alpine/admin-harness-models.ts` (`MODELS_URL`, `loadHarnessModels`) is imported by `admin-harness.ts:30`. Only the cost tiebreak remains; the HELD sibling-lane blocker is stale.
 **Priority:** medium
 **Effort:** Small
@@ -33,5 +34,5 @@ Parity matrix gap #2 (SHIPPED server-only): discovery + capability enrichment wo
 
 **Acceptance Criteria:**
 
-- [ ] Selector consumes discovered models; cost tiebreak engages (unit test).
-- [ ] Static-fallback semantics preserved (live-only discovery, `reason` explains static entries).
+- [x] Selector consumes discovered models; cost tiebreak engages (unit test) — `compareCandidateCost` (`src/integrations/harness/profile-selector.ts:132-136`) sorts admitted candidates by discovered price (`:219-224`).
+- [x] Static-fallback semantics preserved (live-only discovery, `reason` explains static entries) — discovery stays live-only; `reason` still explains static entries.

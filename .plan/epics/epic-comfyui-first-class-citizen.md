@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Surface preparation, plus a follow-up investigation (`docs/meta/research/comfyui-first-class-investigation.md`) that **amended three design decisions**: the workflow library reuses `prompt_templates` rather than a new `comfy_workflows` table, the graph is stored inline in `payload` rather than on disk (no generated-config writer exists, and the loader's dir-mtime cache is not overwrite-safe), and two cited paths did not exist. Six defects are now confirmed by runnable probe against the operator's `i-anima-0001.json` — three original, three found by the investigation. Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
+**Status:** In Progress
+**Status Note:** Core shipped on dev — first-class engine (`src/generation/image-engine/comfyui-first.ts:26`), admin status route (`src/routes/admin/comfyui-status.ts:147-151`), admin builder UI (`src/frontend/alpine/comfyui-builder.ts`) and websocket progress (`src/generation/providers/comfyui-progress.ts:43-69`). The workflow library, the admin workflow surface and the parameterization tail carry the remaining work; the "no ComfyUI admin surface" premise is stale. Surface preparation, plus a follow-up investigation (`docs/meta/research/comfyui-first-class-investigation.md`) that **amended three design decisions**: the workflow library reuses `prompt_templates` rather than a new `comfy_workflows` table, the graph is stored inline in `payload` rather than on disk (no generated-config writer exists, and the loader's dir-mtime cache is not overwrite-safe), and two cited paths did not exist. Six defects are now confirmed by runnable probe against the operator's `i-anima-0001.json` — three original, three found by the investigation. Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
