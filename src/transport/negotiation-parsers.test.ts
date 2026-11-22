@@ -67,6 +67,12 @@ describe("parseAcceptProtocols", () => {
     const result = parseAcceptProtocols("http/1.1;q=invalid, http/2",);
     expect(result,).toEqual([TransportProtocol.Http1_1, TransportProtocol.Http2,],);
   });
+
+  test("reads q after another parameter (RFC 9110 §12.5.1)", () => {
+    // Old split(";", 2) read level=5 as the weight and clamped it to 1.
+    const result = parseAcceptProtocols("http/2;level=5;q=0.5, http/3;q=0.9",);
+    expect(result,).toEqual([TransportProtocol.Http3, TransportProtocol.Http2,],);
+  });
 });
 
 describe("parseAcceptEncoding", () => {
@@ -128,6 +134,17 @@ describe("parseAcceptEncoding", () => {
   test("handles null", () => {
     const result = parseAcceptEncoding(null,);
     expect(result,).toEqual([],);
+  });
+
+  test("reads q after another parameter (RFC 9110 §12.5.1)", () => {
+    // Old split(";", 2) read level=5 as the weight and clamped it to 1.
+    const result = parseAcceptEncoding("gzip; level=5; q=0.5, br;q=0.9",);
+    expect(result,).toEqual([CompressionAlgorithm.Brotli, CompressionAlgorithm.Gzip,],);
+  });
+
+  test("reads q before another parameter", () => {
+    const result = parseAcceptEncoding("gzip;q=0.5;level=5, br;q=0.9",);
+    expect(result,).toEqual([CompressionAlgorithm.Brotli, CompressionAlgorithm.Gzip,],);
   });
 });
 
