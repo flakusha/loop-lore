@@ -28,7 +28,7 @@ const PREFIX = "/api/v1";
 const BASE = `${PREFIX}/admin/comfyui-workflows`;
 
 /** The shipped Anima API export, read verbatim so ingest and catalog cannot drift. */
-const ANIMA_PATH = "./configs/workflows/anima.json";
+const ANIMA_PATH = "./configs/workflows/anima-v1.json";
 
 /** Minimal valid graph: a loader feeding a terminal SaveImage sink. */
 const GRAPH = {
@@ -545,6 +545,7 @@ describe("admin ComfyUI workflow routes — optional bindings", () => {
     expect(payload.bindings,).toBeUndefined();
   });
 });
+
 describe("write fences", () => {
   it("trims the license and nulls blanks", () => {
     expect(licenseValue("  MIT  ",),).toBe("MIT",);

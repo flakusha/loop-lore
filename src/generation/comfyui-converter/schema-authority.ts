@@ -46,7 +46,7 @@ function liveInputNames(
 }
 
 /** sha256 of `fixtures/object-info.json`, asserted by schema-authority.test.ts. */
-export const PINNED_OBJECT_INFO_SHA256 = "732cbd98bdcdc1959974c90e4ad31e5731d0198d76f2ac31685d4ee562698f43";
+export const PINNED_OBJECT_INFO_SHA256 = "bcf080dab09dac7b32003ccb6eb9b4cffe69b6b64a1d99e7003f9b08b784ef6d";
 
 /**
  * Read the bundled pinned snapshot.

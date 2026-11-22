@@ -137,6 +137,7 @@ function loraPlaceholderErrors(placeholders: ReadonlySet<string>,): string[] {
 
   return errors;
 }
+
 /**
  * Structural probe for the metadata half of a payload.
  * @param value
@@ -213,7 +214,7 @@ export function validateWorkflowPayload(value: unknown, options: ValidateWorkflo
     }
   }
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
+  // hint: Logic changed on both sides. Requires understanding intent of each change.
   const placeholders = collectPlaceholders(graph,);
   errors.push(...parameterErrors(payload.parameters, placeholders, boundNames,),);
   errors.push(...loraSlotErrors(payload,),);
