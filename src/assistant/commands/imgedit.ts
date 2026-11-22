@@ -11,11 +11,18 @@
  * therefore leaves no partial work behind.
  */
 
+import {
+  createHonkboxEditProvider,
+  honkboxProbeForImgEdit,
+  shouldUseHonkbox,
+} from "../../image-edit/provider-selection";
 import { ensureWorkflowFileTemplates, } from "../../image-edit/providers/comfyui-workflow-template";
 import {
   registerBuiltinTemplates,
   templateRegistry,
 } from "../../image-edit/template-registry";
+import type { ImageEditProvider, WorkflowTemplate, } from "../../image-edit/types";
+import type { HonkboxProbeResult, } from "../../integrations/honkbox";
 import {
   type CommandContext,
   type CommandResult,
@@ -25,9 +32,52 @@ import {
 const USAGE =
   "Usage: /imgedit <template> [prompt] — edit the latest image in chat with an image-edit template.\nExample: /imgedit img2img make the sky dramatic";
 
+/** Run one honkbox edit when the gate allows it; undefined keeps ComfyUI. */
+async function maybeRunHonkboxEdit(opts: {
+  readonly template: WorkflowTemplate;
+  readonly params: Record<string, unknown>;
+  readonly ownerId: string;
+  readonly chatId: string;
+  readonly messageId?: string;
+  readonly deps: ImgEditCommandDeps;
+},): Promise<CommandResult | undefined> {
+  const { template, params, ownerId, chatId, messageId, deps, } = opts;
+  const probe = deps.probe ? await deps.probe() : await honkboxProbeForImgEdit();
+  if (!shouldUseHonkbox(probe, template,)) { return undefined; }
+
+  const provider = deps.honkbox ? deps.honkbox(probe,) : createHonkboxEditProvider(probe,);
+  const results = await provider.execute(
+    {
+      template_id: template.id,
+      backend: "honkbox",
+      params,
+      chatId,
+      ...(messageId ? { messageId, } : {}),
+    },
+    template,
+    { ownerId, },
+  );
+
+  return {
+    systemMessage: `Image edit with "${template.name}" finished via honkbox (${String(results.length,)} image${
+      results.length === 1 ? "" : "s"
+    }).`,
+    handled: true,
+  };
+}
+
+/** Optional seams for command-layer provider selection tests. */
+export interface ImgEditCommandDeps {
+  /** Cached/fresh honkbox probe; omit for the env-driven production probe. */
+  readonly probe?: () => Promise<HonkboxProbeResult | undefined>;
+  /** Provider factory; omit for the real honkbox adapter. */
+  readonly honkbox?: (probe: HonkboxProbeResult | undefined,) => ImageEditProvider;
+}
+
 export async function imgeditCommandHandler(
   args: string[],
   ctx: CommandContext,
+  deps: ImgEditCommandDeps = {},
 ): Promise<CommandResult> {
   const templateId = (args[0] ?? "").trim();
   const prompt = args.slice(1,).join(" ",).trim();
@@ -85,6 +135,21 @@ export async function imgeditCommandHandler(
   const params: Record<string, unknown> = { prompt, };
   if (imageParam && inputImage) { params[imageParam.name] = inputImage; }
   const backend = template.backends.includes("comfyui",) ? "comfyui" : template.backends[0]!;
+
+  // Capability-gated honkbox path: a disabled/absent gate leaves the action
+  // below — and the HTTP route it feeds — byte-for-byte unchanged.
+  if (ctx.userId) {
+    const honkboxResult = await maybeRunHonkboxEdit({
+      template,
+      params,
+      ownerId: ctx.userId,
+      chatId: ctx.chatId,
+      messageId,
+      deps,
+    },);
+
+    if (honkboxResult) { return honkboxResult; }
+  }
 
   return {
     // Inserted as a chat system message by dispatchCommand, so the run is

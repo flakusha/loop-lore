@@ -24,7 +24,7 @@ export type ImageEditCategory =
   | "controlnet";
 
 /** Supported backend providers */
-export type ImageEditBackend = "comfyui" | "sd-server";
+export type ImageEditBackend = "comfyui" | "sd-server" | "honkbox";
 
 /** Parameter type for template UI rendering */
 export type TemplateParamType =
