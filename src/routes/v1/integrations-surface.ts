@@ -279,6 +279,12 @@ export function integrationsSurface(
         );
       },
       {
+        // parse: "none" — the handler reads request.text() for the raw HMAC
+        // bytes; sibling JSON routes in the composed barrel force Elysia's
+        // body inference, which would consume the stream first and make the
+        // raw read throw "Body is already used" → 500 (same hazard as the
+        // /api/v1/assets upload route in elysia-app.ts).
+        parse: "none",
         params: t.Object({ adapter: t.String({ minLength: 1, },), },),
         headers: t.Object({ "x-loop-lore-signature": t.Optional(t.String(),), },),
       },
