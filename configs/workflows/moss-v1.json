@@ -1,15 +1,15 @@
 {
   "1": {
     "inputs": {
-      "filename_prefix": "comfyui/moss/moss-2026-11-19-15-43-57",
-      "format": "png",
-      "format.bit_depth": "8-bit",
-      "format.input_color_space": "sRGB",
-      "format.channels": "auto",
+      "filename_prefix": "comfyui/moss/moss-%date:yyyy-MM-dd-hh-mm-ss%",
       "images": [
         "5",
         0
-      ]
+      ],
+      "format": "png",
+      "format.bit_depth": "8-bit",
+      "format.input_color_space": "sRGB",
+      "format.channels": "auto"
     },
     "class_type": "SaveImageAdvanced",
     "_meta": {
@@ -28,7 +28,7 @@
   },
   "3": {
     "inputs": {
-      "attention": "{{attention}}",
+      "attention": "comfy kitchen attention",
       "model": [
         "2",
         0

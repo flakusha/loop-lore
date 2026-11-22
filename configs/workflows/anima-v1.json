@@ -1,15 +1,15 @@
 {
   "1": {
     "inputs": {
-      "filename_prefix": "comfyui/anima/anima-2026-11-19-15-59-14",
-      "format": "png",
-      "format.bit_depth": "8-bit",
-      "format.input_color_space": "sRGB",
-      "format.channels": "auto",
+      "filename_prefix": "comfyui/anima/anima-%date:yyyy-MM-dd-hh-mm-ss%",
       "images": [
         "2",
         0
-      ]
+      ],
+      "format": "png",
+      "format.bit_depth": "8-bit",
+      "format.input_color_space": "sRGB",
+      "format.channels": "auto"
     },
     "class_type": "SaveImageAdvanced",
     "_meta": {
@@ -101,7 +101,7 @@
   },
   "8": {
     "inputs": {
-      "attention": "{{attention}}",
+      "attention": "comfy kitchen attention",
       "model": [
         "7",
         0

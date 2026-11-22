@@ -1,15 +1,15 @@
 {
   "461": {
     "inputs": {
-      "filename_prefix": "comfyui/qwen2-1/qwen2-1-2026-11-20-10-01-59",
-      "format": "png",
-      "format.bit_depth": "8-bit",
-      "format.input_color_space": "sRGB",
-      "format.channels": "auto",
+      "filename_prefix": "comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%",
       "images": [
         "489",
         0
-      ]
+      ],
+      "format": "png",
+      "format.bit_depth": "8-bit",
+      "format.input_color_space": "sRGB",
+      "format.channels": "auto"
     },
     "class_type": "SaveImageAdvanced",
     "_meta": {
@@ -134,7 +134,7 @@
   },
   "497": {
     "inputs": {
-      "attention": "{{attention}}",
+      "attention": "comfy kitchen attention",
       "model": [
         "484",
         0

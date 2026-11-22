@@ -1,1 +1,1950 @@
-{"id":"54bb395d-3e60-4c94-b525-85523901575b","revision":0,"last_node_id":498,"last_link_id":736,"nodes":[{"id":461,"type":"SaveImageAdvanced","pos":[1800,2530],"size":[850,610],"flags":{},"order":10,"mode":0,"inputs":[{"localized_name":"images","name":"images","type":"IMAGE","link":716},{"localized_name":"filename_prefix","name":"filename_prefix","type":"STRING","widget":{"name":"filename_prefix"},"link":null},{"localized_name":"format","name":"format","type":"COMFY_DYNAMICCOMBO_V3","widget":{"name":"format"},"link":null},{"localized_name":"bit_depth","name":"format.bit_depth","type":"COMBO","widget":{"name":"format.bit_depth"},"link":null},{"localized_name":"input_color_space","name":"format.input_color_space","type":"COMBO","widget":{"name":"format.input_color_space"},"link":null},{"localized_name":"channels","name":"format.channels","shape":7,"type":"COMBO","widget":{"name":"format.channels"},"link":null}],"outputs":[{"localized_name":"images","name":"images","type":"IMAGE","links":[]}],"properties":{"Node name for S&R":"SaveImageAdvanced"},"widgets_values":["comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%","png","8-bit","sRGB","auto"],"widgets_values_named":{"filename_prefix":"comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%","format":"png","format.bit_depth":"8-bit","format.input_color_space":"sRGB","format.channels":"auto"}},{"id":484,"type":"UNETLoader","pos":[-1490,2470],"size":[510,90],"flags":{},"order":0,"mode":0,"inputs":[{"localized_name":"unet_name","name":"unet_name","type":"COMBO","widget":{"name":"unet_name"},"link":null},{"localized_name":"weight_dtype","name":"weight_dtype","type":"COMBO","widget":{"name":"weight_dtype"},"link":null}],"outputs":[{"localized_name":"MODEL","name":"MODEL","type":"MODEL","links":[732]}],"properties":{"Node name for S&R":"UNETLoader","models":[{"name":"qwen_image_2.1_int8_convrot.safetensors","url":"https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors","directory":"diffusion_models"}]},"widgets_values":["qwen/qwen-image-2.1.safetensors","default"],"widgets_values_named":{"unet_name":"qwen/qwen-image-2.1.safetensors","weight_dtype":"default"}},{"id":485,"type":"TextEncodeQwenImage21","pos":[10,2470],"size":[530,680],"flags":{},"order":7,"mode":0,"inputs":[{"localized_name":"clip","name":"clip","type":"CLIP","link":736},{"localized_name":"image_1","name":"images.image_1","shape":7,"type":"IMAGE","link":null},{"localized_name":"vae","name":"vae","shape":7,"type":"VAE","link":null},{"localized_name":"prompt","name":"prompt","type":"STRING","widget":{"name":"prompt"},"link":null},{"localized_name":"negative_prompt","name":"negative_prompt","type":"STRING","widget":{"name":"negative_prompt"},"link":null},{"localized_name":"resolution","name":"resolution","type":"INT","widget":{"name":"resolution"},"link":null}],"outputs":[{"localized_name":"positive","name":"positive","type":"CONDITIONING","links":[718]},{"localized_name":"negative","name":"negative","type":"CONDITIONING","links":[720]},{"localized_name":"latent","name":"latent","type":"LATENT","links":[]}],"properties":{"Node name for S&R":"TextEncodeQwenImage21"},"widgets_values":["","",1024],"widgets_values_named":{"prompt":"","negative_prompt":"","resolution":1024}},{"id":486,"type":"CLIPLoader","pos":[-1490,2630],"size":[510,120],"flags":{},"order":1,"mode":0,"inputs":[{"localized_name":"clip_name","name":"clip_name","type":"COMBO","widget":{"name":"clip_name"},"link":null},{"localized_name":"type","name":"type","type":"COMBO","widget":{"name":"type"},"link":null},{"localized_name":"device","name":"device","shape":7,"type":"COMBO","widget":{"name":"device"},"link":null}],"outputs":[{"localized_name":"CLIP","name":"CLIP","type":"CLIP","links":[734]}],"properties":{"Node name for S&R":"CLIPLoader","models":[{"name":"qwen3vl_8b_int8_convrot.safetensors","url":"https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors","directory":"text_encoders"}]},"widgets_values":["minimax-h3/qwen3-vl-8b.safetensors","qwen_image","default"],"widgets_values_named":{"clip_name":"minimax-h3/qwen3-vl-8b.safetensors","type":"qwen_image","device":"default"}},{"id":487,"type":"VAELoader","pos":[-1490,2830],"size":[510,70],"flags":{},"order":2,"mode":0,"inputs":[{"localized_name":"vae_name","name":"vae_name","type":"COMBO","widget":{"name":"vae_name"},"link":null}],"outputs":[{"localized_name":"VAE","name":"VAE","type":"VAE","links":[715]}],"properties":{"Node name for S&R":"VAELoader","models":[{"name":"qwen_image_2.1_vae_bf16.safetensors","url":"https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors","directory":"vae"}]},"widgets_values":["qwen/qwen_image_2.1_bf16_fixed.safetensors"],"widgets_values_named":{"vae_name":"qwen/qwen_image_2.1_bf16_fixed.safetensors"}},{"id":488,"type":"EmptyLatentImage","pos":[-1370,3190],"size":[300,120],"flags":{},"order":3,"mode":0,"inputs":[{"localized_name":"width","name":"width","type":"INT","widget":{"name":"width"},"link":null},{"localized_name":"height","name":"height","type":"INT","widget":{"name":"height"},"link":null},{"localized_name":"batch_size","name":"batch_size","type":"INT","widget":{"name":"batch_size"},"link":null}],"outputs":[{"localized_name":"LATENT","name":"LATENT","type":"LATENT","links":[719]}],"properties":{"Node name for S&R":"EmptyLatentImage"},"widgets_values":[1024,1024,1],"widgets_values_named":{"width":1024,"height":1024,"batch_size":1}},{"id":489,"type":"VAEDecode","pos":[1500,2530],"size":[230,60],"flags":{},"order":9,"mode":0,"inputs":[{"localized_name":"samples","name":"samples","type":"LATENT","link":717},{"localized_name":"vae","name":"vae","type":"VAE","link":715}],"outputs":[{"localized_name":"IMAGE","name":"IMAGE","type":"IMAGE","links":[716]}],"properties":{"Node name for S&R":"VAEDecode"}},{"id":490,"type":"KSampler","pos":[810,2630],"size":[270,270],"flags":{},"order":8,"mode":0,"inputs":[{"localized_name":"model","name":"model","type":"MODEL","link":723},{"localized_name":"positive","name":"positive","type":"CONDITIONING","link":718},{"localized_name":"negative","name":"negative","type":"CONDITIONING","link":720},{"localized_name":"latent_image","name":"latent_image","type":"LATENT","link":719},{"localized_name":"seed","name":"seed","type":"INT","widget":{"name":"seed"},"link":null},{"localized_name":"steps","name":"steps","type":"INT","widget":{"name":"steps"},"link":null},{"localized_name":"cfg","name":"cfg","type":"FLOAT","widget":{"name":"cfg"},"link":null},{"localized_name":"sampler_name","name":"sampler_name","type":"COMBO","widget":{"name":"sampler_name"},"link":null},{"localized_name":"scheduler","name":"scheduler","type":"COMBO","widget":{"name":"scheduler"},"link":null},{"localized_name":"denoise","name":"denoise","type":"FLOAT","widget":{"name":"denoise"},"link":null}],"outputs":[{"localized_name":"LATENT","name":"LATENT","type":"LATENT","links":[717]}],"properties":{"Node name for S&R":"KSampler"},"widgets_values":[447606998181262,"fixed",25,1,"euler","simple",1],"widgets_values_named":{"seed":447606998181262,"control_after_generate":"fixed","steps":25,"cfg":1,"sampler_name":"euler","scheduler":"simple","denoise":1}},{"id":496,"type":"QwenImage21Cache","pos":[810,2470],"size":[270,90],"flags":{},"order":5,"mode":0,"inputs":[{"localized_name":"model","name":"model","type":"MODEL","link":735},{"localized_name":"device","name":"device","type":"COMBO","widget":{"name":"device"},"link":null},{"localized_name":"dtype","name":"dtype","type":"COMBO","widget":{"name":"dtype"},"link":null}],"outputs":[{"localized_name":"MODEL","name":"MODEL","type":"MODEL","links":[723]}],"properties":{"Node name for S&R":"QwenImage21Cache"},"widgets_values":["auto","default"],"widgets_values_named":{"device":"auto","dtype":"default"}},{"id":497,"type":"ModelAttentionBackend","pos":[-900,2460],"size":[270,58],"flags":{},"order":6,"mode":0,"inputs":[{"localized_name":"model","name":"model","type":"MODEL","link":732},{"localized_name":"backend","name":"attention","type":"COMBO","widget":{"name":"attention"},"link":null}],"outputs":[{"localized_name":"model","name":"model","type":"MODEL","links":[733]}],"properties":{"Node name for S&R":"ModelAttentionBackend"},"widgets_values":["comfy kitchen attention"],"widgets_values_named":{"attention":"comfy kitchen attention"}},{"id":498,"type":"WASPowerLoraLoader","pos":[-600,2430],"size":[500,2170],"flags":{},"order":4,"mode":0,"inputs":[{"localized_name":"model","name":"model","shape":7,"type":"MODEL","link":733},{"localized_name":"clip","name":"clip","shape":7,"type":"CLIP","link":734},{"localized_name":"fuse","name":"fuse","shape":7,"type":"BOOLEAN","widget":{"name":"fuse"},"link":null},{"localized_name":"strength","name":"strength","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"strength"},"link":null},{"localized_name":"lora_1_enabled","name":"lora_1_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_1_enabled"},"link":null},{"localized_name":"lora_1","name":"lora_1","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_1"},"link":null},{"localized_name":"lora_1_weight","name":"lora_1_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_1_weight"},"link":null},{"localized_name":"lora_2_enabled","name":"lora_2_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_2_enabled"},"link":null},{"localized_name":"lora_2","name":"lora_2","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_2"},"link":null},{"localized_name":"lora_2_weight","name":"lora_2_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_2_weight"},"link":null},{"localized_name":"lora_3_enabled","name":"lora_3_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_3_enabled"},"link":null},{"localized_name":"lora_3","name":"lora_3","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_3"},"link":null},{"localized_name":"lora_3_weight","name":"lora_3_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_3_weight"},"link":null},{"localized_name":"lora_4_enabled","name":"lora_4_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_4_enabled"},"link":null},{"localized_name":"lora_4","name":"lora_4","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_4"},"link":null},{"localized_name":"lora_4_weight","name":"lora_4_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_4_weight"},"link":null},{"localized_name":"lora_5_enabled","name":"lora_5_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_5_enabled"},"link":null},{"localized_name":"lora_5","name":"lora_5","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_5"},"link":null},{"localized_name":"lora_5_weight","name":"lora_5_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_5_weight"},"link":null},{"localized_name":"lora_6_enabled","name":"lora_6_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_6_enabled"},"link":null},{"localized_name":"lora_6","name":"lora_6","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_6"},"link":null},{"localized_name":"lora_6_weight","name":"lora_6_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_6_weight"},"link":null},{"localized_name":"lora_7_enabled","name":"lora_7_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_7_enabled"},"link":null},{"localized_name":"lora_7","name":"lora_7","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_7"},"link":null},{"localized_name":"lora_7_weight","name":"lora_7_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_7_weight"},"link":null},{"localized_name":"lora_8_enabled","name":"lora_8_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_8_enabled"},"link":null},{"localized_name":"lora_8","name":"lora_8","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_8"},"link":null},{"localized_name":"lora_8_weight","name":"lora_8_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_8_weight"},"link":null},{"localized_name":"lora_9_enabled","name":"lora_9_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_9_enabled"},"link":null},{"localized_name":"lora_9","name":"lora_9","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_9"},"link":null},{"localized_name":"lora_9_weight","name":"lora_9_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_9_weight"},"link":null},{"localized_name":"lora_10_enabled","name":"lora_10_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_10_enabled"},"link":null},{"localized_name":"lora_10","name":"lora_10","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_10"},"link":null},{"localized_name":"lora_10_weight","name":"lora_10_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_10_weight"},"link":null},{"localized_name":"lora_11_enabled","name":"lora_11_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_11_enabled"},"link":null},{"localized_name":"lora_11","name":"lora_11","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_11"},"link":null},{"localized_name":"lora_11_weight","name":"lora_11_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_11_weight"},"link":null},{"localized_name":"lora_12_enabled","name":"lora_12_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_12_enabled"},"link":null},{"localized_name":"lora_12","name":"lora_12","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_12"},"link":null},{"localized_name":"lora_12_weight","name":"lora_12_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_12_weight"},"link":null},{"localized_name":"lora_13_enabled","name":"lora_13_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_13_enabled"},"link":null},{"localized_name":"lora_13","name":"lora_13","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_13"},"link":null},{"localized_name":"lora_13_weight","name":"lora_13_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_13_weight"},"link":null},{"localized_name":"lora_14_enabled","name":"lora_14_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_14_enabled"},"link":null},{"localized_name":"lora_14","name":"lora_14","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_14"},"link":null},{"localized_name":"lora_14_weight","name":"lora_14_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_14_weight"},"link":null},{"localized_name":"lora_15_enabled","name":"lora_15_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_15_enabled"},"link":null},{"localized_name":"lora_15","name":"lora_15","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_15"},"link":null},{"localized_name":"lora_15_weight","name":"lora_15_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_15_weight"},"link":null},{"localized_name":"lora_16_enabled","name":"lora_16_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_16_enabled"},"link":null},{"localized_name":"lora_16","name":"lora_16","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_16"},"link":null},{"localized_name":"lora_16_weight","name":"lora_16_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_16_weight"},"link":null},{"localized_name":"lora_17_enabled","name":"lora_17_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_17_enabled"},"link":null},{"localized_name":"lora_17","name":"lora_17","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_17"},"link":null},{"localized_name":"lora_17_weight","name":"lora_17_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_17_weight"},"link":null},{"localized_name":"lora_18_enabled","name":"lora_18_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_18_enabled"},"link":null},{"localized_name":"lora_18","name":"lora_18","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_18"},"link":null},{"localized_name":"lora_18_weight","name":"lora_18_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_18_weight"},"link":null},{"localized_name":"lora_19_enabled","name":"lora_19_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_19_enabled"},"link":null},{"localized_name":"lora_19","name":"lora_19","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_19"},"link":null},{"localized_name":"lora_19_weight","name":"lora_19_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_19_weight"},"link":null},{"localized_name":"lora_20_enabled","name":"lora_20_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_20_enabled"},"link":null},{"localized_name":"lora_20","name":"lora_20","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_20"},"link":null},{"localized_name":"lora_20_weight","name":"lora_20_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_20_weight"},"link":null},{"localized_name":"lora_21_enabled","name":"lora_21_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_21_enabled"},"link":null},{"localized_name":"lora_21","name":"lora_21","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_21"},"link":null},{"localized_name":"lora_21_weight","name":"lora_21_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_21_weight"},"link":null},{"localized_name":"lora_22_enabled","name":"lora_22_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_22_enabled"},"link":null},{"localized_name":"lora_22","name":"lora_22","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_22"},"link":null},{"localized_name":"lora_22_weight","name":"lora_22_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_22_weight"},"link":null},{"localized_name":"lora_23_enabled","name":"lora_23_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_23_enabled"},"link":null},{"localized_name":"lora_23","name":"lora_23","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_23"},"link":null},{"localized_name":"lora_23_weight","name":"lora_23_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_23_weight"},"link":null},{"localized_name":"lora_24_enabled","name":"lora_24_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_24_enabled"},"link":null},{"localized_name":"lora_24","name":"lora_24","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_24"},"link":null},{"localized_name":"lora_24_weight","name":"lora_24_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_24_weight"},"link":null},{"localized_name":"lora_25_enabled","name":"lora_25_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_25_enabled"},"link":null},{"localized_name":"lora_25","name":"lora_25","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_25"},"link":null},{"localized_name":"lora_25_weight","name":"lora_25_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_25_weight"},"link":null},{"localized_name":"lora_26_enabled","name":"lora_26_enabled","shape":7,"type":"BOOLEAN","widget":{"name":"lora_26_enabled"},"link":null},{"localized_name":"lora_26","name":"lora_26","shape":7,"type":"COMBO,STRING","widget":{"name":"lora_26"},"link":null},{"localized_name":"lora_26_weight","name":"lora_26_weight","shape":7,"type":"FLOAT,NUMBER,ARRAY","widget":{"name":"lora_26_weight"},"link":null}],"outputs":[{"localized_name":"model","name":"model","type":"MODEL","links":[735]},{"localized_name":"clip","name":"clip","type":"CLIP","links":[736]},{"localized_name":"lora_stack","name":"lora_stack","type":"LORA_STACK","links":null},{"localized_name":"names","name":"names","type":"STRING","links":null},{"localized_name":"name_1","name":"name_1","type":"STRING","links":null}],"properties":{"Node name for S&R":"WASPowerLoraLoader"},"widgets_values":[false,1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1,true,"None",1],"widgets_values_named":{"fuse":false,"strength":1,"lora_1_enabled":true,"lora_1":"None","lora_1_weight":1,"lora_2_enabled":true,"lora_2":"None","lora_2_weight":1,"lora_3_enabled":true,"lora_3":"None","lora_3_weight":1,"lora_4_enabled":true,"lora_4":"None","lora_4_weight":1,"lora_5_enabled":true,"lora_5":"None","lora_5_weight":1,"lora_6_enabled":true,"lora_6":"None","lora_6_weight":1,"lora_7_enabled":true,"lora_7":"None","lora_7_weight":1,"lora_8_enabled":true,"lora_8":"None","lora_8_weight":1,"lora_9_enabled":true,"lora_9":"None","lora_9_weight":1,"lora_10_enabled":true,"lora_10":"None","lora_10_weight":1,"lora_11_enabled":true,"lora_11":"None","lora_11_weight":1,"lora_12_enabled":true,"lora_12":"None","lora_12_weight":1,"lora_13_enabled":true,"lora_13":"None","lora_13_weight":1,"lora_14_enabled":true,"lora_14":"None","lora_14_weight":1,"lora_15_enabled":true,"lora_15":"None","lora_15_weight":1,"lora_16_enabled":true,"lora_16":"None","lora_16_weight":1,"lora_17_enabled":true,"lora_17":"None","lora_17_weight":1,"lora_18_enabled":true,"lora_18":"None","lora_18_weight":1,"lora_19_enabled":true,"lora_19":"None","lora_19_weight":1,"lora_20_enabled":true,"lora_20":"None","lora_20_weight":1,"lora_21_enabled":true,"lora_21":"None","lora_21_weight":1,"lora_22_enabled":true,"lora_22":"None","lora_22_weight":1,"lora_23_enabled":true,"lora_23":"None","lora_23_weight":1,"lora_24_enabled":true,"lora_24":"None","lora_24_weight":1,"lora_25_enabled":true,"lora_25":"None","lora_25_weight":1,"lora_26_enabled":true,"lora_26":"None","lora_26_weight":1}}],"links":[[715,487,0,489,1,"VAE"],[717,490,0,489,0,"LATENT"],[718,485,0,490,1,"CONDITIONING"],[719,488,0,490,3,"LATENT"],[720,485,1,490,2,"CONDITIONING"],[723,496,0,490,0,"MODEL"],[716,489,0,461,0,"IMAGE"],[732,484,0,497,0,"MODEL"],[733,497,0,498,0,"MODEL"],[734,486,0,498,1,"CLIP"],[735,498,0,496,0,"MODEL"],[736,498,1,485,0,"CLIP"]],"groups":[{"id":39,"title":"Models","bounding":[-1500,2400,530,590],"color":"#3f789e","flags":{}},{"id":40,"title":"Image Size","bounding":[-1500,3100,530,250],"color":"#3f789e","flags":{}},{"id":41,"title":"Conditioning","bounding":[0,2400,700,1100],"color":"#3f789e","flags":{}},{"id":42,"title":"Sampling","bounding":[800,2400,595,1100],"color":"#3f789e","flags":{}}],"config":{},"extra":{"ds":{"scale":1.741557638441185,"offset":[-791.1792922200798,-2008.438462391523]},"frontendVersion":"1.53.6","VHS_latentpreview":false,"VHS_latentpreviewrate":0,"VHS_MetadataImage":true,"VHS_KeepIntermediate":true},"version":0.4}
+{
+  "id": "54bb395d-3e60-4c94-b525-85523901575b",
+  "revision": 0,
+  "last_node_id": 498,
+  "last_link_id": 736,
+  "nodes": [
+    {
+      "id": 461,
+      "type": "SaveImageAdvanced",
+      "pos": [
+        1800,
+        2530
+      ],
+      "size": [
+        850,
+        610
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 716
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "bit_depth",
+          "name": "format.bit_depth",
+          "type": "COMBO",
+          "widget": {
+            "name": "format.bit_depth"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "input_color_space",
+          "name": "format.input_color_space",
+          "type": "COMBO",
+          "widget": {
+            "name": "format.input_color_space"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "channels",
+          "name": "format.channels",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "format.channels"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImageAdvanced"
+      },
+      "widgets_values": [
+        "comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%",
+        "png",
+        "8-bit",
+        "sRGB",
+        "auto"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%",
+        "format": "png",
+        "format.bit_depth": "8-bit",
+        "format.input_color_space": "sRGB",
+        "format.channels": "auto"
+      },
+      "title": "Save Image (Advanced)"
+    },
+    {
+      "id": 484,
+      "type": "UNETLoader",
+      "pos": [
+        -1490,
+        2470
+      ],
+      "size": [
+        510,
+        90
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "unet_name",
+          "name": "unet_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "unet_name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "weight_dtype",
+          "name": "weight_dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "weight_dtype"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            732
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader",
+        "models": [
+          {
+            "name": "qwen_image_2.1_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+            "directory": "diffusion_models"
+          }
+        ]
+      },
+      "widgets_values": [
+        "qwen/qwen-image-2.1.safetensors",
+        "default"
+      ],
+      "widgets_values_named": {
+        "unet_name": "qwen/qwen-image-2.1.safetensors",
+        "weight_dtype": "default"
+      },
+      "title": "Load Diffusion Model"
+    },
+    {
+      "id": 485,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        10,
+        2470
+      ],
+      "size": [
+        530,
+        680
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "link": 736
+        },
+        {
+          "localized_name": "image_1",
+          "name": "images.image_1",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "localized_name": "vae",
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        },
+        {
+          "localized_name": "prompt",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "negative_prompt",
+          "name": "negative_prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "negative_prompt"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "resolution",
+          "name": "resolution",
+          "type": "INT",
+          "widget": {
+            "name": "resolution"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "positive",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            718
+          ]
+        },
+        {
+          "localized_name": "negative",
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            720
+          ]
+        },
+        {
+          "localized_name": "latent",
+          "name": "latent",
+          "type": "LATENT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "",
+        "",
+        1024
+      ],
+      "widgets_values_named": {
+        "prompt": "",
+        "negative_prompt": "",
+        "resolution": 1024
+      },
+      "title": "Text Encode Qwen Image 2.1"
+    },
+    {
+      "id": 486,
+      "type": "CLIPLoader",
+      "pos": [
+        -1490,
+        2630
+      ],
+      "size": [
+        510,
+        120
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "clip_name",
+          "name": "clip_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "clip_name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "type",
+          "name": "type",
+          "type": "COMBO",
+          "widget": {
+            "name": "type"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "device",
+          "name": "device",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "CLIP",
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            734
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader",
+        "models": [
+          {
+            "name": "qwen3vl_8b_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+            "directory": "text_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "minimax-h3/qwen3-vl-8b.safetensors",
+        "qwen_image",
+        "default"
+      ],
+      "widgets_values_named": {
+        "clip_name": "minimax-h3/qwen3-vl-8b.safetensors",
+        "type": "qwen_image",
+        "device": "default"
+      },
+      "title": "Load CLIP"
+    },
+    {
+      "id": 487,
+      "type": "VAELoader",
+      "pos": [
+        -1490,
+        2830
+      ],
+      "size": [
+        510,
+        70
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "vae_name",
+          "name": "vae_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "vae_name"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "VAE",
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            715
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "models": [
+          {
+            "name": "qwen_image_2.1_vae_bf16.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors",
+            "directory": "vae"
+          }
+        ]
+      },
+      "widgets_values": [
+        "qwen/qwen_image_2.1_bf16_fixed.safetensors"
+      ],
+      "widgets_values_named": {
+        "vae_name": "qwen/qwen_image_2.1_bf16_fixed.safetensors"
+      },
+      "title": "Load VAE"
+    },
+    {
+      "id": 488,
+      "type": "EmptyLatentImage",
+      "pos": [
+        -1370,
+        3190
+      ],
+      "size": [
+        300,
+        120
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "width",
+          "name": "width",
+          "type": "INT",
+          "widget": {
+            "name": "width"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "height",
+          "name": "height",
+          "type": "INT",
+          "widget": {
+            "name": "height"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "batch_size",
+          "name": "batch_size",
+          "type": "INT",
+          "widget": {
+            "name": "batch_size"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            719
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        1
+      ],
+      "widgets_values_named": {
+        "width": 1024,
+        "height": 1024,
+        "batch_size": 1
+      },
+      "title": "Empty Latent Image"
+    },
+    {
+      "id": 489,
+      "type": "VAEDecode",
+      "pos": [
+        1500,
+        2530
+      ],
+      "size": [
+        230,
+        60
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "samples",
+          "name": "samples",
+          "type": "LATENT",
+          "link": 717
+        },
+        {
+          "localized_name": "vae",
+          "name": "vae",
+          "type": "VAE",
+          "link": 715
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            716
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "title": "VAE Decode"
+    },
+    {
+      "id": 490,
+      "type": "KSampler",
+      "pos": [
+        810,
+        2630
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": 723
+        },
+        {
+          "localized_name": "positive",
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 718
+        },
+        {
+          "localized_name": "negative",
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 720
+        },
+        {
+          "localized_name": "latent_image",
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 719
+        },
+        {
+          "localized_name": "seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "steps",
+          "name": "steps",
+          "type": "INT",
+          "widget": {
+            "name": "steps"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "cfg",
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "sampler_name",
+          "name": "sampler_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "sampler_name"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "scheduler",
+          "name": "scheduler",
+          "type": "COMBO",
+          "widget": {
+            "name": "scheduler"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "denoise",
+          "name": "denoise",
+          "type": "FLOAT",
+          "widget": {
+            "name": "denoise"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "LATENT",
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            717
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        447606998181262,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "widgets_values_named": {
+        "seed": 447606998181262,
+        "control_after_generate": "fixed",
+        "steps": 25,
+        "cfg": 1,
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "denoise": 1
+      },
+      "title": "KSampler"
+    },
+    {
+      "id": 496,
+      "type": "QwenImage21Cache",
+      "pos": [
+        810,
+        2470
+      ],
+      "size": [
+        270,
+        90
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": 735
+        },
+        {
+          "localized_name": "device",
+          "name": "device",
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "dtype",
+          "name": "dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "dtype"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            723
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenImage21Cache"
+      },
+      "widgets_values": [
+        "auto",
+        "default"
+      ],
+      "widgets_values_named": {
+        "device": "auto",
+        "dtype": "default"
+      },
+      "title": "Qwen Image 2.1 Cache"
+    },
+    {
+      "id": 497,
+      "type": "ModelAttentionBackend",
+      "pos": [
+        -900,
+        2460
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": 732
+        },
+        {
+          "localized_name": "backend",
+          "name": "attention",
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            733
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ModelAttentionBackend"
+      },
+      "widgets_values": [
+        "comfy kitchen attention"
+      ],
+      "widgets_values_named": {
+        "attention": "comfy kitchen attention"
+      },
+      "title": "Model Attention Backend"
+    },
+    {
+      "id": 498,
+      "type": "WASPowerLoraLoader",
+      "pos": [
+        -600,
+        2430
+      ],
+      "size": [
+        500,
+        2170
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "shape": 7,
+          "type": "MODEL",
+          "link": 733
+        },
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "shape": 7,
+          "type": "CLIP",
+          "link": 734
+        },
+        {
+          "localized_name": "fuse",
+          "name": "fuse",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "fuse"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "strength",
+          "name": "strength",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "strength"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_1_enabled",
+          "name": "lora_1_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_1_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_1",
+          "name": "lora_1",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_1"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_1_weight",
+          "name": "lora_1_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_1_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_2_enabled",
+          "name": "lora_2_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_2_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_2",
+          "name": "lora_2",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_2"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_2_weight",
+          "name": "lora_2_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_2_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_3_enabled",
+          "name": "lora_3_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_3_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_3",
+          "name": "lora_3",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_3"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_3_weight",
+          "name": "lora_3_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_3_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_4_enabled",
+          "name": "lora_4_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_4_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_4",
+          "name": "lora_4",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_4"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_4_weight",
+          "name": "lora_4_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_4_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_5_enabled",
+          "name": "lora_5_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_5_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_5",
+          "name": "lora_5",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_5"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_5_weight",
+          "name": "lora_5_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_5_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_6_enabled",
+          "name": "lora_6_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_6_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_6",
+          "name": "lora_6",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_6"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_6_weight",
+          "name": "lora_6_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_6_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_7_enabled",
+          "name": "lora_7_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_7_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_7",
+          "name": "lora_7",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_7"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_7_weight",
+          "name": "lora_7_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_7_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_8_enabled",
+          "name": "lora_8_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_8_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_8",
+          "name": "lora_8",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_8"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_8_weight",
+          "name": "lora_8_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_8_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_9_enabled",
+          "name": "lora_9_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_9_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_9",
+          "name": "lora_9",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_9"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_9_weight",
+          "name": "lora_9_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_9_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_10_enabled",
+          "name": "lora_10_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_10_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_10",
+          "name": "lora_10",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_10"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_10_weight",
+          "name": "lora_10_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_10_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_11_enabled",
+          "name": "lora_11_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_11_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_11",
+          "name": "lora_11",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_11"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_11_weight",
+          "name": "lora_11_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_11_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_12_enabled",
+          "name": "lora_12_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_12_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_12",
+          "name": "lora_12",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_12"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_12_weight",
+          "name": "lora_12_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_12_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_13_enabled",
+          "name": "lora_13_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_13_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_13",
+          "name": "lora_13",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_13"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_13_weight",
+          "name": "lora_13_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_13_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_14_enabled",
+          "name": "lora_14_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_14_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_14",
+          "name": "lora_14",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_14"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_14_weight",
+          "name": "lora_14_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_14_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_15_enabled",
+          "name": "lora_15_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_15_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_15",
+          "name": "lora_15",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_15"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_15_weight",
+          "name": "lora_15_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_15_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_16_enabled",
+          "name": "lora_16_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_16_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_16",
+          "name": "lora_16",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_16"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_16_weight",
+          "name": "lora_16_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_16_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_17_enabled",
+          "name": "lora_17_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_17_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_17",
+          "name": "lora_17",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_17"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_17_weight",
+          "name": "lora_17_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_17_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_18_enabled",
+          "name": "lora_18_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_18_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_18",
+          "name": "lora_18",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_18"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_18_weight",
+          "name": "lora_18_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_18_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_19_enabled",
+          "name": "lora_19_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_19_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_19",
+          "name": "lora_19",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_19"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_19_weight",
+          "name": "lora_19_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_19_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_20_enabled",
+          "name": "lora_20_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_20_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_20",
+          "name": "lora_20",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_20"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_20_weight",
+          "name": "lora_20_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_20_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_21_enabled",
+          "name": "lora_21_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_21_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_21",
+          "name": "lora_21",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_21"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_21_weight",
+          "name": "lora_21_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_21_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_22_enabled",
+          "name": "lora_22_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_22_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_22",
+          "name": "lora_22",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_22"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_22_weight",
+          "name": "lora_22_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_22_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_23_enabled",
+          "name": "lora_23_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_23_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_23",
+          "name": "lora_23",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_23"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_23_weight",
+          "name": "lora_23_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_23_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_24_enabled",
+          "name": "lora_24_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_24_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_24",
+          "name": "lora_24",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_24"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_24_weight",
+          "name": "lora_24_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_24_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_25_enabled",
+          "name": "lora_25_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_25_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_25",
+          "name": "lora_25",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_25"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_25_weight",
+          "name": "lora_25_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_25_weight"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_26_enabled",
+          "name": "lora_26_enabled",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "lora_26_enabled"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_26",
+          "name": "lora_26",
+          "shape": 7,
+          "type": "COMBO,STRING",
+          "widget": {
+            "name": "lora_26"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "lora_26_weight",
+          "name": "lora_26_weight",
+          "shape": 7,
+          "type": "FLOAT,NUMBER,ARRAY",
+          "widget": {
+            "name": "lora_26_weight"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "model",
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            735
+          ]
+        },
+        {
+          "localized_name": "clip",
+          "name": "clip",
+          "type": "CLIP",
+          "links": [
+            736
+          ]
+        },
+        {
+          "localized_name": "lora_stack",
+          "name": "lora_stack",
+          "type": "LORA_STACK",
+          "links": null
+        },
+        {
+          "localized_name": "names",
+          "name": "names",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "localized_name": "name_1",
+          "name": "name_1",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "WASPowerLoraLoader"
+      },
+      "widgets_values": [
+        false,
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1,
+        true,
+        "None",
+        1
+      ],
+      "widgets_values_named": {
+        "fuse": false,
+        "strength": 1,
+        "lora_1_enabled": true,
+        "lora_1": "None",
+        "lora_1_weight": 1,
+        "lora_2_enabled": true,
+        "lora_2": "None",
+        "lora_2_weight": 1,
+        "lora_3_enabled": true,
+        "lora_3": "None",
+        "lora_3_weight": 1,
+        "lora_4_enabled": true,
+        "lora_4": "None",
+        "lora_4_weight": 1,
+        "lora_5_enabled": true,
+        "lora_5": "None",
+        "lora_5_weight": 1,
+        "lora_6_enabled": true,
+        "lora_6": "None",
+        "lora_6_weight": 1,
+        "lora_7_enabled": true,
+        "lora_7": "None",
+        "lora_7_weight": 1,
+        "lora_8_enabled": true,
+        "lora_8": "None",
+        "lora_8_weight": 1,
+        "lora_9_enabled": true,
+        "lora_9": "None",
+        "lora_9_weight": 1,
+        "lora_10_enabled": true,
+        "lora_10": "None",
+        "lora_10_weight": 1,
+        "lora_11_enabled": true,
+        "lora_11": "None",
+        "lora_11_weight": 1,
+        "lora_12_enabled": true,
+        "lora_12": "None",
+        "lora_12_weight": 1,
+        "lora_13_enabled": true,
+        "lora_13": "None",
+        "lora_13_weight": 1,
+        "lora_14_enabled": true,
+        "lora_14": "None",
+        "lora_14_weight": 1,
+        "lora_15_enabled": true,
+        "lora_15": "None",
+        "lora_15_weight": 1,
+        "lora_16_enabled": true,
+        "lora_16": "None",
+        "lora_16_weight": 1,
+        "lora_17_enabled": true,
+        "lora_17": "None",
+        "lora_17_weight": 1,
+        "lora_18_enabled": true,
+        "lora_18": "None",
+        "lora_18_weight": 1,
+        "lora_19_enabled": true,
+        "lora_19": "None",
+        "lora_19_weight": 1,
+        "lora_20_enabled": true,
+        "lora_20": "None",
+        "lora_20_weight": 1,
+        "lora_21_enabled": true,
+        "lora_21": "None",
+        "lora_21_weight": 1,
+        "lora_22_enabled": true,
+        "lora_22": "None",
+        "lora_22_weight": 1,
+        "lora_23_enabled": true,
+        "lora_23": "None",
+        "lora_23_weight": 1,
+        "lora_24_enabled": true,
+        "lora_24": "None",
+        "lora_24_weight": 1,
+        "lora_25_enabled": true,
+        "lora_25": "None",
+        "lora_25_weight": 1,
+        "lora_26_enabled": true,
+        "lora_26": "None",
+        "lora_26_weight": 1
+      },
+      "title": "Power LoRA Loader"
+    }
+  ],
+  "links": [
+    [
+      715,
+      487,
+      0,
+      489,
+      1,
+      "VAE"
+    ],
+    [
+      717,
+      490,
+      0,
+      489,
+      0,
+      "LATENT"
+    ],
+    [
+      718,
+      485,
+      0,
+      490,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      719,
+      488,
+      0,
+      490,
+      3,
+      "LATENT"
+    ],
+    [
+      720,
+      485,
+      1,
+      490,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      723,
+      496,
+      0,
+      490,
+      0,
+      "MODEL"
+    ],
+    [
+      716,
+      489,
+      0,
+      461,
+      0,
+      "IMAGE"
+    ],
+    [
+      732,
+      484,
+      0,
+      497,
+      0,
+      "MODEL"
+    ],
+    [
+      733,
+      497,
+      0,
+      498,
+      0,
+      "MODEL"
+    ],
+    [
+      734,
+      486,
+      0,
+      498,
+      1,
+      "CLIP"
+    ],
+    [
+      735,
+      498,
+      0,
+      496,
+      0,
+      "MODEL"
+    ],
+    [
+      736,
+      498,
+      1,
+      485,
+      0,
+      "CLIP"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 39,
+      "title": "Models",
+      "bounding": [
+        -1500,
+        2400,
+        530,
+        590
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 40,
+      "title": "Image Size",
+      "bounding": [
+        -1500,
+        3100,
+        530,
+        250
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 41,
+      "title": "Conditioning",
+      "bounding": [
+        0,
+        2400,
+        700,
+        1100
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    },
+    {
+      "id": 42,
+      "title": "Sampling",
+      "bounding": [
+        800,
+        2400,
+        595,
+        1100
+      ],
+      "color": "#3f789e",
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.741557638441185,
+      "offset": [
+        -791.1792922200798,
+        -2008.438462391523
+      ]
+    },
+    "frontendVersion": "1.53.6",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

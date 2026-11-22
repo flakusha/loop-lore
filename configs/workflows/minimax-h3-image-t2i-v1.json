@@ -1,7 +1,7 @@
 {
   "9": {
     "inputs": {
-      "filename_prefix": "comfyui/qwen2-1/qwen2-1-2026-11-20-10-14-41",
+      "filename_prefix": "comfyui/qwen2-1/qwen2-1-%date:yyyy-MM-dd-hh-mm-ss%",
       "images": [
         "42",
         0
