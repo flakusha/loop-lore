@@ -13,8 +13,8 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { copyFileSync, existsSync, mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { createSnapshot, } from "./backup-sqlite";
-import { compareRowCounts, } from "./validate-backup-restore";
+import { BACKUP_DIR, createSnapshot, } from "./backup-sqlite";
+import { compareRowCounts, REPO_TMP, } from "./validate-backup-restore";
 
 const SEED_ROWS = 200;
 const CONCURRENT_ROWS = 200;
@@ -159,5 +159,16 @@ describe("compareRowCounts", () => {
     } finally {
       restored.close();
     }
+  });
+});
+
+describe("repo-local scratch defaults", () => {
+  test("backup and validation defaults stay under the repo .tmp, not the OS temp root", () => {
+    const repoTmp = join(import.meta.dir, "..", ".tmp",);
+    expect(REPO_TMP,).toBe(repoTmp,);
+    if (!process.env.BACKUP_DIR) {
+      expect(BACKUP_DIR,).toBe(join(repoTmp, "backups",),);
+    }
+    expect(REPO_TMP.startsWith(tmpdir(),),).toBe(false,);
   });
 });

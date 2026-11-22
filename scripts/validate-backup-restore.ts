@@ -3,12 +3,13 @@
 
 import { spawnSync, } from "bun";
 import { Database, } from "bun:sqlite";
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync, } from "node:fs";
-import { tmpdir, } from "node:os";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, statSync, } from "node:fs";
 import { join, } from "node:path";
 
-const BACKUP_DIR = process.env.BACKUP_DIR ?? tmpdir();
-const VALIDATION_DIR = process.env.VALIDATION_DIR ?? join(tmpdir(), "validation",);
+// ponytail: repo-local scratch, resolved from the script dir because cron/systemd
+// run these with an arbitrary cwd. Set BACKUP_DIR/VALIDATION_DIR for operator paths.
+export const REPO_TMP = join(import.meta.dir, "..", ".tmp",);
+export const BACKUP_DIR = process.env.BACKUP_DIR ?? join(REPO_TMP, "backups",);
 const SOURCE_DB_PATH = process.env.DB_PATH ?? "/data/loop-lore.db";
 
 function log(msg: string,): void {
@@ -18,9 +19,8 @@ function log(msg: string,): void {
 function runOrExit(args: string[],): Buffer {
   const proc = spawnSync(args, { stdout: "pipe", stderr: "pipe", },);
   if (proc.exitCode !== 0) {
-    log(`ERROR: command failed: ${args.join(" ",)}`,);
-    log(new TextDecoder().decode(proc.stderr as Buffer,),);
-    process.exit(1,);
+    const stderr = new TextDecoder().decode(proc.stderr as Buffer,).trim();
+    throw new Error(`command failed: ${args.join(" ",)}${stderr ? `: ${stderr}` : ""}`,);
   }
   return proc.stdout as Buffer;
 }
@@ -73,6 +73,11 @@ export function compareRowCounts(sourcePath: string, restored: Database,): strin
 }
 
 function runValidation(): void {
+  // A fixed global name lets concurrent runs wipe each other's decrypted DB;
+  // mkdtemp gives each invocation its own private dir under the repo scratch.
+  mkdirSync(REPO_TMP, { recursive: true, },);
+  const validationDir = process.env.VALIDATION_DIR ??
+    mkdtempSync(join(REPO_TMP, "backup-validation-",),);
   try {
     // Find latest backup
     const allFiles = readdirSync(BACKUP_DIR,)
@@ -81,21 +86,16 @@ function runValidation(): void {
       .sort((a, b,) => b.mtime - a.mtime);
 
     if (allFiles.length === 0) {
-      log(`ERROR: No backup file found in ${BACKUP_DIR}`,);
-      process.exit(1,);
+      throw new Error(`No backup file found in ${BACKUP_DIR}`,);
     }
 
     const latestBackup = join(BACKUP_DIR, allFiles[0].name,);
     log(`Validating backup: ${latestBackup}`,);
 
-    // Prepare validation dir
-    if (existsSync(VALIDATION_DIR,)) {
-      rmSync(VALIDATION_DIR, { recursive: true, },);
-    }
-    mkdirSync(VALIDATION_DIR, { recursive: true, },);
+    mkdirSync(validationDir, { recursive: true, },);
 
     // Step 1: Decrypt
-    const decryptedFile = join(VALIDATION_DIR, "decrypted_backup.db",);
+    const decryptedFile = join(validationDir, "decrypted_backup.db",);
     runOrExit([
       "gpg",
       "--batch",
@@ -111,8 +111,7 @@ function runValidation(): void {
     if (existsSync(checksumFile,)) {
       const proc = spawnSync(["sha256sum", "-c", checksumFile,], { stdout: "pipe", stderr: "pipe", },);
       if (proc.exitCode !== 0) {
-        log(`ERROR: Checksum verification failed for ${latestBackup}`,);
-        process.exit(1,);
+        throw new Error(`Checksum verification failed for ${latestBackup}`,);
       }
       log("Checksum verified",);
     }
@@ -121,9 +120,8 @@ function runValidation(): void {
     const db = new Database(decryptedFile,);
     const integrityResult = db.query<{ integrity_check: string }, []>("PRAGMA integrity_check;",).get();
     if (!integrityResult || integrityResult.integrity_check !== "ok") {
-      log(`ERROR: Database integrity check failed: ${JSON.stringify(integrityResult,)}`,);
       db.close();
-      process.exit(1,);
+      throw new Error(`Database integrity check failed: ${JSON.stringify(integrityResult,)}`,);
     }
     log("Integrity check passed",);
 
@@ -133,23 +131,20 @@ function runValidation(): void {
     } else {
       const mismatches = compareRowCounts(SOURCE_DB_PATH, db,);
       if (mismatches.length > 0) {
-        for (const mismatch of mismatches) {
-          log(`ERROR: row-count mismatch: ${mismatch}`,);
-        }
         db.close();
-        process.exit(1,);
+        throw new Error(`row-count mismatch: ${mismatches.join("; ",)}`,);
       }
       log("Row counts match the source database",);
     }
     db.close();
 
-    // Step 5: Cleanup
-    rmSync(VALIDATION_DIR, { recursive: true, },);
-
     log(`Backup validation passed: ${latestBackup}`,);
   } catch (err) {
     log(`ERROR: validation failed: ${err}`,);
-    process.exit(1,);
+    process.exitCode = 1;
+  } finally {
+    // Step 5: Cleanup — always, including failed runs (the DB is decrypted).
+    rmSync(validationDir, { recursive: true, force: true, },);
   }
 }
 
