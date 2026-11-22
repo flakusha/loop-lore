@@ -1,14 +1,14 @@
 {
   "92": {
     "inputs": {
-      "filename_prefix": "comfyui/minimax/minimax-%date:yyyy-MM-dd-hh-mm-ss%",
+      "filename_prefix": "comfyui/minimax/minimax-2026-11-20-14-00-58",
+      "format": "auto",
+      "format.codec": "auto",
+      "codec": "auto",
       "video": [
         "160",
         0
-      ],
-      "format": "auto",
-      "format.codec": "auto",
-      "codec": "auto"
+      ]
     },
     "class_type": "SaveVideo",
     "_meta": {
@@ -212,6 +212,18 @@
   "161": {
     "inputs": {
       "prompt": "{{prompt}}",
+      "width": [
+        "143",
+        0
+      ],
+      "height": [
+        "143",
+        1
+      ],
+      "length": [
+        "162",
+        1
+      ],
       "clip": [
         "158",
         0
@@ -227,18 +239,6 @@
       "last_frame": [
         "169",
         0
-      ],
-      "width": [
-        "143",
-        0
-      ],
-      "height": [
-        "143",
-        1
-      ],
-      "length": [
-        "162",
-        1
       ]
     },
     "class_type": "MiniMaxH3ImageToVideo",
