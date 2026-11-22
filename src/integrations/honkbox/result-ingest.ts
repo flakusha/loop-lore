@@ -53,6 +53,32 @@ export interface HonkboxJobEvent {
   readonly status?: string;
 }
 
+/** Options for {@link selectHonkboxArtifact}. */
+export interface SelectHonkboxArtifactOptions {
+  /** Explicit artifact id requested by the caller; wins over emission order. */
+  readonly artifactId?: string;
+}
+
+/** Select one result frame from a job's `job_result` frames.
+ * An explicit id match wins; otherwise the first result frame wins.
+ * @param frames - result frames in emission order
+ * @param opts - optional explicit artifact id
+ * @returns the selected frame, or undefined when no result frame is available
+ */
+export function selectHonkboxArtifact(
+  frames: readonly HonkboxJobEvent[],
+  opts: SelectHonkboxArtifactOptions = {},
+): HonkboxJobEvent | undefined {
+  let first: HonkboxJobEvent | undefined;
+  for (const frame of frames) {
+    if (frame.event !== "job_result" || !frame.artifactId) { continue; }
+    if (opts.artifactId === frame.artifactId) { return frame; }
+    first ??= frame;
+  }
+
+  return first;
+}
+
 /** @param value - unknown JSON value
  * @returns an object view, or undefined
  */
@@ -171,6 +197,8 @@ export interface IngestHonkboxJobResultOptions {
   readonly events: Response;
   /** Registry id of the job whose result is being ingested. */
   readonly jobId: string;
+  /** Artifact id to select when a job emits several results. */
+  readonly artifactId?: string;
   /** Asset store database. */
   readonly database: Kysely<DB>;
   /** Asset upload directory. */
@@ -268,7 +296,7 @@ export async function ingestHonkboxJobResult(
 ): Promise<IngestHonkboxJobResultOutcome> {
   assertDeliveryEnabled(opts,);
 
-  let result: HonkboxJobEvent | undefined;
+  const frames: HonkboxJobEvent[] = [];
   let dropped = false;
   for await (const envelope of readHonkboxFrames(opts.events,)) {
     if (envelope.event === "events_dropped") {
@@ -293,10 +321,12 @@ export async function ingestHonkboxJobResult(
       return { ok: false, reason: "failed", detail: `job ${opts.jobId} failed`, };
     }
 
-    if (event.event === "job_result" && event.artifactId) { result = event; }
+    if (event.event === "job_result") { frames.push(event,); }
     if (event.event === "job_progress") { opts.onProgress?.(event,); }
     if (event.event === "job_finished") { break; }
   }
+
+  let result = selectHonkboxArtifact(frames, { artifactId: opts.artifactId, },);
 
   // A gap frame or a missing result means the snapshot is authoritative — a
   // missed result is never reported as a successful ingest.

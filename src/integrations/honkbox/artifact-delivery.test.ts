@@ -22,7 +22,12 @@ import {
   putHonkboxArtifact,
 } from "./artifacts";
 import { type HonkboxProbeSuccess, parseHonkboxCapabilities, } from "./index";
-import { ingestHonkboxJobResult, parseHonkboxJobEvent, } from "./result-ingest";
+import {
+  type HonkboxJobEvent,
+  ingestHonkboxJobResult,
+  parseHonkboxJobEvent,
+  selectHonkboxArtifact,
+} from "./result-ingest";
 
 const originalFetch = globalThis.fetch;
 
@@ -59,6 +64,21 @@ async function withMockFetch(
 
 const GLB_BYTES = Buffer.from("glTFbinary-fixture-bytes",);
 const GLB_SHA256 = createHash("sha256",).update(GLB_BYTES,).digest("hex",);
+
+describe("selectHonkboxArtifact", () => {
+  test("explicit id wins, no id selects first, no frames yields undefined", () => {
+    const frames: HonkboxJobEvent[] = [
+      { event: "job_result", cancelled: false, artifactId: "a", },
+      { event: "job_result", cancelled: false, artifactId: "b", },
+      { event: "job_progress", cancelled: false, artifactId: "c", },
+    ];
+
+    expect(selectHonkboxArtifact([], {},),).toBeUndefined();
+    expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("a",);
+    expect(selectHonkboxArtifact(frames, { artifactId: "b", },)?.artifactId,).toBe("b",);
+    expect(selectHonkboxArtifact(frames, { artifactId: "missing", },)?.artifactId,).toBe("a",);
+  });
+});
 
 describe("artifact registry constants", () => {
   test("collection path and default byte cap are stable", () => {
@@ -284,6 +304,123 @@ describe("ingestHonkboxJobResult", () => {
       expect(outcome.sizeBytes,).toBe(GLB_BYTES.length,);
       expect(outcome.asset.asset_type,).toBe("model",);
       expect(outcome.asset.filename,).toBe(`${GLB_SHA256}.glb`,);
+    },);
+  });
+
+  /** @param jobId - unique job id for this fixture
+   * @returns two ordered result frames plus id-routed bytes for the mock fetch
+   */
+  function multiFrameFixture(jobId: string,) {
+    const ids = [`${jobId}-a`, `${jobId}-b`,];
+    const bytes = [Buffer.from(`${jobId}-alpha`,), Buffer.from(`${jobId}-beta`,),];
+    const hashes = bytes.map(
+      (value,) => createHash("sha256",).update(value,).digest("hex",),
+    );
+
+    const frames = ids.map((artifactId, index,) => ({
+      event: "job_result",
+      id: jobId,
+      artifact_id: artifactId,
+      size_bytes: bytes[index]!.length,
+      sha256: hashes[index]!,
+    }));
+
+    return {
+      ids,
+      hashes,
+      frames,
+      stream: [
+        ...frames.map((frame,) => `event: job_result\ndata: ${JSON.stringify(frame,)}\n\n`),
+        `event: job_finished\ndata: ${JSON.stringify({ id: jobId, },)}\n\n`,
+      ].join("",),
+      fetchFor: (url: string,) => {
+        const id = decodeURIComponent(
+          url.split("/artifacts/", 2,)[1]?.split("/", 1,)[0] ?? "",
+        );
+
+        const index = ids.indexOf(id,);
+        const value = bytes[index < 0 ? 0 : index]!;
+        return new Response(value, {
+          headers: {
+            "content-type": "image/png",
+            "content-range": `bytes 0-${value.length - 1}/${value.length}`,
+          },
+        },);
+      },
+    };
+  }
+
+  test("explicit artifact id selects the later of two results", async () => {
+    await insertUsers(fixture.db, "hb-multi-explicit", "Honkbox Multi Explicit",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-multi-explicit",);
+    const { ids, hashes, stream, fetchFor, } = multiFrameFixture("job-multi-explicit",);
+    await withMockFetch(fetchFor, async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(stream,),
+        jobId: "job-multi-explicit",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+        artifactId: ids[1],
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe(ids[1]!,);
+      expect(outcome.sha256,).toBe(hashes[1]!,);
+    },);
+  });
+
+  test("no explicit id selects the first of two results", async () => {
+    await insertUsers(fixture.db, "hb-multi-first", "Honkbox Multi First",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-multi-first",);
+    const { ids, hashes, stream, fetchFor, } = multiFrameFixture("job-multi-first",);
+    await withMockFetch(fetchFor, async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(stream,),
+        jobId: "job-multi-first",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe(ids[0]!,);
+      expect(outcome.sha256,).toBe(hashes[0]!,);
+    },);
+  });
+
+  test("a single result frame is unchanged", async () => {
+    await insertUsers(fixture.db, "hb-multi-single", "Honkbox Multi Single",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-multi-single",);
+    const { ids, hashes, frames, fetchFor, } = multiFrameFixture("job-multi-single",);
+    const stream = `event: job_result\ndata: ${JSON.stringify(frames[0],)}\n\n`;
+    await withMockFetch(fetchFor, async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(stream,),
+        jobId: "job-multi-single",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe(ids[0]!,);
+      expect(outcome.sha256,).toBe(hashes[0]!,);
     },);
   });
 });
