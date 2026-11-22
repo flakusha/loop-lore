@@ -9,6 +9,7 @@
  * well-known discovery, and instance-state are served with no secret leakage.
  */
 import { describe, expect, test, } from "bun:test";
+import { getHealthCache, } from "../admin/provider-health";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
 import { initSmk, } from "../crypto/smk";
@@ -163,6 +164,51 @@ describe("federationRoutes — instance-state", () => {
     },
     15000,
   );
+});
+
+describe("federationRoutes — coarse state from provider health", () => {
+  // Owned resource: provider-health module cache. Seed one uniquely-named
+  // entry in place, then restore exact prior contents in finally — no
+  // blanket clear, safe under any test ordering.
+  const seed = (status: "healthy" | "unreachable",) => {
+    const cache = getHealthCache();
+    const saved = cache.slice();
+    cache.splice(0, cache.length, {
+      name: `coarse-${status}-${crypto.randomUUID()}`,
+      label: "coarse test",
+      status,
+      models: [],
+      lastChecked: new Date().toISOString(),
+    },);
+
+    return () => {
+      cache.splice(0, cache.length, ...saved,);
+    };
+  };
+
+  test("an unhealthy provider advertises degraded", async () => {
+    const restore = seed("unreachable",);
+    try {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as { state: string }).state,).toBe("degraded",);
+    } finally {
+      restore();
+    }
+  }, 15000,);
+
+  test("all-healthy providers advertise ok", async () => {
+    const restore = seed("healthy",);
+    try {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as { state: string }).state,).toBe("ok",);
+    } finally {
+      restore();
+    }
+  }, 15000,);
 });
 
 describe("federationRoutes — advertised workload capabilities", () => {

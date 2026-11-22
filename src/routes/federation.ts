@@ -18,6 +18,7 @@
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
 import { Elysia, } from "elysia";
+import { hasUnhealthyProviders, } from "../admin/provider-health";
 import { computeBuildIdentity, } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
@@ -44,7 +45,7 @@ function instanceId(config: Config,): string {
 /** Coarse health verdict from provider health — ok | degraded. */
 type CoarseState = "ok" | "degraded";
 function coarseState(): CoarseState {
-  return "ok";
+  return hasUnhealthyProviders() ? "degraded" : "ok";
 }
 
 /**
