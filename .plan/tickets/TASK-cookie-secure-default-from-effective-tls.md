@@ -3,7 +3,7 @@
 
 # TASK: Cookie secure default from effective TLS
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-auth-access
@@ -13,7 +13,7 @@
 
 ## Summary
 
-Both `ll_token` and `csrf_token` omit the Secure attribute unless the LL_COOKIE_SECURE override is explicitly set or NODE_ENV is production (`src/routes/auth/shared.ts:101-127`, `src/middleware/csrf.ts:122-135`). A direct-TLS deployment with TLS_KEY and TLS_CERT set but no proxy therefore serves session cookies over HTTPS without Secure.
+Both `ll_token` and `csrf_token` now derive `Secure` from the effective server TLS config when no explicit `LL_COOKIE_SECURE` override is set (first match: override > effective TLS > `NODE_ENV=production`; `ddd06477e`, `src/middleware/csrf.ts`, `src/routes/auth/shared.ts`, `src/elysia-app.ts`). A direct-TLS deployment with `TLS_KEY`/`TLS_CERT` set now serves Secure cookies without a manual override.
 
 **Context:**
 Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1c/:59-61. `BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md` is Done and wired the LL_COOKIE_SECURE override for csrf_token, but its Out of scope note (:38) defers docs and does not change the default derivation. Production compose sets the override (`deploy/docker-compose.yml:42-46`), so only direct TLS and hand-rolled deployments are exposed.
@@ -27,12 +27,12 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1c/:59-61. `BUG-bug-csrf
 
 ## Acceptance Criteria
 
-- [ ] With TLS configured and no override, both cookies carry Secure.
-- [ ] With TLS off, both cookies remain usable over plain HTTP without Secure.
-- [ ] Explicit true/false overrides continue to win in both directions.
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] With TLS configured and no override, both cookies carry Secure.
+- [x] With TLS off, both cookies remain usable over plain HTTP without Secure.
+- [x] Explicit true/false overrides continue to win in both directions.
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 ## Verification
 
@@ -41,6 +41,6 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1c/:59-61. `BUG-bug-csrf
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

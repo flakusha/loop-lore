@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-certificate-and-tls-management
@@ -20,7 +20,7 @@ Replace the dev-only in-place self-signed path (src/config/cert.ts ensureTlsCert
 ## Current state
 
 - server.tls config is paths-only {key,cert} (src/config/sections/server.ts); no ca chain, passphrase, or min-TLS-version.
-- Missing cert files -> openssl req -x509 RSA-2048 CN=localhost auto-generated on boot; OpenSSL absent -> warn + continue plain HTTP. No mode gating.
+- Missing cert files -> openssl req -x509 RSA-2048 CN=localhost auto-generated on boot; when provisioning fails (including OpenSSL absent), boot now fails closed with a classified, actionable error (`88d335a9a`) instead of continuing over plain HTTP. Mode gating (manual/acme/proxy) is not implemented.
 - Bun.serve consumes one pair shared by HTTPS and WSS transport (src/server/start.ts, src/transport/factory.ts).
 
 ## Direction

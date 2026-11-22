@@ -3,7 +3,7 @@
 
 # TASK: HSTS proxy proto and env mapping
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-certificate-and-tls-management
@@ -13,10 +13,10 @@
 
 ## Summary
 
-HSTS is default-off and emitted only when the request URL scheme is `https:` (`packages/core/src/config/sections/headers.ts:49-51`, `src/middleware/response-headers.ts:215-222`). Behind a TLS terminator Bun sees plain HTTP, so app-level HSTS never fires; `headers.hsts.*` also has no env mapping (`packages/core/src/config/schema-class/env-map.ts:108-145`), forcing a config file.
+HSTS is default-off and emitted when the request URL scheme is `https:` or, when `server.trustProxy` is true, on a trusted `X-Forwarded-Proto: https` (`packages/core/src/config/sections/headers.ts:49-51`, `src/middleware/response-headers.ts:215-229`, `src/server/handler.ts:45-49`). The `headers.hsts.*` env keys DO exist: the recursive `add("headers", s.headers)` mapping (`packages/core/src/config/schema-class/env-map.ts:99`) generates them, with exact names in `schemas/env-map.snapshot.json`.
 
 **Context:**
-Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1e/:123-124. `BUG-hsts-header-missing-from-response-policy.md` is Done; its Deployment caveat (:38-55) explicitly asks operators to file a follow-up adding proxy-header support before enabling HSTS in production. Edge HSTS exists at `deploy/Caddyfile:31` and `docs/ops/bare-metal/network.md:72-78`, but direct-TLS and custom-proxy deployments cannot enable it via env.
+Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1e/:123-124. `BUG-hsts-header-missing-from-response-policy.md` is Done; its Deployment caveat (:38-55) explicitly asks operators to file a follow-up adding proxy-header support before enabling HSTS in production. Edge HSTS exists at `deploy/Caddyfile:31` and `docs/ops/bare-metal/network.md:72-78`, so direct-TLS and custom-proxy deployments can enable it via the generated env keys.
 
 ## Scope
 
@@ -27,13 +27,13 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1e/:123-124. `BUG-hsts-h
 
 ## Acceptance Criteria
 
-- [ ] HSTS emitted behind a trusted TLS terminator that forwards `X-Forwarded-Proto: https`.
-- [ ] Spoofed `X-Forwarded-Proto` ignored when `trustProxy` is false.
-- [ ] Each hsts field set through its env variable.
-- [ ] Default behavior (off, plain HTTP) unchanged.
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] HSTS emitted behind a trusted TLS terminator that forwards `X-Forwarded-Proto: https`.
+- [x] Spoofed `X-Forwarded-Proto` ignored when `trustProxy` is false.
+- [x] Each hsts field set through its env variable.
+- [x] Default behavior (off, plain HTTP) unchanged.
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 ## Verification
 
@@ -42,6 +42,6 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §1e/:123-124. `BUG-hsts-h
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

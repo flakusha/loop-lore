@@ -3,7 +3,7 @@
 
 # TASK: Secure startup operator checklist
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-deployment-infrastructure
@@ -13,10 +13,10 @@
 
 ## Summary
 
-No consolidated secure-startup checklist exists. Deployment guidance is scattered across `docs/ops/bare-metal/network.md:120-127`, `docs/spec/build-deploy.md:103-122`, `deploy/docker-compose.yml:35-46`, and `deploy/Caddyfile:4-43`, so an operator can miss a security-relevant knob.
+A consolidated secure-startup checklist now exists at `docs/ops/secure-startup.md`, linked from `docs/README.md` and `docs/spec/build-deploy.md` (`fce466f47`). Deployment guidance had been scattered across `docs/ops/bare-metal/network.md:120-127`, `docs/spec/build-deploy.md:103-122`, `deploy/docker-compose.yml:35-46`, and `deploy/Caddyfile:4-43`, so an operator could miss a security-relevant knob.
 
 **Context:**
-Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §3 (Operator actions) enumerates the required settings; `FEAT-feat-security-security-posture-self-audit-endpoint.md` is a runtime admin endpoint, not operator docs, and no docs checklist ticket was found. Two stale claims need correcting alongside the page: the TLS modes ticket still describes a plain-HTTP fallback (amendment tracked in `.tmp/research/tls-startup-gap-ticket-map-2026-11-22.md`), and the release tracker still says MFA docs are absent although `TASK-mfa-dedicated-operator-documentation.md` is Done.
+Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §3 (Operator actions) enumerates the required settings; `FEAT-feat-security-security-posture-self-audit-endpoint.md` is a runtime admin endpoint, not operator docs, and no docs checklist ticket was found. Two stale claims need correcting alongside the page: the TLS-modes ticket plain-HTTP fallback premise was corrected in this reconciliation lane (previously tracked in `.tmp/research/tls-startup-gap-ticket-map-2026-11-22.md`), and the release tracker still says MFA docs are absent although `TASK-mfa-dedicated-operator-documentation.md` is Done.
 
 ## Scope
 
@@ -26,12 +26,12 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §3 (Operator actions) enu
 
 ## Acceptance Criteria
 
-- [ ] Checklist page exists and is linked from deployment docs.
-- [ ] Every item names its config key or doc source; no stale HTTP fallback claim.
-- [ ] `bun run md:lint` passes on the new page.
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Checklist page exists and is linked from deployment docs.
+- [x] Every item names its config key or doc source; no stale HTTP fallback claim.
+- [x] `bun run md:lint` passes on the new page.
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 ## Verification
 
@@ -40,6 +40,6 @@ Audit `.tmp/research/tls-startup-audit-2026-11-22.md` §3 (Operator actions) enu
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
