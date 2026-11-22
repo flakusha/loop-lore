@@ -351,15 +351,19 @@ export async function start() {
     if (p.status !== "healthy") { failedProviders.push(p,); }
   }
 
+  // Configured providers appear in both scans; report each name once.
+  const failedProviderNames = Array.from(new Set(failedProviders.map((p,) => p.name),),);
+  const providerCount = new Set([...healthResults, ...rescanResults,].map((p,) => p.name),).size;
+
   if (failedProviders.length > 0) {
     startLogger.warn("providers unreachable on startup", {
       module: "server",
-      failedProviders: Array.from(failedProviders, (p,) => p.name,),
+      failedProviders: failedProviderNames,
     },);
   } else {
     startLogger.info("all providers healthy", {
       module: "server",
-      count: healthResults.length + rescanResults.length,
+      count: providerCount,
     },);
   }
 
