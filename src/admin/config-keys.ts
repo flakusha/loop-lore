@@ -12,6 +12,23 @@ import type { ConfigEntry, } from "./config";
 export const SECRET_KEY_PATTERN =
   /secret|password|token|api.?key|private.?key|mesh.?psk|encryption.?key|signed.?url|db\.url|database.?url/iu;
 
+/** Flat keys and field names whose "token" is a budget unit, not a credential. */
+const NON_SECRET_CONFIG_KEYS: ReadonlySet<string> = new Set([
+  "lore_token_budget",
+  "memory_token_budget",
+  "loreTokenBudget",
+  "memoryTokenBudget",
+],);
+
+/**
+ * Secret classification with the two known prompt-budget keys excepted.
+ * @param key - flat system_config key or camelCase field name
+ * @returns true when the key holds credential material
+ */
+export function isSecretConfigKeyName(key: string,): boolean {
+  return !NON_SECRET_CONFIG_KEYS.has(key,) && SECRET_KEY_PATTERN.test(key,);
+}
+
 /**
  * Config keys whose modification requires a server restart to take effect.
  *

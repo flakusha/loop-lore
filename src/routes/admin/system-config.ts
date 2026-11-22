@@ -8,8 +8,8 @@ import {
   deleteConfig,
   getAllConfig,
   importConfigFromText,
+  isSecretConfigKeyName,
   REQUIRES_RESTART_KEYS,
-  SECRET_KEY_PATTERN,
   setConfig,
 } from "../../admin/config";
 import {
@@ -69,7 +69,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const rows = await getAllConfig(opts.database,);
         const body: Record<string, string> = {};
         for (const row of rows) {
-          body[row.key] = SECRET_KEY_PATTERN.test(row.key,) ? "***REDACTED***" : row.value;
+          body[row.key] = isSecretConfigKeyName(row.key,) ? "***REDACTED***" : row.value;
         }
 
         try {
@@ -123,7 +123,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const configs = await getAllConfig(opts.database,);
         const decorated = configs.map((c,) => ({
           ...decorateConfigEntry(c,),
-          value: SECRET_KEY_PATTERN.test(c.key,) ? "***REDACTED***" : c.value,
+          value: isSecretConfigKeyName(c.key,) ? "***REDACTED***" : c.value,
         }));
 
         return jsonResponse(decorated,);

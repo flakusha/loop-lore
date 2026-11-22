@@ -14,11 +14,14 @@
  * degradation, so reads MUST NOT throw.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../config/schema";
+import { AUTOROUTE_SCENARIOS, type Config, } from "../config/schema";
+import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "../config/sections/menu-data";
 import type { DB, } from "../db/schema";
 import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
 import { recommendScenarioModel, } from "../models/scenario-ranking";
+import { jsonParseOr, } from "../utils";
+import { getConfigValue, } from "./config";
 
 import { ModelRole, } from "../db/enums-core";
 export type { ModelRole, } from "../db/enums-core";
@@ -77,6 +80,29 @@ async function scenarioDefault(
 }
 
 /**
+ * Parse an admin-edited modelRoles JSON value; invalid or partial rows are ignored.
+ * @param raw - stored system_config value
+ * @returns assignments keyed by valid role, or undefined when unusable
+ */
+function parseStoredModelRoles(raw: string | undefined,): Config["generation"]["modelRoles"] | undefined {
+  if (!raw) { return undefined; }
+  const parsed = jsonParseOr<unknown>(raw, undefined,);
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) { return undefined; }
+
+  const result: NonNullable<Config["generation"]["modelRoles"]> = {};
+  for (const [role, assignment,] of Object.entries(parsed,)) {
+    if (!(VALID_ROLES as readonly string[]).includes(role,)) { continue; }
+    if (typeof assignment !== "object" || assignment === null) { continue; }
+    const value = assignment as Record<string, unknown>;
+    if (typeof value.provider === "string" && typeof value.model === "string") {
+      result[role as keyof typeof result] = { provider: value.provider, model: value.model, };
+    }
+  }
+
+  return Object.keys(result,).length > 0 ? result : undefined;
+}
+
+/**
  * Resolve a model role assignment.
  *
  * Resolution order:
@@ -101,16 +127,25 @@ export async function resolveModelRole(
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
   }
 
-  // Config is the admin-controlled autoroute switch; an explicit caller
-  // scenario (tests, future per-role settings) wins over it.
-  const scenario = opts.scenario ?? config.generation?.autorouteScenario;
-
   // Graceful degradation: a missing/partial `config.generation` section must
   // resolve to an empty role (callAux treats empty provider/model as `null`
   // and returns without throwing), not crash on `config.generation.<field>`.
   if (!config?.generation) {
     return { role, provider: "", model: "", source: "default", };
   }
+
+  const storedScenario = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,);
+
+  const storedRoles = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,);
+
+  const storedValidScenario = storedScenario !== undefined &&
+      (AUTOROUTE_SCENARIOS as readonly string[]).includes(storedScenario,)
+    ? storedScenario as Config["generation"]["autorouteScenario"]
+    : undefined;
+
+  // Explicit caller scenario wins; config-menu DB overrides come next.
+  const scenario = opts.scenario ?? storedValidScenario ?? config.generation.autorouteScenario;
+  const roles = parseStoredModelRoles(storedRoles,) ?? config.generation.modelRoles;
 
   // 1. DB overrides
   try {
@@ -130,7 +165,7 @@ export async function resolveModelRole(
   }
 
   // 2. Config defaults
-  const configRole = config.generation.modelRoles?.[role as keyof typeof config.generation.modelRoles];
+  const configRole = roles?.[role as keyof NonNullable<typeof roles>];
   if (configRole) {
     return { role, provider: configRole.provider, model: configRole.model, source: "config", };
   }

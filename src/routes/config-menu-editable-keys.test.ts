@@ -8,8 +8,12 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { resolveModelRole, } from "../admin/model-roles";
+import { resolveSectionBudget, } from "../assistant/prompt/budgets";
 import type { Config, } from "../config/schema";
+import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
+import { recordRanking, } from "../models/rankings";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { systemConfigRoutes, } from "./admin/system-config";
 import { configMenuRoutes, } from "./config-menu";
@@ -31,8 +35,8 @@ const EDITABLE_KEYS: EditableKey[] = [
     stored: '{"main":{"provider":"local","model":"chat"}}',
     readback: { main: { provider: "local", model: "chat", }, },
   },
-  { key: "prompt_lore_budget", section: "prompt", value: 512, stored: "512", readback: "512", },
-  { key: "prompt_memory_budget", section: "prompt", value: 768, stored: "768", readback: "768", },
+  { key: "lore_token_budget", section: "prompt", value: 512, stored: "512", readback: "512", },
+  { key: "memory_token_budget", section: "prompt", value: 768, stored: "768", readback: "768", },
 ];
 
 function deriveRole(app: Elysia, userRole: string | null,) {
@@ -181,5 +185,71 @@ describe("operator-editable config keys", () => {
       .executeTakeFirst();
 
     expect(row,).toBeUndefined();
+  });
+
+  test("PATCHed prompt budgets reach the effective prompt config", async () => {
+    const app = menuApp(db, "admin",);
+    for (
+      const entry of [
+        { key: "lore_token_budget", value: 640, },
+        { key: "memory_token_budget", value: 896, },
+      ]
+    ) {
+      const res = await patchMenu(app, { key: entry.key, value: entry.value, },);
+      expect(res.status,).toBe(200,);
+    }
+
+    const config = {
+      prompt: { loreTokenBudget: 1024, memoryTokenBudget: 1024, },
+    } as unknown as Config;
+
+    const ctx = {
+      db,
+      chat: { world_id: null, },
+      config,
+    } as unknown as Parameters<typeof resolveSectionBudget>[0];
+
+    expect(await resolveSectionBudget(ctx, "lore",),).toBe(640,);
+    expect(await resolveSectionBudget(ctx, "memory",),).toBe(896,);
+    // File-plane config stays at its default: the override comes from the DB.
+    expect(config.prompt?.loreTokenBudget,).toBe(1024,);
+  });
+
+  test("PATCHed modelRoles and autorouteScenario reach role resolution", async () => {
+    const app = menuApp(db, "admin",);
+    expect(
+      (await patchMenu(app, {
+        key: "model_roles",
+        value: { main: { provider: "stored-provider", model: "stored-model", }, },
+      },)).status,
+    ).toBe(200,);
+
+    const config = {
+      generation: {
+        defaultProvider: "stored-provider",
+        defaultModels: { "stored-provider": "ranked-model", },
+      },
+    } as unknown as Config;
+
+    const resolved = await resolveModelRole(ModelRole.Main, config, db,);
+    expect(resolved.source,).toBe("config",);
+    expect(resolved.provider,).toBe("stored-provider",);
+    expect(resolved.model,).toBe("stored-model",);
+
+    expect((await patchMenu(app, { key: "autoroute_scenario", value: "chat", },)).status,).toBe(200,);
+    await recordRanking(db, {
+      scope: "global",
+      scopeKey: "editable-keys",
+      subjectKey: "ranked-model",
+      metric: "arena_score",
+      value: 0.9,
+      basis: "test",
+      source: "test",
+      observedAt: new Date().toISOString(),
+    },);
+
+    const ranked = await resolveModelRole(ModelRole.Auxiliary, config, db,);
+    expect(ranked.source,).toBe("ranking",);
+    expect(ranked.model,).toBe("ranked-model",);
   });
 });

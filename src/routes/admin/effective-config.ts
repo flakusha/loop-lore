@@ -13,7 +13,7 @@
  */
 
 import { Elysia, t, } from "elysia";
-import { SECRET_KEY_PATTERN, } from "../../admin/config";
+import { isSecretConfigKeyName, SECRET_KEY_PATTERN, } from "../../admin/config";
 import { resolveCredential, SECRET_REF_PREFIX, } from "../../integrations/secrets";
 import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requirePermissionUserId, } from "../http-utils";
@@ -133,7 +133,7 @@ export function effectiveConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
         for (const row of rows) {
           // Secret-adjacent keys are named, never opened, never included.
-          if (SECRET_KEY_PATTERN.test(row.key,)) {
+          if (isSecretConfigKeyName(row.key,)) {
             omitted.push(row.key,);
             continue;
           }

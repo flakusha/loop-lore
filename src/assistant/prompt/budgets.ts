@@ -17,6 +17,8 @@
  * baseline until a ratio is set.
  */
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
+import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "../../config/sections/menu-data";
 import { effectivePromptBudget, } from "../../config/sections/prompt";
 import type { DB, } from "../../db/schema";
 import type { AssembleContext, } from "./types";
@@ -58,9 +60,17 @@ export async function resolveSectionBudget(
   ctx: Pick<AssembleContext, "db" | "chat" | "config">,
   section: BudgetSection,
 ): Promise<number> {
-  const base = section === "lore"
+  const configured = section === "lore"
     ? ctx.config?.prompt?.loreTokenBudget
     : ctx.config?.prompt?.memoryTokenBudget;
+
+  const key = section === "lore"
+    ? EDITABLE_SYSTEM_CONFIG_KEYS.loreTokenBudget
+    : EDITABLE_SYSTEM_CONFIG_KEYS.memoryTokenBudget;
+
+  const stored = await getConfigValue(ctx.db, key,);
+  const parsed = stored ? Number(stored,) : undefined;
+  const base = parsed !== undefined && Number.isFinite(parsed,) ? parsed : configured;
 
   const ratio = await worldBudgetRatio(ctx.db, ctx.chat.world_id,);
   return effectivePromptBudget(base, ratio,);

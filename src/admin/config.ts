@@ -32,6 +32,7 @@ export interface ConfigEntry {
 }
 export {
   decorateConfigEntry,
+  isSecretConfigKeyName,
   PER_CHAT_OVERRIDABLE_KEYS,
   REQUIRES_RESTART_KEYS,
   SECRET_KEY_PATTERN,
