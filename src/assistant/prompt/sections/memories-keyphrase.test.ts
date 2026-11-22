@@ -7,7 +7,7 @@
  *   3. no match → no keyphrase injection
  * plus the config flag and per-message limit overrides.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, setDefaultTimeout, test, } from "bun:test";
 import { MessageRole, MessageStatus, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { clearKeyphraseRecallCooldowns, recordKeyphraseRecall, } from "../../../memory/keyphrase-recall";
@@ -24,6 +24,9 @@ import {
 import type { AssembleContext, } from "../types";
 import { memorySection, } from "./memories";
 import { applyKeyphraseRecalls, collectKeyphraseHits, type KeyphraseRecallCtx, } from "./memories-keyphrase";
+
+// Full test-DB setup per case trips the 5s default under parallel-check load; tolerance only.
+setDefaultTimeout(15000,);
 
 const KEY_PHRASE = "moonstone relic";
 const MARKER = "KEYPHRASE_JOURNAL_MARKER: the relic hums.";
@@ -142,7 +145,7 @@ afterEach(() => {
   clearKeyphraseRecallCooldowns();
 },);
 
-describe("collectKeyphraseHits", { timeout: 15000, }, () => {
+describe("collectKeyphraseHits", () => {
   test("match → hit; no match → no hit", async () => {
     const hit = await setup({ withMatchMessage: true, },);
     try {
@@ -209,9 +212,9 @@ describe("collectKeyphraseHits", { timeout: 15000, }, () => {
       f.sqlite.close();
     }
   });
-},);
+});
 
-describe("applyKeyphraseRecalls", { timeout: 15000, }, () => {
+describe("applyKeyphraseRecalls", () => {
   test("appends forced hits, dedupes, and writes a keyphrase audit row", async () => {
     const f = await setup({ withMatchMessage: false, },);
     try {
@@ -254,9 +257,9 @@ describe("applyKeyphraseRecalls", { timeout: 15000, }, () => {
       f.sqlite.close();
     }
   });
-},);
+});
 
-describe("memorySection — keyphrase recall end-to-end", { timeout: 15000, }, () => {
+describe("memorySection — keyphrase recall end-to-end", () => {
   // Determinism comes from the REAL seam, not a `Math.random` spy: `setup()`
   // puts `randomFn: () => 0.999` on the AssembleContext, `memories.ts` threads
   // it into `InjectionContext.randomFn`, and `injection/decide.ts` consumes it.
@@ -319,4 +322,4 @@ describe("memorySection — keyphrase recall end-to-end", { timeout: 15000, }, (
       f.sqlite.close();
     }
   });
-},);
+});
