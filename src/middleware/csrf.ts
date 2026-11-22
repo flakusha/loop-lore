@@ -69,20 +69,33 @@ function hasBearerAuthorization(headers: Headers,): boolean {
   return headers.get("authorization",)?.startsWith("Bearer ",) === true;
 }
 
+let cookieTlsConfigured = false;
+
 /**
- * Resolve the `Secure` flag for the cookie. Mirrors the decision matrix used
- * by `src/routes/auth/shared.ts: setTokenCookie`.
- * @param override
- * @param prodDefault
+ * Wire the effective server TLS config into the shared cookie `Secure`
+ * decision. Called once per app creation from `src/elysia-app.ts`; the
+ * module default is false so plain-HTTP deployments and unit tests keep
+ * usable cookies.
+ * ponytail: one process-wide value — one TLS config per process today.
+ * @param tlsConfigured truthy when `config.server.tls` is configured
+ */
+export function configureCookieTls(tlsConfigured: boolean,): void {
+  cookieTlsConfigured = tlsConfigured === true;
+}
+
+/**
+ * Resolve the `Secure` flag for BOTH `ll_token` and `csrf_token`.
+ * First match wins: explicit override > effective TLS config > prod default.
+ * @param override explicit `LL_COOKIE_SECURE` override
+ * @param prodDefault `NODE_ENV === "production"` default
  * @returns {boolean}
  */
 export function resolveCookieSecure(
   override: boolean | undefined,
   prodDefault: boolean,
 ): boolean {
-  if (override === true) { return true; }
-  if (override === false) { return false; }
-  return prodDefault;
+  if (override !== undefined) { return override; }
+  return cookieTlsConfigured || prodDefault;
 }
 
 /**
@@ -90,7 +103,7 @@ export function resolveCookieSecure(
  * expected by `resolveCookieSecure`. Returns:
  *   - `true` when `LL_COOKIE_SECURE=true`  (force Secure, override NODE_ENV)
  *   - `false` when `LL_COOKIE_SECURE=false` (force non-Secure, override NODE_ENV)
- *   - `undefined` when the var is unset / unrecognized (defer to NODE_ENV default)
+ *   - `undefined` when unset (defer to effective TLS config, then NODE_ENV)
  *
  * Mirrors `src/routes/auth/shared.ts::setTokenCookie` so both cookies stay in
  * sync. Centralized so tests can assert the mapping without spinning up the
@@ -335,11 +348,9 @@ export function cookieForDecision(
   if (decision.cookieToIssue === null) { return null; }
   const secure = resolveCookieSecure(
     opts.cookieSecureOverride,
-    // Default `Secure` to true only when running in production. Plain-HTTP
-    // dev servers reject `Secure` cookies — without this check, every
-    // local developer hits "cookie not set" during login. Production
-    // gets the safe default; dev gets the workable default; explicit
-    // `cookieSecureOverride` still wins. See
+    // Production default applies only when neither an explicit override nor
+    // the effective TLS config resolved it in the shared helper. Plain-HTTP
+    // dev keeps working cookies. See
     // BUG-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.
     opts.cookieSecureInProd ?? process.env["NODE_ENV"] === "production",
   );

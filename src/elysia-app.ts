@@ -25,6 +25,7 @@ import type { TranslatorFn, } from "./i18n/types";
 import { getLogger, } from "./logger";
 import { authenticateRequest, } from "./middleware/auth";
 import {
+  configureCookieTls,
   CSRF_EXEMPT_ROUTES,
   CSRF_HEADER,
   readCookieSecureOverrideFromEnv,
@@ -204,6 +205,10 @@ export function createApp(deps: AppDeps,) {
   const cookieSecureOverride = readCookieSecureOverrideFromEnv(
     process.env["LL_COOKIE_SECURE"],
   );
+
+  // Effective TLS config drives the Secure default for BOTH cookies when
+  // no explicit LL_COOKIE_SECURE override is set.
+  configureCookieTls(Boolean(config.server.tls,),);
 
   const csrfOpts: CsrfMiddlewareOptions = {
     secret: effectiveCsrfSecret,

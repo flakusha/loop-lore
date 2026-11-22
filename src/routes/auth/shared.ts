@@ -3,6 +3,10 @@
 
 import type { Config, } from "../../config/schema";
 import {
+  readCookieSecureOverrideFromEnv,
+  resolveCookieSecure,
+} from "../../middleware/csrf";
+import {
   createRateLimiter,
   type RateLimiter,
 } from "../../middleware/rate-limit";
@@ -99,20 +103,13 @@ const COOKIE_PATH = "/";
  * @returns the `Set-Cookie` header value for the auth token
  */
 function setTokenCookie(token: string, maxAgeSecs: number,): string {
-  // `Secure` is omitted unless the deployment is reachable over HTTPS.
-  // A cookie with `Secure` set will be silently dropped by the browser
-  // when the page is loaded over plain HTTP (e.g. local dev), breaking auth.
-  //
-  // Decision matrix (first match wins):
-  // LL_COOKIE_SECURE=true → emit Secure (override; e.g. behind TLS-terminating proxy on a custom port)
-  // LL_COOKIE_SECURE=false → never emit Secure (override)
-  // NODE_ENV === "production" → emit Secure
-  // otherwise → omit Secure (dev / solo / unknown)
-  const override = process.env.LL_COOKIE_SECURE;
-  let secure: boolean;
-  if (override === "true") { secure = true; }
-  else if (override === "false") { secure = false; }
-  else { secure = process.env.NODE_ENV === "production"; }
+  // Same decision as `csrf_token` (src/middleware/csrf.ts): explicit
+  // LL_COOKIE_SECURE > effective TLS config > NODE_ENV=production. A Secure
+  // cookie is dropped over plain HTTP, so TLS-off dev omits it.
+  const secure = resolveCookieSecure(
+    readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],),
+    process.env["NODE_ENV"] === "production",
+  );
 
   const parts = [
     `${TOKEN_COOKIE}=${token}`,
