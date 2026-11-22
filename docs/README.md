@@ -273,6 +273,8 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 | [`ops/bare-metal/requirements.txt`](./ops/bare-metal/requirements.txt) | Pinned Ubuntu 22.04 LTS system/runtime packages                         |
 | [`ops/bare-metal/systemd/`](./ops/bare-metal/systemd/)                 | Service unit files for app, worker, llama-swap, exporters, backup timers |
 | [`ops/secure-startup.md`](./ops/secure-startup.md)                       | Secure-startup pre-flight checklist: TLS, secrets, cookies, HSTS, firewall |
+| [`ops/agent-api.md`](./ops/agent-api.md)                             | Shipped RSI agent API: scoped `llra_` tokens, whoami/worktree/check SSE, admin mint/revoke |
+| [`ops/ci-cd-loop.md`](./ops/ci-cd-loop.md)                           | Gate matrix, workflow triggers, check report, scoped runs, failure handling               |
 
 ---
 
