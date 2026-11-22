@@ -55,7 +55,11 @@ settingsModal = function() {
           headers: { Accept: "application/json", },
         },);
 
-        if (res.ok) { this.comfyModels = await res.json(); }
+        if (res.ok) {
+          const body = await res.json();
+          // provider null = none configured: leave the selector hidden.
+          if (body.provider) { this.comfyModels = body; }
+        }
       } catch {
         /* unavailable engine — leave the selector hidden */
       }

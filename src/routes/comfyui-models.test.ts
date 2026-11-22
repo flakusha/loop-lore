@@ -146,6 +146,28 @@ describe("GET /api/v1/comfyui/models", () => {
     expect(body.lorasRole,).toMatchObject({ selected: "style-a.safetensors", source: "discovery", },);
     expect(body.checkpointRole,).toMatchObject({ selected: "base.ckpt", source: "config", },);
   });
+
+  test("returns the empty view when no provider is configured (not 404)", async () => {
+    const config = makeConfig();
+    config.generation.providers.video = [];
+
+    const app = new Elysia({ name: "test-comfyui-models-empty", },)
+      .derive(() => ({ userId: USER_ID, userRole: "user", }))
+      .use(comfyUIModelRoutes({ database: fixture.db, config, },),);
+
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/comfyui/models",),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      provider: null;
+      clipRole: { candidates: string[]; selected: null; source: string };
+    };
+
+    expect(body.provider,).toBeNull();
+    expect(body.clipRole,).toMatchObject({ candidates: [], selected: null, source: "none", },);
+  });
 });
 
 describe("comfyUIModelConfigKey", () => {

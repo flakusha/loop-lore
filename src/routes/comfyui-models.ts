@@ -79,7 +79,18 @@ export function comfyUIModelRoutes(
       const wanted = ctx.query.provider;
       const provider = wanted ? allProviders.find((entry,) => entry.name === wanted) : allProviders[0];
       if (!provider) {
-        return jsonError(`Unknown ComfyUI ${kind} provider: ${wanted ?? "(none configured)"}`, HttpStatus.NotFound,);
+        if (wanted !== undefined) {
+          return jsonError(`Unknown ComfyUI ${kind} provider: ${wanted}`, HttpStatus.NotFound,);
+        }
+
+        // No provider configured is normal state, not an error: return the
+        // empty view so bare settings opens stay 200 (no 404 page noise).
+        return jsonResponse({
+          provider: null,
+          ...resolveComfyUIModels({
+            discovered: { clip: [], diffusion: [], vae: [], checkpoint: [], clip_vision: [], loras: [], },
+          },),
+        },);
       }
 
       const client = new ComfyUIClient({
