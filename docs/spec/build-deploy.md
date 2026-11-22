@@ -121,6 +121,8 @@ origin for federation nodeinfo + self-referential URLs). For trusted local
 HTTPS use `deploy/Caddyfile.local` (`tls internal`, one-time
 `caddy trust`).
 
+For the full pre-flight list (secrets, registration/demo defaults, cookie `Secure`, HSTS, listener exposure, firewall), see [`ops/secure-startup.md`](../ops/secure-startup.md).
+
 Bun handles:
 
 - Dynamic API routes

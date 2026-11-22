@@ -272,6 +272,7 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 | [`ops/bare-metal/network.md`](./ops/bare-metal/network.md)             | Firewall, TLS, port allocation, ACME, federation                        |
 | [`ops/bare-metal/requirements.txt`](./ops/bare-metal/requirements.txt) | Pinned Ubuntu 22.04 LTS system/runtime packages                         |
 | [`ops/bare-metal/systemd/`](./ops/bare-metal/systemd/)                 | Service unit files for app, worker, llama-swap, exporters, backup timers |
+| [`ops/secure-startup.md`](./ops/secure-startup.md)                       | Secure-startup pre-flight checklist: TLS, secrets, cookies, HSTS, firewall |
 
 ---
 
