@@ -10,6 +10,7 @@
 // size-allow: 275
 
 import type { Kysely, } from "kysely";
+import { getUnhealthyProviders, } from "../../admin/provider-health";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { routingReorders, sharedRouter, } from "../routing/router";
@@ -213,26 +214,33 @@ export function buildFailoverList(
   // and reachable through the translation path (model-roles "translator").
 
   const routing = config?.generation?.routing;
-  if (!signal || !routingReorders(routing,)) { return result; }
+  let ordered = result;
+  if (signal && routingReorders(routing,)) {
+    const candidates = result.map((entry,) => ({
+      name: entry.name,
+      model: config?.generation?.defaultModels?.[entry.name] ?? "",
+      capabilities: entry.provider.capabilities,
+      // The router's scoring fields (cost/latency/window) already live on
+      // `capabilities`; restating them per field is a copy that can drift.
+      ...entry.provider.capabilities,
+    }));
 
-  const candidates = result.map((entry,) => ({
-    name: entry.name,
-    model: config?.generation?.defaultModels?.[entry.name] ?? "",
-    capabilities: entry.provider.capabilities,
-    // The router's scoring fields (cost/latency/window) already live on
-    // `capabilities`; restating them per field is a copy that can drift.
-    ...entry.provider.capabilities,
-  }));
+    const routed = sharedRouter(routing,).route(signal, candidates,);
+    // The router owns the whole order, primary included: emitting the caller's
+    // primary first AND the router's chain would dispatch one provider twice and
+    // never attempt the one the router actually chose. A null primary means
+    // every candidate was ineligible — keep the config order rather than
+    // dispatch nothing.
+    if (routed.primary !== null) {
+      const byName = new Map(result.map((entry,) => [entry.name, entry,] as const),);
+      ordered = [routed.primary, ...routed.fallbacks,].map((m,) => byName.get(m.name,)).filter((e,) => e !== undefined);
+    }
+  }
 
-  const routed = sharedRouter(routing,).route(signal, candidates,);
-  const byName = new Map(result.map((entry,) => [entry.name, entry,] as const),);
-  // The router owns the whole order, primary included: emitting the caller's
-  // primary first AND the router's chain would dispatch one provider twice and
-  // never attempt the one the router actually chose. A null primary means
-  // every candidate was ineligible — keep the config order rather than
-  // dispatch nothing.
-  if (routed.primary === null) { return result; }
-  return [routed.primary, ...routed.fallbacks,].map((m,) => byName.get(m.name,)).filter((e,) => e !== undefined);
+  // No scan yet → empty cache → unchanged chain. All-unhealthy → [] so dispatch
+  // fails closed instead of falling back onto a provider we know is bad.
+  const unhealthy = new Set(getUnhealthyProviders(),);
+  return unhealthy.size === 0 ? ordered : ordered.filter((entry,) => !unhealthy.has(entry.name,));
 }
 
 /**
