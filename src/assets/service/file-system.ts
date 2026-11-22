@@ -5,7 +5,8 @@
  * Asset Service — local filesystem helpers
  */
 import fs from "node:fs";
-import { isAbsolute, join, relative, resolve, sep, } from "node:path";
+import { homedir, } from "node:os";
+import { isAbsolute, join, posix, relative, resolve, sep, win32, } from "node:path";
 import { resolveInstancePath, } from "../../config/instance-path";
 import { resolveInstanceDir, } from "../../config/state-dir";
 
@@ -13,6 +14,45 @@ import { resolveInstanceDir, } from "../../config/state-dir";
  * Dangerous root paths that must never be used as upload directories.
  */
 const FORBIDDEN_ROOTS = ["/", "/home", "/root", "/etc", "/usr", "/bin", "/lib", "/var", "/opt",];
+
+/** POSIX baseline with each root's depth budget preserved. */
+const BASELINE_ROOTS = FORBIDDEN_ROOTS.map((root,) => ({
+  root,
+  depth: root === "/" ? 0 : root === "/home" ? 1 : Infinity,
+}));
+
+/** Path API matching a path's separator style (win32 for drive-letter paths). */
+function pathOpsFor(pathValue: string,) {
+  return /^[A-Za-z]:[\\\/]/.test(pathValue,) ? win32 : posix;
+}
+
+/**
+ * Whether an absolute path hits a forbidden root. `home` is injectable so
+ * Windows/macOS shapes can be checked on any host. Depth budgets: 0 = root
+ * only, 1 = root + direct children, Infinity = whole subtree.
+ * @param absolutePath
+ * @param home
+ * @returns true when the path is a forbidden system location
+ */
+export function isForbiddenUploadPath(absolutePath: string, home: string = homedir(),): boolean {
+  const ops = pathOpsFor(absolutePath,);
+  const homeOps = pathOpsFor(home,);
+  const rules = [
+    { root: homeOps.parse(home,).root, depth: 0, },
+    { root: homeOps.dirname(home,), depth: 1, },
+    ...BASELINE_ROOTS,
+    { root: home, depth: 1, },
+  ];
+
+  for (const { root, depth, } of rules) {
+    const rel = ops.relative(root, absolutePath,);
+    if (rel === "") { return true; }
+    if (rel === ".." || rel.startsWith(`..${ops.sep}`,) || ops.isAbsolute(rel,)) { continue; }
+    if (rel.split(ops.sep,).length <= depth) { return true; }
+  }
+
+  return false;
+}
 
 /** Options for {@link resolveUploadDir}. */
 export interface ResolveUploadDirOptions {
@@ -41,17 +81,8 @@ export function resolveUploadDir(uploadDir: string, opts?: ResolveUploadDirOptio
   const normalized = resolve(resolved,);
 
   // Block dangerous system roots
-  for (const forbidden of FORBIDDEN_ROOTS) {
-    if (normalized === forbidden || normalized.startsWith(`${forbidden}/`,)) {
-      // /home is special: block root and direct children (/home/user),
-      // but allow deeper paths (/home/user/projects)
-      if (forbidden === "/home" && normalized !== "/home") {
-        const afterHome = normalized.slice(forbidden.length + 1,);
-        if (afterHome.includes("/",)) { continue; }
-      }
-
-      throw new Error(`Upload directory "${resolved}" resolves to forbidden system path "${normalized}"`,);
-    }
+  if (isForbiddenUploadPath(normalized,)) {
+    throw new Error(`Upload directory "${resolved}" resolves to forbidden system path "${normalized}"`,);
   }
 
   return normalized;

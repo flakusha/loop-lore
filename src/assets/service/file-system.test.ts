@@ -8,12 +8,19 @@
 
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
-import { tmpdir, } from "node:os";
+import { homedir, tmpdir, } from "node:os";
 import { dirname, join, } from "node:path";
 import { DATA_DIR, } from "../../config/constants";
 import { ASSETS_DEFAULTS, } from "../../config/sections/assets";
 import { resolveDbPath, resolveInstanceDir, } from "../../config/state-dir";
-import { deleteFile, getAssetFilePath, isStoragePathInUploadDir, resolveUploadDir, storeFile, } from "./file-system";
+import {
+  deleteFile,
+  getAssetFilePath,
+  isForbiddenUploadPath,
+  isStoragePathInUploadDir,
+  resolveUploadDir,
+  storeFile,
+} from "./file-system";
 
 const ASSET_ID = "aabbccddeeff00112233445566778899";
 
@@ -51,6 +58,49 @@ describe("resolveUploadDir", () => {
 
   test("allows deep paths under /home (e.g. /home/user/projects)", () => {
     expect(resolveUploadDir("/home/testuser/my-project/uploads",),).toBe("/home/testuser/my-project/uploads",);
+  });
+});
+
+describe("resolveUploadDir — cross-platform forbidden roots", () => {
+  test("Windows drive root + Users keep Linux /home semantics", () => {
+    const home = "C:\\Users\\tester";
+    expect(isForbiddenUploadPath("C:\\", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("C:\\Users", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("C:\\Users\\bob", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("C:\\Users\\tester\\child", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("C:\\Users\\tester\\projects\\uploads", home,),).toBe(false,);
+    expect(isForbiddenUploadPath("C:\\UsersEvil\\x", home,),).toBe(false,);
+    expect(isForbiddenUploadPath("C:\\Windows\\System32", home,),).toBe(false,);
+  });
+
+  test("mixed separators and .. cannot bypass the Windows guard", () => {
+    const home = "C:\\Users\\tester";
+    expect(isForbiddenUploadPath("C:\\Users\\tester\\child\\..\\..\\bob", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("C:\\Users\\bob/foo\\..\\..\\Windows", home,),).toBe(true,);
+  });
+
+  test("macOS /Users root keeps Linux /home semantics", () => {
+    const home = "/Users/tester";
+    expect(isForbiddenUploadPath("/Users/bob", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/Users/tester/child", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/Users/tester/projects/uploads", home,),).toBe(false,);
+  });
+
+  test("Linux baseline semantics are preserved", () => {
+    const home = "/home/tester";
+    expect(isForbiddenUploadPath("/", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/etc", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/usr/bin", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/home", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/home/bob", home,),).toBe(true,);
+    expect(isForbiddenUploadPath("/home/bob/projects/uploads", home,),).toBe(false,);
+    expect(isForbiddenUploadPath("/tmp/foo", home,),).toBe(false,);
+  });
+
+  test("home dir direct child is blocked, deeper path allowed", () => {
+    const home = homedir();
+    expect(() => resolveUploadDir(join(home, "child",),)).toThrow("forbidden",);
+    expect(resolveUploadDir(join(home, "projects", "uploads",),),).toBe(join(home, "projects", "uploads",),);
   });
 });
 
