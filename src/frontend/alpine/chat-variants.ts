@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { browserRandomUUIDv7, } from "../browser";
 import { requireActiveChat, } from "./chat-guards";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -213,6 +214,40 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
 
+      this.isGenerating = true;
+
+      // A retry is only metadata until the normal generation route is called
+      // again. Re-enter dispatch with the resolved step, parent and actor so
+      // the click actually restarts the turn instead of just showing a spinner.
+      if (data.parentMessageId && data.actorId) {
+        const generated = await apiFetch("/api/v1/generation/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({
+            chatId: this.activeChat,
+            parentMessageId: data.parentMessageId,
+            actorId: data.actorId,
+            idempotencyKey: browserRandomUUIDv7(),
+            stream: false,
+            parentAttemptId: data.attemptId,
+            stepIndex: data.resumeFromStep,
+            totalSteps: data.totalSteps,
+          },),
+        },);
+
+        if (!generated.ok) {
+          this.isGenerating = false;
+          this.$dispatch?.("show-toast", {
+            type: "error",
+            message: t("toasts.failedRetry",),
+          },);
+
+          return;
+        }
+
+        await this.loadMessages?.();
+      }
+
       this.$dispatch?.("show-toast", {
         type: "info",
         message: data.resumeFromStep > 0
@@ -222,8 +257,6 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
           },)
           : t("status.regeneratingResponse",),
       },);
-
-      this.isGenerating = true;
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorDuringRetry",), },);
     }
