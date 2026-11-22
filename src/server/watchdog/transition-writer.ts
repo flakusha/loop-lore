@@ -11,6 +11,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
+import { record, } from "../../telemetry/service";
 import type { WatchdogDecision, WatchdogTransition, } from "./state";
 
 export interface DecisionFields {
@@ -60,6 +61,12 @@ export function createTransitionWriter(database: Kysely<DB>, logger: Logger,): T
         misses: fields.misses,
         crashes: fields.crashes,
       },).execute();
+
+      await record(database, {
+        eventType: "watchdog.transition",
+        data: { ...fields, event_kind: transition.event_kind, at_ms: transition.at, },
+        source: "server",
+      },);
     })().catch((error: unknown,) => {
       logger.error("watchdog exec-log write failed", error instanceof Error ? error : undefined, {
         event_kind: transition.event_kind,

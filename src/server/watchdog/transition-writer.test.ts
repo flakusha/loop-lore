@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, type Logger, } from "../../logger";
+import { isTelemetryEnabled, } from "../../telemetry/service";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { createState, type WatchdogDecision, type WatchdogTransition, } from "./state";
 import { createTransitionWriter, toDecisionFields, } from "./transition-writer";
@@ -97,6 +98,29 @@ describe("createTransitionWriter", () => {
       reason: null,
       misses: null,
       crashes: null,
+    },);
+  });
+
+  test("mirrors the transition into telemetry_events when the sink is enabled", async () => {
+    expect(isTelemetryEnabled(),).toBe(true,);
+    const writer = createTransitionWriter(db, logger,);
+    writer(transition({ kind: "kill", reason: "probe-misses", misses: 2, },),);
+    await writer.flush();
+
+    const rows = await db.selectFrom("telemetry_events",).selectAll().execute();
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0],).toMatchObject({
+      event_type: "watchdog.transition",
+      source: "server",
+    },);
+
+    expect(JSON.parse(rows[0]!.event_data,),).toEqual({
+      decision_kind: "kill",
+      reason: "probe-misses",
+      misses: 2,
+      crashes: null,
+      event_kind: "crash",
+      at_ms: 1_234,
     },);
   });
 });
