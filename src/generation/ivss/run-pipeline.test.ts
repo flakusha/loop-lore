@@ -255,7 +255,9 @@ describe("IVSS ComfyUI run pipeline", () => {
 
     expect(fragment.status,).toBe(FragmentStatus.Cancelled,);
     expect(getVideoJob(handle.jobId,)?.status,).toBe("failed",);
-    expect(cancelVideoJob(handle.jobId,),).toBe(false,);
+    // The HTTP cancel route reaches this same live closure via the job store.
+    expect(getVideoJob(handle.jobId,)?.cancel,).toBe(handle.cancel,);
+    expect(cancelVideoJob(handle.jobId, seeded.ownerId,),).toBe(false,);
   });
 
   test("a claimed fragment cannot be submitted twice", async () => {

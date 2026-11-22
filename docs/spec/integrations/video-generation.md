@@ -83,6 +83,21 @@ per-LLM-registry scan and video providers are not in that registry, so a
 health check here would always read "unknown". Render failure already
  surfaces per-candidate via engine failover (timeout → 504, failure → 502).
 
+## Owner-scoped job control and deferral
+
+Three POST routes share one owner check (`404` for foreign ids, never `403`):
+`/api/v1/generation/jobs/:id/cancel`, `/retry` and `/defer`. Cancel marks a
+pending job terminal (499), clears its async record and invokes the live IVSS
+run closure when one was registered. Retry of a terminal job resubmits its
+original inputs once; a repeated retry returns the same replacement id, and a
+running job refuses retry (409). Defer parks an unstarted job until
+`scheduledFor` — submit accepts the same field for wait-vs-delay — and stores
+the state in `request_results.progress` through `src/async/store.ts`, so no new
+column or migration is needed. Due jobs resume through the existing gate on the
+next status read or submit (lazy pump in `src/generation/video-jobs.ts`), with
+no background daemon. A running job cannot be deferred: no suspend/resume seam
+exists. The Web caller is `videoJobControls()` under `src/frontend/alpine/`.
+
 ## References
 
 - Gate: `src/generation/video-dispatch-gate.ts`

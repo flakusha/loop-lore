@@ -14,6 +14,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { persistGeneratedImages, } from "../assets/service";
 import { extensionForMime, } from "../assets/service/detect";
+import { getStore, } from "../async/store-registry";
 import { callAux, } from "../aux-pipeline/runner";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
@@ -27,6 +28,7 @@ import { getChildLogger, } from "../logger";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
+import { parseDeferTarget, } from "./job-control";
 import { formatMinimaxPrompt, minimaxModeForWorkflow, } from "./minimax/prompt-format";
 import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
@@ -34,8 +36,18 @@ import { getOwnedTemplate, } from "./template-service";
 import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
 import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
 import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
-import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
+import {
+  cancelVideoJob,
+  completeVideoJob,
+  deferVideoJob,
+  failVideoJob,
+  getVideoJob,
+  pumpDueVideoJobs,
+  storeVideoJob,
+  type VideoJob,
+} from "./video-jobs";
 import { resolveWorkflowForUseCase, } from "./workflow-selection";
+
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
 /**
@@ -117,6 +129,8 @@ interface VideoGenBody {
   details?: string;
   shots?: string[];
   references?: string[];
+  /** Epoch ms to park the job until (wait-vs-delay submit-time control). */
+  scheduledFor?: number;
 }
 
 /**
@@ -317,8 +331,16 @@ export async function handleVideoGeneration(
   const generationTimeoutMs = Math.max(...requestProviders.map((provider,) => provider.generationTimeout ?? 0),);
   if (discard.isDiscarded()) { return cancelledResponse(); }
 
+  const scheduledFor = parseDeferTarget(req.scheduledFor, Date.now(),);
+  if (scheduledFor === undefined) {
+    return Response.json(
+      { error: "scheduledFor must be a timestamp between 1s and 7 days from now", status: 400, },
+      { status: 400, },
+    );
+  }
+
   const jobId = randomUUID();
-  storeVideoJob({
+  const job: VideoJob = {
     id: jobId,
     ownerId: userId,
     status: "pending",
@@ -328,34 +350,89 @@ export async function handleVideoGeneration(
     providers: [...requestProviders,],
     deadline: Date.now() + generationTimeoutMs,
     createdAt: Date.now(),
+  };
+
+  storeVideoJob(job,);
+  getStore()?.track({
+    id: jobId,
+    method: "POST",
+    routePattern: "/api/v1/generation/video",
+    userId,
   },);
 
-  runVideoRender({
-    jobId,
-    prompt,
-    providers: requestProviders,
+  if (scheduledFor !== null) {
+    deferVideoJob(jobId, userId, scheduledFor,);
+    getStore()?.defer?.(jobId, { userId, }, scheduledFor,);
+  }
+
+  // Registers the resume closure even for deferred jobs; the closure starts
+  // nothing while the job is parked, but the lazy pump can re-enter it later.
+  startVideoRender(job, {
     generationTimeout: generationTimeoutMs,
-    request,
     resolveApiKey: userApiKeyResolver({ userId, config, db, },),
     database: db,
     uploadDir: config.assets.uploadDir,
-    ownerId: userId,
-    chatId: resolvedChatId,
-    messageId: req.messageId,
     discard,
-  },).catch((error: unknown,) => {
-    // Unreachable in practice (the continuation settles every path), but
-    // an unhandled rejection would crash the process — mark failed instead.
-    getChildLogger("video-gen",)?.error(
-      "video render continuation threw",
-      error instanceof Error ? error : new Error(String(error,),),
-      { jobId, },
-    );
-
-    failVideoJob(jobId, error instanceof Error ? error.message : String(error,), 500,);
   },);
 
-  return Response.json({ data: { jobId, status: "pending", }, }, { status: 202, },);
+  // A new submit is one of the two lazy-pump points for due deferred jobs.
+  pumpDueVideoJobs();
+
+  return Response.json(
+    { data: { jobId, status: scheduledFor === null ? "pending" : "deferred", scheduledFor, }, },
+    { status: 202, },
+  );
+}
+
+/**
+ * Kick a stored video job through the existing dispatch gate. The stored
+ * resume closure lets the lazy deferred pump re-enter the same path.
+ * @param job - stored pending job
+ * @param deps - render seams captured at submit time
+ * @returns {void}
+ */
+export function startVideoRender(job: VideoJob, deps: {
+  generationTimeout: number;
+  resolveApiKey: VideoApiKeyResolver;
+  database: Kysely<DB>;
+  uploadDir: string;
+  discard: DiscardOnCancelHandle;
+},): void {
+  if (job.started) { return; }
+  const current = getVideoJob(job.id,);
+  if (!current || current.status !== "pending") { return; }
+
+  const run = (): void => {
+    runVideoRender({
+      jobId: job.id,
+      prompt: job.request.prompt,
+      providers: job.providers,
+      generationTimeout: deps.generationTimeout,
+      request: job.request,
+      resolveApiKey: deps.resolveApiKey,
+      database: deps.database,
+      uploadDir: deps.uploadDir,
+      ownerId: job.ownerId,
+      chatId: job.chatId,
+      messageId: job.messageId,
+      discard: deps.discard,
+    },).catch((error: unknown,) => {
+      // Unreachable in practice (the continuation settles every path), but
+      // an unhandled rejection would crash the process — mark failed instead.
+      getChildLogger("video-gen",)?.error(
+        "video render continuation threw",
+        error instanceof Error ? error : new Error(String(error,),),
+        { jobId: job.id, },
+      );
+
+      failVideoJob(job.id, error instanceof Error ? error.message : String(error,), 500,);
+    },);
+  };
+
+  current.resume = run;
+  if (current.deferred) { return; }
+  job.started = true;
+  run();
 }
 
 /**
@@ -417,7 +494,7 @@ async function runVideoRender(job: {
   }
 
   if (job.discard.isDiscarded()) {
-    cancelVideoJob(job.jobId, "Generation cancelled",);
+    cancelVideoJob(job.jobId, job.ownerId, "Generation cancelled",);
     return;
   }
 
@@ -464,7 +541,7 @@ async function runVideoRender(job: {
   }
 
   if (job.discard.isDiscarded()) {
-    cancelVideoJob(job.jobId, "Generation cancelled",);
+    cancelVideoJob(job.jobId, job.ownerId, "Generation cancelled",);
     return;
   }
 

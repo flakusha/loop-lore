@@ -25,6 +25,11 @@ export function setStore(store: AsyncStore | null,): void {
   activeStore = store;
 }
 
+/** Live store handle for owner-scoped job-control routes. */
+export function getStore(): AsyncStore | null {
+  return activeStore;
+}
+
 /**
  * Flush the live store's queue, if one is registered. Awaits quiescence, so a
  * caller may destroy the DB handle on the very next statement. No-op when no

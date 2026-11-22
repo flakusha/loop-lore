@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 277
+// size-allow: 311
 
 /**
  * Async request-response result store — persists tracked async request outcomes
@@ -34,6 +34,10 @@ export interface RequestResultRow {
   routePattern: string;
   userId: string | null;
   status: RequestStatus;
+  /** True while the tracked job waits for `scheduledFor` before resuming. */
+  deferred: boolean;
+  /** Epoch ms the job becomes due; null when not deferred. */
+  scheduledFor: number | null;
   progress: Record<string, unknown> | null;
   responseStatus: number | null;
   responseHeaders: Record<string, string> | null;
@@ -161,6 +165,32 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
       },);
     },
     /**
+     * Park a tracked job until `scheduledFor`. Stored in the existing progress
+     * JSON column — no new DB column or migration. Owner-scoped via `apply()`.
+     * @param id
+     * @param owner
+     * @param scheduledFor
+     */
+    defer(id: string, owner: OwnerRef, scheduledFor: number,) {
+      enqueue({
+        kind: "progress",
+        id,
+        userId: owner.userId,
+        status: "pending",
+        progress: { deferred: true, scheduledFor, },
+      },);
+    },
+    /** Clear a deferral so the job resumes through its normal gate. */
+    resume(id: string, owner: OwnerRef,) {
+      enqueue({
+        kind: "progress",
+        id,
+        userId: owner.userId,
+        status: "pending",
+        progress: { deferred: false, scheduledFor: null, },
+      },);
+    },
+    /**
      * Mark a request complete. Scoped by `owner.userId` so a client guessing
      * another user's requestId cannot overwrite their cached response.
      * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
@@ -200,6 +230,11 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
 
       return row ? rowToResult(row,) : null;
     },
+    /** Read a row only when the caller owns it. */
+    async readOwned(id: string, owner: OwnerRef,): Promise<RequestResultRow | null> {
+      const row = await this.read(id,);
+      return row && row.userId === owner.userId ? row : null;
+    },
     config: cfg,
     destroy(): void {
       destroyed = true;
@@ -217,10 +252,14 @@ export interface AsyncStore {
     userId: string | null;
   },): void;
   progress(id: string, owner: OwnerRef, update: ProgressUpdate,): void;
+  /** Optional so existing test doubles need not implement job-control verbs. */
+  defer?(id: string, owner: OwnerRef, scheduledFor: number,): void;
+  resume?(id: string, owner: OwnerRef,): void;
   complete(id: string, owner: OwnerRef, response: CapturedResponse,): void;
   fail(id: string, owner: OwnerRef, error: string,): void;
   flush(): Promise<void>;
   read(id: string,): Promise<RequestResultRow | null>;
+  readOwned?(id: string, owner: OwnerRef,): Promise<RequestResultRow | null>;
   readonly config: Required<AsyncStoreConfig>;
   destroy(): void;
 }
@@ -230,13 +269,16 @@ export interface AsyncStore {
  * @param row
  */
 function rowToResult(row: RequestResultsRow,): RequestResultRow {
+  const progress = row.progress ? jsonParseOr(row.progress, null,) as Record<string, unknown> | null : null;
   return {
     id: row.id,
     method: row.method,
     routePattern: row.route_pattern,
     userId: row.user_id,
     status: row.status as RequestStatus,
-    progress: row.progress ? jsonParseOr(row.progress, null,) as Record<string, unknown> | null : null,
+    deferred: progress?.deferred === true,
+    scheduledFor: typeof progress?.scheduledFor === "number" ? progress.scheduledFor : null,
+    progress,
     responseStatus: row.response_status,
     responseHeaders: row.response_headers
       ? jsonParseOr(row.response_headers, null,) as Record<string, string> | null

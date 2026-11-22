@@ -55,6 +55,15 @@ export async function dispatchGenerationAction(
     },);
 
     if (res.ok) {
+      // Give the video status panel the job id so its cancel/delay controls
+      // can act on this render without a full page reload.
+      if (endpoint === "/api/v1/generation/video") {
+        const submitted = await res.json() as { data?: { jobId?: string } };
+        if (submitted.data?.jobId) {
+          ctx.$dispatch?.("video-job-created", { jobId: submitted.data.jobId, },);
+        }
+      }
+
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
       // Image/caption POSTs never write the generation buffer — arming the
       // LLM stream here ends in a terminal "No active generation". Only

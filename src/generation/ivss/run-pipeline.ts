@@ -29,7 +29,7 @@ import type { ComfyUINodeInfo, ComfyUIOutputFile, ComfyUIOutputKind, ComfyUIWork
 import { pickVideoSink, } from "../providers/comfyui-poll";
 import type { ComfyUIMaskOriginalRef, } from "../providers/comfyui-upload";
 import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOptions, } from "../video-dispatch-gate";
-import { cancelVideoJob, completeVideoJob, failVideoJob, storeVideoJob, } from "../video-jobs";
+import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "../video-jobs";
 import { getWorkflowLoader, } from "../workflow-loader";
 import { uploadIvssReferences, } from "./reference-upload";
 import { resolveRetakeLatent, } from "./retake";
@@ -318,6 +318,8 @@ export async function startIvssFragmentRun(
     providers: [...providers,],
     deadline: absoluteDeadline,
     createdAt: now(),
+    // IVSS has no deferral entry point: its render starts inside this call.
+    started: true,
   },);
 
   let cancelled = false;
@@ -551,22 +553,28 @@ export async function startIvssFragmentRun(
     }
   };
 
+  const cancelRun = async (): Promise<void> => {
+    if (cancelled) { return; }
+    cancelled = true;
+    notifyCancel?.();
+    await tryCancelRemote();
+
+    cancelVideoJob(jobId, opts.ownerId, "IVSS run cancelled",);
+    await db.updateTable("scenario_fragments",).set({
+      status: FragmentStatus.Cancelled,
+      error: "cancelled",
+      updated_at: timestamp(),
+    },).where("id", "=", fragment.id,).execute();
+  };
+
+  // Owner-scoped HTTP cancel reaches the live closure through the job store.
+  const storedJob = getVideoJob(jobId,);
+  if (storedJob) { storedJob.cancel = cancelRun; }
+
   return {
     jobId,
     fragmentId: fragment.id,
     done: run(),
-    cancel: async () => {
-      if (cancelled) { return; }
-      cancelled = true;
-      notifyCancel?.();
-      await tryCancelRemote();
-
-      cancelVideoJob(jobId, "IVSS run cancelled",);
-      await db.updateTable("scenario_fragments",).set({
-        status: FragmentStatus.Cancelled,
-        error: "cancelled",
-        updated_at: timestamp(),
-      },).where("id", "=", fragment.id,).execute();
-    },
+    cancel: cancelRun,
   };
 }
