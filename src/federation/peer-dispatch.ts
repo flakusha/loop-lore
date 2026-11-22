@@ -139,7 +139,10 @@ export async function dispatchPeerWorkload(options: {
         ...(options.timeoutMs === undefined ? {} : { timeoutMs: options.timeoutMs, }),
         ...(onChunk === undefined ? {} : { onChunk, }),
       },),
-    (result: PeerWorkAttempt,) => result.ok,
+    // A caller abort resolves as `{ok:false, code:"aborted"}`; it is not a
+    // peer fault. An internal timeout also aborts, but the caller signal is
+    // still live then, so that failure is recorded normally.
+    (result: PeerWorkAttempt,) => result.ok || (result.failure.code === "aborted" && signal?.aborted === true),
   );
 
   if (attempt.ok) {
