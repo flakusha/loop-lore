@@ -12,9 +12,12 @@
 import { Value, } from "@sinclair/typebox/value";
 import { describe, expect, it, } from "bun:test";
 import {
+  decodeHarnessAdminSignals,
   HarnessAvailabilitySchema,
   HarnessEscalationDecisionResponse,
   HarnessEscalationsResponse,
+  HarnessLedgerResponse,
+  HarnessLedgerRowSchema,
   HarnessPendingEscalationSchema,
   HarnessPendingPermissionSchema,
   HarnessPermissionDecisionResponse,
@@ -171,5 +174,63 @@ describe("admin harness turn-queue schemas", () => {
     expect(Value.Check(HarnessQueueCancelResponse, { ok: true, },),).toBe(true,);
     expect(Value.Check(HarnessQueueCancelResponse, { ok: false, },),).toBe(true,);
     expect(Value.Check(HarnessQueueCancelResponse, { ok: "yes", },),).toBe(false,);
+  });
+});
+
+/** A well-formed ledger row, as emitted by `GET /api/v1/harness/ledger`. */
+const ledgerRow = {
+  profile: "opencode",
+  dispatchesInWindow: 7,
+  tokensInDay: 12_345,
+  quotaResetAt: 1_760_000_000,
+};
+
+describe("admin harness ledger schema + admin signals", () => {
+  it("HarnessLedgerRowSchema accepts numeric and null quota resets", () => {
+    expect(Value.Check(HarnessLedgerRowSchema, ledgerRow,),).toBe(true,);
+    expect(Value.Check(HarnessLedgerRowSchema, { ...ledgerRow, quotaResetAt: null, },),).toBe(true,);
+  });
+
+  it("HarnessLedgerRowSchema rejects mistyped or missing counters", () => {
+    expect(Value.Check(HarnessLedgerRowSchema, { ...ledgerRow, tokensInDay: "12345", },),).toBe(false,);
+    expect(Value.Check(HarnessLedgerRowSchema, { ...ledgerRow, quotaResetAt: "soon", },),).toBe(false,);
+    const { dispatchesInWindow, ...withoutCounter } = ledgerRow;
+    expect(Value.Check(HarnessLedgerRowSchema, withoutCounter,),).toBe(false,);
+  });
+
+  it("HarnessLedgerResponse wraps the ledger rows and rejects malformed bodies", () => {
+    expect(Value.Check(HarnessLedgerResponse, { items: [ledgerRow,], },),).toBe(true,);
+    expect(Value.Check(HarnessLedgerResponse, { items: [], },),).toBe(true,);
+    expect(Value.Check(HarnessLedgerResponse, { items: [ledgerRow, 3,], },),).toBe(false,);
+    expect(Value.Check(HarnessLedgerResponse, {},),).toBe(false,);
+  });
+
+  it("decodeHarnessAdminSignals keeps only admin sample lines, dropping metadata and public families", () => {
+    const exposition = [
+      "# HELP loop_lore_harness_dispatch_total Harness dispatches",
+      "# TYPE loop_lore_harness_dispatch_total counter",
+      'loop_lore_harness_dispatch_total{profile="opencode"} 7',
+      'loop_lore_harness_profile_dispatch_total{profile="opencode",task="chat"} 5',
+      'loop_lore_harness_profile_quota_reset_epoch_seconds{profile="opencode"} 1760000000',
+      'loop_lore_harness_profile_info{profile="opencode",version="1.0"} 1',
+      'loop_lore_harness_profile_available{profile="opencode"} 1',
+      'loop_lore_harness_requests_total{route="ledger"} 42',
+      "loop_lore_harness_dispatch_total 3",
+      "",
+    ].join("\n",);
+
+    expect(decodeHarnessAdminSignals(exposition,),).toEqual([
+      'loop_lore_harness_dispatch_total{profile="opencode"} 7',
+      'loop_lore_harness_profile_dispatch_total{profile="opencode",task="chat"} 5',
+      'loop_lore_harness_profile_quota_reset_epoch_seconds{profile="opencode"} 1760000000',
+      'loop_lore_harness_profile_info{profile="opencode",version="1.0"} 1',
+      'loop_lore_harness_profile_available{profile="opencode"} 1',
+    ],);
+  });
+
+  it("decodeHarnessAdminSignals returns no signals for empty or metadata-only scrapes", () => {
+    expect(decodeHarnessAdminSignals("",),).toEqual([],);
+    const metadata = "# HELP loop_lore_harness_dispatch_total x\n# TYPE loop_lore_harness_dispatch_total counter";
+    expect(decodeHarnessAdminSignals(metadata,),).toEqual([],);
   });
 });

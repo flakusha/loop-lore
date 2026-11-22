@@ -5,11 +5,13 @@
  * strength clamping/range helpers. No I/O or DB.
  */
 import { describe, expect, test, } from "bun:test";
+import type { LoRAConfig, } from "./types";
 import {
   clampStrength,
   extractLoRAName,
   isLoRAFilename,
   isTypicalStrength,
+  normalizeLoraConfigs,
   validateLoRAConfig,
   validateLoRAModel,
 } from "./validation";
@@ -190,5 +192,39 @@ describe("isTypicalStrength", () => {
     expect(isTypicalStrength(0.8,),).toBe(false,);
     expect(isTypicalStrength(0.1,),).toBe(false,);
     expect(isTypicalStrength(1,),).toBe(false,);
+  });
+});
+
+describe("normalizeLoraConfigs", () => {
+  const valid: LoRAConfig = { name: "portrait", strength: 0.6, backend: "comfyui", };
+
+  test("returns undefined configs when the wire field is absent", () => {
+    expect(normalizeLoraConfigs(undefined,),).toEqual({ ok: true, configs: undefined, },);
+  });
+
+  test("wraps a single object into a one-element array", () => {
+    expect(normalizeLoraConfigs(valid,),).toEqual({ ok: true, configs: [valid,], },);
+  });
+
+  test("passes an existing array through unchanged", () => {
+    const configs: LoRAConfig[] = [
+      valid,
+      { name: "style", strength: 0.4, backend: "sd-server", },
+    ];
+
+    expect(normalizeLoraConfigs(configs,),).toEqual({ ok: true, configs, },);
+  });
+
+  test("fails the whole batch when any entry is invalid", () => {
+    const bad: LoRAConfig = { name: "broken", strength: 5, backend: "comfyui", };
+    expect(normalizeLoraConfigs([valid, bad,],),).toEqual({
+      ok: false,
+      error: "LoRA strength must be between 0.1 and 1",
+    },);
+  });
+
+  test("rejects a single invalid object at the boundary", () => {
+    const invalid: LoRAConfig = { name: "  ", strength: 0.5, backend: "comfyui", };
+    expect(normalizeLoraConfigs(invalid,),).toEqual({ ok: false, error: "Invalid LoRA name", },);
   });
 });

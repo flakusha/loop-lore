@@ -3,7 +3,7 @@
 
 import { describe, expect, it, } from "bun:test";
 import { readFileSync, } from "node:fs";
-import { applyLoraSlots, resolveLoraSlotFiles, resolveLoraSlotNode, } from "./apply-slots";
+import { applyLoraSlots, findLoraModel, resolveLoraSlotFiles, resolveLoraSlotNode, } from "./apply-slots";
 import type { LoRAModel, } from "./types";
 
 const QWEN_T2I = new URL("../../../configs/workflows/qwen-image-2-1-t2i-v1.json", import.meta.url,);
@@ -87,5 +87,40 @@ describe("resolveLoraSlotFiles", () => {
     expect(() => resolveLoraSlotFiles([{ name: "missing", strength: 0.5, },], models,)).toThrow(
       /Unknown LoRA "missing"/,
     );
+  });
+});
+
+describe("findLoraModel", () => {
+  const models: LoRAModel[] = [
+    {
+      name: "portrait",
+      filename: "portrait-v2.safetensors",
+      path: "/models/portrait-v2.safetensors",
+      backend: "comfyui",
+    },
+    { name: "style", filename: "style.safetensors", path: "/models/style.safetensors", backend: "comfyui", },
+  ];
+
+  it("matches a full discovered filename", () => {
+    expect(findLoraModel("style.safetensors", models,),).toBe(models[1],);
+  });
+
+  it("falls back to the stripped display name", () => {
+    expect(findLoraModel("portrait", models,),).toBe(models[0],);
+  });
+
+  it("returns undefined for an unknown name", () => {
+    expect(findLoraModel("missing", models,),).toBeUndefined();
+  });
+
+  it("prefers a filename match over an earlier model with the same display name", () => {
+    // Two passes, not one: the filename match must win even when a different
+    // model earlier in the list would satisfy the stripped-name lookup.
+    const ambiguous: LoRAModel[] = [
+      { name: "style", filename: "other.safetensors", path: "other.safetensors", backend: "comfyui", },
+      { name: "style", filename: "style.safetensors", path: "style.safetensors", backend: "comfyui", },
+    ];
+
+    expect(findLoraModel("style.safetensors", ambiguous,),).toBe(ambiguous[1],);
   });
 });
