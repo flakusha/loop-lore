@@ -10,6 +10,7 @@
  * and share the `requireAgentScope(...)` guards:
  *   #6 worktree spawn (`agent:worktree`) — TTY-free `git worktree add`
  *   #7 check stream (`agent:check`) — `bun run check` over SSE
+ *   #18 ticket lifecycle (`agent:tickets`) — open/close/comment `.plan/` tickets
  *   #8 commit + finalize (`agent:commit` / `agent:finalize`) remains a
  *      separate ticket and is intentionally ABSENT here (no stubs).
  *
@@ -23,6 +24,7 @@ import { jsonResponse, } from "../../routes/http-utils";
 import { type AgentActionMarker, finalizeAgentAction, } from "../audit";
 import { requireAgentToken, type ResolvedAgentToken, } from "./auth";
 import { checkRoutes, } from "./check";
+import { ticketRoutes, } from "./tickets";
 import type { AgentRouteOpts, } from "./types";
 import { worktreeRoutes, } from "./worktree";
 
@@ -39,6 +41,8 @@ export interface AgentApiOpts {
   removeWorktree?: AgentRouteOpts["removeWorktree"];
   measureDirectoryBytes?: AgentRouteOpts["measureDirectoryBytes"];
   runCheck?: AgentRouteOpts["runCheck"];
+  /** Ticket file directory (defaults to `<repoRoot>/.plan/tickets`). */
+  ticketsDir?: string;
 }
 
 /**
@@ -61,6 +65,7 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
     removeWorktree: opts.removeWorktree,
     measureDirectoryBytes: opts.measureDirectoryBytes,
     runCheck: opts.runCheck,
+    ticketsDir: opts.ticketsDir,
   };
 
   /** Stamp the guard's row with the handler's final outcome. */
@@ -103,5 +108,6 @@ export function agentApiRoutes(opts: AgentApiOpts, prefix = "/api",): Elysia {
       },
     )
     .use(worktreeRoutes(subOpts, prefix,),)
-    .use(checkRoutes(subOpts, prefix,),);
+    .use(checkRoutes(subOpts, prefix,),)
+    .use(ticketRoutes(subOpts, prefix,),);
 }

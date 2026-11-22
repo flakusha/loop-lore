@@ -41,5 +41,7 @@ export interface AgentRouteOpts extends AgentAuthDeps {
   removeWorktree?: RemoveWorktree;
   measureDirectoryBytes?: MeasureDirectoryBytes;
   runCheck?: RunCheck;
+  /** Directory holding `.plan/tickets/*.md` (ticket routes only). */
+  ticketsDir?: string;
   now?: () => number;
 }

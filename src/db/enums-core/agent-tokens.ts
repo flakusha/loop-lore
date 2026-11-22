@@ -8,7 +8,8 @@
  * AgentTokenScope is THE capability vocabulary of the `/api/v1/agent/*`
  * surface — one scope per token, value-for-value with the ticket's scope
  * list and the migration's `ck_agent_tokens_scope` CHECK, so the DB column
- * and the `requireAgentScope` guard cannot drift.
+ * and the `requireAgentScope` guard cannot drift. A fifth tier,
+ * `agent:tickets`, gates the ticket lifecycle endpoints (RSI #18).
  */
 
 // ── Agent token scope tier ───────────────────────────────
@@ -17,6 +18,7 @@ export const AgentTokenScope = {
   Check: "agent:check",
   Commit: "agent:commit",
   Finalize: "agent:finalize",
+  Tickets: "agent:tickets",
 } as const;
 /** */
 export type AgentTokenScope = (typeof AgentTokenScope)[keyof typeof AgentTokenScope];

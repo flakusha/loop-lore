@@ -32,6 +32,7 @@ const MintBody = t.Object({
     t.Literal("agent:check",),
     t.Literal("agent:commit",),
     t.Literal("agent:finalize",),
+    t.Literal("agent:tickets",),
   ],),
   ttlMs: t.Optional(t.Number({ minimum: 1, },),),
 },);

@@ -22,7 +22,13 @@ export const AgencyDimensionSchema = t.UnionEnum([
   "ludic",
 ],);
 export const AgencyModeSchema = t.UnionEnum(["free", "forced", "blocked", "skipped",],);
-export const AgentTokenScopeSchema = t.UnionEnum(["agent:worktree", "agent:check", "agent:commit", "agent:finalize",],);
+export const AgentTokenScopeSchema = t.UnionEnum([
+  "agent:worktree",
+  "agent:check",
+  "agent:commit",
+  "agent:finalize",
+  "agent:tickets",
+],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
 export const AnnotationTargetTypeSchema = t.UnionEnum(["scenario", "scene", "shot", "fragment", "asset",],);
 export const AnomalyInteractionSchema = t.UnionEnum(["optional", "required",],);
