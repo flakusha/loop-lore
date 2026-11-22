@@ -597,4 +597,60 @@ describe("request-time preflight gates provider.execute", () => {
     expect(res.status,).toBe(200,);
     expect(providerCalls,).toBe(1,);
   });
+
+  test("valid params.loras string parses and reaches the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { workflow: validGraph, loras: "detail:0.6,style", },
+    },),);
+
+    expect(res.status,).toBe(200,);
+    expect(providerCalls,).toBe(1,);
+  });
+
+  test("out-of-range string strength returns 400 field message without calling the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { workflow: validGraph, loras: "detail:5", },
+    },),);
+
+    expect(res.status,).toBe(400,);
+    const body = await res.text();
+    expect(body,).toContain("must be between 0.1 and 1",);
+    expect(providerCalls,).toBe(0,);
+  });
+
+  test("whitespace-only params.loras is a no-op and reaches the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { workflow: validGraph, loras: "   ", },
+    },),);
+
+    expect(res.status,).toBe(200,);
+    expect(providerCalls,).toBe(1,);
+  });
+
+  test("structured lora failure wins over invalid string entries", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: {
+        workflow: validGraph,
+        lora: { name: "", strength: 0.5, backend: "comfyui", },
+        loras: "detail:5",
+      },
+    },),);
+
+    expect(res.status,).toBe(400,);
+    const body = await res.text();
+    expect(body,).toContain("Invalid LoRA name",);
+    expect(providerCalls,).toBe(0,);
+  });
 });

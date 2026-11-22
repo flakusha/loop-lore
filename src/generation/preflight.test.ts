@@ -67,4 +67,51 @@ describe("preflightRequest", () => {
     expect(result.ok,).toBe(false,);
     if (!result.ok) { expect(result.field,).toBe("workflow",); }
   });
+
+  test("accepts sound parsed LoRA string entries", () => {
+    expect(preflightRequest({ loraEntries: [{ path: "a.safetensors", strength: 0.6, },], },),).toEqual({ ok: true, },);
+  });
+
+  test("accepts an empty loraEntries array as a no-op", () => {
+    expect(preflightRequest({ loraEntries: [], },),).toEqual({ ok: true, },);
+  });
+
+  test("rejects an entry with an empty path", () => {
+    const result = preflightRequest({ loraEntries: [{ path: "", strength: 0.5, },], },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.field,).toBe("loras",);
+      expect(result.error,).toContain("path must be a non-empty string",);
+    }
+  });
+
+  test("rejects out-of-range strength with the shared bounds", () => {
+    for (const strength of [0, 5, -1, Number.NaN, Number.POSITIVE_INFINITY,]) {
+      const result = preflightRequest({ loraEntries: [{ path: "a.safetensors", strength, },], },);
+      expect(result.ok,).toBe(false,);
+      if (!result.ok) {
+        expect(result.field,).toBe("loras",);
+        expect(result.error,).toContain("must be between 0.1 and 1",);
+      }
+    }
+  });
+
+  test("reports the first failing entry position", () => {
+    const result = preflightRequest({
+      loraEntries: [{ path: "good.safetensors", strength: 0.5, }, { path: "bad.safetensors", strength: 2, },],
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) { expect(result.error,).toContain("position 1",); }
+  });
+
+  test("checks the structured lora config before loraEntries", () => {
+    const result = preflightRequest({
+      lora: { name: "", strength: 0.5, backend: "comfyui", },
+      loraEntries: [{ path: "a.safetensors", strength: 5, },],
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) { expect(result.field,).toBe("lora",); }
+  });
 });

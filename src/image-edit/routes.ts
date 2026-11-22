@@ -41,6 +41,7 @@ import {
   type TemplateRegistry,
   templateRegistry,
 } from "./template-registry";
+import { parseLoraString, } from "./templates/builtin/lora";
 import type {
   ImageEditBackend,
   ImageEditProvider,
@@ -177,9 +178,20 @@ export async function handleRun(
   // LoRA config is rejected for every provider (no failover probe billed).
   // ponytail: reuse the shipped validators; attention/bypass/mute are
   // operator decisions and deliberately not request fields here.
+  // Today's callers carry LoRA as a params.loras STRING ("path:strength,..."),
+  // parsed leniently at runtime. Parse it here so the preflight can gate it:
+  // the boundary is STRICT (out-of-range strength -> 400) while the runtime
+  // template build stays LENIENT (parser-dropped entries are silently
+  // skipped, unchanged). Empty/whitespace/absent strings parse to [] and the
+  // gate stays silent, matching prior behavior.
+  const loraEntries = typeof body.params.loras === "string" && body.params.loras.trim().length > 0
+    ? parseLoraString(body.params.loras,)
+    : undefined;
+
   const preflight = preflightRequest({
     workflow: body.params.workflow,
     lora: body.params.lora,
+    loraEntries,
   },);
 
   if (!preflight.ok) {
