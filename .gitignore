@@ -133,3 +133,8 @@ docs/plan-gen/
 .plan/interconnect.json
 .plan/interconnect.md
 .plan/priority-matrix.md
+
+# .github/ workflows are tracked — re-include for users whose global gitignore
+# excludes dot-directories (`.*/`), so workflow files stage with plain `git add`.
+!.github/
+!.github/**
