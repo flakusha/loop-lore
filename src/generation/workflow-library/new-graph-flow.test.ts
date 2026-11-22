@@ -136,7 +136,7 @@ describe("shipped workflow exports pre-submit flow", () => {
     }
   });
 
-  it("MiniMax video exports bind exactly one {{prompt}} placeholder", () => {
+  it("MiniMax video exports bind {{prompt}} and {{attention}} placeholders", () => {
     const videoExports = [
       "minimax-h3-video-fl2va-v1.json",
       "minimax-h3-video-fl2va-opt-v1.json",
@@ -145,7 +145,7 @@ describe("shipped workflow exports pre-submit flow", () => {
     ] as const;
 
     for (const name of videoExports) {
-      expect([...collectPlaceholders(load(name,),),],).toEqual(["prompt",],);
+      expect([...collectPlaceholders(load(name,),),],).toEqual(["prompt", "attention",],);
     }
   });
 });
