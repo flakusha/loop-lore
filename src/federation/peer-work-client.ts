@@ -45,6 +45,7 @@ export type PeerWorkFailureCode = PeerWorkErrorCode | "transport" | "protocol" |
 export interface PeerWorkFailure {
   code: PeerWorkFailureCode;
   status: number;
+  message: string;
   /** Advertised cooldown from a 429 Retry-After header, in whole seconds. */
   retryAfterSec?: number;
   /** Retry-After (ms) the peer advertised on the rejection, when parseable.
@@ -68,6 +69,7 @@ export function parsePeerRetryAfterMs(raw: string | null | undefined,): number |
   const ms = Number(trimmed,) * 1000;
   return Number.isFinite(ms,) && ms > 0 ? ms : undefined;
 }
+
 /** The outcome of one peer attempt. `emitted` is what the caller already saw. */
 export type PeerWorkAttempt =
   | { ok: true; response: GenerateResponse; emitted: number }

@@ -22,11 +22,10 @@ import {
   PeerWorkPartialOutputError,
   PeerWorkQuotaError,
 } from "./peer-dispatch";
-import { peerCircuitOpen, resetPeerHealth, } from "./peer-health";
+import { peerCircuitOpen, recordPeerHealthMiss, resetPeerHealth, } from "./peer-health";
 import { type PeerRouteDecision, PeerRouteReason, resolvePeerRoute, } from "./peer-router";
 import { type PeerWorkAttempt, } from "./peer-work-client";
 import { type PeerWorkRunRequest, } from "./peer-work-wire";
-
 
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
