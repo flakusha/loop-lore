@@ -181,4 +181,25 @@ describe("compareLiveNodeInfo", () => {
       errors: [expect.stringContaining("steps",),],
     },);
   });
+
+  it("reports a malformed live node entry", () => {
+    const live = { ASampler: "not-a-node", } as unknown as Record<string, ComfyUINodeInfo>;
+    expect(compareLiveNodeInfo(PINNED, live, { requiredNodes, },),).toMatchObject({
+      ok: false,
+      errors: [expect.stringContaining("malformed /object_info entry",),],
+    },);
+  });
+
+  it("reports wrong-typed live input groups", () => {
+    const base = liveInfo({ required: {}, optional: {}, },);
+    const live = { ASampler: { ...base.ASampler!, input: { required: "steps", }, }, } as unknown as Record<
+      string,
+      ComfyUINodeInfo
+    >;
+
+    expect(compareLiveNodeInfo(PINNED, live, { requiredNodes, },),).toMatchObject({
+      ok: false,
+      errors: [expect.stringContaining("malformed required inputs",),],
+    },);
+  });
 });

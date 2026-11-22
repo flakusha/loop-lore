@@ -17,6 +17,34 @@ const SHA256_HEX = /^[0-9a-f]{64}$/;
 /** Optional digest prefix used elsewhere in the repo for hash references. */
 const SHA256_PREFIX = "sha256:";
 
+/** Confirm a deserialised value is a non-null object before field access. */
+function isRecord(value: unknown,): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value,);
+}
+
+/** Collect live input names, rejecting a wrong-typed `input` or group. */
+function liveInputNames(
+  className: string,
+  liveInput: unknown,
+): { ok: true; names: Set<string> } | { ok: false; error: string } {
+  if (!isRecord(liveInput,)) {
+    return { ok: false, error: `Node "${className}" has a malformed input in /object_info`, };
+  }
+
+  const names = new Set<string>();
+  for (const group of ["required", "optional",] as const) {
+    const groupValue: unknown = liveInput[group];
+    if (groupValue === undefined) { continue; }
+    if (!isRecord(groupValue,)) {
+      return { ok: false, error: `Node "${className}" has malformed ${group} inputs in /object_info`, };
+    }
+
+    for (const name of Object.keys(groupValue,)) { names.add(name,); }
+  }
+
+  return { ok: true, names, };
+}
+
 /** sha256 of `fixtures/object-info.json`, asserted by schema-authority.test.ts. */
 export const PINNED_OBJECT_INFO_SHA256 = "732cbd98bdcdc1959974c90e4ad31e5731d0198d76f2ac31685d4ee562698f43";
 
@@ -205,9 +233,14 @@ export function compareLiveNodeInfo(
   const errors: string[] = [];
   try {
     for (const className of options.requiredNodes) {
-      const liveNode = live[className];
-      if (!liveNode) {
+      const liveNode: unknown = live[className];
+      if (liveNode === undefined || liveNode === null) {
         errors.push(`Missing required node class "${className}" in live /object_info`,);
+        continue;
+      }
+
+      if (!isRecord(liveNode,)) {
+        errors.push(`Node "${className}" has a malformed /object_info entry`,);
         continue;
       }
 
@@ -216,15 +249,15 @@ export function compareLiveNodeInfo(
         continue;
       }
 
-      const liveInput = liveNode.input ?? { required: {}, optional: {}, };
-      const liveNames = new Set([
-        ...Object.keys(liveInput.required ?? {},),
-        ...Object.keys(liveInput.optional ?? {},),
-      ],);
+      const inputNames = liveInputNames(className, liveNode["input"],);
+      if (!inputNames.ok) {
+        errors.push(inputNames.error,);
+        continue;
+      }
 
       for (const group of ["required", "optional",] as const) {
         for (const name of Object.keys(pinnedNode.input?.[group] ?? {},)) {
-          if (!liveNames.has(name,)) {
+          if (!inputNames.names.has(name,)) {
             errors.push(`Node "${className}" lost ${group} input "${name}" in live /object_info`,);
           }
         }
