@@ -54,6 +54,15 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "chat.unread-reconcile",
+      schedule: "10 4 * * *",
+      enabled: true,
+      run: async ({ database, },) => {
+        const { runUnreadReconcile, } = await import("../chat/service/unread-reconcile");
+        await runUnreadReconcile(database,);
+      },
+    },),
+    defineJob({
       name: "logs.retention",
       schedule: "30 3 * * *",
       enabled: true,

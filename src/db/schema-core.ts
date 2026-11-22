@@ -644,6 +644,8 @@ export interface ChatParticipants {
   initiative: Generated<number>;
   muted_until: string | null;
   banned_until: string | null;
+  unread_count: Generated<number>;
+  last_read_created_at: string | null;
 }
 
 // ── chat_pins ────────────────────────────────────────────
@@ -722,6 +724,7 @@ export interface Chats extends AuditColumns {
   federation_consented_at: string | null;
   purpose: string | null;
   timeline_id: Generated<string>;
+  visible_message_count: Generated<number>;
 }
 
 // ── chat_random_events ────────────────────────────────────────────

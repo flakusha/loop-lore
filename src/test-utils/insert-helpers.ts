@@ -2186,6 +2186,8 @@ export async function insertChatParticipants(
     initiative?: number;
     muted_until?: string | null;
     banned_until?: string | null;
+    unread_count?: number;
+    last_read_created_at?: string | null;
   },
 ): Promise<void> {
   const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
@@ -2313,6 +2315,7 @@ export async function insertChats(
     federation_consented_at?: string | null;
     purpose?: string | null;
     timeline_id?: string;
+    visible_message_count?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };

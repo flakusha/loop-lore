@@ -2533,6 +2533,8 @@ export const SCHEMA = new SchemaManifest()
     initiative: col("integer", { notNull: true, hasDefault: true, },),
     muted_until: col("text",),
     banned_until: col("text",),
+    unread_count: col("integer", { notNull: true, hasDefault: true, },),
+    last_read_created_at: col("text",),
   },)
   .table("chat_pins", {
     id: col("text", { primaryKey: true, },),
@@ -2629,6 +2631,7 @@ export const SCHEMA = new SchemaManifest()
     federation_consented_at: col("text",),
     purpose: col("text",),
     timeline_id: col("text", { notNull: true, hasDefault: true, },),
+    visible_message_count: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),

@@ -1849,6 +1849,8 @@ export const ChatParticipantsSchema = t.Object({
   initiative: t.Optional(t.Number(),),
   muted_until: t.Optional(t.String(),),
   banned_until: t.Optional(t.String(),),
+  unread_count: t.Optional(t.Number(),),
+  last_read_created_at: t.Optional(t.String(),),
 },);
 
 // ── chat_pins ────────────────────────────────────────────
@@ -1927,6 +1929,7 @@ export const ChatsSchema = t.Object({
   federation_consented_at: t.Optional(t.String(),),
   purpose: t.Optional(t.String(),),
   timeline_id: t.Optional(t.String(),),
+  visible_message_count: t.Optional(t.Number(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
