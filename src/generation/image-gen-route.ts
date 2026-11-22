@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // One linear request pipeline; phase extraction would scatter the flow.
-// size-allow: 355
+// size-allow: 335
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
@@ -245,9 +245,12 @@ export async function handleImageGeneration(
     negativePrompt = negativePrompt ?? rendered.negativePrompt;
   }
 
+  // Concatenation (not a template literal): the size gate scans with
+  // ts.createScanner, which mis-lexes an interpolated template tail and
+  // recounts following comment lines as code.
   if (!prompt || prompt.length > MAX_PROMPT) {
     return Response.json(
-      { error: `prompt must be 1..${MAX_PROMPT} characters`, status: 400, },
+      { error: "prompt must be 1.." + MAX_PROMPT + " characters", status: 400, },
       { status: 400, },
     );
   }

@@ -155,9 +155,12 @@ export async function handleVideoGeneration(
     prompt = renderVideoPrompt(payload as SimpleTemplatePayload, req.context ?? {},);
   }
 
+  // Concatenation (not a template literal): the size gate scans with
+  // ts.createScanner, which mis-lexes an interpolated template tail and
+  // recounts following comment lines as code.
   if (!prompt || prompt.trim().length === 0 || prompt.length > MAX_PROMPT) {
     return Response.json(
-      { error: `prompt must be 1..${MAX_PROMPT} characters`, status: 400, },
+      { error: "prompt must be 1.." + MAX_PROMPT + " characters", status: 400, },
       { status: 400, },
     );
   }
