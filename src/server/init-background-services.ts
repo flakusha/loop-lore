@@ -157,6 +157,29 @@ export async function initBackgroundServices(
             },);
 
             if (instance) {
+              const name = "llama-swap";
+              registerProvider(
+                name,
+                new OpenAiCompatibleProvider({
+                  name,
+                  label: "Auto-started llama-swap",
+                  baseUrl: `http://127.0.0.1:${instance.port}/v1`,
+                  model: name,
+                  timeout: 30_000,
+                  retries: 3,
+                  allowUserApiKey: false,
+                  models: {},
+                },),
+              );
+
+              circuitBreaker.register(name,);
+
+              if (!config.generation.defaultProvider) {
+                config.generation.defaultProvider = name;
+              }
+
+              config.generation.defaultModels[name] ??= name;
+
               logger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
             } else {
               logger.warn("llama-swap auto-start failed or skipped", { module: "server", },);

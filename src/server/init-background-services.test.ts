@@ -375,6 +375,32 @@ describe("initBackgroundServices", () => {
     ).toBe(true,);
   });
 
+  test("registers an openaiCompatible provider for the auto-started llama-swap proxy", async () => {
+    const { logger, } = makeLogger();
+    const swapPort = 20_000 + Math.floor(Math.random() * 20_000,);
+    const { manager, calls: managerCalls, } = makeManager({
+      llamaSwap: { port: swapPort, pid: 101, },
+    },);
+
+    const config = makeConfig({
+      charactersEnabled: false,
+      autoStart: {
+        llamaSwap: { enabled: true, configPath: join(uploadDir, "llama-swap.yaml",), },
+      },
+    },);
+
+    await initBackgroundServices(db, config, logger, manager,);
+
+    expect(managerCalls.llamaSwap,).toHaveLength(1,);
+    const provider = getProvider("llama-swap",);
+    expect(provider,).toBeDefined();
+    expect(provider?.capabilities.type,).toBe("openai-compatible",);
+    const registered = provider as unknown as { state: { baseUrl: string } };
+    expect(registered.state.baseUrl,).toBe(`http://127.0.0.1:${swapPort}/v1`,);
+    expect(config.generation.defaultProvider,).toBe("llama-swap",);
+    expect(config.generation.defaultModels["llama-swap"],).toBe("llama-swap",);
+  });
+
   test("applies admin system_config overrides to llama-swap auto-start", async () => {
     await setConfig(db, LLAMA_SWAP_AUTOSTART_ENABLED_KEY, "true", "test",);
     await setConfig(db, LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY, "/srv/llama-swap.yml", "test",);
