@@ -10,10 +10,12 @@
  * reads the registry, the registry just needs to learn about DB rows.
  */
 import type { WorkflowProbeStatus, } from "../../db/enums-generation";
+import { parseLoraString, } from "../../image-edit/templates/builtin/lora";
 import type { WorkflowTemplate, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
+import { applyLoraSlots, resolveLoraSlotNode, } from "../lora/apply-slots";
 import type { ComfyUINodeInfo, ComfyUIWorkflow, } from "../providers/comfyui";
-import type { WorkflowPayload, } from "../template-types";
+import type { LoraSlot, WorkflowPayload, } from "../template-types";
 import { assertGeneratedGraph, } from "../workflow-loader/generated-validation";
 import { collectPlaceholders, substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
 import { planWorkflowBindings, } from "./bindings";
@@ -59,6 +61,58 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
   if (typeof record.category !== "string") { return null; }
   if (!Array.isArray(record.parameters,) || !Array.isArray(record.requiredNodes,)) { return null; }
   return parsed as WorkflowPayload;
+}
+
+/**
+ * Apply a workflow's declared LoRA slots after substitution. The declaration
+ * is the source of truth for which node may carry LoRAs: a slot naming a
+ * missing node or a non-slot node fails closed instead of silently rewiring
+ * an unrelated loader.
+ * @param graph - Substituted ComfyUI graph
+ * @param slots - Declared slots from the payload
+ * @param loraParam - Raw `loras` param (comma-separated full filenames + strength)
+ * @throws {Error} When a declared slot is unknown or has no slot-capable node
+ * @returns {ComfyUIWorkflow}
+ */
+function applyDeclaredLoraSlots(
+  graph: ComfyUIWorkflow,
+  slots: readonly LoraSlot[],
+  loraParam: string,
+): ComfyUIWorkflow {
+  const resolved = resolveLoraSlotNode(graph,);
+  if (!resolved) {
+    throw new Error("declared LoRA slots but graph has no slot-capable node",);
+  }
+
+  for (const slot of slots) {
+    const node = graph[slot.nodeId];
+    if (!node) {
+      throw new Error(`declared LoRA slot has no node ${slot.nodeId}`,);
+    }
+
+    if (node.class_type !== slot.classType) {
+      throw new Error(
+        `declared LoRA slot node ${slot.nodeId} is ${node.class_type}, expected ${slot.classType}`,
+      );
+    }
+
+    if (slot.nodeId !== resolved.nodeId) {
+      throw new Error(
+        `declared LoRA slot ${slot.nodeId} is not the slot node ${resolved.nodeId}`,
+      );
+    }
+  }
+
+  const requested = parseLoraString(loraParam,);
+  if (requested.length === 0) { return graph; }
+
+  const withLoras = applyLoraSlots(
+    graph,
+    resolved,
+    requested.map((entry,) => ({ filename: entry.path, strength: entry.strength, })),
+  );
+
+  return withLoras as ComfyUIWorkflow;
 }
 
 /**
@@ -140,6 +194,14 @@ export function buildWorkflowGraph(
   const graph = substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
   if (payload.bindings !== undefined) {
     assertGeneratedGraph(graph,);
+  }
+
+  if (payload.loraSlots && payload.loraSlots.length > 0) {
+    return applyDeclaredLoraSlots(
+      graph,
+      payload.loraSlots,
+      typeof params.loras === "string" ? params.loras : "",
+    );
   }
 
   return graph;
