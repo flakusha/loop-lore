@@ -21,7 +21,6 @@
  * spec-collected v1Routes/registerPlugins surface.
  */
 
-import { spawnSync, } from "node:child_process";
 import { existsSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { callExtent, lineOf, ROOT, samePath, } from "./shared";
@@ -206,7 +205,7 @@ export function externalFindings(
 export function ensureSpec(rel = SPEC_REL,): PublishedSpec {
   const abs = path.join(ROOT, rel,);
   if (!existsSync(abs,)) {
-    const proc = spawnSync("bun", ["run", "scripts/generate-openapi.ts",], {
+    const proc = Bun.spawnSync(["bun", "run", "scripts/generate-openapi.ts",], {
       cwd: ROOT,
       env: { ...process.env, NODE_ENV: "development", },
       stdout: "pipe",
