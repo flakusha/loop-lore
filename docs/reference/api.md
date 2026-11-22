@@ -52,8 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-410 of 1070 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1074 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -579,6 +578,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/generation/continue | — |
 | POST | /api/v1/generation/generate | — |
 | POST | /api/v1/generation/image | — |
+| POST | /api/v1/generation/jobs/{id}/cancel | Cancel an owned generation job |
+| POST | /api/v1/generation/jobs/{id}/defer | Delay an owned generation job |
+| POST | /api/v1/generation/jobs/{id}/retry | Retry an owned generation job |
 | POST | /api/v1/generation/prompt | — |
 | GET | /api/v1/generation/quota-state | — |
 | POST | /api/v1/generation/quota/override | — |
