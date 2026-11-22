@@ -11,9 +11,13 @@ import type { VideoProviderConfig, } from "../config/schema";
 import {
   __resetVideoJobsForTests,
   completeVideoJob,
+  deferVideoJob,
   failVideoJob,
   getVideoJob,
+  listDueVideoJobs,
   listVideoJobs,
+  markVideoJobRetried,
+  resumeVideoJob,
   storeVideoJob,
   VIDEO_JOB_STORE_MAX,
   type VideoJob,
@@ -121,5 +125,75 @@ describe("video job store", () => {
 
     expect(getVideoJob("keep-pending",),).toBeDefined();
     expect(listVideoJobs("owner-1",).length,).toBe(VIDEO_JOB_STORE_MAX,);
+  });
+
+  test("deferVideoJob parks a pending job, extends its deadline and stays idempotent", () => {
+    const job = pendingJob("job-defer", "owner-1", 1,);
+    storeVideoJob(job,);
+    const scheduledFor = Date.now() + 60_000;
+    const deadlineBefore = job.deadline;
+    const before = Date.now();
+
+    expect(deferVideoJob("job-defer", "owner-2", scheduledFor,),).toBe(false,);
+    expect(job.deferred,).toBeUndefined();
+
+    expect(deferVideoJob("job-defer", "owner-1", scheduledFor,),).toBe(true,);
+    const after = Date.now();
+    expect(job.deferred,).toBe(true,);
+    expect(job.scheduledFor,).toBe(scheduledFor,);
+    expect(job.deadline - deadlineBefore,).toBeLessThanOrEqual(scheduledFor - before,);
+    expect(job.deadline - deadlineBefore,).toBeGreaterThanOrEqual(scheduledFor - after,);
+
+    expect(deferVideoJob("job-defer", "owner-1", scheduledFor + 5_000,),).toBe(false,);
+    expect(job.scheduledFor,).toBe(scheduledFor,);
+
+    const settled = pendingJob("job-settled", "owner-1", 2,);
+    storeVideoJob(settled,);
+    completeVideoJob("job-settled", ASSET,);
+    expect(deferVideoJob("job-settled", "owner-1", scheduledFor,),).toBe(false,);
+  });
+
+  test("listDueVideoJobs returns only deferred pending jobs due at the given time", () => {
+    for (const id of ["due", "later", "resumed", "foreign", "settled",]) {
+      storeVideoJob(pendingJob(id, id === "foreign" ? "owner-2" : "owner-1", 1,),);
+    }
+
+    deferVideoJob("due", "owner-1", 1_000,);
+    deferVideoJob("later", "owner-1", 2_000,);
+    deferVideoJob("resumed", "owner-1", 500,);
+    resumeVideoJob("resumed", "owner-1",);
+    deferVideoJob("foreign", "owner-2", 1_500,);
+    deferVideoJob("settled", "owner-1", 900,);
+    completeVideoJob("settled", ASSET,);
+
+    expect(listDueVideoJobs(1_000,).map((job,) => job.id),).toEqual(["due",],);
+    expect(listDueVideoJobs(1_500,).map((job,) => job.id).sort(),).toEqual(["due", "foreign",],);
+    expect(listDueVideoJobs(0,),).toEqual([],);
+  });
+
+  test("resumeVideoJob clears a deferral only for the owning user", () => {
+    const job = pendingJob("job-resume", "owner-1", 1,);
+    storeVideoJob(job,);
+    deferVideoJob("job-resume", "owner-1", Date.now() + 60_000,);
+
+    expect(resumeVideoJob("job-missing", "owner-1",),).toBe(false,);
+    expect(resumeVideoJob("job-resume", "owner-2",),).toBe(false,);
+    expect(job.deferred,).toBe(true,);
+
+    expect(resumeVideoJob("job-resume", "owner-1",),).toBe(true,);
+    expect(job.deferred,).toBe(false,);
+    expect(job.scheduledFor,).toBeNull();
+    expect(resumeVideoJob("job-resume", "owner-1",),).toBe(false,);
+  });
+
+  test("markVideoJobRetried records the replacement id only for the owner", () => {
+    const job = pendingJob("job-retry", "owner-1", 1,);
+    storeVideoJob(job,);
+
+    markVideoJobRetried("job-retry", "owner-2", "foreign-retry",);
+    expect(job.retryOf,).toBeUndefined();
+    markVideoJobRetried("job-retry", "owner-1", "retry-1",);
+    expect(job.retryOf,).toBe("retry-1",);
+    expect(() => markVideoJobRetried("missing", "owner-1", "retry-2",)).not.toThrow();
   });
 });

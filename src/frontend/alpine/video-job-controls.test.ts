@@ -3,7 +3,7 @@
 
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import { type VideoJobControls, videoJobControlState, } from "./video-job-controls";
+import { DEFAULT_DELAY_MS, type VideoJobControls, videoJobControlState, } from "./video-job-controls";
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ((url: string, opts: RequestInit,) => Response) | null = null;
@@ -75,6 +75,19 @@ describeOrSkip("videoJobControls", () => {
     const body = JSON.parse(calls[0]?.opts.body as string,) as { scheduledFor: number };
     expect(calls[0]?.url,).toBe("/api/v1/generation/jobs/j1/defer",);
     expect(body.scheduledFor,).toBeGreaterThanOrEqual(before + 60_000,);
+  });
+
+  test("defer without an explicit delay targets the default one-hour window", async () => {
+    handler = () => Response.json({ data: {}, },);
+    const state = fresh();
+    state.jobId = "j1";
+    const before = Date.now();
+    await state.defer();
+    const after = Date.now();
+
+    const body = JSON.parse(calls[0]?.opts.body as string,) as { scheduledFor: number };
+    expect(body.scheduledFor,).toBeGreaterThanOrEqual(before + DEFAULT_DELAY_MS,);
+    expect(body.scheduledFor,).toBeLessThanOrEqual(after + DEFAULT_DELAY_MS,);
   });
 
   test("retry posts to the retry route", async () => {

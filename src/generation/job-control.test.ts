@@ -6,9 +6,18 @@ import { randomUUID, } from "node:crypto";
 import { type AsyncStore, createAsyncStore, } from "../async/store";
 import { setStore, } from "../async/store-registry";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
-import { handleJobCancel, handleJobDefer, handleJobRetry, } from "./job-control";
+import {
+  DEFER_DEFAULT_MS,
+  DEFER_MAX_MS,
+  DEFER_MIN_MS,
+  handleJobCancel,
+  handleJobDefer,
+  handleJobRetry,
+  parseDeferTarget,
+} from "./job-control";
 import {
   __resetVideoJobsForTests,
+  getVideoJob,
   pumpDueVideoJobs,
   storeVideoJob,
   type VideoJob,
@@ -150,5 +159,40 @@ describe("generation job control", () => {
     expect((await handleJobCancel(job.id, undefined,)).status,).toBe(401,);
     expect((await handleJobDefer(job.id, undefined, {},)).status,).toBe(401,);
     expect((await handleJobRetry(job.id, undefined, deps,)).status,).toBe(401,);
+  });
+
+  test("defer without a timestamp uses the default delay; a malformed target is rejected", async () => {
+    const job = makeJob("user-a",);
+    const other = makeJob("user-a",);
+    storeVideoJob(job,);
+    storeVideoJob(other,);
+
+    const before = Date.now();
+    const res = await handleJobDefer(job.id, "user-a", {},);
+    const after = Date.now();
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { scheduledFor: number } };
+    expect(body.data.scheduledFor,).toBeGreaterThanOrEqual(before + DEFER_DEFAULT_MS,);
+    expect(body.data.scheduledFor,).toBeLessThanOrEqual(after + DEFER_DEFAULT_MS,);
+    expect(getVideoJob(job.id,)?.scheduledFor,).toBe(body.data.scheduledFor,);
+
+    const bad = await handleJobDefer(other.id, "user-a", { scheduledFor: "tomorrow", },);
+    expect(bad.status,).toBe(400,);
+    expect(getVideoJob(other.id,)?.deferred,).toBeUndefined();
+  });
+
+  test("parseDeferTarget accepts the inclusive delay window and rejects invalid input", () => {
+    const now = 1_700_000_000_000;
+
+    expect(parseDeferTarget(undefined, now,),).toBeNull();
+    expect(parseDeferTarget(null, now,),).toBeNull();
+    expect(parseDeferTarget(now + DEFER_MIN_MS, now,),).toBe(now + DEFER_MIN_MS,);
+    expect(parseDeferTarget(now + DEFER_MAX_MS, now,),).toBe(now + DEFER_MAX_MS,);
+    expect(parseDeferTarget(now + DEFER_MIN_MS - 1, now,),).toBeUndefined();
+    expect(parseDeferTarget(now + DEFER_MAX_MS + 1, now,),).toBeUndefined();
+    expect(parseDeferTarget(now - 1, now,),).toBeUndefined();
+    expect(parseDeferTarget("tomorrow", now,),).toBeUndefined();
+    expect(parseDeferTarget(Number.NaN, now,),).toBeUndefined();
+    expect(parseDeferTarget(Number.POSITIVE_INFINITY, now,),).toBeUndefined();
   });
 });

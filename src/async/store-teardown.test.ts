@@ -17,7 +17,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { createAsyncStore, } from "./store";
-import { flushActiveStore, setStore, } from "./store-registry";
+import { flushActiveStore, getStore, setStore, } from "./store-registry";
 
 describe("flushActiveStore", () => {
   beforeEach(() => {
@@ -94,5 +94,40 @@ describe("flushActiveStore", () => {
     expect(persisted.n,).toBe(25,);
 
     await db.destroy();
+  });
+
+  test("getStore exposes the registered handle used by the shutdown drain", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      expect(getStore(),).toBeNull();
+
+      const store = createAsyncStore(db,);
+      setStore(store,);
+      expect(getStore(),).toBe(store,);
+
+      // The lookup is the seam control routes use to register owner-scoped
+      // work; a queued write through it must survive the shutdown flush.
+      getStore()?.track({
+        id: "req-lookup",
+        method: "POST",
+        routePattern: "/api/x",
+        userId: "u-1",
+      },);
+
+      await flushActiveStore();
+
+      // Draining the queue must not unregister the live store.
+      expect(getStore(),).toBe(store,);
+      const row = sqlite
+        .query("SELECT id, status FROM request_results WHERE id = ?",)
+        .get("req-lookup",) as { id: string; status: string } | null;
+
+      expect(row?.id,).toBe("req-lookup",);
+      expect(row?.status,).toBe("pending",);
+    } finally {
+      setStore(null,);
+
+      await db.destroy();
+    }
   });
 });

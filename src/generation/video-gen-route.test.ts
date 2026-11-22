@@ -33,7 +33,7 @@ import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
 import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realVideoEngine from "./video-engine";
 import type * as videoGenRoute from "./video-gen-route";
-import { __resetVideoJobsForTests, storeVideoJob, } from "./video-jobs";
+import { __resetVideoJobsForTests, storeVideoJob, type VideoJob, } from "./video-jobs";
 
 /** Engine outcome the route test controls per case. */
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
@@ -135,6 +135,7 @@ let lastPersistOpts: {
 // Dynamic import: mocks must register before the SUT module evaluates.
 let handleVideoGeneration: typeof videoGenRoute.handleVideoGeneration;
 let handleVideoGenerationStatus: typeof videoGenRoute.handleVideoGenerationStatus;
+let startVideoRender: typeof videoGenRoute.startVideoRender;
 
 if (ISOLATED) {
   mock.module("./workflow-selection", () => ({
@@ -144,7 +145,7 @@ if (ISOLATED) {
     },
   }),);
 
-  ({ handleVideoGeneration, handleVideoGenerationStatus, } = await import("./video-gen-route"));
+  ({ handleVideoGeneration, handleVideoGenerationStatus, startVideoRender, } = await import("./video-gen-route"));
 }
 
 /**
@@ -829,5 +830,95 @@ describeOrSkip("handleVideoGeneration — workflow selection", () => {
     expect(terminal["status"],).toBe("done",);
     expect(workflowResolverCalls,).toHaveLength(1,);
     expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("txt2video",);
+  });
+},);
+
+describeOrSkip("startVideoRender — deferred re-entry and dispatch gate", () => {
+  let seamDb: TestDb;
+  let seamHandle: Kysely<DB>;
+  let deps: Parameters<typeof startVideoRender>[1];
+
+  beforeAll(async () => {
+    seamDb = await createTestDb();
+    seamHandle = seamDb.db;
+    deps = {
+      generationTimeout: 5_000,
+      resolveApiKey: async () => undefined,
+      database: seamHandle,
+      uploadDir: "/tmp",
+      discard: { isDiscarded: () => false, },
+    };
+  },);
+
+  afterAll(async () => {
+    await destroyTestDb(seamDb,);
+  },);
+
+  beforeEach(() => {
+    engineCalls = 0;
+    videoEngineCalls.length = 0;
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
+    engineCancel = null;
+    __resetVideoJobsForTests();
+  },);
+
+  afterEach(() => {
+    __resetVideoJobsForTests();
+  },);
+
+  /** @param overrides @returns a fresh pending snapshot for the dispatch seam */
+  function renderJob(overrides: Partial<VideoJob> = {},): VideoJob {
+    return {
+      id: randomUUID(),
+      ownerId: "video-route-user",
+      status: "pending",
+      request: { prompt: "a clip", },
+      providers: [],
+      deadline: Date.now() + 60_000,
+      createdAt: Date.now(),
+      ...overrides,
+    };
+  }
+
+  test("ignores unknown and settled jobs", () => {
+    const missing = renderJob();
+    startVideoRender(missing, deps,);
+    expect(missing.started,).toBeUndefined();
+    expect(missing.resume,).toBeUndefined();
+
+    const settled = renderJob({ status: "failed", },);
+    storeVideoJob(settled,);
+    startVideoRender(settled, deps,);
+    expect(settled.resume,).toBeUndefined();
+    expect(engineCalls,).toBe(0,);
+  });
+
+  test("registers a re-entry closure for deferred jobs without starting them", () => {
+    const job = renderJob({ deferred: true, scheduledFor: Date.now() + 60_000, },);
+    storeVideoJob(job,);
+    startVideoRender(job, deps,);
+
+    expect(job.started,).toBeUndefined();
+    expect(typeof job.resume,).toBe("function",);
+    expect(engineCalls,).toBe(0,);
+
+    job.resume?.();
+    // The engine stub increments synchronously when the continuation dispatches.
+    expect(engineCalls,).toBe(1,);
+  });
+
+  test("starts a pending job once and ignores a second start", () => {
+    const job = renderJob();
+    storeVideoJob(job,);
+    startVideoRender(job, deps,);
+    const resume = job.resume;
+    startVideoRender(job, deps,);
+
+    expect(typeof resume,).toBe("function",);
+    expect(job.started,).toBe(true,);
+    expect(job.resume,).toBe(resume,);
+    expect(engineCalls,).toBe(1,);
   });
 },);
