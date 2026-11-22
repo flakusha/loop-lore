@@ -26,6 +26,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
   _availableActors: [] as AvailableActor[],
   _participantQuery: "",
   _participantKind: "all",
+  _memberKind: "all",
   _participantsBusy: false,
   _selectedAddActorId: null as string | null,
   _selectedAddRole: "member",
@@ -47,6 +48,10 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     }
 
     return filterActorsByKind(out, this._participantKind,);
+  },
+
+  get filteredParticipants(): ChatParticipant[] {
+    return filterActorsByKind(this._participants, this._memberKind,);
   },
 
   /**

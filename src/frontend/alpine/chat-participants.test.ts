@@ -360,4 +360,50 @@ describeOrSkip("chatParticipants", () => {
       expect(state.filteredAvailableActors.map((a,) => a.id),).toEqual(["a2",],);
     });
   },);
+
+  describeOrSkip("filteredParticipants", () => {
+    const row = (actor_id: string, agent_type?: string,) => ({
+      chat_id: "chat-1",
+      actor_id,
+      role_in_chat: "member",
+      talkativity: 5,
+      initiative: 0,
+      joined_at: "",
+      last_read_message_id: null,
+      impersonate_actor_id: null,
+      persona_id: null,
+      display_name: actor_id,
+      actor_type: "character",
+      agent_type,
+    });
+
+    test("assistant keeps only the LLM-driven members", () => {
+      const state = buildCtx();
+      state._participants = [row("a1", "ai",), row("a2", "none",),] as unknown as ChatState["_participants"];
+
+      state._memberKind = "assistant";
+      expect(state.filteredParticipants.map((p,) => p.actor_id),).toEqual(["a1",],);
+    });
+
+    test("plain keeps human/plain members, including rows with null agent_type", () => {
+      const state = buildCtx();
+      state._participants = [
+        row("a1", "ai",),
+        row("a2", "none",),
+        row("a3", null,),
+        row("a4",),
+      ] as unknown as ChatState["_participants"];
+
+      state._memberKind = "plain";
+      expect(state.filteredParticipants.map((p,) => p.actor_id),).toEqual(["a2", "a3", "a4",],);
+    });
+
+    test("all keeps every member regardless of agent_type", () => {
+      const state = buildCtx();
+      state._participants = [row("a1", "ai",), row("a2", null,),] as unknown as ChatState["_participants"];
+
+      state._memberKind = "all";
+      expect(state.filteredParticipants.length,).toBe(2,);
+    });
+  },);
 },);

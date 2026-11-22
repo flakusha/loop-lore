@@ -73,6 +73,11 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
               // variants to THAT actor's portrait (additive — existing
               // consumers ignore unknown fields).
               "actors.avatar_asset_id",
+              // Actor kind for the member-grid facet: same `agent_type` the
+              // picker's kind filter reads, so the member list can facet with
+              // the shared filterActorsByKind helper (additive — existing
+              // consumers ignore unknown fields).
+              "actors.agent_type",
             ],)
             .where("chat_participants.chat_id", "=", id,)
             .execute();
