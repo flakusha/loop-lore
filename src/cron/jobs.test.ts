@@ -46,11 +46,19 @@ describe("cron default jobs", () => {
       "models.news-poll",
       "models.reaction-grade",
       "models.global-import",
+      "rsi.failure-cluster-mining",
     ],);
 
     for (const job of jobs) {
       expect(Bun.cron.parse(job.schedule,),).not.toBeNull();
     }
+  });
+
+  test("rsi failure-cluster mining runs weekly", () => {
+    const job = defaultJobs().find((j,) => j.name === "rsi.failure-cluster-mining");
+    expect(job,).toBeDefined();
+    expect(job?.schedule,).toBe("0 4 * * 0",);
+    expect(job?.enabled,).toBe(true,);
   });
 
   // Two network-backed jobs (news-poll, global-import) hit live feeds;

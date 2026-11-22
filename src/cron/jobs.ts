@@ -9,6 +9,7 @@
 // so loading the catalog never pulls heavy service graphs eagerly.
 
 import type { Config, } from "../config/schema";
+import { safeJsonStringify, } from "../utils";
 import { defineJob, } from "./registry";
 import type { CronJobDef, } from "./types";
 
@@ -333,6 +334,33 @@ export function defaultJobs(): CronJobDef[] {
         const written = await importAllBoards(database,);
         logger.info("global boards import complete", { module: "cron", written, },);
         return { written, };
+      },
+    },),
+    defineJob({
+      name: "rsi.failure-cluster-mining",
+      schedule: "0 4 * * 0",
+      enabled: true,
+      // Lazy like every other catalog job: keeps report/watchdog graphs out of boot.
+      // Fire-and-forget — never throw into the scheduler.
+      run: async ({ database, logger, },) => {
+        try {
+          const { listPersistentFailureClusters, } = await import("../harness/reports");
+          const { groupFailureClusters, } = await import("../server/watchdog/cluster-miner");
+          const { resolveInstanceSlug, } = await import("../config/state-dir");
+          const rows = await listPersistentFailureClusters(database, {
+            instanceId: resolveInstanceSlug(process.env,),
+          },);
+
+          const clusters = groupFailureClusters(rows,);
+          const reportPath = `.tmp/rsi/failure-clusters-${new Date().toISOString().slice(0, 10,)}.json`;
+          const serialized = safeJsonStringify(clusters, 2,);
+          if (!serialized.ok) { throw serialized.error; }
+          await Bun.write(reportPath, serialized.value,);
+          logger.info("failure cluster mining complete", { module: "cron", count: clusters.length, reportPath, },);
+          return { count: clusters.length, reportPath, };
+        } catch (error) {
+          logger.warn("failure cluster mining failed", { module: "cron", error: String(error,), },);
+        }
       },
     },),
   ];
