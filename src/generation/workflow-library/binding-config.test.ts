@@ -13,7 +13,7 @@ import { buildWorkflowGraph, rowToPayload, } from "./row";
 import type { SeedOutcome, } from "./seed";
 import { resetSeedOwnerForTests, seedWorkflowLibrary, } from "./seed";
 
-/** Temp dirs are removed after each case; no repo files are touched. */
+/**\n * Parallel-safe resource contract: each case owns a unique `wf-bindings-*`\n * temp dir and, for the seed case, a fresh in-memory DB. `afterEach` removes\n * the dirs; the seed case destroys its DB and resets the owner cache in\n * `finally`. No case touches repo files or shared global state.\n */
 const dirs: string[] = [];
 async function tempDir(): Promise<string> {
   const dir = await mkdtemp(join(tmpdir(), "wf-bindings-",),);
