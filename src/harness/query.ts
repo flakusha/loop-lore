@@ -31,8 +31,9 @@ import {
 export const MAX_LINES = 20_000;
 
 /**
- * Hard ceiling on BYTES read from the end of the log per query. This is the
- * real memory bound — MAX_LINES only caps what survives parsing.
+ * Hard ceiling on BYTES read from the end of the log by the fallback tail
+ * scan. A valid sidecar removes this cap and bounds the read by MAX_LINES
+ * records instead, so this is not the memory bound for indexed logs.
  */
 export const READ_WINDOW_BYTES = 4 * 1024 * 1024;
 
@@ -62,6 +63,10 @@ function matches(record: HarnessRunRecord, filter: HarnessRunFilter,): boolean {
  * Sidecar fast path: start at the record MAX_LINES from the end instead of
  * READ_WINDOW_BYTES from the end. Returns null to signal "fall back to the
  * tail scan" — the sidecar is advisory, never authoritative.
+ *
+ * ponytail: reads the whole sidecar (33 B/record, ~33 MB at 1M records).
+ * Upgrade path: seek to just the last MAX_LINES entries if logs reach that
+ * scale; the current cap stays bounded by record count, not file bytes.
  */
 async function readIndexed(handle: FileHandle, size: number,): Promise<HarnessRunRecord[] | null> {
   const idxPath = getExecIndexPath();

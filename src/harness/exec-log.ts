@@ -51,8 +51,8 @@ let logPathForced = false;
  * Process-local counters over the records handed to the writer.
  *
  * They are the only harness counters a metrics scrape may read: the JSONL is
- * read from disk by the stats endpoint (an O(file) tail scan), which a scrape
- * must never do. The counters are FIXED-SIZE and reset when the process
+ * read from disk by the stats endpoint (a bounded tail/sidecar scan), which a
+ * scrape must never do. The counters are FIXED-SIZE and reset when the process
  * restarts — they are a since-start view of this process, not a durable
  * total. The population is every record handed to {@link appendExecLog}, the
  * same set the stats endpoint rolls up, so the two agree on what a "run" is.
