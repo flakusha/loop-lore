@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { type Expression, type ExpressionBuilder, sql, type SqlBool, } from "kysely";
+import { type Expression, type ExpressionBuilder, type SqlBool, } from "kysely";
 import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
@@ -146,67 +146,36 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
             listQuery = listQuery.where("updated_at", ">=", updatedSince,);
           }
 
-          // TODO(perf): ONE grouped count over all visible messages + JS
-          // filter/sort/paginate replaces the per-chat correlated COUNT
-          // subqueries (min/max filters, count query, unread sort). Counts are
-          // computed over the FULL visible set, not page ids, so ordering and
-          // totals match the previous global semantics.
+          // Counter cutover (migration 122): min/max bounds and sort=unread
+          // read the trigger-maintained chats.visible_message_count /
+          // per-viewer chat_participants.unread_count — zero messages-table
+          // aggregates; the needsCounts grouped query is gone.
           const allChats = await listQuery.execute();
-
-          // The grouped count costs a full messages-table GROUP BY — pay for
-          // it only when a consumer exists: min/max bounds, or the guest
-          // never-read fallback for sort=unread. Authenticated sort=unread has
-          // its own participant-scoped query below. The default
-          // updated_at/name/pinned-first sorts do ZERO messages work, matching
-          // the pre-single-pass SQL path.
-          const needsCounts = minMessages !== undefined ||
-            maxMessages !== undefined ||
-            (sort === "unread" && userId === null);
-
-          let countsByChat: Map<string, number> | null = null;
-          if (needsCounts) {
-            const countRows = await database
-              .selectFrom("messages",)
-              .select(["chat_id", database.fn.countAll<number>().as("count",),],)
-              .where("visibility", "=", "visible",)
-              .groupBy("chat_id",)
-              .execute();
-
-            countsByChat = new Map(Array.from(countRows, (r,) => [r.chat_id, Number(r.count,),],),);
-          }
 
           let unreadByChat: Map<string, number> | null = null;
           if (sort === "unread") {
             if (userId === null) {
-              // SQL fallback was COALESCE(''): never-read counts ALL visible.
-              unreadByChat = countsByChat as Map<string, number>;
+              // Guest sort=unread reads visible_message_count: guests have no
+              // participant rows, so "never read" = count all visible — this
+              // exactly matches the previous COALESCE('') grouped-count fallback.
+              unreadByChat = new Map(Array.from(allChats, (c,) => [c.id, c.visible_message_count,] as const,),);
             } else {
-              // Same semantics as routes/activity.ts computeActivity.
-              const unreadRows = await sql<{ chat_id: string; count: number }>`
-                SELECT m.chat_id, COUNT(*) AS count
-                FROM messages m
-                JOIN chat_participants cp ON cp.chat_id = m.chat_id AND cp.actor_id = ${userId}
-                WHERE m.visibility = 'visible'
-                  AND (
-                    cp.last_read_message_id IS NULL
-                    OR NOT EXISTS (SELECT 1 FROM messages c WHERE c.id = cp.last_read_message_id)
-                    OR m.created_at > (SELECT c.created_at FROM messages c WHERE c.id = cp.last_read_message_id)
-                  )
-                GROUP BY m.chat_id
-              `.execute(database,);
+              // Same source of truth as routes/activity.ts computeActivity.
+              const unreadRows = await database
+                .selectFrom("chat_participants",)
+                .select(["chat_id", "unread_count",],)
+                .where("actor_id", "=", userId,)
+                .execute();
 
-              unreadByChat = new Map(Array.from(unreadRows.rows, (r,) => [r.chat_id, Number(r.count,),],),);
+              unreadByChat = new Map(unreadRows.map((r,) => [r.chat_id, r.unread_count,] as const),);
             }
           }
 
-          const visible = countsByChat === null
-            ? allChats
-            : allChats.filter((chat,) => {
-              const count = countsByChat.get(chat.id,) ?? 0;
-              if (minMessages !== undefined && count < minMessages) { return false; }
-              if (maxMessages !== undefined && count > maxMessages) { return false; }
-              return true;
-            },);
+          const visible = allChats.filter((chat,) => {
+            if (minMessages !== undefined && chat.visible_message_count < minMessages) { return false; }
+            if (maxMessages !== undefined && chat.visible_message_count > maxMessages) { return false; }
+            return true;
+          },);
 
           const byUpdatedDesc = (
             a: { updated_at: string },

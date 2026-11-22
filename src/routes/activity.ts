@@ -15,7 +15,7 @@
  */
 
 import { Elysia, } from "elysia";
-import { type Kysely, sql, } from "kysely";
+import { type Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonResponse, requireUserId, } from "./http-utils";
@@ -39,20 +39,20 @@ export async function computeActivity(
   database: Kysely<DB>,
   userId: string,
 ): Promise<Record<string, ActivityEntry>> {
+  // One indexed participants read (migration 122): the trigger-maintained
+  // unread_count replaces the grouped messages aggregation. The NULL
+  // watermark / deleted-last-read count-all fallback lives inside the
+  // triggers now, so the semantics are unchanged.
   const participants = await database
     .selectFrom("chat_participants",)
-    .select(["chat_id", "last_read_message_id",],)
+    .select(["chat_id", "unread_count",],)
     .where("actor_id", "=", userId,)
     .execute();
 
   if (participants.length === 0) { return {}; }
 
-  const lastReadByChat = new Map<string, string | null>();
-  const chatIds: string[] = [];
-  for (const p of participants) {
-    lastReadByChat.set(p.chat_id, p.last_read_message_id,);
-    chatIds.push(p.chat_id,);
-  }
+  const chatIds = participants.map((p,) => p.chat_id);
+  const unseenByChat = new Map(participants.map((p,) => [p.chat_id, p.unread_count,] as const),);
 
   const chats = await database
     .selectFrom("chats",)
@@ -71,25 +71,6 @@ export async function computeActivity(
     .execute();
 
   const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created as string | null,],),);
-
-  // TODO(perf): one grouped query replaces the per-chat COUNT loop (one round
-  // trip per chat per poll). Fallback semantics preserved: a NULL
-  // last_read_message_id or a last-read row that no longer exists counts ALL
-  // visible messages for that chat.
-  const unseenRows = await sql<{ chat_id: string; count: number }>`
-    SELECT m.chat_id, COUNT(*) AS count
-    FROM messages m
-    JOIN chat_participants cp ON cp.chat_id = m.chat_id AND cp.actor_id = ${userId}
-    WHERE m.visibility = 'visible'
-      AND (
-        cp.last_read_message_id IS NULL
-        OR NOT EXISTS (SELECT 1 FROM messages c WHERE c.id = cp.last_read_message_id)
-        OR m.created_at > (SELECT c.created_at FROM messages c WHERE c.id = cp.last_read_message_id)
-      )
-    GROUP BY m.chat_id
-  `.execute(database,);
-
-  const unseenByChat = new Map(Array.from(unseenRows.rows, (r,) => [r.chat_id, Number(r.count,),],),);
 
   const result: Record<string, ActivityEntry> = {};
   for (const chatId of chatIds) {
