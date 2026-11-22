@@ -12,8 +12,9 @@
 
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
+import { PEER_WORKLOAD_CLASSES, type PeerWorkloadClass, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { safeJsonStringify, } from "../utils";
+import { safeJsonParse, safeJsonStringify, } from "../utils";
 import { parseAdvertisedClasses, } from "./peer-capabilities";
 import {
   canonicalOrigin,
@@ -21,6 +22,8 @@ import {
   type InstanceAdvertisement,
   type PeerFetch,
 } from "./peer-fetch";
+import { configurePeerConcurrency, recordPeerHealthMiss, } from "./peer-health";
+import { listPerformanceBudgets, } from "./performance-quota-store";
 
 /** Registry states for a known peer. */
 export const PEER_STATES = ["pending", "trusted", "suspended",] as const;
@@ -33,6 +36,33 @@ export interface ResyncSummary {
   checked: number;
   /** Peers that answered 200 with a parseable body. */
   alive: number;
+}
+
+/**
+ * Install a peer's persisted concurrency ceilings. A budget without a
+ * `maxConcurrency` resets its class to unlimited, so removing a ceiling does
+ * not leave a stale limit in the routing snapshot.
+ */
+async function applyPeerConcurrency(database: Kysely<DB>, origin: string,): Promise<void> {
+  const budgets = await listPerformanceBudgets(database,);
+  for (const budget of budgets) {
+    if (budget.origin !== origin) { continue; }
+    configurePeerConcurrency({
+      origin,
+      workloadClass: budget.workloadClass,
+      maxConcurrency: budget.maxConcurrency,
+    },);
+  }
+}
+
+/**
+ * Classes a trusted peer was expected to serve. A peer with no advertised
+ * classes still has every class circuit-failed when it is unreachable.
+ */
+function expectedClasses(capabilities: string,): readonly PeerWorkloadClass[] {
+  const parsed = safeJsonParse<unknown>(capabilities,);
+  const advertised = parseAdvertisedClasses(parsed.ok ? parsed.value : [],);
+  return advertised.length > 0 ? advertised : PEER_WORKLOAD_CLASSES;
 }
 
 /**
@@ -79,6 +109,7 @@ export async function upsertPeer(
     )
     .execute();
 
+  await applyPeerConcurrency(database, origin,);
   return origin;
 }
 
@@ -159,6 +190,8 @@ export async function touchPeer(
     },)
     .where("origin", "=", origin,)
     .execute();
+
+  await applyPeerConcurrency(database, origin,);
 }
 
 /**
@@ -192,10 +225,14 @@ export async function runResyncPass(
   await Promise.allSettled(trusted.map(async (peer,) => {
     const originKey = canonicalOrigin(peer.origin,) ?? peer.origin;
     const trust = trustByOrigin.get(originKey,) ?? opts.trustByOrigin?.[peer.origin];
+    const miss = (): void => recordPeerHealthMiss(peer.origin, expectedClasses(peer.capabilities,),);
     // SPKI pin gate: refuse to fetch peers whose pin fails verification.
     if (trust?.spkiPins && trust.spkiPins.length > 0 && opts.pinVerifier !== undefined) {
       const pinned = await opts.pinVerifier(originKey, trust.spkiPins,);
-      if (!pinned) { return; }
+      if (!pinned) {
+        miss();
+        return;
+      }
     }
 
     let res;
@@ -205,10 +242,15 @@ export async function runResyncPass(
         trust,
       );
     } catch {
+      miss();
       return;
     }
 
-    if (!res.ok) { return; }
+    if (!res.ok) {
+      miss();
+      return;
+    }
+
     alive += 1;
     await touchPeer(
       database,

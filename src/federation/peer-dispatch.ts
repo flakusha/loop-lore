@@ -139,6 +139,7 @@ export async function dispatchPeerWorkload(options: {
         ...(options.timeoutMs === undefined ? {} : { timeoutMs: options.timeoutMs, }),
         ...(onChunk === undefined ? {} : { onChunk, }),
       },),
+    (result: PeerWorkAttempt,) => result.ok,
   );
 
   if (attempt.ok) {

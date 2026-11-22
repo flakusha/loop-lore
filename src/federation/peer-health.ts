@@ -196,21 +196,25 @@ export function recordPeerOutcome(
  * Run one peer attempt with slot accounting and outcome recording.
  * The decrement lives in `finally`, so a throwing handler can never leak a
  * slot — a leaked slot permanently shrinks the peer's apparent headroom.
+ * `isSuccess` lets a callback that RESOLVES a failure still count as a peer
+ * failure: the attempt is recorded exactly once either way.
  * @param options
  * @param options.origin
  * @param options.workloadClass
  * @param run The attempt itself.
+ * @param isSuccess Maps the resolved value to a peer outcome; defaults to true.
  * @returns {Promise<T>}
  */
 export async function runPeerAttempt<T,>(
   options: { origin: string; workloadClass: PeerWorkloadClass },
   run: () => Promise<T>,
+  isSuccess: (result: T,) => boolean = () => true,
 ): Promise<T> {
   const startedAt = performance.now();
   beginPeerAttempt(options,);
   try {
     const result = await run();
-    recordPeerOutcome({ ...options, ok: true, latencyMs: performance.now() - startedAt, },);
+    recordPeerOutcome({ ...options, ok: isSuccess(result,), latencyMs: performance.now() - startedAt, },);
     return result;
   } catch (error) {
     recordPeerOutcome({ ...options, ok: false, latencyMs: performance.now() - startedAt, },);
