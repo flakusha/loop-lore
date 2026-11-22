@@ -15,7 +15,7 @@
  */
 
 import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonResponse, requireUserId, } from "./http-utils";
@@ -72,45 +72,29 @@ export async function computeActivity(
 
   const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created as string | null,],),);
 
-  const lastReadIds: string[] = [];
-  for (const v of lastReadByChat.values()) {
-    if (v) { lastReadIds.push(v,); }
-  }
+  // TODO(perf): one grouped query replaces the per-chat COUNT loop (one round
+  // trip per chat per poll). Fallback semantics preserved: a NULL
+  // last_read_message_id or a last-read row that no longer exists counts ALL
+  // visible messages for that chat.
+  const unseenRows = await sql<{ chat_id: string; count: number }>`
+    SELECT m.chat_id, COUNT(*) AS count
+    FROM messages m
+    JOIN chat_participants cp ON cp.chat_id = m.chat_id AND cp.actor_id = ${userId}
+    WHERE m.visibility = 'visible'
+      AND (
+        cp.last_read_message_id IS NULL
+        OR NOT EXISTS (SELECT 1 FROM messages c WHERE c.id = cp.last_read_message_id)
+        OR m.created_at > (SELECT c.created_at FROM messages c WHERE c.id = cp.last_read_message_id)
+      )
+    GROUP BY m.chat_id
+  `.execute(database,);
 
-  const lastReadMap = new Map<string, string>();
-  if (lastReadIds.length > 0) {
-    const lastReadMsgs = await database
-      .selectFrom("messages",)
-      .select(["id", "created_at",],)
-      .where("id", "in", lastReadIds,)
-      .execute();
-
-    for (const msg of lastReadMsgs) {
-      lastReadMap.set(msg.id, msg.created_at,);
-    }
-  }
+  const unseenByChat = new Map(Array.from(unseenRows.rows, (r,) => [r.chat_id, Number(r.count,),],),);
 
   const result: Record<string, ActivityEntry> = {};
-
   for (const chatId of chatIds) {
-    const lastReadId = lastReadByChat.get(chatId,);
-    const lastReadCreatedAt = lastReadId ? lastReadMap.get(lastReadId,) : undefined;
-
-    let query = database
-      .selectFrom("messages",)
-      .select(database.fn.countAll<number>().as("count",),)
-      .where("chat_id", "=", chatId,)
-      .where("visibility", "=", "visible",);
-
-    if (lastReadCreatedAt) {
-      query = query.where("created_at", ">", lastReadCreatedAt,);
-    }
-
-    const countResult = await query.executeTakeFirst();
-    const unseenCount = countResult?.count ?? 0;
-
     result[chatId] = {
-      unseenCount,
+      unseenCount: unseenByChat.get(chatId,) ?? 0,
       lastMessageCreatedAt: latestByChat.get(chatId,) ?? null,
       chatName: chatNames.get(chatId,) ?? "Unknown",
     };
