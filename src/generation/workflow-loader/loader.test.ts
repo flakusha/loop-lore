@@ -12,7 +12,9 @@
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { mkdir, mkdtemp, rm, stat, utimes, writeFile, } from "node:fs/promises";
 import { join, } from "node:path";
+import { errorHandler, } from "../../api/error-handler";
 import { createLogger, } from "../../logger/index.js";
+import { NotFoundError, } from "../../routes/http-utils/status";
 import { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader.js";
 
 const DIR = ".tmp/wf-fixtures-loader";
@@ -134,5 +136,21 @@ describe("getWorkflowLoader", () => {
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
     await expect(loader.loadWorkflow({ name: "nope", },),).rejects.toThrowError("not found",);
+  });
+
+  it("throws a typed 404-shaped error for unknown workflows", async () => {
+    await fixtures();
+    const loader = getWorkflowLoader(DIR,);
+    let caught: unknown;
+    try {
+      await loader.loadWorkflow({ name: "typed-missing", },);
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught,).toBeInstanceOf(NotFoundError,);
+    const response = errorHandler(caught, "req-1",);
+    expect(response.status,).toBe(404,);
+    expect((await response.json() as { error_code: string }).error_code,).toBe("NOT_FOUND",);
   });
 });

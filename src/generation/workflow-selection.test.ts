@@ -196,7 +196,6 @@ describe("resolveWorkflowForUseCase", () => {
 describe("getWorkflowCatalog", () => {
   test("selections are isolated per user and entries are labeled", async () => {
     const available = new Set(await getWorkflowLoader().listWorkflows(),);
-    const defaults = getWorkflowDefaults();
     const catalogA = await getWorkflowCatalog({ database: db, userId: userA, },);
     const catalogB = await getWorkflowCatalog({ database: db, userId: userB, },);
 
@@ -206,12 +205,38 @@ describe("getWorkflowCatalog", () => {
 
     for (const entry of catalogA) {
       expect(entry.supported.length,).toBeGreaterThan(0,);
-      expect(
-        entry.supported.every((option,) => available.has(option.id,) || option.id === defaults[entry.useCase].default),
-      ).toBe(true,);
+      expect(entry.supported.every((option,) => available.has(option.id,)),).toBe(true,);
 
-      expect(entry.supported.some((option,) => option.id === entry.selected),).toBe(true,);
+      // userA has an explicit but unknown video id: keep it, never a default.
+      if (entry.useCase !== "video.generate") {
+        expect(entry.supported.some((option,) => option.id === entry.selected),).toBe(true,);
+      }
+
       expect(entry.supported[0]?.label,).toMatch(/^[A-Z]/,);
+    }
+  });
+});
+
+describe("getWorkflowCatalog fallback", () => {
+  test("an unknown explicit selection is never replaced by the default", async () => {
+    const defaults = getWorkflowDefaults();
+    const catalog = await getWorkflowCatalog({ database: db, userId: bogusUser, },);
+    const image = catalog.find((entry,) => entry.useCase === "image.generate")!;
+    const audio = catalog.find((entry,) => entry.useCase === "audio.generate")!;
+
+    expect(image.selected,).toBe("test:arbitrary",);
+    expect(audio.selected,).toBe("test:audio-workflow",);
+    expect(image.selected,).not.toBe(defaults["image.generate"].default,);
+    expect(image.supported.some((option,) => option.id === image.selected),).toBe(false,);
+    expect(audio.supported.some((option,) => option.id === audio.selected),).toBe(false,);
+  });
+
+  test("a user without a selection gets the loadable default", async () => {
+    const defaults = getWorkflowDefaults();
+    const catalog = await getWorkflowCatalog({ database: db, userId: malformedUser, },);
+    for (const entry of catalog) {
+      expect(entry.selected,).toBe(defaults[entry.useCase].default,);
+      expect(entry.supported.some((option,) => option.id === entry.selected),).toBe(true,);
     }
   });
 });

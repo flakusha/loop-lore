@@ -148,10 +148,9 @@ export async function resolveWorkflowForUseCase({
 }
 
 /**
- * Build the per-user catalog shown in the frontend selector. Configured ids
- * are intersected with the workflows actually loaded from disk so the UI
- * never offers a workflow that cannot run; the configured default is always
- * present.
+ * Build the per-user catalog from workflows actually loaded from disk. An
+ * explicit selection is kept verbatim even when unknown — substituting the
+ * default would persist a stale id back through the settings UI.
  * @param options
  * @returns One entry per use case.
  */
@@ -166,14 +165,11 @@ export async function getWorkflowCatalog({
   return USE_CASES.map((useCase,) => {
     const configured = defaults[useCase];
     const supported = configured.supported.filter((id,) => available.has(id,));
-    if (configured.default && !supported.includes(configured.default,)) {
-      supported.unshift(configured.default,);
-    }
 
     const stored = selections[useCase];
-    const selected = stored && configured.supported.includes(stored,)
-      ? stored
-      : configured.default;
+    // ponytail: no validity recheck — an explicit id survives rejection so the
+    // loader can surface a typed error instead of silently running a default.
+    const selected = stored ?? (available.has(configured.default,) ? configured.default : "");
 
     return {
       useCase,

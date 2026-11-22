@@ -4,6 +4,7 @@
 import { readdir, readFile, stat, } from "node:fs/promises";
 import { extname, join, } from "node:path";
 import { getLogger, } from "../../logger";
+import { NotFoundError, } from "../../routes/http-utils/status";
 import { jsonParseOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import {
@@ -55,16 +56,14 @@ class WorkflowLoader {
    * Load a workflow by name with optional template substitution.
    * @param options - Workflow name and substitution parameters
    * @returns ComfyUI-ready workflow with placeholders replaced
-   * @throws If workflow not found
+   * @throws NotFoundError when the named workflow is not loaded
    */
   async loadWorkflow(options: LoadWorkflowOptions,): Promise<ComfyUIWorkflow> {
     await this.ensureLoaded();
 
     const entry = this.cache.get(options.name,);
     if (!entry) {
-      throw new Error(
-        `Workflow "${options.name}" not found. Available: ${[...this.cache.keys(),].join(", ",)}`,
-      );
+      throw new NotFoundError("Workflow", options.name,);
     }
 
     let workflow = entry.workflow;
