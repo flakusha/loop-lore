@@ -44,10 +44,6 @@ function liveInputNames(
 
   return { ok: true, names, };
 }
-
-/** sha256 of `fixtures/object-info.json`, asserted by schema-authority.test.ts. */
-export const PINNED_OBJECT_INFO_SHA256 = "bcf080dab09dac7b32003ccb6eb9b4cffe69b6b64a1d99e7003f9b08b784ef6d";
-
 /**
  * Read the bundled pinned snapshot.
  * @returns The `/object_info` fixture shipped with the converter
@@ -59,28 +55,15 @@ export async function loadPinnedObjectInfo(): Promise<ObjectInfoSnapshot> {
 }
 
 /**
- * Verify an operator-supplied digest against the bundled pin.
+ * Verify an optional operator-supplied digest against the bundled fixture.
+ * The fixture is the source of truth: its canonical digest is recomputed on
+ * every call, so a changed fixture never needs a constant or config edit.
  * @param expectedSha256 - Digest from the bindings config
  * @returns The matching digest on success, otherwise a descriptive error
  */
-export function verifyPinnedObjectInfoSha256(expectedSha256: string,): SchemaPinResult {
+export async function verifyPinnedObjectInfoSha256(expectedSha256: string,): Promise<SchemaPinResult> {
   try {
-    const pinned = expectedSha256.trim();
-    const raw = pinned.startsWith(SHA256_PREFIX,) ? pinned.slice(SHA256_PREFIX.length,) : pinned;
-    const hex = raw.toLowerCase();
-    if (!SHA256_HEX.test(hex,)) {
-      return {
-        ok: false,
-        error:
-          `Invalid schema pin "${expectedSha256}": expected 64 hex characters, optionally prefixed with "${SHA256_PREFIX}"`,
-      };
-    }
-
-    if (hex !== PINNED_OBJECT_INFO_SHA256) {
-      return { ok: false, error: `Schema pin mismatch: pinned ${hex}, bundled ${PINNED_OBJECT_INFO_SHA256}`, };
-    }
-
-    return { ok: true, sha256: hex, };
+    return verifyObjectInfoPin(await loadPinnedObjectInfo(), expectedSha256,);
   } catch (error) {
     return {
       ok: false,

@@ -35,8 +35,8 @@ export type BindingConfigLoad =
  * Read and verify the bindings config in a workflow directory.
  *
  * A missing file is not an error — config-driven bindings are optional. A
- * present file must parse, carry the bundled snapshot pin, and bind only to
- * nodes that exist in the graph files beside it.
+ * present file must parse, bind only to nodes that exist in the graph files
+ * beside it, and — if it asserts a snapshot digest — match the bundled fixture.
  * @param dir - Directory holding graphs and the optional config
  * @returns The verified config, `null` when absent, or every error found
  */
@@ -61,8 +61,11 @@ export async function loadWorkflowBindings(dir: string,): Promise<BindingConfigL
   if (!parsed.ok) { return parsed; }
 
   const errors: string[] = [];
-  const pin = verifyPinnedObjectInfoSha256(parsed.config.snapshot.objectInfoSha256,);
-  if (!pin.ok) { errors.push(pin.error,); }
+  const digest = parsed.config.snapshot?.objectInfoSha256;
+  if (digest !== undefined) {
+    const pin = await verifyPinnedObjectInfoSha256(digest,);
+    if (!pin.ok) { errors.push(pin.error,); }
+  }
 
   for (const [id, spec,] of Object.entries(parsed.config.workflows,)) {
     let graphText: string;

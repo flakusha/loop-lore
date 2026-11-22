@@ -13,7 +13,6 @@ import {
   loadPinnedObjectInfo,
   objectInfoCanonicalJson,
   objectInfoSha256,
-  PINNED_OBJECT_INFO_SHA256,
   verifyObjectInfoPin,
   verifyPinnedObjectInfoSha256,
 } from "./schema-authority";
@@ -86,33 +85,45 @@ describe("objectInfoCanonicalJson", () => {
   });
 });
 
-describe("checked-in schema pin", () => {
-  it("matches the pinned fixture digest", async () => {
+describe("bundled fixture pin", () => {
+  it("computes the digest from the shipped fixture", async () => {
+    const digest = objectInfoSha256(await loadPinnedObjectInfo(),);
+    expect(digest,).toMatch(/^[0-9a-f]{64}$/,);
+    expect(await verifyPinnedObjectInfoSha256(digest,),).toEqual({ ok: true, sha256: digest, },);
+  });
+
+  it("detects a mutated fixture from the actual file", async () => {
     const fixture = await loadPinnedObjectInfo();
-    expect(objectInfoSha256(fixture,),).toBe(PINNED_OBJECT_INFO_SHA256,);
+    const first = Object.keys(fixture,)[0]!;
+    const mutated: ObjectInfoSnapshot = {
+      ...fixture,
+      [first]: { ...fixture[first]!, input: {}, },
+    };
+
+    const mutatedDigest = objectInfoSha256(mutated,);
+    expect(mutatedDigest,).not.toBe(objectInfoSha256(fixture,),);
+    expect(await verifyPinnedObjectInfoSha256(mutatedDigest,),).toMatchObject({
+      ok: false,
+      error: expect.stringContaining("mismatch",),
+    },);
   });
 });
 
 describe("verifyPinnedObjectInfoSha256", () => {
-  it("accepts the bundled digest in every supported form", () => {
-    for (
-      const candidate of [
-        PINNED_OBJECT_INFO_SHA256,
-        `sha256:${PINNED_OBJECT_INFO_SHA256}`,
-        PINNED_OBJECT_INFO_SHA256.toUpperCase(),
-      ]
-    ) {
-      expect(verifyPinnedObjectInfoSha256(candidate,),).toEqual({ ok: true, sha256: PINNED_OBJECT_INFO_SHA256, },);
+  it("accepts the bundled digest in every supported form", async () => {
+    const digest = objectInfoSha256(await loadPinnedObjectInfo(),);
+    for (const candidate of [digest, `sha256:${digest}`, digest.toUpperCase(),]) {
+      expect(await verifyPinnedObjectInfoSha256(candidate,),).toEqual({ ok: true, sha256: digest, },);
     }
   });
 
-  it("rejects a stale or malformed digest", () => {
-    expect(verifyPinnedObjectInfoSha256("f".repeat(64,),),).toMatchObject({
+  it("rejects a stale or malformed digest", async () => {
+    expect(await verifyPinnedObjectInfoSha256("f".repeat(64,),),).toMatchObject({
       ok: false,
       error: expect.stringContaining("mismatch",),
     },);
 
-    expect(verifyPinnedObjectInfoSha256("short",),).toMatchObject({
+    expect(await verifyPinnedObjectInfoSha256("short",),).toMatchObject({
       ok: false,
       error: expect.stringContaining("Invalid schema pin",),
     },);

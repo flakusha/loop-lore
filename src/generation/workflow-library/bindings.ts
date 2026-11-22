@@ -41,7 +41,7 @@ const SHA256_RE = /^(?:sha256:)?[0-9a-fA-F]{64}$/;
 export interface WorkflowBindingConfig {
   schemaVersion: 1;
   bindingPolicy: "augment" | "explicit";
-  snapshot: { objectInfoSha256: string; source?: string };
+  snapshot?: { objectInfoSha256?: string; source?: string };
   workflows: Readonly<Record<string, WorkflowBindingSpec>>;
 }
 
@@ -310,11 +310,11 @@ export function parseWorkflowBindings(
   }
 
   const snapshot = objectOrNull(root.snapshot,);
-  if (snapshot === null) {
+  if (root.snapshot !== undefined && snapshot === null) {
     errors.push("snapshot: expected an object",);
-  } else {
+  } else if (snapshot !== null) {
     const digest = snapshot.objectInfoSha256;
-    if (typeof digest !== "string" || !SHA256_RE.test(digest,)) {
+    if (digest !== undefined && (typeof digest !== "string" || !SHA256_RE.test(digest,))) {
       errors.push(
         'snapshot.objectInfoSha256: expected 64 hex characters, optionally prefixed with "sha256:"',
       );

@@ -6,7 +6,7 @@ import { mkdtemp, rm, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { TemplateParameter, } from "../../image-edit/types";
-import { PINNED_OBJECT_INFO_SHA256, } from "../comfyui-converter/schema-authority";
+import { loadPinnedObjectInfo, objectInfoSha256, } from "../comfyui-converter/schema-authority";
 import { BINDINGS_FILE, loadWorkflowBindings, parametersForSpec, } from "./binding-config";
 import type { WorkflowBindingSpec, } from "./bindings";
 import { buildWorkflowGraph, rowToPayload, } from "./row";
@@ -46,7 +46,7 @@ function config(overrides: Record<string, unknown> = {},): Record<string, unknow
   return {
     schemaVersion: 1,
     bindingPolicy: "augment",
-    snapshot: { objectInfoSha256: PINNED_OBJECT_INFO_SHA256, },
+    snapshot: { source: "fixture.local", },
     workflows: { fanout: FANOUT, },
     ...overrides,
   };
@@ -66,9 +66,17 @@ describe("loadWorkflowBindings", () => {
     expect(await loadWorkflowBindings(await tempDir(),),).toEqual({ ok: true, config: null, },);
   });
 
-  it("accepts a config whose pin and targets match the shipped graphs", async () => {
+  it("accepts a config with no digest and matching targets", async () => {
     const dir = await tempDir();
     await writeCase(dir, config(),);
+    const loaded = await loadWorkflowBindings(dir,);
+    expect(loaded.ok,).toBe(true,);
+  });
+
+  it("accepts an explicit pin derived from the bundled fixture", async () => {
+    const dir = await tempDir();
+    const digest = objectInfoSha256(await loadPinnedObjectInfo(),);
+    await writeCase(dir, config({ snapshot: { objectInfoSha256: digest, }, },),);
     const loaded = await loadWorkflowBindings(dir,);
     expect(loaded.ok,).toBe(true,);
   });
@@ -79,6 +87,15 @@ describe("loadWorkflowBindings", () => {
     const loaded = await loadWorkflowBindings(dir,);
     expect(loaded.ok,).toBe(false,);
     if (!loaded.ok) { expect(loaded.errors.join(" ",),).toContain("pin mismatch",); }
+  });
+
+  it("rejects malformed JSON", async () => {
+    const dir = await tempDir();
+    await writeFile(join(dir, "fanout.json",), JSON.stringify(GRAPH,),);
+    await writeFile(join(dir, BINDINGS_FILE,), "{not json",);
+    const loaded = await loadWorkflowBindings(dir,);
+    expect(loaded.ok,).toBe(false,);
+    if (!loaded.ok) { expect(loaded.errors.join(" ",),).toContain("not valid JSON",); }
   });
 
   it("rejects a binding target that no longer exists", async () => {

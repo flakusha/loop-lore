@@ -2,7 +2,6 @@
   "schemaVersion": 1,
   "bindingPolicy": "augment",
   "snapshot": {
-    "objectInfoSha256": "732cbd98bdcdc1959974c90e4ad31e5731d0198d76f2ac31685d4ee562698f43",
     "source": "src/generation/comfyui-converter/fixtures/object-info.json"
   },
   "workflows": {

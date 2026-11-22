@@ -15,8 +15,6 @@ import {
   type WorkflowBindingSpec,
 } from "./bindings";
 
-const SHA = "a".repeat(64,);
-
 const PARAMETERS: readonly TemplateParameter[] = [
   { name: "prompt", type: "string", label: "Prompt", default: "", },
   { name: "seed", type: "number", label: "Seed", default: 0, },
@@ -41,7 +39,7 @@ const FANOUT = { ...DEFAULT_FANOUT, maxItems: 2, } as const;
 const CONFIG = {
   schemaVersion: 1,
   bindingPolicy: "augment",
-  snapshot: { objectInfoSha256: `sha256:${SHA}`, source: "generator.local", },
+  snapshot: { source: "generator.local", },
   workflows: {
     txt2img: { parameters: PARAMETERS, bindings: [SCALAR, FANOUT,], },
   },
