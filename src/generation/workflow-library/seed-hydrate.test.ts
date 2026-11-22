@@ -36,6 +36,22 @@ import { baseWorkflowId, } from "./seed-parameters";
 
 const SHIPPED_DIR = "./configs/workflows";
 
+/** Why each shipped export the seed refuses is skipped (id -> reason). */
+const SHIPPED_SKIP_REASONS: Record<string, string> = {
+  "minimax-h3-assemble-wf": "video workflow is not an image-edit template",
+  "minimax-h3-audio-fallback-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-fragment-assemble-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-i2v-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-image-image-edit-v1": "dead node(s) not linked into the graph: 62",
+  "minimax-h3-ref2va-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-t2v-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-video-fl2va-opt-v1": "video workflow is not an image-edit template",
+  "minimax-h3-video-fl2va-v1": "video workflow is not an image-edit template",
+  "minimax-h3-video-ref2va-opt-v1": "video workflow is not an image-edit template",
+  "minimax-h3-video-ref2va-v1": "video workflow is not an image-edit template",
+  "qwen-image-2-1-image-edit-v1": "dead node(s) not linked into the graph: 472, 518",
+};
+
 let db: Kysely<DB>;
 let sqlite: Database;
 
@@ -81,10 +97,9 @@ describe("seedWorkflowLibrary", () => {
     // Operator exports with unreferenced ImageCompare / attention nodes are
     // pinned here: the loader skips them until those nodes are wired or
     // registered as live sinks. Deleting operator rule nodes is not this lane's call.
-    expect(outcome.skipped,).toEqual([
-      { id: "minimax-h3-image-image-edit-v1", reason: "dead node(s) not linked into the graph: 62", },
-      { id: "qwen-image-2-1-image-edit-v1", reason: "dead node(s) not linked into the graph: 472, 518", },
-    ],);
+    expect(outcome.skipped,).toEqual(
+      Object.entries(SHIPPED_SKIP_REASONS,).map(([id, reason,],) => ({ id, reason, })),
+    );
 
     const row = await workflowRowById("txt2img-v1",);
     expect(row.owner_id,).toBe("admin-1",);
@@ -107,15 +122,10 @@ describe("seedWorkflowLibrary", () => {
     // The catalog grows as operators add ComfyUI exports; every shipped
     // `.json` is already in the library after the first test.
     const shipped = (await readdir(SHIPPED_DIR,)).filter((entry,) => entry.endsWith(".json",)).toSorted();
-    const deadNodeReasons: Record<string, string> = {
-      "minimax-h3-image-image-edit-v1": "dead node(s) not linked into the graph: 62",
-      "qwen-image-2-1-image-edit-v1": "dead node(s) not linked into the graph: 472, 518",
-    };
-
     expect(outcome.skipped.map((s,) => [s.id, s.reason,]),).toEqual(
       shipped.map((entry,) => {
         const id = entry.replace(/\.json$/, "",);
-        return [id, deadNodeReasons[id] ?? "already in library",];
+        return [id, SHIPPED_SKIP_REASONS[id] ?? "already in library",];
       },),
     );
   });

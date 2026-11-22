@@ -309,6 +309,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   });
 
   it("normalizes a LoRA array and passes every entry through", async () => {
+    stubDiscoveryProbesHealthy();
     const configs = [
       { name: "first", strength: 0.5, backend: "sd-server", },
       { name: "second", strength: 0.6, backend: "sd-server", },
@@ -696,10 +697,12 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
     persistGeneratedCalls.length = 0;
     generateError = null;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   /** Config with an sdcpp provider listed AHEAD of a ComfyUI provider. */
   const sdThenComfyConfig = (comfyUiFirst: boolean | undefined,) => ({
@@ -808,6 +811,7 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
       }),
     }),);
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     // State restore for later suites: this file's mock.module registrations
@@ -847,6 +851,7 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
       }),
     }),);
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   it("knob ON orders the healthy ComfyUI instance ahead of the chain", async () => {
     stubDiscoveryProbesHealthy();
@@ -910,6 +915,7 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
     bindAvatarCalls.length = 0;
     bindError = null;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   it("binds persisted images as variants on an owned actor and returns avatarIds", async () => {
     const { db, } = await createTestDb();
@@ -1005,6 +1011,7 @@ describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
     generateImagesCalls.length = 0;
     persistGeneratedCalls.length = 0;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   /** Seed a user + a chat owned by that user (passes checkChatAccess). */
   async function seedBgChat(db: Kysely<DB>, userId: string, chatId: string,) {
@@ -1209,11 +1216,13 @@ describeOrSkip("handleImageGeneration — workflow selection", () => {
     failoverOptsCalls.length = 0;
     resolvedWorkflowForTests = undefined;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
     resolvedWorkflowForTests = undefined;
   },);
+// hint: Structural change (rename/retype). Check callers of this entity.
 
   it("uses the resolved stored workflow when the body omits workflow", async () => {
     stubDiscoveryProbesHealthy();

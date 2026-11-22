@@ -85,7 +85,14 @@ export async function generateComfyUI(
   sdConfig: ImageProviderConfig,
   opts: ImageGenOptions,
 ): Promise<ImageGenOutcome> {
-  const workflowName = opts.workflow ?? "txt2img";
+  // The chat route still sends legacy category ids; the shipped catalog
+  // exports them with a -v1 suffix. Normalize before guard and load.
+  const workflowName = opts.workflow === "img2img"
+    ? "img2img-v1"
+    : opts.workflow === "txt2img" || opts.workflow === undefined
+    ? "txt2img-v1"
+    : opts.workflow;
+
   const validatedComfy = validateProviderUrl(sdConfig.baseUrl,);
   if (!validatedComfy.ok) {
     return failure(`Invalid ComfyUI URL: ${validatedComfy.error}`, 400,);
@@ -93,7 +100,7 @@ export async function generateComfyUI(
 
   // img2img's LoadImage node needs an uploaded source; without one the
   // substitution would submit an empty filename and produce garbage.
-  if (workflowName === "img2img" && !opts.initImage) {
+  if (workflowName === "img2img-v1" && !opts.initImage) {
     return failure('The "img2img" workflow requires an init image', 400,);
   }
 

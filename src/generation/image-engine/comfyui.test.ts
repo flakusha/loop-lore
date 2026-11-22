@@ -434,7 +434,7 @@ describe("generateComfyUI", () => {
     expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("simple",);
 
     const explicit = stubComfyRun();
-    expect((await generateComfyUI(CONFIG, { ...OPTS, schedulerName: "karras", },)).ok,).toBe(true,);
+    expect((await generateComfyUI(CONFIG, { ...OPTS, scheduler: "karras", },)).ok,).toBe(true,);
     const overridden = JSON.parse(explicit.submitted(),) as SubmittedPrompt;
     expect(overridden.prompt["5"]?.inputs.scheduler,).toBe("karras",);
   });
