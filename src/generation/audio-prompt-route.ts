@@ -21,6 +21,7 @@ import type { DB, } from "../db/schema";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateAudio, registerAudioProviders, resolveAudioProvider, } from "./audio/engine";
+import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
 
 /** Max prompt length accepted per request. */
 const MAX_PROMPT = 2_000;
@@ -30,6 +31,11 @@ const MAX_SECONDS = 300;
 
 /** Default track length when the caller does not ask for one. */
 const DEFAULT_SECONDS = 30;
+
+/** 409 response when the generation was cancelled while audio rendered. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 interface AudioGenBody {
   /** Natural-language prompt for the audio model. */
@@ -82,6 +88,8 @@ export async function handleAudioGeneration(
     const access = await checkChatAccess(db, resolvedChatId, userId, userRole,);
     if (!access.ok) { return forbiddenResponse(); }
   }
+
+  const discard = registerDiscardOnCancel(resolvedChatId, "tts",);
 
   const prompt = typeof req.prompt === "string" ? req.prompt.trim() : "";
   if (!prompt || prompt.length > MAX_PROMPT) {
@@ -137,6 +145,8 @@ export async function handleAudioGeneration(
     );
   }
 
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
   const assetId = uid();
   const filename = `audio-${assetId.slice(0, 8,)}.wav`;
   const { asset, } = await createAsset({
@@ -153,6 +163,8 @@ export async function handleAudioGeneration(
     },
     uploadDir: config.assets.uploadDir,
   },);
+
+  if (discard.isDiscarded()) { return cancelledResponse(); }
 
   if (req.messageId) {
     await linkAsset({
