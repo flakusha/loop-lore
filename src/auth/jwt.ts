@@ -195,6 +195,19 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
       return { valid: false, error: "Invalid signature", };
     }
 
+    // Assert the JOSE header before any header-derived value (e.g. `kid`)
+    // could be trusted. Verification above is always HMAC-SHA256, so a
+    // forged `alg` must never steer verification down another algorithm.
+    const headerStr = new TextDecoder().decode(base64urlDecode(headerB64,),);
+    const headerParsed = safeJsonParse<Record<string, unknown>>(headerStr,);
+    if (
+      !headerParsed.ok || !headerParsed.value ||
+      typeof headerParsed.value !== "object" || Array.isArray(headerParsed.value,) ||
+      headerParsed.value.alg !== "HS256" || headerParsed.value.typ !== "JWT"
+    ) {
+      return { valid: false, error: "Invalid header", };
+    }
+
     const payloadBytes = base64urlDecode(payloadB64,);
     const payloadStr = new TextDecoder().decode(payloadBytes,);
     // Defense-in-depth: a malformed payload must NOT silently coerce to {} —

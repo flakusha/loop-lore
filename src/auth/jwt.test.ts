@@ -220,3 +220,67 @@ describe("verifyJwt — payload hardening (regression)", () => {
     }
   });
 });
+
+/**
+ * Sign a token with a deliberately forged JOSE header but a valid HMAC
+ * signature and otherwise-valid payload — only the header is under test.
+ * @param headerJson
+ */
+async function tokenWithHeader(headerJson: string,): Promise<string> {
+  const payloadB64 = base64urlEncode(JSON.stringify({
+    sub: USER,
+    role: ROLE,
+    sid: SID,
+    iat: 0,
+    exp: Math.floor(Date.now() / 1000,) + 3600,
+  },),);
+
+  return signRaw(base64urlEncode(headerJson,), payloadB64, SECRET,);
+}
+
+describe("verifyJwt — JOSE header assertion (regression)", () => {
+  test("rejects a validly-signed token with alg:none header", async () => {
+    const token = await tokenWithHeader(JSON.stringify({ alg: "none", typ: "JWT", },),);
+    const result = await verifyJwt({ secret: SECRET, token, },);
+    expect(result.valid,).toBe(false,);
+    if (!result.valid) {
+      expect(result.error,).toBe("Invalid header",);
+    }
+  });
+
+  test("rejects a validly-signed token with alg:RS256 header", async () => {
+    const token = await tokenWithHeader(JSON.stringify({ alg: "RS256", typ: "JWT", },),);
+    const result = await verifyJwt({ secret: SECRET, token, },);
+    expect(result.valid,).toBe(false,);
+    if (!result.valid) {
+      expect(result.error,).toBe("Invalid header",);
+    }
+  });
+
+  test("rejects a validly-signed token with a wrong typ", async () => {
+    const token = await tokenWithHeader(JSON.stringify({ alg: "HS256", typ: "JWE", },),);
+    const result = await verifyJwt({ secret: SECRET, token, },);
+    expect(result.valid,).toBe(false,);
+    if (!result.valid) {
+      expect(result.error,).toBe("Invalid header",);
+    }
+  });
+
+  test("rejects a validly-signed token with a malformed header", async () => {
+    const token = await tokenWithHeader("not-json",);
+    const result = await verifyJwt({ secret: SECRET, token, },);
+    expect(result.valid,).toBe(false,);
+    if (!result.valid) {
+      expect(result.error,).toBe("Invalid header",);
+    }
+  });
+
+  test("rejects a validly-signed token with a null header", async () => {
+    const token = await tokenWithHeader("null",);
+    const result = await verifyJwt({ secret: SECRET, token, },);
+    expect(result.valid,).toBe(false,);
+    if (!result.valid) {
+      expect(result.error,).toBe("Invalid header",);
+    }
+  });
+});
