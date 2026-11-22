@@ -5,7 +5,7 @@
  * Peer dispatch composed with provider failover: the single-retry rule, the
  * discard-partial-output rule, and an unchanged local path.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import {
   CancelReason,
   CancelSource,
@@ -20,8 +20,10 @@ import {
   dispatchPeerWorkload,
   PeerWorkExhaustedError,
   PeerWorkPartialOutputError,
+  PeerWorkQuotaError,
 } from "./peer-dispatch";
-import { type PeerRouteDecision, PeerRouteReason, } from "./peer-router";
+import { peerCircuitOpen, resetPeerHealth, } from "./peer-health";
+import { type PeerRouteDecision, PeerRouteReason, resolvePeerRoute, } from "./peer-router";
 import { type PeerWorkAttempt, } from "./peer-work-client";
 import { type PeerWorkRunRequest, } from "./peer-work-wire";
 
@@ -379,5 +381,61 @@ describe("dispatchPeerWorkload - composed with provider failover", () => {
 
     expect(second,).toBe(RESPONSE,);
     expect(scheduled,).toEqual(["scheduled", "scheduled-after-peer",],);
+  });
+});
+
+describe("dispatchPeerWorkload — quota 429", () => {
+  const QUOTA_PEER = "https://quota-dispatch.example";
+
+  beforeEach(() => {
+    resetPeerHealth();
+  },);
+
+  afterEach(() => {
+    resetPeerHealth();
+  },);
+
+  test("a 429 peer is excluded and never retried locally", async () => {
+    let localCalls = 0;
+    const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(QUOTA_PEER,),
+      request: wireRequest(),
+      local: () => {
+        localCalls += 1;
+        return Promise.resolve(RESPONSE,);
+      },
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: {
+          code: "federation.quota_exceeded",
+          status: 429,
+          message: "budget exceeded",
+          retryAfterSec: 30,
+        },
+      })) as RunPeerSeam,
+    },).catch((error: unknown,) => error);
+
+    expect(thrown,).toBeInstanceOf(PeerWorkQuotaError,);
+    expect((thrown as PeerWorkQuotaError).retryAfterSec,).toBe(30,);
+    expect(localCalls,).toBe(0,);
+    expect(peerCircuitOpen({ origin: QUOTA_PEER, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    const target = peerDecision(QUOTA_PEER,);
+    if (target.target !== "peer") { throw new Error("expected a peer decision",); }
+
+    const decision = resolvePeerRoute({
+      federationEnabled: true,
+      workloadClass: PeerWorkloadClass.Chat,
+      peers: [target.peer,],
+      matrix: { preferences: { [PeerWorkloadClass.Chat]: [QUOTA_PEER,], }, },
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },);
+
+    expect(decision.target,).toBe("local",);
+    expect(decision.excluded,).toEqual([
+      { origin: QUOTA_PEER, reason: "circuit-open", },
+    ],);
   });
 });

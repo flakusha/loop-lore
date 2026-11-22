@@ -31,9 +31,10 @@ import {
   PeerWorkErrorCode,
   type PeerWorkRunRequest,
 } from "../federation/peer-work-wire";
+import { admitPeerWork, } from "../federation/performance-quota-guard";
 import { getChildLogger, } from "../logger";
 import { type MeshRouteOpts, } from "./federation-mesh";
-import { API_META, type ErrorCode, HttpStatus, type HttpStatusCode, } from "./http-utils";
+import { API_META, ErrorCode, HttpStatus, type HttpStatusCode, } from "./http-utils";
 
 /** 499 is a non-standard "client closed request"; no constant exists for it. */
 const HTTP_CLIENT_CLOSED = 499;
@@ -54,6 +55,7 @@ const ENVELOPE_CODE: Record<PeerWorkErrorCode, ErrorCode> = {
   [PeerWorkErrorCode.ClassNotAllowed]: "FORBIDDEN",
   [PeerWorkErrorCode.CredentialRejected]: "FORBIDDEN",
   [PeerWorkErrorCode.InvalidRequest]: "BAD_REQUEST",
+  [PeerWorkErrorCode.QuotaExceeded]: ErrorCode.TooManyRequests,
   [PeerWorkErrorCode.Failed]: "SERVER_ERROR",
   [PeerWorkErrorCode.Cancelled]: "SERVER_ERROR",
 };
@@ -163,7 +165,13 @@ export function mountPeerWorkApi(app: Elysia, opts: PeerWorkRouteOpts,): void {
       abort.abort();
     }, { once: true, },);
 
-    return streamPeerWork({ parsed, abort, encoder, executor: opts.runWorkload, },);
+    return streamPeerWork({
+      parsed,
+      abort,
+      encoder,
+      executor: opts.runWorkload,
+      origin: admission.origin,
+    },);
   }, {
     detail: {
       summary: "Run a workload class for a trusted federation peer",
@@ -182,6 +190,7 @@ export function mountPeerWorkApi(app: Elysia, opts: PeerWorkRouteOpts,): void {
  * @param options.abort Bridges the caller's disconnect to the executor.
  * @param options.encoder
  * @param options.executor
+ * @param options.origin Authorized caller origin, the budget cell key.
  * @returns {Promise<Response>}
  */
 async function streamPeerWork(options: {
@@ -189,8 +198,9 @@ async function streamPeerWork(options: {
   abort: AbortController;
   encoder: TextEncoder;
   executor: PeerWorkExecutor;
+  origin: string;
 },): Promise<Response> {
-  const { parsed, abort, encoder, executor, } = options;
+  const { parsed, abort, encoder, executor, origin, } = options;
   let settle!: (verdict: StreamVerdict,) => void;
   let streaming = false;
   const verdict = new Promise<StreamVerdict>((resolve,) => {
@@ -209,14 +219,26 @@ async function streamPeerWork(options: {
       };
 
       try {
-        await executor.run({
-          request: parsed,
-          onChunk: (chunk,) => {
-            const line = encodePeerWorkChunk(chunk,);
-            if (line !== null) { emit(line,); }
-          },
-          signal: abort.signal,
-        },);
+        // One seam: the slot is held for the whole generation, and a refusal
+        // is returned verbatim (structured 429) before any bytes are streamed.
+        const admitted = await admitPeerWork({
+          origin,
+          workloadClass: parsed.workloadClass,
+          peerTrusted: true,
+        }, () =>
+          executor.run({
+            request: parsed,
+            onChunk: (chunk,) => {
+              const line = encodePeerWorkChunk(chunk,);
+              if (line !== null) { emit(line,); }
+            },
+            signal: abort.signal,
+          },),);
+
+        if (!admitted.admitted) {
+          settle({ ok: false, response: admitted.response, },);
+          return;
+        }
 
         if (!streaming) {
           streaming = true;

@@ -10,7 +10,7 @@ import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { type Config, type FederationConfig, } from "../config/schema";
 import { type Db, } from "../db";
-import { PeerAuthMode, PeerWorkloadClass, } from "../db/enums";
+import { PeerAuthMode, PeerBudgetMode, PeerWorkloadClass, } from "../db/enums";
 import { setPeerState, upsertPeer, } from "../federation/coordinator";
 import {
   listWorkloadPeers,
@@ -28,9 +28,13 @@ import {
   PEER_WORK_STREAM_TYPE,
   type PeerWorkRunRequest,
 } from "../federation/peer-work-wire";
+import {
+  configurePerformanceQuota,
+  resetPerformanceQuota,
+} from "../federation/performance-quota";
 import { assertTrustedPeer, } from "../federation/sharing";
 import { type ChunkEvent, type GenerateResponse, } from "../generation/providers/types";
-import { createTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
 import { mountPeerWorkApi, } from "./federation-peer-work";
 
 const SECRET = "peer-wire-secret-0123456789";
@@ -769,5 +773,71 @@ describe("peer-work route — the documented trust boundary", () => {
 
     expect(res.status,).toBe(403,);
     expect(executor.calls,).toHaveLength(0,);
+  });
+});
+
+describe("peer-work route — capacity admission", () => {
+  const QUOTA_ORIGIN = "https://quota-admission.example";
+  const QUOTA_TOKEN = "quota-admission-token";
+
+  test("a configured hard budget refuses inbound work with a structured 429", async () => {
+    const fixture = await createTestDb();
+    const { db, } = fixture;
+    resetPerformanceQuota();
+    configurePerformanceQuota({
+      enabled: true,
+      budgets: [{
+        origin: QUOTA_ORIGIN,
+        workloadClass: PeerWorkloadClass.Chat,
+        mode: PeerBudgetMode.Hard,
+        maxConcurrency: null,
+        maxQueueDepth: null,
+        requestsPerMinute: 1,
+        tokensPerMinute: null,
+      },],
+    },);
+
+    try {
+      await savePeerWorkload(db, {
+        origin: QUOTA_ORIGIN,
+        authMode: PeerAuthMode.Tls,
+        sharedToken: QUOTA_TOKEN,
+        encryptionKey: SECRET,
+        allowedWorkloadClasses: [PeerWorkloadClass.Chat,],
+        workloadTrust: true,
+      },);
+
+      await upsertPeer(db, {
+        origin: QUOTA_ORIGIN,
+        state: "trusted",
+        capabilities: [PeerWorkloadClass.Chat,],
+      },);
+
+      const executor = executorFor(HAPPY_CHUNKS,);
+      const app = new Elysia();
+      mountPeerWorkApi(app, {
+        config: ENABLED,
+        database: db,
+        encryptionKey: SECRET,
+        runWorkload: executor,
+      },);
+
+      const headers = {
+        [PEER_ORIGIN_HEADER]: QUOTA_ORIGIN,
+        authorization: `Bearer ${QUOTA_TOKEN}`,
+      };
+
+      const first = await app.handle(post(wireRequest(), headers,),);
+      const second = await app.handle(post(wireRequest(), headers,),);
+
+      expect(first.status,).toBe(200,);
+      expect(executor.calls,).toHaveLength(1,);
+      expect(second.status,).toBe(429,);
+      expect(second.headers.get("retry-after",),).not.toBeNull();
+      expect((await rejection(second,)).errorCode,).toBe("federation.quota_exceeded",);
+    } finally {
+      resetPerformanceQuota();
+      await destroyTestDb(fixture,);
+    }
   });
 });

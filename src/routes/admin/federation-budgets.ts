@@ -21,6 +21,7 @@ import {
 } from "../../federation/peer-assignment-matrix";
 import {
   listPerformanceBudgets,
+  reloadPerformanceQuota,
 } from "../../federation/performance-quota-store";
 import {
   BudgetValidationError,
@@ -87,6 +88,7 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
 
         try {
           await writePerformanceBudget({ database: db, input, },);
+          await reloadPerformanceQuota({ database: db, enabled: opts.federationEnabled, },);
         } catch (error) {
           if (error instanceof BudgetValidationError) { return budgetRejection(error,); }
           throw error;
@@ -133,6 +135,7 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
           workloadClass: ctx.params.workloadClass,
         },);
 
+        await reloadPerformanceQuota({ database: db, enabled: opts.federationEnabled, },);
         await auditFederationChange({
           database: db,
           actorId,

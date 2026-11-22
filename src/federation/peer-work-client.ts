@@ -30,7 +30,7 @@ import {
   parsePeerWorkChunkLine,
   PEER_ORIGIN_HEADER,
   PEER_WORK_RUN_PATH,
-  type PeerWorkErrorCode,
+  PeerWorkErrorCode,
   type PeerWorkRunRequest,
   readPeerWorkErrorCode,
 } from "./peer-work-wire";
@@ -46,6 +46,8 @@ export interface PeerWorkFailure {
   code: PeerWorkFailureCode;
   status: number;
   message: string;
+  /** Advertised cooldown from a 429 Retry-After header, in whole seconds. */
+  retryAfterSec?: number;
 }
 
 /** The outcome of one peer attempt. `emitted` is what the caller already saw. */
@@ -95,10 +97,18 @@ async function failureFromRejection(response: Response,): Promise<PeerWorkFailur
   }
 
   const fallback = `peer workload rejected with ${response.status}`;
-  const code = readPeerWorkErrorCode(raw,);
-  return code === null
-    ? { code: "transport", status: response.status, message: envelopeMessage(raw, fallback,), }
-    : { code, status: response.status, message: envelopeMessage(raw, fallback,), };
+  const parsedCode = readPeerWorkErrorCode(raw,);
+  const code = parsedCode ?? (response.status === 429 ? PeerWorkErrorCode.QuotaExceeded : null);
+  const rawRetryAfter = response.status === 429 ? response.headers.get("retry-after",) : null;
+  const seconds = rawRetryAfter === null ? Number.NaN : Number(rawRetryAfter,);
+  const retryAfterSec = Number.isFinite(seconds,) && seconds > 0 ? Math.ceil(seconds,) : undefined;
+
+  return {
+    code: code ?? "transport",
+    status: response.status,
+    message: envelopeMessage(raw, fallback,),
+    ...(retryAfterSec === undefined ? {} : { retryAfterSec, }),
+  };
 }
 
 /**

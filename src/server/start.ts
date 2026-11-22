@@ -147,6 +147,13 @@ export async function start() {
   const logger = getLogger();
   bindSharedQuotaEngine(database,);
 
+  // Federation budgets live in in-process counters: reload the persisted rows
+  // before the first peer-work request can reach the admission guard.
+  if (config.federation?.enabled === true) {
+    const { reloadPerformanceQuota, } = await import("../federation/performance-quota-store");
+    await reloadPerformanceQuota({ database, enabled: true, },);
+  }
+
   // ── Periodic key rotation + telemetry retention ──────────
   // Owned by the cron scheduler (started in createApp below): jobs
   // `crypto.key-rotation-check` and `telemetry.retention`. No raw timers here.

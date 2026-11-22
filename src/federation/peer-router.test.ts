@@ -9,7 +9,7 @@
  * Consumer-visible behaviour only — every assertion is about WHICH target the
  * policy picks, never about how it is wired.
  */
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { PeerAuthMode, PeerInstanceKind, PeerLinkKind, PeerWorkloadClass, } from "../db/enums";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -539,5 +539,95 @@ describe("sticky assignment store", () => {
 
     const rows = await db.selectFrom("mesh_work_assignments",).select("peer_origin",).execute();
     expect(rows,).toHaveLength(1,);
+  });
+});
+
+describe("resolvePeerRoute — local load competes with peers", () => {
+  const BUSY = "https://balancing-busy.example";
+  const IDLE = "https://balancing-idle.example";
+
+  beforeEach(() => {
+    resetPeerHealth();
+  },);
+
+  afterEach(() => {
+    resetPeerHealth();
+  },);
+
+  test("a saturated local chain offloads to a peer with headroom", () => {
+    loadPeer(BUSY, 1, 4,);
+    const decision = resolvePeerRoute(input({
+      workloadClass: PeerWorkloadClass.Embedding,
+      peers: [peer(BUSY,),],
+      matrix: matrixFor({ embedding: [BUSY,], },),
+      localLoad: { inFlight: 32, maxConcurrency: 32, },
+    },),);
+
+    expect(decision.target,).toBe("peer",);
+    expect(decision.reason,).toBe(PeerRouteReason.Ranked,);
+  });
+
+  test("an idle local chain beats a saturated peer", () => {
+    loadPeer(BUSY, 4, 4,);
+    const decision = resolvePeerRoute(input({
+      workloadClass: PeerWorkloadClass.Embedding,
+      peers: [peer(BUSY,),],
+      matrix: matrixFor({ embedding: [BUSY,], },),
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },),);
+
+    expect(decision.target,).toBe("local",);
+    expect(decision.reason,).toBe(PeerRouteReason.LocalPreferred,);
+  });
+
+  test("without local load the legacy peer-only ranking is unchanged", () => {
+    loadPeer(BUSY, 4, 4,);
+    const decision = resolvePeerRoute(input({
+      workloadClass: PeerWorkloadClass.Embedding,
+      peers: [peer(BUSY,),],
+      matrix: matrixFor({ embedding: [BUSY,], },),
+    },),);
+
+    expect(decision.target,).toBe("peer",);
+  });
+
+  test("a surviving sticky pin outranks local preference", () => {
+    const decision = resolvePeerRoute(input({
+      workloadClass: PeerWorkloadClass.Chat,
+      affinityKey: "session-load",
+      peers: [peer(BUSY,), peer(IDLE,),],
+      matrix: matrixFor({ chat: [BUSY, IDLE,], },),
+      assignment: {
+        affinityKey: "session-load",
+        workloadClass: PeerWorkloadClass.Chat,
+        peerOrigin: BUSY,
+      },
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },),);
+
+    expect(decision.target,).toBe("peer",);
+    expect(decision.reason,).toBe(PeerRouteReason.StickyAssignment,);
+    expect(decision.target === "peer" ? decision.peer.origin : "",).toBe(BUSY,);
+  });
+
+  test("federation off and an empty matrix still resolve local", () => {
+    const off = resolvePeerRoute(input({
+      federationEnabled: false,
+      workloadClass: PeerWorkloadClass.Chat,
+      peers: [peer(BUSY,),],
+      matrix: matrixFor({ chat: [BUSY,], },),
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },),);
+
+    expect(off.reason,).toBe(PeerRouteReason.FederationDisabled,);
+
+    const empty = resolvePeerRoute(input({
+      workloadClass: PeerWorkloadClass.Chat,
+      peers: [peer(BUSY,),],
+      matrix: matrixFor({ chat: [], },),
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },),);
+
+    expect(empty.reason,).toBe(PeerRouteReason.NoMatrixRow,);
   });
 });

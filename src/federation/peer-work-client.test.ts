@@ -302,3 +302,53 @@ describe("runPeerWorkload", () => {
     expect(sink.signal?.aborted,).toBe(true,);
   });
 });
+
+describe("runPeerWorkload — quota 429", () => {
+  test("a namespaced 429 carries the routable code and advertised Retry-After", async () => {
+    const response = new Response(
+      JSON.stringify({
+        error: "budget exceeded",
+        data: { error_code: "federation.quota_exceeded", retry_after_sec: 7, },
+      },),
+      {
+        status: 429,
+        headers: { "retry-after": "7", },
+      },
+    );
+
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(response,),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.code,).toBe("federation.quota_exceeded",);
+    expect(attempt.failure.status,).toBe(429,);
+    expect(attempt.failure.retryAfterSec,).toBe(7,);
+    expect(attempt.emitted,).toBe(0,);
+  });
+
+  test("a 429 without an envelope still routes as quota exceeded", async () => {
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: { origin: "https://quota-client.example", },
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(
+        new Response("busy", {
+          status: 429,
+          headers: { "retry-after": "2.4", },
+        },),
+      ),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.code,).toBe("federation.quota_exceeded",);
+    expect(attempt.failure.retryAfterSec,).toBe(3,);
+  });
+});

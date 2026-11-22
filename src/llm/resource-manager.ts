@@ -70,6 +70,15 @@ export class ResourceManager {
   }
 
   /**
+   * Concurrency ceiling for one provider (the global max unless overridden).
+   * @param provider Provider key.
+   * @returns The ceiling used by that provider limiter.
+   */
+  capacityFor(provider: string,): number {
+    return this.providerMax[provider] ?? this.defaultMax;
+  }
+
+  /**
    * Submit a request. Resolves once the executor finishes.
    * @param req - scheduled request (duplicate ids rejected)
    * @returns the schedule handle
