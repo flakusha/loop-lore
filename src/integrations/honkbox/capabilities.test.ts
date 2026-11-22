@@ -69,6 +69,7 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       python_sidecar: false,
       texture_postprocess: false,
       fizgig: false,
+      residency_control: false,
       jobs: true,
       events: true,
       vad: false,
@@ -131,6 +132,7 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.features.pythonSidecar,).toBe(false,);
     expect(caps.features.texturePostprocess,).toBe(false,);
     expect(caps.features.fizgig,).toBe(false,);
+    expect(caps.features.residencyControl,).toBe(false,);
 
     expect(caps.features.jobs,).toBe(true,);
     expect(caps.formats.read,).toEqual(["png", "jpeg",],);
@@ -218,9 +220,15 @@ describe("parseHonkboxCapabilities", () => {
   });
 
   test("parses rerank, python sidecar, texture postprocess and fizgig flags", () => {
-    const flags = ["rerank", "python_sidecar", "texture_postprocess", "fizgig",] as const;
+    const flags = ["rerank", "python_sidecar", "texture_postprocess", "fizgig", "residency_control",] as const;
     const parsed = parseHonkboxCapabilities(capabilitiesDoc({
-      features: { rerank: true, python_sidecar: true, texture_postprocess: true, fizgig: true, },
+      features: {
+        rerank: true,
+        python_sidecar: true,
+        texture_postprocess: true,
+        fizgig: true,
+        residency_control: true,
+      },
     },),);
 
     expect(parsed.ok,).toBe(true,);
@@ -229,6 +237,7 @@ describe("parseHonkboxCapabilities", () => {
     expect(parsed.capabilities.features.pythonSidecar,).toBe(true,);
     expect(parsed.capabilities.features.texturePostprocess,).toBe(true,);
     expect(parsed.capabilities.features.fizgig,).toBe(true,);
+    expect(parsed.capabilities.features.residencyControl,).toBe(true,);
 
     const probe = {
       ok: true,
@@ -245,7 +254,7 @@ describe("parseHonkboxCapabilities", () => {
     for (
       const features of [
         {},
-        { rerank: "yes", python_sidecar: 1, texture_postprocess: null, fizgig: "yes", },
+        { rerank: "yes", python_sidecar: 1, texture_postprocess: null, fizgig: "yes", residency_control: "yes", },
       ]
     ) {
       const tolerant = parseHonkboxCapabilities(capabilitiesDoc({ features, },),);
@@ -548,6 +557,7 @@ describe("registry constants and URL helpers", () => {
       "python_sidecar",
       "texture_postprocess",
       "fizgig",
+      "residency_control",
     ],);
   });
 

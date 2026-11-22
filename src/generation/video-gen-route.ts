@@ -20,6 +20,7 @@ import { loadConfig, } from "../config/load";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { getHonkboxCapabilities, isHonkboxFeatureEnabled, } from "../integrations/honkbox/capabilities";
 import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
@@ -57,7 +58,8 @@ function cancelledResponse(): Response {
  * intentionally unused (the base resolves from app config — explicit base or
  * `generation.autoStart.llamaSwap.listenPort` from the spawned proxy — never
  * request input). A dead proxy is reported loud (`probeOk:false` + warn) but
- * never aborts the render (runVideoPreDispatchHook logs).
+ * never aborts the render (runVideoPreDispatchHook logs). With HONKBOX_* set
+ * and residency_control advertised, honkbox owns the single GPU slot.
  */
 setVideoPreDispatchHook(async () => {
   let listenPort: number | undefined;
@@ -72,7 +74,22 @@ setVideoPreDispatchHook(async () => {
     listenPort = undefined;
   }
 
-  await releaseModelsForRender({ listenPort, },);
+  const honkboxBaseUrl = process.env.HONKBOX_BASE_URL;
+  if (!honkboxBaseUrl) {
+    await releaseModelsForRender({ listenPort, },);
+    return;
+  }
+
+  const apiKey = process.env.HONKBOX_API_KEY;
+  const honkboxProbe = await getHonkboxCapabilities({ baseUrl: honkboxBaseUrl, apiKey, },);
+  if (!isHonkboxFeatureEnabled(honkboxProbe, "residency_control",)) {
+    await releaseModelsForRender({ listenPort, },);
+    return;
+  }
+
+  await releaseModelsForRender({
+    honkbox: { baseUrl: honkboxBaseUrl, apiKey, probe: honkboxProbe, },
+  },);
 },);
 
 /** Request body — prompt is required unless a template renders it. */

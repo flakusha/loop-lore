@@ -52,6 +52,7 @@ export const HONKBOX_FEATURE_KEYS = [
   "python_sidecar",
   "texture_postprocess",
   "fizgig",
+  "residency_control",
 ] as const;
 
 /** */
@@ -109,6 +110,7 @@ export interface HonkboxFeatureFlags {
   readonly pythonSidecar?: boolean;
   readonly texturePostprocess?: boolean;
   readonly fizgig?: boolean;
+  readonly residencyControl?: boolean;
 }
 
 /** One writable container (`Formats::write`). */
@@ -511,6 +513,8 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.texturePostprocess === true;
     case "fizgig":
       return capabilities.features.fizgig === true;
+    case "residency_control":
+      return capabilities.features.residencyControl === true;
   }
 }
 
@@ -613,6 +617,7 @@ export function parseHonkboxCapabilities(
         pythonSidecar: asBool(features?.python_sidecar,),
         texturePostprocess: asBool(features?.texture_postprocess,),
         fizgig: asBool(features?.fizgig,),
+        residencyControl: asBool(features?.residency_control,),
       },
       formats: {
         read: asStringArray(formats?.read,),
