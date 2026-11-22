@@ -116,8 +116,13 @@ class WorkflowLoader {
       const fileStat = await stat(dirPath,);
       const currentMtime = fileStat.mtimeMs;
 
-      // Skip reload if directory hasn't changed
-      if (currentMtime <= this.dirMtime && this.cache.size > 0) {
+      // Skip reload if the directory and every cached file are unchanged.
+      // A directory stat alone misses in-place overwrites of a workflow file.
+      if (
+        currentMtime <= this.dirMtime &&
+        this.cache.size > 0 &&
+        !(await this.invalidateStaleEntries())
+      ) {
         return;
       }
 
@@ -197,6 +202,28 @@ class WorkflowLoader {
     }
 
     getLogger().info({ message: "Workflows loaded", count: this.cache.size, dir: dirPath, },);
+  }
+
+  /**
+   * Drop cached workflows whose file was edited since it was read.
+   * Directory mtime does not change on an in-place overwrite.
+   * @returns Whether any entry was invalidated
+   */
+  private async invalidateStaleEntries(): Promise<boolean> {
+    let invalidated = false;
+    for (const [name, entry,] of this.cache) {
+      try {
+        const fileStat = await stat(entry.meta.path,);
+        if (fileStat.mtimeMs > entry.meta.mtime) {
+          this.cache.delete(name,);
+          invalidated = true;
+        }
+      } catch {
+        // Missing/unreadable file: leave cache alone (existing semantics).
+      }
+    }
+
+    return invalidated;
   }
 
   /** */

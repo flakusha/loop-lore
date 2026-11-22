@@ -10,7 +10,8 @@
  * ships img2img) make the fixture assertions see a ghost workflow.
  */
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
-import { mkdir, rm, writeFile, } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, utimes, writeFile, } from "node:fs/promises";
+import { join, } from "node:path";
 import { createLogger, } from "../../logger/index.js";
 import { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader.js";
 
@@ -98,6 +99,35 @@ describe("getWorkflowLoader", () => {
 
     expect(inputOf(loaded, "5",).cfg,).toBe(9,);
     expect(await loader.getRawWorkflow("missing",),).toBeNull();
+  });
+
+  it("reloads an overwritten workflow without a directory mtime change", async () => {
+    const dir = await mkdtemp(".tmp/wf-loader-mtime-",);
+    const file = join(dir, "graph.json",);
+    const graph = (text: string,) => ({
+      "5": { class_type: "CLIPTextEncode", inputs: { text, }, },
+      "6": { class_type: "SaveImage", inputs: { images: ["5", 0,], }, },
+    });
+
+    try {
+      await writeFile(file, JSON.stringify(graph("FIRST",),),);
+      const dirMtimeBefore = (await stat(dir,)).mtimeMs;
+
+      resetWorkflowLoaderForTests();
+      const loader = getWorkflowLoader(dir,);
+      expect(inputOf(await loader.loadWorkflow({ name: "graph", },), "5",).text,).toBe("FIRST",);
+
+      await writeFile(file, JSON.stringify(graph("SECOND",),),);
+      // Force a strictly newer file mtime without touching the directory.
+      const later = new Date(Date.now() + 60_000,);
+      await utimes(file, later, later,);
+      expect((await stat(dir,)).mtimeMs,).toBe(dirMtimeBefore,);
+
+      expect(inputOf(await loader.loadWorkflow({ name: "graph", },), "5",).text,).toBe("SECOND",);
+    } finally {
+      resetWorkflowLoaderForTests();
+      await rm(dir, { recursive: true, force: true, },);
+    }
   });
 
   it("throws for unknown workflows", async () => {
