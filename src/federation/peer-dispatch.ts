@@ -27,7 +27,7 @@
 import { GenerationCancelledError, } from "../generation/cancellation-actions/error";
 import { type ChunkEvent, type GenerateResponse, } from "../generation/providers/types";
 import { getChildLogger, } from "../logger";
-import { peerCircuitOpen, recordPeerHealthMiss, runPeerAttempt, } from "./peer-health";
+import { notePeerRetryAfter, peerCircuitOpen, recordPeerHealthMiss, runPeerAttempt, } from "./peer-health";
 import { type PeerRouteDecision, } from "./peer-router";
 import { type PeerWorkAttempt, type PeerWorkFailure, runPeerWorkload, } from "./peer-work-client";
 import { PeerWorkErrorCode, type PeerWorkRunRequest, } from "./peer-work-wire";
@@ -169,6 +169,18 @@ export async function dispatchPeerWorkload(options: {
   // Cancellation is the caller's decision, not a peer failure to retry around.
   if (signal?.aborted === true && signal.reason instanceof GenerationCancelledError) {
     throw signal.reason;
+  }
+
+  // If the peer advertised a Retry-After window on the rejection, remember it
+  // for this (peer, class): the NEXT circuit trip cools down for that long
+  // instead of the fixed default. Noting never counts as a failure, so trip
+  // conditions are untouched. Absent/unparseable windows change nothing.
+  if (attempt.failure.retryAfterMs !== undefined) {
+    notePeerRetryAfter({
+      origin: peer.origin,
+      workloadClass: request.workloadClass,
+      retryAfterMs: attempt.failure.retryAfterMs,
+    },);
   }
 
   if (attempt.emitted > 0) {

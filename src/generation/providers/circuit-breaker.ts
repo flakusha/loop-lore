@@ -131,11 +131,19 @@ export class CircuitBreaker {
     }
 
     if (circuit.consecutiveFailures >= cfg.threshold) {
+      const wasOpen = circuit.state === "open";
       circuit.state = "open";
       // Exponential backoff: base * 2^(consecutiveFailures - threshold)
       const backoff = cfg.baseCooldownMs * Math.pow(2, circuit.consecutiveFailures - cfg.threshold,);
-      const cooldown = Math.max(backoff, circuit.retryAfterMs,);
-      circuit.cooldownUntil = Date.now() + Math.min(cooldown, cfg.maxCooldownMs,);
+      // An explicitly advertised Retry-After REPLACES the backoff — it is the
+      // peer's own instruction about when callers may return. Without one, the
+      // exponential backoff applies.
+      const cooldown = circuit.retryAfterMs > 0 ? circuit.retryAfterMs : backoff;
+      const until = Date.now() + Math.min(cooldown, cfg.maxCooldownMs,);
+      // A re-failure while open may EXTEND the running cooldown (e.g. a longer
+      // Retry-After arrived), but never shortens it below what remains — only
+      // a success closes the circuit early.
+      circuit.cooldownUntil = wasOpen ? Math.max(circuit.cooldownUntil, until,) : until;
     }
   }
 

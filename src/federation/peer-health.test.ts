@@ -11,6 +11,7 @@ import {
   beginPeerAttempt,
   configurePeerConcurrency,
   endPeerAttempt,
+  notePeerRetryAfter,
   peerCircuitOpen,
   peerLoad,
   recordPeerHealthMiss,
@@ -150,5 +151,101 @@ describe("per-(peer, class) circuit", () => {
     resetPeerHealth();
     expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
     expect(peerLoad({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },).ewmaLatencyMs,).toBeNull();
+  });
+});
+
+describe("Retry-After cooldown", () => {
+  function tripChat(retryAfterMs?: number,): void {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      recordPeerOutcome({
+        origin: ORIGIN,
+        workloadClass: PeerWorkloadClass.Chat,
+        ok: false,
+        latencyMs: 12,
+        ...(retryAfterMs === undefined ? {} : { retryAfterMs, }),
+      },);
+    }
+  }
+
+  test("an advertised window drives the cooldown instead of the fixed default", () => {
+    tripChat(60_000,);
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 10_000;
+    // The fixed 10s default would have half-opened here; the advertised 60s holds.
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 50_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("an absent window keeps the fixed default cooldown", () => {
+    tripChat();
+    now += 10_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("windows are clamped to 1s..300s", () => {
+    tripChat(400_000,);
+    now += 300_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+
+    resetPeerHealth();
+    now = 1_000_000;
+    tripChat(500,);
+    now += 1_000;
+    // Sub-second advertisements clamp up to the 1s floor, not the 10s default.
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("concurrent advertisements: the last recorded window wins", () => {
+    notePeerRetryAfter({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, retryAfterMs: 60_000, },);
+    notePeerRetryAfter({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, retryAfterMs: 5_000, },);
+    recordPeerHealthMiss(ORIGIN, [PeerWorkloadClass.Chat, PeerWorkloadClass.Chat, PeerWorkloadClass.Chat,],);
+    now += 5_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("noting a window alone never trips or opens a circuit", () => {
+    notePeerRetryAfter({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, retryAfterMs: 60_000, },);
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("a longer window while open extends; a shorter one never shortens", () => {
+    tripChat(60_000,);
+    now += 10_000;
+    // Shorter advertisement must not move the cooldown earlier…
+    recordPeerOutcome({
+      origin: ORIGIN,
+      workloadClass: PeerWorkloadClass.Chat,
+      ok: false,
+      latencyMs: 1,
+      retryAfterMs: 1_000,
+    },);
+
+    now += 20_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    // …and a longer one extends past the original 60s.
+    recordPeerOutcome({
+      origin: ORIGIN,
+      workloadClass: PeerWorkloadClass.Chat,
+      ok: false,
+      latencyMs: 1,
+      retryAfterMs: 300_000,
+    },);
+
+    now += 35_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+    now += 265_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("a success clears a noted window and restores the default", () => {
+    notePeerRetryAfter({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, retryAfterMs: 60_000, },);
+    recordPeerOutcome({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, ok: true, latencyMs: 5, },);
+    tripChat();
+    now += 10_000;
+    expect(peerCircuitOpen({ origin: ORIGIN, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
   });
 });

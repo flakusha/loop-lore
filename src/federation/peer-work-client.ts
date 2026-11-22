@@ -45,11 +45,29 @@ export type PeerWorkFailureCode = PeerWorkErrorCode | "transport" | "protocol" |
 export interface PeerWorkFailure {
   code: PeerWorkFailureCode;
   status: number;
-  message: string;
   /** Advertised cooldown from a 429 Retry-After header, in whole seconds. */
   retryAfterSec?: number;
+  /** Retry-After (ms) the peer advertised on the rejection, when parseable.
+   *  Only a plain seconds integer counts; an HTTP-date or garbage leaves this
+   *  unset so the peer circuit falls back to its fixed default cooldown. */
+  retryAfterMs?: number;
 }
 
+/**
+ * Parse a `Retry-After` value into milliseconds. Only the seconds-integer form
+ * is honored — an HTTP-date would require trusting peer clock alignment, so it
+ * (and anything unparseable) yields `undefined` and the caller keeps its
+ * default cooldown.
+ * @param raw The raw header value, if any.
+ * @returns Milliseconds, or undefined when absent/invalid.
+ */
+export function parsePeerRetryAfterMs(raw: string | null | undefined,): number | undefined {
+  if (raw === undefined || raw === null) { return undefined; }
+  const trimmed = raw.trim();
+  if (!/^\d+$/.test(trimmed,)) { return undefined; }
+  const ms = Number(trimmed,) * 1000;
+  return Number.isFinite(ms,) && ms > 0 ? ms : undefined;
+}
 /** The outcome of one peer attempt. `emitted` is what the caller already saw. */
 export type PeerWorkAttempt =
   | { ok: true; response: GenerateResponse; emitted: number }
@@ -102,12 +120,14 @@ async function failureFromRejection(response: Response,): Promise<PeerWorkFailur
   const rawRetryAfter = response.status === 429 ? response.headers.get("retry-after",) : null;
   const seconds = rawRetryAfter === null ? Number.NaN : Number(rawRetryAfter,);
   const retryAfterSec = Number.isFinite(seconds,) && seconds > 0 ? Math.ceil(seconds,) : undefined;
+  const retryAfterMs = parsePeerRetryAfterMs(rawRetryAfter,);
 
   return {
     code: code ?? "transport",
     status: response.status,
     message: envelopeMessage(raw, fallback,),
     ...(retryAfterSec === undefined ? {} : { retryAfterSec, }),
+    ...(retryAfterMs === undefined ? {} : { retryAfterMs, }),
   };
 }
 

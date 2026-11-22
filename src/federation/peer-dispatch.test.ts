@@ -27,6 +27,14 @@ import { type PeerRouteDecision, PeerRouteReason, resolvePeerRoute, } from "./pe
 import { type PeerWorkAttempt, } from "./peer-work-client";
 import { type PeerWorkRunRequest, } from "./peer-work-wire";
 
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Peer dispatch composed with provider failover: the single-retry rule, the
+ * discard-partial-output rule, and an unchanged local path.
+ */
+
 type RunPeerSeam = NonNullable<Parameters<typeof dispatchPeerWorkload>[0]["runPeer"]>;
 
 /** This instance's own origin — the identity a receiver authorizes. */
@@ -381,6 +389,71 @@ describe("dispatchPeerWorkload - composed with provider failover", () => {
 
     expect(second,).toBe(RESPONSE,);
     expect(scheduled,).toEqual(["scheduled", "scheduled-after-peer",],);
+  });
+});
+
+describe("dispatchPeerWorkload - Retry-After propagation", () => {
+  const realNow = Date.now;
+  let now = 2_000_000;
+
+  beforeEach(() => {
+    resetPeerHealth();
+    now = 2_000_000;
+    Date.now = () => now;
+  },);
+
+  afterEach(() => {
+    Date.now = realNow;
+    resetPeerHealth();
+  },);
+
+  test("a peer-advertised window becomes the NEXT trip's cooldown", async () => {
+    await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(),
+      request: wireRequest(),
+      local: () => Promise.resolve(RESPONSE,),
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: { code: "transport", status: 429, message: "rate limited", retryAfterMs: 60_000, },
+      })) as RunPeerSeam,
+    },).catch(() => undefined);
+
+    // The note alone must not trip anything.
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 10_000;
+    // The fixed 10s default would have half-opened; the advertised 60s holds.
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 50_000;
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("a failure without an advertised window leaves the default untouched", async () => {
+    await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(),
+      request: wireRequest(),
+      local: () => Promise.resolve(RESPONSE,),
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: { code: "transport", status: 502, message: "peer down", },
+      })) as RunPeerSeam,
+    },).catch(() => undefined);
+
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    now += 10_000;
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
   });
 });
 

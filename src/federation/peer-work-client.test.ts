@@ -11,7 +11,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { ChunkEvent, } from "../generation/providers/types";
-import { PEER_WORK_DEFAULT_TIMEOUT_MS, runPeerWorkload, } from "./peer-work-client";
+import { parsePeerRetryAfterMs, PEER_WORK_DEFAULT_TIMEOUT_MS, runPeerWorkload, } from "./peer-work-client";
 import type { PeerWorkTransport, } from "./peer-work-client";
 import { PEER_ORIGIN_HEADER, } from "./peer-work-wire";
 import type { PeerWorkRunRequest, } from "./peer-work-wire";
@@ -37,9 +37,16 @@ const REQUEST: PeerWorkRunRequest = {
  * @param status
  * @returns {Response}
  */
-function sseResponse(lines: unknown[], status = 200,): Response {
+function sseResponse(
+  lines: unknown[],
+  status = 200,
+  headers: Record<string, string> = {},
+): Response {
   const body = lines.map((line,) => JSON.stringify(line,)).join("\n",) + "\n";
-  return new Response(body, { status, headers: { "content-type": "application/x-ndjson", }, },);
+  return new Response(body, {
+    status,
+    headers: { "content-type": "application/x-ndjson", ...headers, },
+  },);
 }
 
 /**
@@ -300,6 +307,32 @@ describe("runPeerWorkload", () => {
     if (attempt.ok) { return; }
     expect(attempt.failure.code,).toBe("aborted",);
     expect(sink.signal?.aborted,).toBe(true,);
+  });
+});
+
+describe("Retry-After parsing", () => {
+  test("a seconds-integer Retry-After rides on the rejection failure", async () => {
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(sseResponse([{ error: "slow down", },], 429, { "retry-after": "30", },),),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.retryAfterMs,).toBe(30_000,);
+  });
+
+  test("an HTTP-date, garbage or absent Retry-After leaves no window", () => {
+    expect(parsePeerRetryAfterMs("30",),).toBe(30_000,);
+    expect(parsePeerRetryAfterMs("Wed, 21 Oct 2026 07:28:00 GMT",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("soon",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("0",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("-5",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs(null,),).toBeUndefined();
+    expect(parsePeerRetryAfterMs(undefined,),).toBeUndefined();
   });
 });
 

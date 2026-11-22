@@ -20,6 +20,47 @@ const EWMA_ALPHA = 0.3;
 /** Circuit thresholds for peer workloads (tighter than the vendor default). */
 const PEER_CIRCUIT_CONFIG = { threshold: 3, baseCooldownMs: 10_000, };
 
+// A peer may ADVERTISE how long its caller should back off (Retry-After).
+// Bounds: 1s floor so a hostile `Retry-After: 0` cannot disable the cooldown
+// entirely, and a 300s ceiling matching the breaker's own maxCooldownMs so a
+// peer cannot bench its callers for an hour. Outside the bounds the value is
+// clamped; absent or unparseable keeps the fixed 10s default.
+const MIN_RETRY_AFTER_MS = 1_000;
+const MAX_RETRY_AFTER_MS = 300_000;
+
+/**
+ * Advertised windows noted by {@link notePeerRetryAfter} but not yet consumed
+ * by a circuit failure. Last note per (peer, class) wins; a success clears it.
+ */
+const advertisedRetryAfterMs = new Map<string, number>();
+
+/**
+ * @param retryAfterMs
+ * @returns {number}
+ */
+function clampRetryAfterMs(retryAfterMs: number,): number {
+  return Math.min(MAX_RETRY_AFTER_MS, Math.max(MIN_RETRY_AFTER_MS, retryAfterMs,),);
+}
+
+/**
+ * Note the Retry-After window a peer advertised on a failed exchange (header
+ * or equivalent wire field, already parsed to ms by the transport layer). The
+ * next circuit failure for that (peer, class) uses it as the cooldown instead
+ * of the fixed default; recording the window NEVER counts as a failure, so
+ * trip/open/close conditions are untouched. Concurrent notes: last wins.
+ * @param options
+ */
+export function notePeerRetryAfter(
+  options: { origin: string; workloadClass: PeerWorkloadClass; retryAfterMs: number },
+): void {
+  const { retryAfterMs, } = options;
+  if (typeof retryAfterMs !== "number" || !Number.isFinite(retryAfterMs,) || retryAfterMs <= 0) {
+    return;
+  }
+
+  advertisedRetryAfterMs.set(cellKey(options.origin, options.workloadClass,), retryAfterMs,);
+}
+
 /** One (peer, class) cell. `limit` null = unlimited (headroom is always free). */
 interface PeerClassState {
   inFlight: number;
@@ -121,6 +162,10 @@ export function recordPeerOutcome(
     workloadClass: PeerWorkloadClass;
     ok: boolean;
     latencyMs: number;
+    /** Advertised Retry-After in ms for this failure; clamped to
+     *  1s..300s. Absent falls back to any noted window, then the fixed
+     *  default cooldown. */
+    retryAfterMs?: number;
   },
 ): void {
   const key = cellKey(options.origin, options.workloadClass,);
@@ -133,11 +178,18 @@ export function recordPeerOutcome(
 
   breaker.register(key, PEER_CIRCUIT_CONFIG,);
   if (options.ok) {
+    advertisedRetryAfterMs.delete(key,);
     breaker.onSuccess(key,);
     return;
   }
 
-  breaker.onFailure(key,);
+  // Duration-aware trip: an explicitly carried window wins; otherwise a
+  // window the peer advertised on an earlier failed exchange (dispatch path)
+  // is consumed; otherwise the breaker's fixed default applies.
+  const noted = advertisedRetryAfterMs.get(key,);
+  advertisedRetryAfterMs.delete(key,);
+  const retryAfterMs = options.retryAfterMs ?? noted;
+  breaker.onFailure(key, retryAfterMs === undefined ? undefined : clampRetryAfterMs(retryAfterMs,),);
 }
 
 /**
@@ -190,14 +242,22 @@ export function peerCircuitOpen(
 export function recordPeerHealthMiss(
   origin: string,
   workloadClasses: readonly PeerWorkloadClass[],
+  retryAfterMs?: number,
 ): void {
   for (const workloadClass of workloadClasses) {
-    recordPeerOutcome({ origin, workloadClass, ok: false, latencyMs: Number.NaN, },);
+    recordPeerOutcome({
+      origin,
+      workloadClass,
+      ok: false,
+      latencyMs: Number.NaN,
+      ...(retryAfterMs === undefined ? {} : { retryAfterMs, }),
+    },);
   }
 }
 
 /** Drop every peer's health + load state. Test isolation. */
 export function resetPeerHealth(): void {
   states.clear();
+  advertisedRetryAfterMs.clear();
   for (const state of breaker.getAllStates()) { breaker.reset(state.name,); }
 }
