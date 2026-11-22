@@ -217,6 +217,8 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/admin/integration-tokens | — |
 | POST | /api/v1/admin/integration-tokens | — |
 | DELETE | /api/v1/admin/integration-tokens/{id} | — |
+| POST | /api/v1/admin/integrity/recover | Acknowledge integrity recovery |
+| GET | /api/v1/admin/integrity/status | Integrity status |
 | PATCH | /api/v1/admin/llama-swap/config | — |
 | GET | /api/v1/admin/llama-swap/status | — |
 | GET | /api/v1/admin/mfa/config | — |
