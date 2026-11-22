@@ -24,6 +24,7 @@ import { jsonStringifyOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { collectPlaceholders, } from "../workflow-substitutor";
+import { BINDINGS_FILE, } from "./binding-config";
 import {
   ensureWorkflowRegistry,
   hydrateWorkflowRegistry,
@@ -121,7 +122,12 @@ describe("seedWorkflowLibrary", () => {
     expect(outcome.imported,).toEqual([],);
     // The catalog grows as operators add ComfyUI exports; every shipped
     // `.json` is already in the library after the first test.
-    const shipped = (await readdir(SHIPPED_DIR,)).filter((entry,) => entry.endsWith(".json",)).toSorted();
+    // BINDINGS_FILE is config, not a workflow: the seed skips it without a
+    // skip record, so it never appears in outcome.skipped.
+    const shipped = (await readdir(SHIPPED_DIR,))
+      .filter((entry,) => entry.endsWith(".json",) && entry !== BINDINGS_FILE)
+      .toSorted();
+
     expect(outcome.skipped.map((s,) => [s.id, s.reason,]),).toEqual(
       shipped.map((entry,) => {
         const id = entry.replace(/\.json$/, "",);

@@ -64,22 +64,6 @@ let videoProviders: Array<Record<string, unknown>> | null = [
 
 /** Selection the mocked resolver returns; undefined = no stored selection. */
 let resolvedWorkflowForTests: string | undefined;
-
-  mock.module("./video-engine", () => ({
-    ...realVideoEngine,
-    generateVideoWithFailover: async () => {
-      engineCancel?.();
-      engineCalls += 1;
-      if (!engineOutcome.ok) { return engineOutcome; }
-
-      return {
-        ok: true,
-        buffer: Buffer.from("fake-video-bytes",),
-        mimeType: "video/mp4",
-        providerId: "comfyui:txt2video",
-      };
-    },
-  }),);
 /** Resolver calls, for precedence assertions. */
 const workflowResolverCalls: Array<Record<string, unknown>> = [];
 /** Provider snapshots handed to the engine, captured at dispatch time. */
@@ -110,6 +94,8 @@ if (ISOLATED) {
     ...realVideoEngine,
     generateVideoWithFailover: async (providers: Array<Record<string, unknown>>,) => {
       videoEngineCalls.push(providers.map((provider,) => ({ ...provider, })),);
+      engineCancel?.();
+      engineCalls += 1;
       if (!engineOutcome.ok) { return engineOutcome; }
 
       return {

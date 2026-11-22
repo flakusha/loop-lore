@@ -10,31 +10,31 @@
  * `checkChatAccess` (IDOR write guard), BYO keys resolved per provider name
  * with fail-closed decrypt (epic-byok-api-keys.md).
  */
-import type { DB, } from "../db/schema";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { persistGeneratedImages, } from "../assets/service";
+import { extensionForMime, } from "../assets/service/detect";
 import { callAux, } from "../aux-pipeline/runner";
 import { checkChatAccess, } from "../chat/service";
-import type { VideoProviderConfig, } from "../config/schema";
-import { ErrorCode, } from "../routes/http-utils/status";
-import { formatMinimaxPrompt, minimaxModeForWorkflow, } from "./minimax/prompt-format";
-import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
-import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
-import { extensionForMime, } from "../assets/service/detect";
-import { forbiddenResponse, } from "../routes/http-utils";
-import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
-import { getChildLogger, } from "../logger";
-import { getDatabase, } from "../db/index";
-import { getOwnedTemplate, } from "./template-service";
 import { loadConfig, } from "../config/load";
-import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
-import { persistGeneratedImages, } from "../assets/service";
-import { preflightRequest, } from "./preflight";
-import { randomUUID, } from "node:crypto";
+import type { VideoProviderConfig, } from "../config/schema";
+import { getDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
 import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
-import { resolveWorkflowForUseCase, } from "./workflow-selection";
+import { getChildLogger, } from "../logger";
+import { forbiddenResponse, } from "../routes/http-utils";
+import { ErrorCode, } from "../routes/http-utils/status";
 import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
+import { formatMinimaxPrompt, minimaxModeForWorkflow, } from "./minimax/prompt-format";
+import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
+import { getOwnedTemplate, } from "./template-service";
+import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
+import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
+import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
+import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
+import { resolveWorkflowForUseCase, } from "./workflow-selection";
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
 /**
@@ -133,11 +133,16 @@ export async function handleVideoGeneration(
   }
 
   const req = body as VideoGenBody;
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 
   // Reject malformed structured input before any job is stored or a provider
   // is submitted. Failure follows this route's existing 4xx envelope.
-  const preflight = preflightRequest({ workflow: req.workflow, lora: req.lora, },);
+  // req.workflow is a library name (string), not a graph: only a graph
+  // object has structure worth validating; names resolve downstream.
+  const preflight = preflightRequest({
+    workflow: typeof req.workflow === "object" && req.workflow !== null ? req.workflow : undefined,
+    lora: req.lora,
+  },);
+
   if (!preflight.ok) {
     return Response.json({ error: preflight.error, status: 400, }, { status: 400, },);
   }
@@ -229,12 +234,18 @@ export async function handleVideoGeneration(
   // Workflow precedence: explicit body field > stored user selection > config
   // default. Config is process-global: copy every provider before overriding
   // its workflow so one user's selection cannot leak into another request.
-  const workflow = req.workflow ?? await resolveWorkflowForUseCase({
-    database: db,
-    userId,
-    useCase: "video.generate",
-    fallback: providers[0]?.workflow,
-  },);
+  // An inline graph object bypasses selection like an explicit name, but it
+  // carries no name downstream — only strings override providers and select
+  // the MiniMax converter (its startsWith assumes a name).
+  const workflowName = typeof req.workflow === "string" ? req.workflow : undefined;
+  const workflow = workflowName ?? (req.workflow === undefined
+    ? await resolveWorkflowForUseCase({
+      database: db,
+      userId,
+      useCase: "video.generate",
+      fallback: providers[0]?.workflow,
+    },)
+    : undefined);
 
   const requestProviders = workflow === undefined
     ? providers

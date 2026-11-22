@@ -188,8 +188,12 @@ export async function handleRun(
     ? parseLoraString(body.params.loras,)
     : undefined;
 
+  // A string workflow is a library name, not a graph — only graph objects
+  // carry structure for the validator; names resolve downstream.
   const preflight = preflightRequest({
-    workflow: body.params.workflow,
+    workflow: typeof body.params.workflow === "object" && body.params.workflow !== null
+      ? body.params.workflow
+      : undefined,
     lora: body.params.lora,
     loraEntries,
   },);

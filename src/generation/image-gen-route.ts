@@ -24,6 +24,7 @@ import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
+import { normalizeLoraConfigs, } from "./lora/validation";
 import { assertComfyUIModelName, } from "./providers/comfyui-model-discovery";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
@@ -36,14 +37,6 @@ import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
 
 import { resolveWorkflowForUseCase, } from "./workflow-selection";
 
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// One linear request pipeline; phase extraction would scatter the flow.
-// size-allow: 335
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// One linear request pipeline; phase extraction would scatter the flow.
-// size-allow: 335
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
  * the output size is known. One 1024x1024 PNG is roughly this big; refusing

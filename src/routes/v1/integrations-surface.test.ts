@@ -11,7 +11,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { createHmac, } from "node:crypto";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
-import { flushActiveStore, setStore, } from "../../async/store-registry";
+import { flushActiveStore, } from "../../async/store-registry";
 import { loadConfig, } from "../../config/load";
 import type { DB, } from "../../db/schema";
 import { createApp, } from "../../elysia-app";
