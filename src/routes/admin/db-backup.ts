@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { type Context, Elysia, t, } from "elysia";
 import { randomUUID, } from "node:crypto";
-import fs from "node:fs";
+import fs, { createReadStream, type Stats, } from "node:fs";
 import path from "node:path";
+import { Readable, } from "node:stream";
 import { ASSETS_DEFAULTS, } from "../../config/sections/assets";
 import {
   createDbBackup,
@@ -40,6 +41,24 @@ type BackupAuthCtx = Context & {
 type BackupParamCtx = BackupAuthCtx & { params: { name: string } };
 
 const BACKUP_NAME_RE = new RegExp(ADMIN_NAME_PATTERN,);
+
+// Bun 1.4.4 omits O_NOFOLLOW from os.constants; these are the verified Linux
+// and Darwin values (O_RDONLY is 0 on POSIX). The lstat/fstat inode match is
+// the portable backstop.
+const NOFOLLOW_FLAG = process.platform === "linux"
+  ? 0o400000
+  : process.platform === "darwin"
+  ? 0x10000
+  : 0;
+
+function downloadUnavailable(): Response {
+  return jsonError({
+    message: "Backup not found or unavailable",
+    status: HttpStatus.NotFound,
+    code: ErrorCode.NotFound,
+  },);
+}
+
 const tBackupMeta = t.Object({ name: t.String(), sizeBytes: t.Number(), },);
 
 /**
@@ -179,7 +198,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       .get(`${prefix}/admin/db/backup/:name`, async (ctx,) => {
         const c = ctx as unknown as BackupParamCtx;
-        return withPermissionAuth(c, "admin.system", () => {
+        return withPermissionAuth(c, "admin.system", async () => {
           if (typeof c.params.name !== "string" || !BACKUP_NAME_RE.test(c.params.name,)) {
             return jsonError({
               message: "Invalid database backup name",
@@ -199,18 +218,59 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          log().info("Admin downloaded database backup", { userId: c.userId, name: c.params.name, },);
-          return new Response(Bun.file(resolved,), {
-            headers: {
-              "Content-Type": "application/octet-stream",
-              "Content-Disposition": `attachment; filename="${c.params.name}"`,
-            },
-          },);
+          // Characterize before opening: a swap between resolve and open fails
+          // the fstat inode match below even where no no-follow flag exists.
+          let before: Stats;
+          try {
+            before = fs.lstatSync(resolved,);
+          } catch (error) {
+            log().error("Database backup download stat failed", error as Error,);
+
+            return downloadUnavailable();
+          }
+
+          if (!before.isFile()) {
+            return downloadUnavailable();
+          }
+
+          let fd: number | undefined;
+          let stream: ReturnType<typeof createReadStream> | undefined;
+          try {
+            fd = fs.openSync(resolved, NOFOLLOW_FLAG,);
+            const after = fs.fstatSync(fd,);
+            if (!after.isFile() || after.dev !== before.dev || after.ino !== before.ino) {
+              throw new Error("Backup file changed while opening",);
+            }
+
+            stream = createReadStream("", { fd, autoClose: true, },);
+            fd = undefined; // the stream owns the fd from here on
+            const body = Readable.toWeb(stream,) as unknown as ReadableStream<Uint8Array>;
+            log().info("Admin downloaded database backup", { userId: c.userId, name: c.params.name, },);
+            return new Response(body, {
+              headers: {
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": `attachment; filename="${c.params.name}"`,
+              },
+            },);
+          } catch (error) {
+            if (stream) {
+              stream.destroy();
+            } else if (fd !== undefined) {
+              try {
+                fs.closeSync(fd,);
+              } catch { /* best-effort fd cleanup */ }
+            }
+
+            log().error("Database backup download failed", error as Error,);
+
+            return downloadUnavailable();
+          }
         },);
       }, {
         response: {
           400: ErrorResponse,
           403: ErrorResponse,
+          404: ErrorResponse,
         },
         detail: {
           summary: "Download a database backup snapshot",

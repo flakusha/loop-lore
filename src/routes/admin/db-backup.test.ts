@@ -12,7 +12,7 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import fs, { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
+import fs, { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { resolveInstanceSlug, } from "../../config/state-dir";
@@ -352,31 +352,104 @@ describe("admin db backup routes", () => {
     }
   });
 
-  test("GET download surfaces an in-flight deletion as a failed body stream", async () => {
+  test("GET download returns a path-free 404 when the file vanishes before open", async () => {
     const app = makeApp(UserRole.Admin,);
     const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
     const { backup, } = await created.json() as { backup: { name: string } };
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    const target = path.join(backupDir, backup.name,);
 
-    // Test-only stub: delete after existsSync/resolve, before Bun.file reads.
-    const bunHolder = Bun as unknown as { file: typeof Bun.file };
-    const realFile = Bun.file;
+    const holder = fs as unknown as { openSync: typeof fs.openSync };
+    const realOpenSync = fs.openSync;
     let deleted = false;
-    bunHolder.file = (...args) => {
+    holder.openSync = ((p: Parameters<typeof fs.openSync>[0], flags: Parameters<typeof fs.openSync>[1],) => {
       if (!deleted) {
-        rmSync(String(args[0],), { force: true, },);
+        rmSync(target, { force: true, },);
         deleted = true;
       }
 
-      return realFile(String(args[0],),);
-    };
+      return realOpenSync(p, flags,);
+    }) as typeof fs.openSync;
+
+    try {
+      const res = await handle(app, "GET", `${PREFIX}/admin/db/backup/${backup.name}`,);
+      expect(deleted,).toBe(true,);
+      expect(res.status,).toBe(404,);
+      const body = await res.json() as { error: string };
+      expect(body.error,).not.toContain(backupDir,);
+      expect(body.error,).not.toContain(target,);
+    } finally {
+      holder.openSync = realOpenSync;
+    }
+  });
+
+  test("GET download keeps serving the pinned fd when the file is deleted after open", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    const { backup, } = await created.json() as { backup: { name: string } };
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    const target = path.join(backupDir, backup.name,);
+    const original = readFileSync(target,);
+
+    const holder = fs as unknown as { openSync: typeof fs.openSync };
+    const realOpenSync = fs.openSync;
+    let deleted = false;
+    holder.openSync = ((p: Parameters<typeof fs.openSync>[0], flags: Parameters<typeof fs.openSync>[1],) => {
+      const fd = realOpenSync(p, flags,);
+      rmSync(target, { force: true, },);
+      deleted = true;
+
+      return fd;
+    }) as typeof fs.openSync;
 
     try {
       const res = await handle(app, "GET", `${PREFIX}/admin/db/backup/${backup.name}`,);
       expect(deleted,).toBe(true,);
       expect(res.status,).toBe(200,);
-      await expect(res.arrayBuffer(),).rejects.toThrow();
+      const bytes = new Uint8Array(await res.arrayBuffer(),);
+      expect(bytes,).toEqual(original,);
     } finally {
-      bunHolder.file = realFile;
+      holder.openSync = realOpenSync;
+      writeFileSync(target, original,);
+    }
+  });
+
+  test("GET download rejects a symlink swapped in after resolve", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    const { backup, } = await created.json() as { backup: { name: string } };
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    const target = path.join(backupDir, backup.name,);
+    const original = readFileSync(target,);
+    const outside = mkdtempSync(path.join(os.tmpdir(), "db-download-swap-",),);
+    const secret = path.join(outside, "secret.db",);
+    writeFileSync(secret, "outside bytes",);
+
+    const holder = fs as unknown as { openSync: typeof fs.openSync };
+    const realOpenSync = fs.openSync;
+    let swapped = false;
+    holder.openSync = ((p: Parameters<typeof fs.openSync>[0], flags: Parameters<typeof fs.openSync>[1],) => {
+      if (!swapped) {
+        rmSync(target, { force: true, },);
+        symlinkSync(secret, target,);
+        swapped = true;
+      }
+
+      return realOpenSync(p, flags,);
+    }) as typeof fs.openSync;
+
+    try {
+      const res = await handle(app, "GET", `${PREFIX}/admin/db/backup/${backup.name}`,);
+      expect(swapped,).toBe(true,);
+      expect(res.status,).toBe(404,);
+      const body = await res.json() as { error: string };
+      expect(body.error,).not.toContain(secret,);
+      expect(body.error,).not.toContain(outside,);
+    } finally {
+      holder.openSync = realOpenSync;
+      rmSync(target, { force: true, },);
+      writeFileSync(target, original,);
+      rmSync(outside, { recursive: true, force: true, },);
     }
   });
 });
