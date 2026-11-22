@@ -208,10 +208,23 @@ if (ISOLATED) {
   // a missing db argument (old boot wiring) leaves no rows and fails the test.
   mock.module("../admin/provider-health", () => ({
     scanAllProviders: async (db?: Kysely<DB>,) => {
+      bootScanCalls.push(db,);
       if (db === bootDb && db) {
         await upsertModelCapabilities(db, bootScanProvider, [
           { id: "boot-scan-model", contextWindow: 4096, toolCalling: true, },
         ],);
+      }
+
+      // The rescan runs after materialize; report the stored provider so the
+      // aggregated boot warning has to name it.
+      if (bootScanCalls.length === 2 && bootRegisteredProviders.length > 0) {
+        return bootRegisteredProviders.map((name,) => ({
+          name,
+          label: name,
+          status: "unreachable" as const,
+          models: [],
+          lastChecked: new Date().toISOString(),
+        }));
       }
 
       return [];
@@ -230,7 +243,12 @@ if (ISOLATED) {
   // the provider registry and the crypto barrel behind it, so it is mocked
   // like the sibling dynamic imports below — the real module has its own suite.
   mock.module("../generation/providers/server-provider-store", () => ({
-    materializeServerProviders: async () => [],
+    materializeServerProviders: async () => {
+      // Register the stored provider only at materialize time, mirroring the
+      // real store — the rescan must observe it.
+      if (bootStoredProvider) { bootRegisteredProviders.push(bootStoredProvider,); }
+      return [];
+    },
   }),);
 
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
@@ -400,6 +418,7 @@ describeOrSkip("start", () => {
       tlsProvisionFailure = null;
     }
   });
+
   test("exits non-zero on a crash-path shutdown and zero on a signal shutdown", async () => {
     const port = findFreePort();
     currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
