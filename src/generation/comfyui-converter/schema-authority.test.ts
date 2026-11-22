@@ -3,7 +3,7 @@
 
 /**
  * Unit tests for pinned `/object_info` identity and live compatibility.
- * Inline snapshots only — no network, DB or fixture files.
+ * Inline snapshots plus the bundled fixture — no network or DB.
  */
 import { describe, expect, it, } from "bun:test";
 import { createHash, } from "node:crypto";
@@ -13,19 +13,11 @@ import {
   loadPinnedObjectInfo,
   objectInfoCanonicalJson,
   objectInfoSha256,
+  verifyLiveSnapshot,
   verifyObjectInfoPin,
   verifyPinnedObjectInfoSha256,
-  verifyLiveSnapshot,
 } from "./schema-authority";
 import type { ObjectInfoSnapshot, } from "./types";
-
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * Unit tests for pinned `/object_info` identity and live compatibility.
- * Inline snapshots plus the bundled fixture — no network or DB.
- */
 
 const PINNED: ObjectInfoSnapshot = {
   ZLoader: {
