@@ -106,7 +106,9 @@ function buildAdminSections(): ConfigMenuSection[] {
         key: snakeKey ?? `${sectionKey}.${fieldName}`,
         path: `${sectionKey}.${fieldName}`,
         label: humanize(fieldName,),
-        type: (fieldMeta.type as ConfigMenuField["type"]) ?? "string",
+        type: fieldMeta.type === "integer"
+          ? "number"
+          : ((fieldMeta.type as ConfigMenuField["type"]) ?? "string"),
         description: fieldMeta.description,
         default: fieldMeta.default,
         required: false,

@@ -35,8 +35,8 @@ const EDITABLE_KEYS: EditableKey[] = [
     stored: '{"main":{"provider":"local","model":"chat"}}',
     readback: { main: { provider: "local", model: "chat", }, },
   },
-  { key: "lore_token_budget", section: "prompt", value: 512, stored: "512", readback: "512", },
-  { key: "memory_token_budget", section: "prompt", value: 768, stored: "768", readback: "768", },
+  { key: "lore_token_budget", section: "prompt", value: 512, stored: "512", readback: 512, },
+  { key: "memory_token_budget", section: "prompt", value: 768, stored: "768", readback: 768, },
 ];
 
 function deriveRole(app: Elysia, userRole: string | null,) {
@@ -80,6 +80,7 @@ function patchSystemConfig(app: ReturnType<typeof systemConfigApp>, key: string,
 
 interface MenuField {
   key: string;
+  type: string;
   editable: boolean;
   scope: string;
   default?: unknown;
@@ -251,5 +252,54 @@ describe("operator-editable config keys", () => {
     const ranked = await resolveModelRole(ModelRole.Auxiliary, config, db,);
     expect(ranked.source,).toBe("ranking",);
     expect(ranked.model,).toBe("ranked-model",);
+  });
+
+  test("budget fields render as numbers and round-trip through PATCH", async () => {
+    const app = menuApp(db, "admin",);
+    const keys = ["lore_token_budget", "memory_token_budget",];
+    const before = await (await app.handle(new Request("http://localhost/api/v1/config-menu",),)).json() as MenuPayload;
+    for (const key of keys) {
+      const field = before.sections.flatMap((s,) => s.fields).find((f,) => f.key === key);
+      expect(field?.type,).toBe("number",);
+    }
+
+    for (
+      const [key, value, expected,] of [
+        ["lore_token_budget", "128", 128,],
+        ["memory_token_budget", "8192", 8192,],
+      ] as const
+    ) {
+      expect((await patchMenu(app, { key, value, },)).status,).toBe(200,);
+      const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,)
+        .executeTakeFirst();
+
+      expect(row?.value,).toBe(String(expected,),);
+      const after = await (await app.handle(new Request("http://localhost/api/v1/config-menu",),))
+        .json() as MenuPayload;
+
+      const field = after.sections.flatMap((s,) => s.fields).find((f,) => f.key === key);
+      expect(field?.default,).toBe(expected,);
+    }
+  });
+
+  test("budget PATCH rejects invalid values with 400 and no write", async () => {
+    const app = menuApp(db, "admin",);
+    const key = "lore_token_budget";
+    const before = await db.selectFrom("system_config",).select("value",).where("key", "=", key,)
+      .executeTakeFirst();
+
+    for (const value of [Number.NaN, -1, 8193, "abc", "NaN", 128.5, null,]) {
+      const res = await patchMenu(app, { key, value, },);
+      expect(res.status,).toBe(400,);
+      const err = await res.json() as { error: string };
+      expect(err.error,).toBe(
+        `Invalid ${key}: expected an integer between 128 and 8192`,
+      );
+    }
+
+    const after = await db.selectFrom("system_config",).select("value",).where("key", "=", key,)
+      .executeTakeFirst();
+
+    expect(after?.value,).toBe(before?.value,);
   });
 });

@@ -9,6 +9,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
+- **Admin-editable model and prompt config keys** — `autoroute_scenario`, `model_roles`, `lore_token_budget` and `memory_token_budget` are editable from the admin config menu; the budget fields render as number inputs and PATCH rejects non-integers or values outside 128–8192 with a 400 before any write, while real secrets stay redacted.
 - **ComfyUI progress events are attributable to the requesting call** — `/prompt` carries a per-call `client_id`, and a prompt-filtered WebSocket subscription reports progress while the existing `/history` poll remains authoritative for completion, so a dead socket cannot hang a generation.
 - **Runtime ComfyUI sampling enums and template-parameter checks** — samplers and schedulers are discovered from `/object_info` through the shared five-minute discovery cache and exposed on `GET /api/v1/image-edit/nodes`; a run rejects out-of-range, off-step, unknown-select and uninstalled sampling values before a graph is submitted. Generation requests can set `width`/`height`/`scheduler`/`denoise`, with openai-shaped `size` mapped when numerics are absent.
 
