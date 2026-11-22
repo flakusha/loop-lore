@@ -82,6 +82,47 @@ describe("validateWorkflowPayload", () => {
     expect(result.ok,).toBe(true,);
   });
 
+  it("rejects a declared binding target that still holds a literal", () => {
+    const graph = {
+      "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+      "2": {
+        class_type: "ModelAttentionBackend",
+        inputs: { attention: "comfy kitchen attention", model: ["1", 0,], },
+      },
+      "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
+    };
+
+    const result = validateWorkflowPayload({
+      ...BASE,
+      body: graph,
+      parameters: [{ name: "attention", type: "string", label: "Attention", default: "", },],
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain("parameter attention has no matching {{placeholder}}",);
+    }
+  });
+
+  it("accepts a declared binding target that holds the exact placeholder", () => {
+    const graph = {
+      "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+      "2": {
+        class_type: "ModelAttentionBackend",
+        inputs: { attention: "{{attention}}", model: ["1", 0,], },
+      },
+      "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
+    };
+
+    const result = validateWorkflowPayload({
+      ...BASE,
+      body: graph,
+      parameters: [{ name: "attention", type: "string", label: "Attention", default: "", },],
+    },);
+
+    expect(result.ok,).toBe(true,);
+  });
+
   it("rejects a duplicate parameter name", () => {
     const result = validateWorkflowPayload({
       ...BASE,
