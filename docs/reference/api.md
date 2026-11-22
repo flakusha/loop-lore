@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1064 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1070 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -214,6 +214,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | DELETE | /api/v1/admin/federation/peers/{origin} | — |
 | PATCH | /api/v1/admin/federation/peers/{origin}/workload | — |
 | GET | /api/v1/admin/federation/usage | — |
+| GET | /api/v1/admin/honkbox/status | Read honkbox capability and queue status |
 | GET | /api/v1/admin/integration-tokens | — |
 | POST | /api/v1/admin/integration-tokens | — |
 | DELETE | /api/v1/admin/integration-tokens/{id} | — |
@@ -299,6 +300,9 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/agency/earn | Credit story points to an actor |
 | POST | /api/v1/agency/spend | Debit story points from an actor |
 | POST | /api/v1/agent/check | Stream bun run check over SSE |
+| POST | /api/v1/agent/tickets/close | Close an own-filed ticket |
+| POST | /api/v1/agent/tickets/comment | Comment on an own-filed ticket |
+| POST | /api/v1/agent/tickets/open | File a validated .plan ticket |
 | GET | /api/v1/agent/whoami | Identify the presented agent token |
 | POST | /api/v1/agent/worktrees | Spawn a TTY-free agent worktree |
 | GET | /api/v1/analytics/characters | — |

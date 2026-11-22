@@ -12,6 +12,7 @@ import { adminNsfwRoutes, } from "../admin-nsfw";
 import { adminTemplateRoutes, } from "../admin-templates";
 import { agentActionsRoutes, } from "../admin/agent-actions";
 import { agentTokenRoutes, } from "../admin/agent-tokens";
+import { honkboxStatusRoutes, } from "../admin/honkbox-status";
 import { sdTemplatesRoutes, } from "../admin/sd-templates";
 import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
@@ -41,6 +42,9 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
   return new Elysia({ name: "v1-admin", },)
     // ── Admin & plugins ──────────────────────────────────────
     .use(adminRoutes(handleOpts, prefix,),)
+    // Honkbox capability/queue status: read-only projection of the cached
+    // probe, mounted only on the v1 surface and gated by admin.system.
+    .use(honkboxStatusRoutes(handleOpts, prefix,),)
     // RSI agent tokens (agent-api-router ticket) — split out of the admin
     // barrel (which is one .use short of TS2589); same admin triple guard.
     .use(agentTokenRoutes(handleOpts, prefix,),)
