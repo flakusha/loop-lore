@@ -58,7 +58,7 @@ export function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
  * declared parameters.
  * @param form - Editor state
  * @param parsed - Already-parsed graph and optional JSON fields
- * @param parsed.graph - The API-format graph, sent under the `body` wrapper key
+ * @param parsed.graph - The graph (UI or API format), sent under the `body` wrapper key
  * @param parsed.parameters - Declared parameters, omitted when unset
  * @param parsed.loraSlots - Declared LoRA slots, omitted when unset
  * @returns The create/update request body
@@ -220,8 +220,11 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
    * @returns {Promise<void>}
    */
   async loadWorkflowFile(event: Event,) {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) { return; }
+    // Clear the picker so picking the same file again fires another change.
+    input.value = "";
     const errors: string[] = [];
     try {
       const graph = parseWorkflowFile(await file.text(), errors,);

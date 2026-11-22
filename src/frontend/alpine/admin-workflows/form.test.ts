@@ -189,11 +189,15 @@ describe("loadWorkflowFile", () => {
       workflowFormErrors: [] as string[],
     };
 
+    const target = { files: [file,], value: "workflow.json", };
+
     await workflowFormState.loadWorkflowFile!.call(state, {
-      target: { files: [file,], },
+      target,
     } as unknown as Event,);
 
     expect(state.workflowFormErrors,).toEqual([],);
+    // The picker is cleared so picking the same file again fires a change.
+    expect(target.value,).toBe("",);
     expect(state.workflowForm.graph,).toBe(pretty(graph,),);
 
     const parsed = parseGraphField(state.workflowForm.graph, [],);
