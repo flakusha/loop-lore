@@ -16,6 +16,7 @@ import { safeFetch as realFetch, } from "../../utils";
 import type { FetchResult, } from "../../utils/safe-fetch/types";
 import type { CommandDescriptor, CommandListResult, } from "./api";
 import { loadCommands, setFetch, } from "./api";
+import { routeClientCommand, } from "./client-commands";
 import {
   CommandCompleter,
   matchCommands,
@@ -24,6 +25,12 @@ import {
   REGEN_ACTIONS,
   valveUsageLine,
 } from "./commands";
+import type { ChatHost, } from "./types";
+
+/** Bun augments fetch with `preconnect`; a plain stub needs this cast. */
+function asFetch(respond: () => Promise<Response>,): typeof fetch {
+  return respond as unknown as typeof fetch;
+}
 
 const REGISTRY: CommandDescriptor[] = [
   { name: "reset", descriptionKey: "commands.reset", },
@@ -343,5 +350,52 @@ describe("loadCommands", () => {
   it("reports a thrown transport error instead of rejecting", async () => {
     setFetch(() => Promise.reject(new Error("ECONNREFUSED",),));
     expect(await loadCommands(undefined, null,),).toEqual({ ok: false, error: "ECONNREFUSED", },);
+  });
+});
+
+describe("routeClientCommand", () => {
+  it("passes an unrecognised slash command through to the branch dispatcher", async () => {
+    const errors: string[] = [];
+    const host = {
+      chatId: "chat-1",
+      sessionToken: "tok" as string | undefined,
+      showError(message: string,) {
+        errors.push(message,);
+      },
+      addMessage() {},
+    } as unknown as ChatHost;
+
+    expect(await routeClientCommand(host, "/unknown",),).toBe(false,);
+    expect(errors,).toEqual([],);
+  });
+
+  it("routes /chars to the character dispatcher", async () => {
+    const messages: string[] = [];
+    const host = {
+      chatId: "chat-1",
+      sessionToken: "tok" as string | undefined,
+      showError() {},
+      addMessage(message: { content: string },) {
+        messages.push(message.content,);
+      },
+    } as unknown as ChatHost;
+
+    const originalFetch = globalThis.fetch;
+    const actorBody = JSON.stringify({ data: [{ id: "actor-7", display_name: "Bob", },], },);
+    globalThis.fetch = asFetch(async () =>
+      new Response(actorBody, {
+        status: 200,
+        headers: { "Content-Type": "application/json", },
+      },)
+    );
+
+    try {
+      expect(await routeClientCommand(host, "/chars",),).toBe(true,);
+      expect(messages[0],).toBe(
+        "Characters:\n1. Bob (actor-7)\n/chars <n> to start a chat.",
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });

@@ -1,5 +1,13 @@
 import { describe, expect, test, } from "bun:test";
-import { formFromRow, parseGraphField, pretty, readJsonArrayField, requestBody, workflowFormState, } from "./form";
+import {
+  formFromRow,
+  parseGraphField,
+  parseWorkflowFile,
+  pretty,
+  readJsonArrayField,
+  requestBody,
+  workflowFormState,
+} from "./form";
 import { emptyWorkflowForm, } from "./types";
 import type { WorkflowDetail, } from "./types";
 
@@ -211,5 +219,42 @@ describe("loadWorkflowFile", () => {
     // Backend `uploadedUiWorkflow` matches `body.nodes` with shaped nodes.
     expect(body.body,).toEqual(graph,);
     expect((body.body as { nodes: unknown[] }).nodes,).toEqual([{ id: 1, type: "KSampler", },],);
+  });
+});
+
+describe("parseWorkflowFile", () => {
+  test("accepts a UI-format export with a nodes array", () => {
+    const graph = { nodes: [{ id: 1, type: "KSampler", },], links: [], };
+    const errors: string[] = [];
+    expect(parseWorkflowFile(JSON.stringify(graph,), errors,),).toEqual(graph,);
+    expect(errors,).toEqual([],);
+  });
+
+  test("accepts an API-format graph whose nodes carry class_type", () => {
+    const graph = { "3": { class_type: "KSampler", inputs: {}, }, };
+    const errors: string[] = [];
+    expect(parseWorkflowFile(JSON.stringify(graph,), errors,),).toEqual(graph,);
+    expect(errors,).toEqual([],);
+  });
+
+  test("records a JSON parse failure and returns null", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile("{not json", errors,),).toBeNull();
+    expect(errors,).toHaveLength(1,);
+    expect(errors[0],).toContain("Workflow file: not valid JSON",);
+  });
+
+  test("rejects a JSON array, which is not a graph object", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile("[]", errors,),).toBeNull();
+    expect(errors,).toEqual(["Workflow file must be a JSON object",],);
+  });
+
+  test("rejects an object that is neither a UI nor an API export", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile('{"foo":1}', errors,),).toBeNull();
+    expect(errors,).toEqual([
+      "Workflow file is not a UI export (nodes array) or an API-format graph",
+    ],);
   });
 });

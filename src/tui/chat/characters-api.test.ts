@@ -4,11 +4,18 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 
 import { createChatWithCharacter, listCharacters, } from "./characters-api";
+import { dispatchCharacterCommand, } from "./characters-commands";
+import type { ChatHost, } from "./types";
 
 interface Capture {
   url: string;
   method: string | undefined;
   body: unknown;
+}
+
+/** Bun augments fetch with `preconnect`; a plain stub needs this cast. */
+function asFetch(respond: () => Promise<Response>,): typeof fetch {
+  return respond as unknown as typeof fetch;
 }
 
 const originalFetch = globalThis.fetch;
@@ -63,5 +70,86 @@ describe("TUI character list/select", () => {
     expect(captures[0]?.url,).toBe("http://localhost:3000/api/v1/chats",);
     expect(captures[0]?.method,).toBe("POST",);
     expect(captures[0]?.body,).toEqual({ name: "Alice", participantIds: ["actor-1",], },);
+  });
+});
+
+/** Bare host surface the character dispatcher touches, with assertion sinks. */
+function commandHost() {
+  const state = { errors: [] as string[], messages: [] as { content: string }[], };
+  const host = {
+    chatId: "chat-1",
+    sessionToken: "tok" as string | undefined,
+    showError(message: string,) {
+      state.errors.push(message,);
+    },
+    addMessage(message: { content: string },) {
+      state.messages.push(message,);
+    },
+  } as unknown as ChatHost;
+
+  return { host, state, };
+}
+
+describe("dispatchCharacterCommand", () => {
+  it("leaves unrelated text to the plain message path", async () => {
+    const { host, state, } = commandHost();
+    expect(await dispatchCharacterCommand(host, "/help",),).toBe(false,);
+    expect(state.errors,).toEqual([],);
+    expect(state.messages,).toEqual([],);
+  });
+
+  it("lists the current page with numbered rows and a selection hint", async () => {
+    const { host, state, } = commandHost();
+    expect(await dispatchCharacterCommand(host, "/chars",),).toBe(true,);
+    expect(state.messages[0]?.content,).toBe(
+      "Characters:\n1. Alice (actor-1)\n/chars <n> to start a chat.",
+    );
+  });
+
+  it("creates a chat from the selected row", async () => {
+    const { host, state, } = commandHost();
+    expect(await dispatchCharacterCommand(host, "/chars 1",),).toBe(true,);
+    expect(state.messages[0]?.content,).toBe(
+      "Chat with Alice created: chat-99. Select it from the chat picker.",
+    );
+
+    expect(captures[1]?.body,).toEqual({ name: "Alice", participantIds: ["actor-1",], },);
+  });
+
+  it("reports an out-of-range selection instead of creating a chat", async () => {
+    const { host, state, } = commandHost();
+    expect(await dispatchCharacterCommand(host, "/chars 9",),).toBe(true,);
+    expect(state.errors,).toEqual([
+      "No character #9 on this page. Run /chars to list.",
+    ],);
+
+    expect(state.messages,).toEqual([],);
+  });
+
+  it("reports an unparseable selection", async () => {
+    const { host, state, } = commandHost();
+    expect(await dispatchCharacterCommand(host, "/chars abc",),).toBe(true,);
+    expect(state.errors,).toEqual([
+      "No character #abc on this page. Run /chars to list.",
+    ],);
+  });
+
+  it("reports an empty character list", async () => {
+    const { host, state, } = commandHost();
+    const originalFetch = globalThis.fetch;
+    const emptyBody = JSON.stringify({ data: [], },);
+    globalThis.fetch = asFetch(async () =>
+      new Response(emptyBody, {
+        status: 200,
+        headers: { "Content-Type": "application/json", },
+      },)
+    );
+
+    try {
+      expect(await dispatchCharacterCommand(host, "/chars",),).toBe(true,);
+      expect(state.messages[0]?.content,).toBe("No characters found.",);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
