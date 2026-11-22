@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Shipped on dev as `src/routes/liveness.ts`: `GET /health/live` + `GET /health/ready`, opt-in via `config.observability.health.*`, DB `SELECT 1` readiness 200/503, no auth. Residual AC: ticket's `/health` + `/ready` route paths, 10 req/s per-IP rate limit, providers+plugins readiness payload and kill-DB E2E test are absent; `src/server/health.ts` is not the file path used.
 **Priority:** Low
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

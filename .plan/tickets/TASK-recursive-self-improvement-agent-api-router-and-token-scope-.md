@@ -28,10 +28,10 @@ Elysia router for `/api/v1/agent/*` with scoped token auth. Mounts in `src/elysi
 ## Acceptance Criteria
 
 - [ ] Router mounted; sub-routes (#6, #7, #8) hang off it
-- [ ] `requireAgentScope('agent:worktree')` rejects requests without valid scope with 403
-- [ ] Tokens are SHA-256 hashed at rest; plaintext never persisted
-- [ ] Admin route `POST /api/admin/agent-tokens` mints a new token with chosen scope; rotated via `DELETE /api/admin/agent-tokens/:id` + re-mint
-- [ ] Rate limit: 60 req/min per token; 600 req/min global
+- [x] `requireAgentScope('agent:worktree')` rejects requests without valid scope with 403
+- [x] Tokens are SHA-256 hashed at rest; plaintext never persisted
+- [x] Admin route `POST /api/admin/agent-tokens` mints a new token with chosen scope; rotated via `DELETE /api/admin/agent-tokens/:id` + re-mint
+- [x] Rate limit: 60 req/min per token; 600 req/min global
 
 ## Files
 

@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** In Progress (first slice landed: `b80a68efb` — migration 117 + transition seam + admin read; no production writer yet)
+**Status:** In Progress (DB + writer + admin read landed; telemetry sink open)
+**Status Note:** Production writer verified on dev: `src/server/watchdog/transition-writer.ts:49-79` inserts every transition, wired as `onTransition` at `src/server/watchdog/cli.ts:25` and flushed at `:34` before exit; migration 117 + `src/routes/admin/watchdog.ts` present. The telemetry mirror is unlanded, so #4's sink half stays open; the admin read is `/api/admin/watchdog/events` (50 default, 200 cap, `at_ms DESC`), not the ticket's 100-row `created_at DESC` route.
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

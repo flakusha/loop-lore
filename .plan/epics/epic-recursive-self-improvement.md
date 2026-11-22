@@ -139,12 +139,12 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 ### Watchdog
 
 - [x] Process supervisor (`src/server/watchdog/supervisor.ts`) — spawn, monitor, restart with backoff
-- [ ] Health/liveness/readiness probes — already shipped separately in `src/routes/liveness.ts` (`/health/live` + `/health/ready`, opt-in via `config.observability.health.*`); the watchdog reuses those routes and owns no second probe surface.
+- [x] Health/liveness/readiness probes — already shipped separately in `src/routes/liveness.ts` (`/health/live` + `/health/ready`, opt-in via `config.observability.health.*`); the watchdog reuses those routes and owns no second probe surface.
 - [x] State machine (starting -> healthy -> degraded -> crashed -> stopping)
-- [ ] Crash telemetry persistence (`watchdog_events` table)
-- [ ] Admin surface (`GET /api/admin/watchdog`)
+- [x] Crash telemetry persistence (`watchdog_events` table)
+- [x] Admin surface (`GET /api/admin/watchdog`)
 - [x] `bun run watchdog` CLI entrypoint
-- [ ] `deploy/docker-compose.yml` `restart: unless-stopped` already wired (verified 2026-09-27)
+- [x] `deploy/docker-compose.yml` `restart: unless-stopped` already wired (verified 2026-09-27)
 
 > **Scope collision (2026-11-20):** This epic owns process/watchdog lifecycle —
 > spawn, health monitoring, restart backoff, and graceful-stop state transitions in
@@ -156,19 +156,19 @@ Per the user's global-target clause, the agent API MUST be sandboxed:
 ### Agent Development Loop
 
 - [ ] `POST /api/v1/agent/tasks` — submit a task (patch, check, commit, finalize)
-- [ ] `POST /api/v1/agent/worktrees` — spawn a worktree (TTY-free path via `scripts/worktree/`)
-- [ ] `POST /api/v1/agent/check` — run gates; stream progress over SSE
+- [x] `POST /api/v1/agent/worktrees` — spawn a worktree (TTY-free path via `scripts/worktree/`)
+- [x] `POST /api/v1/agent/check` — run gates; stream progress over SSE
 - [ ] `POST /api/v1/agent/commit` — GPG-signed commit (delegated to agent)
 - [ ] `POST /api/v1/agent/finalize` — `giwt finalize` (PTY-bound)
-- [ ] Token scope check (`src/agent/api/auth.ts`)
-- [ ] Sandbox (`src/agent/api/sandbox.ts`)
-- [ ] Audit trail (`agent_actions` table)
+- [x] Token scope check (`src/agent/api/auth.ts`)
+- [x] Sandbox (`src/agent/api/sandbox.ts`)
+- [x] Audit trail (`agent_actions` table)
 
 ### CI/CD Loop
 
 - [x] `bun run smoke` script — fast gate (target <=60s) — landed on dev `29812b82b`
 - [x] `.github/workflows/smoke.yml` — every commit to `dev`/PR; 60s timeout — landed on dev `29812b82b`
-- [ ] `.github/workflows/nightly.yml` — full `bun run check` + e2e + browser + perf-regression
+- [x] `.github/workflows/nightly.yml` — full `bun run check` + e2e + browser + perf-regression
 - [ ] `.github/workflows/watchdog-gate.yml` — triggered by webhook from the watchdog on threshold breach
 - [ ] Promote `size:strict` to blocking (lands `TASK-promote-size-check-to-ci`)
 
