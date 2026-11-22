@@ -139,6 +139,8 @@
     "plan:artifacts": "bun run plan:map && bun run plan:matrix && bun run plan:docs && bun run plan:links && bun run plan:priority",
     "plan:validate": "giwt plan validate",
     "plan:validate:fix": "giwt plan validate --fix",
+    "plan:validate:briefing": "bun run scripts/check-briefing.ts",
+    "plan:lint-briefing": "bun run scripts/check-briefing.ts",
     "plan:status": "giwt plan status",
     "plan:status:normalize": "giwt plan normalize-statuses",
     "plan:status:normalize:check": "giwt plan normalize-statuses --check",
