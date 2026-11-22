@@ -25,6 +25,8 @@ import { principalKind, } from "../principal-kind";
 import { authenticateRequest, } from "./authenticate-request";
 import {
   hashIntegrationToken,
+  INTEGRATION_TOKEN_DEFAULT_TTL_MS,
+  INTEGRATION_TOKEN_MAX_TTL_MS,
   INTEGRATION_TOKEN_PREFIX,
   integrationTokenContext,
   mintIntegrationToken,
@@ -73,10 +75,11 @@ async function seedToken(opts: {
   expiresAt?: string | null;
   name?: string;
 } = {},): Promise<string> {
-  const { raw, hash, } = mintIntegrationToken();
+  const { raw, hash, expiresAt, } = mintIntegrationToken();
   await insertIntegrationTokens(db, opts.name ?? "agent-token", hash, opts.scopes ?? "read", issuer, {
     revoked_at: opts.revokedAt ?? null,
-    expires_at: opts.expiresAt ?? null,
+    // An explicit `null` is how a legacy non-expiring row is simulated.
+    expires_at: opts.expiresAt === undefined ? expiresAt : opts.expiresAt,
   },);
 
   return raw;
@@ -105,6 +108,26 @@ describe("mintIntegrationToken", () => {
     expect(hashIntegrationToken(a.raw,),).toBe(a.hash,);
     expect(hashIntegrationToken(b.raw,),).toBe(b.hash,);
     expect(a.hash === b.hash,).toBe(false,);
+  });
+
+  test("stamps a bounded UTC expiry on every mint (default 24h)", () => {
+    const before = Date.now();
+    const { expiresAt, } = mintIntegrationToken();
+    const after = Date.now();
+    const ms = Date.parse(expiresAt,);
+    expect(ms,).toBeGreaterThanOrEqual(before + INTEGRATION_TOKEN_DEFAULT_TTL_MS - 1000,);
+    expect(ms,).toBeLessThanOrEqual(after + INTEGRATION_TOKEN_DEFAULT_TTL_MS + 1000,);
+  });
+
+  test("clamps a requested lifetime to the 7d maximum instead of erroring", () => {
+    const before = Date.now();
+    const { expiresAt, } = mintIntegrationToken(
+      new Date(before + 365 * 24 * 60 * 60 * 1000,).toISOString(),
+    );
+
+    const ms = Date.parse(expiresAt,);
+    expect(ms,).toBeGreaterThanOrEqual(before + INTEGRATION_TOKEN_MAX_TTL_MS - 1000,);
+    expect(ms,).toBeLessThanOrEqual(Date.now() + INTEGRATION_TOKEN_MAX_TTL_MS + 1000,);
   });
 });
 
@@ -152,9 +175,9 @@ describe("verifyIntegrationToken — fail-closed", () => {
     expect(await verifyIntegrationToken(db, raw,),).toBeNull();
   });
 
-  test("a NULL expires_at never expires (open ADR lifetime question)", async () => {
+  test("an ABSENT (NULL) expires_at fails closed — legacy tokens must be re-issued", async () => {
     const raw = await seedToken({ expiresAt: null, },);
-    expect(await verifyIntegrationToken(db, raw,),).not.toBeNull();
+    expect(await verifyIntegrationToken(db, raw,),).toBeNull();
   });
 
   test("a CORRUPT (unparseable) expires_at fails closed, never eternal", async () => {

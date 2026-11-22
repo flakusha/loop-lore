@@ -115,8 +115,8 @@ afterEach(async () => {
 
 /** Seed an integration token for `issuer` and return its RAW bearer value. */
 async function seedToken(issuer: string,): Promise<string> {
-  const { raw, hash, } = mintIntegrationToken();
-  await insertIntegrationTokens(fixture.db, "lsp-editor", hash, "read", issuer,);
+  const { raw, hash, expiresAt, } = mintIntegrationToken();
+  await insertIntegrationTokens(fixture.db, "lsp-editor", hash, "read", issuer, { expires_at: expiresAt, },);
   return raw;
 }
 
