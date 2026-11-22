@@ -356,6 +356,23 @@ describe("POST /api/v1/image-edit/run — authz gates (handleImageGeneration par
 
     expect(res.status,).toBe(403,);
   });
+
+  test("403 for an unknown chatId (no chat oracle)", async () => {
+    const res = await authedApp.handle(
+      jsonRequest(`${BASE}/run`, "POST", {
+        template_id: "txt2img",
+        backend: "comfyui",
+        params: {},
+        chatId: "missing-chat",
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+
+    const body = (await res.json()) as ErrorEnvelope;
+    expect(body.error,).toBe("Forbidden",);
+    expect(body.code,).toBe("FORBIDDEN",);
+  });
 });
 
 describe("POST /api/v1/image-edit/run", () => {
