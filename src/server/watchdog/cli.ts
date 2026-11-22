@@ -5,6 +5,7 @@
 import { join, resolve, } from "node:path";
 import { getDatabase, } from "../../db";
 import { createLogger, } from "../../logger";
+import { notifyOnCrashThreshold, } from "./notify";
 import { DEFAULT_POLICY, } from "./state";
 import { createSupervisor, defaultProbe, defaultSpawn, } from "./supervisor";
 import { createTransitionWriter, } from "./transition-writer";
@@ -23,7 +24,10 @@ const supervisor = createSupervisor({
   probe: defaultProbe(healthUrl, DEFAULT_POLICY.probeTimeoutMs,),
   logger,
   onTransition: writer,
-  alert: (info,) => logger.fatal("Watchdog stopping after repeated crashes", undefined, { ...info, },),
+  alert: (info,) => {
+    logger.fatal("Watchdog stopping after repeated crashes", undefined, { ...info, },);
+    void notifyOnCrashThreshold(info,);
+  },
 },);
 
 for (const signal of ["SIGTERM", "SIGINT",] as const) {
