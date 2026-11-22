@@ -212,6 +212,16 @@
             </div>
             <div>
               <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+              >Load workflow file (UI or API format JSON)</label>
+              <input
+                type="file"
+                accept="application/json, .json"
+                @change="loadWorkflowFile($event)"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
               >ComfyUI graph (API format JSON)</label>
               <textarea
                 class="form-input"

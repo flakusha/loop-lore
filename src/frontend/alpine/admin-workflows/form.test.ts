@@ -1,5 +1,5 @@
 import { describe, expect, test, } from "bun:test";
-import { formFromRow, parseGraphField, pretty, readJsonArrayField, requestBody, } from "./form";
+import { formFromRow, parseGraphField, pretty, readJsonArrayField, requestBody, workflowFormState, } from "./form";
 import { emptyWorkflowForm, } from "./types";
 import type { WorkflowDetail, } from "./types";
 
@@ -176,5 +176,36 @@ describe("requestBody", () => {
     expect(body.parameters,).toEqual([{ name: "steps", },],);
     expect(body.loraSlots,).toEqual([{ name: "lora1", },],);
     expect(body.body,).toEqual({ a: 1, },);
+  });
+});
+
+describe("loadWorkflowFile", () => {
+  test("a picked UI-format export becomes the uploadedUiWorkflow request body", async () => {
+    const graph = { nodes: [{ id: 1, type: "KSampler", },], links: [], };
+    const file = new File([JSON.stringify(graph,),], "workflow.json", { type: "application/json", },);
+    const state = {
+      ...workflowFormState,
+      workflowForm: emptyWorkflowForm(),
+      workflowFormErrors: [] as string[],
+    };
+
+    await workflowFormState.loadWorkflowFile!.call(state, {
+      target: { files: [file,], },
+    } as unknown as Event,);
+
+    expect(state.workflowFormErrors,).toEqual([],);
+    expect(state.workflowForm.graph,).toBe(pretty(graph,),);
+
+    const parsed = parseGraphField(state.workflowForm.graph, [],);
+    expect(parsed,).not.toBeNull();
+    const body = requestBody(state.workflowForm, {
+      graph: parsed as object,
+      parameters: undefined,
+      loraSlots: undefined,
+    },);
+
+    // Backend `uploadedUiWorkflow` matches `body.nodes` with shaped nodes.
+    expect(body.body,).toEqual(graph,);
+    expect((body.body as { nodes: unknown[] }).nodes,).toEqual([{ id: 1, type: "KSampler", },],);
   });
 });

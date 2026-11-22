@@ -85,6 +85,7 @@ export interface AdminWorkflows {
   openWorkflowCreate(): void;
   openWorkflowEdit(id: string,): Promise<void>;
   closeWorkflowForm(): void;
+  loadWorkflowFile(event: Event,): Promise<void>;
   saveWorkflow(): Promise<void>;
   setWorkflowDefault(id: string,): Promise<void>;
   toggleWorkflowEnabled(id: string,): Promise<void>;

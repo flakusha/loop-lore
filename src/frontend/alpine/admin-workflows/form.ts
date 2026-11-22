@@ -109,6 +109,40 @@ export function parseGraphField(text: string, errors: string[],): object | null 
 }
 
 /**
+ * The graph a picked ComfyUI export carries, or null after recording why it
+ * was rejected. UI-format exports carry a `nodes` array; API-format graphs
+ * are a node-id map. Both are stored as graph text — the route decides which
+ * ingest path to use from the graph shape.
+ * @param text - Raw file contents
+ * @param errors - Collected client-side errors
+ * @returns The parsed graph, or null after pushing the reason onto `errors`
+ */
+export function parseWorkflowFile(text: string, errors: string[],): object | null {
+  const reported = errors.length;
+  const value = readJsonField(text, "Workflow file", errors,);
+  if (errors.length > reported) { return null; }
+  if (typeof value !== "object" || value === null || Array.isArray(value,)) {
+    errors.push("Workflow file must be a JSON object",);
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (!Array.isArray(record.nodes,)) {
+    const apiGraph = Object.values(record,).some((node,) =>
+      typeof node === "object" && node !== null && !Array.isArray(node,) &&
+      typeof (node as Record<string, unknown>).class_type === "string"
+    );
+
+    if (!apiGraph) {
+      errors.push("Workflow file is not a UI export (nodes array) or an API-format graph",);
+      return null;
+    }
+  }
+
+  return value;
+}
+
+/**
  * One operator-typed JSON array field, or undefined for blank/unparseable.
  *
  * `buildWorkflowPayload` coerces a non-array to `[]` and drops a non-array
@@ -177,6 +211,30 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
   closeWorkflowForm() {
     this.showWorkflowForm = false;
     this.workflowFormErrors = [];
+  },
+
+  /**
+   * Read a picked ComfyUI export into the graph field. The route decides UI
+   * vs API format from the graph shape, so this only validates and stores.
+   * @param {Event} event
+   * @returns {Promise<void>}
+   */
+  async loadWorkflowFile(event: Event,) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) { return; }
+    const errors: string[] = [];
+    try {
+      const graph = parseWorkflowFile(await file.text(), errors,);
+      if (graph === null) {
+        this.workflowFormErrors = errors;
+        return;
+      }
+
+      this.workflowForm.graph = pretty(graph,);
+      this.workflowFormErrors = [];
+    } catch (error) {
+      this.workflowFormErrors = [`Workflow file: ${(error as Error).message}`,];
+    }
   },
 
   /**
