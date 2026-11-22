@@ -14,9 +14,8 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getAllConfig, setConfig, } from "../admin/config";
+import { validateEditableConfigValue, } from "../admin/config-keys";
 import { buildConfigMenu, type ConfigMenuField, type ConfigMenuSection, } from "../config/sections/menu";
-import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "../config/sections/menu-data";
-import { PROMPT_BUDGET_BOUNDS, } from "../config/sections/prompt";
 import type { DB, } from "../db/schema";
 import { can, } from "../users/permissions";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
@@ -26,11 +25,6 @@ import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "
 interface ConfigMenuOpts {
   database: Kysely<DB>;
 }
-
-const BUDGET_KEYS = new Set<string>([
-  EDITABLE_SYSTEM_CONFIG_KEYS.loreTokenBudget,
-  EDITABLE_SYSTEM_CONFIG_KEYS.memoryTokenBudget,
-],);
 
 /** Minimal Elysia context shape consumed by config-menu routes. */
 interface ConfigMenuCtx {
@@ -177,19 +171,9 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts, prefix = "/api/v
 
         const coerced = coerceValue(body?.value, field.type,);
 
-        if (BUDGET_KEYS.has(key,)) {
-          const budget = Number(coerced,);
-          if (
-            !Number.isInteger(budget,) ||
-            budget < PROMPT_BUDGET_BOUNDS.min ||
-            budget > PROMPT_BUDGET_BOUNDS.max
-          ) {
-            return jsonError(
-              `Invalid ${key}: expected an integer between ${PROMPT_BUDGET_BOUNDS.min} and ${PROMPT_BUDGET_BOUNDS.max}`,
-              HttpStatus.BadRequest,
-              ErrorCode.BadRequest,
-            );
-          }
+        const invalid = validateEditableConfigValue(key, coerced,);
+        if (invalid !== null) {
+          return jsonError(invalid, HttpStatus.BadRequest, ErrorCode.BadRequest,);
         }
 
         if (field.scope === "admin") {

@@ -7,7 +7,7 @@
  */
 import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "@loop-lore/core/config/sections/menu-data";
 import { describe, expect, test, } from "bun:test";
-import { decorateConfigEntry, isSecretConfigKeyName, } from "./config-keys";
+import { decorateConfigEntry, isSecretConfigKeyName, validateEditableConfigValue, } from "./config-keys";
 
 describe("decorateConfigEntry", () => {
   test("flags restart-required and per-chat overridable keys", () => {
@@ -59,5 +59,22 @@ describe("isSecretConfigKeyName", () => {
     for (const key of ["api_token", "password", "openai_api_key", "db.url",]) {
       expect(isSecretConfigKeyName(key,),).toBe(true,);
     }
+  });
+});
+
+describe("validateEditableConfigValue", () => {
+  test("rejects non-integers and out-of-bounds budgets with the stable message", () => {
+    const expected = "Invalid lore_token_budget: expected an integer between 128 and 8192";
+    for (const value of [Number.NaN, -1, 8193, "abc", 128.5, null,]) {
+      expect(validateEditableConfigValue("lore_token_budget", value,),).toBe(expected,);
+    }
+  });
+
+  test("accepts boundaries and leaves other editable keys untouched", () => {
+    expect(validateEditableConfigValue("lore_token_budget", 128,),).toBeNull();
+    expect(validateEditableConfigValue("memory_token_budget", "8192",),).toBeNull();
+    expect(validateEditableConfigValue("autoroute_scenario", "chat",),).toBeNull();
+    expect(validateEditableConfigValue("model_roles", "abc",),).toBeNull();
+    expect(validateEditableConfigValue("api_token", "abc",),).toBeNull();
   });
 });

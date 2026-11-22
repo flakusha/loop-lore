@@ -12,6 +12,7 @@ import {
   REQUIRES_RESTART_KEYS,
   setConfig,
 } from "../../admin/config";
+import { validateEditableConfigValue, } from "../../admin/config-keys";
 import {
   CLASSIFIER_TAG_VOCABULARY_KEY,
   validateTagVocabulary,
@@ -139,6 +140,11 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           return withPermissionAuth(ctx, "admin.system", async () => {
             const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
 
+            const invalid = validateEditableConfigValue(key, value,);
+            if (invalid !== null) {
+              return jsonError(invalid, HttpStatus.BadRequest, ErrorCode.BadRequest,);
+            }
+
             // The classifier tag vocabulary is a structured config value: it
             // must parse as a validated JSON string[] before it can persist.
             if (key === CLASSIFIER_TAG_VOCABULARY_KEY) {
@@ -156,7 +162,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
           },);
         },
-        { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
+        { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, }, },
       )
       // -- Import YAML/TOML config into system_config --
       .post(

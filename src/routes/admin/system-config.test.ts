@@ -40,6 +40,17 @@ function makeApp(db: Kysely<DB>, userRole: string | null,) {
   return app.use(systemConfigRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
+/** @param app - admin app; @param key - config key; @param value - raw PATCH value */
+function patchConfig(app: ReturnType<typeof makeApp>, key: string, value: string,) {
+  return app.handle(
+    new Request("http://localhost/api/admin/system-config", {
+      method: "PATCH",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify({ key, value, },),
+    },),
+  );
+}
+
 let db: Kysely<DB>;
 // TestDb imported from create-test-db.ts
 let sqlite: TestDb["sqlite"];
@@ -424,5 +435,43 @@ describe("admin system-config routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("PATCH validates budget keys with 400 and writes nothing on invalid values", async () => {
+    const app = makeApp(db, "admin",);
+    const key = "lore_token_budget";
+    for (const value of ["NaN", "-1", "8193", "abc", "128.5", "null",]) {
+      const res = await patchConfig(app, key, value,);
+      expect(res.status,).toBe(400,);
+      const err = await res.json() as { error: string };
+      expect(err.error,).toBe(`Invalid ${key}: expected an integer between 128 and 8192`,);
+    }
+
+    const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,)
+      .executeTakeFirst();
+
+    expect(row,).toBeUndefined();
+  });
+
+  test("PATCH accepts budget boundaries and reads them back", async () => {
+    const app = makeApp(db, "admin",);
+    for (
+      const [key, value,] of [
+        ["lore_token_budget", "128",],
+        ["memory_token_budget", "8192",],
+      ] as const
+    ) {
+      const res = await patchConfig(app, key, value,);
+      expect(res.status,).toBe(200,);
+      expect(await getConfigValue(db, key,),).toBe(value,);
+    }
+  });
+
+  test("PATCH still accepts secret keys and GET redacts them", async () => {
+    const app = makeApp(db, "admin",);
+    expect((await patchConfig(app, "api_token", "tok-secret",)).status,).toBe(200,);
+    const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
+    const body = await res.json() as { key: string; value: string }[];
+    expect(body.find((e,) => e.key === "api_token")?.value,).toBe("***REDACTED***",);
   });
 });

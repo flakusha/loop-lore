@@ -6,6 +6,8 @@
  * secret redaction. Pure constants, no DB access.
  */
 
+import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "../config/sections/menu-data";
+import { PROMPT_BUDGET_BOUNDS, } from "../config/sections/prompt";
 import type { ConfigEntry, } from "./config";
 
 /** Keys whose values must never leave the server in cleartext. */
@@ -27,6 +29,34 @@ const NON_SECRET_CONFIG_KEYS: ReadonlySet<string> = new Set([
  */
 export function isSecretConfigKeyName(key: string,): boolean {
   return !NON_SECRET_CONFIG_KEYS.has(key,) && SECRET_KEY_PATTERN.test(key,);
+}
+
+/** Flat system_config keys whose values are prompt token budgets. */
+const BUDGET_CONFIG_KEYS: ReadonlySet<string> = new Set([
+  EDITABLE_SYSTEM_CONFIG_KEYS.loreTokenBudget,
+  EDITABLE_SYSTEM_CONFIG_KEYS.memoryTokenBudget,
+],);
+
+/**
+ * Validate an admin-editable config write. Only the two budget keys carry a
+ * numeric/range rule; scenario and model_roles keep their consumer-side rules.
+ * @param key - flat system_config key
+ * @param raw - incoming value (string from either PATCH surface)
+ * @returns stable error message, or null when the value is acceptable
+ */
+export function validateEditableConfigValue(key: string, raw: unknown,): string | null {
+  if (!BUDGET_CONFIG_KEYS.has(key,)) { return null; }
+
+  const budget = Number(raw,);
+  if (
+    !Number.isInteger(budget,) ||
+    budget < PROMPT_BUDGET_BOUNDS.min ||
+    budget > PROMPT_BUDGET_BOUNDS.max
+  ) {
+    return `Invalid ${key}: expected an integer between ${PROMPT_BUDGET_BOUNDS.min} and ${PROMPT_BUDGET_BOUNDS.max}`;
+  }
+
+  return null;
 }
 
 /**
