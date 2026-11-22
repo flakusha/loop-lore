@@ -20,6 +20,12 @@ export const EDITABLE_KEY_MAP: Record<string, Record<string, string>> = {
   generation: {
     defaultProvider: "default_provider",
     defaultModels: "default_model",
+    autorouteScenario: "autoroute_scenario",
+    modelRoles: "model_roles",
+  },
+  prompt: {
+    loreTokenBudget: "prompt_lore_budget",
+    memoryTokenBudget: "prompt_memory_budget",
   },
 };
 

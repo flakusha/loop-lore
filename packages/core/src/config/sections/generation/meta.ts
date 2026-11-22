@@ -26,6 +26,10 @@ export const generationMeta = {
       enum: ["general", "chat", "coding", "local", "observed",],
       description: "Scenario whose ranking rows select unassigned model roles (unset = manual/default)",
     },
+    modelRoles: {
+      type: "object",
+      description: "Default model role assignments (DB overrides take precedence)",
+    },
     flowControl: {
       type: "object",
       description: "Concurrency regulation for generation endpoints (0 = unbounded)",
