@@ -50,6 +50,14 @@ describe("mergePluginConfig prototype-pollution hardening", () => {
     expect(ok["endpoint"],).toBe("/hook",);
   });
 
+  test("parseStoredPluginConfig drops dangerous top-level keys", () => {
+    const parsed = parseStoredPluginConfig('{"__proto__":{"x":1},"a":2}',);
+
+    expect("__proto__" in parsed,).toBe(false);
+    expect(parsed["a"],).toBe(2,);
+    expect(Object.prototype["x" as never],).toBeUndefined();
+  });
+
   test("parseStoredPluginConfig contract unchanged", () => {
     expect(parseStoredPluginConfig(null,),).toEqual({},);
     expect(parseStoredPluginConfig("  ",),).toEqual({},);

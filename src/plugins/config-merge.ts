@@ -70,5 +70,14 @@ export function parseStoredPluginConfig(raw: string | null | undefined,): Record
     throw new Error("stored plugin config must be a JSON object",);
   }
 
-  return parsed as Record<string, unknown>;
+  // Prototype-pollution guard: same trust boundary as mergePluginConfig —
+  // dangerous top-level keys are dropped, never surfaced to plugin loaders.
+  const source = parsed as Record<string, unknown>;
+  const clean: Record<string, unknown> = Object.create(null);
+  for (const [key, value] of Object.entries(source,)) {
+    if (DANGEROUS_KEYS.includes(key)) { continue; }
+    clean[key] = value;
+  }
+
+  return clean;
 }

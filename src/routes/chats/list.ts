@@ -153,20 +153,33 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
           // totals match the previous global semantics.
           const allChats = await listQuery.execute();
 
-          const countRows = await database
-            .selectFrom("messages",)
-            .select(["chat_id", database.fn.countAll<number>().as("count",),],)
-            .where("visibility", "=", "visible",)
-            .groupBy("chat_id",)
-            .execute();
+          // The grouped count costs a full messages-table GROUP BY — pay for
+          // it only when a consumer exists: min/max bounds, or the guest
+          // never-read fallback for sort=unread. Authenticated sort=unread has
+          // its own participant-scoped query below. The default
+          // updated_at/name/pinned-first sorts do ZERO messages work, matching
+          // the pre-single-pass SQL path.
+          const needsCounts = minMessages !== undefined ||
+            maxMessages !== undefined ||
+            (sort === "unread" && userId === null);
 
-          const countsByChat = new Map(Array.from(countRows, (r,) => [r.chat_id, Number(r.count,),],),);
+          let countsByChat: Map<string, number> | null = null;
+          if (needsCounts) {
+            const countRows = await database
+              .selectFrom("messages",)
+              .select(["chat_id", database.fn.countAll<number>().as("count",),],)
+              .where("visibility", "=", "visible",)
+              .groupBy("chat_id",)
+              .execute();
+
+            countsByChat = new Map(Array.from(countRows, (r,) => [r.chat_id, Number(r.count,),],),);
+          }
 
           let unreadByChat: Map<string, number> | null = null;
           if (sort === "unread") {
             if (userId === null) {
               // SQL fallback was COALESCE(''): never-read counts ALL visible.
-              unreadByChat = countsByChat;
+              unreadByChat = countsByChat as Map<string, number>;
             } else {
               // Same semantics as routes/activity.ts computeActivity.
               const unreadRows = await sql<{ chat_id: string; count: number }>`
@@ -186,12 +199,14 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
             }
           }
 
-          const visible = allChats.filter((chat,) => {
-            const count = countsByChat.get(chat.id,) ?? 0;
-            if (minMessages !== undefined && count < minMessages) { return false; }
-            if (maxMessages !== undefined && count > maxMessages) { return false; }
-            return true;
-          },);
+          const visible = countsByChat === null
+            ? allChats
+            : allChats.filter((chat,) => {
+              const count = countsByChat.get(chat.id,) ?? 0;
+              if (minMessages !== undefined && count < minMessages) { return false; }
+              if (maxMessages !== undefined && count > maxMessages) { return false; }
+              return true;
+            },);
 
           const byUpdatedDesc = (
             a: { updated_at: string },
