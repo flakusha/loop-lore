@@ -501,6 +501,50 @@ describe("admin ComfyUI workflow routes — modality scoping", () => {
   });
 });
 
+describe("admin ComfyUI workflow routes — optional bindings", () => {
+  const BINDINGS = {
+    bindings: [{
+      kind: "scalar",
+      parameter: "prompt",
+      target: { node: "1", input: "text", },
+    },],
+  };
+
+  it("round-trips bindings through an upload without treating them as a node", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Bound",
+      ...GRAPH,
+      bindings: BINDINGS,
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    const payload = JSON.parse(String(row?.payload,),) as Record<string, unknown>;
+    expect(payload.bindings,).toEqual(BINDINGS,);
+    expect(payload.body,).not.toHaveProperty("bindings",);
+  });
+
+  it("rejects malformed bindings through the existing validator", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Bad",
+      ...GRAPH,
+      bindings: { bindings: "not-an-array", },
+    },);
+
+    expect(status,).toBe(400,);
+    expect(String(json.error,),).toContain("bindings",);
+  });
+
+  it("still accepts an upload with no bindings", async () => {
+    const { status, json, } = await postAsAdmin(BASE, { name: "Plain", ...GRAPH, },);
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    const payload = JSON.parse(String(row?.payload,),) as Record<string, unknown>;
+    expect(payload.bindings,).toBeUndefined();
+  });
+});
 describe("write fences", () => {
   it("trims the license and nulls blanks", () => {
     expect(licenseValue("  MIT  ",),).toBe("MIT",);

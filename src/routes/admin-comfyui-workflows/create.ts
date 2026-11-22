@@ -49,6 +49,7 @@ const CreateBody = t.Object(
     expectedOutputKind: t.Optional(t.String(),),
     license: t.Optional(t.Union([t.String(), t.Null(),],),),
     params_reviewed: t.Optional(t.Boolean(),),
+    bindings: t.Optional(t.Unknown(),),
   },
   { additionalProperties: true, },
 );
@@ -95,7 +96,11 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
 
   if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
 
-  const payload = { ...ingested.payload, };
+  const payload = {
+    ...ingested.payload,
+    ...(meta.bindings === undefined ? {} : { bindings: meta.bindings, }),
+  };
+
   const validated = validateWorkflowPayload(payload, { unreferencedLive: ingested.report.unreferencedLive, },);
   if (!validated.ok) { return workflowInvalid(validated.errors,); }
 

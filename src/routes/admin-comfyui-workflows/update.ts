@@ -41,6 +41,7 @@ const UpdateBody = t.Object(
     expectedOutputKind: t.Optional(t.String(),),
     license: t.Optional(t.Union([t.String(), t.Null(),],),),
     params_reviewed: t.Optional(t.Boolean(),),
+    bindings: t.Optional(t.Unknown(),),
   },
   { additionalProperties: true, },
 );
@@ -112,6 +113,17 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
 
                 if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
 
+                const uiPayload = {
+                  ...ingested.payload,
+                  ...(meta.bindings === undefined ? {} : { bindings: meta.bindings, }),
+                };
+
+                const validatedUi = validateWorkflowPayload(uiPayload, {
+                  unreferencedLive: ingested.report.unreferencedLive,
+                },);
+
+                if (!validatedUi.ok) { return workflowInvalid(validatedUi.errors,); }
+
                 const name = typeof body.name === "string" ? body.name.trim() : row.name;
                 const description = body.description === undefined
                   ? row.description
@@ -127,7 +139,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   description,
                   model_family: modelFamily,
                   detail_level: row.detail_level,
-                  payload: ingested.payload,
+                  payload: validatedUi.payload,
                   unreferencedLive: ingested.report.unreferencedLive,
                 },);
 
@@ -167,6 +179,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   parameters: meta.parameters ?? current.parameters,
                   requiredNodes: meta.requiredNodes ?? current.requiredNodes,
                   loraSlots: meta.loraSlots ?? current.loraSlots,
+                  bindings: meta.bindings === undefined ? current.bindings : meta.bindings,
                 },),
                 { unreferencedLive: converted, },
               );
