@@ -19,7 +19,7 @@
 
 import { createLogger, } from "@/logger";
 import { afterEach, beforeAll, beforeEach, describe, expect, spyOn, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { isAbsolute, join, } from "node:path";
 import { ensureTlsCerts, } from "./cert";
@@ -261,6 +261,41 @@ describe("ensureTlsCerts — generation path", () => {
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
     expect(existsSync(keyPath,),).toBe(true,);
     expect(existsSync(certPath,),).toBe(true,);
+  });
+
+  test("restricts the generated private key to 0600 in a temp instance dir", () => {
+    if (originalPlatform === "win32") { return; } // POSIX mode bits only
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const keyPath = join(tempDir, "mode", "key.pem",);
+    const certPath = join(tempDir, "mode", "cert.pem",);
+
+    Bun.spawnSync = (() => {
+      writeFileSync(keyPath, "generated-key",);
+      chmodSync(keyPath, 0o644,); // start loose so the chmod is observable
+      writeFileSync(certPath, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(statSync(keyPath,).mode & 0o777,).toBe(0o600,);
+  });
+
+  test("reusing existing cert files does not change the key mode", () => {
+    if (originalPlatform === "win32") { return; } // POSIX mode bits only
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const keyPath = join(tempDir, "reuse", "key.pem",);
+    const certPath = join(tempDir, "reuse", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+    chmodSync(keyPath, 0o644,);
+    let spawnCalled = false;
+    Bun.spawnSync = (() => {
+      spawnCalled = true;
+      throw new Error("must not generate for existing files",);
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(statSync(keyPath,).mode & 0o777,).toBe(0o644,);
+    expect(spawnCalled,).toBe(false,);
   });
 
   test("returns the resolved absolute paths when a relative config is generated", () => {

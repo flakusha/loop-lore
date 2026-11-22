@@ -12,7 +12,7 @@
  */
 
 import { getLogger, } from "@/logger";
-import { existsSync, mkdirSync, } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, } from "node:fs";
 import { dirname, } from "node:path";
 import { resolveInstancePath, } from "./instance-path";
 import type { TlsConfig, } from "./schema";
@@ -36,6 +36,22 @@ export interface EnsureTlsCertsOptions {
    * instance's state dir.
    */
   instanceDir?: string;
+}
+
+/**
+ * Restrict a freshly generated private key. The reuse fast path never calls
+ * this, so pre-existing key modes are left untouched. POSIX enforces 0600;
+ * Windows chmod only toggles the read-only bit, so failure there is best-effort.
+ */
+function restrictGeneratedKeyMode(keyPath: string,): void {
+  try {
+    chmodSync(keyPath, 0o600,);
+  } catch (error) {
+    if (process.platform !== "win32") {
+      throw error;
+    }
+    getTlsLog().warn("Could not restrict generated TLS key permissions (best effort on Windows)",);
+  }
 }
 
 /**
@@ -98,6 +114,7 @@ export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOption
       ],);
 
       if (result.success) {
+        restrictGeneratedKeyMode(resolved.key,);
         getTlsLog().info(`Certificate generated: ${resolved.cert}`,);
         // The RESOLVED paths: the caller loads these files (Bun.file), and a
         // relative config path would resolve against the cwd, not the
