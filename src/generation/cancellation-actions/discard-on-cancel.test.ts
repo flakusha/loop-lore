@@ -17,9 +17,11 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
+import { handleAmbientGeneration, } from "../audio-gen-route";
 import { handleAudioGeneration, } from "../audio-prompt-route";
 import type { AudioProvider, } from "../audio/types";
 import { registerAudioProvider, unregisterAudioProvider, } from "../audio/types";
+import { encodeWav, } from "../audio/wav";
 import { activeGenerations, chatToAttempt, } from "../cancellation-tracker";
 import type { ActiveGeneration, } from "../cancellation-tracker/types";
 import { StreamingRepetitionDetector, } from "../repetition-detector";
@@ -182,5 +184,43 @@ describe("audio generation discard-on-cancel", () => {
       if (prior === undefined) { chatToAttempt.delete(chatId,); }
       else { chatToAttempt.set(chatId, prior,); }
     }
+  });
+
+  test("ambient generation discards audio when the chat is cancelled", async () => {
+    await withDb(async (db, ownerId, chatId,) => {
+      const attemptId = randomUUID();
+      await withAttempt(chatId, attemptId, async () => {
+        const provider: AudioProvider = {
+          id: `test:ambient-cancel-${randomUUID()}`,
+          async generate() {
+            cancelGeneration({
+              attemptId,
+              reason: CancelReason.UserCancel,
+              source: CancelSource.User,
+              detail: "stop",
+            },);
+
+            return {
+              ok: true,
+              buffer: encodeWav({ sampleRate: 32_000, samples: new Float32Array(1_000,), },),
+              mimeType: "audio/wav",
+            };
+          },
+        };
+
+        await withProvider(provider, async () => {
+          const res = await handleAmbientGeneration(
+            { tags: ["rain",], chatId, duration_sec: 1, provider: provider.id, },
+            db,
+            ownerId,
+          );
+
+          expect(res.status,).toBe(409,);
+          expect(await res.json(),).toEqual({ error: "Generation cancelled", status: 409, },);
+          expect(await db.selectFrom("assets",).select("id",).execute(),).toHaveLength(0,);
+          expect(await db.selectFrom("asset_links",).select("asset_id",).execute(),).toHaveLength(0,);
+        },);
+      },);
+    },);
   });
 });

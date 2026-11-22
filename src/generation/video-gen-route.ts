@@ -25,13 +25,14 @@ import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
+import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
 import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import { getOwnedTemplate, } from "./template-service";
 import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
 import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
 import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
-import { completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
+import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
 /**
@@ -42,6 +43,11 @@ export { handleVideoGenerationStatus, } from "./video-gen-status";
 const ESTIMATED_VIDEO_BYTES = 50_000_000;
 /** Max prompt length accepted per request. */
 const MAX_PROMPT = 2_000;
+
+/** 409 response when the chat was cancelled before the job was stored. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 /**
  * B1 composition: the gate owns the box slot, the sibling unload owns the
@@ -149,6 +155,8 @@ export async function handleVideoGeneration(
     if (!access.ok) { return forbiddenResponse(); }
   }
 
+  const discard = registerDiscardOnCancel(resolvedChatId, "other",);
+
   const config = loadConfig();
 
   // FEAT-065: a user template renders the final prompt from {{variables}}
@@ -228,6 +236,8 @@ export async function handleVideoGeneration(
   // Deadline: the slowest candidate's generationTimeout. The quota gate
   // above already rejected providers-less config, so max() never sees [].
   const generationTimeoutMs = Math.max(...providers.map((provider,) => provider.generationTimeout ?? 0),);
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
   const jobId = randomUUID();
   storeVideoJob({
     id: jobId,
@@ -253,6 +263,7 @@ export async function handleVideoGeneration(
     ownerId: userId,
     chatId: resolvedChatId,
     messageId: req.messageId,
+    discard,
   },).catch((error: unknown,) => {
     // Unreachable in practice (the continuation settles every path), but
     // an unhandled rejection would crash the process — mark failed instead.
@@ -295,6 +306,7 @@ async function runVideoRender(job: {
   ownerId: string;
   chatId?: string;
   messageId?: string;
+  discard: DiscardOnCancelHandle;
 },): Promise<void> {
   const log = getChildLogger("video-gen",);
   let outcome: Awaited<ReturnType<typeof generateVideoWithFailover>> | undefined;
@@ -322,6 +334,11 @@ async function runVideoRender(job: {
 
   if (!outcome) {
     failVideoJob(job.jobId, "video render settled without an outcome", 500,);
+    return;
+  }
+
+  if (job.discard.isDiscarded()) {
+    cancelVideoJob(job.jobId, "Generation cancelled",);
     return;
   }
 
@@ -364,6 +381,11 @@ async function runVideoRender(job: {
   if (!asset) {
     log?.error("video asset persistence failed", undefined, { jobId: job.jobId, },);
     failVideoJob(job.jobId, "video asset persistence failed", 500,);
+    return;
+  }
+
+  if (job.discard.isDiscarded()) {
+    cancelVideoJob(job.jobId, "Generation cancelled",);
     return;
   }
 

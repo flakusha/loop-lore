@@ -18,6 +18,7 @@ import { getLogger, } from "../logger";
 import { resolveActorAccess, } from "../routes/actor-access";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
+import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
 import { generateImagesWithFailover, type InitImage, } from "./image-engine";
 import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
@@ -42,6 +43,11 @@ import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
 const ESTIMATED_IMAGE_BYTES = 1_500_000;
 /** Max prompt length accepted per request. */
 const MAX_PROMPT = 2_000;
+
+/** 409 response when the generation was cancelled before persisting output. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 interface ImageGenBody {
   prompt?: string;
@@ -219,6 +225,8 @@ export async function handleImageGeneration(
     const denied = await resolveActorAccess(database ?? getDatabase(), req.bindActorAvatar, userId,);
     if (denied) { return denied; }
   }
+
+  const discard = registerDiscardOnCancel(req.chatId, "image-queue",);
 
   const db = database ?? getDatabase();
 
@@ -419,6 +427,8 @@ export async function handleImageGeneration(
 
   const { images, mimeType, } = outcome;
 
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
   const links = [
     ...(req.messageId
       ? [{ entityType: "message" as const, entityId: req.messageId, label: "generated", },]
@@ -440,6 +450,8 @@ export async function handleImageGeneration(
     },
     links,
   },);
+
+  if (discard.isDiscarded()) { return cancelledResponse(); }
 
   // Avatar Dogfood (slice 1): bind each persisted image as a `generated`
   // avatar variant on the target actor (see bindGeneratedVariants).

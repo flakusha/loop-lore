@@ -20,10 +20,14 @@ import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
 import type { Kysely, } from "kysely";
-import { AssetType, type TemplateModality, } from "../db/enums";
+import { randomUUID, } from "node:crypto";
+import { AssetType, CancelReason, CancelSource, GenerationStatus, type TemplateModality, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertAssets, insertChats, } from "../test-utils/insert-helpers";
+import { cancelGeneration, } from "./cancellation-actions/cancel";
+import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
+import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
@@ -48,6 +52,8 @@ async function mockBindGeneratedAvatar(_db: unknown, opts: { actorId: string; as
 
 /** When set, mockGenerateImages fails with this outcome (provider-error path). */
 let generateError: { ok: false; error: string; status: number } | null = null;
+/** Invoked inside the engine stub to cancel the chat mid-generation. */
+let generateCancel: (() => void) | null = null;
 
 // ── Mock implementations ───────────────────────────────────────────────────────
 
@@ -60,6 +66,7 @@ async function mockGenerateImages(
   opts: Record<string, unknown>,
 ) {
   generateImagesCalls.push([_sdConfig, opts,],);
+  generateCancel?.();
   if (generateError) { return generateError; }
   return {
     ok: true,
@@ -1059,6 +1066,68 @@ describeOrSkip("handleImageGeneration — prompt length bound", () => {
       const body = (await res.json()) as { error: string };
       expect(body.error,).toBe(`Invalid size "bogus": expected "WIDTHxHEIGHT"`,);
     } finally {
+      await db.destroy();
+    }
+  });
+},);
+
+describeOrSkip("handleImageGeneration — discard on cancel", () => {
+  it("409s without persisting when the chat is cancelled mid-generation", async () => {
+    persistGeneratedCalls.length = 0;
+    stubDiscoveryProbesHealthy();
+    const attemptId = randomUUID();
+    const chatId = randomUUID();
+    const userId = "discard-image-user";
+    const { db, } = await createTestDb();
+    const previousGen = activeGenerations.get(attemptId,);
+    const previousChat = chatToAttempt.get(chatId,);
+    // Only the fields cancelGeneration touches are needed; the cast keeps this
+    // route test independent of the full ActiveGeneration fixture.
+    const active = {
+      attemptId,
+      chatId,
+      status: GenerationStatus.Streaming,
+      abortController: new AbortController(),
+      repetitionDetector: { getBufferText: () => "", },
+      sideEffectJobs: undefined,
+      events: undefined,
+    } as unknown as ActiveGeneration;
+
+    try {
+      await db.insertInto("users",).values({
+        id: userId,
+        username: userId,
+        display_name: "Discard User",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },).execute();
+
+      await insertChats(db, "Discard Chat", userId, { id: chatId, },);
+      activeGenerations.set(attemptId, active,);
+      chatToAttempt.set(chatId, attemptId,);
+      generateCancel = () => {
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.UserCancel,
+          source: CancelSource.User,
+          detail: "stop",
+        },);
+      };
+
+      const res = await handleImageGeneration(makeBody({ chatId, },), db, userId,);
+      expect(res.status,).toBe(409,);
+      expect(await res.json(),).toEqual({ error: "Generation cancelled", status: 409, },);
+      expect(persistGeneratedCalls,).toHaveLength(0,);
+    } finally {
+      generateCancel = null;
+      if (previousGen === undefined) { activeGenerations.delete(attemptId,); }
+      else { activeGenerations.set(attemptId, previousGen,); }
+
+      if (previousChat === undefined) { chatToAttempt.delete(chatId,); }
+      else { chatToAttempt.set(chatId, previousChat,); }
+
+      globalThis.fetch = originalFetch;
       await db.destroy();
     }
   });

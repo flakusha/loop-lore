@@ -16,10 +16,11 @@
  */
 import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import * as realPersist from "../assets/service/persist-generated";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
-import { StorageBudgetScope, } from "../db/enums";
+import { CancelReason, CancelSource, GenerationStatus, StorageBudgetScope, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { StorageWriteRefusedError, } from "../federation/storage-quota";
 import * as realQuota from "../federation/storage-quota";
@@ -27,6 +28,9 @@ import { ErrorCode, } from "../routes/http-utils/status";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { cancelGeneration, } from "./cancellation-actions/cancel";
+import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
+import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realVideoEngine from "./video-engine";
 import type * as videoGenRoute from "./video-gen-route";
 import { __resetVideoJobsForTests, storeVideoJob, } from "./video-jobs";
@@ -35,6 +39,8 @@ import { __resetVideoJobsForTests, storeVideoJob, } from "./video-jobs";
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
 /** Engine submissions observed by the stub; snapshot per test. */
 let engineCalls = 0;
+/** Invoked inside the engine stub to cancel the chat mid-render. */
+let engineCancel: (() => void) | null = null;
 /** Quota refusal to throw, or null for the pass-through path. */
 let quotaRefusal: StorageWriteRefusedError | null = null;
 /** Persisted asset the stub returns; null simulates a persistence miss. */
@@ -80,6 +86,7 @@ if (ISOLATED) {
   mock.module("./video-engine", () => ({
     ...realVideoEngine,
     generateVideoWithFailover: async () => {
+      engineCancel?.();
       engineCalls += 1;
       if (!engineOutcome.ok) { return engineOutcome; }
 
@@ -572,6 +579,56 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     expect(terminal["status"],).toBe("failed",);
     expect(terminal["code"],).toBe(502,);
     expect(terminal["error"],).toBe("boom",);
+  });
+
+  test("cancel mid-render fails the job with 499 and persists no clip", async () => {
+    await insertUsers(pollDb, "video-discard-user", "Discard User", { id: "video-discard-user", } as never,);
+    await insertChats(pollDb, "Discard Chat", "video-discard-user", { id: "discard-chat", } as never,);
+    const attemptId = randomUUID();
+    const previousGen = activeGenerations.get(attemptId,);
+    const previousChat = chatToAttempt.get("discard-chat",);
+    // Only the fields cancelGeneration touches are needed; the cast keeps this
+    // route test independent of the full ActiveGeneration fixture.
+    const active = {
+      attemptId,
+      chatId: "discard-chat",
+      status: GenerationStatus.Streaming,
+      abortController: new AbortController(),
+      repetitionDetector: { getBufferText: () => "", },
+      sideEffectJobs: undefined,
+      events: undefined,
+    } as unknown as ActiveGeneration;
+
+    try {
+      activeGenerations.set(attemptId, active,);
+      chatToAttempt.set("discard-chat", attemptId,);
+      engineCancel = () => {
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.UserCancel,
+          source: CancelSource.User,
+          detail: "stop",
+        },);
+      };
+
+      const { submitStatus, terminal, } = await submitAndPoll(
+        { prompt: "a cancelled clip", chatId: "discard-chat", },
+        pollDb,
+        "video-discard-user",
+      );
+
+      expect(submitStatus,).toBe(202,);
+      expect(terminal["status"],).toBe("failed",);
+      expect(terminal["code"],).toBe(499,);
+      expect(lastPersistOpts,).toBeNull();
+    } finally {
+      engineCancel = null;
+      if (previousGen === undefined) { activeGenerations.delete(attemptId,); }
+      else { activeGenerations.set(attemptId, previousGen,); }
+
+      if (previousChat === undefined) { chatToAttempt.delete("discard-chat",); }
+      else { chatToAttempt.set("discard-chat", previousChat,); }
+    }
   });
 
   test("202 does not wait for the render: submit returns while the job is pending", async () => {

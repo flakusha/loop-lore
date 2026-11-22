@@ -18,12 +18,18 @@ import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateAmbient, } from "./audio/ambient";
 import { registerAudioProviders, } from "./audio/engine";
+import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
 
 /** Max scene tags accepted per request. */
 const MAX_TAGS = 8;
 
 /** Max track length accepted per request. */
 const MAX_SECONDS = 300;
+
+/** 409 response when the generation was cancelled while audio rendered. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 interface AmbientGenBody {
   /** Scene tags (forest, night, rain, ...) — at least one required. */
@@ -80,6 +86,7 @@ export async function handleAmbientGeneration(
     if (!access.ok) { return forbiddenResponse(); }
   }
 
+  const discard = registerDiscardOnCancel(resolvedChatId, "tts",);
   const tags = (req.tags ?? []).filter((t,): t is string => typeof t === "string" && t.trim().length > 0);
   if (tags.length === 0 || tags.length > MAX_TAGS) {
     return Response.json(
@@ -126,6 +133,8 @@ export async function handleAmbientGeneration(
     );
   }
 
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
   const assetId = uid();
   const filename = `ambient-${assetId.slice(0, 8,)}.wav`;
   const { asset, } = await createAsset({
@@ -142,6 +151,8 @@ export async function handleAmbientGeneration(
     },
     uploadDir: config.assets.uploadDir,
   },);
+
+  if (discard.isDiscarded()) { return cancelledResponse(); }
 
   if (req.messageId) {
     await linkAsset({
