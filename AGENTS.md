@@ -329,8 +329,8 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   md - lint, mermaid - lint (mmdlint)
 #                     #   dead - code (knip), dead - code (src files)
 #                     #   wiring - check, fe-be - harmony, api - doc drift,
-#                     #   changelog - gate, db - schema gate, migrations - ordering,
-#                     #   conflict - markers, size - check,
+#                     #   changelog - gate, db - schema gate, schemas - check,
+#                     #   migrations - ordering, conflict - markers, size - check,
 #                     #   size - strict, context - weight, no - shell - refs,
 #                     #   fuzz - generated tests, i18n - reconcile,
 #                     #   i18n - static keys, tests - coverage gaps (see below),

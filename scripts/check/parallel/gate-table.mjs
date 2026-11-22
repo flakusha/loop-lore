@@ -144,6 +144,10 @@ export const checks = {
   // DB schema staleness (regenerates into temp dir, diffs vs committed)
   "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
+  // Generated JSON/env schema freshness (`schemas:check:fix` regenerates).
+  // BLOCKING: the pre-commit hook alone let stale schemas land via CI.
+  "schemas - check": "bun run schemas:check",
+
   // Migration ordering: numeric-prefix uniqueness + localeCompare-free sort.
   // BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
   "migrations - ordering": "bun run scripts/check-migration-ordering.ts",
