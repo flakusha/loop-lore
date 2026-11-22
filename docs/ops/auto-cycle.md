@@ -19,12 +19,12 @@ is slice 2 and is not enabled by this document.
 
 1. Read `.tmp/intercom/AUTO.json` if it exists; otherwise require a natural-language
    trigger. `autoflag` defaults to `off`.
-2. Discover a ticket via `giwt tickets next --json` (or `--plan`, `--epic`), score it
+2. Discover a ticket via `giwt plan report --json` (or `giwt plan status --tickets --json`), score it
    with `bun run plan:lint-briefing <id>` and filter with `eligibility`:
    require an explicit lane, no active claim, acceptance criteria, score ≥ 3.
 3. Read prior history before acting: `engram` context, `.omp/receipt.toml`,
    `giwt ledger show`, `.tmp/intercom/FIXED-*.md`, `.tmp/research/`.
-4. File/update tickets with `giwt new --tickets`, `giwt plan link/sync --fix`.
+4. File/update tickets with `giwt new <branch> --tickets <csv>`, `giwt sync --fix`, and `giwt plan validate --fix`.
 5. Claim with `giwt intercom claim <lane> --owner <agent-id> --scope "<text>"`.
 6. Open a worktree via pinned `bun node_modules/giwt/src/cli.ts new <branch> --scope <id>`
    (never bare `giwt`). Work inside `tree/<branch>/`.
@@ -64,7 +64,7 @@ A tripped profile breaker is a hard skip at dispatch, not a permanent demotion.
 `backoffMs(attempt, retryAtMs, now)` reuses `restartBackoffMs` and
 `SUPERVISION_MAX_RESTARTS` from `src/services/server-external-manager/supervise.ts`.
 Jitter is fixed at 1 inside the policy for determinism; the caller supplies the
-real jitter when it dispatches. `retryAtMs` comes from `_omp/usage` (quota reset
+real jitter when it dispatches. `retryAtMs` comes from the harness `_omp/usage` quota probe (quota reset
 epoch-ms) or is null. Wait is `max(backoff, retryAtMs - now)`. Attempt 5 returns
 `exhausted` — stop the loop, keep the resume point, do not call the direct API.
 
