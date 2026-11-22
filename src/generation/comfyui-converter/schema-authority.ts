@@ -26,6 +26,7 @@ export const PINNED_OBJECT_INFO_SHA256 = "732cbd98bdcdc1959974c90e4ad31e5731d019
  * @throws {Error} When the fixture cannot be read or parsed
  */
 export async function loadPinnedObjectInfo(): Promise<ObjectInfoSnapshot> {
+  // TODO(env): bun-only `Bun.file(...).json()` — add a node shim when a node target lands.
   return await Bun.file(new URL("./fixtures/object-info.json", import.meta.url,),).json() as ObjectInfoSnapshot;
 }
 
