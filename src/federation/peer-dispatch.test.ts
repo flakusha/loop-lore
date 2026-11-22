@@ -448,7 +448,8 @@ describe("dispatchPeerWorkload - Retry-After propagation", () => {
       })) as RunPeerSeam,
     },).catch(() => undefined);
 
-    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    // The dispatch failure above already counts as consecutive failure #1,
+    // so two misses reach the trip threshold of 3 with the base 10s backoff.
     recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
     recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
     now += 10_000;
