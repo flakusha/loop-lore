@@ -64,6 +64,7 @@ Three-tier memory system: episodic (recent events), semantic (facts/knowledge), 
 - Open gap: verify group-chat injection passes a per-viewer actor into
   `evaluateShareability`/`shouldInjectMemory` so knowledge isolation (e.g. dark-elves know,
   humans don't) holds per-message. See `IDEA-memory-knowledge-isolation-and-world-timeline.md`.
+  Enforced viewer-id contract: `docs/spec/memory-system.md` → "Isolation contract".
 
 ## Research Extensions (2026-08-14)
 
