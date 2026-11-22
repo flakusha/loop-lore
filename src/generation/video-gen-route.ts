@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 389
+// size-allow: 430
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).
@@ -46,7 +46,7 @@ import {
   storeVideoJob,
   type VideoJob,
 } from "./video-jobs";
-import { resolveWorkflowForUseCase, } from "./workflow-selection";
+import { getWorkflowDefaults, resolveWorkflowForUseCase, } from "./workflow-selection";
 
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
@@ -201,10 +201,36 @@ export async function handleVideoGeneration(
   const discard = registerDiscardOnCancel(resolvedChatId, "other",);
 
   const config = loadConfig();
+  const providers = config.generation.providers.video;
+
+  // Workflow precedence: explicit body field > stored user selection > config
+  // default. Config is process-global: copy every provider before overriding
+  // its workflow so one user's selection cannot leak into another request.
+  // An inline graph object bypasses selection like an explicit name, but it
+  // carries no name downstream — only strings override providers and select
+  // the MiniMax converter (its startsWith assumes a name).
+  const workflowName = typeof req.workflow === "string" ? req.workflow : undefined;
+  const workflow = workflowName ?? (req.workflow === undefined
+    ? await resolveWorkflowForUseCase({
+      database: db,
+      userId,
+      useCase: "video.generate",
+      fallback: providers?.[0]?.workflow,
+    },)
+    : undefined);
+
+  const minimaxMode = minimaxModeForWorkflow(workflow,);
+  // MiniMax accepts a plain per-cut scenario in `details` without a display
+  // prompt; other paths still require the prompt field.
+  const hasMinimaxDetails = minimaxMode !== null && (
+    (typeof req.details === "string" && req.details.trim().length > 0) ||
+    (req.shots?.length ?? 0) > 0 ||
+    (req.references?.length ?? 0) > 0
+  );
 
   // FEAT-065: a user template renders the final prompt from {{variables}}
   // when provided; the raw `prompt` field is then optional.
-  let prompt = req.prompt;
+  let prompt = req.prompt ?? "";
   if (req.templateId) {
     const row = await getOwnedTemplate(db, req.templateId, userId,);
     if (!row) {
@@ -222,14 +248,26 @@ export async function handleVideoGeneration(
   // Concatenation (not a template literal): the size gate scans with
   // ts.createScanner, which mis-lexes an interpolated template tail and
   // recounts following comment lines as code.
-  if (!prompt || prompt.trim().length === 0 || prompt.length > MAX_PROMPT) {
+  if (!hasMinimaxDetails && (!prompt || prompt.trim().length === 0 || prompt.length > MAX_PROMPT)) {
     return Response.json(
       { error: "prompt must be 1.." + MAX_PROMPT + " characters", status: 400, },
       { status: 400, },
     );
   }
 
-  const providers = config.generation.providers.video;
+  if (workflowName !== undefined) {
+    const allowed = new Set([
+      ...getWorkflowDefaults()["video.generate"].supported,
+      ...(providers ?? []).map((provider,) => provider.workflow).filter(
+        (id,): id is string => typeof id === "string" && id.length > 0,
+      ),
+    ],);
+
+    if (!allowed.has(workflowName,)) {
+      return Response.json({ error: "unsupported workflow: " + workflowName, status: 400, }, { status: 400, },);
+    }
+  }
+
   if (!providers || providers.length === 0) {
     return Response.json(
       {
@@ -262,22 +300,6 @@ export async function handleVideoGeneration(
     throw error;
   }
 
-  // Workflow precedence: explicit body field > stored user selection > config
-  // default. Config is process-global: copy every provider before overriding
-  // its workflow so one user's selection cannot leak into another request.
-  // An inline graph object bypasses selection like an explicit name, but it
-  // carries no name downstream — only strings override providers and select
-  // the MiniMax converter (its startsWith assumes a name).
-  const workflowName = typeof req.workflow === "string" ? req.workflow : undefined;
-  const workflow = workflowName ?? (req.workflow === undefined
-    ? await resolveWorkflowForUseCase({
-      database: db,
-      userId,
-      useCase: "video.generate",
-      fallback: providers[0]?.workflow,
-    },)
-    : undefined);
-
   const requestProviders = workflow === undefined
     ? providers
     : providers.map((provider,) => ({ ...provider, workflow, }));
@@ -285,7 +307,6 @@ export async function handleVideoGeneration(
   // MiniMax H3 FL/REF exports need the Director heading/shot grammar: a plain
   // scenario would otherwise substitute into an unformatted prompt. Convert
   // through the shared AUX seam (one retry inside) and fail closed on failure.
-  const minimaxMode = minimaxModeForWorkflow(workflow,);
   if (minimaxMode) {
     const converted = await formatMinimaxPrompt({
       mode: minimaxMode,
@@ -307,6 +328,13 @@ export async function handleVideoGeneration(
         reason: converted.reason,
         ...(converted.missing ? { missing: converted.missing, } : {}),
       }, { status: 422, },);
+    }
+
+    if (converted.prompt.length > MAX_PROMPT) {
+      return Response.json(
+        { error: "minimax_prompt_too_long", status: 422, },
+        { status: 422, },
+      );
     }
 
     prompt = converted.prompt;

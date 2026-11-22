@@ -42,9 +42,9 @@ const SHIPPED_DIR = "./configs/workflows";
 const SHIPPED_SKIP_REASONS: Record<string, string> = {
   "minimax-h3-assemble-wf": "video workflow is not an image-edit template",
   "minimax-h3-audio-fallback-v1": "not a loadable ComfyUI graph (needs a real output sink)",
+  "minimax-h3-audio-wf": "audio workflow is not an image-edit template",
   "minimax-h3-fragment-assemble-v1": "not a loadable ComfyUI graph (needs a real output sink)",
   "minimax-h3-i2v-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
-  "minimax-h3-image-image-edit-v1": "dead node(s) not linked into the graph: 62",
   "minimax-h3-ref2va-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
   "minimax-h3-t2v-fragment-v1": "not a loadable ComfyUI graph (needs a real output sink)",
   "minimax-h3-video-fl2va-opt-v1": "video workflow is not an image-edit template",
@@ -248,6 +248,7 @@ describe("seedWorkflowLibrary", () => {
   it("configured defaults name shipped, runnable graphs", async () => {
     const defaults = await Bun.file("configs/workflow-defaults.json",).json() as Record<string, { default: string }>;
     for (const { default: id, } of Object.values(defaults,)) {
+      if (!id) { continue; }
       const graph = await Bun.file(join(SHIPPED_DIR, `${id}.json`,),).json() as Record<string, { class_type: string }>;
       const classes = Object.values(graph,).map((node,) => node.class_type);
       expect(classes.some((classType,) => classType !== "Note"),).toBe(true,);

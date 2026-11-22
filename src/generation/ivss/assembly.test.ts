@@ -178,6 +178,7 @@ describe("IVSS workflow-driven assembly", () => {
       cut_points: JSON.stringify(seeded.cutPoints,),
       fps: 24,
       scenario_id: seeded.scenarioId,
+      input_image: `comfy-fragment-${seeded.fragment1}-clip-a.webm`,
     },);
 
     const row = await seeded.db.selectFrom("scenario_assemblies",).selectAll()

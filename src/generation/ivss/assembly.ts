@@ -256,6 +256,8 @@ export async function assembleScenario(
         cut_points: encode(cutPoints,),
         fps,
         scenario_id: scenario.id,
+        // ponytail: shipped assemble graph consumes one {{input_image}}; first clip only
+        input_image: uploads[0] ?? "",
       };
 
       uploads.forEach((name, index,) => {

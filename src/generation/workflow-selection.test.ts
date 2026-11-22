@@ -80,6 +80,11 @@ describe("getWorkflowDefaults", () => {
     const defaults = getWorkflowDefaults();
     expect(Object.keys(defaults,).sort(),).toEqual([...USE_CASES,].sort(),);
     for (const useCase of USE_CASES) {
+      if (defaults[useCase]!.default === "") {
+        expect(defaults[useCase]!.supported,).toEqual([],);
+        continue;
+      }
+
       expect(defaults[useCase]!.supported.length,).toBeGreaterThan(0,);
       expect(defaults[useCase]!.supported,).toContain(defaults[useCase]!.default,);
     }
@@ -100,7 +105,7 @@ describe("getWorkflowDefaults", () => {
     );
 
     expect(defaults["image.edit"].supported,).toEqual(
-      expect.arrayContaining(["img2img-v1",],),
+      expect.arrayContaining(["img2img-v1", "minimax-h3-image-image-edit-v1",],),
     );
 
     expect(defaults["video.generate"].supported,).toEqual(
@@ -112,9 +117,8 @@ describe("getWorkflowDefaults", () => {
       ],),
     );
 
-    expect(defaults["audio.generate"].supported,).toEqual(
-      expect.arrayContaining(["minimax-h3-audio-wf",],),
-    );
+    expect(defaults["audio.generate"].default,).toBe("",);
+    expect(defaults["audio.generate"].supported,).toEqual([],);
   });
 });
 
@@ -125,6 +129,7 @@ describe("workflow-defaults.json shipped ids", () => {
     for (const useCase of USE_CASES) {
       const configured = new Set([defaults[useCase].default, ...defaults[useCase].supported,],);
       for (const id of configured) {
+        if (!id) { continue; }
         expect(available.has(id,),).toBe(true,);
         const graph = await getWorkflowLoader().getRawWorkflow(id,);
         expect(graph,).not.toBeNull();
@@ -170,7 +175,7 @@ describe("resolveWorkflowForUseCase", () => {
         userId: bogusUser,
         useCase: "audio.generate",
       },),
-    ).toBe(defaults["audio.generate"].default,);
+    ).toBeUndefined();
 
     expect(
       await resolveWorkflowForUseCase({
@@ -196,6 +201,7 @@ describe("resolveWorkflowForUseCase", () => {
 describe("getWorkflowCatalog", () => {
   test("selections are isolated per user and entries are labeled", async () => {
     const available = new Set(await getWorkflowLoader().listWorkflows(),);
+    const defaults = getWorkflowDefaults();
     const catalogA = await getWorkflowCatalog({ database: db, userId: userA, },);
     const catalogB = await getWorkflowCatalog({ database: db, userId: userB, },);
 
@@ -204,6 +210,11 @@ describe("getWorkflowCatalog", () => {
     expect(catalogB.find((entry,) => entry.useCase === "image.generate")?.selected,).toBe("noob-v1",);
 
     for (const entry of catalogA) {
+      if (defaults[entry.useCase].default === "") {
+        expect(entry.supported,).toEqual([],);
+        continue;
+      }
+
       expect(entry.supported.length,).toBeGreaterThan(0,);
       expect(entry.supported.every((option,) => available.has(option.id,)),).toBe(true,);
 
@@ -236,6 +247,7 @@ describe("getWorkflowCatalog fallback", () => {
     const catalog = await getWorkflowCatalog({ database: db, userId: malformedUser, },);
     for (const entry of catalog) {
       expect(entry.selected,).toBe(defaults[entry.useCase].default,);
+      if (!entry.selected) { continue; }
       expect(entry.supported.some((option,) => option.id === entry.selected),).toBe(true,);
     }
   });

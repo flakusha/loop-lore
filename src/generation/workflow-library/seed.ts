@@ -55,6 +55,8 @@ const VIDEO_SINK_CLASSES: ReadonlySet<string> = new Set([
   "VHS_VideoCombine",
 ],);
 
+/** Audio-only sinks are as unusable as video sinks in the image-edit library. */
+const AUDIO_SINK_CLASSES: ReadonlySet<string> = new Set(["SaveAudio",],);
 /**
  * Category for a seeded file, from its name.
  *
@@ -147,6 +149,10 @@ async function readPayload(
   const classes = Object.values(graph as WorkflowPayload["body"],).map((node,) => node.class_type);
   if (classes.some((classType,) => VIDEO_SINK_CLASSES.has(classType,))) {
     return { ok: false, reason: "video workflow is not an image-edit template", };
+  }
+
+  if (classes.some((classType,) => AUDIO_SINK_CLASSES.has(classType,))) {
+    return { ok: false, reason: "audio workflow is not an image-edit template", };
   }
 
   return {

@@ -6,6 +6,7 @@
  * No I/O and no stubs: shipped literal shapes and their malformed variants.
  */
 import { describe, expect, it, } from "bun:test";
+import { existsSync, } from "node:fs";
 import {
   minimaxModeForWorkflow,
   validateMinimaxPrompt,
@@ -135,6 +136,7 @@ describe("minimaxModeForWorkflow", () => {
       ]
     ) {
       expect(minimaxModeForWorkflow(id,),).toBe("fl2va",);
+      expect(existsSync(`configs/workflows/${id}.json`,),).toBe(true,);
     }
   });
 
@@ -147,6 +149,7 @@ describe("minimaxModeForWorkflow", () => {
       ]
     ) {
       expect(minimaxModeForWorkflow(id,),).toBe("ref2va",);
+      expect(existsSync(`configs/workflows/${id}.json`,),).toBe(true,);
     }
   });
 

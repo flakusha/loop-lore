@@ -37,6 +37,20 @@ const INPUT: MinimaxFormatInput = {
   durationSeconds: 8,
 };
 
+const REF_CONFORMING = `subject_definitions:
+<Subject 1> is the yellow plane in <Picture 1>.
+summary:
+A five-second cinematic aviation clip.
+retention_analysis:
+<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - the plane is retained.
+detailed_description:
+[Shot 1] A wide shot frames the yellow plane climbing.
+[Shot 2] At 00:02.000, the propeller fills the frame.
+overall_soundscape:
+Straining engine and wind.
+non_diegetic_music:
+N/A`;
+
 function withCaller(responses: Array<string | null>,) {
   const calls: GenerationMessage[][] = [];
   let index = 0;
@@ -101,5 +115,25 @@ describe("formatMinimaxPrompt (injected caller)", () => {
     const { deps, calls, } = withCaller([UNALIGNED, null,],);
     expect(await formatMinimaxPrompt(INPUT, deps,),).toEqual({ ok: false, reason: "aux_unavailable", },);
     expect(calls.length,).toBe(2,);
+  });
+
+  it("pins the REF2VA system prompt instructions", async () => {
+    const { deps, calls, } = withCaller([REF_CONFORMING,],);
+    const result = await formatMinimaxPrompt({ mode: "ref2va", details: "a yellow plane climbs", }, deps,);
+    expect(result,).toEqual({ ok: true, prompt: REF_CONFORMING, },);
+    const system = calls[0]?.[0]?.content ?? "";
+    expect(system,).toContain("MiniMax H3 REF2VA video prompt writer",);
+    for (
+      const heading of [
+        "subject_definitions:",
+        "summary:",
+        "retention_analysis:",
+        "detailed_description:",
+        "overall_soundscape:",
+        "non_diegetic_music:",
+      ]
+    ) {
+      expect(system,).toContain(heading,);
+    }
   });
 });

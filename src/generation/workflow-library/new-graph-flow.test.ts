@@ -3,8 +3,8 @@
 
 /**
  * Shipped API-format exports through the pre-submit pipeline (shape, dead
- * nodes, substitution, validation) with realistic vars. The two image-edit
- * exports pin their unreferenced nodes until the operator wires or drops them.
+ * nodes, substitution, validation) with realistic vars. The qwen image-edit
+ * export pins its unreferenced nodes until the operator wires or drops them.
  * @module new-graph-flow
  */
 import { describe, expect, it, } from "bun:test";
@@ -51,6 +51,7 @@ const FLOW_VARS = buildSubstitutionVars({
 
 const CLEAN_GRAPHS = [
   "minimax-h3-image-t2i-v1.json",
+  "minimax-h3-image-image-edit-v1.json",
   "minimax-h3-audio-wf.json",
   "minimax-h3-assemble-wf.json",
   "minimax-h3-video-fl2va-v1.json",
@@ -60,7 +61,6 @@ const CLEAN_GRAPHS = [
 ] as const;
 
 const DEAD_NODE_GRAPHS = [
-  ["minimax-h3-image-image-edit-v1.json", ["62",], "dead node(s) not linked into the graph: 62",],
   ["qwen-image-2-1-image-edit-v1.json", ["472", "518",], "dead node(s) not linked into the graph: 472, 518",],
 ] as const;
 
@@ -136,7 +136,7 @@ describe("shipped workflow exports pre-submit flow", () => {
     }
   });
 
-  it("MiniMax video exports bind {{prompt}} and {{attention}} placeholders", () => {
+  it("MiniMax video exports bind the {{prompt}} placeholder", () => {
     const videoExports = [
       "minimax-h3-video-fl2va-v1.json",
       "minimax-h3-video-fl2va-opt-v1.json",
@@ -145,7 +145,7 @@ describe("shipped workflow exports pre-submit flow", () => {
     ] as const;
 
     for (const name of videoExports) {
-      expect([...collectPlaceholders(load(name,),),],).toEqual(["prompt", "attention",],);
+      expect([...collectPlaceholders(load(name,),),],).toEqual(["prompt",],);
     }
   });
 });

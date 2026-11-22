@@ -15,7 +15,8 @@
   "image.edit": {
     "default": "img2img-v1",
     "supported": [
-      "img2img-v1"
+      "img2img-v1",
+      "minimax-h3-image-image-edit-v1"
     ]
   },
   "video.generate": {
@@ -28,9 +29,7 @@
     ]
   },
   "audio.generate": {
-    "default": "minimax-h3-audio-wf",
-    "supported": [
-      "minimax-h3-audio-wf"
-    ]
+    "default": "",
+    "supported": []
   }
 }

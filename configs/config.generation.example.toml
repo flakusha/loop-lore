@@ -32,6 +32,9 @@ openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
 # llama-swap proxy variant (model `comfyui_auto` in config.llama-swap.example.yaml):
 # baseUrl = "http://127.0.0.1:7180/upstream/comfyui_auto"
 # Workflow names stay placeholders until the H3 workflow export lands.
+# FL2VA/REF2VA video workflows rewrite prompts through AUX; configure
+# [generation.modelRoles.auxiliary] (provider + model) or those requests fail
+# closed with 422 when the role cannot be resolved.
 # [generation.providers.video.models]
 # clip = "umt5_xxl_fp8_e4m3fn_scaled.safetensors"
 # diffusion = "MinimaxH3_i2v.safetensors"
