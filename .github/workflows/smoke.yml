@@ -18,6 +18,11 @@ jobs:
     name: Fast gate
     runs-on: ubuntu-latest
     timeout-minutes: 2
+    # The parallel check runner's GPG preflight reads .credentials.env before
+    # any gate runs; CI has no credentials and no gate signs commits. Skip only
+    # that preflight — commit signing configuration is untouched.
+    env:
+      CHECK_SKIP_GPG_PRECHECK: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
