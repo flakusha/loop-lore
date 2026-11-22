@@ -209,4 +209,53 @@ describe("findCompressedVariant", () => {
     // gzip;q=0 alone yields no compressed variant at all.
     expect(findCompressedVariant(cssPath, "gzip;q=0",),).toBeNull();
   });
+
+  test("picks the highest-q available variant over fixed priority", () => {
+    expect(findCompressedVariant(cssPath, "br;q=0.3, gzip;q=0.9",),).toEqual({
+      path: `${cssPath}.gz`,
+      encoding: "gzip",
+    },);
+
+    expect(findCompressedVariant(cssPath, "gzip;q=0.9, *;q=0.5",),).toEqual({
+      path: `${cssPath}.gz`,
+      encoding: "gzip",
+    },);
+  });
+
+  test("keeps br > zstd > gzip when q-values tie", () => {
+    expect(findCompressedVariant(cssPath, "gzip;q=1, zstd;q=1, br;q=1",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    expect(findCompressedVariant(cssPath, "gzip;q=1, zstd;q=1",),).toEqual({
+      path: `${cssPath}.zst`,
+      encoding: "zstd",
+    },);
+  });
+
+  test("gzip;q=0 is refused while the wildcard still accepts other codings", () => {
+    expect(findCompressedVariant(cssPath, "gzip;q=0, *",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    rmSync(`${cssPath}.zst`,);
+    expect(findCompressedVariant(cssPath, "gzip;q=0, *",),).toBeNull();
+  });
+
+  test("wildcard accepts any available coding when nothing is explicit", () => {
+    expect(findCompressedVariant(cssPath, "*",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    expect(findCompressedVariant(cssPath, "*",),).toEqual({
+      path: `${cssPath}.zst`,
+      encoding: "zstd",
+    },);
+  });
 });

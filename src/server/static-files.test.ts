@@ -255,6 +255,20 @@ describeOrSkip("handleDocsRequest", () => {
     expect(await res?.text(),).toBe("br-bytes",);
   });
 
+  test("keeps Vary: Accept-Encoding when a refused request serves identity", () => {
+    const fx = getFixtures();
+    writeFixture(fx.docs, "guide/index.html", "<html>Guide</html>",);
+    writeFixture(fx.docs, "guide/index.html.br", "br-bytes",);
+    const res = handleDocsRequest(
+      ...docsRequest("/docs/guide/", { headers: { "accept-encoding": "br;q=0", }, },),
+      {},
+    );
+
+    expect(res?.status,).toBe(200,);
+    expect(res?.headers.get("content-encoding",),).toBeNull();
+    expect(res?.headers.get("vary",),).toBe("Accept-Encoding",);
+  });
+
   test("sets immutable cache control for hashed assets and max-age otherwise", () => {
     const fx = getFixtures();
     writeFixture(fx.docs, "app-3c4f5a2b.js", "hashed",);

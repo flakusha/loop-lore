@@ -4,7 +4,7 @@
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { join, normalize, } from "node:path";
 import { HASHED_ASSET_PATTERN, } from "../content/hash-injection";
-import { findCompressedVariant, getContentType, } from "./static-mime";
+import { findCompressedVariant, getContentType, isCompressible, } from "./static-mime";
 
 export const DOCS_PATH = join(import.meta.dir, "..", "..", "docs", ".vitepress", "dist",);
 
@@ -85,9 +85,10 @@ function respondWithFile(
     "Content-Type": getContentType(fullPath,),
   };
 
-  // Only set Vary when a compressed variant may be served (RFC 7231).
+  // Vary is required for every compressible representation, not just this
+  // request's match: a cached identity response must not hide a variant.
+  if (isCompressible(fullPath,)) { headers["Vary"] = "Accept-Encoding"; }
   const variant = findCompressedVariant(fullPath, acceptEncoding,);
-  if (variant) { headers["Vary"] = "Accept-Encoding"; }
   headers["Cache-Control"] = buildCacheControl(fullPath, cacheMaxAge,);
 
   // Determine the actual serving path (compressed variant takes precedence)
