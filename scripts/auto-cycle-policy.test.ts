@@ -6,6 +6,7 @@ import { restartBackoffMs, } from "../src/services/server-external-manager/super
 import {
   backoffMs,
   eligibility,
+  type EligibilityReason,
   type PolicyTicket,
   selectModel,
   summaryContract,
@@ -61,6 +62,23 @@ describe("eligibility", () => {
     expect(eligibility(ticket({ acceptanceCriteria: ["  ", "\n",], },), [], 5,),).toMatchObject({
       reason: "no-acceptance-criteria",
     },);
+  });
+
+  test("every rejection path yields a documented reason", () => {
+    const verdicts = [
+      eligibility(ticket({ lane: "  ", },), [], 5,),
+      eligibility(ticket(), ["lane-sample",], 5,),
+      eligibility(ticket({ acceptanceCriteria: [], },), [], 5,),
+      eligibility(ticket(), [], 2,),
+    ];
+    const reasons: EligibilityReason[] = [];
+    for (const verdict of verdicts) {
+      expect(verdict.ok,).toBe(false,);
+      if (!verdict.ok) { reasons.push(verdict.reason,); }
+    }
+    expect(new Set(reasons,),).toEqual(
+      new Set<EligibilityReason>(["missing-lane", "claimed-lane", "no-acceptance-criteria", "low-score",],),
+    );
   });
 
   test("a blank lane rejects before score checks", () => {
