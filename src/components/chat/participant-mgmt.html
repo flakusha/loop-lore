@@ -88,6 +88,11 @@
       x-model="_participantQuery"
       data-testid="participant-search"
     />
+    <select class="form-input participant-kind" x-model="_participantKind" data-testid="participant-kind-select">
+      <option value="all">{{{ t("chats.participantKindAll") }}}</option>
+      <option value="assistant">{{{ t("chats.participantKindAssistant") }}}</option>
+      <option value="plain">{{{ t("chats.participantKindPlain") }}}</option>
+    </select>
     <select class="form-input" x-model="_selectedAddRole" data-testid="participant-role-select">
       <option value="member">member</option>
       <option value="owner">owner</option>

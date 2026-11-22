@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { ChatParticipant, ChatParticipantsState, GroupTurnOrder, } from "./chat-types/participants-state";
+import { filterActorsByKind, } from "../actor-kind";
+import type {
+  AvailableActor,
+  ChatParticipant,
+  ChatParticipantsState,
+  GroupTurnOrder,
+} from "./chat-types/participants-state";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
@@ -17,8 +23,9 @@ import type { ChatState, } from "./types";
  */
 export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatState> = {
   _participants: [] as ChatParticipant[],
-  _availableActors: [] as { id: string; display_name: string; actor_type: string }[],
+  _availableActors: [] as AvailableActor[],
   _participantQuery: "",
+  _participantKind: "all",
   _participantsBusy: false,
   _selectedAddActorId: null as string | null,
   _selectedAddRole: "member",
@@ -28,18 +35,18 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
     return this.currentChat?.type === "group";
   },
 
-  get filteredAvailableActors(): { id: string; display_name: string; actor_type: string }[] {
+  get filteredAvailableActors(): AvailableActor[] {
     const memberIds = new Set<string>();
     for (const p of this._participants) { memberIds.add(p.actor_id,); }
     const q = (this._participantQuery || "").toLowerCase();
-    const out: { id: string; display_name: string; actor_type: string }[] = [];
+    const out: AvailableActor[] = [];
     for (const a of this._availableActors) {
       if (memberIds.has(a.id,)) { continue; }
       if (q && !(a.display_name || "").toLowerCase().includes(q,)) { continue; }
       out.push(a,);
     }
 
-    return out;
+    return filterActorsByKind(out, this._participantKind,);
   },
 
   /**
@@ -90,7 +97,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       const res = await apiFetch("/api/v1/actors",);
       if (!res.ok) { return; }
       // GET /api/v1/actors answers with a { data: [...] } envelope.
-      const body = (await res.json()) as { data?: { id: string; display_name: string; actor_type: string }[] };
+      const body = (await res.json()) as { data?: AvailableActor[] };
       this._availableActors = body.data ?? [];
     } catch {
       /* ignore */

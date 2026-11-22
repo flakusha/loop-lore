@@ -322,5 +322,42 @@ describeOrSkip("chatParticipants", () => {
       const result = state.filteredAvailableActors;
       expect(result.map((a,) => a.id),).toEqual(["a3",],);
     });
+
+    test("keeps only LLM-driven rows for the assistant kind", () => {
+      const state = buildCtx();
+      state._availableActors = [
+        { id: "a1", display_name: "Nova", actor_type: "character", agent_type: "ai", },
+        { id: "a2", display_name: "Bob", actor_type: "character", agent_type: "none", },
+      ];
+
+      state._participantKind = "assistant";
+      expect(state.filteredAvailableActors.map((a,) => a.id),).toEqual(["a1",],);
+    });
+
+    test("keeps only plain rows for the plain kind", () => {
+      const state = buildCtx();
+      state._availableActors = [
+        { id: "a1", display_name: "Nova", actor_type: "character", agent_type: "ai", },
+        { id: "a2", display_name: "Bob", actor_type: "character", agent_type: "none", },
+      ];
+
+      state._participantKind = "plain";
+      expect(state.filteredAvailableActors.map((a,) => a.id),).toEqual(["a2",],);
+    });
+
+    test("the kind filter composes with the free-text filter", () => {
+      const state = buildCtx();
+      state._availableActors = [
+        { id: "a1", display_name: "Nova", actor_type: "character", agent_type: "ai", },
+        { id: "a2", display_name: "Bobby", actor_type: "character", agent_type: "none", },
+      ];
+
+      state._participantKind = "assistant";
+      state._participantQuery = "bob";
+      expect(state.filteredAvailableActors.map((a,) => a.id),).toEqual([],);
+
+      state._participantKind = "plain";
+      expect(state.filteredAvailableActors.map((a,) => a.id),).toEqual(["a2",],);
+    });
   },);
 },);

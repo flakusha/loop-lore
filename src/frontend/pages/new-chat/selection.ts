@@ -2,38 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { parseAlternateGreetings, } from "../../../characters/greetings";
-import { ActorType, AgentType, } from "../../../db/enums-core/actors";
+import { filterActorsByKind, } from "../../actor-kind";
 import { filterActors, } from "../shared";
 import { loadMemoriesForActor, } from "./memory";
 import { isGroup, type NewChatCtx, } from "./state";
-
-/** The subset of an `/api/v1/actors` row the kind filter inspects. */
-interface KindableActor {
-  id?: string;
-  actor_type?: string;
-  agent_type?: string;
-}
-
-/**
- * Narrow actor rows by the participant picker's kind facet. Pure: no DOM,
- * no mutation of the input array. Unknown/missing kind behaves like "all";
- * rows missing the field a non-all kind needs are excluded.
- * @param actors
- * @param kind - "all" | "user" | "character" | "assistant"
- * @returns {KindableActor[]}
- */
-export function filterActorsByKind(actors: KindableActor[], kind: string,): KindableActor[] {
-  switch (kind) {
-    case "user":
-      return actors.filter((a,) => a.actor_type === ActorType.User);
-    case "character":
-      return actors.filter((a,) => a.actor_type === ActorType.Character);
-    case "assistant":
-      return actors.filter((a,) => a.agent_type === AgentType.Ai);
-    default:
-      return actors;
-  }
-}
 
 /** A greeting option shown by the new-chat picker. */
 export interface GreetingOption {

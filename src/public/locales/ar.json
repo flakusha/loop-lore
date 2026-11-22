@@ -1650,7 +1650,8 @@
     "participantKindAll": "All kinds",
     "participantKindUser": "Users",
     "participantKindCharacter": "Characters",
-    "participantKindAssistant": "Assistants"
+    "participantKindAssistant": "Assistants",
+    "participantKindPlain": "Plain"
   },
   "personas": {
     "title": "Personas",
