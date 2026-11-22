@@ -192,6 +192,15 @@ describe("shipped graphs with a bindable attention input", () => {
     }
   });
 
+  it("keeps the shipped attention literal as the derived default", async () => {
+    for (const id of ATTENTION_GRAPHS) {
+      const graph = await shippedGraph(id,);
+      const attention = deriveParameters(id, graph,).find((parameter,) => parameter.name === "attention");
+
+      expect(attention?.default, `${id}`,).toBe("comfy kitchen attention",);
+    }
+  });
+
   it("passes seed validation with the newly declared placeholder", async () => {
     for (const id of ATTENTION_GRAPHS) {
       const graph = await shippedGraph(id,);
