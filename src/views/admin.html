@@ -92,6 +92,14 @@
         </button>
         <button
           class="world-edit-tab"
+          :class="{ active: activeTab === 'harnessQueue' }"
+          @click="showTab('harnessQueue')"
+          data-testid="admin-tab-harness-queue"
+        >
+          {{{t("harnessQueue.tab")}}}
+        </button>
+        <button
+          class="world-edit-tab"
           :class="{ active: activeTab === 'federation' }"
           @click="showTab('federation')"
           data-testid="admin-tab-federation"
@@ -129,7 +137,7 @@
       admin/audit-panel.html }} {{> admin/world-events-panel.html }} {{> admin/models-panel.html }} {{>
       admin/plugins-panel.html }} {{> admin/system-panel.html }} {{> admin/analytics-panel.html }} {{>
       admin/health-panel.html }} {{> admin/templates-panel.html }} {{> admin/lora-panel.html }} {{>
-      admin/workflows-panel.html }} {{> admin/builder-panel.html }}
+      admin/workflows-panel.html }} {{> admin/builder-panel.html }} {{> admin/harness-queue-panel.html }}
     </div>
 
     <!-- Harness Tab (TASK-harness-frontend-consolidation) -->

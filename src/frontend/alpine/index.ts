@@ -14,6 +14,7 @@ import "./actor-traits";
 import "./actor-wardrobe";
 import "./admin";
 import "./admin-db-backup";
+import "./admin-harness-queue";
 import "./admin-llama-swap";
 import "./admin-mfa";
 import "./age-gate";
