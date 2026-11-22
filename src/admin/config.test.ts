@@ -378,4 +378,90 @@ describe("importConfigFromText", () => {
     expect(memory?.value,).toBe("2048",);
     expect(await getConfig(db, "api_token",),).toBeUndefined();
   });
+
+  test("skips invalid budget values per entry with the stable error", async () => {
+    await db.deleteFrom("system_config",).where("key", "in", ["lore_token_budget",],).execute();
+
+    for (const value of ["abc", "-1", "8193", "128.5",]) {
+      const results = await importConfigFromText(
+        db,
+        `system_config:\n  lore_token_budget: '${value}'\n`,
+        "yaml",
+      );
+
+      expect(results,).toEqual([
+        {
+          key: "lore_token_budget",
+          action: "skipped",
+          error: "Invalid lore_token_budget: expected an integer between 128 and 8192",
+        },
+      ],);
+
+      expect(await getConfig(db, "lore_token_budget",),).toBeUndefined();
+    }
+  });
+
+  test("keeps importing other entries when a budget entry is skipped", async () => {
+    const results = await importConfigFromText(
+      db,
+      [
+        "system_config:",
+        "  lore_token_budget: 'abc'",
+        "  plain.import.key: ok",
+        "  api_token: SENTINEL-IMPORT-SECRET-2",
+      ].join("\n",),
+      "yaml",
+    );
+
+    expect(results,).toEqual([
+      {
+        key: "lore_token_budget",
+        action: "skipped",
+        error: "Invalid lore_token_budget: expected an integer between 128 and 8192",
+      },
+      { key: "plain.import.key", action: "added", },
+      { key: "api_token", action: "skipped", },
+    ],);
+
+    expect((await getConfig(db, "plain.import.key",))?.value,).toBe("ok",);
+    expect(await getConfig(db, "api_token",),).toBeUndefined();
+  });
+
+  test("imports budget boundaries as added then changed", async () => {
+    await db.deleteFrom("system_config",).where("key", "in", ["lore_token_budget", "memory_token_budget",],)
+      .execute();
+
+    const first = await importConfigFromText(
+      db,
+      [
+        "system_config:",
+        "  lore_token_budget: '128'",
+        "  memory_token_budget: '8192'",
+      ].join("\n",),
+      "yaml",
+    );
+
+    expect(first,).toEqual([
+      { key: "lore_token_budget", action: "added", },
+      { key: "memory_token_budget", action: "added", },
+    ],);
+
+    const second = await importConfigFromText(
+      db,
+      [
+        "system_config:",
+        "  lore_token_budget: '8192'",
+        "  memory_token_budget: '128'",
+      ].join("\n",),
+      "yaml",
+    );
+
+    expect(second,).toEqual([
+      { key: "lore_token_budget", action: "changed", },
+      { key: "memory_token_budget", action: "changed", },
+    ],);
+
+    expect((await getConfig(db, "lore_token_budget",))?.value,).toBe("8192",);
+    expect((await getConfig(db, "memory_token_budget",))?.value,).toBe("128",);
+  });
 });

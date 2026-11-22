@@ -15,7 +15,7 @@ import { applyConfigWrite, classifyConfigPath, } from "../config/hot-apply";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { isSecretConfigKeyName, } from "./config-keys";
+import { isSecretConfigKeyName, validateEditableConfigValue, } from "./config-keys";
 import { openConfigValue, sealConfigValue, } from "./config-secrets";
 /** Child logger scoped to "system-config". */
 function log() {
@@ -274,6 +274,12 @@ export async function importConfigFromText(
 
     if (isSecretConfigKeyName(key,)) {
       results.push({ key, action: "skipped", },);
+      continue;
+    }
+
+    const validationError = validateEditableConfigValue(key, raw,);
+    if (validationError !== null) {
+      results.push({ key, action: "skipped", error: validationError, },);
       continue;
     }
 
