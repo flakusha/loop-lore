@@ -5,7 +5,8 @@
 
 The `/api/v1/agent/*` surface is the shipped recursive-self-improvement agent
 interface. Mounted by `agentApiRoutes` under `/api/v1`
-(`src/agent/api/router.ts:44-107`; mount in `src/server/elysia-app.ts`). This
+(`src/agent/api/router.ts:44-107`; mounted via
+`src/routes/v1/standalone-surface.ts:23,51`). This
 page documents the shipped surface only; see [the CI/CD loop](./ci-cd-loop.md)
 for the check runner the `check` route drives.
 
