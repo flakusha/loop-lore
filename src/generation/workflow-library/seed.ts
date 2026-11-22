@@ -36,7 +36,6 @@ import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, isValidWorkflow, } from "../workflow-loader/workflow-validation";
 import { BINDINGS_FILE, loadWorkflowBindings, parametersForSpec, } from "./binding-config";
 import type { WorkflowBindingConfig, WorkflowBindingSpec, } from "./bindings";
-// hint: Logic changed on both sides. Requires understanding intent of each change.
 import { baseWorkflowId, deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 

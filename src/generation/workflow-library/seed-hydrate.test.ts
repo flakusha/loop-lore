@@ -204,6 +204,56 @@ describe("seedWorkflowLibrary", () => {
     }
   });
 
+  it("rejects video-sink graphs while an image-sink graph still seeds", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "wf-seed-sink-",),);
+    try {
+      const videoSinks = [
+        "SaveVideo",
+        "VHS_VideoCombine",
+        "DaSiWa_EnhancedVideoCombine",
+        "DaSiWaH3ClipAssemble",
+      ];
+
+      for (const sink of videoSinks) {
+        await writeFile(
+          join(dir, `${sink}.json`,),
+          JSON.stringify({
+            "1": { class_type: "LoadImage", inputs: { image: "{{input_image}}", }, },
+            "2": { class_type: sink, inputs: { images: ["1", 0,], }, },
+          },),
+        );
+      }
+
+      await writeFile(
+        join(dir, "image.json",),
+        JSON.stringify({
+          "1": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", }, },
+          "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+        },),
+      );
+
+      const outcome = await seedWorkflowLibrary(db, dir,);
+      expect(outcome.imported,).toEqual(["image",],);
+      expect(outcome.skipped,).toEqual(
+        videoSinks.toSorted().map((sink,) => ({
+          id: sink,
+          reason: "video workflow is not an image-edit template",
+        })),
+      );
+    } finally {
+      await rm(dir, { recursive: true, force: true, },);
+    }
+  });
+
+  it("configured defaults name shipped, runnable graphs", async () => {
+    const defaults = await Bun.file("configs/workflow-defaults.json",).json() as Record<string, { default: string }>;
+    for (const { default: id, } of Object.values(defaults,)) {
+      const graph = await Bun.file(join(SHIPPED_DIR, `${id}.json`,),).json() as Record<string, { class_type: string }>;
+      const classes = Object.values(graph,).map((node,) => node.class_type);
+      expect(classes.some((classType,) => classType !== "Note"),).toBe(true,);
+    }
+  });
+
   it("imports nothing when no admin exists to own the rows", async () => {
     const fresh = await createTestDb();
     resetSeedOwnerForTests();
