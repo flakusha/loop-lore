@@ -44,7 +44,13 @@ import {
   type HarnessRunSummary,
   type HarnessStatCard,
 } from "./admin-harness-rows";
-import { HarnessRunsResponse, HarnessStatsSchema, } from "./admin-harness-schema";
+import {
+  decodeHarnessAdminSignals,
+  HarnessLedgerResponse,
+  type HarnessLedgerRow,
+  HarnessRunsResponse,
+  HarnessStatsSchema,
+} from "./admin-harness-schema";
 import {
   applyHarnessSettings,
   confirmHarnessAck,
@@ -57,6 +63,8 @@ import { t, } from "./i18n";
 import { parseOr, } from "./validation";
 
 const STATS_URL = "/api/v1/harness/stats";
+const LEDGER_URL = "/api/v1/harness/ledger";
+const METRICS_URL = "/api/v1/harness/metrics";
 /** Page size requested from `/runs`; the endpoint applies its own cap. */
 const RUNS_LIMIT = 50;
 
@@ -65,6 +73,9 @@ export const adminHarness = {
   harnessStatCards: [] as HarnessStatCard[],
   harnessModelRows: [] as HarnessModelRow[],
   harnessGapRows: [] as HarnessGapRow[],
+  // Usage-ledger rows + admin-only metric families (state owned by this module).
+  harnessLedgerRows: [] as HarnessLedgerRow[],
+  harnessAdminSignals: [] as string[],
   harnessDetail: null as HarnessDetailView | null,
   harnessRunId: "",
   harnessTaskType: "",
@@ -149,6 +160,8 @@ export const adminHarness = {
       }
 
       if (models !== null) { this.harnessModelsError = models; }
+
+      await this.loadHarnessUsage();
     } finally {
       this.loadingHarness = false;
     }
@@ -193,6 +206,41 @@ export const adminHarness = {
     this.harnessStatCards = buildStatCards(data,);
     this.harnessModelRows = buildModelRows(data.byModel,);
     this.harnessGapRows = buildGapRows(data.toolingGaps,);
+  },
+
+  /**
+   * Fetch the already-served ledger + metrics endpoints and expose their
+   * decoded rows next to the stats rollup. Each response is classified on
+   * its own — a 503 from a not-composed runtime leaves the section empty
+   * without blanking the runs table.
+   * @returns {Promise<void>}
+   */
+  async loadHarnessUsage() {
+    const [ledgerRes, metricsRes,] = await Promise.allSettled([
+      apiFetch(LEDGER_URL, JSON_HEADERS,),
+      apiFetch(METRICS_URL,),
+    ],);
+
+    if (ledgerRes.status === "fulfilled" && ledgerRes.value.ok) {
+      const data = parseOr(
+        HarnessLedgerResponse,
+        await ledgerRes.value.json(),
+        { items: [] as HarnessLedgerRow[], },
+        () => {
+          showToast("error", t("harness.errorShape",),);
+        },
+      );
+
+      this.harnessLedgerRows = data.items;
+    } else {
+      this.harnessLedgerRows = [];
+    }
+
+    if (metricsRes.status === "fulfilled" && metricsRes.value.ok) {
+      this.harnessAdminSignals = decodeHarnessAdminSignals(await metricsRes.value.text(),);
+    } else {
+      this.harnessAdminSignals = [];
+    }
   },
 
   /**
