@@ -13,6 +13,7 @@ import { workflowSelectionRoutes, } from "../routes/workflow-selection/catalog";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { getWorkflowLoader, } from "./workflow-loader";
+import { hasTerminalSink, } from "./workflow-loader/workflow-validation";
 import {
   getUserWorkflowSelections,
   getWorkflowCatalog,
@@ -104,16 +105,32 @@ describe("getWorkflowDefaults", () => {
 
     expect(defaults["video.generate"].supported,).toEqual(
       expect.arrayContaining([
-        "minimax-h3-t2v-fragment-v1",
-        "minimax-h3-i2v-fragment-v1",
-        "minimax-h3-ref2va-fragment-v1",
-        "minimax-h3-fragment-assemble-v1",
+        "minimax-h3-video-fl2va-v1",
+        "minimax-h3-video-fl2va-opt-v1",
+        "minimax-h3-video-ref2va-v1",
+        "minimax-h3-video-ref2va-opt-v1",
       ],),
     );
 
     expect(defaults["audio.generate"].supported,).toEqual(
-      expect.arrayContaining(["minimax-h3-audio-fallback-v1",],),
+      expect.arrayContaining(["minimax-h3-audio-wf",],),
     );
+  });
+});
+
+describe("workflow-defaults.json shipped ids", () => {
+  test("every configured default and supported id is a shipped graph with a real terminal sink", async () => {
+    const available = new Set(await getWorkflowLoader().listWorkflows(),);
+    const defaults = getWorkflowDefaults();
+    for (const useCase of USE_CASES) {
+      const configured = new Set([defaults[useCase].default, ...defaults[useCase].supported,],);
+      for (const id of configured) {
+        expect(available.has(id,),).toBe(true,);
+        const graph = await getWorkflowLoader().getRawWorkflow(id,);
+        expect(graph,).not.toBeNull();
+        expect(hasTerminalSink(graph!,),).toBe(true,);
+      }
+    }
   });
 });
 

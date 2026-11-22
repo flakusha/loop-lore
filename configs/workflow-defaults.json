@@ -19,18 +19,18 @@
     ]
   },
   "video.generate": {
-    "default": "minimax-h3-t2v-fragment-v1",
+    "default": "minimax-h3-video-fl2va-v1",
     "supported": [
-      "minimax-h3-t2v-fragment-v1",
-      "minimax-h3-i2v-fragment-v1",
-      "minimax-h3-ref2va-fragment-v1",
-      "minimax-h3-fragment-assemble-v1"
+      "minimax-h3-video-fl2va-v1",
+      "minimax-h3-video-fl2va-opt-v1",
+      "minimax-h3-video-ref2va-v1",
+      "minimax-h3-video-ref2va-opt-v1"
     ]
   },
   "audio.generate": {
-    "default": "minimax-h3-audio-fallback-v1",
+    "default": "minimax-h3-audio-wf",
     "supported": [
-      "minimax-h3-audio-fallback-v1"
+      "minimax-h3-audio-wf"
     ]
   }
 }
