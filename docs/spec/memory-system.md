@@ -36,12 +36,15 @@ Secret memories (`privacy: secret`) evaluate shareability FIRST and skip the sco
 ### Isolation contract
 
 Viewer identity is mandatory: `ProvisionContext.viewerId` is a required `string`
-(`src/memory/provision.ts:21-23`). Reads are viewer-scoped — `fetchActorMemories`
-selects only `actor_id = actorId`
-(`src/assistant/prompt/sections/memories-helpers.ts:153-160`) — so no path reads
-another viewer's memories. `checkScope`/`checkPrivacy` gate what that viewer may
-see, and timeline scoping drops rows bound to another timeline (see "Timeline
-binding" above). New callers must pass the active viewer explicitly.
+(`src/memory/provision.ts:21-23`), built from the active `ctx.actor.id` on the
+prompt path (`src/assistant/prompt/sections/memories.ts:44-49`). Each owner's rows
+are fetched by `actor_id` (`fetchActorMemories`,
+`src/assistant/prompt/sections/memories-helpers.ts:153-160`), then
+`checkScope`/`checkPrivacy` gate them against that viewer
+(`src/memory/provision.ts:161-235`): private and non-public character memories
+never reach another viewer. Timeline scoping additionally drops rows bound to a
+different timeline (see "Timeline binding" above). Every caller passes the
+viewer explicitly.
 
 ## Not implemented / aspirational
 
