@@ -54,6 +54,15 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "logs.retention",
+      schedule: "30 3 * * *",
+      enabled: true,
+      run: async ({ database, },) => {
+        const { runLogRetentionCleanup, } = await import("../logger/retention");
+        await runLogRetentionCleanup(database,);
+      },
+    },),
+    defineJob({
       name: "chat.archive-expiration",
       schedule: "0 3 * * *",
       enabled: true,

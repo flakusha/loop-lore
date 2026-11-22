@@ -90,6 +90,8 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             }
 
             if (q) {
+              // Retention decision: the LIKE scan stays — the retention cron
+              // bounds the table and q is length-capped at the query schema.
               const like = `%${q}%`;
               query = query.where("message", "like", like,);
             }
