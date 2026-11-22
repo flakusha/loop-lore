@@ -1,0 +1,112 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Watchdog Tab (read-only exec log) - state lives in frontend/alpine/admin-watchdog.ts. -->
+<template x-if="activeTab === 'watchdog'">
+  <div x-data="adminWatchdog()" x-init="init()" style="padding: var(--space-6)" data-testid="watchdog-panel">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4)">
+      <div>
+        <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("watchdog.title")}}}</h3>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px">{{{t("watchdog.help")}}}</div>
+      </div>
+      <button class="btn btn-secondary btn-xs" @click="load()" :disabled="loading" data-testid="watchdog-refresh">
+        {{{t("watchdog.refresh")}}}
+      </button>
+    </div>
+
+    <!-- Filters: state badge and recency, both applied client-side to the loaded rows. -->
+    <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap">
+      <label style="font-size: 12px; display: flex; gap: var(--space-2); align-items: center">
+        <span>{{{t("watchdog.state")}}}</span>
+        <select class="form-input" style="font-size: 12px" x-model="stateFilter" data-testid="watchdog-state-filter">
+          <option value="all">{{{t("watchdog.allStates")}}}</option>
+          <option value="watching">{{{t("watchdog.badge.watching")}}}</option>
+          <option value="degraded">{{{t("watchdog.badge.degraded")}}}</option>
+          <option value="restarting">{{{t("watchdog.badge.restarting")}}}</option>
+          <option value="stopped">{{{t("watchdog.badge.stopped")}}}</option>
+          <option value="unknown">{{{t("watchdog.badge.unknown")}}}</option>
+        </select>
+      </label>
+      <label style="font-size: 12px; display: flex; gap: var(--space-2); align-items: center">
+        <span>{{{t("watchdog.since")}}}</span>
+        <select class="form-input" style="font-size: 12px" x-model="sinceFilter" data-testid="watchdog-since-filter">
+          <option value="all">{{{t("watchdog.allTime")}}}</option>
+          <option value="15m">{{{t("watchdog.last15m")}}}</option>
+          <option value="1h">{{{t("watchdog.lastHour")}}}</option>
+          <option value="24h">{{{t("watchdog.last24h")}}}</option>
+        </select>
+      </label>
+    </div>
+
+    <div
+      x-show="error !== ''"
+      style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; margin-bottom: var(--space-3)"
+      x-text="error"
+      data-testid="watchdog-error"
+    >
+    </div>
+
+    <div
+      x-show="loading"
+      style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)"
+      data-testid="watchdog-loading"
+    >
+      {{{t("watchdog.loading")}}}
+    </div>
+
+    <div
+      x-show="!loading && error === '' && rows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-8)"
+      data-testid="watchdog-empty"
+    >
+      <div class="icon">🐕</div>
+      <div class="title">{{{t("watchdog.empty")}}}</div>
+    </div>
+
+    <div
+      x-show="!loading && error === '' && rows.length > 0 && visibleRows().length === 0"
+      class="empty-state"
+      style="padding: var(--space-8)"
+      data-testid="watchdog-no-matches"
+    >
+      <div class="title">{{{t("watchdog.noMatches")}}}</div>
+    </div>
+
+    <template x-if="!loading && error === '' && visibleRows().length > 0">
+      <div style="display: grid; gap: var(--space-1); overflow-x: auto">
+        <div
+          style="display: grid; grid-template-columns: 160px 80px 90px 110px minmax(120px, 1fr) 70px 70px; gap: var(--space-2); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; min-width: 700px"
+          data-testid="watchdog-header"
+        >
+          <span>{{{t("watchdog.colTime")}}}</span>
+          <span>{{{t("watchdog.colEvent")}}}</span>
+          <span>{{{t("watchdog.colDecision")}}}</span>
+          <span>{{{t("watchdog.state")}}}</span>
+          <span>{{{t("watchdog.colReason")}}}</span>
+          <span>{{{t("watchdog.colMisses")}}}</span>
+          <span>{{{t("watchdog.colCrashes")}}}</span>
+        </div>
+        <template x-for="row in visibleRows()" :key="row.id">
+          <div
+            style="display: grid; grid-template-columns: 160px 80px 90px 110px minmax(120px, 1fr) 70px 70px; gap: var(--space-2); font-size: 12px; padding: var(--space-2) 0; border-top: 1px solid var(--border-default, #e9ecef); min-width: 700px"
+            data-testid="watchdog-row"
+          >
+            <span x-text="timeLabel(row)"></span>
+            <span x-text="row.event_kind"></span>
+            <span x-text="row.decision_kind"></span>
+            <span
+              class="status-badge"
+              :style="{ color: badgeColor(row) }"
+              x-text="badgeLabel(row)"
+              data-testid="watchdog-badge"
+            ></span>
+            <span x-text="row.reason ?? '-'"></span>
+            <span x-text="row.misses ?? '-'"></span>
+            <span x-text="row.crashes ?? '-'"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

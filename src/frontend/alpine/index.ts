@@ -18,6 +18,7 @@ import "./admin-harness-queue";
 import "./admin-honkbox";
 import "./admin-llama-swap";
 import "./admin-mfa";
+import "./admin-watchdog";
 import "./age-gate";
 import "./app";
 import "./audio-player";

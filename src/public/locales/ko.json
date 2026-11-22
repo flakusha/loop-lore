@@ -2799,6 +2799,39 @@
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
   },
+
+  "watchdog": {
+    "tab": "Watchdog",
+    "title": "Watchdog exec log",
+    "help": "Read-only log of the watchdog supervisor's transitions.",
+    "refresh": "Refresh",
+    "loading": "Loading watchdog events…",
+    "empty": "No watchdog events recorded yet.",
+    "noMatches": "No events match the current filters.",
+    "loadFailed": "Failed to load watchdog events.",
+    "forbidden": "You do not have access to the watchdog log.",
+    "unauthorized": "Your session is not authorized for the watchdog log.",
+    "state": "State",
+    "since": "Since",
+    "allStates": "All states",
+    "allTime": "All time",
+    "last15m": "Last 15 minutes",
+    "lastHour": "Last hour",
+    "last24h": "Last 24 hours",
+    "colTime": "Time",
+    "colEvent": "Event",
+    "colDecision": "Decision",
+    "colReason": "Reason",
+    "colMisses": "Misses",
+    "colCrashes": "Crashes",
+    "badge": {
+      "watching": "Watching",
+      "degraded": "Degraded",
+      "restarting": "Restarting",
+      "stopped": "Stopped",
+      "unknown": "Unknown"
+    }
+  }
   "harnessQueue": {
     "tab": "Harness Queue",
     "title": "Harness turn queue",
