@@ -16,6 +16,9 @@ import type { StoryTurnDetail, } from "./types";
 /** Resolved turns keyed `"<chatId>:<turnId>"`. */
 const turnCache = new Map<string, StoryTurnDetail>();
 
+/** FIFO cap on cached lookups (the vn/image-preloader cache-cap pattern). */
+const MAX_CACHED_TURNS = 50;
+
 /**
  * Build the composite cache key for a (chatId, turnId) pair.
  * @param chatId
@@ -44,6 +47,13 @@ export async function fetchStoryTurnById(
     if (!res.ok) { return null; }
     const turn = await res.json() as StoryTurnDetail;
     turnCache.set(key, turn,);
+    // Map preserves insertion order; the first key is the oldest entry.
+    while (turnCache.size > MAX_CACHED_TURNS) {
+      const oldest = turnCache.keys().next().value;
+      if (oldest === undefined) { break; }
+      turnCache.delete(oldest,);
+    }
+
     return turn;
   } catch {
     return null;

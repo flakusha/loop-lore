@@ -68,6 +68,20 @@ describeOrSkip("fetchStoryTurnById", () => {
     expect(storyTurnCacheSize(),).toBe(0,);
   });
 
+  test("evicts the oldest entry once the cache exceeds the FIFO cap", async () => {
+    fetchHandler = () => Response.json(TURN,);
+    for (let i = 0; i < 51; i++) {
+      await fetchStoryTurnById("chat-1", `turn-${i}`,);
+    }
+
+    expect(storyTurnCacheSize(),).toBe(50,);
+    // The oldest entry (turn-0) was evicted; the newest survives.
+    await fetchStoryTurnById("chat-1", "turn-0",);
+    expect(fetchCalls.filter((u,) => u.endsWith("/turn-0",)).length,).toBe(2,);
+    await fetchStoryTurnById("chat-1", "turn-50",);
+    expect(fetchCalls.filter((u,) => u.endsWith("/turn-50",)).length,).toBe(1,);
+  });
+
   test("returns null on network error", async () => {
     fetchHandler = () => {
       throw new Error("network",);
