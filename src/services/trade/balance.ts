@@ -89,15 +89,69 @@ export async function getBalance(
 }
 
 /**
+ * Thrown when a concurrent writer wins the balance race on every bounded
+ * attempt, so no attempt could re-read a pre-image it still matched.
+ */
+class BalanceWriteExhaustedError extends Error {
+  /** @param message - Human-readable failure description. */
+  constructor(message: string,) {
+    super(message,);
+    this.name = "BalanceWriteExhaustedError";
+  }
+}
+
+const MAX_BALANCE_WRITE_ATTEMPTS = 4;
+
+/**
+ * Conditional balance write. `next` sees the observed pre-image and returns
+ * the new balance, or null for a no-op (insufficient funds). A writer that
+ * loses the race re-reads the row and recomputes from the fresh balance.
+ */
+async function applyBalanceUpdate(
+  d: Kysely<DB> | Transaction<DB>,
+  actorId: string,
+  worldId: string,
+  currency: string,
+  next: (current: number,) => number | null,
+): Promise<number | null> {
+  for (let attempt = 0; attempt < MAX_BALANCE_WRITE_ATTEMPTS; attempt++) {
+    const current = await ensureBalanceRow(d, actorId, worldId, currency,);
+    const updated = next(current,);
+    if (updated === null) { return null; }
+
+    const result = await d
+      .updateTable("actor_currencies",)
+      .set({ balance: updated, updated_at: new Date().toISOString(), },)
+      .where("actor_id", "=", actorId,)
+      .where("world_id", "=", worldId,)
+      .where("currency_type", "=", currency,)
+      .where("balance", "=", current,)
+      .executeTakeFirst();
+
+    if (Number(result.numUpdatedRows ?? 0,) > 0) { return updated; }
+  }
+
+  throw new BalanceWriteExhaustedError(
+    `balance update for ${actorId}/${worldId}/${currency} failed after ${MAX_BALANCE_WRITE_ATTEMPTS} attempts: concurrent modification`,
+  );
+}
+
+/**
  * Add funds to an actor's balance (never produces a negative balance).
+ * The write is conditional on the balance read at the top of the attempt; a
+ * concurrent writer that changed the row between read and write turns the
+ * UPDATE into a 0-rows no-op and the attempt is retried from a freshly-read
+ * balance (bounded), so a retry can never double-apply the credit.
  * @param db
  * @param actorId
  * @param worldId
  * @param amount
  * @param currency
  * @param trx
- * @throws {Error}
- * @returns {Promise<number>}
+ * @throws {BalanceWriteExhaustedError} when every bounded attempt loses the
+ * race to a concurrent writer.
+ * @throws {Error} on negative amount.
+ * @returns {Promise<number>} the balance written by the winning attempt.
  */
 export async function credit(
   db: Kysely<DB>,
@@ -108,18 +162,13 @@ export async function credit(
   trx?: Kysely<DB> | Transaction<DB>,
 ): Promise<number> {
   if (amount < 0) { throw new Error("credit amount must be non-negative",); }
-  const d = trx ?? db;
-  const current = await ensureBalanceRow(d, actorId, worldId, currency,);
-  const next = current + amount;
-  await d
-    .updateTable("actor_currencies",)
-    .set({ balance: next, updated_at: new Date().toISOString(), },)
-    .where("actor_id", "=", actorId,)
-    .where("world_id", "=", worldId,)
-    .where("currency_type", "=", currency,)
-    .execute();
-
-  return next;
+  return (await applyBalanceUpdate(
+    trx ?? db,
+    actorId,
+    worldId,
+    currency,
+    (current,) => current + amount,
+  ))!;
 }
 
 /**
@@ -142,19 +191,22 @@ export async function debit(
   trx?: Kysely<DB> | Transaction<DB>,
 ): Promise<boolean> {
   if (amount < 0) { throw new Error("debit amount must be non-negative",); }
-  const d = trx ?? db;
-  const current = await ensureBalanceRow(d, actorId, worldId, currency,);
-  if (current < amount) { return false; }
-  const next = current - amount;
-  await d
-    .updateTable("actor_currencies",)
-    .set({ balance: next, updated_at: new Date().toISOString(), },)
-    .where("actor_id", "=", actorId,)
-    .where("world_id", "=", worldId,)
-    .where("currency_type", "=", currency,)
-    .execute();
+  try {
+    const updated = await applyBalanceUpdate(
+      trx ?? db,
+      actorId,
+      worldId,
+      currency,
+      (current,) => current < amount ? null : current - amount,
+    );
 
-  return true;
+    return updated !== null;
+  } catch (e) {
+    // Documented failure mode: race exhaustion reports a retryable no-op
+    // instead of throwing, so callers treat it like insufficient funds.
+    if (e instanceof BalanceWriteExhaustedError) { return false; }
+    throw e;
+  }
 }
 
 /**
