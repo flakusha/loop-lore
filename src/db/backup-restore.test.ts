@@ -2,7 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  utimesSync,
+  writeFileSync,
+} from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createLogger, } from "../logger";
@@ -11,6 +20,7 @@ import {
   hasSqliteHeader,
   InvalidSnapshotError,
   listDbBackups,
+  pruneDbSnapshots,
   resolveBackupPath,
   restoreDbBackup,
   validateSqliteSnapshot,
@@ -120,12 +130,41 @@ describe("db backup/restore service", () => {
   });
 
   test("resolveBackupPath rejects traversal, separators and missing files", () => {
-    expect(() => resolveBackupPath(dir, "../escape.db",)).toThrow();
-    expect(() => resolveBackupPath(dir, "sub/dir.db",)).toThrow();
-    expect(() => resolveBackupPath(dir, "nope.db",)).toThrow();
+    for (
+      const bad of [
+        "../escape.db",
+        "sub/dir.db",
+        "/etc/passwd",
+        "sub\\escape.db",
+        "a..b.db",
+        "nope.db",
+      ]
+    ) {
+      expect(() => resolveBackupPath(dir, bad,)).toThrow();
+    }
+
     const created = path.join(dir, "ok.db",);
     writeFileSync(created, "x",);
     expect(resolveBackupPath(dir, "ok.db",),).toBe(created,);
+  });
+
+  test("pruneDbSnapshots keeps the newest files and deletes the rest", () => {
+    const pruneDir = mkdtempSync(path.join(os.tmpdir(), "db-snap-prune-",),);
+    try {
+      for (let i = 0; i < 4; i += 1) {
+        const file = path.join(pruneDir, `snap-${i}.db`,);
+        writeFileSync(file, "x",);
+        const when = new Date(2026, 0, i + 1,).getTime();
+        utimesSync(file, when, when,);
+      }
+
+      expect(pruneDbSnapshots(pruneDir, 2,),).toBe(2,);
+      expect(readdirSync(pruneDir,).sort(),).toEqual(["snap-2.db", "snap-3.db",],);
+      expect(pruneDbSnapshots(pruneDir, 0,),).toBe(2,);
+      expect(readdirSync(pruneDir,),).toEqual([],);
+    } finally {
+      rmSync(pruneDir, { recursive: true, force: true, },);
+    }
   });
 
   test("restoreDbBackup replaces the live file with the snapshot after close", async () => {

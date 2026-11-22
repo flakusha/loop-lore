@@ -12,10 +12,15 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { resolveInstanceSlug, } from "../../config/state-dir";
+import {
+  hasSqliteHeader,
+  resolveBackupPath,
+  validateSqliteSnapshot,
+} from "../../db/backup-restore";
 import { UserRole, } from "../../db/enums";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
@@ -62,10 +67,14 @@ afterAll(async () => {
   await destroyTestDb(testDb,);
 },);
 
-function makeApp(userRole: string | null,): Elysia {
+function makeApp(userRole: string | null, maxFileSize?: number,): Elysia {
   const app = new Elysia({ name: "test-db-backup", },);
   app.derive(() => ({ userId: userRole ? `test-${userRole}` : null, userRole, sessionId: null, }));
-  return app.use(dbBackupRoutes({ database: db, config: {} as never, }, PREFIX,),);
+  const config = maxFileSize === undefined
+    ? {} as never
+    : { assets: { maxFileSize, }, } as never;
+
+  return app.use(dbBackupRoutes({ database: db, config, }, PREFIX,),);
 }
 
 function handle(app: Elysia, method: string, urlPath: string, body?: unknown,): Promise<Response> {
@@ -74,6 +83,17 @@ function handle(app: Elysia, method: string, urlPath: string, body?: unknown,): 
       method,
       headers: body === undefined ? {} : { "content-type": "application/json", },
       body: body === undefined ? undefined : JSON.stringify(body,),
+    },),
+  );
+}
+
+function upload(app: Elysia, file: File,): Promise<Response> {
+  const form = new FormData();
+  form.set("file", file,);
+  return app.handle(
+    new Request(`http://localhost${PREFIX}/admin/db/backup/upload`, {
+      method: "POST",
+      body: form,
     },),
   );
 }
@@ -87,6 +107,9 @@ describe("admin db backup routes", () => {
       (await handle(app, "POST", `${PREFIX}/admin/db/restore`, { name: "x.db", confirmation: "RESTORE", },)).status,
     )
       .toBe(401,);
+
+    expect((await handle(app, "GET", `${PREFIX}/admin/db/backup/x.db`,)).status,).toBe(401,);
+    expect((await upload(app, new File(["x",], "x.db",),)).status,).toBe(401,);
   });
 
   test("non-admin is 403 on every verb", async () => {
@@ -97,6 +120,9 @@ describe("admin db backup routes", () => {
       (await handle(app, "POST", `${PREFIX}/admin/db/restore`, { name: "x.db", confirmation: "RESTORE", },)).status,
     )
       .toBe(403,);
+
+    expect((await handle(app, "GET", `${PREFIX}/admin/db/backup/x.db`,)).status,).toBe(403,);
+    expect((await upload(app, new File(["x",], "x.db",),)).status,).toBe(403,);
   });
 
   test("GET lists backups in the env backup dir", async () => {
@@ -176,5 +202,99 @@ describe("admin db backup routes", () => {
     expect(body.restored,).toBe(true,);
     expect(body.restartRequired,).toBe(true,);
     expect(body.preRestoreBackup,).toMatch(/\.db$/,);
+  });
+
+  test("GET download rejects traversal-shaped names", async () => {
+    const app = makeApp(UserRole.Admin,);
+    for (const bad of ["%2E%2E%2Fx.db", "%2Fetc%2Fpasswd", "sub%5Cx.db", "a..b.db",]) {
+      const res = await handle(app, "GET", `${PREFIX}/admin/db/backup/${bad}`,);
+      expect(res.status,).toBeGreaterThanOrEqual(400,);
+      expect(res.status,).toBeLessThan(500,);
+    }
+  });
+
+  test("POST upload rejects non-SQLite and header-only empty-schema files", async () => {
+    const app = makeApp(UserRole.Admin,);
+    expect((await upload(app, new File([new Uint8Array([1, 2, 3, 4,],),], "garbage.db",),)).status,).toBe(400,);
+
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    mkdirSync(backupDir, { recursive: true, },);
+    const emptyPath = path.join(mkdtempSync(path.join(os.tmpdir(), "db-upload-empty-",),), "empty.db",);
+    try {
+      const empty = new Database(emptyPath,);
+      empty.exec("PRAGMA user_version = 1;",);
+      empty.close();
+      const bytes = new Uint8Array(readFileSync(emptyPath,),);
+      expect(hasSqliteHeader(emptyPath,),).toBe(true,);
+      const res = await upload(app, new File([bytes,], `upload-empty-${Date.now()}.db`,),);
+      expect(res.status,).toBe(400,);
+      const body = await res.json() as { error: string };
+      expect(body.error,).toContain("not a valid SQLite database",);
+      expect(body.error,).not.toContain(backupDir,);
+    } finally {
+      rmSync(path.dirname(emptyPath,), { recursive: true, force: true, },);
+    }
+
+    expect(readdirSync(backupDir,).some((n,) => n.endsWith(".tmp",)),).toBe(false,);
+  });
+
+  test("POST upload enforces the configured byte cap and rejects traversal names", async () => {
+    const capped = makeApp(UserRole.Admin, 64,);
+    const tooBig = await upload(capped, new File([new Uint8Array(128,),], "cap.db",),);
+    expect(tooBig.status,).toBe(422,);
+
+    const app = makeApp(UserRole.Admin,);
+    for (const name of ["../escape.db", "/abs.db", "sub\\escape.db", "a..b.db", "plain.txt",]) {
+      const res = await upload(app, new File(["x",], name,),);
+      expect(res.status,).toBe(400,);
+    }
+  });
+
+  test("download → upload → restore round trip validates the uploaded snapshot", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    expect(created.status,).toBe(201,);
+    const createdBody = await created.json() as { backup: { name: string } };
+
+    const downloaded = await handle(app, "GET", `${PREFIX}/admin/db/backup/${createdBody.backup.name}`,);
+    expect(downloaded.status,).toBe(200,);
+    expect(downloaded.headers.get("content-type",),).toBe("application/octet-stream",);
+    const bytes = new Uint8Array(await downloaded.arrayBuffer(),);
+    expect(bytes.length,).toBeGreaterThan(0,);
+
+    const name = `roundtrip-${Date.now()}.db`;
+    const uploaded = await upload(app, new File([bytes,], name,),);
+    expect(uploaded.status,).toBe(201,);
+    const uploadedBody = await uploaded.json() as { backup: { name: string; sizeBytes: number } };
+    expect(uploadedBody.backup.name,).toBe(name,);
+    expect(uploadedBody.backup.sizeBytes,).toBe(bytes.length,);
+
+    const uploadedPath = path.join(
+      backupRoot,
+      resolveInstanceSlug(process.env,),
+      "db",
+      name,
+    );
+
+    expect(hasSqliteHeader(uploadedPath,),).toBe(true,);
+    expect(() => validateSqliteSnapshot(uploadedPath,)).not.toThrow();
+    expect(() => resolveBackupPath(path.dirname(uploadedPath,), name,)).not.toThrow();
+
+    const restored = await handle(app, "POST", `${PREFIX}/admin/db/restore`, {
+      name,
+      confirmation: "RESTORE",
+    },);
+
+    expect(restored.status,).toBe(200,);
+    const live = new Database(livePath, { readonly: true, },);
+    try {
+      const tables = live.query("SELECT name FROM sqlite_master WHERE type = 'table';",).all() as Array<
+        { name: string }
+      >;
+
+      expect(tables.map((row,) => row.name),).toContain("chats",);
+    } finally {
+      live.close();
+    }
   });
 });

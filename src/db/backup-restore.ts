@@ -211,6 +211,32 @@ export function listDbBackups(dir: string,): BackupFileMeta[] {
 }
 
 /**
+ * Retention prune for file snapshots: keep the newest `keep` `.db` files in
+ * `dir` (by mtime then name, oldest first from {@link listDbBackups}) and
+ * delete the rest. Returns the number deleted. Missing dirs and files that
+ * vanish between listing and unlink are no-ops — pruning never breaks the
+ * host flow.
+ * @param dir - server-derived backup directory
+ * @param keep - maximum snapshots to retain; <= 0 deletes all
+ * @returns number of snapshot files removed
+ */
+export function pruneDbSnapshots(dir: string, keep: number,): number {
+  const backups = listDbBackups(dir,);
+  const stale = keep <= 0 ? backups : backups.slice(0, Math.max(backups.length - keep, 0,),);
+  let deleted = 0;
+  for (const entry of stale) {
+    try {
+      fs.unlinkSync(path.join(dir, entry.name,),);
+      deleted += 1;
+    } catch {
+      /* file vanished between list and unlink — nothing to do */
+    }
+  }
+
+  return deleted;
+}
+
+/**
  * Resolve `name` inside `dir`, rejecting path traversal: names must be bare
  * file names of existing files inside the backup directory.
  * @throws when the name escapes the directory or does not exist

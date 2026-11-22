@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1062 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1064 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -199,6 +199,8 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | POST | /api/v1/admin/cron/jobs/{name}/run | — |
 | GET | /api/v1/admin/db/backup | — |
 | POST | /api/v1/admin/db/backup | — |
+| GET | /api/v1/admin/db/backup/{name} | Download a database backup snapshot |
+| POST | /api/v1/admin/db/backup/upload | Upload a database backup snapshot |
 | POST | /api/v1/admin/db/restore | — |
 | GET | /api/v1/admin/effective-config/export | — |
 | POST | /api/v1/admin/factory-reset | — |

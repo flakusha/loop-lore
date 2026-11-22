@@ -466,14 +466,15 @@ export async function persistBackupHook(db: Kysely<DB>, trigger: BackupTrigger,)
 const noopHook: BackupHook = async () => {/* scheduler surface invokes hooks; default is intentionally inert */};
 
 /**
- * Scheduling hooks (chat end, asset upload, world save). Registered no-ops by
- * default — the scheduler surface owns invocation; call registerBackupHook
- * to wire persistence. This module never invents a scheduler.
+ * Scheduling hooks (chat end, asset upload, world save, db snapshot). Registered
+ * no-ops by default — the scheduler surface owns invocation; call
+ * registerBackupHook to wire persistence. This module never invents a scheduler.
  */
 export const backupHooks = {
   onChatEnd: noopHook,
   onAssetUpload: noopHook,
   onWorldSave: noopHook,
+  onDbSnapshot: noopHook,
 } satisfies Record<string, BackupHook>;
 
 /** Wire a persistence implementation into one scheduling hook. */
