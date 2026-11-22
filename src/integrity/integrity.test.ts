@@ -1,25 +1,38 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { dirname, join, } from "node:path";
+import { setTestDatabase, } from "../db/index";
 import type { Logger, } from "../logger/types";
+import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
+import { clearBootSentinel, runBootIntegrityGate, } from "./boot";
 import {
   clearRunning,
+  defaultIntegrityPaths,
   detectUncleanShutdown,
   type IntegrityChecker,
   type IntegrityResult,
   markRunning,
+  QUARANTINE_FILE,
   quarantineVerdict,
   runStartupIntegrityGate,
+  SENTINEL_FILE,
   type SentinelFs,
 } from "./crash-recovery";
-import { isWriteBlocked, } from "./safe-mode";
+import { createNodeSentinelFs, } from "./node-fs";
+import { isWriteBlocked, safeModeResponse, } from "./safe-mode";
+import { runScheduledIntegrityCheck, } from "./scheduled-check";
 import { createSqliteIntegrityChecker, } from "./sqlite-check";
 import {
   clearSafeMode,
   enterSafeMode,
   getIntegrityState,
+  recordVerdict,
   resetIntegrityState,
+  setUncleanShutdown,
 } from "./state";
 
 function memoryFs(): SentinelFs & { files: Map<string, string> } {
@@ -193,5 +206,113 @@ describe("sqlite quick_check binding", () => {
     const bad = createSqliteIntegrityChecker(rows("ok,page 3 corrupt",) as never,);
     expect(bad().verdict,).toBe("fail",);
     expect(bad().detail,).toBe("page 3 corrupt",);
+  });
+});
+
+describe("integrity state publication", () => {
+  test("recordVerdict publishes detail and an explicit timestamp", () => {
+    recordVerdict({ verdict: "warn", detail: "page 3", checkedAtMs: 1_700, },);
+    expect(getIntegrityState(),).toMatchObject({
+      verdict: "warn",
+      detail: "page 3",
+      checkedAtMs: 1_700,
+    },);
+  });
+
+  test("setUncleanShutdown toggles the boot flag without leaving safe mode", () => {
+    enterSafeMode("test",);
+    setUncleanShutdown(true,);
+    expect(getIntegrityState().uncleanShutdown,).toBe(true,);
+    expect(getIntegrityState().safeMode,).toBe(true,);
+    setUncleanShutdown(false,);
+    expect(getIntegrityState().uncleanShutdown,).toBe(false,);
+    expect(getIntegrityState().safeMode,).toBe(true,);
+  });
+});
+
+describe("safeModeResponse", () => {
+  test("returns 503 with a write-disabled explanation", async () => {
+    const response = safeModeResponse();
+    expect(response.status,).toBe(503,);
+    const body = await response.json() as { error: string };
+    expect(body.error,).toContain("writes disabled",);
+  });
+});
+
+describe("default integrity paths", () => {
+  test("uses the per-instance state dir and the published filenames", () => {
+    const env = {
+      LOOP_LORE_STATE_DIR: "/tmp/loop-lore-integrity-paths",
+      LOOP_LORE_INSTANCE: "test-instance",
+    };
+
+    const paths = defaultIntegrityPaths(env,);
+    expect(paths.sentinel,).toBe(join(env.LOOP_LORE_STATE_DIR, "test-instance", SENTINEL_FILE,),);
+    expect(paths.quarantine,).toBe(join(env.LOOP_LORE_STATE_DIR, "test-instance", QUARANTINE_FILE,),);
+  });
+});
+
+describe("production integrity adapters", () => {
+  let fixture: TestDb;
+  let tempDir: string;
+  let savedStateDir: string | undefined;
+  let savedInstance: string | undefined;
+
+  beforeEach(async () => {
+    fixture = await createTestDb();
+    setTestDatabase(fixture.db, fixture.sqlite,);
+    resetIntegrityState();
+    tempDir = mkdtempSync(join(tmpdir(), "loop-lore-integrity-",),);
+    savedStateDir = process.env.LOOP_LORE_STATE_DIR;
+    savedInstance = process.env.LOOP_LORE_INSTANCE;
+    process.env.LOOP_LORE_STATE_DIR = tempDir;
+    process.env.LOOP_LORE_INSTANCE = `test-${crypto.randomUUID().slice(0, 8,)}`;
+  },);
+
+  afterEach(async () => {
+    setTestDatabase(null,);
+    if (savedStateDir === undefined) { delete process.env.LOOP_LORE_STATE_DIR; }
+    else { process.env.LOOP_LORE_STATE_DIR = savedStateDir; }
+
+    if (savedInstance === undefined) { delete process.env.LOOP_LORE_INSTANCE; }
+    else { process.env.LOOP_LORE_INSTANCE = savedInstance; }
+
+    await destroyTestDb(fixture,);
+    rmSync(tempDir, { recursive: true, force: true, },);
+  },);
+
+  test("createNodeSentinelFs writes, reads and removes real files", () => {
+    const fs = createNodeSentinelFs();
+    const file = join(tempDir, "nested", "sentinel",);
+    expect(fs.exists(file,),).toBe(false,);
+    fs.write(file, "payload",);
+    expect(fs.exists(file,),).toBe(true,);
+    expect(fs.read(file,),).toBe("payload",);
+    fs.remove(file,);
+    expect(fs.exists(file,),).toBe(false,);
+    expect(fs.read(file,),).toBe("",);
+  });
+
+  test("runBootIntegrityGate checks the live DB and clearBootSentinel removes the marker", () => {
+    const paths = defaultIntegrityPaths();
+    mkdirSync(dirname(paths.sentinel,), { recursive: true, },);
+    writeFileSync(paths.sentinel, "leftover", "utf8",);
+
+    const result = runBootIntegrityGate(stubLogger,);
+    expect(result,).toEqual({ verdict: "pass", detail: "ok", },);
+    expect(getIntegrityState().uncleanShutdown,).toBe(true,);
+    expect(getIntegrityState().verdict,).toBe("pass",);
+    expect(getIntegrityState().safeMode,).toBe(false,);
+    expect(existsSync(paths.sentinel,),).toBe(true,);
+
+    clearBootSentinel();
+    expect(existsSync(paths.sentinel,),).toBe(false,);
+  });
+
+  test("runScheduledIntegrityCheck publishes a fresh verdict from the live DB", () => {
+    const result = runScheduledIntegrityCheck(stubLogger,);
+    expect(result,).toEqual({ verdict: "pass", detail: "ok", },);
+    expect(getIntegrityState().verdict,).toBe("pass",);
+    expect(getIntegrityState().checkedAtMs,).not.toBeNull();
   });
 });

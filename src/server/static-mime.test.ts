@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { findCompressedVariant, getContentType, } from "./static-mime";
+import { findCompressedVariant, getContentType, isCompressible, } from "./static-mime";
 
 describe("getContentType", () => {
   test("maps every known extension to its MIME type", () => {
@@ -257,5 +257,23 @@ describe("findCompressedVariant", () => {
       path: `${cssPath}.zst`,
       encoding: "zstd",
     },);
+  });
+});
+
+describe("isCompressible", () => {
+  test("marks text-like and wasm extensions as compressible", () => {
+    for (const file of ["app.css", "app.js", "index.html", "data.json", "icon.svg", "mod.wasm",]) {
+      expect(isCompressible(file,),).toBe(true,);
+    }
+  });
+
+  test("leaves binary assets and unknown extensions alone", () => {
+    for (const file of ["image.png", "font.woff2", "archive.gz", "Makefile", "",]) {
+      expect(isCompressible(file,),).toBe(false,);
+    }
+  });
+
+  test("lowercases the extension before lookup", () => {
+    expect(isCompressible("app.CSS",),).toBe(true,);
   });
 });

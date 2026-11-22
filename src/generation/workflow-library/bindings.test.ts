@@ -11,7 +11,9 @@ import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import {
   bindingPlaceholders,
   parseWorkflowBindings,
+  parseWorkflowBindingSpec,
   planWorkflowBindings,
+  validateBindingTargets,
   type WorkflowBindingSpec,
 } from "./bindings";
 
@@ -187,5 +189,42 @@ describe("planWorkflowBindings", () => {
     if (!result.ok) {
       expect(result.errors.join(" ",),).toContain("fail-closed",);
     }
+  });
+});
+
+describe("parseWorkflowBindingSpec", () => {
+  it("accepts a valid single-workflow spec", () => {
+    const spec = CONFIG.workflows.txt2img;
+    expect(parseWorkflowBindingSpec(spec,),).toEqual({ ok: true, spec, },);
+  });
+
+  it("reports every structural error without throwing", () => {
+    const result = parseWorkflowBindingSpec({ parameters: "nope", bindings: SCALAR, },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      const text = result.errors.join(" ",);
+      expect(text,).toContain("parameters",);
+      expect(text,).toContain("bindings",);
+    }
+  });
+});
+
+describe("validateBindingTargets", () => {
+  const spec: WorkflowBindingSpec = { bindings: [SCALAR, FANOUT,], };
+
+  it("returns no errors when placeholders still match the graph", () => {
+    expect(validateBindingTargets(spec, graph(),),).toEqual([],);
+  });
+
+  it("reports an unknown node id", () => {
+    const g = graph();
+    delete g["1"];
+    expect(validateBindingTargets(spec, g,).join(" ",),).toContain("unknown node",);
+  });
+
+  it("fails closed when the target no longer holds its placeholder", () => {
+    const g = graph();
+    g["1"] = { class_type: "CLIPTextEncode", inputs: { text: "already filled", }, };
+    expect(validateBindingTargets(spec, g,).join(" ",),).toContain("fail-closed",);
   });
 });

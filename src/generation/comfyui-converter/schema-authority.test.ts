@@ -15,8 +15,17 @@ import {
   objectInfoSha256,
   verifyObjectInfoPin,
   verifyPinnedObjectInfoSha256,
+  verifyLiveSnapshot,
 } from "./schema-authority";
 import type { ObjectInfoSnapshot, } from "./types";
+
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Unit tests for pinned `/object_info` identity and live compatibility.
+ * Inline snapshots plus the bundled fixture — no network or DB.
+ */
 
 const PINNED: ObjectInfoSnapshot = {
   ZLoader: {
@@ -212,5 +221,35 @@ describe("compareLiveNodeInfo", () => {
       ok: false,
       errors: [expect.stringContaining("malformed required inputs",),],
     },);
+  });
+});
+
+describe("verifyLiveSnapshot", () => {
+  it("accepts a live snapshot derived from the bundled pin", async () => {
+    const pinned = await loadPinnedObjectInfo();
+    const className = Object.keys(pinned,)[0]!;
+    const live: Record<string, ComfyUINodeInfo> = {};
+    for (const [name, node,] of Object.entries(pinned,)) {
+      live[name] = {
+        name,
+        display_name: name,
+        category: "test",
+        input: (node.input ?? {}) as ComfyUINodeInfo["input"],
+        output: [...(node.output ?? []),],
+        output_name: [...(node.output_name ?? []),],
+      };
+    }
+
+    expect(await verifyLiveSnapshot(live, [className,],),).toEqual({ ok: true, },);
+  });
+
+  it("reports a required class missing from the live snapshot", async () => {
+    const pinned = await loadPinnedObjectInfo();
+    const className = Object.keys(pinned,)[0]!;
+    const result = await verifyLiveSnapshot({}, [className,],);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain(className,);
+    }
   });
 });
