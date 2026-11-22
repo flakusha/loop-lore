@@ -20,6 +20,7 @@ import {
 } from "./peer-health";
 import { type WorkloadPeer, } from "./peer-registry";
 import {
+  LOCAL_ROUTE_CANDIDATE,
   peerAssignmentKey,
   type PeerAssignmentMatrix,
   peerRankComparator,
@@ -578,6 +579,15 @@ describe("resolvePeerRoute — local load competes with peers", () => {
 
     expect(decision.target,).toBe("local",);
     expect(decision.reason,).toBe(PeerRouteReason.LocalPreferred,);
+  });
+
+  test("the local sentinel never collides with a peer origin", () => {
+    // The NUL prefix keeps the in-band local candidate out of the peer
+    // origin space (URLs); pin the value so a change is deliberate.
+    expect(LOCAL_ROUTE_CANDIDATE,).toBe("\u0000local",);
+    for (const origin of [BUSY, IDLE, GPU, CPU, "local", " local",]) {
+      expect(origin === LOCAL_ROUTE_CANDIDATE,).toBe(false,);
+    }
   });
 
   test("without local load the legacy peer-only ranking is unchanged", () => {
