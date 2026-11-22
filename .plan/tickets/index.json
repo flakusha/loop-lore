@@ -9617,6 +9617,20 @@
     "title": "Settings save omits gmConfig for online chats",
     "type": "BUG"
   },
+  "BUG-SETUP-STATE-TLS-CHECK-USES-UNREANCHORED-CERT-PATHS": {
+    "hash": "6a677f2",
+    "git_issue": "6a677f2",
+    "extid": "BUG-SETUP-STATE-TLS-CHECK-USES-UNREANCHORED-CERT-PATHS",
+    "type": "BUG",
+    "title": "setup state TLS check uses unreanchored cert paths",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-setup-state-tls-check-uses-unreanchored-cert-paths.md",
+    "status": "open"
+  },
   "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT",
@@ -10500,6 +10514,20 @@
     "tags": [],
     "source": ".plan/tickets/BUG-timeline-event-steering-manifest-status-update-and-timeline-.md",
     "status": "done"
+  },
+  "BUG-TLS-GENERATED-PRIVATE-KEY-WRITTEN-WITHOUT-0600-PERMISSIONS": {
+    "hash": "adcbf2e",
+    "git_issue": "adcbf2e",
+    "extid": "BUG-TLS-GENERATED-PRIVATE-KEY-WRITTEN-WITHOUT-0600-PERMISSIONS",
+    "type": "BUG",
+    "title": "TLS generated private key written without 0600 permissions",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-certificate-and-tls-management",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tls-generated-private-key-written-without-0600-permissions.md",
+    "status": "open"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
     "epic": "epic-plugin-system",
@@ -37755,6 +37783,20 @@
     "title": "Convert Generated<number> boolean shims to boolean state machines across schema",
     "type": "TASK"
   },
+  "TASK-COOKIE-SECURE-DEFAULT-FROM-EFFECTIVE-TLS": {
+    "hash": "429d8b8",
+    "git_issue": "429d8b8",
+    "extid": "TASK-COOKIE-SECURE-DEFAULT-FROM-EFFECTIVE-TLS",
+    "type": "TASK",
+    "title": "Cookie secure default from effective TLS",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cookie-secure-default-from-effective-tls.md",
+    "status": "open"
+  },
   "TASK-CORRECT-DEAD-FILE-REFERENCES-AND-STORE-SHAPE-DRIFT-IN-THE-IN": {
     "hash": "0a4df5c",
     "git_issue": "0a4df5c",
@@ -47228,6 +47270,20 @@
     "title": "Neighborhood & Housing Customization System",
     "type": "TASK"
   },
+  "TASK-HSTS-PROXY-PROTO-AND-ENV-MAPPING": {
+    "hash": "964db8d",
+    "git_issue": "964db8d",
+    "extid": "TASK-HSTS-PROXY-PROTO-AND-ENV-MAPPING",
+    "type": "TASK",
+    "title": "HSTS proxy proto and env mapping",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-certificate-and-tls-management",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hsts-proxy-proto-and-env-mapping.md",
+    "status": "open"
+  },
   "TASK-HTML-DEDUP-AUDIT": {
     "epic": "epic-frontend-html-dedup-htmx-reuse",
     "extid": "TASK-HTML-DEDUP-AUDIT",
@@ -48381,6 +48437,20 @@
     "title": "Integration Infrastructure",
     "type": "TASK"
   },
+  "TASK-INTEGRATION-TOKENS-EXPIRE-BY-DEFAULT": {
+    "hash": "be9affa",
+    "git_issue": "be9affa",
+    "extid": "TASK-INTEGRATION-TOKENS-EXPIRE-BY-DEFAULT",
+    "type": "TASK",
+    "title": "Integration tokens expire by default",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-integration-tokens-expire-by-default.md",
+    "status": "open"
+  },
   "TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT": {
     "hash": "9d39ebf",
     "git_issue": "9d39ebf",
@@ -49204,6 +49274,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md",
     "status": "done"
+  },
+  "TASK-JWT-ADD-ISSUER-CLAIM": {
+    "hash": "88938c6",
+    "git_issue": "88938c6",
+    "extid": "TASK-JWT-ADD-ISSUER-CLAIM",
+    "type": "TASK",
+    "title": "JWT add issuer claim",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jwt-add-issuer-claim.md",
+    "status": "open"
   },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "epic-auth-access",
@@ -61743,6 +61827,20 @@
     ],
     "title": "Search Telemetry & Quota Observability",
     "type": "TASK"
+  },
+  "TASK-SECURE-STARTUP-OPERATOR-CHECKLIST": {
+    "hash": "375ae56",
+    "git_issue": "375ae56",
+    "extid": "TASK-SECURE-STARTUP-OPERATOR-CHECKLIST",
+    "type": "TASK",
+    "title": "Secure startup operator checklist",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-deployment-infrastructure",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-secure-startup-operator-checklist.md",
+    "status": "open"
   },
   "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI": {
     "hash": "2350e43",
