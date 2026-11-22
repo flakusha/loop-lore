@@ -77,13 +77,13 @@ describe("substituteWorkflow variant expansion", () => {
   it("picks one option per group, deterministically per seed", () => {
     const opts: SubstituteOptions = { expandVariants: true, variantSeed: 7, };
     const first = substituteWorkflow("a {x|y} b", {}, opts,);
-    expect(["a x b", "a y b",],).toContain(first,);
+    expect(["a x b", "a y b",],).toContain(String(first,),);
     expect(substituteWorkflow("a {x|y} b", {}, opts,),).toBe(first,);
   });
 
   it("resolves nested groups innermost-first", () => {
     const out = substituteWorkflow("{a|{b|c}}", {}, { expandVariants: true, variantSeed: 3, },);
-    expect(["a", "b", "c",],).toContain(out,);
+    expect(["a", "b", "c",],).toContain(String(out,),);
     expect(out,).not.toContain("{",);
   });
 
@@ -93,7 +93,7 @@ describe("substituteWorkflow variant expansion", () => {
       variantSeed: 1,
     },);
 
-    expect(["red car", "blue car",],).toContain(out,);
+    expect(["red car", "blue car",],).toContain(String(out,),);
   });
 
   it("shares one pick sequence across a whole workflow", () => {
@@ -109,6 +109,7 @@ describe("substituteWorkflow variant expansion", () => {
     expect(substituteWorkflow("{{prompt}}", { prompt: "cat", }, opts,),).toBe("cat",);
   });
 });
+
 describe("applyNodeOverrides", () => {
   const workflow = { "5": { class_type: "CLIPTextEncode", inputs: { text: "old", cfg: 1, }, }, };
   it("returns a new top-level workflow with merged inputs", () => {

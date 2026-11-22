@@ -196,7 +196,7 @@ describe("generateComfyUI", () => {
       model: "picked.ckpt",
       samplerName: "dpmpp_2m",
       seed: 123456,
-      lora: { name: "style-lora", strength: 0.7, backend: "comfyui", },
+      lora: [{ name: "style-lora", strength: 0.7, backend: "comfyui", },],
     },);
 
     expect(outcome.ok,).toBe(true,);
@@ -241,7 +241,7 @@ describe("generateComfyUI", () => {
 
     const outcome = await generateComfyUI(CONFIG, {
       ...OPTS,
-      lora: { name: "char", strength: 0.7, backend: "comfyui", },
+      lora: [{ name: "char", strength: 0.7, backend: "comfyui", },],
     },);
 
     expect(outcome.ok,).toBe(true,);
@@ -287,7 +287,7 @@ describe("generateComfyUI", () => {
 
     const outcome = await generateComfyUI(CONFIG, {
       ...OPTS,
-      lora: { name: "missing", strength: 0.7, backend: "comfyui", },
+      lora: [{ name: "missing", strength: 0.7, backend: "comfyui", },],
     },);
 
     expect(outcome.ok,).toBe(true,);

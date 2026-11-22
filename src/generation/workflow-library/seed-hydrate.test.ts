@@ -11,7 +11,7 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { Kysely, } from "kysely";
-import { mkdtemp, rm, writeFile, } from "node:fs/promises";
+import { mkdtemp, readdir, rm, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
@@ -32,30 +32,7 @@ import {
 } from "./hydrate";
 import { buildWorkflowGraph, rowToPayload, rowToTemplate, } from "./row";
 import { resetSeedOwnerForTests, seedWorkflowLibrary, } from "./seed";
-
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { baseWorkflowId, } from "./seed-parameters";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * Library round-trip tests: seed -> read back -> hydrate -> build graph.
- *
- * These seams only break at boot, so they run against a real migrated SQLite
- * DB rather than a stub. A temp dir is used for the bad-file case because the
- * seed scans a directory, not a list of injected records.
- */
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-/**
- * Library round-trip tests: seed -> read back -> hydrate -> build graph.
- *
- * These seams only break at boot, so they run against a real migrated SQLite
- * DB rather than a stub. A temp dir is used for the bad-file case because the
- * seed scans a directory, not a list of injected records.
- */
 
 const SHIPPED_DIR = "./configs/workflows";
 

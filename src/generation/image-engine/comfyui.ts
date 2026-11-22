@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import type { ComfyUIWorkflow, } from "../providers/comfyui";
-import type { ImageGenOptions, ImageGenOutcome, } from "./types";
+import { randomUUID, } from "node:crypto";
 import type { ImageProviderConfig, } from "../../config/schema";
-import type { LoRAConfig, LoRAModel, } from "../lora/types";
-import { ComfyUIClient, } from "../providers/comfyui";
+import { getLogger, type Logger, } from "../../logger";
+import { validateProviderUrl, } from "../../utils/url-validation";
 import { applyLoraSlots, resolveLoraSlotFiles, resolveLoraSlotNode, } from "../lora/apply-slots";
 import { discoverLoras, } from "../lora/discovery";
-import { failure, ok, } from "./helpers";
-import { getLogger, type Logger, } from "../../logger";
 import { injectComfyUILora, } from "../lora/discovery-comfyui";
-import { loadComfyUIWorkflow, } from "../workflow-loader";
-import { randomUUID, } from "node:crypto";
+import type { LoRAConfig, LoRAModel, } from "../lora/types";
+import type { ComfyUIWorkflow, } from "../providers/comfyui";
+import { ComfyUIClient, } from "../providers/comfyui";
 import { uploadImageToComfy, } from "../providers/comfyui-upload";
-import { validateProviderUrl, } from "../../utils/url-validation";
+import { loadComfyUIWorkflow, } from "../workflow-loader";
+import { failure, ok, } from "./helpers";
+import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
 /**
  * Lazily resolve the module logger (null before logger init).
@@ -74,6 +74,7 @@ async function applyRequestedLoras(
     return { ok: false, error: error instanceof Error ? error.message : String(error,), };
   }
 }
+
 /**
  * Generate images via a ComfyUI workflow (loaded + substituted from disk).
  * @param sdConfig
@@ -131,7 +132,6 @@ export async function generateComfyUI(
     clip: opts.clip ?? sdConfig.models?.clip,
     vae: opts.vae ?? sdConfig.models?.vae,
     clip_vision: opts.clipVision ?? sdConfig.models?.clip_vision,
-    lora: opts.lora?.name,
     ...(opts.initImage
       ? {
         input_image: uploadedInitImage,

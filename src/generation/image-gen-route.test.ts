@@ -145,6 +145,44 @@ const defaultConfig = {
 // registry and the mocks cannot leak.
 let handleImageGeneration: typeof imageGenRoute.handleImageGeneration;
 const realFailover = realImageEngine.generateImagesWithFailover;
+
+if (ISOLATED) {
+  mock.module("../config/load", () => ({
+    ...realConfigLoad,
+    loadConfig: () => ({ ...structuredClone(createConfigSchema().defaults,), ...defaultConfig, }),
+  }),);
+
+  mock.module("./image-engine", () => ({
+    ...realImageEngine,
+    generateImages: mockGenerateImages,
+    generateImagesWithFailover: async (
+      ...args: Parameters<typeof realImageEngine.generateImagesWithFailover>
+    ) => {
+      failoverOptsCalls.push(args[2] as unknown as Record<string, unknown>,);
+      return realFailover(...args,);
+    },
+  }),);
+
+  mock.module("../assets/service/persist-generated", () => ({
+    ...realPersistGenerated,
+    persistGeneratedImages: mockPersistGeneratedImages,
+  }),);
+
+  mock.module("../characters/services/avatar-service", () => ({
+    ...realAvatarService,
+    bindGeneratedActorAvatar: mockBindGeneratedAvatar,
+  }),);
+
+  mock.module("./workflow-selection", () => ({
+    resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
+      workflowResolverCalls.push(opts,);
+      return resolvedWorkflowForTests;
+    },
+  }),);
+
+  ({ handleImageGeneration, } = await import("./image-gen-route"));
+}
+
 /**
  * A freshly MIGRATED test database for the cases that pass no explicit handle.
  * `handleImageGeneration` falls back to `getDatabase()`, which without an
@@ -297,6 +335,7 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     expect(json.error,).toContain("strength must be between",);
     expect(generateImagesCalls.length,).toBe(0,);
   });
+
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
@@ -649,29 +688,8 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
       await db.destroy();
     }
   });
-
-  beforeEach(() => {
-    generateImagesCalls.length = 0;
-    persistGeneratedCalls.length = 0;
-    generateError = null;
-  },);
-
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-  },);
-
-  beforeEach(() => {
-    generateImagesCalls.length = 0;
-    persistGeneratedCalls.length = 0;
-    generateError = null;
-  },);
-
-  afterEach(() => {
-    globalThis.fetch = originalFetch;
-  },);
 },);
 
-// ── /image ComfyUI-first opt-in routing (TASK-sd-cpp-provider) ──────────────
 describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
@@ -886,12 +904,6 @@ async function seedAvatarFixtures(db: Kysely<DB>,): Promise<void> {
   },).execute();
 }
 
-  beforeEach(() => {
-    generateImagesCalls.length = 0;
-    bindAvatarCalls.length = 0;
-    bindError = null;
-  },);
-
 describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 1)", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
@@ -986,14 +998,7 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
       await db.destroy();
     }
   });
-
-  beforeEach(() => {
-    generateImagesCalls.length = 0;
-    persistGeneratedCalls.length = 0;
-  },);
 },);
-
-// ── setAsChatBackground: persist generated image as active chat background ──
 
 describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
   beforeEach(() => {

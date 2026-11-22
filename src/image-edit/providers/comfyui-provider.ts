@@ -16,7 +16,7 @@ import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import { pickSdProvider, } from "../../config/schema";
 import { getDatabase, } from "../../db";
-import { ComfyUIClient, } from "../../generation/providers/comfyui";
+import { ComfyUIClient, type ComfyUIWorkflow, } from "../../generation/providers/comfyui";
 import { getLogger, } from "../../logger";
 import type { NodeDiscovery, } from "../node-availability";
 import type {
@@ -32,16 +32,6 @@ import { uploadImageParams, } from "./comfyui-image-upload";
 
 import { applyLoraSlots, resolveLoraSlotNode, } from "../../generation/lora/apply-slots";
 import { parseLoraString, } from "../templates/builtin/lora";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 260
-/**
- * ComfyUI Image Edit Provider — Executes templates via ComfyUI API
- *
- * download generated images, and store them as assets.
- * @module comfyui-provider
- */
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function log() {
