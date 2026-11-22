@@ -12,21 +12,21 @@ import { join, } from "node:path";
 const EXISTING = join(import.meta.dir, "..", "..", "package.json",);
 
 describe("serveFile", () => {
-  test("missing file returns 404", () => {
-    const res = serveFile("/nonexistent/path/file.bin", "application/octet-stream",);
+  test("missing file returns 404", async () => {
+    const res = await serveFile("/nonexistent/path/file.bin", "application/octet-stream",);
     expect(res.status,).toBe(404,);
   });
 
   test("serves the file bytes with content type and immutable cache", async () => {
-    const res = serveFile(EXISTING, "application/json",);
+    const res = await serveFile(EXISTING, "application/json",);
     expect(res.status,).toBe(200,);
     expect(res.headers.get("Content-Type",),).toBe("application/json",);
     expect(res.headers.get("Cache-Control",),).toMatch(/public, max-age=\d+, immutable/,);
     expect((await res.text()).length,).toBeGreaterThan(0,);
   });
 
-  test("honors custom cache control and extra headers", () => {
-    const res = serveFile(EXISTING, "application/json", {
+  test("honors custom cache control and extra headers", async () => {
+    const res = await serveFile(EXISTING, "application/json", {
       cacheControl: "no-store",
       extraHeaders: { "X-Custom": "yes", },
     },);

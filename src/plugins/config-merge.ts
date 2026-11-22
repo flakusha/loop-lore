@@ -21,12 +21,15 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+const DANGEROUS_KEYS = ["__proto__", "constructor", "hasOwnProperty"];
+
 /**
  * Deep-merge stored config over defaults.
  * @param defaults - Default values from the plugin manifest.
  * @param stored - Stored overrides (user/admin supplied).
  * @param schema - Optional schema; `required` keys must survive the merge.
- * @returns Merged config; `stored` wins per key.
+ * @returns Merged config; `stored` wins per key. Built on a null prototype
+ * so a stored `__proto__` key can never pollute Object.prototype.
  * @throws When a `required` schema key is missing from the merged result.
  */
 export function mergePluginConfig(
@@ -34,8 +37,11 @@ export function mergePluginConfig(
   stored: Record<string, unknown>,
   schema?: PluginConfigSchema,
 ): Record<string, unknown> {
-  const merged: Record<string, unknown> = { ...defaults, };
+  const merged: Record<string, unknown> = Object.assign(Object.create(null), defaults,);
   for (const [key, value] of Object.entries(stored)) {
+    // Prototype-pollution guard: mirror parseStoredPluginConfig's trust
+    // boundary — dangerous own keys are skipped, never merged.
+    if (DANGEROUS_KEYS.includes(key)) { continue; }
     const base = merged[key];
     merged[key] = isPlainObject(base) && isPlainObject(value)
       ? mergePluginConfig(base, value)

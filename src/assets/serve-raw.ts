@@ -93,7 +93,7 @@ export async function handleServeRaw({
     }
   }
 
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
+  return await serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
 }
 
 /**
@@ -170,7 +170,7 @@ export async function handleDownload({
     }
   }
 
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
+  return await serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
     extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
   },);
 }

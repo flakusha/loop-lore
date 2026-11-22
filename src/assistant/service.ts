@@ -59,6 +59,15 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
 const ORDERED_KEYWORDS: [string, AssistantResponse[],][] = Object.entries(RESPONSE_MAP,)
   .sort((a, b,) => b[0].length - a[0].length);
 
+// TODO(perf): precompiled per-keyword patterns (static list — zero staleness
+// risk); avoids a RegExp compile per keyword per request.
+const ORDERED_PATTERNS: [RegExp, AssistantResponse[],][] = ORDERED_KEYWORDS.map(
+  ([keyword, responses,],) => {
+    const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`,);
+    return [new RegExp(String.raw`(?:^|\W)${escaped}\b`, "i",), responses,];
+  },
+);
+
 /**
  * Generate an assistant response based on user input.
  * Returns null if no match found (no response needed).
@@ -69,11 +78,9 @@ export function generateResponse(params: GenerateResponseParams,): AssistantResp
   const { userInput, } = params;
   const lower = userInput.toLowerCase().trim();
 
-  // Check exact matches first (word boundary or start of string)
-  for (const [keyword, responses,] of ORDERED_KEYWORDS) {
-    // Use word boundary regex to avoid false positives (e.g., "helpme" matching "help")
-    const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`,);
-    const pattern = new RegExp(String.raw`(?:^|\W)${escaped}\b`, "i",);
+  // Check exact matches first (word boundary or start of string); patterns
+  // are precompiled at module scope (longest keyword first).
+  for (const [pattern, responses,] of ORDERED_PATTERNS) {
     if (pattern.test(lower,)) {
       return responses[0] ?? null;
     }

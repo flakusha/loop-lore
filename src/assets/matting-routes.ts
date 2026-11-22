@@ -116,7 +116,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
   const { asset, } = resolved;
 
   if (asset.alpha_status === AssetAlphaStatus.Native) {
-    return serveFile(
+    return await serveFile(
       getAssetFilePath(opts.uploadDir, asset.storage_path,),
       asset.mime_type,
     );
@@ -131,7 +131,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
     return notFoundResponse("Matted derivative not found",);
   }
 
-  return serveFile(
+  return await serveFile(
     getAssetFilePath(opts.uploadDir, derivative.storage_path,),
     derivative.mime_type,
   );

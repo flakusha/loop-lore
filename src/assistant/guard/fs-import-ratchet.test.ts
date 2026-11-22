@@ -84,7 +84,6 @@ const STATEMENT_BOUNDARY = /[;{}]$/;
  * ratchet forces.
  */
 const BASELINE = [
-  "src/assets/serve-file.ts",
   "src/assets/test-helpers.ts",
   "src/assets/variant-path.ts",
   "src/build/compress.ts",

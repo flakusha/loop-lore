@@ -5,7 +5,6 @@
  * Asset Service — read/access (get, list, decrypt, ownership)
  */
 import type { ExpressionBuilder, Kysely, } from "kysely";
-import fs from "node:fs";
 import { decryptAssetBlob, } from "../../crypto/asset-encryption";
 import type { ChatKey, } from "../../crypto/chat-keys";
 import { ActorType, ActorVisibility, AssetLinkEntity, AssetVisibility, } from "../../db/enums";
@@ -67,9 +66,12 @@ export async function getAssetData(
   if (!asset) { return null; }
 
   const filePath = getAssetFilePath(uploadDir, asset.storage_path,);
-  if (!fs.existsSync(filePath,)) { return null; }
+  const file = Bun.file(filePath,);
+  if (!(await file.exists())) { return null; }
 
-  const fileData = fs.readFileSync(filePath,);
+  // TODO(perf): async read keeps the synchronous driver free; only the
+  // encrypted branch inherently needs bytes (decryption input).
+  const fileData = Buffer.from(await file.arrayBuffer(),);
 
   // If asset is encrypted, decrypt it (per-asset HKDF subkey derives from chatKey + assetId)
   if (isEncryptedAsset(asset,)) {

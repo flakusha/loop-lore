@@ -4,12 +4,12 @@
 /**
  * Asset file serving helper (extracted from ./controller.ts).
  */
-import { existsSync, readFileSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import { notFoundResponse, } from "../routes/http-utils";
 
 /**
- * Serve a file from disk with proper headers.
+ * Serve a file from disk with proper headers. Streams via Bun.file so large
+ * assets never buffer in JS or block the synchronous driver.
  * @param filePath
  * @param contentType
  * @param opts
@@ -17,17 +17,17 @@ import { notFoundResponse, } from "../routes/http-utils";
  * @param opts.extraHeaders
  * @returns file response
  */
-export function serveFile(
+export async function serveFile(
   filePath: string,
   contentType: string,
   opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
-): Response {
-  if (!existsSync(filePath,)) {
+): Promise<Response> {
+  const file = Bun.file(filePath,);
+  if (!(await file.exists())) {
     return notFoundResponse("File not found on disk",);
   }
 
-  const data = readFileSync(filePath,);
-  return new Response(data, {
+  return new Response(file, {
     headers: {
       "Content-Type": contentType,
       // MIME-sniff defense: assets may be attacker-controlled (e.g. SVG).

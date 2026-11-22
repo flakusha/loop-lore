@@ -57,9 +57,10 @@ export async function handleGenerationStream(
      * @returns {Promise<void>}
      */
     async start(controller,) {
+      const encoder = new TextEncoder();
       const buffer = await waitForBuffer(chatId, 15_000,);
       if (!buffer) {
-        controller.enqueue(new TextEncoder().encode("event: stream-error\ndata: No active generation\n\n",),);
+        controller.enqueue(encoder.encode("event: stream-error\ndata: No active generation\n\n",),);
         controller.close();
         return;
       }
@@ -67,7 +68,7 @@ export async function handleGenerationStream(
       for (const event of buffer.replay(replayFrom,)) {
         const lines = event.html.split("\n",);
         const dataBlock = Array.from(lines, (l,) => `data: ${l}`,).join("\n",);
-        controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
+        controller.enqueue(encoder.encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
       }
 
       if (buffer.isDone || buffer.hasError) {
@@ -83,14 +84,14 @@ export async function handleGenerationStream(
               (l,) => `data: ${l}`,
             ).join("\n",);
 
-            controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
+            controller.enqueue(encoder.encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
           } catch {
             // Controller might be closed — ignore
           }
         },
         () => {
           try {
-            controller.enqueue(new TextEncoder().encode("event: stream-done\ndata: {}\n\n",),);
+            controller.enqueue(encoder.encode("event: stream-done\ndata: {}\n\n",),);
             controller.close();
           } catch {
             // Ignore
@@ -100,7 +101,7 @@ export async function handleGenerationStream(
           try {
             const payload = safeJsonStringify({ error: String(error,), },);
             controller.enqueue(
-              new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),
+              encoder.encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),
             );
 
             controller.close();
@@ -112,7 +113,7 @@ export async function handleGenerationStream(
 
       const keepalive = setInterval(() => {
         try {
-          controller.enqueue(new TextEncoder().encode(": keepalive\n\n",),);
+          controller.enqueue(encoder.encode(": keepalive\n\n",),);
         } catch {
           clearInterval(keepalive,);
         }
