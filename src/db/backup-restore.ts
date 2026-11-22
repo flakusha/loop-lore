@@ -246,16 +246,34 @@ export function resolveBackupPath(dir: string, name: string,): string {
     throw new Error("Invalid backup name",);
   }
 
+  const base = path.resolve(dir,);
   const resolved = path.resolve(dir, name,);
-  if (path.dirname(resolved,) !== path.resolve(dir,)) {
+  if (path.dirname(resolved,) !== base) {
     throw new Error("Invalid backup name",);
   }
 
-  if (!fs.existsSync(resolved,)) {
-    throw new Error(`Backup "${name}" not found`,);
+  // A bare name may still be a symlink pointing outside the backup directory.
+  // Resolve symlinks on both sides and re-check containment before returning.
+  let realBase: string;
+  let realTarget: string;
+  try {
+    realBase = fs.realpathSync(base,);
+    realTarget = fs.realpathSync(resolved,);
+  } catch (error) {
+    // ENOENT means missing; other FS errors are reported generically so raw
+    // absolute paths never reach callers.
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw new Error(`Backup "${name}" not found`,);
+    }
+
+    throw new Error("Invalid backup name",);
   }
 
-  return resolved;
+  if (path.dirname(realTarget,) !== realBase) {
+    throw new Error("Invalid backup name",);
+  }
+
+  return realTarget;
 }
 
 /**

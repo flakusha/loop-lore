@@ -12,7 +12,7 @@ import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
+import fs, { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { resolveInstanceSlug, } from "../../config/state-dir";
@@ -295,6 +295,88 @@ describe("admin db backup routes", () => {
       expect(tables.map((row,) => row.name),).toContain("chats",);
     } finally {
       live.close();
+    }
+  });
+
+  test("malformed download name is authorized before it is validated", async () => {
+    const badName = "%2E%2E%2Fx.db";
+    const anon = await handle(makeApp(null,), "GET", `${PREFIX}/admin/db/backup/${badName}`,);
+    expect(anon.status,).toBe(401,);
+    const user = await handle(makeApp(UserRole.User,), "GET", `${PREFIX}/admin/db/backup/${badName}`,);
+    expect(user.status,).toBe(403,);
+    const admin = await handle(makeApp(UserRole.Admin,), "GET", `${PREFIX}/admin/db/backup/${badName}`,);
+    expect(admin.status,).toBe(400,);
+  });
+
+  test("POST upload never clobbers an existing snapshot (409)", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    expect(created.status,).toBe(201,);
+    const { backup, } = await created.json() as { backup: { name: string } };
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    const target = path.join(backupDir, backup.name,);
+    const original = readFileSync(target,);
+
+    const duplicate = await upload(app, new File([original,], backup.name,),);
+    expect(duplicate.status,).toBe(409,);
+    const duplicateBody = await duplicate.json() as { error: string };
+    expect(duplicateBody.error,).toContain("Snapshot already exists",);
+    expect(readFileSync(target,),).toEqual(original,);
+    expect(readdirSync(backupDir,).some((name,) => name.endsWith(".tmp",)),).toBe(false,);
+  });
+
+  test("POST upload 500 is path-free and cleans up after a link failure", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    const { backup, } = await created.json() as { backup: { name: string } };
+    const backupDir = path.join(backupRoot, resolveInstanceSlug(process.env,), "db",);
+    const bytes = readFileSync(path.join(backupDir, backup.name,),);
+
+    // Test-only stub: force the generic catch with a path-bearing raw error.
+    const fsHolder = fs as unknown as { linkSync: typeof fs.linkSync };
+    const realLinkSync = fs.linkSync;
+    fsHolder.linkSync = () => {
+      throw new Error(`EACCES: cannot link '/tmp/private/${backup.name}'`,);
+    };
+
+    try {
+      const res = await upload(app, new File([bytes,], `fail500-${Date.now()}.db`,),);
+      expect(res.status,).toBe(500,);
+      const body = await res.json() as { error: string };
+      expect(body.error,).toBe("Upload failed",);
+      expect(body.error,).not.toContain("/tmp",);
+      expect(body.error,).not.toContain(backupDir,);
+      expect(readdirSync(backupDir,).some((name,) => name.endsWith(".tmp",)),).toBe(false,);
+    } finally {
+      fsHolder.linkSync = realLinkSync;
+    }
+  });
+
+  test("GET download surfaces an in-flight deletion as a failed body stream", async () => {
+    const app = makeApp(UserRole.Admin,);
+    const created = await handle(app, "POST", `${PREFIX}/admin/db/backup`,);
+    const { backup, } = await created.json() as { backup: { name: string } };
+
+    // Test-only stub: delete after existsSync/resolve, before Bun.file reads.
+    const bunHolder = Bun as unknown as { file: typeof Bun.file };
+    const realFile = Bun.file;
+    let deleted = false;
+    bunHolder.file = (...args) => {
+      if (!deleted) {
+        rmSync(String(args[0],), { force: true, },);
+        deleted = true;
+      }
+
+      return realFile(String(args[0],),);
+    };
+
+    try {
+      const res = await handle(app, "GET", `${PREFIX}/admin/db/backup/${backup.name}`,);
+      expect(deleted,).toBe(true,);
+      expect(res.status,).toBe(200,);
+      await expect(res.arrayBuffer(),).rejects.toThrow();
+    } finally {
+      bunHolder.file = realFile;
     }
   });
 });

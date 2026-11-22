@@ -40,8 +40,6 @@ type BackupAuthCtx = Context & {
 type BackupParamCtx = BackupAuthCtx & { params: { name: string } };
 
 const BACKUP_NAME_RE = new RegExp(ADMIN_NAME_PATTERN,);
-const tBackupName = t.String({ minLength: 1, maxLength: 64, pattern: ADMIN_NAME_PATTERN, },);
-const tBackupParams = t.Object({ name: tBackupName, },);
 const tBackupMeta = t.Object({ name: t.String(), sizeBytes: t.Number(), },);
 
 /**
@@ -182,6 +180,14 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(`${prefix}/admin/db/backup/:name`, async (ctx,) => {
         const c = ctx as unknown as BackupParamCtx;
         return withPermissionAuth(c, "admin.system", () => {
+          if (typeof c.params.name !== "string" || !BACKUP_NAME_RE.test(c.params.name,)) {
+            return jsonError({
+              message: "Invalid database backup name",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.ValidationError,
+            },);
+          }
+
           let resolved: string;
           try {
             resolved = resolveBackupPath(dir, c.params.name,);
@@ -202,7 +208,6 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         },);
       }, {
-        params: tBackupParams,
         response: {
           400: ErrorResponse,
           403: ErrorResponse,
@@ -249,10 +254,6 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
 
           const target = path.join(dir, name,);
-          if (fs.existsSync(target,)) {
-            return jsonError({ message: "Snapshot already exists", status: HttpStatus.BadRequest, },);
-          }
-
           const tmp = path.join(dir, `.upload-${randomUUID()}.tmp`,);
           try {
             fs.mkdirSync(dir, { recursive: true, },);
@@ -266,7 +267,21 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             }
 
             validateSqliteSnapshot(tmp,);
-            fs.renameSync(tmp, target,);
+            try {
+              fs.linkSync(tmp, target,);
+            } catch (error) {
+              if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+                return jsonError({
+                  message: "Snapshot already exists",
+                  status: HttpStatus.Conflict,
+                  code: ErrorCode.Conflict,
+                },);
+              }
+
+              throw error;
+            }
+
+            fs.unlinkSync(tmp,);
             const sizeBytes = fs.statSync(target,).size;
             log().info("Admin uploaded database backup", { userId: c.userId, name, sizeBytes, },);
             return jsonResponse({ backup: { name, sizeBytes, }, }, HttpStatus.Created,);
@@ -281,7 +296,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
             log().error("Database snapshot upload failed", error as Error,);
             return jsonError({
-              message: `Upload failed: ${(error as Error).message}`,
+              message: "Upload failed",
               status: HttpStatus.InternalServerError,
               code: ErrorCode.ServerError,
             },);
@@ -299,7 +314,9 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           201: t.Object({ backup: tBackupMeta, },),
           400: ErrorResponse,
           403: ErrorResponse,
+          409: ErrorResponse,
           422: ErrorResponse,
+          500: ErrorResponse,
         },
         detail: {
           summary: "Upload a database backup snapshot",

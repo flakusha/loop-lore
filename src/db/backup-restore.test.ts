@@ -9,6 +9,7 @@ import {
   readdirSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   utimesSync,
   writeFileSync,
 } from "node:fs";
@@ -146,6 +147,18 @@ describe("db backup/restore service", () => {
     const created = path.join(dir, "ok.db",);
     writeFileSync(created, "x",);
     expect(resolveBackupPath(dir, "ok.db",),).toBe(created,);
+  });
+
+  test("resolveBackupPath rejects a symlink that escapes the backup directory", () => {
+    const outside = mkdtempSync(path.join(os.tmpdir(), "db-backup-outside-",),);
+    try {
+      const secret = path.join(outside, "secret.db",);
+      writeFileSync(secret, "outside data",);
+      symlinkSync(secret, path.join(dir, "link.db",),);
+      expect(() => resolveBackupPath(dir, "link.db",)).toThrow(/Invalid backup name/,);
+    } finally {
+      rmSync(outside, { recursive: true, force: true, },);
+    }
   });
 
   test("pruneDbSnapshots keeps the newest files and deletes the rest", () => {
