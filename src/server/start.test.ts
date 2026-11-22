@@ -39,6 +39,10 @@ let tlsProvisionFailure: Error | null = null;
 // Per-test owned seams for the boot capability assertion (set/restored in the test).
 let bootDb: Kysely<DB> | undefined;
 let bootScanProvider = "boot-scan-test-provider";
+let bootScanCalls: (Kysely<DB> | undefined)[] = [];
+let bootRegisteredProviders: string[] = [];
+let bootStoredProvider: string | undefined;
+let bootWarnings: { message: string; meta: Record<string, unknown> }[] = [];
 
 // Real seams captured BEFORE the module mocks below replace their specifiers.
 const { createSqliteDialect, } = await import("../db/index");
@@ -53,7 +57,9 @@ if (ISOLATED) {
     trace: () => {},
     debug: () => {},
     info: () => {},
-    warn: () => {},
+    warn: (message: string | Record<string, unknown>, meta?: Record<string, unknown>,) => {
+      bootWarnings.push({ message: String(message,), meta: meta ?? {}, },);
+    },
     error: () => {},
     fatal: () => {},
     child: () => fakeLogger,
@@ -229,7 +235,6 @@ if (ISOLATED) {
 
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
   mock.module("../config/hot-reload", () => ({
-    watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     watchDomainConfigs: () => ({ close() {}, __close() {}, }),
     stopWatchingDomainConfigs: () => {},
   }),);
@@ -453,6 +458,48 @@ describeOrSkip("start", () => {
     } finally {
       bootDb = undefined;
       bootScanProvider = "boot-scan-test-provider";
+      currentConfig = previousConfig;
+      await db.destroy();
+      sqlite.close();
+    }
+  });
+
+  test("rescan after materialization folds stored providers into one warning", async () => {
+    // Owned: in-memory DB destroyed in finally; unique provider id; ephemeral
+    // port; config/db/warning seams restored in finally. No mock.module or
+    // blanket clears; process.on is restored by afterEach.
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    const storedProvider = `stored-scan-${crypto.randomUUID()}`;
+    const previousConfig = currentConfig;
+    try {
+      createLogger({ level: "error", },);
+    } catch { /* already initialized */ }
+
+    bootDb = db;
+    bootStoredProvider = storedProvider;
+    bootScanCalls = [];
+    bootRegisteredProviders = [];
+    bootWarnings = [];
+    currentConfig = { ...previousConfig, server: { port: 0, host: "127.0.0.1", tls: undefined, }, };
+    try {
+      await start();
+
+      expect(bootScanCalls.length,).toBe(2,);
+      expect(bootScanCalls[0],).toBe(db,);
+      expect(bootScanCalls[1],).toBe(db,);
+      expect(bootRegisteredProviders,).toContain(storedProvider,);
+
+      const warnings = bootWarnings.filter((w,) => w.message === "providers unreachable on startup");
+      expect(warnings.length,).toBe(1,);
+      expect(warnings[0]?.meta.module,).toBe("server",);
+      expect(warnings[0]?.meta.failedProviders,).toContain(storedProvider,);
+    } finally {
+      bootDb = undefined;
+      bootStoredProvider = undefined;
+      bootScanCalls = [];
+      bootRegisteredProviders = [];
+      bootWarnings = [];
       currentConfig = previousConfig;
       await db.destroy();
       sqlite.close();

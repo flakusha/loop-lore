@@ -230,14 +230,8 @@ export async function start() {
 
   const startLogger = getLogger();
   warnByokWithoutSecret(config, startLogger,);
-  if (failedProviders.length > 0) {
-    startLogger.warn("providers unreachable on startup", {
-      module: "server",
-      failedProviders: Array.from(failedProviders, (p,) => p.name,),
-    },);
-  } else {
-    startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
-  }
+  // The boot verdict is emitted once, after the stored-provider rescan below,
+  // so failures from both scans aggregate into a single structured warning.
 
   // Orphaned emotion-avatar jobs from a previous process are terminal, never
   // resumed: mark them failed with an explicit reason and rebuild the
@@ -348,6 +342,26 @@ export async function start() {
   // survives a restart.
   const { materializeServerProviders, } = await import("../generation/providers/server-provider-store");
   await materializeServerProviders(database, config,);
+
+  // Stored/wizard-created providers only enter the registry at materialize
+  // time, so rescan now to give them a boot health verdict and populate
+  // model_capabilities. Reuses the scanAllProviders binding from this scope.
+  const rescanResults = await scanAllProviders(database,);
+  for (const p of rescanResults) {
+    if (p.status !== "healthy") { failedProviders.push(p,); }
+  }
+
+  if (failedProviders.length > 0) {
+    startLogger.warn("providers unreachable on startup", {
+      module: "server",
+      failedProviders: Array.from(failedProviders, (p,) => p.name,),
+    },);
+  } else {
+    startLogger.info("all providers healthy", {
+      module: "server",
+      count: healthResults.length + rescanResults.length,
+    },);
+  }
 
   if (config.logging.dbEnabled) {
     const { DBTransport, } = await import("../logger/transports/db");
