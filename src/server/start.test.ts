@@ -9,7 +9,10 @@
 // free port. The server is verified with a real HTTP request.
 
 import { serve, } from "bun";
+import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 // ── Mutable config ───────────────────────────────────────────
@@ -31,6 +34,16 @@ const processOnCalls: [string, (...args: unknown[]) => void,][] = [];
 // Gate for the plugin loader: a test can hold `loadAllPlugins` open to observe
 // the boot window (traffic must stay gated until the plugins are loaded).
 let pluginGate: Promise<void> | undefined;
+
+// Per-test owned seams for the boot capability assertion (set/restored in the test).
+let bootDb: Kysely<DB> | undefined;
+let bootScanProvider = "boot-scan-test-provider";
+
+// Real seams captured BEFORE the module mocks below replace their specifiers.
+const { createSqliteDialect, } = await import("../db/index");
+const { runMigrations: realRunMigrations, } = await import("../db/migrate");
+const { upsertModelCapabilities, } = await import("../admin/model-capabilities");
+const { createLogger, } = await import("../logger");
 
 // ── Module mocks (everything except "bun") ──────────────────
 
@@ -76,8 +89,21 @@ if (ISOLATED) {
     }),
   );
 
-  mock.module("../db/index", () => ({ getDatabase: () => fakeDb, getSqliteDatabase: () => null, }),);
-  mock.module("../db/migrate", () => ({ runDataMigrations: async () => {}, runMigrations: async () => {}, }),);
+  mock.module("../db/index", () => ({
+    getDatabase: () => bootDb ?? fakeDb,
+    getSqliteDatabase: () => null,
+    createSqliteDialect,
+  }),);
+
+  // Real migrations for the owned boot DB: the scan must not run before
+  // model_capabilities exists. Other tests keep the fixed fake DB stub.
+  mock.module("../db/migrate", () => ({
+    runDataMigrations: async () => {},
+    runMigrations: async (db: Kysely<DB>,) => {
+      if (db === bootDb) { await realRunMigrations(db,); }
+    },
+  }),);
+
   mock.module("../db/seed", () => ({ seedDefaultActors: async () => {}, }),);
   mock.module(
     "../characters/services/emotion-avatar-service/restart-reconcile",
@@ -162,7 +188,20 @@ if (ISOLATED) {
     backendToConfig: () => ({}),
   }),);
 
-  mock.module("../admin/provider-health", () => ({ scanAllProviders: async () => [], }),);
+  // Provider discovery is stubbed; the capability write is the real upsert so
+  // a missing db argument (old boot wiring) leaves no rows and fails the test.
+  mock.module("../admin/provider-health", () => ({
+    scanAllProviders: async (db?: Kysely<DB>,) => {
+      if (db === bootDb && db) {
+        await upsertModelCapabilities(db, bootScanProvider, [
+          { id: "boot-scan-model", contextWindow: 4096, toolCalling: true, },
+        ],);
+      }
+
+      return [];
+    },
+  }),);
+
   // Only seedDefaults is CALLED here (dynamic import in start()), but the
   // graph statically links getConfigValue too — a mock without it breaks
   // module linking for every importer under --isolate.
@@ -347,6 +386,40 @@ describeOrSkip("start", () => {
       expect(exitCodes.at(-1,),).toBe(0,);
     } finally {
       process.exit = originalExit;
+    }
+  });
+
+  test("boot scan persists capability rows through the server database", async () => {
+    // Owned: in-memory DB destroyed in finally; unique provider id; port 0
+    // listener; module-level config/db seams restored in finally. No fixed
+    // ports, paths, or global fetch stubs; process.on is restored by afterEach.
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    const provider = `boot-scan-${crypto.randomUUID()}`;
+    const previousConfig = currentConfig;
+    // Real migrations and the real upsert log through the real logger singleton.
+    try {
+      createLogger({ level: "error", },);
+    } catch { /* already initialized */ }
+
+    bootDb = db;
+    bootScanProvider = provider;
+    currentConfig = { ...previousConfig, server: { port: 0, host: "127.0.0.1", tls: undefined, }, };
+    try {
+      await start();
+      const rows = await db.selectFrom("model_capabilities",)
+        .where("provider_id", "=", provider,)
+        .selectAll()
+        .execute();
+
+      expect(rows.length,).toBe(1,);
+      expect(rows[0]!.model_id,).toBe("boot-scan-model",);
+    } finally {
+      bootDb = undefined;
+      bootScanProvider = "boot-scan-test-provider";
+      currentConfig = previousConfig;
+      await db.destroy();
+      sqlite.close();
     }
   });
 },);

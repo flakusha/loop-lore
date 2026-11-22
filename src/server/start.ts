@@ -143,25 +143,6 @@ export async function start() {
   initializeProviders(config,);
   initDefaultHooks();
 
-  // Startup health check — scan providers and log any failures
-  const { scanAllProviders, } = await import("../admin/provider-health");
-  const healthResults = await scanAllProviders();
-  const failedProviders: (typeof healthResults)[number][] = [];
-  for (const p of healthResults) {
-    if (p.status !== "healthy") { failedProviders.push(p,); }
-  }
-
-  const startLogger = getLogger();
-  warnByokWithoutSecret(config, startLogger,);
-  if (failedProviders.length > 0) {
-    startLogger.warn("providers unreachable on startup", {
-      module: "server",
-      failedProviders: Array.from(failedProviders, (p,) => p.name,),
-    },);
-  } else {
-    startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
-  }
-
   const database = getDatabase(resolveDbPath(process.env, config.server,),);
   const logger = getLogger();
   bindSharedQuotaEngine(database,);
@@ -224,6 +205,27 @@ export async function start() {
 
   await runMigrations(database,); // ensure DB schema ready before serving
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
+
+  // Startup health check — scan after the schema exists so the boot scan
+  // populates model_capabilities before the first request.
+  const { scanAllProviders, } = await import("../admin/provider-health");
+  const healthResults = await scanAllProviders(database,);
+  const failedProviders: (typeof healthResults)[number][] = [];
+  for (const p of healthResults) {
+    if (p.status !== "healthy") { failedProviders.push(p,); }
+  }
+
+  const startLogger = getLogger();
+  warnByokWithoutSecret(config, startLogger,);
+  if (failedProviders.length > 0) {
+    startLogger.warn("providers unreachable on startup", {
+      module: "server",
+      failedProviders: Array.from(failedProviders, (p,) => p.name,),
+    },);
+  } else {
+    startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
+  }
+
   // Orphaned emotion-avatar jobs from a previous process are terminal, never
   // resumed: mark them failed with an explicit reason and rebuild the
   // in-memory job cache from the durable rows, so no list/status/SSE consumer
