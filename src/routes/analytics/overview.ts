@@ -26,6 +26,8 @@ export async function overviewHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Promi
     .where("chats.created_by", "=", userId,)
     .groupBy("chats.id",)
     .select([
+      "chats.id",
+      "chats.name",
       sql<number>`count(messages.id)`.as("totalMessages",),
       sql<number>`coalesce(sum(messages.token_count_total), 0)`.as("totalTokens",),
       sql<number>`coalesce(sum(CASE WHEN messages.role = 'user' THEN messages.token_count_total ELSE 0 END), 0)`
@@ -45,20 +47,17 @@ export async function overviewHandler(db: Kysely<DB>, ctx: AnalyticsCtx,): Promi
     system: overview.reduce((sum, row,) => sum + Number(row.systemTokens ?? 0,), 0,),
   };
 
-  const topChats = await db
-    .selectFrom("chats",)
-    .leftJoin("messages", "messages.chat_id", "chats.id",)
-    .where("chats.created_by", "=", userId,)
-    .groupBy("chats.id",)
-    .select([
-      "chats.id",
-      "chats.name",
-      sql<number>`coalesce(sum(messages.token_count_total), 0)`.as("totalTokens",),
-      sql<number>`count(messages.id)`.as("totalMessages",),
-    ],)
-    .orderBy("totalTokens", "desc",)
-    .limit(5,)
-    .execute();
+  // TODO(perf): topChats derives from the same grouped rows as the overview
+  // aggregate — one chats⋈messages scan instead of two.
+  const topChats = overview
+    .map((row,) => ({
+      id: row.id,
+      name: row.name,
+      totalTokens: Number(row.totalTokens ?? 0,),
+      totalMessages: Number(row.totalMessages ?? 0,),
+    }))
+    .sort((a, b,) => b.totalTokens - a.totalTokens)
+    .slice(0, 5,);
 
   // Bucket generation latencies in the same query as the aggregate so the
   // dashboard histogram costs no extra round-trip.
