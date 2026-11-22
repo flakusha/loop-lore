@@ -24,13 +24,13 @@ is slice 2 and is not enabled by this document.
    require an explicit lane, no active claim, acceptance criteria, score ≥ 3.
 3. Read prior history before acting: `engram` context, `.omp/receipt.toml`,
    `giwt ledger show`, `.tmp/intercom/FIXED-*.md`, `.tmp/research/`.
-4. File/update tickets with `giwt new <branch> --tickets <csv>`, `giwt sync --fix`, and `giwt plan validate --fix`.
+4. File/update tickets with `giwt ticket <TYPE> <title>`, `giwt sync --fix` and `giwt plan validate --fix`.
 5. Claim with `giwt intercom claim <lane> --owner <agent-id> --scope "<text>"`.
 6. Open a worktree via pinned `bun node_modules/giwt/src/cli.ts new <branch> --scope <id>`
    (never bare `giwt`). Work inside `tree/<branch>/`.
 7. Implement with small subagents; each writes its partial state to FIXED before
    termination. Review, patch, confirm with scoped gates.
-8. Rebase via `giwt rebase --onto <target>`; finalize via `giwt finalize <branch>`.
+8. Rebase via `giwt rebase <branch> dev` (target from `AUTO.json.targetBranch`); finalize via `giwt finalize <branch>`.
    Slice 1 never calls either.
 
 ## `AUTO.json` defaults (scratch file, operator-owned)
