@@ -9,7 +9,7 @@ import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { deleteConfig, getAllConfig, getConfig, seedDefaults, setConfig, } from "./config";
+import { deleteConfig, getAllConfig, getConfig, importConfigFromText, seedDefaults, setConfig, } from "./config";
 
 describe("getAllConfig", () => {
   let db: Kysely<DB>;
@@ -340,5 +340,42 @@ describe("seedDefaults", () => {
       const model = await getConfig(db, "default_model",);
       expect(model?.value,).toBe("",);
     });
+  });
+});
+
+describe("importConfigFromText", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    db = (await createTestDb()).db;
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("imports token-budget keys but skips credential keys", async () => {
+    const results = await importConfigFromText(
+      db,
+      [
+        "system_config:",
+        "  lore_token_budget: '1024'",
+        "  memory_token_budget: '2048'",
+        "  api_token: SENTINEL-IMPORT-SECRET-1",
+      ].join("\n",),
+      "yaml",
+    );
+
+    expect(results,).toEqual([
+      { key: "lore_token_budget", action: "added", },
+      { key: "memory_token_budget", action: "added", },
+      { key: "api_token", action: "skipped", },
+    ],);
+
+    const lore = await getConfig(db, "lore_token_budget",);
+    expect(lore?.value,).toBe("1024",);
+    const memory = await getConfig(db, "memory_token_budget",);
+    expect(memory?.value,).toBe("2048",);
+    expect(await getConfig(db, "api_token",),).toBeUndefined();
   });
 });

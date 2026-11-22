@@ -134,9 +134,16 @@ export async function resolveModelRole(
     return { role, provider: "", model: "", source: "default", };
   }
 
-  const storedScenario = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,);
-
-  const storedRoles = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,);
+  let storedScenario: string | undefined;
+  let storedRoles: string | undefined;
+  try {
+    storedScenario = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,);
+    storedRoles = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,);
+  } catch (error) {
+    getLogger()
+      .child({ module: "model-roles", },)
+      .warn("Failed to read stored model-role config keys", { error: (error as Error).message, },);
+  }
 
   const storedValidScenario = storedScenario !== undefined &&
       (AUTOROUTE_SCENARIOS as readonly string[]).includes(storedScenario,)

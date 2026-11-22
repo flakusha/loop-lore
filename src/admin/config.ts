@@ -15,7 +15,7 @@ import { applyConfigWrite, classifyConfigPath, } from "../config/hot-apply";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { SECRET_KEY_PATTERN, } from "./config-keys";
+import { isSecretConfigKeyName, } from "./config-keys";
 import { openConfigValue, sealConfigValue, } from "./config-secrets";
 /** Child logger scoped to "system-config". */
 function log() {
@@ -272,7 +272,7 @@ export async function importConfigFromText(
       continue;
     }
 
-    if (SECRET_KEY_PATTERN.test(key,)) {
+    if (isSecretConfigKeyName(key,)) {
       results.push({ key, action: "skipped", },);
       continue;
     }

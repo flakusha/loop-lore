@@ -140,4 +140,23 @@ describe("admin effective-config export", () => {
     expect(raw,).not.toContain("SENTINEL-SEALED-SECRET-1",);
     expect(raw,).not.toContain("SENTINEL-LEGACY-TOKEN-1",);
   });
+
+  test("exposes token-budget fields but omits real secrets from the file plane", async () => {
+    const app = makeApp(db, "admin", {
+      prompt: {
+        loreTokenBudget: "1024",
+        memoryTokenBudget: "2048",
+        apiKey: "SENTINEL-FILE-PLANE-APIKEY-1",
+      },
+    },);
+
+    const res = await app.handle(new Request("http://localhost/api/admin/effective-config/export",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as ExportBody;
+    const prompt = body.values["prompt"] as Record<string, unknown>;
+    expect(prompt["loreTokenBudget"],).toBe("1024",);
+    expect(prompt["memoryTokenBudget"],).toBe("2048",);
+    expect(body.omitted,).toContain("prompt.apiKey",);
+    expect(JSON.stringify(body,),).not.toContain("SENTINEL-FILE-PLANE-APIKEY-1",);
+  });
 });

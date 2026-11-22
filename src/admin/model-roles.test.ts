@@ -142,6 +142,26 @@ describeReal("model-roles", () => {
       expect(resolved.model,).toBe("",);
     });
 
+    test("falls back to config when system_config is unavailable", async () => {
+      // Strict-review falsifying probe: a DB missing system_config used to throw
+      // from the two getConfigValue reads, breaking the file-header no-throw contract.
+      const unavailableDb = {
+        selectFrom: (table: string,) => {
+          if (table === "system_config") { throw new Error("no such table: system_config",); }
+          return db.selectFrom(table as keyof DB,);
+        },
+      } as unknown as Kysely<DB>;
+
+      const config = makeConfig({
+        modelRoles: { [ModelRole.Main]: { provider: "cfg-provider", model: "cfg-model", }, },
+      },);
+
+      const resolved = await resolveModelRole(ModelRole.Main, config, unavailableDb,);
+      expect(resolved.source,).toBe("config",);
+      expect(resolved.provider,).toBe("cfg-provider",);
+      expect(resolved.model,).toBe("cfg-model",);
+    });
+
     test("throws for a role outside VALID_ROLES", async () => {
       await expect(resolveModelRole(ModelRole.Moderation, makeConfig(), db,),).rejects.toThrow();
     });
