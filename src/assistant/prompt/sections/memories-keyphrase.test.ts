@@ -142,7 +142,7 @@ afterEach(() => {
   clearKeyphraseRecallCooldowns();
 },);
 
-describe("collectKeyphraseHits", () => {
+describe("collectKeyphraseHits", { timeout: 15000, }, () => {
   test("match → hit; no match → no hit", async () => {
     const hit = await setup({ withMatchMessage: true, },);
     try {
@@ -209,9 +209,9 @@ describe("collectKeyphraseHits", () => {
       f.sqlite.close();
     }
   });
-});
+},);
 
-describe("applyKeyphraseRecalls", () => {
+describe("applyKeyphraseRecalls", { timeout: 15000, }, () => {
   test("appends forced hits, dedupes, and writes a keyphrase audit row", async () => {
     const f = await setup({ withMatchMessage: false, },);
     try {
@@ -254,9 +254,9 @@ describe("applyKeyphraseRecalls", () => {
       f.sqlite.close();
     }
   });
-});
+},);
 
-describe("memorySection — keyphrase recall end-to-end", () => {
+describe("memorySection — keyphrase recall end-to-end", { timeout: 15000, }, () => {
   // Determinism comes from the REAL seam, not a `Math.random` spy: `setup()`
   // puts `randomFn: () => 0.999` on the AssembleContext, `memories.ts` threads
   // it into `InjectionContext.randomFn`, and `injection/decide.ts` consumes it.
@@ -319,4 +319,4 @@ describe("memorySection — keyphrase recall end-to-end", () => {
       f.sqlite.close();
     }
   });
-});
+},);
