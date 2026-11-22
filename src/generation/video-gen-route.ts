@@ -39,6 +39,8 @@ export { handleVideoGenerationStatus, } from "./video-gen-status";
  * here avoids paying for a render this instance cannot store.
  */
 const ESTIMATED_VIDEO_BYTES = 50_000_000;
+/** Max prompt length accepted per request. */
+const MAX_PROMPT = 2_000;
 
 /**
  * B1 composition: the gate owns the box slot, the sibling unload owns the
@@ -153,8 +155,11 @@ export async function handleVideoGeneration(
     prompt = renderVideoPrompt(payload as SimpleTemplatePayload, req.context ?? {},);
   }
 
-  if (!prompt || prompt.trim().length === 0) {
-    return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
+  if (!prompt || prompt.trim().length === 0 || prompt.length > MAX_PROMPT) {
+    return Response.json(
+      { error: `prompt must be 1..${MAX_PROMPT} characters`, status: 400, },
+      { status: 400, },
+    );
   }
 
   const providers = config.generation.providers.video;

@@ -173,6 +173,40 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("400s a prompt of 2001 characters with the bound message", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "x".repeat(2_001,), },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toBe("prompt must be 1..2000 characters",);
+  });
+
+  test("passes a 2000-character prompt past the bound", async () => {
+    const configured = videoProviders;
+    videoProviders = null;
+    try {
+      const res = await handleVideoGeneration(
+        { prompt: "x".repeat(2_000,), },
+        db,
+        "video-route-user",
+        "user",
+      );
+
+      // The no-provider gate sits after the prompt bound: reaching it proves
+      // the 2000-character body was accepted by the bound check.
+      expect(res.status,).toBe(501,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toContain("No video generation provider configured",);
+    } finally {
+      videoProviders = configured;
+    }
+  });
+
   test("501 when no video provider is configured", async () => {
     videoProviders = null;
     const res = await handleVideoGeneration({ prompt: "a clip", }, db, "video-route-user", "user",);

@@ -40,6 +40,8 @@ import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
  * here avoids paying for a generation this instance cannot store.
  */
 const ESTIMATED_IMAGE_BYTES = 1_500_000;
+/** Max prompt length accepted per request. */
+const MAX_PROMPT = 2_000;
 
 interface ImageGenBody {
   prompt?: string;
@@ -243,8 +245,11 @@ export async function handleImageGeneration(
     negativePrompt = negativePrompt ?? rendered.negativePrompt;
   }
 
-  if (!prompt) {
-    return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
+  if (!prompt || prompt.length > MAX_PROMPT) {
+    return Response.json(
+      { error: `prompt must be 1..${MAX_PROMPT} characters`, status: 400, },
+      { status: 400, },
+    );
   }
 
   // A malformed `size` is a 400 at the boundary, before any DB or provider

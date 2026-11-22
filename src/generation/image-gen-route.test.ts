@@ -1025,3 +1025,41 @@ describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
     }
   });
 },);
+
+describeOrSkip("handleImageGeneration — prompt length bound", () => {
+  it("400s a prompt of 2001 characters with the bound message", async () => {
+    const db = await migratedDb();
+    try {
+      const res = await handleImageGeneration(
+        { prompt: "x".repeat(2_001,), },
+        db,
+        "prompt-bound-image-user",
+      );
+
+      expect(res.status,).toBe(400,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toBe("prompt must be 1..2000 characters",);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("passes a 2000-character prompt past the bound", async () => {
+    const db = await migratedDb();
+    try {
+      // Malformed size is the next gate after the prompt bound: reaching it
+      // proves the 2000-character body was accepted by the bound check.
+      const res = await handleImageGeneration(
+        { prompt: "x".repeat(2_000,), size: "bogus", },
+        db,
+        "prompt-bound-image-user",
+      );
+
+      expect(res.status,).toBe(400,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toBe(`Invalid size "bogus": expected "WIDTHxHEIGHT"`,);
+    } finally {
+      await db.destroy();
+    }
+  });
+},);
