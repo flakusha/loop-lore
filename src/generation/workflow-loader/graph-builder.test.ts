@@ -47,9 +47,11 @@ describe("Graph", () => {
     graph.wire(first, 0, sink, "images",);
 
     expect(() => graph.wire(second, 0, sink, "images",)).toThrow();
+    const secondSink = graph.add("SaveImage", {},);
+    graph.wire(second, 0, secondSink, "images",);
 
     const { workflow, prompt, } = graph.finish(FINISH,);
-    expect(workflow.links,).toHaveLength(1,);
+    expect(workflow.links,).toHaveLength(2,);
     expect(prompt[sink]?.inputs,).toEqual({ images: [first, 0,], },);
   });
 
@@ -57,13 +59,17 @@ describe("Graph", () => {
     const graph = new Graph({ reservedIds: ["60:45", "100", "101",], },);
     const first = graph.add("NoopLoader", {},);
     const second = graph.add("NoopLoader", {},);
+    const firstSink = graph.add("SaveImage", {},);
+    const secondSink = graph.add("SaveImage", {},);
+    graph.wire(first, 0, firstSink, "images",);
+    graph.wire(second, 0, secondSink, "images",);
 
     expect(first,).toBe("102",);
     expect(second,).toBe("103",);
 
     const { workflow, prompt, } = graph.finish(FINISH,);
-    expect(Object.keys(prompt,),).toEqual(["102", "103",],);
-    expect(workflow.nodes?.map((node,) => node.id),).toEqual(["102", "103",],);
+    expect(Object.keys(prompt,).slice(0, 2,),).toEqual(["102", "103",],);
+    expect(workflow.nodes?.map((node,) => node.id).slice(0, 2,),).toEqual(["102", "103",],);
   });
 
   it("embeds the prompt under the caller-named key only, with no model literals", () => {
@@ -84,6 +90,8 @@ describe("Graph", () => {
   it("keeps the embedded executablePrompt independent of the returned prompt", () => {
     const graph = new Graph();
     const loader = graph.add("CheckpointLoaderSimple", { ckpt_name: "base.safetensors", },);
+    const sink = graph.add("SaveImage", {},);
+    graph.wire(loader, 0, sink, "images",);
 
     const { workflow, prompt, } = graph.finish(FINISH,);
     const extra = workflow.extra as Record<string, { schema: string; executablePrompt: ComfyUIWorkflow }>;
@@ -119,9 +127,18 @@ describe("Graph", () => {
 
     expect(() => graph.wire("missing", 0, sink, "images",)).toThrow();
     expect(() => graph.wire(source, 0, "missing", "images",)).toThrow();
+    expect(() => graph.finish(FINISH,)).toThrow(/dead node/,);
 
+    graph.wire(source, 0, sink, "images",);
     const { workflow, prompt, } = graph.finish(FINISH,);
-    expect(workflow.links,).toEqual([],);
-    expect(Object.values(prompt,).every((node,) => Object.keys(node.inputs,).length === 0),).toBe(true,);
+    expect(workflow.links,).toEqual([[1, source, 0, sink, expect.any(Number,), "",],],);
+    expect(prompt[sink]?.inputs,).toEqual({ images: [source, 0,], },);
+  });
+
+  it("rejects an invalid finished graph through the shared gate", () => {
+    const graph = new Graph();
+    graph.add("NoopLoader", {},);
+
+    expect(() => graph.finish(FINISH,)).toThrow(/no terminal sink/,);
   });
 });

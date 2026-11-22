@@ -10,6 +10,7 @@ import {
 } from "../comfyui-converter/types";
 import { allocateNodeId, } from "../node-id";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
+import { assertGeneratedGraph, } from "./generated-validation";
 
 /** Options for constructing a {@link Graph}. */
 export interface GraphOptions {
@@ -130,6 +131,8 @@ export class Graph {
         _meta: { title: node.classType, },
       };
     }
+
+    assertGeneratedGraph(prompt,);
 
     return {
       workflow: {
