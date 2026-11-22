@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 450
+// size-allow: 500
 
 /**
  * Honkbox job-result ingest.
@@ -38,6 +38,13 @@ import {
 /** Jobs snapshot, relative to the `/v1`-inclusive base URL. */
 const HONKBOX_JOBS_PATH = "/jobs";
 
+/** One NSFW annotation attached to a honkbox job result (`JobEvent.annotations`). */
+export interface HonkboxNsfwAnnotation {
+  readonly score: number;
+  readonly classes: readonly string[];
+  readonly modelVersion: string;
+}
+
 /** One parsed honkbox job frame (SSE data or a `/v1/jobs` row). */
 export interface HonkboxJobEvent {
   readonly event: string;
@@ -51,6 +58,8 @@ export interface HonkboxJobEvent {
   readonly sha256?: string;
   readonly sizeBytes?: number;
   readonly status?: string;
+  /** NSFW annotations on an artifact-less `job_result` re-emit. */
+  readonly annotations?: readonly HonkboxNsfwAnnotation[];
 }
 
 /** Options for {@link selectHonkboxArtifact}. */
@@ -102,6 +111,31 @@ function asText(value: unknown,): string | undefined {
   return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
+/** @param value - unknown JSON value
+ * @returns parsed annotations, dropping malformed entries; never throws
+ */
+function parseHonkboxAnnotations(value: unknown,): HonkboxNsfwAnnotation[] | undefined {
+  if (!Array.isArray(value,)) { return undefined; }
+  const annotations: HonkboxNsfwAnnotation[] = [];
+  for (const entry of value) {
+    const row = asRecord(entry,);
+    if (!row) { continue; }
+    const score = asFiniteNumber(row.score,);
+    const modelVersion = asText(row.model_version,) ?? asText(row.modelVersion,);
+    if (score === undefined || score < 0 || score > 1 || modelVersion === undefined) { continue; }
+    const classes = Array.isArray(row.classes,)
+      ? row.classes.flatMap((value,): string[] => {
+        const text = asText(value,);
+        return text ? [text,] : [];
+      },)
+      : [];
+
+    annotations.push({ score, classes, modelVersion, },);
+  }
+
+  return annotations;
+}
+
 /** Parse one job frame. Missing optional fields stay absent; never throws.
  * @param value - decoded JSON value (SSE `data` payload or a jobs row)
  * @param fallbackEvent - SSE `event:` line when the payload omits `event`
@@ -117,8 +151,13 @@ export function parseHonkboxJobEvent(
   const artifactId = asText(row.artifact_id,) ?? asText(row.artifactId,);
   const sha256 = asText(row.sha256,);
   const sizeBytes = asFiniteNumber(row.size_bytes,) ?? asFiniteNumber(row.sizeBytes,);
-  if (!artifactId && !sha256 && sizeBytes === undefined && row.event === "job_result") {
-    // A result frame without an artifact id is not a result — never a success.
+  const annotations = parseHonkboxAnnotations(row.annotations,);
+  if (
+    !artifactId && !sha256 && sizeBytes === undefined &&
+    row.event === "job_result" && !annotations?.length
+  ) {
+    // No artifact and no annotations is not a result — never a success.
+    // Annotation-only re-emits are carriers, never asset candidates.
     return undefined;
   }
 
@@ -136,6 +175,7 @@ export function parseHonkboxJobEvent(
     ...(sha256 ? { sha256, } : {}),
     ...(sizeBytes === undefined ? {} : { sizeBytes, }),
     ...(asText(row.status,) ? { status: asText(row.status,), } : {}),
+    ...(annotations?.length ? { annotations, } : {}),
   };
 }
 
@@ -213,6 +253,11 @@ export interface IngestHonkboxJobResultOptions {
   readonly listJobs?: () => Promise<unknown>;
   /** Optional progress sink for `job_progress` frames. */
   readonly onProgress?: (event: HonkboxJobEvent,) => void;
+  /** Optional sink for NSFW annotations on artifact-less result frames. */
+  readonly onAnnotations?: (
+    annotations: readonly HonkboxNsfwAnnotation[],
+    event: HonkboxJobEvent,
+  ) => void;
 }
 
 /** Outcome of one ingest attempt. Errors (capability, transport, integrity)
@@ -224,6 +269,7 @@ export type IngestHonkboxJobResultOutcome =
     artifactId: string;
     sha256: string;
     sizeBytes: number;
+    readonly annotations: readonly HonkboxNsfwAnnotation[];
   }
   | { ok: false; reason: "cancelled" | "failed" | "no-result"; detail: string };
 
@@ -297,6 +343,7 @@ export async function ingestHonkboxJobResult(
   assertDeliveryEnabled(opts,);
 
   const frames: HonkboxJobEvent[] = [];
+  const annotations: HonkboxNsfwAnnotation[] = [];
   let dropped = false;
   for await (const envelope of readHonkboxFrames(opts.events,)) {
     if (envelope.event === "events_dropped") {
@@ -321,7 +368,12 @@ export async function ingestHonkboxJobResult(
       return { ok: false, reason: "failed", detail: `job ${opts.jobId} failed`, };
     }
 
-    if (event.event === "job_result") { frames.push(event,); }
+    if (event.event === "job_result" && event.artifactId) { frames.push(event,); }
+    if (event.annotations?.length) {
+      annotations.push(...event.annotations,);
+      opts.onAnnotations?.(event.annotations, event,);
+    }
+
     if (event.event === "job_progress") { opts.onProgress?.(event,); }
     if (event.event === "job_finished") { break; }
   }
@@ -417,6 +469,7 @@ export async function ingestHonkboxJobResult(
       artifactId: result.artifactId,
       sha256: downloaded.sha256,
       sizeBytes: bytes.byteLength,
+      annotations,
     };
   } finally {
     await cleanupHonkboxArtifact(downloaded,);

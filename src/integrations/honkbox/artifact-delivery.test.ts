@@ -24,6 +24,7 @@ import {
 import { type HonkboxProbeSuccess, parseHonkboxCapabilities, } from "./index";
 import {
   type HonkboxJobEvent,
+  type HonkboxNsfwAnnotation,
   ingestHonkboxJobResult,
   parseHonkboxJobEvent,
   selectHonkboxArtifact,
@@ -78,6 +79,22 @@ describe("selectHonkboxArtifact", () => {
     expect(selectHonkboxArtifact(frames, { artifactId: "b", },)?.artifactId,).toBe("b",);
     expect(selectHonkboxArtifact(frames, { artifactId: "missing", },)?.artifactId,).toBe("a",);
   });
+
+  test("artifact-less frames are never selection candidates", () => {
+    const frames: HonkboxJobEvent[] = [
+      {
+        event: "job_result",
+        cancelled: false,
+        annotations: [
+          { score: 0.6, classes: ["x",], modelVersion: "v1", },
+        ],
+      },
+      { event: "job_result", cancelled: false, artifactId: "real", },
+    ];
+
+    expect(frames[0]?.artifactId,).toBeUndefined();
+    expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("real",);
+  });
 });
 
 describe("artifact registry constants", () => {
@@ -128,6 +145,45 @@ describe("parseHonkboxJobEvent", () => {
     const event = parseHonkboxJobEvent({ event: "job_cancelled", id: "job-1", cancelled: true, }, "job_cancelled",);
     expect(event?.event,).toBe("job_cancelled",);
     expect(event?.cancelled,).toBe(true,);
+  });
+
+  test("retains an annotated artifact-less result frame", () => {
+    const event = parseHonkboxJobEvent({
+      event: "job_result",
+      id: "job-nsfw",
+      annotations: [{ score: 0.4, classes: ["sfw",], model_version: "v1", },],
+    }, "job_result",);
+
+    expect(event?.artifactId,).toBeUndefined();
+    expect(event?.annotations,).toEqual([
+      { score: 0.4, classes: ["sfw",], modelVersion: "v1", },
+    ],);
+  });
+
+  test("drops malformed annotations without throwing", () => {
+    const event = parseHonkboxJobEvent({
+      event: "job_result",
+      annotations: [
+        { score: 0.5, classes: ["ok",], model_version: "v1", },
+        null,
+        { score: "high", classes: [], model_version: "v1", },
+        { score: 1.4, classes: [], model_version: "v1", },
+        { score: 0.5, classes: [], model_version: "", },
+        { score: 0.2, classes: ["a", 3, null, "b",], model_version: "v2", },
+        { score: 0.3, classes: "nope", model_version: "v3", },
+      ],
+    }, "job_result",);
+
+    expect(event?.annotations,).toEqual([
+      { score: 0.5, classes: ["ok",], modelVersion: "v1", },
+      { score: 0.2, classes: ["a", "b",], modelVersion: "v2", },
+      { score: 0.3, classes: [], modelVersion: "v3", },
+    ],);
+
+    expect(parseHonkboxJobEvent({
+      event: "job_result",
+      annotations: "nope",
+    }, "job_result",),).toBeUndefined();
   });
 });
 
@@ -396,6 +452,70 @@ describe("ingestHonkboxJobResult", () => {
       if (!outcome.ok) { return; }
       expect(outcome.artifactId,).toBe(ids[0]!,);
       expect(outcome.sha256,).toBe(hashes[0]!,);
+    },);
+  });
+
+  test("annotation re-emit is surfaced without becoming an asset", async () => {
+    await insertUsers(fixture.db, "hb-nsfw-owner", "Honkbox NSFW Owner",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-nsfw-owner",);
+    const bytes = Buffer.from("hb-nsfw-image",);
+    const hash = createHash("sha256",).update(bytes,).digest("hex",);
+    const annotationFrame = {
+      event: "job_result",
+      id: "job-nsfw",
+      annotations: [
+        { score: 0.75, classes: ["explicit", 7, "violence",], model_version: "nsfw-v2", },
+        { score: "bad", classes: ["x",], model_version: "v0", },
+      ],
+    };
+
+    const resultFrame = {
+      event: "job_result",
+      id: "job-nsfw",
+      artifact_id: "nsfw-a",
+      size_bytes: bytes.length,
+      sha256: hash,
+    };
+
+    const stream = [
+      `event: job_result\ndata: ${JSON.stringify(annotationFrame,)}\n\n`,
+      `event: job_result\ndata: ${JSON.stringify(resultFrame,)}\n\n`,
+      `event: job_finished\ndata: ${JSON.stringify({ id: "job-nsfw", },)}\n\n`,
+    ].join("",);
+
+    const observed: (readonly HonkboxNsfwAnnotation[])[] = [];
+
+    await withMockFetch(() =>
+      new Response(bytes, {
+        headers: {
+          "content-type": "image/png",
+          "content-range": `bytes 0-${bytes.length - 1}/${bytes.length}`,
+        },
+      },), async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(stream,),
+        jobId: "job-nsfw",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+        onAnnotations: (annotations,) => {
+          observed.push(annotations,);
+        },
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe("nsfw-a",);
+      expect(outcome.annotations,).toEqual([
+        { score: 0.75, classes: ["explicit", "violence",], modelVersion: "nsfw-v2", },
+      ],);
+
+      expect(observed,).toHaveLength(1,);
+      expect(observed[0],).toEqual(outcome.annotations,);
     },);
   });
 
