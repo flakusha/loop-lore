@@ -90,6 +90,7 @@ function expandVariants(str: string, rng: () => number,): string {
     current = next;
   }
 }
+
 /**
  * Every `{{placeholder}}` name appearing anywhere in a JSON-compatible value.
  *
@@ -172,6 +173,7 @@ function substituteDeep<T,>(
   // Numbers, booleans, null — pass through
   return obj as Substituted<T>;
 }
+
 /**
  * Substitute a single string value.
  *
@@ -239,7 +241,7 @@ export function applyNodeOverrides<T extends Record<string, unknown>,>(
     const inputs = node.inputs as Record<string, unknown> | undefined;
     if (!inputs) { continue; }
 
-    node.inputs = { ...inputs, ...fields, };
+    (result as Record<string, unknown>)[nodeId] = { ...node, inputs: { ...inputs, ...fields, }, };
   }
 
   return result;
@@ -267,6 +269,7 @@ function assertAlignedDimension(value: number, label: string,): void {
     throw new RangeError(`${label} must be a positive multiple of 32 (got ${value},)`,);
   }
 }
+
 /**
  * Build substitution vars from image generation parameters.
  *

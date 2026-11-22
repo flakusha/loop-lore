@@ -118,6 +118,14 @@ describe("applyNodeOverrides", () => {
     expect(out["5"]?.inputs,).toEqual({ text: "new", cfg: 1, },);
   });
 
+  it("leaves the input graph node unchanged", () => {
+    const input = { "5": { class_type: "CLIPTextEncode", inputs: { text: "old", cfg: 1, }, }, };
+    const out = applyNodeOverrides(input, new Map([["5", { text: "new", },],],),);
+    expect(input["5"].inputs,).toEqual({ text: "old", cfg: 1, },);
+    expect(out["5"].inputs,).toEqual({ text: "new", cfg: 1, },);
+    expect(out["5"],).not.toBe(input["5"],);
+  });
+
   it("ignores unknown nodes and empty override maps", () => {
     expect(applyNodeOverrides(workflow, new Map(),),).toBe(workflow,);
     expect(applyNodeOverrides(workflow, new Map([["9", { text: "x", },],],),)["5"],).toBe(workflow["5"],);
