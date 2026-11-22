@@ -38,7 +38,7 @@ const FIELD = /^\*\*([^*]+):\*\*\s*(.*)$/;
 const NEXT_SECTION = /^(?:#{1,3}\s+|\*\*[A-Za-z][^*]*:\*\*)/;
 const CHECKBOX = /- \[[ xX]\]/;
 const CROSS_REF = /(?:src\/[a-z0-9-/.]+|epic-[a-z0-9-]+|\.md\b)/;
-const MEASURABLE = /(?:[<>≤≥]=?\s*\d+|\d+\s*(?:ms|s\b|%|results?|files?))/i;
+const MEASURABLE = /(?:[<>≤≥]=?\s*\d+|\d+\s*(?:ms|s\b|%|results?|files?|tests?|cases?|checks?))/i;
 
 const STRATEGY_HEADINGS = ["strategic advice", "implementation", "notes",];
 const GOTCHA_HEADINGS = ["risks", "gotchas", "notes / verification",];

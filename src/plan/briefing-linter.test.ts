@@ -110,6 +110,14 @@ describe("lintBriefing axes", () => {
     expect(result.axes.testability,).toBe(false,);
   });
 
+  test("a numeric test count counts as a measurable threshold", () => {
+    const ticket = GOOD.replace("in <=500ms", "correctly",);
+    const result = lintBriefing(ticket,);
+
+    expect(result.axes.testability,).toBe(true,);
+    expect(result.suggestions.some((s,) => s.includes("measurable",)),).toBe(false,);
+  });
+
   test("checkboxes without measurable thresholds still get a specific suggestion", () => {
     const ticket = GOOD.replace("in <=500ms", "correctly",).replace("At least 3 tests pass", "Tests pass",);
     const result = lintBriefing(ticket,);
