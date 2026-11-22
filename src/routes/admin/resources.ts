@@ -19,10 +19,21 @@ import {
 } from "../../resource/external-storage";
 import { ErrorResponse, } from "../../validation/schemas";
 import {
+  AdminBackupVerifyResponse,
+  AdminBackupWriteResponse,
+  AdminInferenceAddResponse,
+  AdminInferenceListResponse,
+  AdminInferenceProbeResponse,
+  AdminStorageAddResponse,
+  AdminStorageListResponse,
+  AdminStorageProbeResponse,
+} from "../../validation/schemas/responses";
+import {
   ErrorCode,
   HttpStatus,
   jsonError,
   jsonResponse,
+  type PermissionGuardCtx,
   requirePermissionUserId,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
@@ -32,6 +43,14 @@ const StorageKind = t.Union([t.Literal("s3",), t.Literal("webdav",),],);
 const QuotaBody = t.Optional(
   t.Object({ requestsPerMinute: t.Optional(t.Number(),), tokensPerMinute: t.Optional(t.Number(),), },),
 );
+
+/**
+ * Elysia inferred context omits the auth fields derive adds at runtime.
+ * Cast once here; handlers stay typed.
+ */
+function authorize(ctx: unknown,) {
+  return requirePermissionUserId(ctx as PermissionGuardCtx, "admin.system",);
+}
 
 /**
  * Admin routes for provisioned external resources.
@@ -55,16 +74,16 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-resources", },)
       // ── Inference: list ──────────────────────────────────
-      .get(`${prefix}/admin/resources/inference`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .get(`${prefix}/admin/resources/inference`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         return jsonResponse({ resources: await listInferenceResources(db,), },);
       }, {
-        response: { 200: t.Object({ resources: t.Array(t.Any(),), },), 403: ErrorResponse, },
+        response: { 200: AdminInferenceListResponse, 403: ErrorResponse, },
       },)
       // ── Inference: add ───────────────────────────────────
-      .post(`${prefix}/admin/resources/inference`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/inference`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         const body = ctx.body as {
           kind: "llm" | "sd" | "comfyui";
@@ -113,11 +132,11 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           secret: t.String(),
           quota: QuotaBody,
         },),
-        response: { 201: t.Object({ resource: t.Any(), },), 400: ErrorResponse, 403: ErrorResponse, },
+        response: { 201: AdminInferenceAddResponse, 400: ErrorResponse, 403: ErrorResponse, },
       },)
       // ── Inference: revoke ────────────────────────────────
-      .delete(`${prefix}/admin/resources/inference/:id`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .delete(`${prefix}/admin/resources/inference/:id`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         try {
           await revokeInferenceResource(db, ctx.params.id,);
@@ -133,24 +152,24 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         response: { 200: t.Object({ revoked: t.String(), },), 403: ErrorResponse, 404: ErrorResponse, },
       },)
       // ── Inference: test (dry-run, never calls out) ──────
-      .post(`${prefix}/admin/resources/inference/:id/test`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/inference/:id/test`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         return jsonResponse(await testInferenceResource(db, ctx.params.id,),);
       }, {
-        response: { 200: t.Any(), 403: ErrorResponse, },
+        response: { 200: AdminInferenceProbeResponse, 403: ErrorResponse, },
       },)
       // ── Storage: list ────────────────────────────────────
-      .get(`${prefix}/admin/resources/storage`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .get(`${prefix}/admin/resources/storage`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         return jsonResponse({ resources: await listStorageResources(db,), },);
       }, {
-        response: { 200: t.Object({ resources: t.Array(t.Any(),), },), 403: ErrorResponse, },
+        response: { 200: AdminStorageListResponse, 403: ErrorResponse, },
       },)
       // ── Storage: add ─────────────────────────────────────
-      .post(`${prefix}/admin/resources/storage`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/storage`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         const body = ctx.body as {
           kind: "s3" | "webdav";
@@ -191,11 +210,11 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           secret: t.String(),
           storageQuotaBytes: t.Optional(t.Number(),),
         },),
-        response: { 201: t.Object({ resource: t.Any(), },), 400: ErrorResponse, 403: ErrorResponse, },
+        response: { 201: AdminStorageAddResponse, 400: ErrorResponse, 403: ErrorResponse, },
       },)
       // ── Storage: revoke ──────────────────────────────────
-      .delete(`${prefix}/admin/resources/storage/:id`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .delete(`${prefix}/admin/resources/storage/:id`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         try {
           await revokeStorageResource(db, ctx.params.id,);
@@ -211,16 +230,16 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         response: { 200: t.Object({ revoked: t.String(), },), 403: ErrorResponse, 404: ErrorResponse, },
       },)
       // ── Storage: test (dry-run, never calls out) ─────────
-      .post(`${prefix}/admin/resources/storage/:id/test`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/storage/:id/test`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         return jsonResponse(await testStorageResource(db, ctx.params.id,),);
       }, {
-        response: { 200: t.Any(), 403: ErrorResponse, },
+        response: { 200: AdminStorageProbeResponse, 403: ErrorResponse, },
       },)
       // ── Backups: write (hash-checked) ─────────────────────
-      .post(`${prefix}/admin/resources/backups`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/backups`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         const body = ctx.body as { resourceType?: string; payload?: string; storageQuotaBytes?: number };
         if (!body?.resourceType || typeof body?.payload !== "string") {
@@ -257,11 +276,11 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         }
       }, {
         body: t.Object({ resourceType: t.String(), payload: t.String(), storageQuotaBytes: t.Optional(t.Number(),), },),
-        response: { 201: t.Object({ backup: t.Any(), },), 400: ErrorResponse, 403: ErrorResponse, 507: ErrorResponse, },
+        response: { 201: AdminBackupWriteResponse, 400: ErrorResponse, 403: ErrorResponse, 507: ErrorResponse, },
       },)
       // ── Backups: integrity check ─────────────────────────
-      .post(`${prefix}/admin/resources/backups/:id/verify`, async (ctx: any,) => {
-        const userId = requirePermissionUserId(ctx, "admin.system",);
+      .post(`${prefix}/admin/resources/backups/:id/verify`, async (ctx,) => {
+        const userId = authorize(ctx,);
         if (typeof userId !== "string") { return userId; }
         try {
           const backup = await verifyBackupIntegrity(db, ctx.params.id,);
@@ -282,7 +301,7 @@ export function resourcesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         }
       }, {
-        response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, 409: ErrorResponse, },
+        response: { 200: AdminBackupVerifyResponse, 403: ErrorResponse, 404: ErrorResponse, 409: ErrorResponse, },
       },)
   );
 }
