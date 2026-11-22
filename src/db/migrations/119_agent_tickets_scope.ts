@@ -2,19 +2,40 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 118_agent_tickets_scope
+ * 119_agent_tickets_scope
  *
  * Widen `ck_agent_tokens_scope` on `agent_tokens` to admit `agent:tickets`
  * alongside the four 114 tiers (RSI #18). SQLite cannot ALTER a CHECK, so
  * the table is rebuilt column-for-column and every row copied unchanged;
  * the unique token_hash constraint is recreated identically.
  *
+ * `expires_at` is owned by 118_agent_token_expiry and is not part of this
+ * migration. The rebuild detects the column at runtime: when it is present
+ * the values and the partial index `idx_agent_tokens_expires_at` are carried
+ * over, when it is absent (branch-only chain) nothing is invented. Rolling
+ * back 119 keeps the column as well, so 118 can still drop it.
+ *
  * `down` restores the 114 constraint. An `agent:tickets` row cannot satisfy
  * it, so rollback throws rather than discarding data (same contract as 110).
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * Does the live `agent_tokens` table carry the `expires_at` column added by
+ * 118_agent_token_expiry? The column is optional for this migration: the
+ * branch-only chain has no 118, the merged chain does.
+ */
+async function hasExpiresAt(database: Kysely<unknown>,): Promise<boolean> {
+  const rows = await sql<{ name: string }>`
+    SELECT name FROM pragma_table_info('agent_tokens')
+  `.execute(database,);
+
+  return rows.rows.some((row,) => row.name === "expires_at");
+}
+
 export async function up(database: Kysely<unknown>,): Promise<void> {
+  const carriesExpiresAt = await hasExpiresAt(database,);
+
   await database.schema
     .createTable("agent_tokens_new",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -34,8 +55,23 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     SELECT id, token_hash, scope, created_at, revoked_at, last_used_at FROM agent_tokens
   `.execute(database,);
 
+  if (carriesExpiresAt) {
+    await sql`ALTER TABLE agent_tokens_new ADD COLUMN expires_at text`.execute(database,);
+    await sql`
+      UPDATE agent_tokens_new
+      SET expires_at = (SELECT src.expires_at FROM agent_tokens src WHERE src.id = agent_tokens_new.id)
+    `.execute(database,);
+  }
+
   await database.schema.dropTable("agent_tokens",).execute();
   await database.schema.alterTable("agent_tokens_new",).renameTo("agent_tokens",).execute();
+
+  if (carriesExpiresAt) {
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_agent_tokens_expires_at
+      ON agent_tokens (expires_at) WHERE expires_at IS NOT NULL
+    `.execute(database,);
+  }
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
@@ -45,9 +81,11 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
 
   if (Number(ticketRows.rows[0]?.n ?? 0,) > 0) {
     throw new Error(
-      "118_agent_tickets_scope: cannot roll back while 'agent:tickets' tokens exist; revoke them first",
+      "119_agent_tickets_scope: cannot roll back while 'agent:tickets' tokens exist; revoke them first",
     );
   }
+
+  const carriesExpiresAt = await hasExpiresAt(database,);
 
   await database.schema
     .createTable("agent_tokens_old",)
@@ -68,6 +106,21 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     SELECT id, token_hash, scope, created_at, revoked_at, last_used_at FROM agent_tokens
   `.execute(database,);
 
+  if (carriesExpiresAt) {
+    await sql`ALTER TABLE agent_tokens_old ADD COLUMN expires_at text`.execute(database,);
+    await sql`
+      UPDATE agent_tokens_old
+      SET expires_at = (SELECT src.expires_at FROM agent_tokens src WHERE src.id = agent_tokens_old.id)
+    `.execute(database,);
+  }
+
   await database.schema.dropTable("agent_tokens",).execute();
   await database.schema.alterTable("agent_tokens_old",).renameTo("agent_tokens",).execute();
+
+  if (carriesExpiresAt) {
+    await sql`
+      CREATE INDEX IF NOT EXISTS idx_agent_tokens_expires_at
+      ON agent_tokens (expires_at) WHERE expires_at IS NOT NULL
+    `.execute(database,);
+  }
 }

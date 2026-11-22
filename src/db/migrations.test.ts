@@ -276,7 +276,9 @@ describe("migration numbering is sequential from 001", () => {
     // 085 actor_memories_timeline_id kept their numbers) so applied order is
     // deterministic again. Only numbers listed here may be absent; any other
     // gap still fails below.
-    const PARKED = [58, 66, 71, 72, 81, 84,];
+    // 118 (agent token expiry) lives on dev; this branch numbers its scope
+    // migration 119, so 118 is a hole here until the branch rebases onto dev.
+    const PARKED = [58, 66, 71, 72, 81, 84, 118,];
     const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
     const expected = Array.from(
       { length: prefixes.length + parkedMissing.length, },
