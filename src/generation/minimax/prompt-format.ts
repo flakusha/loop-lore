@@ -142,8 +142,11 @@ export function minimaxModeForWorkflow(workflow: string | undefined,): MinimaxMo
 
   if (
     workflow.startsWith("minimax-h3-video-fl2va",) ||
+    // Legacy `video-` aliases kept for existing callers; bare ids are shipped files.
     workflow.startsWith("minimax-h3-video-i2v-fragment",) ||
-    workflow.startsWith("minimax-h3-video-t2v-fragment",)
+    workflow.startsWith("minimax-h3-video-t2v-fragment",) ||
+    workflow.startsWith("minimax-h3-i2v-fragment",) ||
+    workflow.startsWith("minimax-h3-t2v-fragment",)
   ) { return "fl2va"; }
 
   return null;

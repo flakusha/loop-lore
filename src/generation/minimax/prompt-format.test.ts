@@ -130,8 +130,8 @@ describe("minimaxModeForWorkflow", () => {
       const id of [
         "minimax-h3-video-fl2va-v1",
         "minimax-h3-video-fl2va-opt-v1",
-        "minimax-h3-video-i2v-fragment-v1",
-        "minimax-h3-video-t2v-fragment-v1",
+        "minimax-h3-i2v-fragment-v1",
+        "minimax-h3-t2v-fragment-v1",
       ]
     ) {
       expect(minimaxModeForWorkflow(id,),).toBe("fl2va",);
@@ -143,7 +143,6 @@ describe("minimaxModeForWorkflow", () => {
       const id of [
         "minimax-h3-video-ref2va-v1",
         "minimax-h3-video-ref2va-opt-v1",
-        "minimax-h3-video-ref2va-fragment-v1",
         "minimax-h3-ref2va-fragment-v1",
       ]
     ) {
