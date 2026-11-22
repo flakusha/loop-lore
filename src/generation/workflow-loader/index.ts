@@ -21,5 +21,9 @@ export { loadComfyUIWorkflow, } from "./convenience";
 // ── Graph validation ───────────────────────────────────────
 export { findDeadNodes, isValidWorkflow, TERMINAL_SINK_CLASSES, } from "./workflow-validation";
 
+// ── Graph builder ───────────────────────────────────────────
+export { Graph, } from "./graph-builder";
+export type { GraphFinishOptions, GraphOptions, GraphResult, } from "./graph-builder";
+
 // ── Public types ───────────────────────────────────────────
 export type { LoadWorkflowOptions, } from "./types";
