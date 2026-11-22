@@ -51,6 +51,7 @@ export async function dispatchGenerationAction(
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(body,),
+      idempotencyKey: true,
     },);
 
     if (res.ok) {
