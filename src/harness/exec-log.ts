@@ -21,6 +21,7 @@ import { dirname, join, } from "node:path";
 import { resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
 import { getLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
+import { EXEC_INDEX_FILENAME, formatIndexEntry, } from "./exec-index";
 import { runGit, } from "./run-context";
 import { type HarnessRunRecord, serializeRun, } from "./types";
 
@@ -165,6 +166,16 @@ export function getExecLogPath(): string | null {
 }
 
 /**
+ * Absolute path of this instance's offset sidecar, or null when there is no
+ * log. Derived from the log path, so the forced test seam applies to both.
+ * @returns the `executions.idx` path beside the JSONL log
+ */
+export function getExecIndexPath(): string | null {
+  const path = getExecLogPath();
+  return path === null ? null : join(dirname(path,), EXEC_INDEX_FILENAME,);
+}
+
+/**
  * Point the operator at the repo-scoped log this instance-scoped path
  * replaced.
  *
@@ -256,7 +267,29 @@ export function appendExecLog(record: HarnessRunRecord,): void {
     // greps the log. safeJsonStringify reports the failure instead of throwing.
     const encoded = safeJsonStringify(serializeRun(withInstanceSlug(record,),),);
     if (!encoded.ok) { throw encoded.error; }
-    fs.appendFileSync(path, `${encoded.value}\n`, "utf8",);
+    const line = `${encoded.value}\n`;
+    // Byte offset of the line about to be appended; a fresh or missing file
+    // starts at 0. Both appends are sync, so no other writer interleaves them.
+    let offset = 0;
+    try {
+      offset = fs.statSync(path,).size;
+    } catch {
+      offset = 0;
+    }
+
+    fs.appendFileSync(path, line, "utf8",);
+    // ponytail: the sidecar is best-effort and can sit one entry behind the
+    // log after a torn process; the reader detects drift and falls back to
+    // its tail scan. Upgrade path: rebuild from the log if retroactive
+    // indexing of pre-sidecar logs is ever needed.
+    try {
+      const idxPath = getExecIndexPath();
+      if (idxPath !== null) {
+        fs.appendFileSync(idxPath, formatIndexEntry(offset, Buffer.byteLength(line, "utf8",),), "ascii",);
+      }
+    } catch {
+      // Best-effort: a missing sidecar only disables the reader's fast path.
+    }
   } catch (error) {
     // Everything below is best-effort reporting of a best-effort write. The
     // warn is wrapped because `getLogger()` itself throws when the root logger
