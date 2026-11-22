@@ -163,6 +163,9 @@ export const checks = {
   // Comprehensive .plan/ validation (format, linkage, backlog, tickets,
   // code-map, links, spdx, naming, epics-doc, status-vocab, matrix)
   "plan - validate": "bun run plan:validate",
+  // BriefingScript pre-agent ticket quality (RSI #17). Advisory: quality
+  // drifts from concurrent .plan/ merges — a signal, not a finalize blocker.
+  "briefing - pre-agent ticket quality": "bun run plan:validate:briefing",
 
   // Feature matrix freshness (.plan/feature-matrix.md vs a fresh rebuild)
   "plan - matrix": "bun run plan:matrix:check",
@@ -262,6 +265,8 @@ export const ADVISORY_GATES = new Set([
   // spdx, naming, epics-doc, status-vocab, matrix — all drift when dev merges
   // plan changes concurrently.
   "plan - validate",
+  // BriefingScript ticket quality: drifts from concurrent .plan/ merges.
+  "briefing - pre-agent ticket quality",
   // Ticket index reconciliation: index.json ↔ .md ↔ git issues — drifts when
   // dev merges ticket changes concurrently.
   "plan - ticket index (sync)",

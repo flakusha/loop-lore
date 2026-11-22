@@ -2,18 +2,23 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import {
+  capRows,
   gateDecision,
   isScannableTicket,
   listTickets,
+  MAX_ROWS,
   resolveGate,
   resolveTicketPath,
   scoreTicketFile,
+  selectDiffTickets,
+  summaryLine,
   type TicketScore,
 } from "./check-briefing.js";
+import { ADVISORY_GATES, checks, } from "./check/parallel/gate-table.mjs";
 
 /**
  * CLI + gate contract for scripts/check-briefing.ts.
@@ -56,16 +61,32 @@ function withTickets(files: Record<string, string>, fn: (dir: string,) => void,)
   }
 }
 
-function run(args: string[], gate?: string,) {
+interface RunOpts {
+  cwd?: string;
+  env?: Record<string, string>;
+}
+
+function run(args: string[], gate?: string, opts: RunOpts = {},) {
   const proc = Bun.spawnSync(["bun", SCRIPT, ...args,], {
-    cwd: import.meta.dir,
-    env: { ...process.env, ...(gate === undefined ? {} : { BRIEFING_GATE: gate, }), },
+    cwd: opts.cwd ?? import.meta.dir,
+    env: {
+      ...process.env,
+      ...(gate === undefined ? {} : { BRIEFING_GATE: gate, }),
+      ...opts.env,
+    },
   },);
   return {
     exitCode: proc.exitCode,
     stdout: proc.stdout.toString(),
     stderr: proc.stderr.toString(),
   };
+}
+
+function git(args: string[], cwd: string,): void {
+  const proc = Bun.spawnSync(["git", ...args,], { cwd, },);
+  if (proc.exitCode !== 0) {
+    throw new Error(`git ${args.join(" ",)} failed: ${proc.stderr.toString().trim()}`,);
+  }
 }
 
 function score(file: string, scoreValue: number, verdict: TicketScore["verdict"],): TicketScore {
@@ -155,5 +176,77 @@ describe("check-briefing CLI", () => {
       expect(result.exitCode,).toBe(1,);
       expect(result.stderr,).toContain("error:",);
     },);
+  });
+
+  test("briefing gate is registered as advisory", () => {
+    const name = "briefing - pre-agent ticket quality";
+    expect(checks[name],).toBe("bun run plan:validate:briefing",);
+    expect(ADVISORY_GATES.has(name,),).toBe(true,);
+  });
+
+  test("capRows and summaryLine bound the report deterministically", () => {
+    const rows = Array.from({ length: MAX_ROWS + 5, }, (_, i,) => score(`TASK-${i}.md`, 5, "actionable",),);
+    expect(capRows(rows,),).toHaveLength(MAX_ROWS,);
+    expect(capRows(rows, 3,),).toHaveLength(3,);
+    expect(summaryLine(rows.length, rows.length,),).toBe("25 actionable / 25 scanned",);
+  });
+
+  test("CLI caps table rows and prints the summary for >20 flagged tickets", () => {
+    const files = Object.fromEntries(
+      Array.from({ length: MAX_ROWS + 5, }, (_, i,) => [`TASK-${String(i,).padStart(2, "0",)}.md`, "",],),
+    );
+    withTickets(files, (dir,) => {
+      const result = run([], "off", { env: { BRIEFING_TICKETS_DIR: dir, }, },);
+      expect(result.exitCode,).toBe(0,);
+      const lines = result.stdout.trim().split("\n",);
+      expect(lines,).toHaveLength(MAX_ROWS + 1,);
+      expect(lines[MAX_ROWS],).toBe("0 actionable / 25 scanned",);
+    },);
+  });
+
+  test("selectDiffTickets keeps only changed scannable tickets", () => {
+    const dir = join(tmpdir(), "repo", ".plan", "tickets",);
+    expect(selectDiffTickets([
+      ".plan/tickets/TASK-a.md",
+      "src/foo.ts",
+      ".plan/tickets/BUG-x.md",
+      ".plan/tickets/TASK-help.md",
+      ".plan/tickets/nested/TASK-c.md",
+      "/other/.plan/tickets/TASK-b.md",
+      ".plan/tickets/TASK-a.md",
+    ], dir,),).toEqual([join(dir, "TASK-a.md",), join(dir, "TASK-b.md",),],);
+  });
+
+  test("--diff-base restricts the batch scan to changed tickets", () => {
+    const dir = mkdtempSync(join(tmpdir(), "briefing-diff-",),);
+    try {
+      const tickets = join(dir, ".plan", "tickets",);
+      mkdirSync(tickets, { recursive: true, },);
+      writeFileSync(join(tickets, "TASK-a.md",), "",);
+      writeFileSync(join(tickets, "TASK-b.md",), "",);
+      git(["init", "-q",], dir,);
+      git(["config", "user.email", "test@example.com",], dir,);
+      git(["config", "user.name", "test",], dir,);
+      git(["add", "-f", ".",], dir,);
+      git(["-c", "commit.gpgsign=false", "commit", "-qm", "base",], dir,);
+      writeFileSync(join(tickets, "TASK-b.md",), FULL,);
+
+      const flagged = run(["--diff-base", "HEAD",], "off", {
+        cwd: dir,
+        env: { BRIEFING_TICKETS_DIR: tickets, },
+      },);
+      expect(flagged.exitCode,).toBe(0,);
+      expect(flagged.stdout,).toContain("TASK-b.md",);
+      expect(flagged.stdout,).not.toContain("TASK-a.md",);
+      expect(flagged.stdout,).toContain("1 actionable / 1 scanned",);
+
+      const env = run([], "off", {
+        cwd: dir,
+        env: { BRIEFING_TICKETS_DIR: tickets, BRIEFING_DIFF_BASE: "HEAD", },
+      },);
+      expect(env.stdout,).toContain("1 actionable / 1 scanned",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });

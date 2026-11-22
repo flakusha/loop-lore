@@ -137,7 +137,7 @@
     "plan:links": "giwt plan links --write",
     "plan:links:check": "giwt plan links --check",
     "plan:artifacts": "bun run plan:map && bun run plan:matrix && bun run plan:docs && bun run plan:links && bun run plan:priority",
-    "plan:validate": "giwt plan validate",
+    "plan:validate": "giwt plan validate && bun run plan:validate:briefing",
     "plan:validate:fix": "giwt plan validate --fix",
     "plan:validate:briefing": "bun run scripts/check-briefing.ts",
     "plan:lint-briefing": "bun run scripts/check-briefing.ts",
