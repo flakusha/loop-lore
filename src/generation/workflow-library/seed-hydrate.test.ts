@@ -9,8 +9,9 @@
  * seed scans a directory, not a list of injected records.
  */
 import { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import { mkdtemp, readdir, rm, writeFile, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
@@ -18,7 +19,7 @@ import type { DB, } from "../../db/schema";
 import { TemplateRegistry, } from "../../image-edit/template-registry";
 import { builtinTemplates, } from "../../image-edit/templates/builtin";
 import type { TemplateParameter, TemplateParamType, } from "../../image-edit/types";
-import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { jsonStringifyOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
@@ -53,6 +54,24 @@ const SHIPPED_SKIP_REASONS: Record<string, string> = {
   "qwen-image-2-1-image-edit-v1": "dead node(s) not linked into the graph: 472, 518",
 };
 
+/**
+ * RESOURCE CONTRACT
+ *
+ * - The file-scoped `db`/`sqlite` pair below is the SHARED fixture: created
+ *   once in `beforeAll`, torn down once in `afterAll`. Every case that reads
+ *   a seeded row shares it, and therefore shares its state.
+ * - The `seedWorkflowLibrary idempotence` case owns a SEPARATE in-memory DB,
+ *   created per case in `beforeEach` and destroyed unconditionally in
+ *   `afterEach`, plus a `randomUUID()` admin id, so it can never collide
+ *   with another case and never leaves a handle behind.
+ * - The only fixture directory either case uses is the shipped
+ *   `configs/workflows` catalog, which is READ-ONLY here. The temp
+ *   directories the bad-file cases scan are `mkdtemp` dirs removed in a
+ *   `finally`, so no fixed path is ever written.
+ * - The seed caches the owning user id in module state; the isolated case
+ *   resets that cache on both sides of the case so it neither inherits nor
+ *   leaks an owner id.
+ */
 let db: Kysely<DB>;
 let sqlite: Database;
 
@@ -115,25 +134,6 @@ describe("seedWorkflowLibrary", () => {
       expect(placeholders.has("negative_prompt",),).toBe(true,);
       expect(placeholders.has("scheduler",),).toBe(true,);
     }
-  });
-
-  it("is idempotent - a second run imports nothing new", async () => {
-    const outcome = await seedWorkflowLibrary(db, SHIPPED_DIR,);
-    expect(outcome.imported,).toEqual([],);
-    // The catalog grows as operators add ComfyUI exports; every shipped
-    // `.json` is already in the library after the first test.
-    // BINDINGS_FILE is config, not a workflow: the seed skips it without a
-    // skip record, so it never appears in outcome.skipped.
-    const shipped = (await readdir(SHIPPED_DIR,))
-      .filter((entry,) => entry.endsWith(".json",) && entry !== BINDINGS_FILE)
-      .toSorted();
-
-    expect(outcome.skipped.map((s,) => [s.id, s.reason,]),).toEqual(
-      shipped.map((entry,) => {
-        const id = entry.replace(/\.json$/, "",);
-        return [id, SHIPPED_SKIP_REASONS[id] ?? "already in library",];
-      },),
-    );
   });
 
   it("skips one bad file without failing the whole seed", async () => {
@@ -262,6 +262,56 @@ describe("seedWorkflowLibrary", () => {
     expect(outcome.skipped,).toEqual([],);
     await fresh.db.destroy();
     fresh.sqlite.close();
+  });
+});
+
+describe("seedWorkflowLibrary idempotence", () => {
+  let ownDb: Kysely<DB>;
+  let ownSqlite: Database;
+
+  beforeEach(async () => {
+    const made = await createTestDb();
+    ownDb = made.db;
+    ownSqlite = made.sqlite;
+    await insertUsers(ownDb, `admin-${randomUUID()}`, "Admin", {
+      id: `admin-${randomUUID()}`,
+      role: "admin",
+    },);
+  },);
+
+  afterEach(async () => {
+    // Unconditional teardown: the DB is destroyed even when an assertion
+    // above it fails, and the cached owner id never outlives the case.
+    resetSeedOwnerForTests();
+    await destroyTestDb({ db: ownDb, sqlite: ownSqlite, },);
+  },);
+
+  it("is idempotent - a second run imports nothing new", async () => {
+    // The seed caches the owning user id; drop it so THIS case's admin owns
+    // the rows instead of a neighbouring case's.
+    resetSeedOwnerForTests();
+
+    // Seed explicitly inside the case: the contract is proven against a
+    // library this case built itself, not against one a sibling left behind.
+    const first = await seedWorkflowLibrary(ownDb, SHIPPED_DIR,);
+    expect(first.imported.length,).toBeGreaterThan(0,);
+
+    const outcome = await seedWorkflowLibrary(ownDb, SHIPPED_DIR,);
+    expect(outcome.imported,).toEqual([],);
+    // The catalog grows as operators add ComfyUI exports; every shipped
+    // `.json` is already in the library after the first run.
+    // BINDINGS_FILE is config, not a workflow: the seed skips it without a
+    // skip record, so it never appears in outcome.skipped.
+    const shipped = (await readdir(SHIPPED_DIR,))
+      .filter((entry,) => entry.endsWith(".json",) && entry !== BINDINGS_FILE)
+      .toSorted();
+
+    expect(outcome.skipped.map((s,) => [s.id, s.reason,]),).toEqual(
+      shipped.map((entry,) => {
+        const id = entry.replace(/\.json$/, "",);
+        return [id, SHIPPED_SKIP_REASONS[id] ?? "already in library",];
+      },),
+    );
   });
 });
 
