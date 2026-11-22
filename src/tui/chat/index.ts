@@ -28,6 +28,7 @@ import {
   uploadAsset as uploadAssetDispatch,
 } from "./api";
 import type { ImageGenResult, MessageAttachment, UploadResult, } from "./api";
+import { dispatchBranchCommand, } from "./branch-commands";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
 import { ChatInputField, } from "./input-field";
@@ -321,6 +322,16 @@ export class ChatWidget implements Component, ChatHost {
     // frontend's command-action dispatch, so `/image` and `/upload` are
     // handled here. Anything else goes through the normal send path (the
     // server still dispatches its own `/image` command for other clients).
+    // Branch / split / reunite are HTTP commands over the shipped chat
+    // routes, not message text the server should dispatch to the LLM.
+    if (
+      trimmed === "/branch" || trimmed.startsWith("/branch ",) ||
+      trimmed.startsWith("/split ",) || trimmed.startsWith("/reunite ",)
+    ) {
+      void dispatchBranchCommand(this, trimmed,);
+      return;
+    }
+
     if (trimmed.startsWith("/image ",)) {
       this.input.setValue("",);
       void this.generateImageFlow(trimmed.slice("/image ".length,),);
