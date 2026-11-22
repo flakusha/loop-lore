@@ -126,6 +126,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ chatId, description, },),
+      idempotencyKey: true,
     },);
 
     if (res.ok) {
