@@ -3,11 +3,10 @@
 
 /** Tests for the honkbox artifact-delivery surface (`artifacts.ts`, `result-ingest.ts`). */
 
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { createHash, } from "node:crypto";
-import { existsSync, mkdtempSync, rmSync, } from "node:fs";
-import { tmpdir, } from "node:os";
-import { join, } from "node:path";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, } from "node:fs";
+import { join, resolve, } from "node:path";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import {
@@ -31,6 +30,10 @@ import {
 } from "./result-ingest";
 
 const originalFetch = globalThis.fetch;
+
+/** Repo-local gitignored scratch root for per-test sandboxes. */
+const SANDBOX_ROOT = resolve(import.meta.dir, "../../../.tmp",);
+mkdirSync(SANDBOX_ROOT, { recursive: true, },);
 
 afterAll(() => {
   globalThis.fetch = originalFetch;
@@ -94,6 +97,55 @@ describe("selectHonkboxArtifact", () => {
 
     expect(frames[0]?.artifactId,).toBeUndefined();
     expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("real",);
+  });
+
+  test("the primary frame beats the first frame", () => {
+    const frames: HonkboxJobEvent[] = [
+      { event: "job_result", cancelled: false, artifactId: "map", artifactIndex: 0, },
+      {
+        event: "job_result",
+        cancelled: false,
+        artifactId: "model",
+        artifactIndex: 1,
+        artifactPrimary: true,
+      },
+    ];
+
+    expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("model",);
+  });
+
+  test("an explicit artifact id beats the primary frame", () => {
+    const frames: HonkboxJobEvent[] = [
+      { event: "job_result", cancelled: false, artifactId: "map", artifactIndex: 0, },
+      {
+        event: "job_result",
+        cancelled: false,
+        artifactId: "model",
+        artifactIndex: 1,
+        artifactPrimary: true,
+      },
+    ];
+
+    expect(selectHonkboxArtifact(frames, { artifactId: "map", },)?.artifactId,).toBe("map",);
+  });
+
+  test("without a primary the lowest artifact index wins", () => {
+    const frames: HonkboxJobEvent[] = [
+      { event: "job_result", cancelled: false, artifactId: "second", artifactIndex: 1, },
+      { event: "job_result", cancelled: false, artifactId: "first", artifactIndex: 0, },
+    ];
+
+    expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("first",);
+  });
+
+  test("frames without selection metadata keep the first-frame fallback", () => {
+    const frames: HonkboxJobEvent[] = [
+      { event: "job_result", cancelled: false, artifactId: "a", },
+      { event: "job_result", cancelled: false, artifactId: "b", },
+    ];
+
+    expect(selectHonkboxArtifact(frames, {},)?.artifactId,).toBe("a",);
+    expect(selectHonkboxArtifact([], {},),).toBeUndefined();
   });
 });
 
@@ -185,6 +237,46 @@ describe("parseHonkboxJobEvent", () => {
       annotations: "nope",
     }, "job_result",),).toBeUndefined();
   });
+
+  test("parses artifact selection metadata when present", () => {
+    const event = parseHonkboxJobEvent({
+      event: "job_result",
+      artifact_id: "a1",
+      artifact_name: "export.glb",
+      artifact_kind: "model",
+      artifact_index: 1,
+      artifact_primary: true,
+    }, "job_result",);
+
+    expect(event?.artifactName,).toBe("export.glb",);
+    expect(event?.artifactKind,).toBe("model",);
+    expect(event?.artifactIndex,).toBe(1,);
+    expect(event?.artifactPrimary,).toBe(true,);
+  });
+
+  test("drops absent and wrong-typed artifact selection metadata", () => {
+    const absent = parseHonkboxJobEvent({ event: "job_result", artifact_id: "a1", }, "job_result",);
+    expect(absent?.artifactId,).toBe("a1",);
+    expect(absent?.artifactName,).toBeUndefined();
+    expect(absent?.artifactKind,).toBeUndefined();
+    expect(absent?.artifactIndex,).toBeUndefined();
+    expect(absent?.artifactPrimary,).toBeUndefined();
+
+    const wrong = parseHonkboxJobEvent({
+      event: "job_result",
+      artifact_id: "a1",
+      artifact_name: 7,
+      artifact_kind: {},
+      artifact_index: "1",
+      artifact_primary: "yes",
+    }, "job_result",);
+
+    expect(wrong?.artifactId,).toBe("a1",);
+    expect(wrong?.artifactName,).toBeUndefined();
+    expect(wrong?.artifactKind,).toBeUndefined();
+    expect(wrong?.artifactIndex,).toBeUndefined();
+    expect(wrong?.artifactPrimary,).toBeUndefined();
+  });
 });
 
 describe("artifact store client", () => {
@@ -243,7 +335,7 @@ describe("artifact store client", () => {
 
 describe("ingestHonkboxJobResult", () => {
   let fixture: TestDb;
-  const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-hb-ingest-",),);
+  let uploadDir: string;
 
   beforeAll(async () => {
     fixture = await createTestDb();
@@ -251,6 +343,14 @@ describe("ingestHonkboxJobResult", () => {
 
   afterAll(async () => {
     await destroyTestDb(fixture,);
+  },);
+
+  // Owns: one upload sandbox per test, so a red test cannot leak files into the next.
+  beforeEach(() => {
+    uploadDir = mkdtempSync(join(SANDBOX_ROOT, "hb-ingest-",),);
+  },);
+
+  afterEach(() => {
     rmSync(uploadDir, { recursive: true, force: true, },);
   },);
 
@@ -516,6 +616,188 @@ describe("ingestHonkboxJobResult", () => {
 
       expect(observed,).toHaveLength(1,);
       expect(observed[0],).toEqual(outcome.annotations,);
+    },);
+  });
+
+  /** Blender recipe pair: the map is emitted first, the model is primary.
+   * @param jobId - unique job id for this fixture
+   * @returns two ordered result frames plus id-routed bytes for the mock fetch
+   */
+  function blenderFixture(jobId: string,) {
+    const ids = [`${jobId}-map`, `${jobId}-glb`,];
+    const bytes = [Buffer.from(`${jobId}-map-bytes`,), GLB_BYTES,];
+    const hashes = bytes.map(
+      (value,) => createHash("sha256",).update(value,).digest("hex",),
+    );
+
+    const frames = [
+      {
+        event: "job_result",
+        id: jobId,
+        artifact_id: ids[0]!,
+        artifact_name: "recipe_map.png",
+        artifact_kind: "map",
+        artifact_index: 0,
+        artifact_primary: false,
+        size_bytes: bytes[0]!.length,
+        sha256: hashes[0]!,
+      },
+      {
+        event: "job_result",
+        id: jobId,
+        artifact_id: ids[1]!,
+        artifact_name: "export.glb",
+        artifact_kind: "model",
+        artifact_index: 1,
+        artifact_primary: true,
+        size_bytes: bytes[1]!.length,
+        sha256: hashes[1]!,
+      },
+    ];
+
+    return {
+      ids,
+      hashes,
+      frames,
+      stream: [
+        ...frames.map((frame,) => `event: job_result\ndata: ${JSON.stringify(frame,)}\n\n`),
+        `event: job_finished\ndata: ${JSON.stringify({ id: jobId, },)}\n\n`,
+      ].join("",),
+      fetchFor: (url: string,) => {
+        const id = decodeURIComponent(
+          url.split("/artifacts/", 2,)[1]?.split("/", 1,)[0] ?? "",
+        );
+
+        const index = ids.indexOf(id,);
+        const value = bytes[index < 0 ? 0 : index]!;
+        return new Response(value, {
+          headers: {
+            "content-type": index === 1 ? "model/gltf-binary" : "image/png",
+            "content-range": `bytes 0-${value.length - 1}/${value.length}`,
+          },
+        },);
+      },
+    };
+  }
+
+  // Owns: the "hb-blender" user row, one mock artifact fetch and one upload sandbox.
+  test("a blender-shaped stream ingests the primary model, not the first map frame", async () => {
+    await insertUsers(fixture.db, "hb-blender", "Honkbox Blender",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-blender",);
+    const { ids, hashes, stream, fetchFor, } = blenderFixture("job-blender",);
+    await withMockFetch(fetchFor, async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(stream,),
+        jobId: "job-blender",
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => [],
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe(ids[1]!,);
+      expect(outcome.sha256,).toBe(hashes[1]!,);
+      expect(outcome.asset.asset_type,).toBe("model",);
+    },);
+  });
+
+  // Owns: the "hb-snapshot-new" user row, one mock artifact fetch and one upload sandbox.
+  test("a new-shape snapshot row recovers the primary artifact", async () => {
+    await insertUsers(fixture.db, "hb-snapshot-new", "Honkbox Snapshot New",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-snapshot-new",);
+    const jobId = "job-snapshot-new";
+    const bytes = Buffer.from("snapshot-primary-bytes",);
+
+    await withMockFetch(async () =>
+      new Response(bytes, {
+        headers: {
+          "content-type": "model/gltf-binary",
+          "content-range": `bytes 0-${bytes.length - 1}/${bytes.length}`,
+        },
+      },), async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(
+          `event: job_progress\ndata: ${JSON.stringify({ id: jobId, },)}\n\n`,
+        ),
+        jobId,
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => ({
+          object: "list",
+          data: [{
+            id: jobId,
+            kind: "blender",
+            artifacts: [
+              {
+                artifact_id: "snap-map",
+                name: "recipe_map.png",
+                kind: "map",
+                index: 0,
+                primary: false,
+              },
+              {
+                artifact_id: "snap-glb",
+                name: "export.glb",
+                kind: "model",
+                index: 1,
+                primary: true,
+              },
+            ],
+          },],
+        }),
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe("snap-glb",);
+    },);
+  });
+
+  // Owns: the "hb-snapshot-old" user row, one mock artifact fetch and one upload sandbox.
+  test("an old-shape snapshot row still recovers its top-level artifact", async () => {
+    await insertUsers(fixture.db, "hb-snapshot-old", "Honkbox Snapshot Old",);
+    const ownerId = await ownerIdFor(fixture.db, "hb-snapshot-old",);
+    const jobId = "job-snapshot-old";
+    const bytes = Buffer.from("snapshot-old-bytes",);
+    const hash = createHash("sha256",).update(bytes,).digest("hex",);
+
+    await withMockFetch(async () =>
+      new Response(bytes, {
+        headers: {
+          "content-type": "model/gltf-binary",
+          "content-range": `bytes 0-${bytes.length - 1}/${bytes.length}`,
+        },
+      },), async () => {
+      const outcome = await ingestHonkboxJobResult({
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: deliveryProbe(),
+        events: new Response(
+          `event: job_progress\ndata: ${JSON.stringify({ id: jobId, },)}\n\n`,
+        ),
+        jobId,
+        database: fixture.db,
+        uploadDir,
+        ownerId,
+        links: [],
+        listJobs: async () => ({
+          object: "list",
+          data: [{ id: jobId, artifact_id: "old-artifact", sha256: hash, size_bytes: bytes.length, },],
+        }),
+      },);
+
+      expect(outcome.ok,).toBe(true,);
+      if (!outcome.ok) { return; }
+      expect(outcome.artifactId,).toBe("old-artifact",);
+      expect(outcome.sha256,).toBe(hash,);
     },);
   });
 

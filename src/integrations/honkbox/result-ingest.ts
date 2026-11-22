@@ -58,6 +58,14 @@ export interface HonkboxJobEvent {
   readonly sha256?: string;
   readonly sizeBytes?: number;
   readonly status?: string;
+  /** Producer artifact name (`artifact_name`); absent on older honkbox. */
+  readonly artifactName?: string;
+  /** Producer artifact kind (`artifact_kind`): `image`, `model`, `map`, ... */
+  readonly artifactKind?: string;
+  /** Zero-based emission position (`artifact_index`). */
+  readonly artifactIndex?: number;
+  /** `true` marks the one preferred artifact of the job (`artifact_primary`). */
+  readonly artifactPrimary?: boolean;
   /** NSFW annotations on an artifact-less `job_result` re-emit. */
   readonly annotations?: readonly HonkboxNsfwAnnotation[];
 }
@@ -69,7 +77,10 @@ export interface SelectHonkboxArtifactOptions {
 }
 
 /** Select one result frame from a job's `job_result` frames.
- * An explicit id match wins; otherwise the first result frame wins.
+ * Rule, in order: an explicitly requested artifact id, then the frame honkbox
+ * marked `artifact_primary`, then the lowest `artifact_index` (a frame without
+ * an index ranks last), then the first result frame (old honkbox carries no
+ * selection metadata at all).
  * @param frames - result frames in emission order
  * @param opts - optional explicit artifact id
  * @returns the selected frame, or undefined when no result frame is available
@@ -79,13 +90,26 @@ export function selectHonkboxArtifact(
   opts: SelectHonkboxArtifactOptions = {},
 ): HonkboxJobEvent | undefined {
   let first: HonkboxJobEvent | undefined;
+  let primary: HonkboxJobEvent | undefined;
+  let lowest: HonkboxJobEvent | undefined;
+  let lowestIndex = Number.POSITIVE_INFINITY;
   for (const frame of frames) {
     if (frame.event !== "job_result" || !frame.artifactId) { continue; }
     if (opts.artifactId === frame.artifactId) { return frame; }
     first ??= frame;
+    if (frame.artifactPrimary === true) {
+      primary ??= frame;
+      continue;
+    }
+
+    const index = frame.artifactIndex ?? Number.POSITIVE_INFINITY;
+    if (index < lowestIndex) {
+      lowestIndex = index;
+      lowest = frame;
+    }
   }
 
-  return first;
+  return primary ?? lowest ?? first;
 }
 
 /** @param value - unknown JSON value
@@ -136,6 +160,29 @@ function parseHonkboxAnnotations(value: unknown,): HonkboxNsfwAnnotation[] | und
   return annotations;
 }
 
+/** Artifact selection metadata carried by a job frame.
+ * Wrong-typed fields are dropped; the frame stays usable.
+ * @param row - decoded JSON object
+ * @returns the metadata fields that are present and well-typed
+ */
+function parseFrameArtifactMeta(row: Record<string, unknown>,): Partial<HonkboxJobEvent> {
+  const artifactName = asText(row.artifact_name,) ?? asText(row.artifactName,);
+  const artifactKind = asText(row.artifact_kind,) ?? asText(row.artifactKind,);
+  const artifactIndex = asFiniteNumber(row.artifact_index,) ?? asFiniteNumber(row.artifactIndex,);
+  const artifactPrimary = typeof row.artifact_primary === "boolean"
+    ? row.artifact_primary
+    : typeof row.artifactPrimary === "boolean"
+    ? row.artifactPrimary
+    : undefined;
+
+  return {
+    ...(artifactName ? { artifactName, } : {}),
+    ...(artifactKind ? { artifactKind, } : {}),
+    ...(artifactIndex === undefined ? {} : { artifactIndex, }),
+    ...(artifactPrimary === undefined ? {} : { artifactPrimary, }),
+  };
+}
+
 /** Parse one job frame. Missing optional fields stay absent; never throws.
  * @param value - decoded JSON value (SSE `data` payload or a jobs row)
  * @param fallbackEvent - SSE `event:` line when the payload omits `event`
@@ -174,6 +221,7 @@ export function parseHonkboxJobEvent(
     ...(artifactId ? { artifactId, } : {}),
     ...(sha256 ? { sha256, } : {}),
     ...(sizeBytes === undefined ? {} : { sizeBytes, }),
+    ...parseFrameArtifactMeta(row,),
     ...(asText(row.status,) ? { status: asText(row.status,), } : {}),
     ...(annotations?.length ? { annotations, } : {}),
   };
@@ -310,6 +358,35 @@ async function jobsSnapshot(opts: IngestHonkboxJobResultOptions,): Promise<unkno
   return result.data;
 }
 
+/** One artifact of a `/v1/jobs` row (`JobInfo.artifacts[]`), as a result frame.
+ * @param value - unknown JSON value
+ * @returns the artifact frame, or undefined when it carries no artifact id
+ */
+function parseArtifactRef(value: unknown,): HonkboxJobEvent | undefined {
+  const row = asRecord(value,);
+  if (!row) { return undefined; }
+  const artifactId = asText(row.artifact_id,) ?? asText(row.artifactId,);
+  if (!artifactId) { return undefined; }
+  const artifactName = asText(row.name,) ?? asText(row.artifact_name,);
+  const artifactKind = asText(row.kind,) ?? asText(row.artifact_kind,);
+  const artifactIndex = asFiniteNumber(row.index,) ?? asFiniteNumber(row.artifact_index,);
+  const artifactPrimary = typeof row.primary === "boolean"
+    ? row.primary
+    : typeof row.artifact_primary === "boolean"
+    ? row.artifact_primary
+    : undefined;
+
+  return {
+    event: "job_result",
+    cancelled: false,
+    artifactId,
+    ...(artifactName ? { artifactName, } : {}),
+    ...(artifactKind ? { artifactKind, } : {}),
+    ...(artifactIndex === undefined ? {} : { artifactIndex, }),
+    ...(artifactPrimary === undefined ? {} : { artifactPrimary, }),
+  };
+}
+
 /** Recover a dropped result from the current-state snapshot.
  * @param opts - ingest options
  * @returns a result event, or undefined when no result is discoverable
@@ -329,6 +406,21 @@ async function reconcileJobResult(
 
   const rows = candidates as unknown[];
   const row = rows.find((entry,) => asRecord(entry,)?.id === opts.jobId);
+  const record = asRecord(row,);
+  if (!record) { return undefined; }
+
+  // Shipped honkbox lists every artifact of a job in `artifacts[]`.
+  if (Array.isArray(record.artifacts,)) {
+    const frames = record.artifacts.flatMap((entry,) => {
+      const frame = parseArtifactRef(entry,);
+      return frame ? [frame,] : [];
+    },);
+
+    const selected = selectHonkboxArtifact(frames, { artifactId: opts.artifactId, },);
+    if (selected) { return selected; }
+  }
+
+  // Old honkbox put the one artifact on the job row itself.
   const event = parseHonkboxJobEvent(row, "job_result",);
   return event?.event === "job_result" && event.artifactId ? event : undefined;
 }

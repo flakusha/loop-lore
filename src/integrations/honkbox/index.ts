@@ -90,6 +90,7 @@ export type {
 export {
   ingestHonkboxJobResult,
   parseHonkboxJobEvent,
+  selectHonkboxArtifact,
 } from "./result-ingest";
 export type {
   HonkboxJobEvent,
