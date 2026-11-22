@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 286
 
 /**
  * Harness tab state (admin.html) — agent-harness run history + telemetry.

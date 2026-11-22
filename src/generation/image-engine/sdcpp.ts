@@ -57,6 +57,7 @@ async function applySdCppLoras(
 
   return effective;
 }
+
 /**
  * Generate images via sd.cpp — async job submission + polling.
  * @param sdConfig

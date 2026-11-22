@@ -2832,7 +2832,7 @@
       "stopped": "Stopped",
       "unknown": "Unknown"
     }
-  }
+  },
   "harnessQueue": {
     "tab": "Harness Queue",
     "title": "Harness turn queue",

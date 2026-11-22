@@ -99,7 +99,7 @@ describe("generation-helpers idempotency", () => {
     const key = headers.get("Idempotency-Key",);
     expect(typeof key,).toBe("string",);
     expect(key!.length,).toBeGreaterThan(0,);
-    questKeyFromOtherTest = key;
+    questKeyFromOtherTest = key ?? undefined;
   });
 
   it("mints a non-empty Idempotency-Key header on the quest POST (and none on the lookup GET)", async () => {

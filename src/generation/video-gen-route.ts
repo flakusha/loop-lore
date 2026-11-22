@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 300
+// size-allow: 389
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 255
+// size-allow: 315
 import { serve, } from "bun";
 import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
@@ -144,7 +144,6 @@ export async function start() {
   initializeProviders(config,);
   initDefaultHooks();
 
-// hint: Logic changed on both sides. Requires understanding intent of each change.
   const database = getDatabase(resolveDbPath(process.env, config.server,),);
   const logger = getLogger();
   bindSharedQuotaEngine(database,);

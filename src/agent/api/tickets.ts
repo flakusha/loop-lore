@@ -13,7 +13,7 @@
  * token id carried in its `metadata` JSON. Every op writes its own audit row.
  */
 import { Elysia, t, } from "elysia";
-import { existsSync, mkdirSync, readFileSync, writeFileSync, } from "node:fs";
+import fs from "node:fs";
 import { join, resolve, } from "node:path";
 import { AgentTokenScope, } from "../../db/enums";
 import { lintBriefing, } from "../../plan/briefing-linter";
@@ -64,7 +64,7 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           return jsonError({ message: "Invalid ticket slug", status: HttpStatus.BadRequest, },);
         }
 
-        if (existsSync(path,)) {
+        if (fs.existsSync(path,)) {
           await auditTicketAction(database, ctx.request, OPEN_ACTION, token, slug, "rejected", {
             reason: "duplicate",
           },);
@@ -92,8 +92,8 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           },);
         }
 
-        mkdirSync(ticketsDir, { recursive: true, },);
-        writeFileSync(path, markdown.endsWith("\n",) ? markdown : `${markdown}\n`, "utf8",);
+        fs.mkdirSync(ticketsDir, { recursive: true, },);
+        fs.writeFileSync(path, markdown.endsWith("\n",) ? markdown : `${markdown}\n`, "utf8",);
         await auditTicketAction(database, ctx.request, OPEN_ACTION, token, slug, "success", { score: lint.score, },);
         return jsonResponse({ data: { slug, path, score: lint.score, verdict: lint.verdict, }, }, HttpStatus.Created,);
       },
@@ -150,7 +150,7 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           return jsonError({ message: "Only the filing agent may close this ticket", status: HttpStatus.Forbidden, },);
         }
 
-        if (!existsSync(path,)) {
+        if (!fs.existsSync(path,)) {
           await auditTicketAction(database, ctx.request, CLOSE_ACTION, token, slug, "rejected", {
             reason: "missing",
           },);
@@ -158,7 +158,7 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           return jsonError({ message: "Ticket not found", status: HttpStatus.NotFound, },);
         }
 
-        const markdown = readFileSync(path, "utf8",);
+        const markdown = fs.readFileSync(path, "utf8",);
         const status = readStatus(markdown,);
         if (status !== null && /blocked/i.test(status,)) {
           await auditTicketAction(database, ctx.request, CLOSE_ACTION, token, slug, "rejected", {
@@ -176,7 +176,7 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           return jsonError({ message: "Ticket has open blockers", status: HttpStatus.Conflict, },);
         }
 
-        writeFileSync(path, closeMarkdown(markdown, resolution, reference, token.id,), "utf8",);
+        fs.writeFileSync(path, closeMarkdown(markdown, resolution, reference, token.id,), "utf8",);
         await auditTicketAction(database, ctx.request, CLOSE_ACTION, token, slug, "success", {
           reference: reference.trim(),
         },);
@@ -232,7 +232,7 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           },);
         }
 
-        if (!existsSync(path,)) {
+        if (!fs.existsSync(path,)) {
           await auditTicketAction(database, ctx.request, COMMENT_ACTION, token, slug, "rejected", {
             reason: "missing",
           },);
@@ -240,12 +240,12 @@ export function ticketRoutes(opts: AgentRouteOpts, prefix = "/api",): Elysia {
           return jsonError({ message: "Ticket not found", status: HttpStatus.NotFound, },);
         }
 
-        const markdown = readFileSync(path, "utf8",);
+        const markdown = fs.readFileSync(path, "utf8",);
         const note = `${markdown.trimEnd()}\n\n**Agent comment (${
           new Date().toISOString()
         }, ${token.id})**\n\n${body.trim()}\n`;
 
-        writeFileSync(path, note, "utf8",);
+        fs.writeFileSync(path, note, "utf8",);
         await auditTicketAction(database, ctx.request, COMMENT_ACTION, token, slug, "success",);
         return jsonResponse({ data: { slug, commentLength: body.trim().length, }, },);
       },

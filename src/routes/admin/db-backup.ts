@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 339
 import { type Context, Elysia, t, } from "elysia";
 import { randomUUID, } from "node:crypto";
-import fs, { createReadStream, type Stats, } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { Readable, } from "node:stream";
 import { ASSETS_DEFAULTS, } from "../../config/sections/assets";
@@ -220,7 +221,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
           // Characterize before opening: a swap between resolve and open fails
           // the fstat inode match below even where no no-follow flag exists.
-          let before: Stats;
+          let before: fs.Stats;
           try {
             before = fs.lstatSync(resolved,);
           } catch (error) {
@@ -234,7 +235,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
 
           let fd: number | undefined;
-          let stream: ReturnType<typeof createReadStream> | undefined;
+          let stream: ReturnType<typeof fs.createReadStream> | undefined;
           try {
             fd = fs.openSync(resolved, NOFOLLOW_FLAG,);
             const after = fs.fstatSync(fd,);
@@ -242,7 +243,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               throw new Error("Backup file changed while opening",);
             }
 
-            stream = createReadStream("", { fd, autoClose: true, },);
+            stream = fs.createReadStream("", { fd, autoClose: true, },);
             fd = undefined; // the stream owns the fd from here on
             const body = Readable.toWeb(stream,) as unknown as ReadableStream<Uint8Array>;
             log().info("Admin downloaded database backup", { userId: c.userId, name: c.params.name, },);

@@ -362,7 +362,7 @@ describeOrSkip("chatParticipants", () => {
   },);
 
   describeOrSkip("filteredParticipants", () => {
-    const row = (actor_id: string, agent_type?: string,) => ({
+    const row = (actor_id: string, agent_type?: string | null,) => ({
       chat_id: "chat-1",
       actor_id,
       role_in_chat: "member",

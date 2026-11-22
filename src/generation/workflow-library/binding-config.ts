@@ -9,7 +9,7 @@
  * bundled `/object_info` fixture, or a target that no longer exists rejects
  * the whole config so no workflow is seeded from a stale description.
  */
-import { readFile, } from "node:fs/promises";
+import fs from "node:fs/promises";
 import { join, } from "node:path";
 import type { TemplateParameter, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
@@ -43,7 +43,7 @@ export type BindingConfigLoad =
 export async function loadWorkflowBindings(dir: string,): Promise<BindingConfigLoad> {
   let text: string;
   try {
-    text = await readFile(join(dir, BINDINGS_FILE,), "utf8",);
+    text = await fs.readFile(join(dir, BINDINGS_FILE,), "utf8",);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       return { ok: true, config: null, };
@@ -70,7 +70,7 @@ export async function loadWorkflowBindings(dir: string,): Promise<BindingConfigL
   for (const [id, spec,] of Object.entries(parsed.config.workflows,)) {
     let graphText: string;
     try {
-      graphText = await readFile(join(dir, `${id}.json`,), "utf8",);
+      graphText = await fs.readFile(join(dir, `${id}.json`,), "utf8",);
     } catch (error) {
       errors.push(`workflows.${id}: cannot read graph: ${String(error,)}`,);
       continue;

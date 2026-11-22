@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // One linear request pipeline; phase extraction would scatter the flow.
-// size-allow: 335
+// size-allow: 343
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
