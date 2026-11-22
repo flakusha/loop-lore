@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-20T13:34:25.527Z",
-  "count": 1410,
+  "generatedAt": "2026-11-22T01:43:49.039Z",
+  "count": 1407,
   "gaps": [
     "packages/core/src/config/character-loader.ts#findCharacterFiles",
     "packages/core/src/config/constants.ts#IMMUTABLE_CACHE_MAX_AGE",
@@ -195,7 +195,6 @@
     "src/assistant/entity-spec/entity-spec-kinds.ts#firstSeedLine",
     "src/assistant/gm-tool-detection.ts#GM_TOOL_NAMES",
     "src/assistant/gm-tool-execution.ts#GM_TOOL_NAMES",
-    "src/assistant/gm-tool-execution.ts#detectGmTool",
     "src/assistant/guard/sandbox-members.ts#FS_READ_MEMBERS",
     "src/assistant/guard/sandbox-members.ts#FS_TWO_PATH_MEMBERS",
     "src/assistant/guard/sandbox-members.ts#FS_WRITE_MEMBERS",
@@ -524,7 +523,6 @@
     "src/frontend/alpine/admin-workflows/shared.ts#readJsonField",
     "src/frontend/alpine/admin-workflows/shared.ts#workflowErrors",
     "src/frontend/alpine/admin-world-events.ts#adminWorldEvents",
-    "src/frontend/alpine/admin-worlds.ts#adminWorlds",
     "src/frontend/alpine/avatar-focus.ts#AVATAR_FOCUS_DEFAULT",
     "src/frontend/alpine/catalog-download.ts#filenameFromUrl",
     "src/frontend/alpine/chat-actions/audio.ts#audioActionHandlers",
@@ -701,7 +699,6 @@
     "src/generation/discovery-cache.ts#DISCOVERY_TTL_MS",
     "src/generation/discovery-cache.ts#cachedDiscovery",
     "src/generation/discovery-cache.ts#cachedValues",
-    "src/generation/discovery-cache.ts#clearCachedDiscovery",
     "src/generation/generate-route/tool-execution.ts#sanitizeToolOutput",
     "src/generation/generation-routes/quota-state.ts#backupResourceId",
     "src/generation/hooks/moderation-classifier.ts#MODERATE_KEYWORDS",
