@@ -51,6 +51,7 @@ export const HONKBOX_FEATURE_KEYS = [
   "rerank",
   "python_sidecar",
   "texture_postprocess",
+  "fizgig",
 ] as const;
 
 /** */
@@ -107,6 +108,7 @@ export interface HonkboxFeatureFlags {
   readonly rerank?: boolean;
   readonly pythonSidecar?: boolean;
   readonly texturePostprocess?: boolean;
+  readonly fizgig?: boolean;
 }
 
 /** One writable container (`Formats::write`). */
@@ -507,6 +509,8 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.pythonSidecar === true;
     case "texture_postprocess":
       return capabilities.features.texturePostprocess === true;
+    case "fizgig":
+      return capabilities.features.fizgig === true;
   }
 }
 
@@ -608,6 +612,7 @@ export function parseHonkboxCapabilities(
         rerank: asBool(features?.rerank,),
         pythonSidecar: asBool(features?.python_sidecar,),
         texturePostprocess: asBool(features?.texture_postprocess,),
+        fizgig: asBool(features?.fizgig,),
       },
       formats: {
         read: asStringArray(formats?.read,),

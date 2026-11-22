@@ -68,6 +68,7 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       rerank: false,
       python_sidecar: false,
       texture_postprocess: false,
+      fizgig: false,
       jobs: true,
       events: true,
       vad: false,
@@ -129,6 +130,7 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.features.rerank,).toBe(false,);
     expect(caps.features.pythonSidecar,).toBe(false,);
     expect(caps.features.texturePostprocess,).toBe(false,);
+    expect(caps.features.fizgig,).toBe(false,);
 
     expect(caps.features.jobs,).toBe(true,);
     expect(caps.formats.read,).toEqual(["png", "jpeg",],);
@@ -215,10 +217,10 @@ describe("parseHonkboxCapabilities", () => {
     expect(isHonkboxFeatureEnabled(absentProbe, "audio_cpp",),).toBe(false,);
   });
 
-  test("parses rerank, python sidecar and texture postprocess flags", () => {
-    const flags = ["rerank", "python_sidecar", "texture_postprocess",] as const;
+  test("parses rerank, python sidecar, texture postprocess and fizgig flags", () => {
+    const flags = ["rerank", "python_sidecar", "texture_postprocess", "fizgig",] as const;
     const parsed = parseHonkboxCapabilities(capabilitiesDoc({
-      features: { rerank: true, python_sidecar: true, texture_postprocess: true, },
+      features: { rerank: true, python_sidecar: true, texture_postprocess: true, fizgig: true, },
     },),);
 
     expect(parsed.ok,).toBe(true,);
@@ -226,6 +228,7 @@ describe("parseHonkboxCapabilities", () => {
     expect(parsed.capabilities.features.rerank,).toBe(true,);
     expect(parsed.capabilities.features.pythonSidecar,).toBe(true,);
     expect(parsed.capabilities.features.texturePostprocess,).toBe(true,);
+    expect(parsed.capabilities.features.fizgig,).toBe(true,);
 
     const probe = {
       ok: true,
@@ -242,7 +245,7 @@ describe("parseHonkboxCapabilities", () => {
     for (
       const features of [
         {},
-        { rerank: "yes", python_sidecar: 1, texture_postprocess: null, },
+        { rerank: "yes", python_sidecar: 1, texture_postprocess: null, fizgig: "yes", },
       ]
     ) {
       const tolerant = parseHonkboxCapabilities(capabilitiesDoc({ features, },),);
@@ -289,6 +292,58 @@ describe("parseHonkboxCapabilities", () => {
     expect(isHonkboxFeatureEnabled(probe, "artifactDelivery",),).toBe(true,);
     expect(isHonkboxExternalToolAvailable(probe, "blender", "gltf-binary",),).toBe(true,);
     expect(isHonkboxExternalToolAvailable(probe, "blender", "missing",),).toBe(false,);
+  });
+
+  test("llama_server tool gate requires the matching row and capability", () => {
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc({
+      external_tools: {
+        tools: [
+          { id: "llama_server", capabilities: ["openai_compat",], available: true, },
+          { id: "other_tool", capabilities: ["other",], available: true, },
+          { id: "third_tool", capabilities: ["openai_compat",], available: true, },
+          { id: "llama_server", capabilities: ["openai_compat",], available: false, },
+        ],
+      },
+    },),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    const probe = {
+      ok: true,
+      capabilities: parsed.capabilities,
+      supported: true,
+      latencyMs: 1,
+    } as const;
+
+    expect(
+      isHonkboxExternalToolAvailable(probe, "llama_server", "openai_compat",),
+    ).toBe(true,);
+
+    expect(isHonkboxExternalToolAvailable(probe, "llama_server",),).toBe(true,);
+    expect(isHonkboxExternalToolAvailable(probe, "llama_server", "other",),).toBe(false,);
+    expect(isHonkboxExternalToolAvailable(probe, "other_tool", "openai_compat",),).toBe(false,);
+    expect(
+      isHonkboxExternalToolAvailable(undefined, "llama_server", "openai_compat",),
+    ).toBe(false,);
+
+    const unavailable = parseHonkboxCapabilities(capabilitiesDoc({
+      external_tools: {
+        tools: [{ id: "llama_server", capabilities: ["openai_compat",], available: false, },],
+      },
+    },),);
+
+    expect(unavailable.ok,).toBe(true,);
+    if (!unavailable.ok) { return; }
+    const unavailableProbe = {
+      ok: true,
+      capabilities: unavailable.capabilities,
+      supported: true,
+      latencyMs: 1,
+    } as const;
+
+    expect(
+      isHonkboxExternalToolAvailable(unavailableProbe, "llama_server", "openai_compat",),
+    ).toBe(false,);
   });
 
   test("defaults missing sections and rejects non-object bodies", () => {
@@ -492,6 +547,7 @@ describe("registry constants and URL helpers", () => {
       "rerank",
       "python_sidecar",
       "texture_postprocess",
+      "fizgig",
     ],);
   });
 
