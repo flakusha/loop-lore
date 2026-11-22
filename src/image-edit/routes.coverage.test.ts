@@ -32,7 +32,7 @@ import {
   insertUsers,
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
-import { handleRun, handleTemplates, imageEditRoutes, } from "./routes";
+import { comfyuiProvider, handleRun, handleTemplates, imageEditRoutes, } from "./routes";
 import { templateRegistry, } from "./template-registry";
 import type { ImageEditBackend, WorkflowTemplate, } from "./types";
 
@@ -523,5 +523,78 @@ describe("exported handlers", () => {
     );
 
     expect(scopedRes.status,).toBe(400,);
+  });
+});
+
+describe("request-time preflight gates provider.execute", () => {
+  const template: WorkflowTemplate = {
+    id: `preflight-probe-${uid()}`,
+    name: "Preflight Probe",
+    description: "Registered by routes.coverage.test.ts",
+    category: "txt2img",
+    backends: ["comfyui",],
+    required_nodes: [],
+    parameters: [],
+    build: () => ({}),
+  };
+
+  const validGraph = {
+    "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+    "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+  };
+
+  const validLora = { name: "detail_lora", strength: 0.5, backend: "comfyui", };
+
+  let providerCalls = 0;
+  let originalExecute: typeof comfyuiProvider.execute;
+
+  beforeAll(() => {
+    templateRegistry.register(template,);
+    originalExecute = comfyuiProvider.execute;
+    comfyuiProvider.execute = async () => {
+      providerCalls += 1;
+      return [];
+    };
+  },);
+
+  afterAll(() => {
+    comfyuiProvider.execute = originalExecute;
+    templateRegistry.unregister(template.id,);
+  },);
+
+  test("invalid graph returns 400 without calling the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { workflow: {}, },
+    },),);
+
+    expect(res.status,).toBe(400,);
+    expect(providerCalls,).toBe(0,);
+  });
+
+  test("invalid LoRA config returns 400 without calling the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { lora: { name: "", strength: 0.5, backend: "comfyui", }, },
+    },),);
+
+    expect(res.status,).toBe(400,);
+    expect(providerCalls,).toBe(0,);
+  });
+
+  test("valid graph and LoRA config reach the provider", async () => {
+    providerCalls = 0;
+    const res = await authedApp.handle(jsonRequest(`${BASE}/run`, "POST", {
+      template_id: template.id,
+      backend: "comfyui",
+      params: { workflow: validGraph, lora: validLora, },
+    },),);
+
+    expect(res.status,).toBe(200,);
+    expect(providerCalls,).toBe(1,);
   });
 });

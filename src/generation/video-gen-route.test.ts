@@ -33,6 +33,8 @@ import { __resetVideoJobsForTests, storeVideoJob, } from "./video-jobs";
 
 /** Engine outcome the route test controls per case. */
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
+/** Engine submissions observed by the stub; snapshot per test. */
+let engineCalls = 0;
 /** Quota refusal to throw, or null for the pass-through path. */
 let quotaRefusal: StorageWriteRefusedError | null = null;
 /** Persisted asset the stub returns; null simulates a persistence miss. */
@@ -78,6 +80,7 @@ if (ISOLATED) {
   mock.module("./video-engine", () => ({
     ...realVideoEngine,
     generateVideoWithFailover: async () => {
+      engineCalls += 1;
       if (!engineOutcome.ok) { return engineOutcome; }
 
       return {
@@ -426,6 +429,51 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(terminal["status"],).toBe("failed",);
     expect(terminal["code"],).toBe(500,);
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
+  });
+
+  test("invalid graph returns 400 without submitting to the engine", async () => {
+    const before = engineCalls;
+    const res = await handleVideoGeneration(
+      { prompt: "a clip", workflow: {}, },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
+  });
+
+  test("invalid LoRA config returns 400 without submitting to the engine", async () => {
+    const before = engineCalls;
+    const res = await handleVideoGeneration(
+      { prompt: "a clip", lora: { name: "", strength: 0.5, backend: "comfyui", }, },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
+  });
+
+  test("valid graph and LoRA config still reach the engine", async () => {
+    const before = engineCalls;
+    const { submitStatus, } = await submitAndPoll(
+      {
+        prompt: "a clip",
+        workflow: {
+          "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+          "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+        },
+        lora: { name: "detail_lora", strength: 0.5, backend: "comfyui", },
+      },
+      db,
+      "video-route-user",
+    );
+
+    expect(submitStatus,).toBe(202,);
+    expect(engineCalls,).toBeGreaterThan(before,);
   });
 },);
 

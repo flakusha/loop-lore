@@ -16,6 +16,7 @@
 
 import { getDatabase, } from "../db";
 import { discoverComfyUISampling, } from "../generation/comfyui-sampling";
+import { preflightRequest, } from "../generation/preflight";
 import { ensureWorkflowRegistry, } from "../generation/workflow-library";
 import { API_META, ErrorCode, HttpStatus, jsonError, jsonResponse, parseBody, } from "../routes/http-utils";
 import {
@@ -171,6 +172,19 @@ export async function handleRun(
   }
 
   const provider = getProvider(body.backend,);
+
+  // One request-time gate before any backend executes: a malformed graph or
+  // LoRA config is rejected for every provider (no failover probe billed).
+  // ponytail: reuse the shipped validators; attention/bypass/mute are
+  // operator decisions and deliberately not request fields here.
+  const preflight = preflightRequest({
+    workflow: body.params.workflow,
+    lora: body.params.lora,
+  },);
+
+  if (!preflight.ok) {
+    return jsonError({ message: preflight.error, status: HttpStatus.BadRequest, },);
+  }
 
   // The required-parameter and image-parameter checks live in the shared
   // schema module, so this route and the chain path cannot drift apart.

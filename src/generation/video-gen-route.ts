@@ -25,6 +25,7 @@ import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
+import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import { getOwnedTemplate, } from "./template-service";
 import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
@@ -83,6 +84,10 @@ interface VideoGenBody {
   chatId?: string;
   /** Message the clip belongs to; linkage requires access. */
   messageId?: string;
+  /** Raw graph when a structured caller supplies one — validated, not submitted. */
+  workflow?: unknown;
+  /** LoRA config when a structured caller supplies one — validated, not applied. */
+  lora?: unknown;
 }
 
 /**
@@ -116,6 +121,14 @@ export async function handleVideoGeneration(
   }
 
   const req = body as VideoGenBody;
+
+  // Reject malformed structured input before any job is stored or a provider
+  // is submitted. Failure follows this route's existing 4xx envelope.
+  const preflight = preflightRequest({ workflow: req.workflow, lora: req.lora, },);
+  if (!preflight.ok) {
+    return Response.json({ error: preflight.error, status: 400, }, { status: 400, },);
+  }
+
   const db = database ?? getDatabase();
 
   let resolvedChatId = req.chatId;
