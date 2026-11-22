@@ -175,6 +175,17 @@ export async function listGenerationJobRecords(
  * @param database
  * @returns Records newest first.
  */
+/** Newest-N bound for the startup in-memory cache rebuild. */
+export const REBUILD_CACHE_LIMIT = 200;
+
+/**
+ * List the newest emotion-avatar job records — the startup cache rebuild
+ * source. Bounded to the newest REBUILD_CACHE_LIMIT rows so boot cost is
+ * constant on accounts with long histories; the durable rows remain the
+ * full history, the in-memory store is a cache.
+ * @param database
+ * @returns Records newest first, at most REBUILD_CACHE_LIMIT rows.
+ */
 export async function listEmotionAvatarJobRecords(
   database: Kysely<DB>,
 ): Promise<GenerationJobRecord[]> {
@@ -184,6 +195,7 @@ export async function listEmotionAvatarJobRecords(
     .where("kind", "=", EMOTION_AVATAR_JOB_KIND,)
     .orderBy("created_at", "desc",)
     .orderBy(sql`rowid desc`,)
+    .limit(REBUILD_CACHE_LIMIT,)
     .execute();
 
   return rows.map((row,) => toRecord(row,));
