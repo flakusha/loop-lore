@@ -6,6 +6,7 @@
 // parsing and the stale-chat guards all read the same page/pagination contract.
 import type { CommandValveSpec, } from "../../assistant/commands/valves";
 import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
+import { type ChatStreamSubscription, openChatStream, } from "./stream";
 import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
@@ -67,6 +68,27 @@ export async function handleSend(
   host.isSending = true;
   host.showTyping();
 
+  // The POST blocks until generation finishes, so subscribe first: the server
+  // replays its buffer plus live tokens over this same channel.
+  const streamChatId = host.chatId;
+  const stream: ChatStreamSubscription = openChatStream({
+    chatId: streamChatId,
+    sessionToken: host.sessionToken,
+    callbacks: {
+      onUpdate: (content,) => {
+        if (host.chatId !== streamChatId) { return; }
+        host.hideTyping();
+        host.setStreamContent?.(content,);
+      },
+      onDone: () => {
+        if (host.chatId === streamChatId) { host.setStreamContent?.(null,); }
+      },
+      onError: () => {
+        if (host.chatId === streamChatId) { host.setStreamContent?.(null,); }
+      },
+    },
+  },);
+
   try {
     const payload = attachments?.length
       ? { content: text, role: "user", attachments, }
@@ -87,6 +109,8 @@ export async function handleSend(
     },);
 
     host.hideTyping();
+    stream.close();
+    host.setStreamContent?.(null,);
 
     if (!result.ok) {
       host.showError(result.error.message,);
@@ -98,9 +122,8 @@ export async function handleSend(
     // Add user message
     host.addMessage({ id: data.id, role: "user", content: text, },);
 
-    // Add assistant auto-reply if present. With an LLM configured the server
-    // returns 201 without it (reply arrives over SSE, which the TUI lacks) —
-    // refresh the transcript so the reply appears without a manual F5.
+    // Add assistant auto-reply if present. Live tokens already arrived over
+    // SSE; without one, the transcript reload below is the polling fallback.
     if (data.assistantMessage) {
       host.addMessage({
         id: data.assistantMessage.id,
@@ -111,6 +134,8 @@ export async function handleSend(
       await loadMessages(host,);
     }
   } catch (error) {
+    stream.close();
+    host.setStreamContent?.(null,);
     host.hideTyping();
     host.showError(`Network error: ${(error as Error).message}`,);
   } finally {

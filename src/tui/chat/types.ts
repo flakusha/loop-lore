@@ -53,5 +53,8 @@ export interface ChatHost {
   scrollToBottom(): void;
   showTyping(): void;
   hideTyping(): void;
+  /** Live generation row. Optional so bare test hosts keep working; the real
+   * widget replaces one row as tokens arrive instead of polling pages. */
+  setStreamContent?(content: string | null,): void;
   showError(message: string,): void;
 }

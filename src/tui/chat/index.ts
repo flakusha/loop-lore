@@ -52,6 +52,8 @@ export class ChatWidget implements Component, ChatHost {
    * `hideTyping` removes THIS row, not the tail — after a load or an error line
    * the tail is a real message, and popping it lost one per send. */
   private typingRow: number | null = null;
+  /** Row the live generation snapshot occupies; replaced on every token. */
+  private streamRow: number | null = null;
   isSending = false;
   sessionToken: string | undefined;
   sendTimeoutMs: number;
@@ -215,6 +217,7 @@ export class ChatWidget implements Component, ChatHost {
     // A fresh transcript has no typing placeholder: whatever row one held is
     // gone with the old rows.
     this.typingRow = null;
+    this.streamRow = null;
     this.transcriptLines = Array.from(messages, (msg,) => formatMessageLine(msg,),);
     this.scrollToBottom();
   }
@@ -223,6 +226,7 @@ export class ChatWidget implements Component, ChatHost {
   clearMessages(): void {
     this.messages = [];
     this.typingRow = null;
+    this.streamRow = null;
     this.transcriptLines = [];
     this.syncTranscript();
   }
@@ -248,6 +252,31 @@ export class ChatWidget implements Component, ChatHost {
 
     this.typingRow = null;
     this.transcriptLines.splice(row, 1,);
+    this.scrollToBottom();
+  }
+
+  /**
+   * Show the latest generation snapshot in one row, replacing the previous
+   * one. `null` removes the row (stream done, error or send settled).
+   * @param content - plain text from the SSE stream, or null to clear
+   */
+  setStreamContent(content: string | null,): void {
+    if (content === null) {
+      if (this.streamRow === null) { return; }
+      this.transcriptLines.splice(this.streamRow, 1,);
+      this.streamRow = null;
+      this.scrollToBottom();
+      return;
+    }
+
+    const line = `{cyan-fg}${escapeMarkup(content,)}{/cyan-fg}`;
+    if (this.streamRow === null) {
+      this.streamRow = this.transcriptLines.length;
+      this.transcriptLines.push(line,);
+    } else {
+      this.transcriptLines[this.streamRow] = line;
+    }
+
     this.scrollToBottom();
   }
 
