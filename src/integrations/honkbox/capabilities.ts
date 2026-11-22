@@ -48,6 +48,9 @@ export const HONKBOX_FEATURE_KEYS = [
   "recognition",
   "decisions",
   "audio_cpp",
+  "rerank",
+  "python_sidecar",
+  "texture_postprocess",
 ] as const;
 
 /** */
@@ -101,6 +104,9 @@ export interface HonkboxFeatureFlags {
   readonly artifactDelivery: boolean;
   readonly decisions?: boolean;
   readonly audioCpp?: HonkboxAudioCppFeature;
+  readonly rerank?: boolean;
+  readonly pythonSidecar?: boolean;
+  readonly texturePostprocess?: boolean;
 }
 
 /** One writable container (`Formats::write`). */
@@ -495,6 +501,12 @@ export function isHonkboxFeatureEnabled(
       return capabilities.features.blender;
     case "artifactDelivery":
       return capabilities.features.artifactDelivery;
+    case "rerank":
+      return capabilities.features.rerank === true;
+    case "python_sidecar":
+      return capabilities.features.pythonSidecar === true;
+    case "texture_postprocess":
+      return capabilities.features.texturePostprocess === true;
   }
 }
 
@@ -593,6 +605,9 @@ export function parseHonkboxCapabilities(
         experimentalAshSd: asBool(features?.experimental_ash_sd,),
         blender: asBool(features?.blender,),
         artifactDelivery: asBool(features?.artifact_delivery,),
+        rerank: asBool(features?.rerank,),
+        pythonSidecar: asBool(features?.python_sidecar,),
+        texturePostprocess: asBool(features?.texture_postprocess,),
       },
       formats: {
         read: asStringArray(formats?.read,),

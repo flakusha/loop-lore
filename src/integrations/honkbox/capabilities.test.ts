@@ -65,6 +65,9 @@ function capabilitiesDoc(overrides: Record<string, unknown> = {},): Record<strin
       video: false,
       decisions: false,
       audio_cpp: { built: false, stt_families: [], tts_families: [], },
+      rerank: false,
+      python_sidecar: false,
+      texture_postprocess: false,
       jobs: true,
       events: true,
       vad: false,
@@ -122,6 +125,10 @@ describe("parseHonkboxCapabilities", () => {
       sttFamilies: [],
       ttsFamilies: [],
     },);
+
+    expect(caps.features.rerank,).toBe(false,);
+    expect(caps.features.pythonSidecar,).toBe(false,);
+    expect(caps.features.texturePostprocess,).toBe(false,);
 
     expect(caps.features.jobs,).toBe(true,);
     expect(caps.formats.read,).toEqual(["png", "jpeg",],);
@@ -206,6 +213,52 @@ describe("parseHonkboxCapabilities", () => {
     } as const;
 
     expect(isHonkboxFeatureEnabled(absentProbe, "audio_cpp",),).toBe(false,);
+  });
+
+  test("parses rerank, python sidecar and texture postprocess flags", () => {
+    const flags = ["rerank", "python_sidecar", "texture_postprocess",] as const;
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc({
+      features: { rerank: true, python_sidecar: true, texture_postprocess: true, },
+    },),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    expect(parsed.capabilities.features.rerank,).toBe(true,);
+    expect(parsed.capabilities.features.pythonSidecar,).toBe(true,);
+    expect(parsed.capabilities.features.texturePostprocess,).toBe(true,);
+
+    const probe = {
+      ok: true,
+      capabilities: parsed.capabilities,
+      supported: true,
+      latencyMs: 1,
+    } as const;
+
+    for (const flag of flags) {
+      expect(HONKBOX_FEATURE_KEYS,).toContain(flag,);
+      expect(isHonkboxFeatureEnabled(probe, flag,),).toBe(true,);
+    }
+
+    for (
+      const features of [
+        {},
+        { rerank: "yes", python_sidecar: 1, texture_postprocess: null, },
+      ]
+    ) {
+      const tolerant = parseHonkboxCapabilities(capabilitiesDoc({ features, },),);
+      expect(tolerant.ok,).toBe(true,);
+      if (!tolerant.ok) { continue; }
+      const off = {
+        ok: true,
+        capabilities: tolerant.capabilities,
+        supported: true,
+        latencyMs: 1,
+      } as const;
+
+      for (const flag of flags) {
+        expect(isHonkboxFeatureEnabled(off, flag,),).toBe(false,);
+      }
+    }
   });
 
   test("parses artifact delivery, storage and external tools", () => {
@@ -436,6 +489,9 @@ describe("registry constants and URL helpers", () => {
       "recognition",
       "decisions",
       "audio_cpp",
+      "rerank",
+      "python_sidecar",
+      "texture_postprocess",
     ],);
   });
 
