@@ -16,7 +16,7 @@ env:
 jobs:
   smoke:
     name: Fast gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 2
     # The parallel check runner's GPG preflight reads .credentials.env before
     # any gate runs; CI has no credentials and no gate signs commits. Skip only

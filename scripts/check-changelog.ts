@@ -10,15 +10,16 @@
  *
  * Checks:
  *  1. `## [Unreleased]` section exists.
- *  2. Every released section matches `## [x.y.z] - YYYY-MM-DD`.
+ *  2. Every released section matches `## [x.y.z] - YYYY-MM-DD`, with an
+ *     optional `-rc.N` suffix for staged (`stg`) release candidates.
  *  3. Sections are newest-first (descending semver, `[Unreleased]` on top).
  *  4. No duplicate version sections.
  *  5. No duplicate `### ` subheadings within `[Unreleased]` (a verbatim
  *     re-paste of a block defeats the weave merge driver's heading-entity
  *     matching and fans out into phantom CHANGELOG conflicts).
- *  6. If the latest `x.y.z` git tag (bare, no `v` prefix) exists, CHANGELOG
- *     must already contain a matching section (prevents releasing with a
- *     stale changelog).
+ *  6. If the latest `x.y.z` git tag (bare, no `v` prefix — stable or
+ *     `-rc.N` candidate) exists, CHANGELOG must already contain a matching
+ *     section (prevents releasing with a stale changelog).
  *
  * Usage:
  *   bun run scripts/check-changelog.ts
@@ -33,13 +34,16 @@ import { flag, object, runScript, withDefault, } from "../src/cli/parser";
 const PROJECT_ROOT = resolve(import.meta.dir, "..",);
 const CHANGELOG_PATH = resolve(PROJECT_ROOT, "CHANGELOG.md",);
 
-interface Section {
+export interface Section {
   version: string | null; // null for [Unreleased]
   date: string | null;
   line: number;
 }
 
-const VERSION_RE = /^## \[(\d+\.\d+\.\d+)\]\s+-\s+(\d{4}-\d{2}-\d{2})$/;
+// Release-candidate suffix for staged (`stg`) prereleases: `0.1.0-rc.1`.
+// Bare `x.y.z` stays the stable format; `-rc.N` marks a candidate that must
+// never be mistaken for the release itself.
+const VERSION_RE = /^## \[(\d+\.\d+\.\d+(?:-rc\.\d+)?)\]\s+-\s+(\d{4}-\d{2}-\d{2})$/;
 const UNRELEASED_RE = /^## \[Unreleased\]$/;
 const SUBHEADING_RE = /^### (.+)$/;
 
@@ -68,7 +72,7 @@ function checkUnreleasedSubheadings(lines: string[],): string[] {
   return errors;
 }
 
-function parseSections(lines: string[],): { sections: Section[]; errors: string[] } {
+export function parseSections(lines: string[],): { sections: Section[]; errors: string[] } {
   const sections: Section[] = [];
   const errors: string[] = [];
   const seen = new Set<string>();
@@ -93,14 +97,25 @@ function parseSections(lines: string[],): { sections: Section[]; errors: string[
   return { sections, errors, };
 }
 
-function compareVersions(a: string, b: string,): number {
-  const pa = a.split(".",).map(Number,);
-  const pb = b.split(".",).map(Number,);
+/** Newest-first ordering over `x.y.z` with optional `-rc.N`: a stable
+ * release sorts above its own candidates; candidates order by N. */
+export function compareVersions(a: string, b: string,): number {
+  const split = (v: string,): { base: number[]; rc: number | null } => {
+    const dash = v.indexOf("-",);
+    const base = (dash === -1 ? v : v.slice(0, dash,)).split(".",).map(Number,);
+    const rc = dash === -1 ? null : Number(v.slice(dash + "-rc.".length,),);
+    return { base, rc: rc === null || Number.isNaN(rc,) ? null : rc, };
+  };
+  const pa = split(a,);
+  const pb = split(b,);
   for (let i = 0; i < 3; i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
+    const diff = (pa.base[i] ?? 0) - (pb.base[i] ?? 0);
     if (diff !== 0) { return diff; }
   }
-  return 0;
+  if (pa.rc === null && pb.rc === null) { return 0; }
+  if (pa.rc === null) { return 1; }
+  if (pb.rc === null) { return -1; }
+  return pa.rc - pb.rc;
 }
 
 function checkOrdering(sections: Section[],): string[] {
@@ -120,9 +135,12 @@ function checkOrdering(sections: Section[],): string[] {
 
 function latestGitTag(): string | null {
   try {
-    // Bare `x.y.z` tags (no `v` prefix); `dev-*` tags never match.
+    // Bare `x.y.z` tags (no `v` prefix), stable or `-rc.N`; `dev-*` and
+    // `stg-*` names never match. `sort -V` picks the newest deterministically
+    // (an `-rc.N` of the same base may sort above its stable — harmless,
+    // the section check applies to whichever tag is newest).
     const tag = execSync(
-      `git tag | grep "^[0-9]" | sort -t. -k1 -k2 -k3 -n | tail -1`,
+      `git tag --list '[0-9]*' | sort -V | tail -1`,
       { encoding: "utf-8", cwd: PROJECT_ROOT, },
     ).trim();
     return tag === "" ? null : tag;

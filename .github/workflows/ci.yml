@@ -1,14 +1,14 @@
 # CI Pipeline
 #
-# Runs on push to main/develop and on PRs.
+# Runs on push to master/dev/stg and on PRs targeting them.
 # Steps: typecheck → lint → format → test → build
 name: CI
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, dev, stg]
   pull_request:
-    branches: [master, dev]
+    branches: [master, dev, stg]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,7 +25,7 @@ env:
 jobs:
   gates:
     name: Local Gate Suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # The browser gate's OWN budget is 45 min (scripts/check/parallel/
     # runner.mjs) and it runs LAST in the solo tail - a job timeout equal
     # to the gate budget kills the job exactly as the gate expires, so the
@@ -99,7 +99,7 @@ jobs:
 
   check:
     name: Typecheck + Lint + Format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -143,7 +143,7 @@ jobs:
 
   test-unit:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: check
     steps:
@@ -168,7 +168,7 @@ jobs:
 
   test-e2e:
     name: E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: check
     steps:
@@ -193,7 +193,7 @@ jobs:
 
   test-browser:
     name: Browser E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     needs: check
     steps:
@@ -250,7 +250,7 @@ jobs:
     # so a broken UI fails the pipeline without reddening the app build, and
     # it needs the wasm32 TARGET but not the wasm-bindgen CLI, so it works
     # where the browser bundle cannot be built.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -286,7 +286,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     needs: [test-unit, test-e2e, test-browser]
     steps:
@@ -355,7 +355,7 @@ jobs:
 
   telemetry:
     name: Telemetry Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     needs: check
     steps:
