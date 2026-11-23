@@ -6,18 +6,32 @@
  * request validation, and the success path (provider dispatch + asset
  * persistence).
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { loadConfig, } from "../config/load";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { ISOLATED, } from "../test-utils/isolate-only";
 import { uid, } from "../utils";
-import { handleAudioGeneration, } from "./audio-prompt-route";
+import type * as audioPromptRoute from "./audio-prompt-route";
 import type { AudioGenRequest, AudioProvider, } from "./audio/types";
 import { registerAudioProvider, unregisterAudioProvider, } from "./audio/types";
-import { getWorkflowDefaults, } from "./workflow-selection";
+
+/** Stored audio workflow used by the resolver stub and the selection cases. */
+const STORED_AUDIO_WORKFLOW = "stored-audio-workflow";
+
+/** Route under test; loaded after the resolver stub registers under --isolate. */
+let handleAudioGeneration: typeof audioPromptRoute.handleAudioGeneration;
+
+if (ISOLATED) {
+  mock.module("./workflow-selection", () => ({
+    resolveWorkflowForUseCase: async () => STORED_AUDIO_WORKFLOW,
+  }),);
+}
+
+({ handleAudioGeneration, } = await import("./audio-prompt-route"));
 
 /** Fake provider so the success path runs without a ComfyUI server. */
 const fakeProvider: AudioProvider = {
@@ -123,7 +137,7 @@ describe("handleAudioGeneration", () => {
       },
     };
 
-    const selectedWorkflow = getWorkflowDefaults()["audio.generate"].default;
+    const selectedWorkflow = STORED_AUDIO_WORKFLOW;
 
     beforeAll(async () => {
       selectedUserId = uid();

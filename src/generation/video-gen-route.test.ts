@@ -139,6 +139,12 @@ let startVideoRender: typeof videoGenRoute.startVideoRender;
 
 if (ISOLATED) {
   mock.module("./workflow-selection", () => ({
+    getWorkflowDefaults: () => ({
+      "image.generate": { supported: [], default: "", },
+      "image.edit": { supported: [], default: "", },
+      "video.generate": { supported: ["explicit-video-wf", "txt2video",], default: "txt2video", },
+      "audio.generate": { supported: [], default: "", },
+    }),
     resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
       workflowResolverCalls.push(opts,);
       return resolvedWorkflowForTests;
