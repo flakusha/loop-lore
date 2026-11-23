@@ -88,5 +88,9 @@ describe("isolated decoy listener", () => {
     const body = await res.text();
     expect(body,).not.toContain("loop-lore",);
     expect(body.length,).toBeLessThan(64,);
+
+    const inherited = await fetch(`${listener.url}/__proto__`,);
+    expect(inherited.status,).toBe(404,);
+    expect(hits.at(-1,)?.kind,).toBe("unknown",);
   });
 });

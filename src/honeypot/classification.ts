@@ -76,6 +76,8 @@ export async function recordIndicator(
   options: { id?: string; now?: Date; ttlMs?: number } = {},
 ): Promise<IndicatorRow> {
   const now = options.now ?? new Date();
+  // Write-path pruning: without a timer, expired rows otherwise accumulate.
+  await pruneExpiredIndicators(database, now,);
   const row: IndicatorRow = {
     confidence: classification.confidence,
     createdAt: now.toISOString(),

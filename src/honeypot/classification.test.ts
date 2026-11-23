@@ -97,6 +97,16 @@ describe("local classification store", () => {
     expect(await clearIndicators(db,),).toBe(1,);
     expect(await listIndicators(db, NOW,),).toEqual([],);
   });
+
+  test("prunes expired rows on the next write", async () => {
+    const classification = classifyDecoyHit(makeHit(),)!;
+    await recordIndicator(db, classification, { id: "old", now: NOW, ttlMs: 1000, },);
+    await recordIndicator(db, classification, { id: "fresh", now: new Date(NOW.getTime() + 2000,), },);
+
+    const all = await db.selectFrom("honeypot_indicators",).select(["id",],).execute();
+    expect(all,).toHaveLength(1,);
+    expect(all[0]?.id,).toBe("fresh",);
+  });
 });
 
 describe("decoy hit sink", () => {

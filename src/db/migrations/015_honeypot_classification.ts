@@ -22,6 +22,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await sql`CREATE INDEX "idx_honeypot_indicators_indicator_expires" on "honeypot_indicators" ("indicator", "expires_at")`
     .execute(database,);
+
+  await sql`CREATE INDEX "idx_honeypot_indicators_expiry" on "honeypot_indicators" ("expires_at")`
+    .execute(database,);
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {

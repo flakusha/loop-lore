@@ -40,6 +40,9 @@ for (const signal of ["SIGINT", "SIGTERM",] as const) {
     void listener.stop().then(async () => {
       await resetDatabaseSingleton();
       process.exit(0,);
+    },).catch((error: unknown,) => {
+      process.stderr.write(`honeypot shutdown failed: ${String(error,)}\n`,);
+      process.exit(1,);
     },);
   },);
 }

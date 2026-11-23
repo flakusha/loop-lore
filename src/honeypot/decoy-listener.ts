@@ -140,7 +140,7 @@ export function startDecoyListener(options: DecoyListenerOptions = {},): DecoyLi
         ? "robots"
         : path === "/api/v1/auth/login"
         ? "fake-auth"
-        : path in BAIT_PAGES
+        : Object.hasOwn(BAIT_PAGES, path,)
         ? "bait"
         : "unknown";
 
@@ -164,9 +164,8 @@ export function startDecoyListener(options: DecoyListenerOptions = {},): DecoyLi
         );
       }
 
-      if (method === "GET" || method === "HEAD") {
-        const page = BAIT_PAGES[path];
-        if (page !== undefined) { return reply(page,); }
+      if ((method === "GET" || method === "HEAD") && Object.hasOwn(BAIT_PAGES, path,)) {
+        return reply(BAIT_PAGES[path]!,);
       }
 
       return reply("not found", 404, "text/plain; charset=utf-8",);
