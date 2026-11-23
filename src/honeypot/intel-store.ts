@@ -49,7 +49,7 @@ export async function recordIntel(
       source_peer: record.sourcePeer,
       type: record.type,
     },)
-    .onConflict((oc,) => oc.column("nonce",).doNothing())
+    .onConflict((oc,) => oc.columns(["source_peer", "nonce",],).doNothing())
     .executeTakeFirst();
 
   return Number(result?.numInsertedOrUpdatedRows ?? 0n,) > 0;

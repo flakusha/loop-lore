@@ -18,6 +18,7 @@ import {
   countActiveForPeer,
   delistIntelForPeer,
   listActiveIntel,
+  pruneExpiredIntel,
   recordIntel,
 } from "../honeypot/intel-store";
 import { getLogger, } from "../logger";
@@ -92,11 +93,14 @@ export function mountMeshIntelApi(app: Elysia, opts: MeshRouteOpts,): void {
       return error("source peer mismatch", HttpStatus.BadRequest, ErrorCode.BadRequest,);
     }
 
-    if (await countActiveForPeer(database, origin,) >= MAX_PER_PEER) {
+    const now = new Date();
+    await pruneExpiredIntel(database, now,);
+    const active = await countActiveForPeer(database, origin, now,);
+    const reports = parsed.feed.records.filter((record,) => record.action === "report");
+    if (active + reports.length > MAX_PER_PEER) {
       return error("peer intel budget exhausted", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
     }
 
-    const now = new Date();
     let accepted = 0;
     let delisted = 0;
     let duplicates = 0;

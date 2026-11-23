@@ -197,4 +197,12 @@ describe("local reports store", () => {
     expect(await pruneExpiredIntel(db, toDate(NOW.getTime() + 2000,),),).toBe(1,);
     expect(await listActiveIntel(db, { now: NOW, },),).toHaveLength(1,);
   });
+
+  test("a peer cannot squat another peer\x27s nonce", async () => {
+    const shared = record();
+    expect(await recordIntel(db, shared, NOW,),).toBe(true,);
+    expect(await recordIntel(db, { ...shared, sourcePeer: "https://b.example", }, NOW,),).toBe(true,);
+    expect(await countActiveForPeer(db, PEER, NOW,),).toBe(1,);
+    expect(await countActiveForPeer(db, "https://b.example", NOW,),).toBe(1,);
+  });
 });

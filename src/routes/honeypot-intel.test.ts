@@ -6,7 +6,7 @@ import { Elysia, } from "elysia";
 import type { Config, FederationConfig, } from "../config/schema";
 import type { Db, } from "../db";
 import { upsertPeer, } from "../federation/coordinator";
-import { type IntelFeed, type IntelRecord, signIntelFeed, signIntelPull, } from "../honeypot/intel";
+import { type IntelFeed, type IntelRecord, MAX_PER_PEER, signIntelFeed, signIntelPull, } from "../honeypot/intel";
 import { listActiveIntel, } from "../honeypot/intel-store";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { toDate, } from "../utils/date";
@@ -194,6 +194,73 @@ describe("mesh intel feed", () => {
 
       const bad = await post(db, "/api/mesh/intel/pull", { ...body, proof: "0".repeat(64,), },);
       expect(bad.status,).toBe(400,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  test("rejects a push that would exceed the per-peer budget", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await upsertPeer(db, { origin: PEER_A, state: "trusted", },);
+      const base = record();
+      const seed = Array.from({ length: MAX_PER_PEER, }, (_, i,) => ({
+        action: "report",
+        confidence: 0.4,
+        created_at: base.createdAt,
+        expires_at: base.expiresAt,
+        id: crypto.randomUUID(),
+        indicator: `decoy:${i.toString(16,).padStart(8, "0",)}:suspicion`,
+        nonce: `seed-${i}`,
+        received_at: base.createdAt,
+        source_peer: PEER_A,
+        type: "suspicion",
+      }),);
+
+      await db.insertInto("mesh_intel_reports",).values(seed,).execute();
+
+      const feed: IntelFeed = { origin: PEER_A, records: [record(),], };
+      const res = await post(db, "/api/mesh/intel/push", {
+        ...feed,
+        proof: await signIntelFeed(PSK, feed,),
+      },);
+
+      expect(res.status,).toBe(429,);
+      const rows = await db.selectFrom("mesh_intel_reports",).select(["id",],).execute();
+      expect(rows,).toHaveLength(MAX_PER_PEER,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  test("prunes expired rows on an accepted push", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await upsertPeer(db, { origin: PEER_A, state: "trusted", },);
+      await db.insertInto("mesh_intel_reports",).values({
+        action: "report",
+        confidence: 0.4,
+        created_at: toDate(Date.now() - 10_000,).toISOString(),
+        expires_at: toDate(Date.now() - 1000,).toISOString(),
+        id: crypto.randomUUID(),
+        indicator: "decoy:deadbeef:suspicion",
+        nonce: "expired-nonce",
+        received_at: toDate(Date.now() - 10_000,).toISOString(),
+        source_peer: PEER_A,
+        type: "suspicion",
+      },).execute();
+
+      const entry = record();
+      const feed: IntelFeed = { origin: PEER_A, records: [entry,], };
+      const res = await post(db, "/api/mesh/intel/push", {
+        ...feed,
+        proof: await signIntelFeed(PSK, feed,),
+      },);
+
+      expect(res.status,).toBe(200,);
+      const rows = await db.selectFrom("mesh_intel_reports",).selectAll().execute();
+      expect(rows,).toHaveLength(1,);
+      expect(rows[0]?.indicator,).toBe(entry.indicator,);
     } finally {
       await db.destroy();
     }
