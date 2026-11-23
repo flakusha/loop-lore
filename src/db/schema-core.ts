@@ -2379,3 +2379,17 @@ export interface HoneypotIndicators {
   created_at: string;
   expires_at: string;
 }
+
+// ── mesh_intel_reports ────────────────────────────────────────────
+export interface MeshIntelReports {
+  id: string;
+  indicator: string;
+  type: string;
+  confidence: number;
+  source_peer: string;
+  action: string;
+  nonce: string;
+  created_at: string;
+  expires_at: string;
+  received_at: string;
+}

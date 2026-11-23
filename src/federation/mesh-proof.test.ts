@@ -5,13 +5,29 @@
 // the exact material the sender signed: a tampered reservation, a foreign
 // PSK, or a malformed proof must never pass.
 import { describe, expect, test, } from "bun:test";
-import { type MeshReserveMaterial, meshReserveProof, verifyMeshReserveProof, } from "./mesh-proof";
+import {
+  meshHmacHex,
+  type MeshReserveMaterial,
+  meshReserveProof,
+  verifyMeshHmacHex,
+  verifyMeshReserveProof,
+} from "./mesh-proof";
 
 const MATERIAL: MeshReserveMaterial = {
   senderOrigin: "https://peer.example",
   contentHash: "content-hash-1",
   sizeBytes: 1024,
 };
+
+describe("shared mesh HMAC helpers", () => {
+  test("hex proofs verify only the exact signed string", async () => {
+    const proof = await meshHmacHex("psk-secret", "material",);
+    expect(proof,).toMatch(/^[0-9a-f]{64}$/,);
+    expect(await verifyMeshHmacHex("psk-secret", "material", proof,),).toBe(true,);
+    expect(await verifyMeshHmacHex("psk-secret", "other", proof,),).toBe(false,);
+    expect(await verifyMeshHmacHex("psk-secret", "material", "not-hex",),).toBe(false,);
+  });
+});
 
 describe("mesh reserve proof", () => {
   test("a proof over the same material verifies", async () => {

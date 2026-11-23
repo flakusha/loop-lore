@@ -4253,3 +4253,16 @@ export const HoneypotIndicatorsSchema = t.Object({
   created_at: t.String(),
   expires_at: t.String(),
 },);
+
+// ── mesh_intel_reports ────────────────────────────────────────────
+export const MeshIntelReportsSchema = t.Object({
+  indicator: t.String(),
+  type: t.String(),
+  confidence: t.Number(),
+  source_peer: t.String(),
+  action: t.String(),
+  nonce: t.String(),
+  created_at: t.String(),
+  expires_at: t.String(),
+  received_at: t.String(),
+},);

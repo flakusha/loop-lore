@@ -913,6 +913,18 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("mesh_intel_reports", {
+    id: col("text", { primaryKey: true, },),
+    indicator: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    confidence: col("real", { notNull: true, },),
+    source_peer: col("text", { notNull: true, },),
+    action: col("text", { notNull: true, },),
+    nonce: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    expires_at: col("text", { notNull: true, },),
+    received_at: col("text", { notNull: true, },),
+  },)
   .table("mesh_negotiations", {
     id: col("text", { primaryKey: true, },),
     peer_origin: col("text", { notNull: true, },),

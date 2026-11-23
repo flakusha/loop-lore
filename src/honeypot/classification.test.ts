@@ -8,6 +8,7 @@ import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-te
 import {
   classifyDecoyHit,
   clearIndicators,
+  DEFAULT_TTL_MS,
   listIndicators,
   pruneExpiredIndicators,
   recordIndicator,
@@ -91,6 +92,8 @@ describe("local classification store", () => {
     expect(rows.length,).toBe(0,);
 
     await recordIndicator(db, classification, { id: "row-2", now: NOW, },);
+    const defaulted = await listIndicators(db, NOW,);
+    expect(defaulted[0]?.expiresAt,).toBe(new Date(NOW.getTime() + DEFAULT_TTL_MS,).toISOString(),);
     expect(await clearIndicators(db,),).toBe(1,);
     expect(await listIndicators(db, NOW,),).toEqual([],);
   });

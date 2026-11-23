@@ -29,6 +29,7 @@ import { createLocalPeerWorkExecutor, } from "../federation/peer-work-execute";
 import { buildHostMetaXrd, HOST_META_PATH, WEBFINGER_PATH, } from "../federation/webfinger";
 import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
 import { mountPeerWorkApi, } from "./federation-peer-work";
+import { meshIntelEnabled, mountMeshIntelApi, } from "./honeypot-intel";
 import { HttpStatus, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -182,6 +183,7 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
   );
 
   mountMeshApi(app, opts,);
+  if (meshIntelEnabled()) { mountMeshIntelApi(app, opts,); }
   mountPeerWorkApi(app, {
     ...opts,
     encryptionKey: config.byoKey?.encryptionKey ?? "",

@@ -272,4 +272,5 @@ export interface DB {
   e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
   e2e_skipped_message_keys: import("./schema-core").E2eSkippedMessageKeys;
   honeypot_indicators: import("./schema-core").HoneypotIndicators;
+  mesh_intel_reports: import("./schema-core").MeshIntelReports;
 }

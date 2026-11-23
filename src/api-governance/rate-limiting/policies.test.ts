@@ -8,6 +8,7 @@ import {
   chatPolicy,
   defaultPolicy,
   generationPolicy,
+  intelPolicy,
   outboundFetchPolicy,
   policies,
   policyForRoute,
@@ -16,6 +17,13 @@ import {
 } from "./policies";
 
 describe("policy registry", () => {
+  test("mesh intel has a bounded peer budget registered by name", () => {
+    expect(intelPolicy.name,).toBe("mesh-intel",);
+    expect(intelPolicy.windowMs,).toBe(60_000,);
+    expect(intelPolicy.max,).toBeLessThan(defaultPolicy.max,);
+    expect(policies[intelPolicy.name],).toBe(intelPolicy,);
+  });
+
   test("chat policy is sized for real UI volume, not generation volume", () => {
     expect(chatPolicy.name,).toBe("chat",);
     expect(chatPolicy.windowMs,).toBe(60_000,);

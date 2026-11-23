@@ -40,6 +40,35 @@ function canonical(material: MeshReserveMaterial,): string {
 }
 
 /**
+ * Hex HMAC-SHA256 over a canonical string. Shared by the reserve proof and
+ * the advisory mesh intel feed; neither signs arbitrary caller bytes.
+ * @param secret Shared mesh PSK
+ * @param material Canonical string to sign
+ * @returns hex digest
+ */
+export async function meshHmacHex(secret: string, material: string,): Promise<string> {
+  return createHmac("sha256", secret,).update(material,).digest("hex",);
+}
+
+/**
+ * Constant-time comparison of a hex HMAC proof.
+ * @param secret Shared mesh PSK
+ * @param material Canonical string that was signed
+ * @param proof Claimed hex digest
+ * @returns true when the proof matches
+ */
+export async function verifyMeshHmacHex(
+  secret: string,
+  material: string,
+  proof: unknown,
+): Promise<boolean> {
+  if (typeof proof !== "string") { return false; }
+  const expected = Buffer.from(await meshHmacHex(secret, material,), "hex",);
+  const claimed = Buffer.from(proof, "hex",);
+  return expected.length === claimed.length && timingSafeEqual(expected, claimed,);
+}
+
+/**
  * Compute the mesh reserve proof: hex HMAC-SHA256 of the canonical
  * reservation material keyed by the mesh PSK.
  * @param secret Shared mesh PSK (config.federation.meshPsk).
@@ -50,7 +79,7 @@ export async function meshReserveProof(
   secret: string,
   material: MeshReserveMaterial,
 ): Promise<string> {
-  return createHmac("sha256", secret,).update(canonical(material,),).digest("hex",);
+  return meshHmacHex(secret, canonical(material,),);
 }
 
 /**
@@ -65,8 +94,5 @@ export async function verifyMeshReserveProof(
   material: MeshReserveMaterial,
   proof: unknown,
 ): Promise<boolean> {
-  if (typeof proof !== "string") { return false; }
-  const expected = Buffer.from(await meshReserveProof(secret, material,), "hex",);
-  const claimed = Buffer.from(proof, "hex",);
-  return expected.length === claimed.length && timingSafeEqual(expected, claimed,);
+  return verifyMeshHmacHex(secret, canonical(material,), proof,);
 }

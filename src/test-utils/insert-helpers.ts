@@ -6922,3 +6922,35 @@ export async function insertHoneypotIndicators(
   } as any,).execute();
   return id;
 }
+
+/** Insert a mesh_intel_reports row. */
+export async function insertMeshIntelReports(
+  db: Db,
+  indicator: string,
+  type: string,
+  confidence: number,
+  source_peer: string,
+  action: string,
+  nonce: string,
+  created_at: string,
+  expires_at: string,
+  received_at: string,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_intel_reports",).values({
+    id,
+    indicator,
+    type,
+    confidence,
+    source_peer,
+    action,
+    nonce,
+    created_at,
+    expires_at,
+    received_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
