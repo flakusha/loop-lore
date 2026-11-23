@@ -6896,3 +6896,29 @@ export async function insertE2eSkippedMessageKeys(
   } as any,).execute();
   return id;
 }
+
+/** Insert a honeypot_indicators row. */
+export async function insertHoneypotIndicators(
+  db: Db,
+  indicator: string,
+  label: string,
+  confidence: number,
+  source: string,
+  created_at: string,
+  expires_at: string,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("honeypot_indicators",).values({
+    id,
+    indicator,
+    label,
+    confidence,
+    source,
+    created_at,
+    expires_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}

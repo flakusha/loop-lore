@@ -2368,3 +2368,14 @@ export interface E2eSkippedMessageKeys {
   message_key: string;
   created_at: Generated<string>;
 }
+
+// ── honeypot_indicators ────────────────────────────────────────────
+export interface HoneypotIndicators {
+  id: string;
+  indicator: string;
+  label: string;
+  confidence: number;
+  source: string;
+  created_at: string;
+  expires_at: string;
+}

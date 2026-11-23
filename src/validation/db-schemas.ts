@@ -4243,3 +4243,13 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── honeypot_indicators ────────────────────────────────────────────
+export const HoneypotIndicatorsSchema = t.Object({
+  indicator: t.String(),
+  label: t.String(),
+  confidence: t.Number(),
+  source: t.String(),
+  created_at: t.String(),
+  expires_at: t.String(),
+},);

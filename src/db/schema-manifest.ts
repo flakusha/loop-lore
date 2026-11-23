@@ -714,6 +714,15 @@ export const SCHEMA = new SchemaManifest()
     finished_at: col("text",),
     owner_slug: col("text",),
   },)
+  .table("honeypot_indicators", {
+    id: col("text", { primaryKey: true, },),
+    indicator: col("text", { notNull: true, },),
+    label: col("text", { notNull: true, },),
+    confidence: col("real", { notNull: true, },),
+    source: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    expires_at: col("text", { notNull: true, },),
+  },)
   .table("immersion_decision_log", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     chat_id: col("text", { notNull: true, },),
