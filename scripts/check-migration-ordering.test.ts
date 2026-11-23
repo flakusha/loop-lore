@@ -2,41 +2,23 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { type FileRow, isDeclaredOrderStable, } from "./check-migration-ordering";
+import { compareMigrationNames, } from "../src/db/migrate";
 
-const row = (name: string,): FileRow => ({
-  name,
-  prefix: name.slice(0, 3,),
-  relDir: "src/db/migrations",
-});
-
-describe("migration ordering gate: declared order", () => {
-  test("accepts a list already in comparator order", () => {
-    expect(
-      isDeclaredOrderStable([
-        row("001_init.ts",),
-        row("002_next.ts",),
-        row("010_later.ts",),
-      ],),
-    ).toBe(true,);
-  });
-
-  test("FAILS a deliberately misordered list", () => {
-    expect(
-      isDeclaredOrderStable([
-        row("010_later.ts",),
-        row("001_init.ts",),
-        row("002_next.ts",),
-      ],),
-    ).toBe(false,);
-  });
-
-  test("FAILS equal prefixes declared out of alphabetical order", () => {
-    expect(
-      isDeclaredOrderStable([
-        row("001_zeta.ts",),
-        row("001_alpha.ts",),
-      ],),
-    ).toBe(false,);
+describe("migration ordering gate: compareMigrationNames", () => {
+  test("sorts a misordered list by numeric prefix, then alphabetically", () => {
+    const names = [
+      "010_later.ts",
+      "003_init.ts",
+      "001_zeta.ts",
+      "001_alpha.ts",
+      "002_next.ts",
+    ];
+    expect([...names,].sort(compareMigrationNames,),).toEqual([
+      "001_alpha.ts",
+      "001_zeta.ts",
+      "002_next.ts",
+      "003_init.ts",
+      "010_later.ts",
+    ],);
   });
 });

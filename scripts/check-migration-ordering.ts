@@ -8,12 +8,15 @@
  *      (3-digit numeric prefix). Stray .ts (README siblings, helpers,
  *      tests) get flagged.
  *   2. Numeric prefixes are unique within the loader scope
- *      (src/db/migrations/) — the directory migrate.ts's readdirSync
- *      actually scans. Duplicate prefixes there were the original
- *      ticket's failure mode (041a_/041b_ etc. ordered alphabetically
- *      by localeCompare rather than by author intent).
- *   3. Names sort numerically by prefix, then alphabetically — the same
- *      rule src/db/migrate.ts:compareMigrationNames enforces at runtime.
+ *      (src/db/migrations/) — the directory the production loader scans.
+ *      Duplicate prefixes were the original ticket's failure mode
+ *      (041a_/041b_ etc. ordered alphabetically rather than by author intent).
+ *
+ * Load order is NOT a filesystem-order invariant: src/db/migrate.ts sorts
+ * its readdir snapshot with compareMigrationNames, so ordering is identical
+ * on dev and in fresh worktrees. The comparator is tested directly in
+ * check-migration-ordering.test.ts; this gate covers only what a sort cannot
+ * fix — stray files and ambiguous prefixes.
  *
  * Post-collapse (DB v0), migrations/ holds a single 001_init.ts plus any
  * future NNN_*.ts appends; no parts/ subdirectory exists.
@@ -28,7 +31,6 @@
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, } from "node:url";
-import { compareMigrationNames, } from "../src/db/migrate";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url,),);
 const ROOT = path.resolve(__dirname, "..",);
@@ -36,7 +38,7 @@ const MIGRATIONS_ROOT = path.join(ROOT, "src/db/migrations",);
 
 const FILENAME = /^(\d{3})_(.+)\.ts$/;
 
-export interface FileRow {
+interface FileRow {
   readonly name: string;
   readonly prefix: string;
   readonly relDir: string;
@@ -116,21 +118,6 @@ if (loaderCollisions.length === 0) {
     console.error(`      prefix ${prefix}:`,);
     for (const f of files) { console.error(`        - ${path.join(f.relDir, f.name,)}`,); }
   }
-}
-
-/**
- * Compare the declared (readdir) order against a freshly sorted copy using
- * the same comparator the runtime loader applies.
- */
-export function isDeclaredOrderStable(rows: readonly FileRow[],): boolean {
-  const sorted = [...rows,].sort((a, b,) => compareMigrationNames(a.name, b.name,));
-  return rows.every((row, i,) => row.name === sorted[i]?.name);
-}
-
-if (isDeclaredOrderStable(loaderReport.collected,)) {
-  ok("loader scope: declared order is stable under numeric + alphabetical comparator",);
-} else {
-  fail("loader scope: declared order disagrees with comparator — re-run after sort fix",);
 }
 
 if (import.meta.main) {
