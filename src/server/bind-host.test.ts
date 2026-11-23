@@ -36,6 +36,8 @@ describe("resolveBindHost", () => {
     expect(await resolveBindHost({ host: "[::1]", },),).toBe("::1",);
   });
 
+  // Ephemeral: `.invalid` is reserved (RFC 6761), so this name cannot resolve and the test owns
+  // no shared resource; the explicit timeout absorbs DNS scheduling under parallel test load.
   test("a name that cannot resolve reports the host and the fix", async () => {
     const failure = await resolveBindHost({ host: "loop-lore-no-such-host.invalid", },).catch(
       (error: unknown,) => error,
@@ -46,7 +48,7 @@ describe("resolveBindHost", () => {
     expect(message,).toContain("loop-lore-no-such-host.invalid",);
     expect(message,).toContain("could not be resolved",);
     expect(message,).toContain("set server.host",);
-  });
+  }, 30000,);
 });
 
 /**
