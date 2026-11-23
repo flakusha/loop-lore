@@ -42,3 +42,5 @@ The epic now records the 14-file baseline, one owner per table, FK-safe gapless 
 
 
 git issue: 930cabe
+
+**Resolved:** 2026-11-23 registry-driven close: git issue 930cabe (registry tip: 2387011a6 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-EPIC-DB-MIGRATION-COMPACTIO)

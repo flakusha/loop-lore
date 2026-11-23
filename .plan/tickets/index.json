@@ -41845,7 +41845,7 @@
       "stale-doc"
     ],
     "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EPIC-FRONTEND-COMPONENT-ARCHITECTURE-CLARIFICATION-2026-09-26": {
     "epic": "epic-frontend-component-architecture",
