@@ -11,6 +11,7 @@
  */
 
 import { readFileSync } from "node:fs";
+import { moduleName, } from "../source-paths.mjs";
 
 /**
  * Parse an lcov file into its raw records.
@@ -23,8 +24,9 @@ export function parseRecords(lcovPath,) {
 }
 
 /**
- * Aggregate LF/LH per module (top-level dir under `src/` or
- * `packages/core/src/`; top-level files bucket under `(root)`).
+ * Aggregate LF/LH per module (top-level dir under any workspace's `src/`;
+ * core keeps its flat name, other workspaces are prefixed; top-level files
+ * bucket under `(root)`).
  * @param records
  */
 export function aggregateModules(records,) {
@@ -34,8 +36,7 @@ export function aggregateModules(records,) {
     const sf = r.match(/SF:(.+)/,)?.[1];
 
     if (!sf) { continue; }
-    const seg = sf.replace(/^(?:packages\/core\/)?src\//, "",).split("/",)[0];
-    const mod = seg.includes(".",) ? "(root)" : seg;
+    const mod = moduleName(sf,);
     const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
 
     const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);

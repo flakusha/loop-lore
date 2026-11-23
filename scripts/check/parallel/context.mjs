@@ -148,9 +148,9 @@ export function changedFiles(base, cwd = DIFF_ROOT,) {
 export function changedModules(files,) {
   const mods = new Set();
   for (const f of files) {
-    if (f.startsWith("packages/core/src/",)) {
-      // Keep the real core path: `src/<mod>` points at the app-side shim tree,
-      // not the core module that owns the implementation and its tests.
+    if (/^packages\/[^/]+\/src\//.test(f,)) {
+      // Keep the real workspace path: `src/<mod>` points at the app-side shim
+      // tree, not the package that owns the implementation and its tests.
       mods.add(path.posix.dirname(f,).split("/",).slice(0, 4,).join("/",),);
       continue;
     }
@@ -196,7 +196,7 @@ function dirHasTests(dir,) {
 export function scopedCoveragePaths(files,) {
   const mods = changedModules(files,) ?? [];
   return mods
-    .map((m,) => m.startsWith("packages/core/src/",) ? m : `src/${m}`)
+    .map((m,) => m.startsWith("packages/",) ? m : `src/${m}`)
     .filter((p,) => {
       const abs = path.resolve(DIFF_ROOT, p,);
       // Guard: a top-level changed FILE (e.g. `.gitignore`) maps to a
@@ -233,7 +233,7 @@ export const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED_FILES,);
 // (no meaningful per-file line coverage; those paths are unmeasured SKIPs).
 /** Whether a changed file is a source file the scoped lcov can floor. */
 export function isScopedDiffSrcFile(f,) {
-  return (f.startsWith("src/",) || f.startsWith("packages/core/src/",)) &&
+  return (f.startsWith("src/",) || /^packages\/[^/]+\/src\//.test(f,)) &&
     f.endsWith(".ts",) && !f.endsWith(".test.ts",);
 }
 export const SCOPED_DIFF_SRC_FILES = (DIFF_BASE ? CHANGED_FILES : [])

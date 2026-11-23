@@ -17,10 +17,11 @@
  */
 
 // oxlint-disable-next-line import/no-nodejs-modules
-import { existsSync, readdirSync, statSync, } from "node:fs";
+import { existsSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 import { jscpdScanCommand, } from "../jscpd-scan.mjs";
+import { TEST_ROOTS, walkTestFiles, } from "../source-paths.mjs";
 import {
   COVERAGE_DIR_RELATIVE,
   JSCPD_DIR_RELATIVE,
@@ -101,9 +102,9 @@ function registerTestChunkGates(checks,) {
     "diff-scoped: the scoped coverage gate runs exactly the diff's tests",
   );
   const emptyReason = (tree,) => noopSkip(`no *.test.ts files matched under ${tree}/`,);
-  const srcTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "src",),);
-  const pluginTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),);
-  const scriptTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, "scripts",),);
+  const srcTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),);
+  const pluginTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.plugins,),);
+  const scriptTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.scripts,),);
   checks[TEST_CHUNK_GATE_NAMES[0]] = srcTests.length > 0
     ? testChunkCommand({
       coverageDirRel: CHUNK_COVERAGE_DIRS.src,
@@ -111,7 +112,7 @@ function registerTestChunkGates(checks,) {
       jobs: SRC_TEST_JOBS,
       suite: "src",
     },)
-    : (DIFF_BASE ? scopedReason : emptyReason("src",));
+    : (DIFF_BASE ? scopedReason : emptyReason(TEST_ROOTS.src,));
   // tests/e2e/ stays a DIRECTORY argument exactly like the former mega gate:
   // bun discovers `*.test.ts` under it (the `*.browser.ts` specs are not
   // test files and never ran there).
@@ -119,7 +120,7 @@ function registerTestChunkGates(checks,) {
     ? scopedReason
     : testChunkCommand({
       coverageDirRel: CHUNK_COVERAGE_DIRS.e2e,
-      files: ["tests/e2e/",],
+      files: [TEST_ROOTS.e2e,],
       jobs: TEST_JOBS,
       suite: "e2e",
     },);
@@ -135,7 +136,7 @@ function registerTestChunkGates(checks,) {
       jobs: TEST_JOBS,
       suite: "plugins",
     },)
-    : (DIFF_BASE ? scopedReason : emptyReason("plugins",));
+    : (DIFF_BASE ? scopedReason : emptyReason(TEST_ROOTS.plugins,));
   // scripts/** colocated tests drive their subject in a SUBPROCESS
   // (spawnSync / Bun.spawn), so the parent run's lcov only ever records
   // module-load side effects — flooring that partial number is a false red
@@ -145,7 +146,7 @@ function registerTestChunkGates(checks,) {
   // adds no serial wall. A failing scripts test still fails this gate.
   checks[TEST_CHUNK_GATE_NAMES[3]] = scriptTests.length > 0
     ? `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} ${scriptTests.join(" ",)} --isolate`
-    : (DIFF_BASE ? scopedReason : emptyReason("scripts",));
+    : (DIFF_BASE ? scopedReason : emptyReason(TEST_ROOTS.scripts,));
 }
 
 /**
@@ -186,10 +187,10 @@ function coverageCommand() {
     // call site) are required — an empty plugins/ tree legitimately has no
     // chunk, and tests/e2e/ always exists.
     const chunks = [];
-    if (filterPaths(walkTestFiles(PROJECT_ROOT, "src",),).length > 0) {
+    if (filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),).length > 0) {
       chunks.push(`${CHUNK_COVERAGE_DIRS.src}/lcov.info`,);
     }
-    if (filterPaths(walkTestFiles(PROJECT_ROOT, "plugins",),).length > 0) {
+    if (filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.plugins,),).length > 0) {
       chunks.push(`${CHUNK_COVERAGE_DIRS.plugins}/lcov.info`,);
     }
     chunks.push(`${CHUNK_COVERAGE_DIRS.e2e}/lcov.info`,);
@@ -246,33 +247,6 @@ function coverageCommand() {
   // them halves the gate's wall time (measured 397s -> 205s on the dev host,
   // 188s and 209s apart).
   return scopedCoverageCommand({ companionRun, scopedRun, floorRun, },);
-}
-
-/**
- * Recursively collect every `*.test.ts` file under `root/<dir>/`, returned
- * as repo-relative paths. Sorted for deterministic command lines.
- */
-function walkTestFiles(root, dir,) {
-  const out = [];
-  const abs = path.resolve(root, dir,);
-  if (!existsSync(abs,)) { return out; }
-  // Diff-derived targets can be files (e.g. root-level src/*.ts) — only walk dirs.
-  if (!statSync(abs,).isDirectory()) { return abs.endsWith(".test.ts",) ? [dir,] : out; }
-  const stack = [abs,];
-  while (stack.length > 0) {
-    const cur = stack.pop();
-    for (const entry of readdirSync(cur, { withFileTypes: true, },)) {
-      const full = path.join(cur, entry.name,);
-      if (entry.isDirectory()) {
-        stack.push(full,);
-        continue;
-      }
-      if (entry.isFile() && entry.name.endsWith(".test.ts",)) {
-        out.push(path.relative(root, full,),);
-      }
-    }
-  }
-  return out.sort();
 }
 
 /**

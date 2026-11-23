@@ -307,10 +307,11 @@ const TYPE_ONLY_STATEMENT = /\b(?:import|export)[ \t]+type[ \t]+[^;"']*["'][^"']
 
 /** Extensionless repo-relative module id a specifier points at, or null. */
 function resolveSpecifier(spec, importerId,) {
+  const workspace = spec.match(/^@loop-lore\/([^/]+)\/(.+)$/,);
   const joined = spec.startsWith("@/",)
     ? `src/${spec.slice(2,)}`
-    : spec.startsWith("@loop-lore/core/",)
-    ? `packages/core/src/${spec.slice("@loop-lore/core/".length,)}`
+    : workspace
+    ? `packages/${workspace[1]}/src/${workspace[2]}`
     : spec.startsWith(".",)
     ? path.posix.join(path.posix.dirname(importerId,), spec,)
     : null;
