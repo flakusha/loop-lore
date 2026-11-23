@@ -116,6 +116,20 @@ describe("decoy hit sink", () => {
     expect(await listIndicators(db, NOW,),).toEqual([],);
   });
 
+  test("ignores benign hits without writing a label", async () => {
+    const sink = createDecoyHitSink(db, {},);
+    await sink(makeHit({ kind: "robots", path: "/robots.txt", },),);
+    expect(await listIndicators(db, NOW,),).toEqual([],);
+  });
+
+  test("swallows store failures so the decoy surface stays up", async () => {
+    const broken = await createTestDb();
+    await broken.db.destroy();
+    const sink = createDecoyHitSink(broken.db, {},);
+    await sink(makeHit(),);
+    expect(await listIndicators(db, NOW,),).toEqual([],);
+  });
+
   test("stores labels from real decoy hits with no caller-supplied ids", async () => {
     const recorded = Promise.withResolvers<{ indicator: string }>();
     const sink = createDecoyHitSink(db, {
