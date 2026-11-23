@@ -270,6 +270,45 @@ describe("handleLogin — rate limiting", () => {
     expect(await blocked.text(),).toContain("Too many attempts",);
   });
 
+  test("rotating source IPs cannot renew the budget for one account", async () => {
+    for (let i = 0; i < 10; i++) {
+      const res = await handleLogin(
+        makeRequest(loginBody(USERNAME, "wrong",),),
+        db,
+        makeConfig(),
+        undefined,
+        `192.0.2.${i + 1}`,
+        loginLimiter,
+      );
+
+      expect(res.status,).toBe(200,);
+    }
+
+    const blocked = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong",),),
+      db,
+      makeConfig(),
+      undefined,
+      "192.0.2.99",
+      loginLimiter,
+    );
+
+    expect(blocked.status,).toBe(429,);
+    expect(await blocked.text(),).toContain("Too many attempts for this account",);
+
+    // A different account on a fresh IP still has its own budget.
+    const other = await handleLogin(
+      makeRequest(loginBody("disabled-user", "wrong",),),
+      db,
+      makeConfig(),
+      undefined,
+      "192.0.2.100",
+      loginLimiter,
+    );
+
+    expect(other.status,).toBe(200,);
+  });
+
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers
   test("429 response carries Retry-After and X-RateLimit-* headers", async () => {
     for (let i = 0; i < 10; i++) {
