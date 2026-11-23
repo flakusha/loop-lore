@@ -28,14 +28,14 @@ import { applyNodeOverrides, } from "../src/generation/workflow-substitutor";
 import type { TemplateParameter, } from "../src/image-edit/types";
 
 /** Pinned shared fixture; never written by this script. */
-export const RUNTIME_SNAPSHOT = "src/generation/comfyui-converter/fixtures/object-info.json";
+const RUNTIME_SNAPSHOT = "src/generation/comfyui-converter/fixtures/object-info.json";
 
 /** Catalog-only class specs, merged over the shared fixture. */
 export const DEFAULT_OVERLAY = "configs/workflow-object-info/object-info.catalog-overlay.json";
 
 /** Default input and output directories (repo-root relative). */
 export const ORIGINALS_DIR = "configs/workflows/originals";
-export const DEFAULT_OUT_DIR = "configs/workflows";
+const DEFAULT_OUT_DIR = "configs/workflows";
 
 /**
  * Empty UI saves with no API counterpart. Listed explicitly so an empty
@@ -54,7 +54,7 @@ export const EMPTY_GRAPH_POLICY: Readonly<Record<string, string>> = {
  * Converter drops COMFY_DYNAMICCOMBO_V3 sub-widgets (`widgets.ts` named-first
  * `widgetOrder` filter). Carry only values actually present in each UI save.
  */
-export const DYNAMIC_COMBO_FIELDS: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+const DYNAMIC_COMBO_FIELDS: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   anima: { "1": ["format", "format.bit_depth", "format.input_color_space", "format.channels",], },
   illustrious: { "1": ["format", "format.bit_depth", "format.input_color_space", "format.channels",], },
   krea2: { "1": ["format", "format.bit_depth", "format.input_color_space", "format.channels",], },
@@ -82,9 +82,11 @@ export const DYNAMIC_COMBO_FIELDS: Readonly<Record<string, Readonly<Record<strin
  * `[p]` derivation cannot bind `{{prompt}}`. Keep the shipped prompt contract
  * by binding it explicitly when generating these two graphs.
  */
-export const PROMPT_BINDINGS: Readonly<Record<string, readonly string[]>> = {
-  "minimax-h3-video-fl2va": ["161",],
-  "minimax-h3-video-fl2va-opt": ["161",],
+const PROMPT_BINDINGS: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  "minimax-h3-video-fl2va": { "161": ["prompt",], },
+  "minimax-h3-video-fl2va-opt": { "161": ["prompt",], },
+  "minimax-h3-video-ref2va": { "138": ["value",], },
+  "minimax-h3-video-ref2va-opt": { "138": ["value",], },
 };
 
 /** Options shared by CLI and tests. */
@@ -153,8 +155,20 @@ function applyDynamicCombos(id: string, workflow: UiWorkflow, graph: ApiGraph,):
 /** Bind `{{prompt}}` on graphs whose UI save has no `[p]` mark for it. */
 function applyPromptBindings(id: string, graph: ApiGraph,): ApiGraph {
   const overrides = new Map<string, Record<string, unknown>>();
-  for (const nodeId of PROMPT_BINDINGS[id] ?? []) {
-    overrides.set(nodeId, { prompt: "{{prompt}}", },);
+  for (const [nodeId, fields,] of Object.entries(PROMPT_BINDINGS[id] ?? {},)) {
+    overrides.set(nodeId, Object.fromEntries(fields.map((field,) => [field, "{{prompt}}",]),),);
+  }
+  return overrides.size === 0 ? graph : applyNodeOverrides(graph, overrides,);
+}
+
+/** ponytail: UI saves carry a literal attention string; per-class map if more appear. */
+function bindAttentionLiterals(graph: ApiGraph,): ApiGraph {
+  const overrides = new Map<string, Record<string, unknown>>();
+  for (const [nodeId, node,] of Object.entries(graph,)) {
+    const inputs = node.inputs as Record<string, unknown> | undefined;
+    if (inputs?.attention === "comfy kitchen attention") {
+      overrides.set(nodeId, { attention: "{{attention}}", },);
+    }
   }
   return overrides.size === 0 ? graph : applyNodeOverrides(graph, overrides,);
 }
@@ -170,6 +184,10 @@ export function buildWorkflowGraph(
   let graph = applyDerived(converted, derived.overrides,);
   graph = applyDynamicCombos(id, workflow, graph,);
   graph = applyPromptBindings(id, graph,);
+  graph = bindAttentionLiterals(graph,);
+  // ponytail: operator export carries an unwired ImageCompare node; drop it
+  // here only. Upgrade to a per-graph dead-node allowlist if another appears.
+  if (id === "minimax-h3-image-image-edit") { delete (graph as unknown as Record<string, unknown>)["62"]; }
   const titled: ApiGraph = {};
   for (const [nodeId, node,] of Object.entries(graph,)) {
     titled[nodeId] = {
@@ -209,7 +227,7 @@ interface CliArgs {
 }
 
 /** Parse the two build-time knobs; both default to repo paths. */
-export function parseArgs(argv: readonly string[],): CliArgs {
+function parseArgs(argv: readonly string[],): CliArgs {
   let outDir = DEFAULT_OUT_DIR;
   let overlayPath = DEFAULT_OVERLAY;
   for (let index = 0; index < argv.length; index += 1) {

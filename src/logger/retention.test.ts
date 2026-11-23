@@ -8,7 +8,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { resolveLogRetentionDays, runLogRetentionCleanup, } from "./retention";
+import { LOG_RETENTION_DAYS_DEFAULT, resolveLogRetentionDays, runLogRetentionCleanup, } from "./retention";
 
 describe("runLogRetentionCleanup", () => {
   it("deletes entries older than the retention window and keeps fresh ones", async () => {
@@ -89,7 +89,8 @@ describe("resolveLogRetentionDays", () => {
   it("falls back to the seeded default on absent/invalid values", () => {
     expect(resolveLogRetentionDays(undefined,),).toBe(90,);
     expect(resolveLogRetentionDays("0",),).toBe(90,);
-    expect(resolveLogRetentionDays("bogus",),).toBe(90,);
+    expect(resolveLogRetentionDays("bogus",),).toBe(LOG_RETENTION_DAYS_DEFAULT,);
+    expect(LOG_RETENTION_DAYS_DEFAULT,).toBe(90,);
     expect(resolveLogRetentionDays("7",),).toBe(7,);
   });
 });

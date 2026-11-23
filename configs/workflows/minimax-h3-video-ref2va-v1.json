@@ -298,7 +298,7 @@
   },
   "142": {
     "inputs": {
-      "attention": "comfy kitchen attention",
+      "attention": "{{attention}}",
       "model": [
         "141",
         0

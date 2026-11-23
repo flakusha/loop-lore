@@ -28,6 +28,8 @@ describe("cron default jobs", () => {
     expect(jobs.map((j,) => j.name),).toEqual([
       "integrity.check",
       "telemetry.retention",
+      "chat.unread-reconcile",
+      "logs.retention",
       "chat.archive-expiration",
       "async.offload",
       "crypto.key-rotation-check",
