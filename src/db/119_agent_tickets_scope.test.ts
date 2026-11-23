@@ -173,4 +173,44 @@ describe("119_agent_tickets_scope", () => {
     expect(columnNames(),).not.toContain("expires_at",);
     expect(indexSql(),).toHaveLength(0,);
   });
+
+  test("up and down keep rsi_agent_worktrees rows across the rebuild", async () => {
+    raw.exec(WITH_EXPIRY_TABLE,);
+    raw.exec(`
+      CREATE TABLE rsi_agent_worktrees (
+        id text PRIMARY KEY,
+        token_id text NOT NULL REFERENCES agent_tokens(id) ON DELETE CASCADE,
+        branch text NOT NULL,
+        path text NOT NULL UNIQUE,
+        disk_bytes integer NOT NULL DEFAULT 0,
+        created_at text NOT NULL,
+        last_active_at text NOT NULL,
+        removed_at text
+      )
+    `,);
+
+    raw.exec(
+      "INSERT INTO agent_tokens (id, token_hash, scope, created_at) VALUES ('a', 'hash-a', 'agent:check', 'now')",
+    );
+
+    raw.exec(
+      "INSERT INTO rsi_agent_worktrees (id, token_id, branch, path, disk_bytes, created_at, last_active_at) VALUES ('w1', 'a', 'feature/x', 'tree/x', 42, 'now', 'now')",
+    );
+
+    const migrations = await getMigrationFiles();
+    const migration = migrations[MIGRATION];
+    expect(migration,).toBeDefined();
+
+    const registryRows = (): unknown[] =>
+      raw.query("SELECT id, token_id, branch, disk_bytes FROM rsi_agent_worktrees",).all();
+
+    const expected = [{ id: "w1", token_id: "a", branch: "feature/x", disk_bytes: 42, },];
+
+    await migration!.up(db,);
+    expect(registryRows(),).toEqual(expected,);
+
+    await migration!.down!(db,);
+    expect(registryRows(),).toEqual(expected,);
+    expect(raw.query("PRAGMA foreign_key_check",).all(),).toEqual([],);
+  });
 });

@@ -33,8 +33,32 @@ async function hasExpiresAt(database: Kysely<unknown>,): Promise<boolean> {
   return rows.rows.some((row,) => row.name === "expires_at");
 }
 
+/**
+ * `rsi_agent_worktrees.token_id` has ON DELETE CASCADE, so DROP TABLE below
+ * would silently delete the registry. Snapshot it before the rebuild (022
+ * precedent) and restore it afterwards.
+ */
+async function snapshotAgentWorktrees(database: Kysely<unknown>,): Promise<boolean> {
+  const rows = await sql<{ name: string }>`
+    SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'rsi_agent_worktrees'
+  `.execute(database,);
+
+  if (rows.rows.length === 0) { return false; }
+
+  await sql`DROP TABLE IF EXISTS temp.rsi_agent_worktrees_119_snapshot`.execute(database,);
+  await sql`CREATE TEMP TABLE rsi_agent_worktrees_119_snapshot AS SELECT * FROM rsi_agent_worktrees`.execute(database,);
+  return true;
+}
+
+async function restoreAgentWorktrees(database: Kysely<unknown>, snapshotted: boolean,): Promise<void> {
+  if (!snapshotted) { return; }
+  await sql`INSERT INTO rsi_agent_worktrees SELECT * FROM rsi_agent_worktrees_119_snapshot`.execute(database,);
+  await sql`DROP TABLE rsi_agent_worktrees_119_snapshot`.execute(database,);
+}
+
 export async function up(database: Kysely<unknown>,): Promise<void> {
   const carriesExpiresAt = await hasExpiresAt(database,);
+  const registrySnapshot = await snapshotAgentWorktrees(database,);
 
   await database.schema
     .createTable("agent_tokens_new",)
@@ -65,6 +89,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema.dropTable("agent_tokens",).execute();
   await database.schema.alterTable("agent_tokens_new",).renameTo("agent_tokens",).execute();
+  await restoreAgentWorktrees(database, registrySnapshot,);
 
   if (carriesExpiresAt) {
     await sql`
@@ -86,6 +111,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   }
 
   const carriesExpiresAt = await hasExpiresAt(database,);
+  const registrySnapshot = await snapshotAgentWorktrees(database,);
 
   await database.schema
     .createTable("agent_tokens_old",)
@@ -116,6 +142,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema.dropTable("agent_tokens",).execute();
   await database.schema.alterTable("agent_tokens_old",).renameTo("agent_tokens",).execute();
+  await restoreAgentWorktrees(database, registrySnapshot,);
 
   if (carriesExpiresAt) {
     await sql`
