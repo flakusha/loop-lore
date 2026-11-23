@@ -2,17 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 087 — `chat_owners` co-owners table + creator backfill
- * (TASK-chat-owners-schema-and-backfill, epic-chat-multi-ownership).
- *
- * Pins the ticket ACs directly: backfill exactness (one row per chat,
- * user = created_by, granted_by null), UNIQUE(chat_id, user_id)
- * enforcement at the database, the reason ≤ 500 CHECK, FK cascades, and
- * `down()` restoring the pre-087 shape (no table, backfilled rows gone).
- *
- * Mirrors src/db/078_user_api_keys_unique.test.ts and, like it, lives in
- * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
- * colocated test as a migration).
+ * Final-schema oracle for `chat_owners` (owned by 005_chat in the consolidated
+ * migration chain): every chat is born with exactly one owner row, the
+ * (chat_id, user_id) UNIQUE constraint, the reason <= 500 CHECK, and the FK
+ * cascades.
  *
  * Parallel-safety contract: every test owns a private `:memory:` SQLite DB
  * from its own `createTestDb()` call (no shared handle, no fixed-path
@@ -24,13 +17,7 @@ import { type Kysely, sql, } from "kysely";
 
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/087_chat_owners";
 import type { DB, } from "./schema";
-
-const MIGRATION = "087_chat_owners";
-
-/** `up`/`down` are typed against the untyped handle the migrator passes them. */
-type UntypedDb = Kysely<unknown>;
 
 interface OwnerRow {
   chat_id: string;
@@ -54,20 +41,8 @@ async function ownerRows(db: Kysely<DB>,): Promise<OwnerRow[]> {
 }
 
 /**
- * @param db
- * @returns whether the chat_owners table exists in the schema
- */
-async function hasTable(db: Kysely<DB>,): Promise<boolean> {
-  const rows = await sql<{ name: string }>`
-    SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'chat_owners'
-  `.execute(db,);
-
-  return rows.rows.length > 0;
-}
-
-/**
  * Raw insert so the tests do not depend on the generated insert-helper
- * shape for the brand-new table.
+ * shape for the table.
  * @param db
  * @param chatId
  * @param userId
@@ -85,23 +60,17 @@ async function insertOwner(
   `.execute(db,);
 }
 
-describe(MIGRATION, () => {
-  test("backfills exactly one owners row per chat from chats.created_by", async () => {
+describe("chat_owners (final schema)", () => {
+  test("every chat has exactly one owners row from chats.created_by", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      // insertChats needs the table (it seeds the creator row), so build
-      // chats first, then drop to the pre-087 shape and let `up` backfill
-      // from chats.created_by alone.
+      // insertChats mirrors the production create path and seeds one owner row
+      // (the creator) per chat, with granted_by/reason unset.
       const u1 = await insertUsers(db, `co-u1-${crypto.randomUUID()}`, "U1",);
       const u2 = await insertUsers(db, `co-u2-${crypto.randomUUID()}`, "U2",);
       const c1 = await insertChats(db, "Chat One", u1,);
       const c2 = await insertChats(db, "Chat Two", u1,);
       const c3 = await insertChats(db, "Chat Three", u2,);
-
-      await down(db as unknown as UntypedDb,);
-      expect(await hasTable(db,),).toBe(false,);
-
-      await up(db as unknown as UntypedDb,);
 
       const byChat = (a: { chat_id: string }, b: { chat_id: string },) => a.chat_id.localeCompare(b.chat_id,);
       const rows = (await ownerRows(db,)).sort(byChat,);
@@ -205,27 +174,4 @@ describe(MIGRATION, () => {
       sqlite.close();
     }
   });
-
-  test("down() restores the pre-087 shape, backfilled rows included", async () => {
-    const { db, sqlite, } = await createTestDb();
-    try {
-      const u = await insertUsers(db, `co-down-${crypto.randomUUID()}`, "Down",);
-      await insertChats(db, "Down Chat", u,);
-
-      // Re-run 084 against this chat: down() first (pre-087 shape), then up()
-      // whose backfill creates exactly one row for it.
-      await down(db as unknown as UntypedDb,);
-      expect(await hasTable(db,),).toBe(false,);
-      await up(db as unknown as UntypedDb,);
-      expect((await ownerRows(db,)).length,).toBe(1,);
-
-      // down() again drops the table WITH the backfilled row — the pre-087
-      // shape is exactly "no table".
-      await down(db as unknown as UntypedDb,);
-      expect(await hasTable(db,),).toBe(false,);
-    } finally {
-      await db.destroy();
-      sqlite.close();
-    }
-  });
-},);
+});

@@ -2,19 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * 017 guard-trigger UPDATE twins.
+ * Guard-trigger UPDATE twins against the final consolidated schema.
  *
- * 003 (memory_audit_log.action) and 005 (world_lore confidence/distortion)
- * shipped BEFORE INSERT-only guards. 017 adds BEFORE UPDATE twins so an
- * UPDATE cannot move a row into a state INSERT would reject.
+ * The INSERT-only guards (memory_audit_log.action, world_lore
+ * confidence/distortion) and their BEFORE UPDATE twins are both present:
+ * 002_worlds owns the world_lore pairs, 003_actors owns the memory_audit pair.
+ * An UPDATE cannot move a row into a state INSERT would reject.
  *
- * Uses createTestDb (full chain, incl. 017) and the typed insert helpers.
+ * Uses createTestDb (full chain) and the typed insert helpers.
  */
 import { describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertMemoryAuditLog, insertUsers, insertWorldLoreEntries, insertWorlds, } from "../test-utils/insert-helpers";
 
-describe("017 guard-trigger UPDATE twins", () => {
+describe("guard-trigger UPDATE twins (final schema)", () => {
   test("UPDATE world_lore_entries confidence outside 0..100 aborts", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
@@ -78,19 +79,40 @@ describe("017 guard-trigger UPDATE twins", () => {
     }
   });
 
-  test("018 down() drops the UPDATE twins, up() restores them", async () => {
+  test("final DB keeps both the INSERT guards and their UPDATE twins", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      const userId = await insertUsers(db, `guard-u-${crypto.randomUUID()}`, "Guard",);
-      const worldId = await insertWorlds(db, userId, "Guard World",);
-      const loreId = await insertWorldLoreEntries(db, worldId, "lore",);
-      const m018 = await import("./migrations/018_guard_triggers_update_twins");
-      await m018.down(db as never,);
-      await db.updateTable("world_lore_entries",).set({ confidence: 999, },).where("id", "=", loreId,).execute();
-      await m018.up(db as never,);
-      await expect(
-        db.updateTable("world_lore_entries",).set({ confidence: 999, },).where("id", "=", loreId,).execute(),
-      ).rejects.toThrow(/confidence must be 0\.\.100/,);
+      const bodies = new Map(
+        (sqlite.query(`SELECT name, sql FROM sqlite_master WHERE type = 'trigger'`,).all() as {
+          name: string;
+          sql: string;
+        }[]).map((row,) => [row.name, row.sql,]),
+      );
+
+      const pairs = [
+        [
+          "world_lore_entries_confidence_check",
+          "world_lore_entries_confidence_check_update",
+          "world_lore_entries.confidence must be 0..100",
+        ],
+        [
+          "world_lore_entries_distortion_check",
+          "world_lore_entries_distortion_check_update",
+          "world_lore_entries.distortion_level must be 0..100",
+        ],
+        [
+          "memory_audit_log_action_check",
+          "memory_audit_log_action_check_update",
+          "memory_audit_log.action not in allowed enum",
+        ],
+      ] as const;
+
+      for (const [insert, update, message,] of pairs) {
+        expect(bodies.has(insert,), `${insert} missing`,).toBe(true,);
+        const twin = bodies.get(update,);
+        expect(twin, `${update} missing`,).toBeDefined();
+        expect(twin, `${update} body must mirror ${insert}`,).toContain(message,);
+      }
     } finally {
       await db.destroy();
       sqlite.close();

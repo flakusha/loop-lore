@@ -18,6 +18,22 @@ export interface TelemetryEvents {
   created_at: string;
 }
 
+// ── ranking_snapshots ────────────────────────────────────────────
+export interface RankingSnapshots {
+  id: Generated<string>;
+  source: string;
+  source_key: Generated<string>;
+  version: string;
+  checksum: string | null;
+  fetched_at: Generated<string>;
+  next_refresh_after: string;
+  row_count: number | null;
+  payload: Generated<string>;
+  status: Generated<string>;
+  last_error: string | null;
+  meta: Generated<string>;
+}
+
 // ── model_rankings ────────────────────────────────────────────
 export interface ModelRankings {
   id: Generated<string>;
@@ -35,20 +51,4 @@ export interface ModelRankings {
   expires_at: string | null;
   meta: Generated<string>;
   created_at: Generated<string>;
-}
-
-// ── ranking_snapshots ────────────────────────────────────────────
-export interface RankingSnapshots {
-  id: Generated<string>;
-  source: string;
-  source_key: Generated<string>;
-  version: string;
-  checksum: string | null;
-  fetched_at: Generated<string>;
-  next_refresh_after: string;
-  row_count: number | null;
-  payload: Generated<string>;
-  status: Generated<string>;
-  last_error: string | null;
-  meta: Generated<string>;
 }

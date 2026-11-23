@@ -48,16 +48,16 @@ describe("EncryptionLevel rename — direct contract", () => {
 // ── 2. Source-tree grep guard ──────────────────────────────────
 //
 // Re-read every `.ts` file under `src/` and assert none contains the
-// literal text `EncryptionLevel.Private`, except for the documented
-// exempt set (this test file itself uses the symbol intentionally;
-// migration 057 records the historical rename event in its docstring).
+// literal text `EncryptionLevel.Private`, except for this test file, which
+// uses the symbol intentionally. The retired 057 migration that recorded the
+// historical rename is gone from the 14-file baseline, so no migration file
+// is exempt any more.
 
 const SRC_ROOT = join(import.meta.dir, "..", "..",);
 
 // Static literal: use Record for the membership check.
 const EXEMPT_FILES: Record<string, true> = {
   [import.meta.path]: true,
-  [join(SRC_ROOT, "db/migrations/057_encryption_level_at_rest_rename.ts",)]: true,
 };
 
 /**

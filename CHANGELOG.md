@@ -7,6 +7,10 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ## [Unreleased]
 
+### Changed
+
+- **Database migrations compacted into a 14-file pre-release baseline** — the 122 legacy migrations are replaced by 14 final-form per-domain files with unchanged schema; local databases must be recreated (export → `db:reinit` → import), no compatibility shim.
+
 ### Added
 
 - **Harness turn queue is controllable from the admin UI** — the queue tab lists turns, enqueues a single profile/prompt/chat/actor turn and cancels only `queued` turns through the existing admin-gated routes; running turns stay uncancellable and 401/403 render as messages.

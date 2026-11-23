@@ -34,17 +34,15 @@ describe("parseColumns", () => {
 });
 
 describe("listMigrationFiles", () => {
-  test("returns the whole append-only chain, collapsed init first", () => {
+  test("returns the whole 14-file baseline, 001_core first", () => {
     const dir = resolve(import.meta.dir, "../../src/db/migrations",);
     const files = listMigrationFiles(dir,);
-    // The chain is append-only (src/db/migrations/README.md): one collapsed
-    // base plus numbered increments, applied in filename order. Asserting a
-    // count here would just churn on every new migration — assert the parts
-    // that are actually load-bearing for the generators that consume this:
-    // the base is present, ordering is stable, and nothing non-migration is
-    // swept in (README.md must not appear).
+    // The consolidated baseline (src/db/migrations/README.md) is a set of
+    // final-form files applied in filename order. Asserting a count here would
+    // churn on every new migration — assert what the generators consume: the
+    // base is present, ordering is stable, and no non-migration is swept in.
     expect(files.length,).toBeGreaterThan(1,);
-    expect(files[0],).toMatch(/001_init\.ts$/,);
+    expect(files[0],).toMatch(/001_core\.ts$/,);
     expect(files.some((f,) => f.endsWith("README.md",)),).toBe(false,);
     const suffixes = files.map((f,) => f.slice(dir.length + 1,));
     expect(suffixes,).toEqual([...suffixes,].sort(),);
@@ -55,7 +53,7 @@ describe("parseMigration", () => {
   /**
    * The alter/rename/drop branches. The file header says parseMigration is
    * "exercised end-to-end by check-db-schemas.ts / schema-schema.test.ts",
-   * but that only ever parses 001_init.ts, which is pure createTable — so
+   * but that only ever parses 001_core.ts, which is pure createTable — so
    * every branch below went unmeasured until these landed.
    *
    * Resource contract: each test writes one fixture into its own
@@ -78,12 +76,14 @@ describe("parseMigration", () => {
     }
   }
 
-  test("parses the collapsed init into creates", () => {
-    const file = resolve(import.meta.dir, "../../src/db/migrations/001_init.ts",);
-    const { creates, } = parseMigration(file,);
-    expect(creates.size,).toBeGreaterThan(100,);
+  test("parses the consolidated baseline into creates", () => {
+    const dir = resolve(import.meta.dir, "../../src/db/migrations",);
+    const creates = new Map(
+      listMigrationFiles(dir,).flatMap((file,) => [...parseMigration(file,).creates.entries(),]),
+    );
+    expect(creates.size,).toBe(252,);
     const users = creates.get("users",);
-    expect(users?.createdBy,).toBe("001_init.ts",);
+    expect(users?.createdBy,).toBe("001_core.ts",);
     expect(users?.columns.id?.primaryKey,).toBe(true,);
   });
 
@@ -112,9 +112,9 @@ describe("parseMigration", () => {
 
   test("a bare renameColumn with no nearby addColumn still reports the pair", () => {
     // The case the `renames` channel exists for. A forward rename migration
-    // (057_column_name_disambiguation) states every rename as a literal
-    // `alterTable(t).renameColumn(a, b)` with no addColumn to supply a type,
-    // so the 500-char type lookup finds nothing and `alters` stays empty.
+    // states every rename as a literal `alterTable(t).renameColumn(a, b)` with
+    // no addColumn to supply a type, so the 500-char type lookup finds nothing
+    // and `alters` stays empty.
     // Without `renames`, the generators would see the old name dropped and no
     // new name at all — silently deleting the column from every artifact.
     withMigration(
@@ -146,19 +146,51 @@ describe("parseMigration", () => {
     );
   });
 
-  test("the real 057 migration renames every column it documents", () => {
-    // Ties the parser branch back to the migration that relies on it. If that
-    // file ever stops parsing its own renames, codegen loses columns silently.
-    const file = resolve(import.meta.dir, "../../src/db/migrations/057_column_name_disambiguation.ts",);
-    const { renames, } = parseMigration(file,);
-    const flat = [...renames.values(),].flat();
-    expect(flat.length, "057 should carry 24 renames",).toBe(24,);
-    expect(renames.get("users",),).toEqual([
-      ["format_version", "row_version",],
-      ["password_hash", "secret_hash",],
-    ],);
-    expect(renames.get("message_search_tokens",),).toEqual([["token", "term",],],);
-    expect(renames.get("character_avatar_config",),).toEqual([["fallback_chain", "fallback_order",],],);
+  test("a 24-rename fixture keeps every documented column", () => {
+    // The retired 057 file is gone from the 14-file baseline. The renames
+    // channel is still load-bearing for generators, so exercise it with the
+    // same 24 literal renames through a scratch fixture.
+    const pairs: [string, string, string,][] = [
+      ["users", "format_version", "row_version",],
+      ["users", "password_hash", "secret_hash",],
+      ["sessions", "token_hash", "secret_hash",],
+      ["actors", "format_version", "row_version",],
+      ["messages", "format_version", "row_version",],
+      ["personas", "format_version", "row_version",],
+      ["message_search_tokens", "token", "term",],
+      ["character_avatar_config", "fallback_chain", "fallback_order",],
+      ["request_results", "data_version", "content_version",],
+      ["assets", "data_version", "content_version",],
+      ["worlds", "data_version", "content_version",],
+      ["characters", "data_version", "content_version",],
+      ["character_stats", "data_version", "content_version",],
+      ["chats", "data_version", "content_version",],
+      ["messages", "data_version", "content_version",],
+      ["items", "data_version", "content_version",],
+      ["world_lore_entries", "data_version", "content_version",],
+      ["actor_lore_entries", "data_version", "content_version",],
+      ["quests", "data_version", "content_version",],
+      ["locations", "data_version", "content_version",],
+      ["blog_posts", "data_version", "content_version",],
+      ["shadow_notes", "data_version", "content_version",],
+      ["whitenotes", "data_version", "content_version",],
+      ["crafting_recipes", "data_version", "content_version",],
+    ];
+    withMigration(
+      pairs.map(([table, from, to,],) =>
+        `await db.schema.alterTable("${table}",).renameColumn("${from}", "${to}",).execute();`
+      ).join("\n",),
+      (file,) => {
+        const { renames, } = parseMigration(file,);
+        expect([...renames.values(),].flat(), "24 renames",).toHaveLength(24,);
+        expect(renames.get("users",),).toEqual([
+          ["format_version", "row_version",],
+          ["password_hash", "secret_hash",],
+        ],);
+        expect(renames.get("message_search_tokens",),).toEqual([["token", "term",],],);
+        expect(renames.get("character_avatar_config",),).toEqual([["fallback_chain", "fallback_order",],],);
+      },
+    );
   });
 
   test("renameTo marks the table it renamed away from as dropped", () => {

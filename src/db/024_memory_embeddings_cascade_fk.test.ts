@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Deleting a memory must delete its vector row. Before 024 there was no FK,
- * `deleteEmbedding()` was only ever called from its own test, and every deleted
- * memory leaked a 1536-dim blob.
+ * Memory-embedding FK cascade oracle against the final consolidated schema.
+ * `memory_embeddings.memory_id` is a FK to `actor_memories.id` with ON DELETE
+ * CASCADE (owned by 003_actors), so deleting a memory removes its vector row.
  *
  * The interesting cases are the ones a per-call-site fix would miss: the chat
  * delete paths remove memories by `source_chat_id`, not by `memory_id`.
@@ -13,7 +13,6 @@ import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActorMemories, insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
-import { up, } from "./migrations/024_memory_embeddings_cascade_fk";
 import type { DB, } from "./schema";
 
 const vec = new Uint8Array(1536 * 4,).fill(7,);
@@ -92,45 +91,32 @@ describe("024_memory_embeddings_cascade_fk", () => {
     }
   });
 
-  // The migration is also a one-time cleanup: databases upgrading from the
-  // pre-024 shape already hold vectors whose memory is long gone, and there is
-  // no parent row to cascade from. Those rows must be dropped by the rebuild,
-  // not carried into the FK-enforced table where they would fail the constraint.
-  //
-  // This calls `up` directly rather than going through a Migrator: a
-  // migrateDown() would run 024's own `down`, which drops the table and so
-  // would clear the planted orphan before `up` ever saw it -- the assertion
-  // would pass no matter what `up` did with orphans.
-  test("up drops pre-existing orphans instead of carrying them into the FK table", async () => {
+  // In the final schema the FK is in place from table creation, so no orphan
+  // row can exist. Assert the constraint directly: an embedding with no parent
+  // memory is rejected, and the FK cascades on delete.
+  test("final schema enforces the memory→embedding FK (no orphans)", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      // Back to the pre-024 shape (no FK) and plant a row with no parent.
-      sqlite.run("DROP TABLE memory_embeddings",);
-      sqlite.run(
-        `CREATE TABLE memory_embeddings (
-           memory_id TEXT PRIMARY KEY,
-           model TEXT NOT NULL DEFAULT 'nomic-embed-text',
-           dimensions INTEGER NOT NULL DEFAULT 1536,
-           vector_blob BLOB NOT NULL,
-           created_at INTEGER NOT NULL
-         )`,
-      );
+      const fks = sqlite.query(`PRAGMA foreign_key_list(memory_embeddings)`,).all() as {
+        table: string;
+        from: string;
+        to: string;
+        on_delete: string;
+      }[];
 
-      sqlite.run(
-        "INSERT INTO memory_embeddings (memory_id, vector_blob, created_at) VALUES (?, ?, ?)",
-        ["orphan-mem", vec, Date.now(),],
-      );
+      expect(fks,).toEqual([
+        expect.objectContaining({
+          table: "actor_memories",
+          from: "memory_id",
+          to: "id",
+          on_delete: "CASCADE",
+        },),
+      ],);
 
-      expect(await embeddingIds(db,),).toEqual(["orphan-mem",],);
-
-      await up(db as unknown as Kysely<unknown>,);
-
-      // Gone, and the rebuilt table enforces the FK.
-      expect(await embeddingIds(db,),).toEqual([],);
       expect(() => {
         sqlite.run(
           "INSERT INTO memory_embeddings (memory_id, vector_blob, created_at) VALUES (?, ?, ?)",
-          ["orphan-mem-2", vec, Date.now(),],
+          ["orphan-mem", vec, Date.now(),],
         );
       },).toThrow();
     } finally {

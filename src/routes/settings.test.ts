@@ -10,10 +10,17 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { Kysely, } from "kysely";
 import { createSqliteDialect, } from "../db/index";
-import { up as migrate, } from "../db/migrations/001_init";
+import { getMigrationFiles, } from "../db/migrate";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { settingsRoutes, } from "./settings";
+
+/** Apply the consolidated 14-file baseline to the in-memory DB. */
+async function applyBaseline(database: Kysely<unknown>,): Promise<void> {
+  for (const migration of Object.values(await getMigrationFiles(),)) {
+    await migration.up(database,);
+  }
+}
 
 const TEST_USER_ID = uid();
 
@@ -41,7 +48,7 @@ describe("GET /api/settings", () => {
 
   beforeAll(async () => {
     db = createTestDb();
-    await migrate(db as unknown as Kysely<unknown>,);
+    await applyBaseline(db as unknown as Kysely<unknown>,);
     await db
       .insertInto("users",)
       .values({
@@ -111,7 +118,7 @@ describe("PATCH /api/settings", () => {
 
   beforeAll(async () => {
     db = createTestDb();
-    await migrate(db as unknown as Kysely<unknown>,);
+    await applyBaseline(db as unknown as Kysely<unknown>,);
     await db
       .insertInto("users",)
       .values({
@@ -318,7 +325,7 @@ describe("GET /api/settings/export", () => {
 
   beforeAll(async () => {
     db = createTestDb();
-    await migrate(db as unknown as Kysely<unknown>,);
+    await applyBaseline(db as unknown as Kysely<unknown>,);
     await db
       .insertInto("users",)
       .values({

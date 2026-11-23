@@ -18,8 +18,8 @@
  * check-migration-ordering.test.ts; this gate covers only what a sort cannot
  * fix — stray files and ambiguous prefixes.
  *
- * Post-collapse (DB v0), migrations/ holds a single 001_init.ts plus any
- * future NNN_*.ts appends; no parts/ subdirectory exists.
+ * The S2 baseline holds 001_core.ts through 014_support_singletons.ts plus
+ * later NNN_*.ts appends; no parts/ subdirectory exists.
  *
  * BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
  *

@@ -3,23 +3,18 @@
 
 /**
  * Fractal-locations invariants tests — DB triggers + service-layer rules
- * established in 013_locations_fractal.ts (INSERT guards) and
- * 106_locations_integrity.ts (UPDATE twins + depth ceiling). Each invariant
- * below has an explicit "what happens if it's violated" assertion so a
- * regression to the underlying trigger or service code surfaces immediately.
+ * owned by 011_locations_factions_npc in the consolidated migration chain
+ * (INSERT guards, UPDATE twins, depth ceiling). Each invariant below has an
+ * explicit "what happens if it's violated" assertion so a regression to the
+ * underlying trigger or service code surfaces immediately.
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { type Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { ActorPositionService, } from "../locations/positions";
 import { TravelRouteService, } from "../locations/routes";
 import { LocationTreeService, } from "../locations/tree";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, insertWorlds, } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/106_locations_integrity";
-
-/** `up`/`down` are typed against the untyped handle the migrator passes them. */
-type UntypedDb = Kysely<unknown>;
 
 let testDb: TestDb;
 const OWNER = "fractal-inv-owner";
@@ -288,18 +283,8 @@ describe("fractal locations invariants", () => {
     expect(paths.get(gc,),).toBe(`/${r2}/${child}/${gc}/`,);
   });
 
-  test("migration 106: up creates and down removes exactly its triggers", async () => {
+  test("final DB carries exactly the four integrity triggers", () => {
     const expected = [...NEW_TRIGGERS,].sort();
-    const { db, sqlite, } = await createTestDb();
-    try {
-      expect(integrityTriggers(sqlite,),).toEqual(expected,);
-      await down(db as unknown as UntypedDb,);
-      expect(integrityTriggers(sqlite,),).toEqual([],);
-      await up(db as unknown as UntypedDb,);
-      expect(integrityTriggers(sqlite,),).toEqual(expected,);
-    } finally {
-      await db.destroy();
-      sqlite.close();
-    }
+    expect(integrityTriggers(testDb.sqlite,),).toEqual(expected,);
   });
 });

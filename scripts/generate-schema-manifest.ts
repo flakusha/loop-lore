@@ -341,7 +341,7 @@ function generateManifest(
 
 function main() {
   const allFiles = listMigrationFiles(MIGRATIONS_DIR,);
-  console.log(`Found ${allFiles.length} migration files (migrations + parts)`,);
+  console.log(`Found ${allFiles.length} migration files`,);
 
   const allTables = new Map<string, TableDef>();
   const allAlters = new Map<string, Record<string, ColumnDef>>();

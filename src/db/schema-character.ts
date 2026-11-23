@@ -34,6 +34,31 @@ export interface WorldAvatarConfig {
   outfit_bindings: string | null;
 }
 
+// ── emotions ────────────────────────────────────────────
+export interface Emotions {
+  id: string;
+  name: string;
+  display_name: string;
+  category: string;
+  valence: number;
+  arousal: number;
+  icon: string | null;
+  created_at: string;
+}
+
+// ── mood_events ────────────────────────────────────────────
+export interface MoodEvents {
+  id: string;
+  actor_id: string;
+  world_id: string | null;
+  event_type: string;
+  happiness_delta: number;
+  mood_override: string | null;
+  source: string;
+  source_id: string | null;
+  created_at: string;
+}
+
 // ── admin_character_overrides ────────────────────────────────────────────
 export interface AdminCharacterOverrides {
   id: string;
@@ -310,29 +335,18 @@ export interface CharacterWorldTraits {
   drift_count: Generated<number>;
 }
 
-// ── emotions ────────────────────────────────────────────
-export interface Emotions {
-  id: string;
-  name: string;
-  display_name: string;
-  category: string;
-  valence: number;
-  arousal: number;
-  icon: string | null;
-  created_at: string;
-}
-
-// ── mood_events ────────────────────────────────────────────
-export interface MoodEvents {
+// ── character_license_history ────────────────────────────────────────────
+export interface CharacterLicenseHistory {
   id: string;
   actor_id: string;
-  world_id: string | null;
-  event_type: string;
-  happiness_delta: number;
-  mood_override: string | null;
-  source: string;
-  source_id: string | null;
-  created_at: string;
+  license_type: string;
+  custom_license_text: string | null;
+  attribution: string | null;
+  allow_derivatives: number;
+  allow_commercial: number;
+  share_alike: number;
+  changed_by: string;
+  created_at: Generated<string>;
 }
 
 // ── location_nsfw_config ────────────────────────────────────────────
@@ -364,18 +378,4 @@ export interface NsfwEncounters {
   status: Generated<NsfwEncounterStatus>;
   created_at: string;
   updated_at: string;
-}
-
-// ── character_license_history ────────────────────────────────────────────
-export interface CharacterLicenseHistory {
-  id: string;
-  actor_id: string;
-  license_type: string;
-  custom_license_text: string | null;
-  attribution: string | null;
-  allow_derivatives: number;
-  allow_commercial: number;
-  share_alike: number;
-  changed_by: string;
-  created_at: Generated<string>;
 }

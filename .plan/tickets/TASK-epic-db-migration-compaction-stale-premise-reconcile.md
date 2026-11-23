@@ -3,42 +3,36 @@
 
 # TASK: epic-db-migration-compaction describes a tree that no longer exists
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-db-migration-compaction
 **Tags:** db, migrations, plan-hygiene, stale-doc
 
-**Summary:** The compaction epic's "Current State" section is a snapshot of a repo state that was subsequently changed; every number, path, and both named defect classes are now wrong. A ticket that a future agent executes would delete live migration history.
-**Context:** Found while reviewing the DB-split epics. AGENTS.md ranks `src/` above `docs/spec/*`; `.plan/epics/` is closer to the docs band, so a stale epic is a live trap for anyone picking up the compaction work.
+**Summary:** Reconcile the compaction epic's stale tree snapshot to the operator-approved 14-file S2 baseline (122 legacy migrations → `001_core.ts` … `014_support_singletons.ts`), preserving the durable textual-generator constraint.
+**Context:** `.plan/epics/` previously described a 79-file/`parts/` tree that no longer existed. The approved decision replaces append-only history with a disposable-DB S2 baseline; local DBs export → `db:reinit` → import, no shim.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
 
-## Stale Claims (verified 2026-09-28)
+## Reconciled claims (2026-11-23)
 
-| Epic claim | Current state |
+| Old claim | Approved state |
 | --- | --- |
-| "79 top-level migration files ... `001_init.ts` ... `076_drop_chats_visual_novel.ts`" | 23 top-level files, ending at `022_prompt_templates_workflow_columns.ts` |
-| "plus `parts/` (9 files)", "orphan `parts/009`" | `src/db/migrations/parts/` does not exist |
-| "mirror the existing `parts/001-008` idiom", "preserve the generators' `parts/` parse contract" | `scripts/lib/migration-parser.ts:188-193` `listMigrationFiles()` is top-level only; no `parts/` contract to preserve |
-| Defect class 1: "10 migrations bake `new Date().toISOString()`", lists migrations `029`-`044` | zero occurrences of `toISOString` in `src/db/migrations/`; those file numbers do not exist |
-| Defect class 2: "orphan `parts/009_encryption_level_default.ts` meant to change `'public'`->`'none'`" | `001_init.ts:1767` already has `.defaultTo("none",)` |
-| "the schema generators extract the `up()` body via non-greedy regex `...Promise<void>\s*\{([\s\S]*?)\n\}`" | correct, and load-bearing: `scripts/lib/migration-parser.ts:52-53` |
-| "Delete 78 superseded top-level files" | would delete shipped, applied migrations -> `assertMigrationsNotStale` (`src/db/migrate.ts:94`) fail-fasts on every existing DB |
-
-The regex constraint is the one durable finding and should survive into the rewritten epic. The rest is a snapshot of a tree that has since been compacted by other means.
+| 79 files / `001_init.ts` / `076_drop_chats_visual_novel.ts` | 122 files on dev ending `122_unread_visible_counters.ts`; replaced by 14 final-form files |
+| `parts/` tree and its generator parse contract | No `parts/` directory; `listMigrationFiles()` is top-level only; one inline create per table is mandatory |
+| JS-injected `new Date().toISOString()` defaults, `chats.encryption_level` `'public'` | Historically stale; final DDL is derived from the retired chain and verified by the canonical golden-dump oracle |
+| "delete shipped migrations" illegal under append-only | Operator-approved S2 baseline: local DBs disposable, no compatibility shim, `assertMigrationsNotStale` recovery is recreate |
+| Textual `up()` extraction via non-greedy regex | Durable and load-bearing — kept in the rewritten epic |
 
 ## Fix Shape
 
-Rewrite `epic-db-migration-compaction.md`'s Current State and Required Code/Test Changes against the real tree, and re-decide the epic: the append-only policy (`src/db/migrations/README.md`) plus `assertMigrationsNotStale` mean "delete 78 files" is not a legal option for shipped migrations without an explicit, tested data-migration story for every live database. If the remaining value is only "fewer files to read", say so; if it is none, close the epic with its one reusable finding preserved.
-
-Do not touch migrations themselves in this ticket - it is a plan-doc reconciliation.
+The epic now records the 14-file baseline, one owner per table, FK-safe gapless prefixes, inline DSL only and the canonical equivalence oracle. Migration-coupled tests assert final-shape behavior. No plan doc instructs deleting applied files without the disposable-DB contract.
 
 ## Acceptance Criteria
 
-- [ ] `epic-db-migration-compaction.md` current-state numbers and paths match the tree.
-- [ ] Both named defect classes either re-confirmed against `src/` or marked resolved with evidence.
-- [ ] The generator-regex constraint retained (it is true and constrains any future fold).
-- [ ] Epic re-decided: proceed with a legal plan, or close with the finding preserved.
+- [x] `epic-db-migration-compaction.md` current-state numbers and paths match the 14-file baseline.
+- [x] Named defect classes resolved with the canonical golden-dump comparison (final DDL matches the retired chain).
+- [x] Generator-regex constraint retained (it is true and constrains any future fold).
+- [x] Epic re-decided: proceed with the legal disposable-DB plan.
 - [ ] `bun run plan:validate` green.
 
 ## Related

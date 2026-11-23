@@ -122,38 +122,6 @@ export interface MetaProgression {
   updated_at: Generated<string>;
 }
 
-// ── model_capabilities ────────────────────────────────────────────
-export interface ModelCapabilities {
-  id: string;
-  provider_id: string;
-  model_id: string;
-  context_window: number | null;
-  max_output: number | null;
-  supports_tools: number | null;
-  supports_vision: number | null;
-  supports_thinking: number | null;
-  modalities: string | null;
-  param_size: string | null;
-  owned_by: string | null;
-  user_override: Generated<number>;
-  notes: string | null;
-  last_seen: string;
-  created_at: string;
-  updated_at: string;
-  native_locale: string | null;
-}
-
-// ── model_role_overrides ────────────────────────────────────────────
-export interface ModelRoleOverrides {
-  role: ModelRole;
-  provider: string;
-  model: string;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  temperature: number | null;
-  max_tokens: number | null;
-}
-
 // ── notifications ────────────────────────────────────────────
 export interface Notifications {
   id: string;
@@ -165,18 +133,6 @@ export interface Notifications {
   read: Generated<NotificationStatus>;
   data: string | null;
   created_at: Generated<string>;
-}
-
-// ── plugin_state ────────────────────────────────────────────
-export interface PluginState {
-  name: string;
-  status: Generated<PluginStatus>;
-  enabled_at: string | null;
-  disabled_at: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  config_json: string | null;
-  origin: string | null;
 }
 
 // ── request_results ────────────────────────────────────────────
@@ -259,19 +215,219 @@ export interface Users {
   encryption_secret: string | null;
 }
 
-// ── asset_transforms ────────────────────────────────────────────
-export interface AssetTransforms {
-  asset_id: string;
-  context: TransformContext;
-  crop_x: number | null;
-  crop_y: number | null;
-  crop_w: number | null;
-  crop_h: number | null;
-  zoom: number | null;
-  rotation: number | null;
-  focal_point_x: number | null;
-  focal_point_y: number | null;
+// ── activitypub_actor_keys ────────────────────────────────────────────
+export interface ActivitypubActorKeys {
+  id: string;
+  actor_id: string;
+  key_id: string;
+  public_jwk: string;
+  encrypted_private_jwk: string;
+  status: Generated<string>;
+  rotated_at: string | null;
+  created_at: string;
+  expires_at: string | null;
+}
+
+// ── growth_log ────────────────────────────────────────────
+export interface GrowthLog {
+  id: string;
+  actor_id: string;
+  axis: string;
+  event_type: string;
+  status: Generated<string>;
+  subject_kind: string | null;
+  subject_id: string | null;
+  before_json: string | null;
+  after_json: string | null;
+  reason: Generated<string>;
+  source_event_id: string | null;
+  recorded_at: string;
+  confirmed_at: string | null;
+  confirmed_by: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+// ── proactive_messaging_config ────────────────────────────────────────────
+export interface ProactiveMessagingConfig {
+  id: string;
+  chat_id: string;
+  actor_id: string;
+  frequency: Generated<string>;
+  quiet_hours_start: string | null;
+  quiet_hours_end: string | null;
+  enabled: Generated<number>;
+  last_proactive_at: string | null;
+  backoff_count: Generated<number>;
+  config_json: Generated<string>;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
+}
+
+// ── task_dependencies ────────────────────────────────────────────
+export interface TaskDependencies {
+  task_id: string;
+  depends_on_task_id: string;
+  on_failure: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── scheduled_messages ────────────────────────────────────────────
+export interface ScheduledMessages {
+  id: string;
+  chat_id: string;
+  author_id: string;
+  body: string;
+  send_at: string;
+  status: Generated<string>;
+}
+
+// ── message_reminders ────────────────────────────────────────────
+export interface MessageReminders {
+  id: string;
+  message_id: string;
+  user_id: string;
+  remind_at: string;
+}
+
+// ── plan_items ────────────────────────────────────────────
+export interface PlanItems {
+  id: string;
+  owner_id: string;
+  chat_id: string | null;
+  title: string;
+  state: Generated<string>;
+  kind: Generated<string>;
+  position: Generated<number>;
+  parent_id: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── plan_links ────────────────────────────────────────────
+export interface PlanLinks {
+  from_id: string;
+  to_id: string;
+  relation: string;
+  created_at: Generated<string>;
+}
+
+// ── backup_records ────────────────────────────────────────────
+export interface BackupRecords {
+  id: string;
+  resource_type: string;
+  owner_id: string;
+  content_hash: string;
+  server_hash: string | null;
+  payload: string;
+  version: Generated<number>;
+  created_at: Generated<string>;
+  storage_quota_bytes: Generated<number>;
+}
+
+// ── tool_call_audit ────────────────────────────────────────────
+export interface ToolCallAudit {
+  id: Generated<string>;
+  tool: string;
+  chat_id: Generated<string>;
+  user_id: Generated<string>;
+  verdict: string;
+  rationale: Generated<string>;
+  escalation_attempt: Generated<number>;
+  required_role: string | null;
+  tags: Generated<string>;
+  duration_ms: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── integration_tokens ────────────────────────────────────────────
+export interface IntegrationTokens {
+  id: string;
+  name: string;
+  token_hash: string;
+  scopes: IntegrationTokenScope;
+  issuer_admin_user_id: string;
+  created_at: Generated<string>;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  expires_at: string | null;
+}
+
+// ── harness_queue_turns ────────────────────────────────────────────
+export interface HarnessQueueTurns {
+  id: string;
+  batch_id: string;
+  profile: string;
+  prompt: string;
+  status: Generated<HarnessQueueTurnStatus>;
+  chat_id: string;
+  actor_id: string;
+  requested_by: string;
+  requested_role: string | null;
+  turn_key: string | null;
+  attempts: Generated<number>;
+  result_message_id: string | null;
+  error_code: HarnessQueueErrorCode | null;
+  error_message: string | null;
+  created_at: Generated<string>;
+  started_at: string | null;
+  finished_at: string | null;
+  owner_slug: string | null;
+}
+
+// ── auth_factors ────────────────────────────────────────────
+export interface AuthFactors {
+  id: string;
+  user_id: string;
+  kind: FactorKind;
+  created_at: number;
+  target: string | null;
+  verified_at: number | null;
+}
+
+// ── auth_challenges ────────────────────────────────────────────
+export interface AuthChallenges {
+  id: string;
+  user_id: string;
+  factor_id: string;
+  purpose: ChallengePurpose;
+  nonce_hash: string;
+  expires_at: number;
+  attempts: Generated<number>;
+  consumed: Generated<number>;
+  created_at: number;
+}
+
+// ── tooling_reports ────────────────────────────────────────────
+export interface ToolingReports {
+  id: Generated<string>;
+  ts: Generated<string>;
+  source: string;
+  category: string;
+  tool: Generated<string>;
+  attempt: number | null;
+  max_attempts: number | null;
+  detail: Generated<string>;
+  duration_ms: number | null;
+  profile: string | null;
+  branch: string | null;
+  git_sha: string | null;
+  instance_id: Generated<string>;
+  dedupe_key: string | null;
+  count: Generated<number>;
+  last_seen: string | null;
+}
+
+// ── watchdog_events ────────────────────────────────────────────
+export interface WatchdogEvents {
+  id: Generated<number>;
+  event_kind: string;
+  decision_kind: string;
+  at_ms: number;
+  created_at: Generated<string>;
+  reason: string | null;
+  misses: number | null;
+  crashes: number | null;
 }
 
 // ── world_invites ────────────────────────────────────────────
@@ -332,17 +488,125 @@ export interface WorldEventSteerings {
   created_at: Generated<string>;
 }
 
-// ── activitypub_actor_keys ────────────────────────────────────────────
-export interface ActivitypubActorKeys {
+// ── playthroughs ────────────────────────────────────────────
+export interface Playthroughs {
+  id: Generated<string>;
+  player_id: string;
+  world_id: string;
+  playthrough_number: Generated<number>;
+  difficulty: Generated<string>;
+  status: Generated<PlaythroughStatus>;
+  ending_id: string | null;
+  ending_type: string | null;
+  completion_time: Generated<number>;
+  choices_made: Generated<number>;
+  secrets_found: Generated<number>;
+  achievements_unlocked: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  completed_at: string | null;
+}
+
+// ── world_simulation_state ────────────────────────────────────────────
+export interface WorldSimulationState {
+  world_id: string;
+  next_tick_at: string;
+  paused: Generated<number>;
+  last_run_at: string | null;
+  last_error: string | null;
+  tick_count: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── world_travel_budget ────────────────────────────────────────────
+export interface WorldTravelBudget {
+  world_id: string;
+  spent: Generated<number>;
+  ceiling: Generated<number>;
+  window_start_tick: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── world_event_log ────────────────────────────────────────────
+export interface WorldEventLog {
+  id: Generated<string>;
+  world_id: string;
+  event_type: string;
+  subject_id: string | null;
+  actor_id: string | null;
+  payload: Generated<string>;
+  tick_index: number;
+  dedupe_key: string;
+  created_at: Generated<string>;
+}
+
+// ── world_conditions ────────────────────────────────────────────
+export interface WorldConditions {
+  world_id: string;
+  weather: Generated<string>;
+  time_of_day: Generated<string>;
+  season: Generated<string>;
+  temperature: Generated<number>;
+  global_modifiers: Generated<string>;
+  weather_seed: Generated<number>;
+  mode: Generated<string>;
+  tick_interval_minutes: Generated<number>;
+  last_tick_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_condition_history ────────────────────────────────────────────
+export interface WorldConditionHistory {
   id: string;
-  actor_id: string;
-  key_id: string;
-  public_jwk: string;
-  encrypted_private_jwk: string;
-  status: Generated<string>;
-  rotated_at: string | null;
-  created_at: string;
-  expires_at: string | null;
+  world_id: string;
+  recorded_at: Generated<string>;
+  weather: string;
+  time_of_day: string;
+  season: string;
+  world_minute: number;
+}
+
+// ── world_licenses ────────────────────────────────────────────
+export interface WorldLicenses {
+  id: Generated<string>;
+  world_id: string;
+  spdx_or_custom: Generated<LicenseKind>;
+  spdx_id: string | null;
+  license_text: string | null;
+  attribution: Generated<string>;
+  allowed_use: Generated<string>;
+  prohibited_use: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_maps ────────────────────────────────────────────
+export interface WorldMaps {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  map_type: Generated<MapType>;
+  width: number;
+  height: number;
+  tile_asset_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export interface WorldTimelineSelections {
+  user_id: string;
+  world_id: string;
+  timeline_id: string;
+  selected_at: string;
+}
+
+// ── world_lore_search_tokens ────────────────────────────────────────────
+export interface WorldLoreSearchTokens {
+  entry_id: string;
+  term: string;
+  scope: string;
 }
 
 // ── actor_currencies ────────────────────────────────────────────
@@ -455,6 +719,196 @@ export interface Actors {
   plan_visible: Generated<number>;
 }
 
+// ── memory_embeddings ────────────────────────────────────────────
+export interface MemoryEmbeddings {
+  memory_id: string;
+  model: Generated<string>;
+  dimensions: Generated<number>;
+  vector_blob: Uint8Array;
+  created_at: number;
+}
+
+// ── actor_locations ────────────────────────────────────────────
+export interface ActorLocations {
+  actor_id: string;
+  physical_location_id: string;
+  spatial_location_id: string;
+  entered_at: Generated<string>;
+}
+
+// ── memory_audit_log ────────────────────────────────────────────
+export interface MemoryAuditLog {
+  id: string;
+  memory_id: string;
+  actor_id: string;
+  user_id: string | null;
+  action: string;
+  details: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── agency_play_counters ────────────────────────────────────────────
+export interface AgencyPlayCounters {
+  id: Generated<string>;
+  world_id: string | null;
+  chat_id: string | null;
+  dimension: string;
+  actor_id: string | null;
+  count: Generated<number>;
+  hour_bucket: string;
+  created_at: Generated<string>;
+}
+
+// ── agency_dimension_counters ────────────────────────────────────────────
+export interface AgencyDimensionCounters {
+  id: Generated<string>;
+  world_id: string | null;
+  dimension: string;
+  day: string;
+  total: Generated<number>;
+  meaningful: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── actor_daily_plans ────────────────────────────────────────────
+export interface ActorDailyPlans {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  plan_date: string;
+  summary: string;
+  priority: Generated<string>;
+  created_at: Generated<string>;
+  reflection_step_count: Generated<number>;
+}
+
+// ── actor_planned_activities ────────────────────────────────────────────
+export interface ActorPlannedActivities {
+  id: Generated<string>;
+  plan_id: string;
+  description: string;
+  score: Generated<number>;
+  completed: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── actor_chat_buffers ────────────────────────────────────────────
+export interface ActorChatBuffers {
+  id: Generated<string>;
+  actor_id: string;
+  partner_actor_id: string;
+  last_chat_at: Generated<string>;
+  consecutive_count: Generated<number>;
+  cooldown_minutes: Generated<number>;
+  max_consecutive_chats: Generated<number>;
+}
+
+// ── actor_plan_revisions ────────────────────────────────────────────
+export interface ActorPlanRevisions {
+  id: Generated<string>;
+  plan_id: string;
+  revision_kind: string;
+  before_priority: string;
+  after_priority: string;
+  reason: string;
+  created_at: Generated<string>;
+}
+
+// ── actor_story_points ────────────────────────────────────────────
+export interface ActorStoryPoints {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  balance: Generated<number>;
+  earned_total: Generated<number>;
+  spent_total: Generated<number>;
+  cap: number | null;
+  last_earn_at: string | null;
+  last_spend_at: string | null;
+  last_earn_reason: string | null;
+  last_spend_reason: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── autonomy_budget ────────────────────────────────────────────
+export interface AutonomyBudget {
+  scope_kind: string;
+  scope_id: string;
+  limit_name: string;
+  window_start_at: string;
+  window_count: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── actor_wardrobe ────────────────────────────────────────────
+export interface ActorWardrobe {
+  id: Generated<string>;
+  actor_id: string;
+  wardrobe_item_id: string;
+  item_instance_id: string | null;
+  created_at: Generated<string>;
+}
+
+// ── npc_memories ────────────────────────────────────────────
+export interface NpcMemories {
+  id: Generated<string>;
+  world_id: string;
+  npc_id: string;
+  memory_type: Generated<MemoryType>;
+  content: string;
+  importance: Generated<number>;
+  emotional_impact: Generated<number>;
+  participants: Generated<string>;
+  location_id: string | null;
+  decay_rate: Generated<number>;
+  shared: Generated<number>;
+  created_at: Generated<string>;
+  last_reinforced_at: Generated<string>;
+  expires_at: string | null;
+}
+
+// ── npc_relationships ────────────────────────────────────────────
+export interface NpcRelationships {
+  id: Generated<string>;
+  world_id: string;
+  npc_id: string;
+  target_id: string;
+  standing: Generated<number>;
+  relationship_type: Generated<NpcRelationshipType>;
+  emotional_bond: Generated<number>;
+  history: Generated<string>;
+  last_interaction_at: Generated<string>;
+}
+
+// ── karma_profiles ────────────────────────────────────────────
+export interface KarmaProfiles {
+  id: string;
+  world_id: string;
+  actor_id: string;
+  overall: Generated<number>;
+  categories_json: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── karma_events ────────────────────────────────────────────
+export interface KarmaEvents {
+  id: string;
+  world_id: string;
+  actor_id: string;
+  category: KarmaCategory;
+  delta: number;
+  reason: Generated<string>;
+  occurred_at: Generated<string>;
+}
+
+// ── actor_lore_search_tokens ────────────────────────────────────────────
+export interface ActorLoreSearchTokens {
+  entry_id: string;
+  term: string;
+  scope: string;
+}
+
 // ── character_arc ────────────────────────────────────────────
 export interface CharacterArc {
   id: string;
@@ -462,26 +916,6 @@ export interface CharacterArc {
   current_stage: string;
   stage_description: string | null;
   updated_at: string;
-}
-
-// ── growth_log ────────────────────────────────────────────
-export interface GrowthLog {
-  id: string;
-  actor_id: string;
-  axis: string;
-  event_type: string;
-  status: Generated<string>;
-  subject_kind: string | null;
-  subject_id: string | null;
-  before_json: string | null;
-  after_json: string | null;
-  reason: Generated<string>;
-  source_event_id: string | null;
-  recorded_at: string;
-  confirmed_at: string | null;
-  confirmed_by: string | null;
-  created_at: string | null;
-  updated_at: string | null;
 }
 
 // ── character_internal_traits ────────────────────────────────────────────
@@ -567,6 +1001,59 @@ export interface Characters extends AuditColumns {
   settings: Generated<string>;
   agent_role: string | null;
   federation_consent: Generated<number>;
+}
+
+// ── personas ────────────────────────────────────────────
+export interface Personas {
+  id: string;
+  user_id: string;
+  name: string;
+  avatar_asset_id: string | null;
+  description: string | null;
+  title: string | null;
+  is_default: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  row_version: Generated<number>;
+  temperature: number | null;
+  max_tokens: number | null;
+  model: string | null;
+}
+
+// ── wardrobe_items ────────────────────────────────────────────
+export interface WardrobeItems {
+  id: string;
+  actor_id: string | null;
+  world_id: string | null;
+  name: string;
+  descriptor: Generated<string>;
+  tags: Generated<string>;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── character_stat_allocation ────────────────────────────────────────────
+export interface CharacterStatAllocation {
+  actor_id: string;
+  world_id: string;
+  allocated_str: number;
+  allocated_dex: number;
+  allocated_con: number;
+  allocated_int: number;
+  allocated_wis: number;
+  allocated_cha: number;
+  allocated_at: string;
+  allocated_by_user_id: string | null;
+}
+
+// ── character_trait_assignments ────────────────────────────────────────────
+export interface CharacterTraitAssignments {
+  actor_id: string;
+  trait_id: string;
+  world_id: string;
+  granted_at: string;
+  granted_by_user_id: string | null;
 }
 
 // ── chat_background_assignments ────────────────────────────────────────────
@@ -837,46 +1324,6 @@ export interface Messages {
   outfit_id: string | null;
 }
 
-// ── music_links ────────────────────────────────────────────
-export interface MusicLinks {
-  id: string;
-  chat_id: string;
-  section_id: string | null;
-  sender_id: string;
-  service: string;
-  url: string;
-  embed_html: string | null;
-  title: string;
-  artist: string;
-  thumbnail_url: string | null;
-  duration_secs: number | null;
-  service_track_id: string;
-  service_url: string;
-  is_playlist: Generated<number>;
-  track_count: number | null;
-  explicit: Generated<number>;
-  year: number | null;
-  genre: string | null;
-  nsfw_hidden: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── proactive_messaging_config ────────────────────────────────────────────
-export interface ProactiveMessagingConfig {
-  id: string;
-  chat_id: string;
-  actor_id: string;
-  frequency: Generated<string>;
-  quiet_hours_start: string | null;
-  quiet_hours_end: string | null;
-  enabled: Generated<number>;
-  last_proactive_at: string | null;
-  backoff_count: Generated<number>;
-  config_json: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── vn_choices ────────────────────────────────────────────
 export interface VnChoices {
   id: string;
@@ -893,21 +1340,191 @@ export interface VnChoices {
   created_at: string;
 }
 
-// ── personas ────────────────────────────────────────────
-export interface Personas {
+// ── message_search_tokens ────────────────────────────────────────────
+export interface MessageSearchTokens {
+  message_id: string;
+  term: string;
+  scope: string;
+}
+
+// ── interaction_logs ────────────────────────────────────────────
+export interface InteractionLogs {
+  id: Generated<string>;
+  chat_id: string;
+  world_id: string | null;
+  actor_id: string;
+  target_actor_id: string | null;
+  location_id: string | null;
+  command: string;
+  category: InteractionCategory;
+  skill: string;
+  difficulty: number;
+  roll_sides: number | null;
+  roll_count: number | null;
+  roll_modifier: number | null;
+  roll_mode: string | null;
+  roll_values: string | null;
+  roll_raw_total: number | null;
+  roll_total: number | null;
+  roll_margin: number | null;
+  outcome: InteractionOutcome;
+  action_points: Generated<number>;
+  modifiers: Generated<string>;
+  result: Generated<string>;
+  state_changes: Generated<string>;
+  created_at: Generated<string>;
+  agency_mode: Generated<AgencyMode>;
+  action_type: string | null;
+}
+
+// ── chat_branches ────────────────────────────────────────────
+export interface ChatBranches {
   id: string;
-  user_id: string;
+  chat_id: string;
+  parent_message_id: string;
   name: string;
-  avatar_asset_id: string | null;
-  description: string | null;
-  title: string | null;
-  is_default: Generated<string>;
+  created_at: Generated<string>;
+  is_active: Generated<number>;
+}
+
+// ── chat_wardrobe_overrides ────────────────────────────────────────────
+export interface ChatWardrobeOverrides {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  outfit_id: string;
+  changed_by: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
-  row_version: Generated<number>;
-  temperature: number | null;
-  max_tokens: number | null;
-  model: string | null;
+}
+
+// ── branch_merges ────────────────────────────────────────────
+export interface BranchMerges {
+  id: string;
+  chat_id: string;
+  base_message_id: string;
+  mode: string;
+  status: Generated<string>;
+  result_message_id: string | null;
+  merged_branch_id: string | null;
+  created_by: string;
+  idempotency_key: string | null;
+  metadata: string | null;
+  created_at: Generated<string>;
+  confirmed_at: string | null;
+}
+
+// ── branch_merge_sources ────────────────────────────────────────────
+export interface BranchMergeSources {
+  merge_id: string;
+  ordinal: number;
+  branch_id: string | null;
+  tip_message_id: string;
+}
+
+// ── vn_questions ────────────────────────────────────────────
+export interface VnQuestions {
+  id: string;
+  chat_id: string;
+  scene_index: number;
+  question_type: Generated<string>;
+  question_text: string;
+  speaker_id: string | null;
+  options: Generated<string>;
+  next_scene_id: string | null;
+  consequences: Generated<string>;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  status: Generated<string>;
+  selected_option_id: string | null;
+  answered_at: string | null;
+  created_at: string;
+  applied_at: string | null;
+}
+
+// ── vn_choice_selections ────────────────────────────────────────────
+export interface VnChoiceSelections {
+  id: string;
+  chat_id: string;
+  choice_id: string;
+  scene_index: number;
+  relationship_impact: Generated<string>;
+  mood_impact: Generated<string>;
+  selected_by: string | null;
+  applied_at: string | null;
+  created_at: string;
+}
+
+// ── message_polls ────────────────────────────────────────────
+export interface MessagePolls {
+  id: string;
+  message_id: string;
+  question: string;
+  options: string;
+  multi: Generated<number>;
+  created_by: string;
+  closes_at: string | null;
+  closed_at: string | null;
+  created_at: Generated<string>;
+}
+
+// ── poll_votes ────────────────────────────────────────────
+export interface PollVotes {
+  id: string;
+  poll_id: string;
+  user_id: string;
+  option_idx: number;
+  created_at: Generated<string>;
+}
+
+// ── immersion_failed_checks ────────────────────────────────────────────
+export interface ImmersionFailedChecks {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  blocked_action: string;
+  reason: string;
+  source: Generated<string>;
+  created_at: Generated<string>;
+  resolved_at: string | null;
+}
+
+// ── immersion_decision_log ────────────────────────────────────────────
+export interface ImmersionDecisionLog {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string;
+  source: Generated<string>;
+  severity: string;
+  rule_id: string | null;
+  engine: Generated<string>;
+  claims: Generated<string>;
+  state_snapshot: Generated<string>;
+  verdict: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── chat_owners ────────────────────────────────────────────
+export interface ChatOwners {
+  id: Generated<string>;
+  chat_id: string;
+  user_id: string;
+  granted_by: string | null;
+  granted_at: Generated<string>;
+  reason: string | null;
+}
+
+// ── chat_list_filters ────────────────────────────────────────────
+export interface ChatListFilters {
+  user_id: string;
+  chat_type: Generated<string>;
+  archived: Generated<string>;
+  sort: Generated<string>;
+  world_id: string | null;
+  min_messages: number | null;
+  max_messages: number | null;
+  updated_since: string | null;
+  updated_at: string;
 }
 
 // ── achievements ────────────────────────────────────────────
@@ -1004,26 +1621,6 @@ export interface PlayerAchievements {
   updated_at: Generated<string>;
 }
 
-// ── playthroughs ────────────────────────────────────────────
-export interface Playthroughs {
-  id: Generated<string>;
-  player_id: string;
-  world_id: string;
-  playthrough_number: Generated<number>;
-  difficulty: Generated<string>;
-  status: Generated<PlaythroughStatus>;
-  ending_id: string | null;
-  ending_type: string | null;
-  completion_time: Generated<number>;
-  choices_made: Generated<number>;
-  secrets_found: Generated<number>;
-  achievements_unlocked: Generated<number>;
-  metadata: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  completed_at: string | null;
-}
-
 // ── trade_history ────────────────────────────────────────────
 export interface TradeHistory {
   id: string;
@@ -1051,187 +1648,6 @@ export interface XpLedger {
   created_at: Generated<string>;
 }
 
-// ── memory_embeddings ────────────────────────────────────────────
-export interface MemoryEmbeddings {
-  memory_id: string;
-  model: Generated<string>;
-  dimensions: Generated<number>;
-  vector_blob: Uint8Array;
-  created_at: number;
-}
-
-// ── generation_jobs ────────────────────────────────────────────
-export interface GenerationJobs {
-  id: string;
-  kind: string;
-  actor_id: string | null;
-  status: Generated<string>;
-  payload: Generated<string>;
-  results: Generated<string>;
-  error_message: string | null;
-  started_at: string | null;
-  completed_at: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── prompt_templates ────────────────────────────────────────────
-export interface PromptTemplates {
-  id: string;
-  owner_id: string;
-  modality: Generated<TemplateModality>;
-  name: string;
-  description: string | null;
-  model_family: string | null;
-  detail_level: Generated<TemplateDetailLevel>;
-  payload: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  is_default: Generated<DefaultState>;
-  enabled: Generated<LoreEntryStatus>;
-  lora_slots: string | null;
-  min_vram: number | null;
-  probe_status: Generated<WorkflowProbeStatus>;
-  params_reviewed: Generated<number>;
-  license: string | null;
-}
-
-// ── nsfw_consent_state ────────────────────────────────────────────
-export interface NsfwConsentState {
-  id: string;
-  user_id: string;
-  chat_id: string;
-  action: string;
-  scope: Generated<string>;
-  reason: string | null;
-  created_at: string;
-  revoked_at: string | null;
-  updated_at: string | null;
-}
-
-// ── e2e_group_wraps ────────────────────────────────────────────
-export interface E2eGroupWraps {
-  id: string;
-  group_session_id: string;
-  recipient_actor_id: string;
-  wrapped_key: string;
-  sender_eph_pub_jwk: string;
-  chain_index: number;
-  created_at: Generated<string>;
-}
-
-// ── e2e_sessions ────────────────────────────────────────────
-export interface E2eSessions {
-  id: string;
-  sender_actor_id: string;
-  recipient_actor_id: string | null;
-  chat_id: string | null;
-  kind: Generated<string>;
-  created_at: Generated<string>;
-  last_message_at: string | null;
-  revoked_at: string | null;
-  root_key: Uint8Array | null;
-  sending_chain_key: Uint8Array | null;
-  receiving_chain_key: Uint8Array | null;
-  send_count: Generated<number>;
-  recv_count: Generated<number>;
-  ephemeral_public_jwk: string | null;
-  ephemeral_private_jwk: string | null;
-}
-
-// ── e2e_skipped_keys ────────────────────────────────────────────
-export interface E2eSkippedKeys {
-  id: string;
-  session_id: string;
-  dh_public_jwk: string;
-  counter: number;
-  encrypted_message_key: string;
-  created_at: Generated<string>;
-  expires_at: string;
-}
-
-// ── e2e_skipped_message_keys ────────────────────────────────────────────
-export interface E2eSkippedMessageKeys {
-  id: string;
-  session_id: string;
-  recipient_actor_id: string;
-  chain_index: number;
-  message_key: string;
-  created_at: Generated<string>;
-}
-
-// ── message_search_tokens ────────────────────────────────────────────
-export interface MessageSearchTokens {
-  message_id: string;
-  term: string;
-  scope: string;
-}
-
-// ── workflow_sessions ────────────────────────────────────────────
-export interface WorkflowSessions {
-  chat_id: string;
-  workflow_id: string;
-  step_values: Generated<string>;
-  confirmed: Generated<number>;
-  updated_at: Generated<string>;
-}
-
-// ── mesh_peers ────────────────────────────────────────────
-export interface MeshPeers {
-  origin: string;
-  state: Generated<string>;
-  capabilities: Generated<string>;
-  last_seen: string | null;
-  created_at: Generated<string>;
-  capacity_bytes: number | null;
-  display_name: string | null;
-  instance_kind: Generated<PeerInstanceKind>;
-  auth_mode: Generated<PeerAuthMode>;
-  workload_trust: Generated<number>;
-  allowed_workload_classes: Generated<string>;
-  sticky_enabled: Generated<number>;
-  shared_token_enc: string | null;
-  key_version: Generated<number>;
-}
-
-// ── mesh_negotiations ────────────────────────────────────────────
-export interface MeshNegotiations {
-  id: string;
-  peer_origin: string;
-  state: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── mesh_reservations ────────────────────────────────────────────
-export interface MeshReservations {
-  id: string;
-  peer_origin: string;
-  content_hash: string;
-  size_bytes: number;
-  content_type: Generated<string>;
-  state: Generated<string>;
-  expires_at: string;
-  created_at: Generated<string>;
-}
-
-// ── mesh_deliveries ────────────────────────────────────────────
-export interface MeshDeliveries {
-  content_id: string;
-  origin: string;
-  content_hash: string;
-  clock: number;
-  received_at: Generated<string>;
-}
-
-// ── mesh_inbound_keys ────────────────────────────────────────────
-export interface MeshInboundKeys {
-  peer_origin: string;
-  encrypted_key: string;
-  previous_encrypted_key: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── rotation_history ────────────────────────────────────────────
 export interface RotationHistory {
   id: string;
@@ -1241,51 +1657,6 @@ export interface RotationHistory {
   old_key_id: string | null;
   new_key_id: string;
   messages_re_encrypted: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── travel_routes ────────────────────────────────────────────
-export interface TravelRoutes {
-  id: string;
-  world_id: string;
-  name: string;
-  kind: TransportKind;
-  waypoints: Generated<string>;
-  loop: Generated<number>;
-  seconds_per_unit: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── travel_route_stops ────────────────────────────────────────────
-export interface TravelRouteStops {
-  id: string;
-  route_id: string;
-  location_id: string;
-  stop_order: number;
-  dwell_seconds: Generated<number>;
-  coord_x: number | null;
-  coord_y: number | null;
-  coord_z: number | null;
-  created_at: string | null;
-  updated_at: string | null;
-}
-
-// ── actor_locations ────────────────────────────────────────────
-export interface ActorLocations {
-  actor_id: string;
-  physical_location_id: string;
-  spatial_location_id: string;
-  entered_at: Generated<string>;
-}
-
-// ── memory_audit_log ────────────────────────────────────────────
-export interface MemoryAuditLog {
-  id: string;
-  memory_id: string;
-  actor_id: string;
-  user_id: string | null;
-  action: string;
-  details: Generated<string>;
   created_at: Generated<string>;
 }
 
@@ -1306,141 +1677,6 @@ export interface StatusEffect {
   updated_at: string | null;
 }
 
-// ── interaction_logs ────────────────────────────────────────────
-export interface InteractionLogs {
-  id: Generated<string>;
-  chat_id: string;
-  world_id: string | null;
-  actor_id: string;
-  target_actor_id: string | null;
-  location_id: string | null;
-  command: string;
-  category: InteractionCategory;
-  skill: string;
-  difficulty: number;
-  roll_sides: number | null;
-  roll_count: number | null;
-  roll_modifier: number | null;
-  roll_mode: string | null;
-  roll_values: string | null;
-  roll_raw_total: number | null;
-  roll_total: number | null;
-  roll_margin: number | null;
-  outcome: InteractionOutcome;
-  action_points: Generated<number>;
-  modifiers: Generated<string>;
-  result: Generated<string>;
-  state_changes: Generated<string>;
-  created_at: Generated<string>;
-  agency_mode: Generated<AgencyMode>;
-  action_type: string | null;
-}
-
-// ── agency_play_counters ────────────────────────────────────────────
-export interface AgencyPlayCounters {
-  id: Generated<string>;
-  world_id: string | null;
-  chat_id: string | null;
-  dimension: string;
-  actor_id: string | null;
-  count: Generated<number>;
-  hour_bucket: string;
-  created_at: Generated<string>;
-}
-
-// ── agency_dimension_counters ────────────────────────────────────────────
-export interface AgencyDimensionCounters {
-  id: Generated<string>;
-  world_id: string | null;
-  dimension: string;
-  day: string;
-  total: Generated<number>;
-  meaningful: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── actor_daily_plans ────────────────────────────────────────────
-export interface ActorDailyPlans {
-  id: Generated<string>;
-  actor_id: string;
-  world_id: string | null;
-  plan_date: string;
-  summary: string;
-  priority: Generated<string>;
-  created_at: Generated<string>;
-  reflection_step_count: Generated<number>;
-}
-
-// ── actor_planned_activities ────────────────────────────────────────────
-export interface ActorPlannedActivities {
-  id: Generated<string>;
-  plan_id: string;
-  description: string;
-  score: Generated<number>;
-  completed: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── actor_chat_buffers ────────────────────────────────────────────
-export interface ActorChatBuffers {
-  id: Generated<string>;
-  actor_id: string;
-  partner_actor_id: string;
-  last_chat_at: Generated<string>;
-  consecutive_count: Generated<number>;
-  cooldown_minutes: Generated<number>;
-  max_consecutive_chats: Generated<number>;
-}
-
-// ── actor_plan_revisions ────────────────────────────────────────────
-export interface ActorPlanRevisions {
-  id: Generated<string>;
-  plan_id: string;
-  revision_kind: string;
-  before_priority: string;
-  after_priority: string;
-  reason: string;
-  created_at: Generated<string>;
-}
-
-// ── chat_branches ────────────────────────────────────────────
-export interface ChatBranches {
-  id: string;
-  chat_id: string;
-  parent_message_id: string;
-  name: string;
-  created_at: Generated<string>;
-  is_active: Generated<number>;
-}
-
-// ── model_comparison_runs ────────────────────────────────────────────
-export interface ModelComparisonRuns {
-  id: string;
-  user_id: string;
-  prompt: string;
-  results: string;
-  ratings: Generated<string>;
-  metadata: Generated<string>;
-  created_at: string;
-}
-
-// ── actor_story_points ────────────────────────────────────────────
-export interface ActorStoryPoints {
-  id: Generated<string>;
-  actor_id: string;
-  world_id: string | null;
-  balance: Generated<number>;
-  earned_total: Generated<number>;
-  spent_total: Generated<number>;
-  cap: number | null;
-  last_earn_at: string | null;
-  last_spend_at: string | null;
-  last_earn_reason: string | null;
-  last_spend_reason: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── game_states ────────────────────────────────────────────
 export interface GameStates {
   id: Generated<string>;
@@ -1448,27 +1684,6 @@ export interface GameStates {
   message_id: string | null;
   state: Generated<string>;
   created_at: Generated<string>;
-}
-
-// ── autonomy_budget ────────────────────────────────────────────
-export interface AutonomyBudget {
-  scope_kind: string;
-  scope_id: string;
-  limit_name: string;
-  window_start_at: string;
-  window_count: Generated<number>;
-  updated_at: Generated<string>;
-}
-
-// ── world_simulation_state ────────────────────────────────────────────
-export interface WorldSimulationState {
-  world_id: string;
-  next_tick_at: string;
-  paused: Generated<number>;
-  last_run_at: string | null;
-  last_error: string | null;
-  tick_count: Generated<number>;
-  updated_at: Generated<string>;
 }
 
 // ── carriage_records ────────────────────────────────────────────
@@ -1479,287 +1694,6 @@ export interface CarriageRecords {
   scope: string;
   payload: string;
   created_at: string;
-}
-
-// ── wardrobe_items ────────────────────────────────────────────
-export interface WardrobeItems {
-  id: string;
-  actor_id: string | null;
-  world_id: string | null;
-  name: string;
-  descriptor: Generated<string>;
-  tags: Generated<string>;
-  sort_order: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── actor_wardrobe ────────────────────────────────────────────
-export interface ActorWardrobe {
-  id: Generated<string>;
-  actor_id: string;
-  wardrobe_item_id: string;
-  item_instance_id: string | null;
-  created_at: Generated<string>;
-}
-
-// ── chat_wardrobe_overrides ────────────────────────────────────────────
-export interface ChatWardrobeOverrides {
-  id: Generated<string>;
-  chat_id: string;
-  actor_id: string;
-  outfit_id: string;
-  changed_by: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── mesh_dek_exports ────────────────────────────────────────────
-export interface MeshDekExports {
-  id: Generated<string>;
-  chat_id: string;
-  key_id: string;
-  peer_origin: string;
-  sender_origin: string;
-  created_at: Generated<string>;
-  revoked_at: string | null;
-}
-
-// ── mesh_outbox ────────────────────────────────────────────
-export interface MeshOutbox {
-  id: Generated<string>;
-  target_origin: string;
-  content_id: string;
-  envelope: string;
-  attempts: Generated<number>;
-  status: Generated<string>;
-  next_attempt_at: string;
-  created_at: Generated<string>;
-  chat_id: string | null;
-}
-
-// ── task_dependencies ────────────────────────────────────────────
-export interface TaskDependencies {
-  task_id: string;
-  depends_on_task_id: string;
-  on_failure: Generated<string>;
-  created_at: Generated<string>;
-}
-
-// ── travel_parties ────────────────────────────────────────────
-export interface TravelParties {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  kind: Generated<string>;
-  cadence: Generated<string>;
-  route: Generated<string>;
-  route_index: Generated<number>;
-  steps_per_tick: Generated<number>;
-  travel_progress: Generated<number>;
-  current_location_id: string | null;
-  current_tick: Generated<number>;
-  status: Generated<string>;
-  blocked_until_tick: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── npc_migrations ────────────────────────────────────────────
-export interface NpcMigrations {
-  id: Generated<string>;
-  world_id: string;
-  actor_id: string;
-  origin_location_id: string | null;
-  destination_location_id: string | null;
-  depart_tick: number;
-  arrive_tick: number;
-  cadence: Generated<string>;
-  status: Generated<string>;
-  last_depart_tick: Generated<number>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── world_travel_budget ────────────────────────────────────────────
-export interface WorldTravelBudget {
-  world_id: string;
-  spent: Generated<number>;
-  ceiling: Generated<number>;
-  window_start_tick: Generated<number>;
-  updated_at: Generated<string>;
-}
-
-// ── world_event_log ────────────────────────────────────────────
-export interface WorldEventLog {
-  id: Generated<string>;
-  world_id: string;
-  event_type: string;
-  subject_id: string | null;
-  actor_id: string | null;
-  payload: Generated<string>;
-  tick_index: number;
-  dedupe_key: string;
-  created_at: Generated<string>;
-}
-
-// ── location_discovery ────────────────────────────────────────────
-export interface LocationDiscovery {
-  world_id: string;
-  location_id: string;
-  actor_id: string;
-  progress: Generated<number>;
-  last_explored_tick: Generated<number>;
-  discovered: Generated<number>;
-  discovered_tick: number | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── scheduled_messages ────────────────────────────────────────────
-export interface ScheduledMessages {
-  id: string;
-  chat_id: string;
-  author_id: string;
-  body: string;
-  send_at: string;
-  status: Generated<string>;
-}
-
-// ── message_reminders ────────────────────────────────────────────
-export interface MessageReminders {
-  id: string;
-  message_id: string;
-  user_id: string;
-  remind_at: string;
-}
-
-// ── branch_merges ────────────────────────────────────────────
-export interface BranchMerges {
-  id: string;
-  chat_id: string;
-  base_message_id: string;
-  mode: string;
-  status: Generated<string>;
-  result_message_id: string | null;
-  merged_branch_id: string | null;
-  created_by: string;
-  idempotency_key: string | null;
-  metadata: string | null;
-  created_at: Generated<string>;
-  confirmed_at: string | null;
-}
-
-// ── branch_merge_sources ────────────────────────────────────────────
-export interface BranchMergeSources {
-  merge_id: string;
-  ordinal: number;
-  branch_id: string | null;
-  tip_message_id: string;
-}
-
-// ── plan_items ────────────────────────────────────────────
-export interface PlanItems {
-  id: string;
-  owner_id: string;
-  chat_id: string | null;
-  title: string;
-  state: Generated<string>;
-  kind: Generated<string>;
-  position: Generated<number>;
-  parent_id: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── plan_links ────────────────────────────────────────────
-export interface PlanLinks {
-  from_id: string;
-  to_id: string;
-  relation: string;
-  created_at: Generated<string>;
-}
-
-// ── vn_questions ────────────────────────────────────────────
-export interface VnQuestions {
-  id: string;
-  chat_id: string;
-  scene_index: number;
-  question_type: Generated<string>;
-  question_text: string;
-  speaker_id: string | null;
-  options: Generated<string>;
-  next_scene_id: string | null;
-  consequences: Generated<string>;
-  relationship_impact: Generated<string>;
-  mood_impact: Generated<string>;
-  status: Generated<string>;
-  selected_option_id: string | null;
-  answered_at: string | null;
-  created_at: string;
-  applied_at: string | null;
-}
-
-// ── location_edges ────────────────────────────────────────────
-export interface LocationEdges {
-  id: Generated<string>;
-  world_id: string;
-  from_id: string;
-  to_id: string;
-  mode: Generated<LocationEdgeMode>;
-  game_hours: Generated<number>;
-  requires_discovery: Generated<number>;
-  cost_json: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── world_conditions ────────────────────────────────────────────
-export interface WorldConditions {
-  world_id: string;
-  weather: Generated<string>;
-  time_of_day: Generated<string>;
-  season: Generated<string>;
-  temperature: Generated<number>;
-  global_modifiers: Generated<string>;
-  weather_seed: Generated<number>;
-  mode: Generated<string>;
-  tick_interval_minutes: Generated<number>;
-  last_tick_at: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── world_condition_history ────────────────────────────────────────────
-export interface WorldConditionHistory {
-  id: string;
-  world_id: string;
-  recorded_at: Generated<string>;
-  weather: string;
-  time_of_day: string;
-  season: string;
-  world_minute: number;
-}
-
-// ── location_anomalies ────────────────────────────────────────────
-export interface LocationAnomalies {
-  id: Generated<string>;
-  location_id: string;
-  world_id: string;
-  name: string;
-  type: Generated<AnomalyType>;
-  stat_modifiers: Generated<string>;
-  damage_over_time: Generated<number>;
-  healing_over_time: Generated<number>;
-  experience_multiplier: Generated<number>;
-  loot_multiplier: Generated<number>;
-  special_effects: Generated<string>;
-  duration_seconds: Generated<number>;
-  discovery_chance: Generated<number>;
-  discovered_at: string | null;
-  interaction_required: Generated<AnomalyInteraction>;
-  expires_at: string | null;
-  created_at: Generated<string>;
 }
 
 // ── encounter_templates ────────────────────────────────────────────
@@ -1794,27 +1728,6 @@ export interface EncounterRolls {
   cooldown_until: string | null;
 }
 
-// ── location_storage ────────────────────────────────────────────
-export interface LocationStorage {
-  id: Generated<string>;
-  world_id: string;
-  location_id: string;
-  name: string;
-  capacity: Generated<number>;
-  security: Generated<number>;
-  access_control: Generated<string>;
-  created_at: Generated<string>;
-}
-
-// ── location_storage_items ────────────────────────────────────────────
-export interface LocationStorageItems {
-  id: Generated<string>;
-  storage_id: string;
-  item_id: string;
-  quantity: Generated<number>;
-  stored_at: Generated<string>;
-}
-
 // ── extraction_rolls ────────────────────────────────────────────
 export interface ExtractionRolls {
   id: Generated<string>;
@@ -1826,37 +1739,6 @@ export interface ExtractionRolls {
   succeeded: Generated<number>;
   difficulty: Generated<number>;
   yield: Generated<string>;
-}
-
-// ── npc_memories ────────────────────────────────────────────
-export interface NpcMemories {
-  id: Generated<string>;
-  world_id: string;
-  npc_id: string;
-  memory_type: Generated<MemoryType>;
-  content: string;
-  importance: Generated<number>;
-  emotional_impact: Generated<number>;
-  participants: Generated<string>;
-  location_id: string | null;
-  decay_rate: Generated<number>;
-  shared: Generated<number>;
-  created_at: Generated<string>;
-  last_reinforced_at: Generated<string>;
-  expires_at: string | null;
-}
-
-// ── npc_relationships ────────────────────────────────────────────
-export interface NpcRelationships {
-  id: Generated<string>;
-  world_id: string;
-  npc_id: string;
-  target_id: string;
-  standing: Generated<number>;
-  relationship_type: Generated<NpcRelationshipType>;
-  emotional_bond: Generated<number>;
-  history: Generated<string>;
-  last_interaction_at: Generated<string>;
 }
 
 // ── monster_templates ────────────────────────────────────────────
@@ -1939,82 +1821,6 @@ export interface FactionStanding {
   updated_at: Generated<string>;
 }
 
-// ── karma_profiles ────────────────────────────────────────────
-export interface KarmaProfiles {
-  id: string;
-  world_id: string;
-  actor_id: string;
-  overall: Generated<number>;
-  categories_json: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── karma_events ────────────────────────────────────────────
-export interface KarmaEvents {
-  id: string;
-  world_id: string;
-  actor_id: string;
-  category: KarmaCategory;
-  delta: number;
-  reason: Generated<string>;
-  occurred_at: Generated<string>;
-}
-
-// ── world_licenses ────────────────────────────────────────────
-export interface WorldLicenses {
-  id: Generated<string>;
-  world_id: string;
-  spdx_or_custom: Generated<LicenseKind>;
-  spdx_id: string | null;
-  license_text: string | null;
-  attribution: Generated<string>;
-  allowed_use: Generated<string>;
-  prohibited_use: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── world_maps ────────────────────────────────────────────
-export interface WorldMaps {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  map_type: Generated<MapType>;
-  width: number;
-  height: number;
-  tile_asset_id: string | null;
-  created_at: Generated<string>;
-}
-
-// ── map_zones ────────────────────────────────────────────
-export interface MapZones {
-  id: Generated<string>;
-  map_id: string;
-  location_id: string | null;
-  name: string;
-  zone_type: Generated<ZoneType>;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  z: Generated<number>;
-  metadata: Generated<string>;
-  created_at: Generated<string>;
-}
-
-// ── vn_choice_selections ────────────────────────────────────────────
-export interface VnChoiceSelections {
-  id: string;
-  chat_id: string;
-  choice_id: string;
-  scene_index: number;
-  relationship_impact: Generated<string>;
-  mood_impact: Generated<string>;
-  selected_by: string | null;
-  applied_at: string | null;
-  created_at: string;
-}
-
 // ── instance_storage_budgets ────────────────────────────────────────────
 export interface InstanceStorageBudgets {
   id: Generated<string>;
@@ -2023,6 +1829,255 @@ export interface InstanceStorageBudgets {
   hard_limit_bytes: number | null;
   eviction_policy: Generated<StorageEvictionPolicy>;
   updated_at: Generated<string>;
+}
+
+// ── resource_records ────────────────────────────────────────────
+export interface ResourceRecords {
+  id: string;
+  owner_id: string;
+  type: string;
+  provider: string;
+  endpoint: string;
+  credential_ref: string;
+  quota: Generated<string>;
+  status: Generated<string>;
+  created_at: Generated<string>;
+  last_used_at: string | null;
+}
+
+// ── resource_quota_counters ────────────────────────────────────────────
+export interface ResourceQuotaCounters {
+  resource_id: string;
+  window_start: string;
+  requests: Generated<number>;
+  tokens: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── model_capabilities ────────────────────────────────────────────
+export interface ModelCapabilities {
+  id: string;
+  provider_id: string;
+  model_id: string;
+  context_window: number | null;
+  max_output: number | null;
+  supports_tools: number | null;
+  supports_vision: number | null;
+  supports_thinking: number | null;
+  modalities: string | null;
+  param_size: string | null;
+  owned_by: string | null;
+  user_override: Generated<number>;
+  notes: string | null;
+  last_seen: string;
+  created_at: string;
+  updated_at: string;
+  native_locale: string | null;
+}
+
+// ── model_role_overrides ────────────────────────────────────────────
+export interface ModelRoleOverrides {
+  role: ModelRole;
+  provider: string;
+  model: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  temperature: number | null;
+  max_tokens: number | null;
+}
+
+// ── asset_transforms ────────────────────────────────────────────
+export interface AssetTransforms {
+  asset_id: string;
+  context: TransformContext;
+  crop_x: number | null;
+  crop_y: number | null;
+  crop_w: number | null;
+  crop_h: number | null;
+  zoom: number | null;
+  rotation: number | null;
+  focal_point_x: number | null;
+  focal_point_y: number | null;
+  updated_at: Generated<string>;
+}
+
+// ── music_links ────────────────────────────────────────────
+export interface MusicLinks {
+  id: string;
+  chat_id: string;
+  section_id: string | null;
+  sender_id: string;
+  service: string;
+  url: string;
+  embed_html: string | null;
+  title: string;
+  artist: string;
+  thumbnail_url: string | null;
+  duration_secs: number | null;
+  service_track_id: string;
+  service_url: string;
+  is_playlist: Generated<number>;
+  track_count: number | null;
+  explicit: Generated<number>;
+  year: number | null;
+  genre: string | null;
+  nsfw_hidden: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── generation_jobs ────────────────────────────────────────────
+export interface GenerationJobs {
+  id: string;
+  kind: string;
+  actor_id: string | null;
+  status: Generated<string>;
+  payload: Generated<string>;
+  results: Generated<string>;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── prompt_templates ────────────────────────────────────────────
+export interface PromptTemplates {
+  id: string;
+  owner_id: string;
+  modality: Generated<TemplateModality>;
+  name: string;
+  description: string | null;
+  model_family: string | null;
+  detail_level: Generated<TemplateDetailLevel>;
+  payload: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  is_default: Generated<DefaultState>;
+  enabled: Generated<LoreEntryStatus>;
+  lora_slots: string | null;
+  min_vram: number | null;
+  probe_status: Generated<WorkflowProbeStatus>;
+  params_reviewed: Generated<number>;
+  license: string | null;
+}
+
+// ── workflow_sessions ────────────────────────────────────────────
+export interface WorkflowSessions {
+  chat_id: string;
+  workflow_id: string;
+  step_values: Generated<string>;
+  confirmed: Generated<number>;
+  updated_at: Generated<string>;
+}
+
+// ── model_comparison_runs ────────────────────────────────────────────
+export interface ModelComparisonRuns {
+  id: string;
+  user_id: string;
+  prompt: string;
+  results: string;
+  ratings: Generated<string>;
+  metadata: Generated<string>;
+  created_at: string;
+}
+
+// ── link_previews ────────────────────────────────────────────
+export interface LinkPreviews {
+  id: string;
+  url_hash: string;
+  url: string;
+  title: string | null;
+  description: string | null;
+  image_url: string | null;
+  fetched_at: Generated<string>;
+}
+
+// ── asset_user_preferences ────────────────────────────────────────────
+export interface AssetUserPreferences {
+  user_id: string;
+  download_naming: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── mesh_peers ────────────────────────────────────────────
+export interface MeshPeers {
+  origin: string;
+  state: Generated<string>;
+  capabilities: Generated<string>;
+  last_seen: string | null;
+  created_at: Generated<string>;
+  capacity_bytes: number | null;
+  display_name: string | null;
+  instance_kind: Generated<PeerInstanceKind>;
+  auth_mode: Generated<PeerAuthMode>;
+  workload_trust: Generated<number>;
+  allowed_workload_classes: Generated<string>;
+  sticky_enabled: Generated<number>;
+  shared_token_enc: string | null;
+  key_version: Generated<number>;
+}
+
+// ── mesh_negotiations ────────────────────────────────────────────
+export interface MeshNegotiations {
+  id: string;
+  peer_origin: string;
+  state: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── mesh_reservations ────────────────────────────────────────────
+export interface MeshReservations {
+  id: string;
+  peer_origin: string;
+  content_hash: string;
+  size_bytes: number;
+  content_type: Generated<string>;
+  state: Generated<string>;
+  expires_at: string;
+  created_at: Generated<string>;
+}
+
+// ── mesh_deliveries ────────────────────────────────────────────
+export interface MeshDeliveries {
+  content_id: string;
+  origin: string;
+  content_hash: string;
+  clock: number;
+  received_at: Generated<string>;
+}
+
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export interface MeshInboundKeys {
+  peer_origin: string;
+  encrypted_key: string;
+  previous_encrypted_key: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── mesh_dek_exports ────────────────────────────────────────────
+export interface MeshDekExports {
+  id: Generated<string>;
+  chat_id: string;
+  key_id: string;
+  peer_origin: string;
+  sender_origin: string;
+  created_at: Generated<string>;
+  revoked_at: string | null;
+}
+
+// ── mesh_outbox ────────────────────────────────────────────
+export interface MeshOutbox {
+  id: Generated<string>;
+  target_origin: string;
+  content_id: string;
+  envelope: string;
+  attempts: Generated<number>;
+  status: Generated<string>;
+  next_attempt_at: string;
+  created_at: Generated<string>;
+  chat_id: string | null;
 }
 
 // ── mesh_work_assignments ────────────────────────────────────────────
@@ -2048,276 +2103,11 @@ export interface FederationPerformanceBudgets {
   updated_at: string;
 }
 
-// ── message_polls ────────────────────────────────────────────
-export interface MessagePolls {
-  id: string;
-  message_id: string;
-  question: string;
-  options: string;
-  multi: Generated<number>;
-  created_by: string;
-  closes_at: string | null;
-  closed_at: string | null;
-  created_at: Generated<string>;
-}
-
-// ── poll_votes ────────────────────────────────────────────
-export interface PollVotes {
-  id: string;
-  poll_id: string;
-  user_id: string;
-  option_idx: number;
-  created_at: Generated<string>;
-}
-
-// ── link_previews ────────────────────────────────────────────
-export interface LinkPreviews {
-  id: string;
-  url_hash: string;
-  url: string;
-  title: string | null;
-  description: string | null;
-  image_url: string | null;
-  fetched_at: Generated<string>;
-}
-
-// ── character_stat_allocation ────────────────────────────────────────────
-export interface CharacterStatAllocation {
-  actor_id: string;
-  world_id: string;
-  allocated_str: number;
-  allocated_dex: number;
-  allocated_con: number;
-  allocated_int: number;
-  allocated_wis: number;
-  allocated_cha: number;
-  allocated_at: string;
-  allocated_by_user_id: string | null;
-}
-
-// ── character_trait_assignments ────────────────────────────────────────────
-export interface CharacterTraitAssignments {
-  actor_id: string;
-  trait_id: string;
-  world_id: string;
-  granted_at: string;
-  granted_by_user_id: string | null;
-}
-
 // ── assistant_quota_usage ────────────────────────────────────────────
 export interface AssistantQuotaUsage {
   user_id: string;
   window_start: string;
   used_units: Generated<number>;
-}
-
-// ── immersion_failed_checks ────────────────────────────────────────────
-export interface ImmersionFailedChecks {
-  id: Generated<string>;
-  chat_id: string;
-  actor_id: string;
-  blocked_action: string;
-  reason: string;
-  source: Generated<string>;
-  created_at: Generated<string>;
-  resolved_at: string | null;
-}
-
-// ── immersion_decision_log ────────────────────────────────────────────
-export interface ImmersionDecisionLog {
-  id: Generated<string>;
-  chat_id: string;
-  actor_id: string;
-  source: Generated<string>;
-  severity: string;
-  rule_id: string | null;
-  engine: Generated<string>;
-  claims: Generated<string>;
-  state_snapshot: Generated<string>;
-  verdict: Generated<string>;
-  created_at: Generated<string>;
-}
-
-// ── chat_owners ────────────────────────────────────────────
-export interface ChatOwners {
-  id: Generated<string>;
-  chat_id: string;
-  user_id: string;
-  granted_by: string | null;
-  granted_at: Generated<string>;
-  reason: string | null;
-}
-
-// ── world_timeline_selections ────────────────────────────────────────────
-export interface WorldTimelineSelections {
-  user_id: string;
-  world_id: string;
-  timeline_id: string;
-  selected_at: string;
-}
-
-// ── resource_records ────────────────────────────────────────────
-export interface ResourceRecords {
-  id: string;
-  owner_id: string;
-  type: string;
-  provider: string;
-  endpoint: string;
-  credential_ref: string;
-  quota: Generated<string>;
-  status: Generated<string>;
-  created_at: Generated<string>;
-  last_used_at: string | null;
-}
-
-// ── backup_records ────────────────────────────────────────────
-export interface BackupRecords {
-  id: string;
-  resource_type: string;
-  owner_id: string;
-  content_hash: string;
-  server_hash: string | null;
-  payload: string;
-  version: Generated<number>;
-  created_at: Generated<string>;
-  storage_quota_bytes: Generated<number>;
-}
-
-// ── resource_quota_counters ────────────────────────────────────────────
-export interface ResourceQuotaCounters {
-  resource_id: string;
-  window_start: string;
-  requests: Generated<number>;
-  tokens: Generated<number>;
-  updated_at: Generated<string>;
-}
-
-// ── tool_call_audit ────────────────────────────────────────────
-export interface ToolCallAudit {
-  id: Generated<string>;
-  tool: string;
-  chat_id: Generated<string>;
-  user_id: Generated<string>;
-  verdict: string;
-  rationale: Generated<string>;
-  escalation_attempt: Generated<number>;
-  required_role: string | null;
-  tags: Generated<string>;
-  duration_ms: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── integration_tokens ────────────────────────────────────────────
-export interface IntegrationTokens {
-  id: string;
-  name: string;
-  token_hash: string;
-  scopes: IntegrationTokenScope;
-  issuer_admin_user_id: string;
-  created_at: Generated<string>;
-  last_used_at: string | null;
-  revoked_at: string | null;
-  expires_at: string | null;
-}
-
-// ── chat_list_filters ────────────────────────────────────────────
-export interface ChatListFilters {
-  user_id: string;
-  chat_type: Generated<string>;
-  archived: Generated<string>;
-  sort: Generated<string>;
-  world_id: string | null;
-  min_messages: number | null;
-  max_messages: number | null;
-  updated_since: string | null;
-  updated_at: string;
-}
-
-// ── world_lore_search_tokens ────────────────────────────────────────────
-export interface WorldLoreSearchTokens {
-  entry_id: string;
-  term: string;
-  scope: string;
-}
-
-// ── actor_lore_search_tokens ────────────────────────────────────────────
-export interface ActorLoreSearchTokens {
-  entry_id: string;
-  term: string;
-  scope: string;
-}
-
-// ── harness_queue_turns ────────────────────────────────────────────
-export interface HarnessQueueTurns {
-  id: string;
-  batch_id: string;
-  profile: string;
-  prompt: string;
-  status: Generated<HarnessQueueTurnStatus>;
-  chat_id: string;
-  actor_id: string;
-  requested_by: string;
-  requested_role: string | null;
-  turn_key: string | null;
-  attempts: Generated<number>;
-  result_message_id: string | null;
-  error_code: HarnessQueueErrorCode | null;
-  error_message: string | null;
-  created_at: Generated<string>;
-  started_at: string | null;
-  finished_at: string | null;
-  owner_slug: string | null;
-}
-
-// ── auth_factors ────────────────────────────────────────────
-export interface AuthFactors {
-  id: string;
-  user_id: string;
-  kind: FactorKind;
-  created_at: number;
-  target: string | null;
-  verified_at: number | null;
-}
-
-// ── auth_challenges ────────────────────────────────────────────
-export interface AuthChallenges {
-  id: string;
-  user_id: string;
-  factor_id: string;
-  purpose: ChallengePurpose;
-  nonce_hash: string;
-  expires_at: number;
-  attempts: Generated<number>;
-  consumed: Generated<number>;
-  created_at: number;
-}
-
-// ── asset_user_preferences ────────────────────────────────────────────
-export interface AssetUserPreferences {
-  user_id: string;
-  download_naming: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── tooling_reports ────────────────────────────────────────────
-export interface ToolingReports {
-  id: Generated<string>;
-  ts: Generated<string>;
-  source: string;
-  category: string;
-  tool: Generated<string>;
-  attempt: number | null;
-  max_attempts: number | null;
-  detail: Generated<string>;
-  duration_ms: number | null;
-  profile: string | null;
-  branch: string | null;
-  git_sha: string | null;
-  instance_id: Generated<string>;
-  dedupe_key: string | null;
-  count: Generated<number>;
-  last_seen: string | null;
 }
 
 // ── agent_tokens ────────────────────────────────────────────
@@ -2357,14 +2147,224 @@ export interface AgentActions {
   created_at: Generated<string>;
 }
 
-// ── watchdog_events ────────────────────────────────────────────
-export interface WatchdogEvents {
-  id: Generated<number>;
-  event_kind: string;
-  decision_kind: string;
-  at_ms: number;
+// ── travel_routes ────────────────────────────────────────────
+export interface TravelRoutes {
+  id: string;
+  world_id: string;
+  name: string;
+  kind: TransportKind;
+  waypoints: Generated<string>;
+  loop: Generated<number>;
+  seconds_per_unit: Generated<number>;
   created_at: Generated<string>;
+}
+
+// ── travel_route_stops ────────────────────────────────────────────
+export interface TravelRouteStops {
+  id: string;
+  route_id: string;
+  location_id: string;
+  stop_order: number;
+  dwell_seconds: Generated<number>;
+  coord_x: number | null;
+  coord_y: number | null;
+  coord_z: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+// ── travel_parties ────────────────────────────────────────────
+export interface TravelParties {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  kind: Generated<string>;
+  cadence: Generated<string>;
+  route: Generated<string>;
+  route_index: Generated<number>;
+  steps_per_tick: Generated<number>;
+  travel_progress: Generated<number>;
+  current_location_id: string | null;
+  current_tick: Generated<number>;
+  status: Generated<string>;
+  blocked_until_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── npc_migrations ────────────────────────────────────────────
+export interface NpcMigrations {
+  id: Generated<string>;
+  world_id: string;
+  actor_id: string;
+  origin_location_id: string | null;
+  destination_location_id: string | null;
+  depart_tick: number;
+  arrive_tick: number;
+  cadence: Generated<string>;
+  status: Generated<string>;
+  last_depart_tick: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── location_discovery ────────────────────────────────────────────
+export interface LocationDiscovery {
+  world_id: string;
+  location_id: string;
+  actor_id: string;
+  progress: Generated<number>;
+  last_explored_tick: Generated<number>;
+  discovered: Generated<number>;
+  discovered_tick: number | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── location_edges ────────────────────────────────────────────
+export interface LocationEdges {
+  id: Generated<string>;
+  world_id: string;
+  from_id: string;
+  to_id: string;
+  mode: Generated<LocationEdgeMode>;
+  game_hours: Generated<number>;
+  requires_discovery: Generated<number>;
+  cost_json: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── location_anomalies ────────────────────────────────────────────
+export interface LocationAnomalies {
+  id: Generated<string>;
+  location_id: string;
+  world_id: string;
+  name: string;
+  type: Generated<AnomalyType>;
+  stat_modifiers: Generated<string>;
+  damage_over_time: Generated<number>;
+  healing_over_time: Generated<number>;
+  experience_multiplier: Generated<number>;
+  loot_multiplier: Generated<number>;
+  special_effects: Generated<string>;
+  duration_seconds: Generated<number>;
+  discovery_chance: Generated<number>;
+  discovered_at: string | null;
+  interaction_required: Generated<AnomalyInteraction>;
+  expires_at: string | null;
+  created_at: Generated<string>;
+}
+
+// ── location_storage ────────────────────────────────────────────
+export interface LocationStorage {
+  id: Generated<string>;
+  world_id: string;
+  location_id: string;
+  name: string;
+  capacity: Generated<number>;
+  security: Generated<number>;
+  access_control: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── location_storage_items ────────────────────────────────────────────
+export interface LocationStorageItems {
+  id: Generated<string>;
+  storage_id: string;
+  item_id: string;
+  quantity: Generated<number>;
+  stored_at: Generated<string>;
+}
+
+// ── map_zones ────────────────────────────────────────────
+export interface MapZones {
+  id: Generated<string>;
+  map_id: string;
+  location_id: string | null;
+  name: string;
+  zone_type: Generated<ZoneType>;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  z: Generated<number>;
+  metadata: Generated<string>;
+  created_at: Generated<string>;
+}
+
+// ── nsfw_consent_state ────────────────────────────────────────────
+export interface NsfwConsentState {
+  id: string;
+  user_id: string;
+  chat_id: string;
+  action: string;
+  scope: Generated<string>;
   reason: string | null;
-  misses: number | null;
-  crashes: number | null;
+  created_at: string;
+  revoked_at: string | null;
+  updated_at: string | null;
+}
+
+// ── plugin_state ────────────────────────────────────────────
+export interface PluginState {
+  name: string;
+  status: Generated<PluginStatus>;
+  enabled_at: string | null;
+  disabled_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  config_json: string | null;
+  origin: string | null;
+}
+
+// ── e2e_group_wraps ────────────────────────────────────────────
+export interface E2eGroupWraps {
+  id: string;
+  group_session_id: string;
+  recipient_actor_id: string;
+  wrapped_key: string;
+  sender_eph_pub_jwk: string;
+  chain_index: number;
+  created_at: Generated<string>;
+}
+
+// ── e2e_sessions ────────────────────────────────────────────
+export interface E2eSessions {
+  id: string;
+  sender_actor_id: string;
+  recipient_actor_id: string | null;
+  chat_id: string | null;
+  kind: Generated<string>;
+  created_at: Generated<string>;
+  last_message_at: string | null;
+  revoked_at: string | null;
+  root_key: Uint8Array | null;
+  sending_chain_key: Uint8Array | null;
+  receiving_chain_key: Uint8Array | null;
+  send_count: Generated<number>;
+  recv_count: Generated<number>;
+  ephemeral_public_jwk: string | null;
+  ephemeral_private_jwk: string | null;
+}
+
+// ── e2e_skipped_keys ────────────────────────────────────────────
+export interface E2eSkippedKeys {
+  id: string;
+  session_id: string;
+  dh_public_jwk: string;
+  counter: number;
+  encrypted_message_key: string;
+  created_at: Generated<string>;
+  expires_at: string;
+}
+
+// ── e2e_skipped_message_keys ────────────────────────────────────────────
+export interface E2eSkippedMessageKeys {
+  id: string;
+  session_id: string;
+  recipient_actor_id: string;
+  chain_index: number;
+  message_key: string;
+  created_at: Generated<string>;
 }

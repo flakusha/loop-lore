@@ -294,7 +294,7 @@ console.log("hi");
 
 describe("isExcluded", () => {
   test("excludes migration files", () => {
-    expect(isExcluded("src/db/migrations/001_init.ts",),).toBe(true,);
+    expect(isExcluded("src/db/migrations/001_core.ts",),).toBe(true,);
   });
 
   test("excludes test files", () => {

@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for migration 122 unread/visible-message counters (trigger
- * behavior, fixture equivalence, reconcile self-heal) and the O(1)
- * mark-read reset in the chats-extras route.
+ * Tests for unread/visible-message counters in the consolidated baseline
+ * (trigger behavior, maintained-vs-grouped equivalence, reconcile self-heal)
+ * and the O(1) mark-read reset in the chats-extras route.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -60,7 +60,7 @@ async function expectedUnread(db: Kysely<DB>, chatId: string, actorId: string,):
   return rows.filter((m,) => !lastRead || m.created_at > lastRead.created_at).length;
 }
 
-describe("unread/visible counters (migration 122)", () => {
+describe("unread/visible counters (consolidated baseline)", () => {
   let db: Kysely<DB>;
 
   const mkUser = async (name: string,): Promise<string> => {

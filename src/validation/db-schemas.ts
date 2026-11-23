@@ -821,47 +821,6 @@ export const MetaProgressionSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── model_capabilities ────────────────────────────────────────────
-export const ModelCapabilitiesSchema = t.Object({
-  provider_id: t.String(),
-  model_id: t.String(),
-  last_seen: t.String(),
-  created_at: t.String(),
-  updated_at: t.String(),
-  context_window: t.Optional(t.Number(),),
-  max_output: t.Optional(t.Number(),),
-  supports_tools: t.Optional(t.Number(),),
-  supports_vision: t.Optional(t.Number(),),
-  supports_thinking: t.Optional(t.Number(),),
-  modalities: t.Optional(t.String(),),
-  param_size: t.Optional(t.String(),),
-  owned_by: t.Optional(t.String(),),
-  user_override: t.Optional(t.Number(),),
-  notes: t.Optional(t.String(),),
-  native_locale: t.Optional(t.String(),),
-},);
-
-// ── model_comparisons ────────────────────────────────────────────
-export const ModelComparisonsSchema = t.Object({
-  message_id: t.String(),
-  user_id: t.String(),
-  reference_model: t.String(),
-  preference: t.String(),
-  confidence: t.Number(),
-  created_at: t.String(),
-},);
-
-// ── model_role_overrides ────────────────────────────────────────────
-export const ModelRoleOverridesSchema = t.Object({
-  provider: t.String(),
-  model: t.String(),
-  role: t.Optional(ModelRoleSchema,),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  temperature: t.Optional(t.Number(),),
-  max_tokens: t.Optional(t.Number(),),
-},);
-
 // ── notifications ────────────────────────────────────────────
 export const NotificationsSchema = t.Object({
   user_id: t.String(),
@@ -872,18 +831,6 @@ export const NotificationsSchema = t.Object({
   read: t.Optional(NotificationStatusSchema,),
   data: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-},);
-
-// ── plugin_state ────────────────────────────────────────────
-export const PluginStateSchema = t.Object({
-  name: t.Optional(t.String(),),
-  status: t.Optional(PluginStatusSchema,),
-  enabled_at: t.Optional(t.String(),),
-  disabled_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  config_json: t.Optional(t.String(),),
-  origin: t.Optional(t.String(),),
 },);
 
 // ── request_results ────────────────────────────────────────────
@@ -972,99 +919,234 @@ export const UsersSchema = t.Object({
   encryption_secret: t.Optional(t.String(),),
 },);
 
-// ── asset_links ────────────────────────────────────────────
-export const AssetLinksSchema = t.Object({
-  asset_id: t.String(),
-  entity_type: AssetLinkEntitySchema,
-  entity_id: t.String(),
-  label: t.Optional(t.String(),),
-  sort_order: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  archived_at: t.Optional(t.String(),),
+// ── activitypub_actor_keys ────────────────────────────────────────────
+export const ActivitypubActorKeysSchema = t.Object({
+  actor_id: t.String(),
+  key_id: t.String(),
+  public_jwk: t.String(),
+  encrypted_private_jwk: t.String(),
+  created_at: t.String(),
+  status: t.Optional(t.String(),),
+  rotated_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
 },);
 
-// ── asset_shares ────────────────────────────────────────────
-export const AssetSharesSchema = t.Object({
-  asset_id: t.String(),
-  shared_with_id: t.String(),
-  shared_by_id: t.String(),
+// ── growth_log ────────────────────────────────────────────
+export const GrowthLogSchema = t.Object({
+  actor_id: t.String(),
+  axis: t.String(),
+  event_type: t.String(),
+  recorded_at: t.String(),
+  status: t.Optional(t.String(),),
+  subject_kind: t.Optional(t.String(),),
+  subject_id: t.Optional(t.String(),),
+  before_json: t.Optional(t.String(),),
+  after_json: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  source_event_id: t.Optional(t.String(),),
+  confirmed_at: t.Optional(t.String(),),
+  confirmed_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── proactive_messaging_config ────────────────────────────────────────────
+export const ProactiveMessagingConfigSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  frequency: t.Optional(t.String(),),
+  quiet_hours_start: t.Optional(t.String(),),
+  quiet_hours_end: t.Optional(t.String(),),
+  enabled: t.Optional(t.Number(),),
+  last_proactive_at: t.Optional(t.String(),),
+  backoff_count: t.Optional(t.Number(),),
+  config_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── synthetic_data ────────────────────────────────────────────
+export const SyntheticDataSchema = t.Object({
+  type: SyntheticDataTypeSchema,
+  source_data: t.String(),
+  generated_cases: t.String(),
+  chat_id: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  status: t.Optional(SyntheticDataStatusSchema,),
+  created_at: t.Optional(t.String(),),
+  validated_at: t.Optional(t.String(),),
+  validated_by: t.Optional(t.String(),),
+},);
+
+// ── task_dependencies ────────────────────────────────────────────
+export const TaskDependenciesSchema = t.Object({
+  task_id: t.String(),
+  depends_on_task_id: t.String(),
+  on_failure: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
 
-// ── assets ────────────────────────────────────────────
-export const AssetsSchema = t.Object({
+// ── scheduled_messages ────────────────────────────────────────────
+export const ScheduledMessagesSchema = t.Object({
+  chat_id: t.String(),
+  author_id: t.String(),
+  body: t.String(),
+  send_at: t.String(),
+  status: t.Optional(t.String(),),
+},);
+
+// ── message_reminders ────────────────────────────────────────────
+export const MessageRemindersSchema = t.Object({
+  message_id: t.String(),
+  user_id: t.String(),
+  remind_at: t.String(),
+},);
+
+// ── plan_items ────────────────────────────────────────────
+export const PlanItemsSchema = t.Object({
   owner_id: t.String(),
-  filename: t.String(),
-  mime_type: t.String(),
-  asset_type: AssetTypeSchema,
-  size_bytes: t.Number(),
-  storage_path: t.String(),
-  storage_backend: t.Optional(StorageBackendSchema,),
-  width: t.Optional(t.Number(),),
-  height: t.Optional(t.Number(),),
-  duration_secs: t.Optional(t.Number(),),
-  alt_text: t.Optional(t.String(),),
-  visibility: t.Optional(AssetVisibilitySchema,),
-  created_at: t.Optional(t.String(),),
-  encryption_tier: t.Optional(t.String(),),
-  encrypted_key_id: t.Optional(t.String(),),
-  alpha_status: t.Optional(AssetAlphaStatusSchema,),
-  content_hash: t.Optional(t.String(),),
-  content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
-  thumbnail_path: t.Optional(t.String(),),
-},);
-
-// ── asset_transforms ────────────────────────────────────────────
-export const AssetTransformsSchema = t.Object({
-  asset_id: t.String(),
-  context: TransformContextSchema,
-  crop_x: t.Optional(t.Number(),),
-  crop_y: t.Optional(t.Number(),),
-  crop_w: t.Optional(t.Number(),),
-  crop_h: t.Optional(t.Number(),),
-  zoom: t.Optional(t.Number(),),
-  rotation: t.Optional(t.Number(),),
-  focal_point_x: t.Optional(t.Number(),),
-  focal_point_y: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── location_states ────────────────────────────────────────────
-export const LocationStatesSchema = t.Object({
-  location_id: t.String(),
-  world_id: t.String(),
-  description_override: t.Optional(t.String(),),
-  atmosphere: t.Optional(t.String(),),
-  npcs_present: t.Optional(t.String(),),
-  items_available: t.Optional(t.String(),),
-  time_of_day: t.Optional(t.String(),),
-  weather: t.Optional(t.String(),),
-  hazards: t.Optional(t.String(),),
+  title: t.String(),
+  chat_id: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  kind: t.Optional(t.String(),),
+  position: t.Optional(t.Number(),),
+  parent_id: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── locations ────────────────────────────────────────────
-export const LocationsSchema = t.Object({
-  world_id: t.String(),
+// ── plan_links ────────────────────────────────────────────
+export const PlanLinksSchema = t.Object({
+  from_id: t.String(),
+  to_id: t.String(),
+  relation: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── backup_records ────────────────────────────────────────────
+export const BackupRecordsSchema = t.Object({
+  resource_type: t.String(),
+  owner_id: t.String(),
+  content_hash: t.String(),
+  payload: t.String(),
+  server_hash: t.Optional(t.String(),),
+  version: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  storage_quota_bytes: t.Optional(t.Number(),),
+},);
+
+// ── ranking_snapshots ────────────────────────────────────────────
+export const RankingSnapshotsSchema = t.Object({
+  source: t.String(),
+  version: t.String(),
+  next_refresh_after: t.String(),
+  source_key: t.Optional(t.String(),),
+  checksum: t.Optional(t.String(),),
+  fetched_at: t.Optional(t.String(),),
+  row_count: t.Optional(t.Number(),),
+  payload: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_error: t.Optional(t.String(),),
+  meta: t.Optional(t.String(),),
+},);
+
+// ── tool_call_audit ────────────────────────────────────────────
+export const ToolCallAuditSchema = t.Object({
+  tool: t.String(),
+  verdict: t.String(),
+  chat_id: t.Optional(t.String(),),
+  user_id: t.Optional(t.String(),),
+  rationale: t.Optional(t.String(),),
+  escalation_attempt: t.Optional(t.Number(),),
+  required_role: t.Optional(t.String(),),
+  tags: t.Optional(t.String(),),
+  duration_ms: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── integration_tokens ────────────────────────────────────────────
+export const IntegrationTokensSchema = t.Object({
   name: t.String(),
-  description: t.Optional(t.String(),),
-  connections: t.Optional(t.String(),),
-  publication_status: t.Optional(PublicationStatusSchema,),
-  parent_location_id: t.Optional(t.String(),),
+  token_hash: t.String(),
+  scopes: IntegrationTokenScopeSchema,
+  issuer_admin_user_id: t.String(),
   created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  kind: t.Optional(LocationKindSchema,),
-  mobility_mode: t.Optional(MobilityModeSchema,),
-  path: t.Optional(t.String(),),
-  coord_x: t.Optional(t.Number(),),
-  coord_y: t.Optional(t.Number(),),
-  coord_z: t.Optional(t.Number(),),
-  current_route_id: t.Optional(t.String(),),
-  travel_progress: t.Optional(t.Number(),),
-  content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
+  last_used_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+},);
+
+// ── harness_queue_turns ────────────────────────────────────────────
+export const HarnessQueueTurnsSchema = t.Object({
+  batch_id: t.String(),
+  profile: t.String(),
+  prompt: t.String(),
+  chat_id: t.String(),
+  actor_id: t.String(),
+  requested_by: t.String(),
+  status: t.Optional(HarnessQueueTurnStatusSchema,),
+  requested_role: t.Optional(t.String(),),
+  turn_key: t.Optional(t.String(),),
+  attempts: t.Optional(t.Number(),),
+  result_message_id: t.Optional(t.String(),),
+  error_code: t.Optional(HarnessQueueErrorCodeSchema,),
+  error_message: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  started_at: t.Optional(t.String(),),
+  finished_at: t.Optional(t.String(),),
+  owner_slug: t.Optional(t.String(),),
+},);
+
+// ── auth_factors ────────────────────────────────────────────
+export const AuthFactorsSchema = t.Object({
+  user_id: t.String(),
+  kind: FactorKindSchema,
+  created_at: t.Number(),
+  target: t.Optional(t.String(),),
+  verified_at: t.Optional(t.Number(),),
+},);
+
+// ── auth_challenges ────────────────────────────────────────────
+export const AuthChallengesSchema = t.Object({
+  user_id: t.String(),
+  factor_id: t.String(),
+  purpose: ChallengePurposeSchema,
+  nonce_hash: t.String(),
+  expires_at: t.Number(),
+  created_at: t.Number(),
+  attempts: t.Optional(t.Number(),),
+  consumed: t.Optional(t.Number(),),
+},);
+
+// ── tooling_reports ────────────────────────────────────────────
+export const ToolingReportsSchema = t.Object({
+  source: t.String(),
+  category: t.String(),
+  ts: t.Optional(t.String(),),
+  tool: t.Optional(t.String(),),
+  attempt: t.Optional(t.Number(),),
+  max_attempts: t.Optional(t.Number(),),
+  detail: t.Optional(t.String(),),
+  duration_ms: t.Optional(t.Number(),),
+  profile: t.Optional(t.String(),),
+  branch: t.Optional(t.String(),),
+  git_sha: t.Optional(t.String(),),
+  instance_id: t.Optional(t.String(),),
+  dedupe_key: t.Optional(t.String(),),
+  count: t.Optional(t.Number(),),
+  last_seen: t.Optional(t.String(),),
+},);
+
+// ── watchdog_events ────────────────────────────────────────────
+export const WatchdogEventsSchema = t.Object({
+  event_kind: t.String(),
+  decision_kind: t.String(),
+  at_ms: t.Number(),
+  created_at: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  misses: t.Optional(t.Number(),),
+  crashes: t.Optional(t.Number(),),
 },);
 
 // ── world_avatar_config ────────────────────────────────────────────
@@ -1234,16 +1316,138 @@ export const WorldsSchema = t.Object({
   prompt_budget_ratio: t.Optional(t.Number(),),
 },);
 
-// ── activitypub_actor_keys ────────────────────────────────────────────
-export const ActivitypubActorKeysSchema = t.Object({
-  actor_id: t.String(),
-  key_id: t.String(),
-  public_jwk: t.String(),
-  encrypted_private_jwk: t.String(),
-  created_at: t.String(),
-  status: t.Optional(t.String(),),
-  rotated_at: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
+// ── playthroughs ────────────────────────────────────────────
+export const PlaythroughsSchema = t.Object({
+  player_id: t.String(),
+  world_id: t.String(),
+  playthrough_number: t.Optional(t.Number(),),
+  difficulty: t.Optional(t.String(),),
+  status: t.Optional(PlaythroughStatusSchema,),
+  ending_id: t.Optional(t.String(),),
+  ending_type: t.Optional(t.String(),),
+  completion_time: t.Optional(t.Number(),),
+  choices_made: t.Optional(t.Number(),),
+  secrets_found: t.Optional(t.Number(),),
+  achievements_unlocked: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+},);
+
+// ── world_simulation_state ────────────────────────────────────────────
+export const WorldSimulationStateSchema = t.Object({
+  next_tick_at: t.String(),
+  world_id: t.Optional(t.String(),),
+  paused: t.Optional(t.Number(),),
+  last_run_at: t.Optional(t.String(),),
+  last_error: t.Optional(t.String(),),
+  tick_count: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_travel_budget ────────────────────────────────────────────
+export const WorldTravelBudgetSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  spent: t.Optional(t.Number(),),
+  ceiling: t.Optional(t.Number(),),
+  window_start_tick: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_event_log ────────────────────────────────────────────
+export const WorldEventLogSchema = t.Object({
+  world_id: t.String(),
+  event_type: t.String(),
+  tick_index: t.Number(),
+  dedupe_key: t.String(),
+  subject_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  payload: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── world_timescale ────────────────────────────────────────────
+export const WorldTimescaleSchema = t.Object({
+  world_id: t.String(),
+  epoch: t.Optional(t.String(),),
+  scale_size: t.Optional(t.Number(),),
+  advanced_minutes: t.Optional(t.Number(),),
+  anchor_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_timescale_history ────────────────────────────────────────────
+export const WorldTimescaleHistorySchema = t.Object({
+  world_id: t.String(),
+  epoch: t.String(),
+  changed_at: t.Optional(t.String(),),
+},);
+
+// ── world_conditions ────────────────────────────────────────────
+export const WorldConditionsSchema = t.Object({
+  world_id: t.Optional(t.String(),),
+  weather: t.Optional(t.String(),),
+  time_of_day: t.Optional(t.String(),),
+  season: t.Optional(t.String(),),
+  temperature: t.Optional(t.Number(),),
+  global_modifiers: t.Optional(t.String(),),
+  weather_seed: t.Optional(t.Number(),),
+  mode: t.Optional(t.String(),),
+  tick_interval_minutes: t.Optional(t.Number(),),
+  last_tick_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_condition_history ────────────────────────────────────────────
+export const WorldConditionHistorySchema = t.Object({
+  world_id: t.String(),
+  weather: t.String(),
+  time_of_day: t.String(),
+  season: t.String(),
+  world_minute: t.Number(),
+  recorded_at: t.Optional(t.String(),),
+},);
+
+// ── world_licenses ────────────────────────────────────────────
+export const WorldLicensesSchema = t.Object({
+  world_id: t.String(),
+  spdx_or_custom: t.Optional(LicenseKindSchema,),
+  spdx_id: t.Optional(t.String(),),
+  license_text: t.Optional(t.String(),),
+  attribution: t.Optional(t.String(),),
+  allowed_use: t.Optional(t.String(),),
+  prohibited_use: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── world_maps ────────────────────────────────────────────
+export const WorldMapsSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  width: t.Number(),
+  height: t.Number(),
+  map_type: t.Optional(MapTypeSchema,),
+  tile_asset_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── world_timeline_selections ────────────────────────────────────────────
+export const WorldTimelineSelectionsSchema = t.Object({
+  user_id: t.String(),
+  world_id: t.String(),
+  timeline_id: t.String(),
+  selected_at: t.String(),
+},);
+
+// ── world_lore_search_tokens ────────────────────────────────────────────
+export const WorldLoreSearchTokensSchema = t.Object({
+  entry_id: t.String(),
+  term: t.String(),
+  scope: t.String(),
 },);
 
 // ── actor_currencies ────────────────────────────────────────────
@@ -1384,6 +1588,254 @@ export const ActorsSchema = t.Object({
   plan_visible: t.Optional(t.Number(),),
 },);
 
+// ── emotions ────────────────────────────────────────────
+export const EmotionsSchema = t.Object({
+  name: t.String(),
+  display_name: t.String(),
+  category: t.String(),
+  valence: t.Number(),
+  arousal: t.Number(),
+  created_at: t.String(),
+  icon: t.Optional(t.String(),),
+},);
+
+// ── mood_events ────────────────────────────────────────────
+export const MoodEventsSchema = t.Object({
+  actor_id: t.String(),
+  event_type: t.String(),
+  happiness_delta: t.Number(),
+  source: t.String(),
+  created_at: t.String(),
+  world_id: t.Optional(t.String(),),
+  mood_override: t.Optional(t.String(),),
+  source_id: t.Optional(t.String(),),
+},);
+
+// ── npc_states ────────────────────────────────────────────
+export const NpcStatesSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.String(),
+  location_id: t.Optional(t.String(),),
+  health: t.Optional(t.Number(),),
+  mental_state: t.Optional(t.String(),),
+  knowledge: t.Optional(t.String(),),
+  relationships: t.Optional(t.String(),),
+  inventory: t.Optional(t.String(),),
+  schedule: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── actor_memories ────────────────────────────────────────────
+export const ActorMemoriesSchema = t.Object({
+  actor_id: t.String(),
+  content: t.String(),
+  source_chat_id: t.Optional(t.String(),),
+  memory_type: t.Optional(MemoryTypeSchema,),
+  confidence: t.Optional(t.Number(),),
+  importance: t.Optional(t.Number(),),
+  keywords: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  decay_rate: t.Optional(t.Number(),),
+  strength: t.Optional(t.Number(),),
+  last_accessed_at: t.Optional(t.String(),),
+  source_message_id: t.Optional(t.String(),),
+  context: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  user_id: t.Optional(t.String(),),
+  scope: t.Optional(t.String(),),
+  pinned: t.Optional(PinnedStateSchema,),
+  privacy: t.Optional(t.String(),),
+  review_status: t.Optional(MemoryReviewStatusSchema,),
+  shareability: t.Optional(t.String(),),
+  source_message_ids: t.Optional(t.String(),),
+  source_chat_ids: t.Optional(t.String(),),
+  extraction_kind: t.Optional(ExtractionKindSchema,),
+  context_window_start: t.Optional(t.String(),),
+  context_window_end: t.Optional(t.String(),),
+  emotion_impact: t.Optional(t.String(),),
+  timeline_id: t.Optional(t.String(),),
+},);
+
+// ── memory_embeddings ────────────────────────────────────────────
+export const MemoryEmbeddingsSchema = t.Object({
+  vector_blob: t.String(),
+  created_at: t.Number(),
+  memory_id: t.Optional(t.String(),),
+  model: t.Optional(t.String(),),
+  dimensions: t.Optional(t.Number(),),
+},);
+
+// ── actor_locations ────────────────────────────────────────────
+export const ActorLocationsSchema = t.Object({
+  physical_location_id: t.String(),
+  spatial_location_id: t.String(),
+  actor_id: t.Optional(t.String(),),
+  entered_at: t.Optional(t.String(),),
+},);
+
+// ── memory_audit_log ────────────────────────────────────────────
+export const MemoryAuditLogSchema = t.Object({
+  memory_id: t.String(),
+  actor_id: t.String(),
+  action: t.String(),
+  user_id: t.Optional(t.String(),),
+  details: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── agency_play_counters ────────────────────────────────────────────
+export const AgencyPlayCountersSchema = t.Object({
+  dimension: t.String(),
+  hour_bucket: t.String(),
+  world_id: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
+  actor_id: t.Optional(t.String(),),
+  count: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── agency_dimension_counters ────────────────────────────────────────────
+export const AgencyDimensionCountersSchema = t.Object({
+  dimension: t.String(),
+  day: t.String(),
+  world_id: t.Optional(t.String(),),
+  total: t.Optional(t.Number(),),
+  meaningful: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_daily_plans ────────────────────────────────────────────
+export const ActorDailyPlansSchema = t.Object({
+  actor_id: t.String(),
+  plan_date: t.String(),
+  summary: t.String(),
+  world_id: t.Optional(t.String(),),
+  priority: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  reflection_step_count: t.Optional(t.Number(),),
+},);
+
+// ── actor_planned_activities ────────────────────────────────────────────
+export const ActorPlannedActivitiesSchema = t.Object({
+  plan_id: t.String(),
+  description: t.String(),
+  score: t.Optional(t.Number(),),
+  completed: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_chat_buffers ────────────────────────────────────────────
+export const ActorChatBuffersSchema = t.Object({
+  actor_id: t.String(),
+  partner_actor_id: t.String(),
+  last_chat_at: t.Optional(t.String(),),
+  consecutive_count: t.Optional(t.Number(),),
+  cooldown_minutes: t.Optional(t.Number(),),
+  max_consecutive_chats: t.Optional(t.Number(),),
+},);
+
+// ── actor_plan_revisions ────────────────────────────────────────────
+export const ActorPlanRevisionsSchema = t.Object({
+  plan_id: t.String(),
+  revision_kind: t.String(),
+  before_priority: t.String(),
+  after_priority: t.String(),
+  reason: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── actor_story_points ────────────────────────────────────────────
+export const ActorStoryPointsSchema = t.Object({
+  actor_id: t.String(),
+  world_id: t.Optional(t.String(),),
+  balance: t.Optional(t.Number(),),
+  earned_total: t.Optional(t.Number(),),
+  spent_total: t.Optional(t.Number(),),
+  cap: t.Optional(t.Number(),),
+  last_earn_at: t.Optional(t.String(),),
+  last_spend_at: t.Optional(t.String(),),
+  last_earn_reason: t.Optional(t.String(),),
+  last_spend_reason: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── autonomy_budget ────────────────────────────────────────────
+export const AutonomyBudgetSchema = t.Object({
+  scope_kind: t.String(),
+  scope_id: t.String(),
+  limit_name: t.String(),
+  window_start_at: t.String(),
+  window_count: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── actor_wardrobe ────────────────────────────────────────────
+export const ActorWardrobeSchema = t.Object({
+  actor_id: t.String(),
+  wardrobe_item_id: t.String(),
+  item_instance_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── npc_memories ────────────────────────────────────────────
+export const NpcMemoriesSchema = t.Object({
+  world_id: t.String(),
+  npc_id: t.String(),
+  content: t.String(),
+  memory_type: t.Optional(MemoryTypeSchema,),
+  importance: t.Optional(t.Number(),),
+  emotional_impact: t.Optional(t.Number(),),
+  participants: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  decay_rate: t.Optional(t.Number(),),
+  shared: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  last_reinforced_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+},);
+
+// ── npc_relationships ────────────────────────────────────────────
+export const NpcRelationshipsSchema = t.Object({
+  world_id: t.String(),
+  npc_id: t.String(),
+  target_id: t.String(),
+  standing: t.Optional(t.Number(),),
+  relationship_type: t.Optional(NpcRelationshipTypeSchema,),
+  emotional_bond: t.Optional(t.Number(),),
+  history: t.Optional(t.String(),),
+  last_interaction_at: t.Optional(t.String(),),
+},);
+
+// ── karma_profiles ────────────────────────────────────────────
+export const KarmaProfilesSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  overall: t.Optional(t.Number(),),
+  categories_json: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── karma_events ────────────────────────────────────────────
+export const KarmaEventsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  category: KarmaCategorySchema,
+  delta: t.Number(),
+  reason: t.Optional(t.String(),),
+  occurred_at: t.Optional(t.String(),),
+},);
+
+// ── actor_lore_search_tokens ────────────────────────────────────────────
+export const ActorLoreSearchTokensSchema = t.Object({
+  entry_id: t.String(),
+  term: t.String(),
+  scope: t.String(),
+},);
+
 // ── admin_character_overrides ────────────────────────────────────────────
 export const AdminCharacterOverridesSchema = t.Object({
   actor_id: t.String(),
@@ -1402,25 +1854,6 @@ export const CharacterArcSchema = t.Object({
   current_stage: t.String(),
   updated_at: t.String(),
   stage_description: t.Optional(t.String(),),
-},);
-
-// ── growth_log ────────────────────────────────────────────
-export const GrowthLogSchema = t.Object({
-  actor_id: t.String(),
-  axis: t.String(),
-  event_type: t.String(),
-  recorded_at: t.String(),
-  status: t.Optional(t.String(),),
-  subject_kind: t.Optional(t.String(),),
-  subject_id: t.Optional(t.String(),),
-  before_json: t.Optional(t.String(),),
-  after_json: t.Optional(t.String(),),
-  reason: t.Optional(t.String(),),
-  source_event_id: t.Optional(t.String(),),
-  confirmed_at: t.Optional(t.String(),),
-  confirmed_by: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
 },);
 
 // ── character_arousal ────────────────────────────────────────────
@@ -1757,27 +2190,68 @@ export const CharactersSchema = t.Object({
   record_hash: t.Optional(t.String(),),
 },);
 
-// ── emotions ────────────────────────────────────────────
-export const EmotionsSchema = t.Object({
+// ── personas ────────────────────────────────────────────
+export const PersonasSchema = t.Object({
+  user_id: t.String(),
   name: t.String(),
-  display_name: t.String(),
-  category: t.String(),
-  valence: t.Number(),
-  arousal: t.Number(),
-  created_at: t.String(),
-  icon: t.Optional(t.String(),),
+  avatar_asset_id: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  title: t.Optional(t.String(),),
+  is_default: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  row_version: t.Optional(t.Number(),),
+  temperature: t.Optional(t.Number(),),
+  max_tokens: t.Optional(t.Number(),),
+  model: t.Optional(t.String(),),
 },);
 
-// ── mood_events ────────────────────────────────────────────
-export const MoodEventsSchema = t.Object({
+// ── character_license_history ────────────────────────────────────────────
+export const CharacterLicenseHistorySchema = t.Object({
   actor_id: t.String(),
-  event_type: t.String(),
-  happiness_delta: t.Number(),
-  source: t.String(),
-  created_at: t.String(),
+  license_type: t.String(),
+  allow_derivatives: t.Number(),
+  allow_commercial: t.Number(),
+  share_alike: t.Number(),
+  changed_by: t.String(),
+  custom_license_text: t.Optional(t.String(),),
+  attribution: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── wardrobe_items ────────────────────────────────────────────
+export const WardrobeItemsSchema = t.Object({
+  name: t.String(),
+  actor_id: t.Optional(t.String(),),
   world_id: t.Optional(t.String(),),
-  mood_override: t.Optional(t.String(),),
-  source_id: t.Optional(t.String(),),
+  descriptor: t.Optional(t.String(),),
+  tags: t.Optional(t.String(),),
+  sort_order: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── character_stat_allocation ────────────────────────────────────────────
+export const CharacterStatAllocationSchema = t.Object({
+  world_id: t.String(),
+  allocated_str: t.Number(),
+  allocated_dex: t.Number(),
+  allocated_con: t.Number(),
+  allocated_int: t.Number(),
+  allocated_wis: t.Number(),
+  allocated_cha: t.Number(),
+  allocated_at: t.String(),
+  actor_id: t.Optional(t.String(),),
+  allocated_by_user_id: t.Optional(t.String(),),
+},);
+
+// ── character_trait_assignments ────────────────────────────────────────────
+export const CharacterTraitAssignmentsSchema = t.Object({
+  actor_id: t.String(),
+  trait_id: t.String(),
+  world_id: t.String(),
+  granted_at: t.String(),
+  granted_by_user_id: t.Optional(t.String(),),
 },);
 
 // ── chat_background_assignments ────────────────────────────────────────────
@@ -2037,44 +2511,6 @@ export const MessagesSchema = t.Object({
   outfit_id: t.Optional(t.String(),),
 },);
 
-// ── music_links ────────────────────────────────────────────
-export const MusicLinksSchema = t.Object({
-  chat_id: t.String(),
-  sender_id: t.String(),
-  service: t.String(),
-  url: t.String(),
-  title: t.String(),
-  artist: t.String(),
-  service_track_id: t.String(),
-  service_url: t.String(),
-  section_id: t.Optional(t.String(),),
-  embed_html: t.Optional(t.String(),),
-  thumbnail_url: t.Optional(t.String(),),
-  duration_secs: t.Optional(t.Number(),),
-  is_playlist: t.Optional(t.Number(),),
-  track_count: t.Optional(t.Number(),),
-  explicit: t.Optional(t.Number(),),
-  year: t.Optional(t.Number(),),
-  genre: t.Optional(t.String(),),
-  nsfw_hidden: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── proactive_messaging_config ────────────────────────────────────────────
-export const ProactiveMessagingConfigSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  frequency: t.Optional(t.String(),),
-  quiet_hours_start: t.Optional(t.String(),),
-  quiet_hours_end: t.Optional(t.String(),),
-  enabled: t.Optional(t.Number(),),
-  last_proactive_at: t.Optional(t.String(),),
-  backoff_count: t.Optional(t.Number(),),
-  config_json: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
 // ── story_turns ────────────────────────────────────────────
 export const StoryTurnsSchema = t.Object({
   chat_id: t.String(),
@@ -2111,20 +2547,200 @@ export const VnChoicesSchema = t.Object({
   selected_at: t.Optional(t.String(),),
 },);
 
-// ── personas ────────────────────────────────────────────
-export const PersonasSchema = t.Object({
-  user_id: t.String(),
+// ── message_search_tokens ────────────────────────────────────────────
+export const MessageSearchTokensSchema = t.Object({
+  message_id: t.String(),
+  term: t.String(),
+  scope: t.String(),
+},);
+
+// ── rpg_questions ────────────────────────────────────────────
+export const RpgQuestionsSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  type: t.String(),
+  prompt: t.String(),
+  options: t.String(),
+  time_limit: t.Optional(t.Number(),),
+  required_choice: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  selected_option_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  answered_at: t.Optional(t.String(),),
+  input_kind: t.Optional(t.String(),),
+  answer_value: t.Optional(t.String(),),
+  min_value: t.Optional(t.Number(),),
+  max_value: t.Optional(t.Number(),),
+  effect: t.Optional(t.String(),),
+},);
+
+// ── interaction_logs ────────────────────────────────────────────
+export const InteractionLogsSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  command: t.String(),
+  category: InteractionCategorySchema,
+  skill: t.String(),
+  difficulty: t.Number(),
+  outcome: InteractionOutcomeSchema,
+  world_id: t.Optional(t.String(),),
+  target_actor_id: t.Optional(t.String(),),
+  location_id: t.Optional(t.String(),),
+  roll_sides: t.Optional(t.Number(),),
+  roll_count: t.Optional(t.Number(),),
+  roll_modifier: t.Optional(t.Number(),),
+  roll_mode: t.Optional(t.String(),),
+  roll_values: t.Optional(t.String(),),
+  roll_raw_total: t.Optional(t.Number(),),
+  roll_total: t.Optional(t.Number(),),
+  roll_margin: t.Optional(t.Number(),),
+  action_points: t.Optional(t.Number(),),
+  modifiers: t.Optional(t.String(),),
+  result: t.Optional(t.String(),),
+  state_changes: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  agency_mode: t.Optional(AgencyModeSchema,),
+  action_type: t.Optional(t.String(),),
+},);
+
+// ── chat_branches ────────────────────────────────────────────
+export const ChatBranchesSchema = t.Object({
+  chat_id: t.String(),
+  parent_message_id: t.String(),
   name: t.String(),
-  avatar_asset_id: t.Optional(t.String(),),
-  description: t.Optional(t.String(),),
-  title: t.Optional(t.String(),),
-  is_default: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  is_active: t.Optional(t.Number(),),
+},);
+
+// ── chat_wardrobe_overrides ────────────────────────────────────────────
+export const ChatWardrobeOverridesSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  outfit_id: t.String(),
+  changed_by: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  row_version: t.Optional(t.Number(),),
-  temperature: t.Optional(t.Number(),),
-  max_tokens: t.Optional(t.Number(),),
-  model: t.Optional(t.String(),),
+},);
+
+// ── branch_merges ────────────────────────────────────────────
+export const BranchMergesSchema = t.Object({
+  chat_id: t.String(),
+  base_message_id: t.String(),
+  mode: t.String(),
+  created_by: t.String(),
+  status: t.Optional(t.String(),),
+  result_message_id: t.Optional(t.String(),),
+  merged_branch_id: t.Optional(t.String(),),
+  idempotency_key: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  confirmed_at: t.Optional(t.String(),),
+},);
+
+// ── branch_merge_sources ────────────────────────────────────────────
+export const BranchMergeSourcesSchema = t.Object({
+  merge_id: t.String(),
+  ordinal: t.Number(),
+  tip_message_id: t.String(),
+  branch_id: t.Optional(t.String(),),
+},);
+
+// ── vn_questions ────────────────────────────────────────────
+export const VnQuestionsSchema = t.Object({
+  chat_id: t.String(),
+  scene_index: t.Number(),
+  question_text: t.String(),
+  created_at: t.String(),
+  question_type: t.Optional(t.String(),),
+  speaker_id: t.Optional(t.String(),),
+  options: t.Optional(t.String(),),
+  next_scene_id: t.Optional(t.String(),),
+  consequences: t.Optional(t.String(),),
+  relationship_impact: t.Optional(t.String(),),
+  mood_impact: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  selected_option_id: t.Optional(t.String(),),
+  answered_at: t.Optional(t.String(),),
+  applied_at: t.Optional(t.String(),),
+},);
+
+// ── vn_choice_selections ────────────────────────────────────────────
+export const VnChoiceSelectionsSchema = t.Object({
+  chat_id: t.String(),
+  choice_id: t.String(),
+  scene_index: t.Number(),
+  created_at: t.String(),
+  relationship_impact: t.Optional(t.String(),),
+  mood_impact: t.Optional(t.String(),),
+  selected_by: t.Optional(t.String(),),
+  applied_at: t.Optional(t.String(),),
+},);
+
+// ── message_polls ────────────────────────────────────────────
+export const MessagePollsSchema = t.Object({
+  message_id: t.String(),
+  question: t.String(),
+  options: t.String(),
+  created_by: t.String(),
+  multi: t.Optional(t.Number(),),
+  closes_at: t.Optional(t.String(),),
+  closed_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── poll_votes ────────────────────────────────────────────
+export const PollVotesSchema = t.Object({
+  poll_id: t.String(),
+  user_id: t.String(),
+  option_idx: t.Number(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── immersion_failed_checks ────────────────────────────────────────────
+export const ImmersionFailedChecksSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  blocked_action: t.String(),
+  reason: t.String(),
+  source: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  resolved_at: t.Optional(t.String(),),
+},);
+
+// ── immersion_decision_log ────────────────────────────────────────────
+export const ImmersionDecisionLogSchema = t.Object({
+  chat_id: t.String(),
+  actor_id: t.String(),
+  severity: t.String(),
+  source: t.Optional(t.String(),),
+  rule_id: t.Optional(t.String(),),
+  engine: t.Optional(t.String(),),
+  claims: t.Optional(t.String(),),
+  state_snapshot: t.Optional(t.String(),),
+  verdict: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── chat_owners ────────────────────────────────────────────
+export const ChatOwnersSchema = t.Object({
+  chat_id: t.String(),
+  user_id: t.String(),
+  granted_by: t.Optional(t.String(),),
+  granted_at: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+},);
+
+// ── chat_list_filters ────────────────────────────────────────────
+export const ChatListFiltersSchema = t.Object({
+  updated_at: t.String(),
+  user_id: t.Optional(t.String(),),
+  chat_type: t.Optional(t.String(),),
+  archived: t.Optional(t.String(),),
+  sort: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  min_messages: t.Optional(t.Number(),),
+  max_messages: t.Optional(t.Number(),),
+  updated_since: t.Optional(t.String(),),
 },);
 
 // ── items ────────────────────────────────────────────
@@ -2143,21 +2759,6 @@ export const ItemsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
-},);
-
-// ── npc_states ────────────────────────────────────────────
-export const NpcStatesSchema = t.Object({
-  actor_id: t.String(),
-  world_id: t.String(),
-  location_id: t.Optional(t.String(),),
-  health: t.Optional(t.Number(),),
-  mental_state: t.Optional(t.String(),),
-  knowledge: t.Optional(t.String(),),
-  relationships: t.Optional(t.String(),),
-  inventory: t.Optional(t.String(),),
-  schedule: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
 },);
 
 // ── quest_progress ────────────────────────────────────────────
@@ -2196,36 +2797,6 @@ export const QuestsSchema = t.Object({
   completed_at: t.Optional(t.String(),),
   content_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
-},);
-
-// ── shadow_notes ────────────────────────────────────────────
-export const ShadowNotesSchema = t.Object({
-  chat_id: t.String(),
-  type: ShadowNoteTypeSchema,
-  content: t.String(),
-  created_at: t.String(),
-  status: t.Optional(ShadowNoteStatusSchema,),
-  visibility: t.Optional(ShadowNoteVisibilitySchema,),
-  expires_at: t.Optional(t.String(),),
-  author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
-  content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
-  trigger_condition: t.Optional(t.String(),),
-  revealed_to: t.Optional(t.String(),),
-},);
-
-// ── whitenotes ────────────────────────────────────────────
-export const WhitenotesSchema = t.Object({
-  chat_id: t.String(),
-  type: WhiteneoteTypeSchema,
-  content: t.String(),
-  created_at: t.String(),
-  priority: t.Optional(t.Number(),),
-  scope: t.Optional(WhiteneoteScopeSchema,),
-  expires_at: t.Optional(t.String(),),
-  content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
-  message_id: t.Optional(t.String(),),
 },);
 
 // ── crafting_attempts ────────────────────────────────────────────
@@ -2389,10 +2960,10 @@ export const ProfessionsSchema = t.Object({
   discipline: CraftingDisciplineSchema,
   created_at: t.String(),
   updated_at: t.String(),
-  world_id: t.Optional(t.String(),),
   level: t.Optional(t.Number(),),
   experience: t.Optional(t.Number(),),
   title: t.Optional(ProfessionTitleSchema,),
+  world_id: t.Optional(t.String(),),
 },);
 
 // ── recipe_discoveries ────────────────────────────────────────────
@@ -2495,25 +3066,6 @@ export const PlayerAchievementsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── playthroughs ────────────────────────────────────────────
-export const PlaythroughsSchema = t.Object({
-  player_id: t.String(),
-  world_id: t.String(),
-  playthrough_number: t.Optional(t.Number(),),
-  difficulty: t.Optional(t.String(),),
-  status: t.Optional(PlaythroughStatusSchema,),
-  ending_id: t.Optional(t.String(),),
-  ending_type: t.Optional(t.String(),),
-  completion_time: t.Optional(t.Number(),),
-  choices_made: t.Optional(t.Number(),),
-  secrets_found: t.Optional(t.Number(),),
-  achievements_unlocked: t.Optional(t.Number(),),
-  metadata: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  completed_at: t.Optional(t.String(),),
-},);
-
 // ── trade_history ────────────────────────────────────────────
 export const TradeHistorySchema = t.Object({
   world_id: t.String(),
@@ -2539,426 +3091,6 @@ export const XpLedgerSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-// ── blog_comments ────────────────────────────────────────────
-export const BlogCommentsSchema = t.Object({
-  post_id: t.String(),
-  author_id: t.String(),
-  body: t.String(),
-  status: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  parent_comment_id: t.Optional(t.String(),),
-},);
-
-// ── blog_follows ────────────────────────────────────────────
-export const BlogFollowsSchema = t.Object({
-  follower_id: t.String(),
-  author_id: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── blog_posts ────────────────────────────────────────────
-export const BlogPostsSchema = t.Object({
-  author_id: t.String(),
-  title: t.String(),
-  body: t.String(),
-  visibility: t.Optional(t.String(),),
-  author_type: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  category: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  character_id: t.Optional(t.String(),),
-  scheduled_at: t.Optional(t.String(),),
-  published_at: t.Optional(t.String(),),
-  view_count: t.Optional(t.Number(),),
-  metadata: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  content_version: t.Optional(t.Number(),),
-  record_hash: t.Optional(t.String(),),
-},);
-
-// ── blog_rag_sources ────────────────────────────────────────────
-export const BlogRagSourcesSchema = t.Object({
-  post_id: t.String(),
-  source_type: t.String(),
-  uri: t.String(),
-  title: t.String(),
-  relevance_score: t.Optional(t.Number(),),
-  snippet: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── blog_tags ────────────────────────────────────────────
-export const BlogTagsSchema = t.Object({
-  post_id: t.String(),
-  tag: t.String(),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── actor_memories ────────────────────────────────────────────
-export const ActorMemoriesSchema = t.Object({
-  actor_id: t.String(),
-  content: t.String(),
-  source_chat_id: t.Optional(t.String(),),
-  memory_type: t.Optional(MemoryTypeSchema,),
-  confidence: t.Optional(t.Number(),),
-  importance: t.Optional(t.Number(),),
-  keywords: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-  decay_rate: t.Optional(t.Number(),),
-  strength: t.Optional(t.Number(),),
-  last_accessed_at: t.Optional(t.String(),),
-  source_message_id: t.Optional(t.String(),),
-  context: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  user_id: t.Optional(t.String(),),
-  scope: t.Optional(t.String(),),
-  pinned: t.Optional(PinnedStateSchema,),
-  privacy: t.Optional(t.String(),),
-  review_status: t.Optional(MemoryReviewStatusSchema,),
-  shareability: t.Optional(t.String(),),
-  source_message_ids: t.Optional(t.String(),),
-  source_chat_ids: t.Optional(t.String(),),
-  extraction_kind: t.Optional(ExtractionKindSchema,),
-  context_window_start: t.Optional(t.String(),),
-  context_window_end: t.Optional(t.String(),),
-  emotion_impact: t.Optional(t.String(),),
-  timeline_id: t.Optional(t.String(),),
-},);
-
-// ── memory_embeddings ────────────────────────────────────────────
-export const MemoryEmbeddingsSchema = t.Object({
-  vector_blob: t.String(),
-  created_at: t.Number(),
-  memory_id: t.Optional(t.String(),),
-  model: t.Optional(t.String(),),
-  dimensions: t.Optional(t.Number(),),
-},);
-
-// ── generation_attempts ────────────────────────────────────────────
-export const GenerationAttemptsSchema = t.Object({
-  chat_id: t.String(),
-  parent_message_id: t.String(),
-  actor_id: t.String(),
-  idempotency_key: t.String(),
-  model_id: t.String(),
-  provider: t.String(),
-  status: t.Optional(GenerationStatusSchema,),
-  cancel_reason: t.Optional(CancelReasonSchema,),
-  cancel_reason_detail: t.Optional(t.String(),),
-  cancel_source: t.Optional(CancelSourceSchema,),
-  abort_signal_id: t.Optional(t.String(),),
-  started_at: t.Optional(t.String(),),
-  completed_at: t.Optional(t.String(),),
-  prompt_tokens: t.Optional(t.Number(),),
-  completion_tokens: t.Optional(t.Number(),),
-  total_tokens: t.Optional(t.Number(),),
-  generation_time_ms: t.Optional(t.Number(),),
-  error_message: t.Optional(t.String(),),
-  streaming_chunks_received: t.Optional(t.Number(),),
-  streaming_chars_received: t.Optional(t.Number(),),
-  repetition_score: t.Optional(t.Number(),),
-  repetition_analysis: t.Optional(t.String(),),
-  policy_analysis: t.Optional(t.String(),),
-  response_count_in_turn: t.Optional(t.Number(),),
-  parent_attempt_id: t.Optional(t.String(),),
-  continuation_count: t.Optional(t.Number(),),
-  partial_content: t.Optional(t.String(),),
-  step_index: t.Optional(t.Number(),),
-  total_steps: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  last_rendered_chunk_index: t.Optional(t.Number(),),
-  delivery_confirmed_at: t.Optional(t.String(),),
-  side_effect_jobs_cancelled: t.Optional(t.Number(),),
-},);
-
-// ── synthetic_data ────────────────────────────────────────────
-export const SyntheticDataSchema = t.Object({
-  type: SyntheticDataTypeSchema,
-  source_data: t.String(),
-  generated_cases: t.String(),
-  chat_id: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  metadata: t.Optional(t.String(),),
-  status: t.Optional(SyntheticDataStatusSchema,),
-  created_at: t.Optional(t.String(),),
-  validated_at: t.Optional(t.String(),),
-  validated_by: t.Optional(t.String(),),
-},);
-
-// ── generation_jobs ────────────────────────────────────────────
-export const GenerationJobsSchema = t.Object({
-  kind: t.String(),
-  actor_id: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  payload: t.Optional(t.String(),),
-  results: t.Optional(t.String(),),
-  error_message: t.Optional(t.String(),),
-  started_at: t.Optional(t.String(),),
-  completed_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── prompt_templates ────────────────────────────────────────────
-export const PromptTemplatesSchema = t.Object({
-  owner_id: t.String(),
-  name: t.String(),
-  modality: t.Optional(TemplateModalitySchema,),
-  description: t.Optional(t.String(),),
-  model_family: t.Optional(t.String(),),
-  detail_level: t.Optional(TemplateDetailLevelSchema,),
-  payload: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  is_default: t.Optional(DefaultStateSchema,),
-  enabled: t.Optional(LoreEntryStatusSchema,),
-  lora_slots: t.Optional(t.String(),),
-  min_vram: t.Optional(t.Number(),),
-  probe_status: t.Optional(WorkflowProbeStatusSchema,),
-  params_reviewed: t.Optional(t.Number(),),
-  license: t.Optional(t.String(),),
-},);
-
-// ── content_flags ────────────────────────────────────────────
-export const ContentFlagsSchema = t.Object({
-  reporter_id: t.String(),
-  content_type: t.String(),
-  content_id: t.String(),
-  flag_reason: t.String(),
-  chat_id: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  description: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  resolution: t.Optional(t.String(),),
-  resolved_by: t.Optional(t.String(),),
-  resolved_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── location_nsfw_config ────────────────────────────────────────────
-export const LocationNsfwConfigSchema = t.Object({
-  location_id: t.String(),
-  location_type: NsfwLocationTypeSchema,
-  created_at: t.String(),
-  updated_at: t.String(),
-  privacy_level: t.Optional(t.String(),),
-  discovery_chance: t.Optional(t.Number(),),
-  atmosphere: t.Optional(t.String(),),
-  equipment: t.Optional(t.String(),),
-  risks: t.Optional(t.String(),),
-},);
-
-// ── moderation_actions ────────────────────────────────────────────
-export const ModerationActionsSchema = t.Object({
-  action_type: t.String(),
-  target_user_id: t.String(),
-  performed_by: t.String(),
-  reason: t.String(),
-  scope: t.String(),
-  scope_id: t.Optional(t.String(),),
-  metadata: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  superseded_by: t.Optional(t.String(),),
-  deleted_at: t.Optional(t.String(),),
-  deleted_by: t.Optional(t.String(),),
-},);
-
-// ── moderation_appeals ────────────────────────────────────────────
-export const ModerationAppealsSchema = t.Object({
-  user_id: t.String(),
-  action_id: t.String(),
-  reason: t.String(),
-  created_at: t.String(),
-  status: t.Optional(t.String(),),
-  reviewed_by: t.Optional(t.String(),),
-  review_note: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── nsfw_consent_state ────────────────────────────────────────────
-export const NsfwConsentStateSchema = t.Object({
-  user_id: t.String(),
-  chat_id: t.String(),
-  action: t.String(),
-  created_at: t.String(),
-  scope: t.Optional(t.String(),),
-  reason: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── nsfw_encounters ────────────────────────────────────────────
-export const NsfwEncountersSchema = t.Object({
-  encounter_type: NsfwEncounterTypeSchema,
-  participants: t.String(),
-  created_at: t.String(),
-  updated_at: t.String(),
-  world_id: t.Optional(t.String(),),
-  intensity: t.Optional(ContentIntensitySchema,),
-  narrative_style: t.Optional(NarrativeStyleSchema,),
-  phases: t.Optional(t.String(),),
-  current_phase: t.Optional(t.Number(),),
-  outcomes: t.Optional(t.String(),),
-  content_tags: t.Optional(t.String(),),
-  status: t.Optional(NsfwEncounterStatusSchema,),
-},);
-
-// ── nsfw_user_preferences ────────────────────────────────────────────
-export const NsfwUserPreferencesSchema = t.Object({
-  user_id: t.String(),
-  nsfw_enabled: t.Optional(t.Number(),),
-  max_rating: t.Optional(t.String(),),
-  access_status: t.Optional(NsfwAccessStatusSchema,),
-  shadow_nsfw: t.Optional(t.Number(),),
-  block_reason: t.Optional(t.String(),),
-  banned_at: t.Optional(t.String(),),
-  banned_by: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-  nsfw_blur_media: t.Optional(t.Number(),),
-},);
-
-// ── e2e_group_wraps ────────────────────────────────────────────
-export const E2eGroupWrapsSchema = t.Object({
-  group_session_id: t.String(),
-  recipient_actor_id: t.String(),
-  wrapped_key: t.String(),
-  sender_eph_pub_jwk: t.String(),
-  chain_index: t.Number(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── e2e_sessions ────────────────────────────────────────────
-export const E2eSessionsSchema = t.Object({
-  sender_actor_id: t.String(),
-  recipient_actor_id: t.Optional(t.String(),),
-  chat_id: t.Optional(t.String(),),
-  kind: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  last_message_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-  root_key: t.Optional(t.String(),),
-  sending_chain_key: t.Optional(t.String(),),
-  receiving_chain_key: t.Optional(t.String(),),
-  send_count: t.Optional(t.Number(),),
-  recv_count: t.Optional(t.Number(),),
-  ephemeral_public_jwk: t.Optional(t.String(),),
-  ephemeral_private_jwk: t.Optional(t.String(),),
-},);
-
-// ── e2e_skipped_keys ────────────────────────────────────────────
-export const E2eSkippedKeysSchema = t.Object({
-  session_id: t.String(),
-  dh_public_jwk: t.String(),
-  counter: t.Number(),
-  encrypted_message_key: t.String(),
-  expires_at: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── e2e_skipped_message_keys ────────────────────────────────────────────
-export const E2eSkippedMessageKeysSchema = t.Object({
-  session_id: t.String(),
-  recipient_actor_id: t.String(),
-  chain_index: t.Number(),
-  message_key: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── message_search_tokens ────────────────────────────────────────────
-export const MessageSearchTokensSchema = t.Object({
-  message_id: t.String(),
-  term: t.String(),
-  scope: t.String(),
-},);
-
-// ── workflow_sessions ────────────────────────────────────────────
-export const WorkflowSessionsSchema = t.Object({
-  workflow_id: t.String(),
-  chat_id: t.Optional(t.String(),),
-  step_values: t.Optional(t.String(),),
-  confirmed: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_peers ────────────────────────────────────────────
-export const MeshPeersSchema = t.Object({
-  origin: t.Optional(t.String(),),
-  state: t.Optional(t.String(),),
-  capabilities: t.Optional(t.String(),),
-  last_seen: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  capacity_bytes: t.Optional(t.Number(),),
-  display_name: t.Optional(t.String(),),
-  instance_kind: t.Optional(PeerInstanceKindSchema,),
-  auth_mode: t.Optional(PeerAuthModeSchema,),
-  workload_trust: t.Optional(t.Number(),),
-  allowed_workload_classes: t.Optional(t.String(),),
-  sticky_enabled: t.Optional(t.Number(),),
-  shared_token_enc: t.Optional(t.String(),),
-  key_version: t.Optional(t.Number(),),
-},);
-
-// ── mesh_negotiations ────────────────────────────────────────────
-export const MeshNegotiationsSchema = t.Object({
-  peer_origin: t.String(),
-  state: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_reservations ────────────────────────────────────────────
-export const MeshReservationsSchema = t.Object({
-  peer_origin: t.String(),
-  content_hash: t.String(),
-  size_bytes: t.Number(),
-  expires_at: t.String(),
-  content_type: t.Optional(t.String(),),
-  state: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_deliveries ────────────────────────────────────────────
-export const MeshDeliveriesSchema = t.Object({
-  origin: t.String(),
-  content_hash: t.String(),
-  clock: t.Number(),
-  content_id: t.Optional(t.String(),),
-  received_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_inbound_keys ────────────────────────────────────────────
-export const MeshInboundKeysSchema = t.Object({
-  encrypted_key: t.String(),
-  peer_origin: t.Optional(t.String(),),
-  previous_encrypted_key: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tags ────────────────────────────────────────────
-export const AssetTagsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  scope: t.Optional(t.String(),),
-  owner_id: t.Optional(t.String(),),
-  source: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tag_dismissals ────────────────────────────────────────────
-export const AssetTagDismissalsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  user_id: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
 // ── rotation_history ────────────────────────────────────────────
 export const RotationHistorySchema = t.Object({
   chat_id: t.String(),
@@ -2978,81 +3110,6 @@ export const QuestRewardLedgerSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-// ── character_license_history ────────────────────────────────────────────
-export const CharacterLicenseHistorySchema = t.Object({
-  actor_id: t.String(),
-  license_type: t.String(),
-  allow_derivatives: t.Number(),
-  allow_commercial: t.Number(),
-  share_alike: t.Number(),
-  changed_by: t.String(),
-  custom_license_text: t.Optional(t.String(),),
-  attribution: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── travel_routes ────────────────────────────────────────────
-export const TravelRoutesSchema = t.Object({
-  world_id: t.String(),
-  name: t.String(),
-  kind: TransportKindSchema,
-  waypoints: t.Optional(t.String(),),
-  loop: t.Optional(t.Number(),),
-  seconds_per_unit: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── travel_route_stops ────────────────────────────────────────────
-export const TravelRouteStopsSchema = t.Object({
-  route_id: t.String(),
-  location_id: t.String(),
-  stop_order: t.Number(),
-  dwell_seconds: t.Optional(t.Number(),),
-  coord_x: t.Optional(t.Number(),),
-  coord_y: t.Optional(t.Number(),),
-  coord_z: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── actor_locations ────────────────────────────────────────────
-export const ActorLocationsSchema = t.Object({
-  physical_location_id: t.String(),
-  spatial_location_id: t.String(),
-  actor_id: t.Optional(t.String(),),
-  entered_at: t.Optional(t.String(),),
-},);
-
-// ── rpg_questions ────────────────────────────────────────────
-export const RpgQuestionsSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  type: t.String(),
-  prompt: t.String(),
-  options: t.String(),
-  time_limit: t.Optional(t.Number(),),
-  required_choice: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  selected_option_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  answered_at: t.Optional(t.String(),),
-  input_kind: t.Optional(t.String(),),
-  answer_value: t.Optional(t.String(),),
-  min_value: t.Optional(t.Number(),),
-  max_value: t.Optional(t.Number(),),
-  effect: t.Optional(t.String(),),
-},);
-
-// ── memory_audit_log ────────────────────────────────────────────
-export const MemoryAuditLogSchema = t.Object({
-  memory_id: t.String(),
-  actor_id: t.String(),
-  action: t.String(),
-  user_id: t.Optional(t.String(),),
-  details: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
 // ── status_effect ────────────────────────────────────────────
 export const StatusEffectSchema = t.Object({
   actor_id: t.String(),
@@ -3069,158 +3126,12 @@ export const StatusEffectSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── interaction_logs ────────────────────────────────────────────
-export const InteractionLogsSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  command: t.String(),
-  category: InteractionCategorySchema,
-  skill: t.String(),
-  difficulty: t.Number(),
-  outcome: InteractionOutcomeSchema,
-  world_id: t.Optional(t.String(),),
-  target_actor_id: t.Optional(t.String(),),
-  location_id: t.Optional(t.String(),),
-  roll_sides: t.Optional(t.Number(),),
-  roll_count: t.Optional(t.Number(),),
-  roll_modifier: t.Optional(t.Number(),),
-  roll_mode: t.Optional(t.String(),),
-  roll_values: t.Optional(t.String(),),
-  roll_raw_total: t.Optional(t.Number(),),
-  roll_total: t.Optional(t.Number(),),
-  roll_margin: t.Optional(t.Number(),),
-  action_points: t.Optional(t.Number(),),
-  modifiers: t.Optional(t.String(),),
-  result: t.Optional(t.String(),),
-  state_changes: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  agency_mode: t.Optional(AgencyModeSchema,),
-  action_type: t.Optional(t.String(),),
-},);
-
-// ── agency_play_counters ────────────────────────────────────────────
-export const AgencyPlayCountersSchema = t.Object({
-  dimension: t.String(),
-  hour_bucket: t.String(),
-  world_id: t.Optional(t.String(),),
-  chat_id: t.Optional(t.String(),),
-  actor_id: t.Optional(t.String(),),
-  count: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── agency_dimension_counters ────────────────────────────────────────────
-export const AgencyDimensionCountersSchema = t.Object({
-  dimension: t.String(),
-  day: t.String(),
-  world_id: t.Optional(t.String(),),
-  total: t.Optional(t.Number(),),
-  meaningful: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── actor_daily_plans ────────────────────────────────────────────
-export const ActorDailyPlansSchema = t.Object({
-  actor_id: t.String(),
-  plan_date: t.String(),
-  summary: t.String(),
-  world_id: t.Optional(t.String(),),
-  priority: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  reflection_step_count: t.Optional(t.Number(),),
-},);
-
-// ── actor_planned_activities ────────────────────────────────────────────
-export const ActorPlannedActivitiesSchema = t.Object({
-  plan_id: t.String(),
-  description: t.String(),
-  score: t.Optional(t.Number(),),
-  completed: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── actor_chat_buffers ────────────────────────────────────────────
-export const ActorChatBuffersSchema = t.Object({
-  actor_id: t.String(),
-  partner_actor_id: t.String(),
-  last_chat_at: t.Optional(t.String(),),
-  consecutive_count: t.Optional(t.Number(),),
-  cooldown_minutes: t.Optional(t.Number(),),
-  max_consecutive_chats: t.Optional(t.Number(),),
-},);
-
-// ── actor_plan_revisions ────────────────────────────────────────────
-export const ActorPlanRevisionsSchema = t.Object({
-  plan_id: t.String(),
-  revision_kind: t.String(),
-  before_priority: t.String(),
-  after_priority: t.String(),
-  reason: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── chat_branches ────────────────────────────────────────────
-export const ChatBranchesSchema = t.Object({
-  chat_id: t.String(),
-  parent_message_id: t.String(),
-  name: t.String(),
-  created_at: t.Optional(t.String(),),
-  is_active: t.Optional(t.Number(),),
-},);
-
-// ── model_comparison_runs ────────────────────────────────────────────
-export const ModelComparisonRunsSchema = t.Object({
-  user_id: t.String(),
-  prompt: t.String(),
-  results: t.String(),
-  created_at: t.String(),
-  ratings: t.Optional(t.String(),),
-  metadata: t.Optional(t.String(),),
-},);
-
-// ── actor_story_points ────────────────────────────────────────────
-export const ActorStoryPointsSchema = t.Object({
-  actor_id: t.String(),
-  world_id: t.Optional(t.String(),),
-  balance: t.Optional(t.Number(),),
-  earned_total: t.Optional(t.Number(),),
-  spent_total: t.Optional(t.Number(),),
-  cap: t.Optional(t.Number(),),
-  last_earn_at: t.Optional(t.String(),),
-  last_spend_at: t.Optional(t.String(),),
-  last_earn_reason: t.Optional(t.String(),),
-  last_spend_reason: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
 // ── game_states ────────────────────────────────────────────
 export const GameStatesSchema = t.Object({
   chat_id: t.String(),
   message_id: t.Optional(t.String(),),
   state: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
-},);
-
-// ── autonomy_budget ────────────────────────────────────────────
-export const AutonomyBudgetSchema = t.Object({
-  scope_kind: t.String(),
-  scope_id: t.String(),
-  limit_name: t.String(),
-  window_start_at: t.String(),
-  window_count: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_simulation_state ────────────────────────────────────────────
-export const WorldSimulationStateSchema = t.Object({
-  next_tick_at: t.String(),
-  world_id: t.Optional(t.String(),),
-  paused: t.Optional(t.Number(),),
-  last_run_at: t.Optional(t.String(),),
-  last_error: t.Optional(t.String(),),
-  tick_count: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
 },);
 
 // ── carriage_records ────────────────────────────────────────────
@@ -3230,289 +3141,6 @@ export const CarriageRecordsSchema = t.Object({
   payload: t.String(),
   created_at: t.String(),
   source_chat_id: t.Optional(t.String(),),
-},);
-
-// ── wardrobe_items ────────────────────────────────────────────
-export const WardrobeItemsSchema = t.Object({
-  name: t.String(),
-  actor_id: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  descriptor: t.Optional(t.String(),),
-  tags: t.Optional(t.String(),),
-  sort_order: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── actor_wardrobe ────────────────────────────────────────────
-export const ActorWardrobeSchema = t.Object({
-  actor_id: t.String(),
-  wardrobe_item_id: t.String(),
-  item_instance_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── chat_wardrobe_overrides ────────────────────────────────────────────
-export const ChatWardrobeOverridesSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  outfit_id: t.String(),
-  changed_by: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_dek_exports ────────────────────────────────────────────
-export const MeshDekExportsSchema = t.Object({
-  chat_id: t.String(),
-  key_id: t.String(),
-  peer_origin: t.String(),
-  sender_origin: t.String(),
-  created_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-},);
-
-// ── mesh_outbox ────────────────────────────────────────────
-export const MeshOutboxSchema = t.Object({
-  target_origin: t.String(),
-  content_id: t.String(),
-  envelope: t.String(),
-  next_attempt_at: t.String(),
-  attempts: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  chat_id: t.Optional(t.String(),),
-},);
-
-// ── task_dependencies ────────────────────────────────────────────
-export const TaskDependenciesSchema = t.Object({
-  task_id: t.String(),
-  depends_on_task_id: t.String(),
-  on_failure: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── travel_parties ────────────────────────────────────────────
-export const TravelPartiesSchema = t.Object({
-  world_id: t.String(),
-  name: t.String(),
-  kind: t.Optional(t.String(),),
-  cadence: t.Optional(t.String(),),
-  route: t.Optional(t.String(),),
-  route_index: t.Optional(t.Number(),),
-  steps_per_tick: t.Optional(t.Number(),),
-  travel_progress: t.Optional(t.Number(),),
-  current_location_id: t.Optional(t.String(),),
-  current_tick: t.Optional(t.Number(),),
-  status: t.Optional(t.String(),),
-  blocked_until_tick: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── npc_migrations ────────────────────────────────────────────
-export const NpcMigrationsSchema = t.Object({
-  world_id: t.String(),
-  actor_id: t.String(),
-  depart_tick: t.Number(),
-  arrive_tick: t.Number(),
-  origin_location_id: t.Optional(t.String(),),
-  destination_location_id: t.Optional(t.String(),),
-  cadence: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  last_depart_tick: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_travel_budget ────────────────────────────────────────────
-export const WorldTravelBudgetSchema = t.Object({
-  world_id: t.Optional(t.String(),),
-  spent: t.Optional(t.Number(),),
-  ceiling: t.Optional(t.Number(),),
-  window_start_tick: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_event_log ────────────────────────────────────────────
-export const WorldEventLogSchema = t.Object({
-  world_id: t.String(),
-  event_type: t.String(),
-  tick_index: t.Number(),
-  dedupe_key: t.String(),
-  subject_id: t.Optional(t.String(),),
-  actor_id: t.Optional(t.String(),),
-  payload: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── location_discovery ────────────────────────────────────────────
-export const LocationDiscoverySchema = t.Object({
-  world_id: t.String(),
-  location_id: t.String(),
-  actor_id: t.String(),
-  progress: t.Optional(t.Number(),),
-  last_explored_tick: t.Optional(t.Number(),),
-  discovered: t.Optional(t.Number(),),
-  discovered_tick: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── scheduled_messages ────────────────────────────────────────────
-export const ScheduledMessagesSchema = t.Object({
-  chat_id: t.String(),
-  author_id: t.String(),
-  body: t.String(),
-  send_at: t.String(),
-  status: t.Optional(t.String(),),
-},);
-
-// ── message_reminders ────────────────────────────────────────────
-export const MessageRemindersSchema = t.Object({
-  message_id: t.String(),
-  user_id: t.String(),
-  remind_at: t.String(),
-},);
-
-// ── branch_merges ────────────────────────────────────────────
-export const BranchMergesSchema = t.Object({
-  chat_id: t.String(),
-  base_message_id: t.String(),
-  mode: t.String(),
-  created_by: t.String(),
-  status: t.Optional(t.String(),),
-  result_message_id: t.Optional(t.String(),),
-  merged_branch_id: t.Optional(t.String(),),
-  idempotency_key: t.Optional(t.String(),),
-  metadata: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  confirmed_at: t.Optional(t.String(),),
-},);
-
-// ── branch_merge_sources ────────────────────────────────────────────
-export const BranchMergeSourcesSchema = t.Object({
-  merge_id: t.String(),
-  ordinal: t.Number(),
-  tip_message_id: t.String(),
-  branch_id: t.Optional(t.String(),),
-},);
-
-// ── plan_items ────────────────────────────────────────────
-export const PlanItemsSchema = t.Object({
-  owner_id: t.String(),
-  title: t.String(),
-  chat_id: t.Optional(t.String(),),
-  state: t.Optional(t.String(),),
-  kind: t.Optional(t.String(),),
-  position: t.Optional(t.Number(),),
-  parent_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── plan_links ────────────────────────────────────────────
-export const PlanLinksSchema = t.Object({
-  from_id: t.String(),
-  to_id: t.String(),
-  relation: t.String(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── vn_questions ────────────────────────────────────────────
-export const VnQuestionsSchema = t.Object({
-  chat_id: t.String(),
-  scene_index: t.Number(),
-  question_text: t.String(),
-  created_at: t.String(),
-  question_type: t.Optional(t.String(),),
-  speaker_id: t.Optional(t.String(),),
-  options: t.Optional(t.String(),),
-  next_scene_id: t.Optional(t.String(),),
-  consequences: t.Optional(t.String(),),
-  relationship_impact: t.Optional(t.String(),),
-  mood_impact: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  selected_option_id: t.Optional(t.String(),),
-  answered_at: t.Optional(t.String(),),
-  applied_at: t.Optional(t.String(),),
-},);
-
-// ── world_timescale ────────────────────────────────────────────
-export const WorldTimescaleSchema = t.Object({
-  world_id: t.String(),
-  epoch: t.Optional(t.String(),),
-  scale_size: t.Optional(t.Number(),),
-  advanced_minutes: t.Optional(t.Number(),),
-  anchor_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_timescale_history ────────────────────────────────────────────
-export const WorldTimescaleHistorySchema = t.Object({
-  world_id: t.String(),
-  epoch: t.String(),
-  changed_at: t.Optional(t.String(),),
-},);
-
-// ── location_edges ────────────────────────────────────────────
-export const LocationEdgesSchema = t.Object({
-  world_id: t.String(),
-  from_id: t.String(),
-  to_id: t.String(),
-  mode: t.Optional(LocationEdgeModeSchema,),
-  game_hours: t.Optional(t.Number(),),
-  requires_discovery: t.Optional(t.Number(),),
-  cost_json: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_conditions ────────────────────────────────────────────
-export const WorldConditionsSchema = t.Object({
-  world_id: t.Optional(t.String(),),
-  weather: t.Optional(t.String(),),
-  time_of_day: t.Optional(t.String(),),
-  season: t.Optional(t.String(),),
-  temperature: t.Optional(t.Number(),),
-  global_modifiers: t.Optional(t.String(),),
-  weather_seed: t.Optional(t.Number(),),
-  mode: t.Optional(t.String(),),
-  tick_interval_minutes: t.Optional(t.Number(),),
-  last_tick_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_condition_history ────────────────────────────────────────────
-export const WorldConditionHistorySchema = t.Object({
-  world_id: t.String(),
-  weather: t.String(),
-  time_of_day: t.String(),
-  season: t.String(),
-  world_minute: t.Number(),
-  recorded_at: t.Optional(t.String(),),
-},);
-
-// ── location_anomalies ────────────────────────────────────────────
-export const LocationAnomaliesSchema = t.Object({
-  location_id: t.String(),
-  world_id: t.String(),
-  name: t.String(),
-  type: t.Optional(AnomalyTypeSchema,),
-  stat_modifiers: t.Optional(t.String(),),
-  damage_over_time: t.Optional(t.Number(),),
-  healing_over_time: t.Optional(t.Number(),),
-  experience_multiplier: t.Optional(t.Number(),),
-  loot_multiplier: t.Optional(t.Number(),),
-  special_effects: t.Optional(t.String(),),
-  duration_seconds: t.Optional(t.Number(),),
-  discovery_chance: t.Optional(t.Number(),),
-  discovered_at: t.Optional(t.String(),),
-  interaction_required: t.Optional(AnomalyInteractionSchema,),
-  expires_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
 },);
 
 // ── encounter_templates ────────────────────────────────────────────
@@ -3545,25 +3173,6 @@ export const EncounterRollsSchema = t.Object({
   cooldown_until: t.Optional(t.String(),),
 },);
 
-// ── location_storage ────────────────────────────────────────────
-export const LocationStorageSchema = t.Object({
-  world_id: t.String(),
-  location_id: t.String(),
-  name: t.String(),
-  capacity: t.Optional(t.Number(),),
-  security: t.Optional(t.Number(),),
-  access_control: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── location_storage_items ────────────────────────────────────────────
-export const LocationStorageItemsSchema = t.Object({
-  storage_id: t.String(),
-  item_id: t.String(),
-  quantity: t.Optional(t.Number(),),
-  stored_at: t.Optional(t.String(),),
-},);
-
 // ── extraction_rolls ────────────────────────────────────────────
 export const ExtractionRollsSchema = t.Object({
   world_id: t.String(),
@@ -3574,35 +3183,6 @@ export const ExtractionRollsSchema = t.Object({
   succeeded: t.Optional(t.Number(),),
   difficulty: t.Optional(t.Number(),),
   yield: t.Optional(t.String(),),
-},);
-
-// ── npc_memories ────────────────────────────────────────────
-export const NpcMemoriesSchema = t.Object({
-  world_id: t.String(),
-  npc_id: t.String(),
-  content: t.String(),
-  memory_type: t.Optional(MemoryTypeSchema,),
-  importance: t.Optional(t.Number(),),
-  emotional_impact: t.Optional(t.Number(),),
-  participants: t.Optional(t.String(),),
-  location_id: t.Optional(t.String(),),
-  decay_rate: t.Optional(t.Number(),),
-  shared: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  last_reinforced_at: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-},);
-
-// ── npc_relationships ────────────────────────────────────────────
-export const NpcRelationshipsSchema = t.Object({
-  world_id: t.String(),
-  npc_id: t.String(),
-  target_id: t.String(),
-  standing: t.Optional(t.Number(),),
-  relationship_type: t.Optional(NpcRelationshipTypeSchema,),
-  emotional_bond: t.Optional(t.Number(),),
-  history: t.Optional(t.String(),),
-  last_interaction_at: t.Optional(t.String(),),
 },);
 
 // ── monster_templates ────────────────────────────────────────────
@@ -3679,76 +3259,6 @@ export const FactionStandingSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── karma_profiles ────────────────────────────────────────────
-export const KarmaProfilesSchema = t.Object({
-  world_id: t.String(),
-  actor_id: t.String(),
-  overall: t.Optional(t.Number(),),
-  categories_json: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── karma_events ────────────────────────────────────────────
-export const KarmaEventsSchema = t.Object({
-  world_id: t.String(),
-  actor_id: t.String(),
-  category: KarmaCategorySchema,
-  delta: t.Number(),
-  reason: t.Optional(t.String(),),
-  occurred_at: t.Optional(t.String(),),
-},);
-
-// ── world_licenses ────────────────────────────────────────────
-export const WorldLicensesSchema = t.Object({
-  world_id: t.String(),
-  spdx_or_custom: t.Optional(LicenseKindSchema,),
-  spdx_id: t.Optional(t.String(),),
-  license_text: t.Optional(t.String(),),
-  attribution: t.Optional(t.String(),),
-  allowed_use: t.Optional(t.String(),),
-  prohibited_use: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── world_maps ────────────────────────────────────────────
-export const WorldMapsSchema = t.Object({
-  world_id: t.String(),
-  name: t.String(),
-  width: t.Number(),
-  height: t.Number(),
-  map_type: t.Optional(MapTypeSchema,),
-  tile_asset_id: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── map_zones ────────────────────────────────────────────
-export const MapZonesSchema = t.Object({
-  map_id: t.String(),
-  name: t.String(),
-  x: t.Number(),
-  y: t.Number(),
-  width: t.Number(),
-  height: t.Number(),
-  location_id: t.Optional(t.String(),),
-  zone_type: t.Optional(ZoneTypeSchema,),
-  z: t.Optional(t.Number(),),
-  metadata: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── vn_choice_selections ────────────────────────────────────────────
-export const VnChoiceSelectionsSchema = t.Object({
-  chat_id: t.String(),
-  choice_id: t.String(),
-  scene_index: t.Number(),
-  created_at: t.String(),
-  relationship_impact: t.Optional(t.String(),),
-  mood_impact: t.Optional(t.String(),),
-  selected_by: t.Optional(t.String(),),
-  applied_at: t.Optional(t.String(),),
-},);
-
 // ── instance_storage_budgets ────────────────────────────────────────────
 export const InstanceStorageBudgetsSchema = t.Object({
   asset_class: t.Optional(StorageBudgetScopeSchema,),
@@ -3756,6 +3266,371 @@ export const InstanceStorageBudgetsSchema = t.Object({
   hard_limit_bytes: t.Optional(t.Number(),),
   eviction_policy: t.Optional(StorageEvictionPolicySchema,),
   updated_at: t.Optional(t.String(),),
+},);
+
+// ── resource_records ────────────────────────────────────────────
+export const ResourceRecordsSchema = t.Object({
+  owner_id: t.String(),
+  type: t.String(),
+  provider: t.String(),
+  endpoint: t.String(),
+  credential_ref: t.String(),
+  quota: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  last_used_at: t.Optional(t.String(),),
+},);
+
+// ── resource_quota_counters ────────────────────────────────────────────
+export const ResourceQuotaCountersSchema = t.Object({
+  window_start: t.String(),
+  resource_id: t.Optional(t.String(),),
+  requests: t.Optional(t.Number(),),
+  tokens: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── model_capabilities ────────────────────────────────────────────
+export const ModelCapabilitiesSchema = t.Object({
+  provider_id: t.String(),
+  model_id: t.String(),
+  last_seen: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+  context_window: t.Optional(t.Number(),),
+  max_output: t.Optional(t.Number(),),
+  supports_tools: t.Optional(t.Number(),),
+  supports_vision: t.Optional(t.Number(),),
+  supports_thinking: t.Optional(t.Number(),),
+  modalities: t.Optional(t.String(),),
+  param_size: t.Optional(t.String(),),
+  owned_by: t.Optional(t.String(),),
+  user_override: t.Optional(t.Number(),),
+  notes: t.Optional(t.String(),),
+  native_locale: t.Optional(t.String(),),
+},);
+
+// ── model_comparisons ────────────────────────────────────────────
+export const ModelComparisonsSchema = t.Object({
+  message_id: t.String(),
+  user_id: t.String(),
+  reference_model: t.String(),
+  preference: t.String(),
+  confidence: t.Number(),
+  created_at: t.String(),
+},);
+
+// ── model_role_overrides ────────────────────────────────────────────
+export const ModelRoleOverridesSchema = t.Object({
+  provider: t.String(),
+  model: t.String(),
+  role: t.Optional(ModelRoleSchema,),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  temperature: t.Optional(t.Number(),),
+  max_tokens: t.Optional(t.Number(),),
+},);
+
+// ── asset_links ────────────────────────────────────────────
+export const AssetLinksSchema = t.Object({
+  asset_id: t.String(),
+  entity_type: AssetLinkEntitySchema,
+  entity_id: t.String(),
+  label: t.Optional(t.String(),),
+  sort_order: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  archived_at: t.Optional(t.String(),),
+},);
+
+// ── asset_shares ────────────────────────────────────────────
+export const AssetSharesSchema = t.Object({
+  asset_id: t.String(),
+  shared_with_id: t.String(),
+  shared_by_id: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── assets ────────────────────────────────────────────
+export const AssetsSchema = t.Object({
+  owner_id: t.String(),
+  filename: t.String(),
+  mime_type: t.String(),
+  asset_type: AssetTypeSchema,
+  size_bytes: t.Number(),
+  storage_path: t.String(),
+  storage_backend: t.Optional(StorageBackendSchema,),
+  width: t.Optional(t.Number(),),
+  height: t.Optional(t.Number(),),
+  duration_secs: t.Optional(t.Number(),),
+  alt_text: t.Optional(t.String(),),
+  visibility: t.Optional(AssetVisibilitySchema,),
+  created_at: t.Optional(t.String(),),
+  encryption_tier: t.Optional(t.String(),),
+  encrypted_key_id: t.Optional(t.String(),),
+  alpha_status: t.Optional(AssetAlphaStatusSchema,),
+  content_hash: t.Optional(t.String(),),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
+  thumbnail_path: t.Optional(t.String(),),
+},);
+
+// ── asset_transforms ────────────────────────────────────────────
+export const AssetTransformsSchema = t.Object({
+  asset_id: t.String(),
+  context: TransformContextSchema,
+  crop_x: t.Optional(t.Number(),),
+  crop_y: t.Optional(t.Number(),),
+  crop_w: t.Optional(t.Number(),),
+  crop_h: t.Optional(t.Number(),),
+  zoom: t.Optional(t.Number(),),
+  rotation: t.Optional(t.Number(),),
+  focal_point_x: t.Optional(t.Number(),),
+  focal_point_y: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── music_links ────────────────────────────────────────────
+export const MusicLinksSchema = t.Object({
+  chat_id: t.String(),
+  sender_id: t.String(),
+  service: t.String(),
+  url: t.String(),
+  title: t.String(),
+  artist: t.String(),
+  service_track_id: t.String(),
+  service_url: t.String(),
+  section_id: t.Optional(t.String(),),
+  embed_html: t.Optional(t.String(),),
+  thumbnail_url: t.Optional(t.String(),),
+  duration_secs: t.Optional(t.Number(),),
+  is_playlist: t.Optional(t.Number(),),
+  track_count: t.Optional(t.Number(),),
+  explicit: t.Optional(t.Number(),),
+  year: t.Optional(t.Number(),),
+  genre: t.Optional(t.String(),),
+  nsfw_hidden: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── generation_attempts ────────────────────────────────────────────
+export const GenerationAttemptsSchema = t.Object({
+  chat_id: t.String(),
+  parent_message_id: t.String(),
+  actor_id: t.String(),
+  idempotency_key: t.String(),
+  model_id: t.String(),
+  provider: t.String(),
+  status: t.Optional(GenerationStatusSchema,),
+  cancel_reason: t.Optional(CancelReasonSchema,),
+  cancel_reason_detail: t.Optional(t.String(),),
+  cancel_source: t.Optional(CancelSourceSchema,),
+  abort_signal_id: t.Optional(t.String(),),
+  started_at: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+  prompt_tokens: t.Optional(t.Number(),),
+  completion_tokens: t.Optional(t.Number(),),
+  total_tokens: t.Optional(t.Number(),),
+  generation_time_ms: t.Optional(t.Number(),),
+  error_message: t.Optional(t.String(),),
+  streaming_chunks_received: t.Optional(t.Number(),),
+  streaming_chars_received: t.Optional(t.Number(),),
+  repetition_score: t.Optional(t.Number(),),
+  repetition_analysis: t.Optional(t.String(),),
+  policy_analysis: t.Optional(t.String(),),
+  response_count_in_turn: t.Optional(t.Number(),),
+  parent_attempt_id: t.Optional(t.String(),),
+  continuation_count: t.Optional(t.Number(),),
+  partial_content: t.Optional(t.String(),),
+  step_index: t.Optional(t.Number(),),
+  total_steps: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  last_rendered_chunk_index: t.Optional(t.Number(),),
+  delivery_confirmed_at: t.Optional(t.String(),),
+  side_effect_jobs_cancelled: t.Optional(t.Number(),),
+},);
+
+// ── generation_jobs ────────────────────────────────────────────
+export const GenerationJobsSchema = t.Object({
+  kind: t.String(),
+  actor_id: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  payload: t.Optional(t.String(),),
+  results: t.Optional(t.String(),),
+  error_message: t.Optional(t.String(),),
+  started_at: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── prompt_templates ────────────────────────────────────────────
+export const PromptTemplatesSchema = t.Object({
+  owner_id: t.String(),
+  name: t.String(),
+  modality: t.Optional(TemplateModalitySchema,),
+  description: t.Optional(t.String(),),
+  model_family: t.Optional(t.String(),),
+  detail_level: t.Optional(TemplateDetailLevelSchema,),
+  payload: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  is_default: t.Optional(DefaultStateSchema,),
+  enabled: t.Optional(LoreEntryStatusSchema,),
+  lora_slots: t.Optional(t.String(),),
+  min_vram: t.Optional(t.Number(),),
+  probe_status: t.Optional(WorkflowProbeStatusSchema,),
+  params_reviewed: t.Optional(t.Number(),),
+  license: t.Optional(t.String(),),
+},);
+
+// ── workflow_sessions ────────────────────────────────────────────
+export const WorkflowSessionsSchema = t.Object({
+  workflow_id: t.String(),
+  chat_id: t.Optional(t.String(),),
+  step_values: t.Optional(t.String(),),
+  confirmed: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tags ────────────────────────────────────────────
+export const AssetTagsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  scope: t.Optional(t.String(),),
+  owner_id: t.Optional(t.String(),),
+  source: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tag_dismissals ────────────────────────────────────────────
+export const AssetTagDismissalsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  user_id: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── model_comparison_runs ────────────────────────────────────────────
+export const ModelComparisonRunsSchema = t.Object({
+  user_id: t.String(),
+  prompt: t.String(),
+  results: t.String(),
+  created_at: t.String(),
+  ratings: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+},);
+
+// ── link_previews ────────────────────────────────────────────
+export const LinkPreviewsSchema = t.Object({
+  url_hash: t.String(),
+  url: t.String(),
+  title: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  image_url: t.Optional(t.String(),),
+  fetched_at: t.Optional(t.String(),),
+},);
+
+// ── model_rankings ────────────────────────────────────────────
+export const ModelRankingsSchema = t.Object({
+  scope: t.String(),
+  subject_key: t.String(),
+  metric: t.String(),
+  value: t.Number(),
+  basis: t.String(),
+  source: t.String(),
+  observed_at: t.String(),
+  scope_key: t.Optional(t.String(),),
+  unit: t.Optional(t.String(),),
+  source_version: t.Optional(t.String(),),
+  source_ref: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  meta: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── asset_user_preferences ────────────────────────────────────────────
+export const AssetUserPreferencesSchema = t.Object({
+  user_id: t.Optional(t.String(),),
+  download_naming: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_peers ────────────────────────────────────────────
+export const MeshPeersSchema = t.Object({
+  origin: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  capabilities: t.Optional(t.String(),),
+  last_seen: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  capacity_bytes: t.Optional(t.Number(),),
+  display_name: t.Optional(t.String(),),
+  instance_kind: t.Optional(PeerInstanceKindSchema,),
+  auth_mode: t.Optional(PeerAuthModeSchema,),
+  workload_trust: t.Optional(t.Number(),),
+  allowed_workload_classes: t.Optional(t.String(),),
+  sticky_enabled: t.Optional(t.Number(),),
+  shared_token_enc: t.Optional(t.String(),),
+  key_version: t.Optional(t.Number(),),
+},);
+
+// ── mesh_negotiations ────────────────────────────────────────────
+export const MeshNegotiationsSchema = t.Object({
+  peer_origin: t.String(),
+  state: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_reservations ────────────────────────────────────────────
+export const MeshReservationsSchema = t.Object({
+  peer_origin: t.String(),
+  content_hash: t.String(),
+  size_bytes: t.Number(),
+  expires_at: t.String(),
+  content_type: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_deliveries ────────────────────────────────────────────
+export const MeshDeliveriesSchema = t.Object({
+  origin: t.String(),
+  content_hash: t.String(),
+  clock: t.Number(),
+  content_id: t.Optional(t.String(),),
+  received_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export const MeshInboundKeysSchema = t.Object({
+  encrypted_key: t.String(),
+  peer_origin: t.Optional(t.String(),),
+  previous_encrypted_key: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_dek_exports ────────────────────────────────────────────
+export const MeshDekExportsSchema = t.Object({
+  chat_id: t.String(),
+  key_id: t.String(),
+  peer_origin: t.String(),
+  sender_origin: t.String(),
+  created_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_outbox ────────────────────────────────────────────
+export const MeshOutboxSchema = t.Object({
+  target_origin: t.String(),
+  content_id: t.String(),
+  envelope: t.String(),
+  next_attempt_at: t.String(),
+  attempts: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
 },);
 
 // ── mesh_work_assignments ────────────────────────────────────────────
@@ -3779,270 +3654,6 @@ export const FederationPerformanceBudgetsSchema = t.Object({
   max_queue_depth: t.Optional(t.Number(),),
   requests_per_minute: t.Optional(t.Number(),),
   tokens_per_minute: t.Optional(t.Number(),),
-},);
-
-// ── message_polls ────────────────────────────────────────────
-export const MessagePollsSchema = t.Object({
-  message_id: t.String(),
-  question: t.String(),
-  options: t.String(),
-  created_by: t.String(),
-  multi: t.Optional(t.Number(),),
-  closes_at: t.Optional(t.String(),),
-  closed_at: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── poll_votes ────────────────────────────────────────────
-export const PollVotesSchema = t.Object({
-  poll_id: t.String(),
-  user_id: t.String(),
-  option_idx: t.Number(),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── link_previews ────────────────────────────────────────────
-export const LinkPreviewsSchema = t.Object({
-  url_hash: t.String(),
-  url: t.String(),
-  title: t.Optional(t.String(),),
-  description: t.Optional(t.String(),),
-  image_url: t.Optional(t.String(),),
-  fetched_at: t.Optional(t.String(),),
-},);
-
-// ── character_stat_allocation ────────────────────────────────────────────
-export const CharacterStatAllocationSchema = t.Object({
-  world_id: t.String(),
-  allocated_str: t.Number(),
-  allocated_dex: t.Number(),
-  allocated_con: t.Number(),
-  allocated_int: t.Number(),
-  allocated_wis: t.Number(),
-  allocated_cha: t.Number(),
-  allocated_at: t.String(),
-  actor_id: t.Optional(t.String(),),
-  allocated_by_user_id: t.Optional(t.String(),),
-},);
-
-// ── character_trait_assignments ────────────────────────────────────────────
-export const CharacterTraitAssignmentsSchema = t.Object({
-  actor_id: t.String(),
-  trait_id: t.String(),
-  world_id: t.String(),
-  granted_at: t.String(),
-  granted_by_user_id: t.Optional(t.String(),),
-},);
-
-// ── assistant_quota_usage ────────────────────────────────────────────
-export const AssistantQuotaUsageSchema = t.Object({
-  window_start: t.String(),
-  user_id: t.Optional(t.String(),),
-  used_units: t.Optional(t.Number(),),
-},);
-
-// ── immersion_failed_checks ────────────────────────────────────────────
-export const ImmersionFailedChecksSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  blocked_action: t.String(),
-  reason: t.String(),
-  source: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  resolved_at: t.Optional(t.String(),),
-},);
-
-// ── immersion_decision_log ────────────────────────────────────────────
-export const ImmersionDecisionLogSchema = t.Object({
-  chat_id: t.String(),
-  actor_id: t.String(),
-  severity: t.String(),
-  source: t.Optional(t.String(),),
-  rule_id: t.Optional(t.String(),),
-  engine: t.Optional(t.String(),),
-  claims: t.Optional(t.String(),),
-  state_snapshot: t.Optional(t.String(),),
-  verdict: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── chat_owners ────────────────────────────────────────────
-export const ChatOwnersSchema = t.Object({
-  chat_id: t.String(),
-  user_id: t.String(),
-  granted_by: t.Optional(t.String(),),
-  granted_at: t.Optional(t.String(),),
-  reason: t.Optional(t.String(),),
-},);
-
-// ── world_timeline_selections ────────────────────────────────────────────
-export const WorldTimelineSelectionsSchema = t.Object({
-  user_id: t.String(),
-  world_id: t.String(),
-  timeline_id: t.String(),
-  selected_at: t.String(),
-},);
-
-// ── resource_records ────────────────────────────────────────────
-export const ResourceRecordsSchema = t.Object({
-  owner_id: t.String(),
-  type: t.String(),
-  provider: t.String(),
-  endpoint: t.String(),
-  credential_ref: t.String(),
-  quota: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  last_used_at: t.Optional(t.String(),),
-},);
-
-// ── backup_records ────────────────────────────────────────────
-export const BackupRecordsSchema = t.Object({
-  resource_type: t.String(),
-  owner_id: t.String(),
-  content_hash: t.String(),
-  payload: t.String(),
-  server_hash: t.Optional(t.String(),),
-  version: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-  storage_quota_bytes: t.Optional(t.Number(),),
-},);
-
-// ── resource_quota_counters ────────────────────────────────────────────
-export const ResourceQuotaCountersSchema = t.Object({
-  window_start: t.String(),
-  resource_id: t.Optional(t.String(),),
-  requests: t.Optional(t.Number(),),
-  tokens: t.Optional(t.Number(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── model_rankings ────────────────────────────────────────────
-export const ModelRankingsSchema = t.Object({
-  scope: t.String(),
-  subject_key: t.String(),
-  metric: t.String(),
-  value: t.Number(),
-  basis: t.String(),
-  source: t.String(),
-  observed_at: t.String(),
-  scope_key: t.Optional(t.String(),),
-  unit: t.Optional(t.String(),),
-  source_version: t.Optional(t.String(),),
-  source_ref: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-  meta: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── ranking_snapshots ────────────────────────────────────────────
-export const RankingSnapshotsSchema = t.Object({
-  source: t.String(),
-  version: t.String(),
-  next_refresh_after: t.String(),
-  source_key: t.Optional(t.String(),),
-  checksum: t.Optional(t.String(),),
-  fetched_at: t.Optional(t.String(),),
-  row_count: t.Optional(t.Number(),),
-  payload: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  last_error: t.Optional(t.String(),),
-  meta: t.Optional(t.String(),),
-},);
-
-// ── tool_call_audit ────────────────────────────────────────────
-export const ToolCallAuditSchema = t.Object({
-  tool: t.String(),
-  verdict: t.String(),
-  chat_id: t.Optional(t.String(),),
-  user_id: t.Optional(t.String(),),
-  rationale: t.Optional(t.String(),),
-  escalation_attempt: t.Optional(t.Number(),),
-  required_role: t.Optional(t.String(),),
-  tags: t.Optional(t.String(),),
-  duration_ms: t.Optional(t.Number(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── integration_tokens ────────────────────────────────────────────
-export const IntegrationTokensSchema = t.Object({
-  name: t.String(),
-  token_hash: t.String(),
-  scopes: IntegrationTokenScopeSchema,
-  issuer_admin_user_id: t.String(),
-  created_at: t.Optional(t.String(),),
-  last_used_at: t.Optional(t.String(),),
-  revoked_at: t.Optional(t.String(),),
-  expires_at: t.Optional(t.String(),),
-},);
-
-// ── chat_list_filters ────────────────────────────────────────────
-export const ChatListFiltersSchema = t.Object({
-  updated_at: t.String(),
-  user_id: t.Optional(t.String(),),
-  chat_type: t.Optional(t.String(),),
-  archived: t.Optional(t.String(),),
-  sort: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  min_messages: t.Optional(t.Number(),),
-  max_messages: t.Optional(t.Number(),),
-  updated_since: t.Optional(t.String(),),
-},);
-
-// ── world_lore_search_tokens ────────────────────────────────────────────
-export const WorldLoreSearchTokensSchema = t.Object({
-  entry_id: t.String(),
-  term: t.String(),
-  scope: t.String(),
-},);
-
-// ── actor_lore_search_tokens ────────────────────────────────────────────
-export const ActorLoreSearchTokensSchema = t.Object({
-  entry_id: t.String(),
-  term: t.String(),
-  scope: t.String(),
-},);
-
-// ── harness_queue_turns ────────────────────────────────────────────
-export const HarnessQueueTurnsSchema = t.Object({
-  batch_id: t.String(),
-  profile: t.String(),
-  prompt: t.String(),
-  chat_id: t.String(),
-  actor_id: t.String(),
-  requested_by: t.String(),
-  status: t.Optional(HarnessQueueTurnStatusSchema,),
-  requested_role: t.Optional(t.String(),),
-  turn_key: t.Optional(t.String(),),
-  attempts: t.Optional(t.Number(),),
-  result_message_id: t.Optional(t.String(),),
-  error_code: t.Optional(HarnessQueueErrorCodeSchema,),
-  error_message: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  started_at: t.Optional(t.String(),),
-  finished_at: t.Optional(t.String(),),
-  owner_slug: t.Optional(t.String(),),
-},);
-
-// ── auth_factors ────────────────────────────────────────────
-export const AuthFactorsSchema = t.Object({
-  user_id: t.String(),
-  kind: FactorKindSchema,
-  created_at: t.Number(),
-  target: t.Optional(t.String(),),
-  verified_at: t.Optional(t.Number(),),
-},);
-
-// ── auth_challenges ────────────────────────────────────────────
-export const AuthChallengesSchema = t.Object({
-  user_id: t.String(),
-  factor_id: t.String(),
-  purpose: ChallengePurposeSchema,
-  nonce_hash: t.String(),
-  expires_at: t.Number(),
-  created_at: t.Number(),
-  attempts: t.Optional(t.Number(),),
-  consumed: t.Optional(t.Number(),),
 },);
 
 // ── scenarios ────────────────────────────────────────────
@@ -4172,31 +3783,11 @@ export const ScenarioAssembliesSchema = t.Object({
   updated_at: t.Optional(t.String(),),
 },);
 
-// ── asset_user_preferences ────────────────────────────────────────────
-export const AssetUserPreferencesSchema = t.Object({
+// ── assistant_quota_usage ────────────────────────────────────────────
+export const AssistantQuotaUsageSchema = t.Object({
+  window_start: t.String(),
   user_id: t.Optional(t.String(),),
-  download_naming: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-  updated_at: t.Optional(t.String(),),
-},);
-
-// ── tooling_reports ────────────────────────────────────────────
-export const ToolingReportsSchema = t.Object({
-  source: t.String(),
-  category: t.String(),
-  ts: t.Optional(t.String(),),
-  tool: t.Optional(t.String(),),
-  attempt: t.Optional(t.Number(),),
-  max_attempts: t.Optional(t.Number(),),
-  detail: t.Optional(t.String(),),
-  duration_ms: t.Optional(t.Number(),),
-  profile: t.Optional(t.String(),),
-  branch: t.Optional(t.String(),),
-  git_sha: t.Optional(t.String(),),
-  instance_id: t.Optional(t.String(),),
-  dedupe_key: t.Optional(t.String(),),
-  count: t.Optional(t.Number(),),
-  last_seen: t.Optional(t.String(),),
+  used_units: t.Optional(t.Number(),),
 },);
 
 // ── agent_tokens ────────────────────────────────────────────
@@ -4233,13 +3824,422 @@ export const AgentActionsSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
-// ── watchdog_events ────────────────────────────────────────────
-export const WatchdogEventsSchema = t.Object({
-  event_kind: t.String(),
-  decision_kind: t.String(),
-  at_ms: t.Number(),
+// ── location_states ────────────────────────────────────────────
+export const LocationStatesSchema = t.Object({
+  location_id: t.String(),
+  world_id: t.String(),
+  description_override: t.Optional(t.String(),),
+  atmosphere: t.Optional(t.String(),),
+  npcs_present: t.Optional(t.String(),),
+  items_available: t.Optional(t.String(),),
+  time_of_day: t.Optional(t.String(),),
+  weather: t.Optional(t.String(),),
+  hazards: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── locations ────────────────────────────────────────────
+export const LocationsSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  description: t.Optional(t.String(),),
+  connections: t.Optional(t.String(),),
+  publication_status: t.Optional(PublicationStatusSchema,),
+  parent_location_id: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  kind: t.Optional(LocationKindSchema,),
+  mobility_mode: t.Optional(MobilityModeSchema,),
+  path: t.Optional(t.String(),),
+  coord_x: t.Optional(t.Number(),),
+  coord_y: t.Optional(t.Number(),),
+  coord_z: t.Optional(t.Number(),),
+  current_route_id: t.Optional(t.String(),),
+  travel_progress: t.Optional(t.Number(),),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
+},);
+
+// ── location_nsfw_config ────────────────────────────────────────────
+export const LocationNsfwConfigSchema = t.Object({
+  location_id: t.String(),
+  location_type: NsfwLocationTypeSchema,
+  created_at: t.String(),
+  updated_at: t.String(),
+  privacy_level: t.Optional(t.String(),),
+  discovery_chance: t.Optional(t.Number(),),
+  atmosphere: t.Optional(t.String(),),
+  equipment: t.Optional(t.String(),),
+  risks: t.Optional(t.String(),),
+},);
+
+// ── travel_routes ────────────────────────────────────────────
+export const TravelRoutesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: TransportKindSchema,
+  waypoints: t.Optional(t.String(),),
+  loop: t.Optional(t.Number(),),
+  seconds_per_unit: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── travel_route_stops ────────────────────────────────────────────
+export const TravelRouteStopsSchema = t.Object({
+  route_id: t.String(),
+  location_id: t.String(),
+  stop_order: t.Number(),
+  dwell_seconds: t.Optional(t.Number(),),
+  coord_x: t.Optional(t.Number(),),
+  coord_y: t.Optional(t.Number(),),
+  coord_z: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── travel_parties ────────────────────────────────────────────
+export const TravelPartiesSchema = t.Object({
+  world_id: t.String(),
+  name: t.String(),
+  kind: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  route: t.Optional(t.String(),),
+  route_index: t.Optional(t.Number(),),
+  steps_per_tick: t.Optional(t.Number(),),
+  travel_progress: t.Optional(t.Number(),),
+  current_location_id: t.Optional(t.String(),),
+  current_tick: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  blocked_until_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── npc_migrations ────────────────────────────────────────────
+export const NpcMigrationsSchema = t.Object({
+  world_id: t.String(),
+  actor_id: t.String(),
+  depart_tick: t.Number(),
+  arrive_tick: t.Number(),
+  origin_location_id: t.Optional(t.String(),),
+  destination_location_id: t.Optional(t.String(),),
+  cadence: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  last_depart_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── location_discovery ────────────────────────────────────────────
+export const LocationDiscoverySchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  actor_id: t.String(),
+  progress: t.Optional(t.Number(),),
+  last_explored_tick: t.Optional(t.Number(),),
+  discovered: t.Optional(t.Number(),),
+  discovered_tick: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── location_edges ────────────────────────────────────────────
+export const LocationEdgesSchema = t.Object({
+  world_id: t.String(),
+  from_id: t.String(),
+  to_id: t.String(),
+  mode: t.Optional(LocationEdgeModeSchema,),
+  game_hours: t.Optional(t.Number(),),
+  requires_discovery: t.Optional(t.Number(),),
+  cost_json: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── location_anomalies ────────────────────────────────────────────
+export const LocationAnomaliesSchema = t.Object({
+  location_id: t.String(),
+  world_id: t.String(),
+  name: t.String(),
+  type: t.Optional(AnomalyTypeSchema,),
+  stat_modifiers: t.Optional(t.String(),),
+  damage_over_time: t.Optional(t.Number(),),
+  healing_over_time: t.Optional(t.Number(),),
+  experience_multiplier: t.Optional(t.Number(),),
+  loot_multiplier: t.Optional(t.Number(),),
+  special_effects: t.Optional(t.String(),),
+  duration_seconds: t.Optional(t.Number(),),
+  discovery_chance: t.Optional(t.Number(),),
+  discovered_at: t.Optional(t.String(),),
+  interaction_required: t.Optional(AnomalyInteractionSchema,),
+  expires_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── location_storage ────────────────────────────────────────────
+export const LocationStorageSchema = t.Object({
+  world_id: t.String(),
+  location_id: t.String(),
+  name: t.String(),
+  capacity: t.Optional(t.Number(),),
+  security: t.Optional(t.Number(),),
+  access_control: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── location_storage_items ────────────────────────────────────────────
+export const LocationStorageItemsSchema = t.Object({
+  storage_id: t.String(),
+  item_id: t.String(),
+  quantity: t.Optional(t.Number(),),
+  stored_at: t.Optional(t.String(),),
+},);
+
+// ── map_zones ────────────────────────────────────────────
+export const MapZonesSchema = t.Object({
+  map_id: t.String(),
+  name: t.String(),
+  x: t.Number(),
+  y: t.Number(),
+  width: t.Number(),
+  height: t.Number(),
+  location_id: t.Optional(t.String(),),
+  zone_type: t.Optional(ZoneTypeSchema,),
+  z: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── shadow_notes ────────────────────────────────────────────
+export const ShadowNotesSchema = t.Object({
+  chat_id: t.String(),
+  type: ShadowNoteTypeSchema,
+  content: t.String(),
+  created_at: t.String(),
+  status: t.Optional(ShadowNoteStatusSchema,),
+  visibility: t.Optional(ShadowNoteVisibilitySchema,),
+  expires_at: t.Optional(t.String(),),
+  author_type: t.Optional(ShadowNoteAuthorTypeSchema,),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
+  trigger_condition: t.Optional(t.String(),),
+  revealed_to: t.Optional(t.String(),),
+},);
+
+// ── whitenotes ────────────────────────────────────────────
+export const WhitenotesSchema = t.Object({
+  chat_id: t.String(),
+  type: WhiteneoteTypeSchema,
+  content: t.String(),
+  created_at: t.String(),
+  priority: t.Optional(t.Number(),),
+  scope: t.Optional(WhiteneoteScopeSchema,),
+  expires_at: t.Optional(t.String(),),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
+  message_id: t.Optional(t.String(),),
+},);
+
+// ── blog_comments ────────────────────────────────────────────
+export const BlogCommentsSchema = t.Object({
+  post_id: t.String(),
+  author_id: t.String(),
+  body: t.String(),
+  status: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  parent_comment_id: t.Optional(t.String(),),
+},);
+
+// ── blog_follows ────────────────────────────────────────────
+export const BlogFollowsSchema = t.Object({
+  follower_id: t.String(),
+  author_id: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── blog_posts ────────────────────────────────────────────
+export const BlogPostsSchema = t.Object({
+  author_id: t.String(),
+  title: t.String(),
+  body: t.String(),
+  visibility: t.Optional(t.String(),),
+  author_type: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  category: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  character_id: t.Optional(t.String(),),
+  scheduled_at: t.Optional(t.String(),),
+  published_at: t.Optional(t.String(),),
+  view_count: t.Optional(t.Number(),),
+  metadata: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  content_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
+},);
+
+// ── blog_rag_sources ────────────────────────────────────────────
+export const BlogRagSourcesSchema = t.Object({
+  post_id: t.String(),
+  source_type: t.String(),
+  uri: t.String(),
+  title: t.String(),
+  relevance_score: t.Optional(t.Number(),),
+  snippet: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── blog_tags ────────────────────────────────────────────
+export const BlogTagsSchema = t.Object({
+  post_id: t.String(),
+  tag: t.String(),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── content_flags ────────────────────────────────────────────
+export const ContentFlagsSchema = t.Object({
+  reporter_id: t.String(),
+  content_type: t.String(),
+  content_id: t.String(),
+  flag_reason: t.String(),
+  chat_id: t.Optional(t.String(),),
+  world_id: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  resolution: t.Optional(t.String(),),
+  resolved_by: t.Optional(t.String(),),
+  resolved_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── moderation_actions ────────────────────────────────────────────
+export const ModerationActionsSchema = t.Object({
+  action_type: t.String(),
+  target_user_id: t.String(),
+  performed_by: t.String(),
+  reason: t.String(),
+  scope: t.String(),
+  scope_id: t.Optional(t.String(),),
+  metadata: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  superseded_by: t.Optional(t.String(),),
+  deleted_at: t.Optional(t.String(),),
+  deleted_by: t.Optional(t.String(),),
+},);
+
+// ── moderation_appeals ────────────────────────────────────────────
+export const ModerationAppealsSchema = t.Object({
+  user_id: t.String(),
+  action_id: t.String(),
+  reason: t.String(),
+  created_at: t.String(),
+  status: t.Optional(t.String(),),
+  reviewed_by: t.Optional(t.String(),),
+  review_note: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── nsfw_consent_state ────────────────────────────────────────────
+export const NsfwConsentStateSchema = t.Object({
+  user_id: t.String(),
+  chat_id: t.String(),
+  action: t.String(),
+  created_at: t.String(),
+  scope: t.Optional(t.String(),),
   reason: t.Optional(t.String(),),
-  misses: t.Optional(t.Number(),),
-  crashes: t.Optional(t.Number(),),
+  revoked_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── nsfw_encounters ────────────────────────────────────────────
+export const NsfwEncountersSchema = t.Object({
+  encounter_type: NsfwEncounterTypeSchema,
+  participants: t.String(),
+  created_at: t.String(),
+  updated_at: t.String(),
+  world_id: t.Optional(t.String(),),
+  intensity: t.Optional(ContentIntensitySchema,),
+  narrative_style: t.Optional(NarrativeStyleSchema,),
+  phases: t.Optional(t.String(),),
+  current_phase: t.Optional(t.Number(),),
+  outcomes: t.Optional(t.String(),),
+  content_tags: t.Optional(t.String(),),
+  status: t.Optional(NsfwEncounterStatusSchema,),
+},);
+
+// ── nsfw_user_preferences ────────────────────────────────────────────
+export const NsfwUserPreferencesSchema = t.Object({
+  user_id: t.String(),
+  nsfw_enabled: t.Optional(t.Number(),),
+  max_rating: t.Optional(t.String(),),
+  access_status: t.Optional(NsfwAccessStatusSchema,),
+  shadow_nsfw: t.Optional(t.Number(),),
+  block_reason: t.Optional(t.String(),),
+  banned_at: t.Optional(t.String(),),
+  banned_by: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  nsfw_blur_media: t.Optional(t.Number(),),
+},);
+
+// ── plugin_state ────────────────────────────────────────────
+export const PluginStateSchema = t.Object({
+  name: t.Optional(t.String(),),
+  status: t.Optional(PluginStatusSchema,),
+  enabled_at: t.Optional(t.String(),),
+  disabled_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+  config_json: t.Optional(t.String(),),
+  origin: t.Optional(t.String(),),
+},);
+
+// ── e2e_group_wraps ────────────────────────────────────────────
+export const E2eGroupWrapsSchema = t.Object({
+  group_session_id: t.String(),
+  recipient_actor_id: t.String(),
+  wrapped_key: t.String(),
+  sender_eph_pub_jwk: t.String(),
+  chain_index: t.Number(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── e2e_sessions ────────────────────────────────────────────
+export const E2eSessionsSchema = t.Object({
+  sender_actor_id: t.String(),
+  recipient_actor_id: t.Optional(t.String(),),
+  chat_id: t.Optional(t.String(),),
+  kind: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  last_message_at: t.Optional(t.String(),),
+  revoked_at: t.Optional(t.String(),),
+  root_key: t.Optional(t.String(),),
+  sending_chain_key: t.Optional(t.String(),),
+  receiving_chain_key: t.Optional(t.String(),),
+  send_count: t.Optional(t.Number(),),
+  recv_count: t.Optional(t.Number(),),
+  ephemeral_public_jwk: t.Optional(t.String(),),
+  ephemeral_private_jwk: t.Optional(t.String(),),
+},);
+
+// ── e2e_skipped_keys ────────────────────────────────────────────
+export const E2eSkippedKeysSchema = t.Object({
+  session_id: t.String(),
+  dh_public_jwk: t.String(),
+  counter: t.Number(),
+  encrypted_message_key: t.String(),
+  expires_at: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── e2e_skipped_message_keys ────────────────────────────────────────────
+export const E2eSkippedMessageKeysSchema = t.Object({
+  session_id: t.String(),
+  recipient_actor_id: t.String(),
+  chain_index: t.Number(),
+  message_key: t.String(),
+  created_at: t.Optional(t.String(),),
 },);

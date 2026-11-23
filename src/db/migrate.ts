@@ -89,9 +89,9 @@ export async function getMigrationFiles(): Promise<Record<string, Migration>> {
  * Fail-fast guard: reject databases whose applied migrations no longer exist
  * in src/db/migrations/.
  *
- * Applied migrations are append-only — deleting or renumbering a shipped
- * migration orphans its `kysely_migration` row and breaks every existing DB
- * (Kysely throws an opaque "missing migration" error with no recovery hint).
+ * After the 14-file S2 baseline, applied migrations are append-only — deleting
+ * or renumbering a shipped migration orphans its `kysely_migration` row. Local
+ * DBs are disposable, so the recovery is export → db:reinit → import.
  * @param database
  * @param migrations
  * @throws {Error} When applied migrations are missing from the provider
@@ -137,11 +137,8 @@ export async function assertMigrationsNotStale<DB,>(
   throw new Error(
     `Database has ${missing.length} applied migration(s) missing from src/db/migrations/:\n${
       Array.from(missing, (name,) => `  - ${name}`,).join("\n",)
-    }\n\nApplied migrations are append-only: never delete or renumber a shipped migration.` +
-      `\nRecovery options:` +
-      `\n  1. Restore the deleted migrations from git (git show <commit>:<path>).` +
-      `\n  2. If this database is disposable, recreate it (e.g. db:reinit).` +
-      `\n  3. If you know the rows are truly orphaned, delete them from kysely_migration manually.`,
+    }\n\nThis local database predates the 14-file consolidated baseline; its applied\nmigration names no longer exist.` +
+      `\nRecovery: export any data you need, recreate the DB (db:reinit), then import.`,
   );
 }
 

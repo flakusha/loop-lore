@@ -9,7 +9,7 @@ import { tmpdir, } from "node:os";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "./index";
-import { runMigrations, } from "./migrate";
+import { assertMigrationsNotStale, getMigrationFiles, runMigrations, } from "./migrate";
 import type { DB, } from "./schema";
 
 createLogger({ level: "error", },);
@@ -77,4 +77,31 @@ describe("runMigrations cross-process guard", () => {
     },
     120_000,
   );
+});
+
+describe("stale migration guard", () => {
+  test("names retired migrations and the 14-file recovery path", async () => {
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    try {
+      await sql`CREATE TABLE kysely_migration (name text PRIMARY KEY, timestamp integer, completed integer)`.execute(
+        db,
+      );
+
+      await sql`INSERT INTO kysely_migration (name, timestamp, completed) VALUES (${"001_init"}, 1, 1), (${"119_agent_tickets_scope"}, 1, 1)`
+        .execute(db,);
+
+      const migrations = await getMigrationFiles();
+      const guard = assertMigrationsNotStale(db, migrations,);
+
+      await expect(guard,).rejects.toThrow(/001_init/,);
+      await expect(guard,).rejects.toThrow(/This local database predates the 14-file consolidated baseline/,);
+      await expect(guard,).rejects.toThrow(
+        /Recovery: export any data you need, recreate the DB \(db:reinit\), then import\./,
+      );
+    } finally {
+      await db.destroy();
+      sqlite.close();
+    }
+  });
 });

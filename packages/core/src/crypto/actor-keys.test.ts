@@ -13,9 +13,8 @@ import {
   rotateActorKey,
 } from "./actor-keys";
 
-import { createSqliteDialect, } from "@/db/index";
-import { up as migrate, } from "@/db/migrations/001_init";
 import type { DB, } from "@/db/schema";
+import { createTestDb, } from "@/test-utils/create-test-db";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
 import { getSmk, initSmk, } from "./smk";
@@ -47,10 +46,9 @@ async function ensureActor(actorId: string,): Promise<void> {
 }
 
 beforeAll(async () => {
-  const sqlite = new Database(":memory:",);
-  rawSqlite = sqlite;
-  db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
-  await migrate(db as unknown as Kysely<unknown>,);
+  const created = await createTestDb();
+  db = created.db;
+  rawSqlite = created.sqlite;
   for (const actorId of KEY_BEARING_ACTORS) { await ensureActor(actorId,); }
   await initSmk({
     serverEncryptionKey: VALID_HEX_KEY,

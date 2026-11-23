@@ -5,11 +5,18 @@ import { Kysely, } from "kysely";
 import { tmpdir, } from "node:os";
 import { loadConfig, } from "../config/load";
 import { createSqliteDialect, } from "../db/index";
-import { up, } from "../db/migrations/001_init";
+import { getMigrationFiles, } from "../db/migrate";
 import type { DB, } from "../db/schema";
 import { createApp, } from "../elysia-app";
 import { createLogger, getChildLogger, type Logger, } from "../logger";
 import { safeFetch, } from "../utils";
+
+/** Apply the consolidated 14-file baseline to this one-shot DB. */
+async function applyBaseline(database: Kysely<unknown>,): Promise<void> {
+  for (const migration of Object.values(await getMigrationFiles(),)) {
+    await migration.up(database,);
+  }
+}
 
 // Console-only logger: a one-shot smoke run has no host process to seed one.
 createLogger({ level: "info", },);
@@ -18,7 +25,7 @@ const sqlite = new Database(":memory:",);
 sqlite.run("PRAGMA foreign_keys = ON",);
 const dialect = createSqliteDialect(sqlite,);
 const db = new Kysely<DB>({ dialect, },);
-await up(db as Kysely<unknown>,);
+await applyBaseline(db as unknown as Kysely<unknown>,);
 
 const config = loadConfig();
 config.db.sqliteFilename = ":memory:";

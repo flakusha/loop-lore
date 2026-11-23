@@ -265,7 +265,7 @@ test("generated files and migrations yield no gaps, and the scan still ran", () 
     "src/db/schema.ts": generated,
     "src/db/schema-manifest.ts": generated,
     "src/db/schema-story.ts": generated,
-    "src/db/migrations/001_init.ts": generated,
+    "src/db/migrations/001_core.ts": generated,
     "src/validation/db-schemas.ts": generated,
     "src/test-utils/insert-helpers.ts": generated,
   },);
