@@ -81,7 +81,7 @@ function buildMigrationProvider() {
       const dir = path.join(__dirname, "migrations",);
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
-        .toSorted((a, b,) => a.localeCompare(b,));
+        .toSorted(compareMigrationNames,);
 
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
@@ -120,6 +120,13 @@ describe("migration roundtrip", () => {
 
   test(`found ${migrationNames.length} migration files`, () => {
     expect(migrationNames.length,).toBeGreaterThan(0,);
+  });
+
+  test("provider order matches the shared migration comparator", async () => {
+    const providerKeys = Object.keys(await buildMigrationProvider().getMigrations(),);
+    expect(providerKeys,).toEqual(
+      migrationNames.map((name,) => name.replace(/\.ts$/, "",)),
+    );
   });
 
   test("migrateToLatest succeeds for all migrations", async () => {

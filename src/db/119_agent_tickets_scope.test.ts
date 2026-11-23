@@ -213,4 +213,63 @@ describe("119_agent_tickets_scope", () => {
     expect(registryRows(),).toEqual(expected,);
     expect(raw.query("PRAGMA foreign_key_check",).all(),).toEqual([],);
   });
+
+  test("row-survival oracle: full child row and FK enforcement survive 119 up/down", async () => {
+    raw.exec(WITH_EXPIRY_TABLE,);
+    raw.exec(`
+      CREATE TABLE rsi_agent_worktrees (
+        id text PRIMARY KEY,
+        token_id text NOT NULL REFERENCES agent_tokens(id) ON DELETE CASCADE,
+        branch text NOT NULL,
+        path text NOT NULL UNIQUE,
+        disk_bytes integer NOT NULL DEFAULT 0,
+        created_at text NOT NULL,
+        last_active_at text NOT NULL,
+        removed_at text
+      )
+    `,);
+
+    raw.exec(
+      "INSERT INTO agent_tokens (id, token_hash, scope, created_at) VALUES ('a', 'hash-a', 'agent:check', 'now')",
+    );
+
+    raw.exec(
+      "INSERT INTO rsi_agent_worktrees (id, token_id, branch, path, disk_bytes, created_at, last_active_at) VALUES ('w1', 'a', 'feature/x', 'tree/x', 42, 'now', 'now')",
+    );
+
+    const migrations = await getMigrationFiles();
+    const migration = migrations[MIGRATION];
+    expect(migration,).toBeDefined();
+
+    const fullRow = (): unknown[] =>
+      raw.query(
+        "SELECT id, token_id, branch, path, disk_bytes, created_at, last_active_at, removed_at FROM rsi_agent_worktrees",
+      ).all();
+
+    const expected = [{
+      id: "w1",
+      token_id: "a",
+      branch: "feature/x",
+      path: "tree/x",
+      disk_bytes: 42,
+      created_at: "now",
+      last_active_at: "now",
+      removed_at: null,
+    },];
+
+    await migration!.up(db,);
+    expect(fullRow(),).toEqual(expected,);
+    expect(raw.query("PRAGMA foreign_key_check",).all(),).toEqual([],);
+
+    await migration!.down!(db,);
+    expect(fullRow(),).toEqual(expected,);
+    expect(raw.query("PRAGMA foreign_key_check",).all(),).toEqual([],);
+
+    // FK enforcement is still live after both rebuilds.
+    expect(() =>
+      raw.exec(
+        "INSERT INTO rsi_agent_worktrees (id, token_id, branch, path, created_at, last_active_at) VALUES ('w2', 'bogus', 'feature/y', 'tree/y', 'now', 'now')",
+      )
+    ).toThrow();
+  }, 15000,);
 });

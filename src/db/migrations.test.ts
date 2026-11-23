@@ -258,34 +258,14 @@ describe("migration numbering is sequential from 001", () => {
 
     expect(prefixes[0],).toBe(1,);
 
-    // 058 is parked on the unmerged `world-conditions-time` branch
-    // (src/db/migrations/058_world_conditions.ts), so dev legitimately has a
-    // hole at 58 until that branch finalizes. 066 (instance storage budgets)
-    // is parked the same way: it belongs to the still-unmerged
-    // `feat-fed-storage-quota` branch of the federation-offload epic, and 068
-    // (performance quota budgets) is numbered past it so no two branches
-    // collide. 065 (peer workload columns) and 067 (workload assignments) have
-    // landed, so they are no longer holes. 071 and 072 are parked on parallel
-    // unmerged branches (`char-stat-traits`, `chat-rich-engagement`,
-    // `xp-progression-surface`); the message-translations migrations were
-    // renumbered to 073/074 to avoid colliding with those claims. 081 is
-    // parked on an unmerged sibling branch (observed there as `081_*`
-    // during the immersion-gate work); 082 onwards were numbered past it
-    // so no two branches collide. The 2026-10-31 wave landed five 084 and
-    // three 085 files; they were renumbered to 087-092 (084 lore_reveal and
-    // 085 actor_memories_timeline_id kept their numbers) so applied order is
-    // deterministic again. Only numbers listed here may be absent; any other
-    // gap still fails below.
-    // 118 (agent token expiry) lives on dev; this branch numbers its scope
-    // migration 119, so 118 is a hole here until the branch rebases onto dev.
-    const PARKED = [58, 66, 71, 72, 81, 84, 118,];
-    const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
+    // All historically PARKED numbers (058/066/071/072/081/084/118) have
+    // landed on dev; the current chain is gapless.
     const expected = Array.from(
-      { length: prefixes.length + parkedMissing.length, },
+      { length: prefixes.length, },
       (_, i,) => i + 1,
-    ).filter((n,) => !parkedMissing.includes(n,));
+    );
 
-    expect(prefixes, `prefixes must be 001..N with no gaps (parked: ${parkedMissing.join(", ",)})`,).toEqual(expected,);
+    expect(prefixes, "prefixes must be 001..N with no gaps",).toEqual(expected,);
   });
 });
 

@@ -28,6 +28,7 @@
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, } from "node:url";
+import { compareMigrationNames, } from "../src/db/migrate";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url,),);
 const ROOT = path.resolve(__dirname, "..",);
@@ -35,7 +36,7 @@ const MIGRATIONS_ROOT = path.join(ROOT, "src/db/migrations",);
 
 const FILENAME = /^(\d{3})_(.+)\.ts$/;
 
-interface FileRow {
+export interface FileRow {
   readonly name: string;
   readonly prefix: string;
   readonly relDir: string;
@@ -117,26 +118,25 @@ if (loaderCollisions.length === 0) {
   }
 }
 
-const numericSort = (a: FileRow, b: FileRow,): number => {
-  if (a.prefix !== b.prefix) { return Number(a.prefix,) - Number(b.prefix,); }
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-};
-const sorted = [...loaderReport.collected,].sort(numericSort,);
-let orderOk = true;
-for (let i = 0; i < sorted.length; i++) {
-  if (sorted[i] !== sorted[i]) {
-    orderOk = false;
-    break;
-  }
+/**
+ * Compare the declared (readdir) order against a freshly sorted copy using
+ * the same comparator the runtime loader applies.
+ */
+export function isDeclaredOrderStable(rows: readonly FileRow[],): boolean {
+  const sorted = [...rows,].sort((a, b,) => compareMigrationNames(a.name, b.name,));
+  return rows.every((row, i,) => row.name === sorted[i]?.name);
 }
-if (orderOk) {
+
+if (isDeclaredOrderStable(loaderReport.collected,)) {
   ok("loader scope: declared order is stable under numeric + alphabetical comparator",);
 } else {
   fail("loader scope: declared order disagrees with comparator — re-run after sort fix",);
 }
 
-if (failed) {
-  console.error("\nMigration ordering gate FAILED.",);
-  process.exit(1,);
+if (import.meta.main) {
+  if (failed) {
+    console.error("\nMigration ordering gate FAILED.",);
+    process.exit(1,);
+  }
+  console.log("\nMigration ordering gate PASSED.",);
 }
-console.log("\nMigration ordering gate PASSED.",);
