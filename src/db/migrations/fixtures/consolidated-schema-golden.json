@@ -4864,6 +4864,55 @@
       "name": "world_lore_entries_distortion_check_update",
       "tbl_name": "world_lore_entries",
       "sql": "CREATE TRIGGER world_lore_entries_distortion_check_update BEFORE UPDATE OF distortion_level ON world_lore_entries FOR EACH ROW WHEN NEW.distortion_level < 0 OR NEW.distortion_level > 100 BEGIN SELECT RAISE(ABORT, 'world_lore_entries.distortion_level must be 0..100'); END"
+    },
+    {
+      "type": "index",
+      "name": "idx_honeypot_indicators_expiry",
+      "tbl_name": "honeypot_indicators",
+      "sql": "CREATE INDEX idx_honeypot_indicators_expiry on honeypot_indicators (expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_honeypot_indicators_indicator_expires",
+      "tbl_name": "honeypot_indicators",
+      "sql": "CREATE INDEX idx_honeypot_indicators_indicator_expires on honeypot_indicators (indicator, expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_mesh_intel_reports_expiry",
+      "tbl_name": "mesh_intel_reports",
+      "sql": "CREATE INDEX idx_mesh_intel_reports_expiry on mesh_intel_reports (expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_mesh_intel_reports_lookup",
+      "tbl_name": "mesh_intel_reports",
+      "sql": "CREATE INDEX idx_mesh_intel_reports_lookup on mesh_intel_reports (indicator, source_peer, expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_mesh_intel_reports_nonce",
+      "tbl_name": "mesh_intel_reports",
+      "sql": "CREATE UNIQUE INDEX idx_mesh_intel_reports_nonce on mesh_intel_reports (source_peer, nonce)"
+    },
+    {
+      "type": "index",
+      "name": "sqlite_autoindex_honeypot_indicators_1",
+      "tbl_name": "honeypot_indicators",
+      "sql": ""
+    },
+    { "type": "index", "name": "sqlite_autoindex_mesh_intel_reports_1", "tbl_name": "mesh_intel_reports", "sql": "" },
+    {
+      "type": "table",
+      "name": "honeypot_indicators",
+      "tbl_name": "honeypot_indicators",
+      "sql": "CREATE TABLE honeypot_indicators (id text primary key, indicator text not null, label text not null, confidence real not null, source text not null, created_at text not null, expires_at text not null)"
+    },
+    {
+      "type": "table",
+      "name": "mesh_intel_reports",
+      "tbl_name": "mesh_intel_reports",
+      "sql": "CREATE TABLE mesh_intel_reports (id text primary key, indicator text not null, type text not null, confidence real not null, source_peer text not null, action text not null, nonce text not null, created_at text not null, expires_at text not null, received_at text not null)"
     }
   ],
   "tables": {
@@ -12947,6 +12996,33 @@
         { "cid": 7, "name": "created_at", "type": "TEXT", "notnull": 1, "dflt_value": "datetime('now')", "pk": 0 }
       ],
       "foreignKeys": []
+    },
+    "honeypot_indicators": {
+      "foreignKeys": [],
+      "info": [
+        { "cid": 0, "name": "id", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 1 },
+        { "cid": 1, "name": "indicator", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 2, "name": "label", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 3, "name": "confidence", "type": "REAL", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 4, "name": "source", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 5, "name": "created_at", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 6, "name": "expires_at", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 }
+      ]
+    },
+    "mesh_intel_reports": {
+      "foreignKeys": [],
+      "info": [
+        { "cid": 0, "name": "id", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 1 },
+        { "cid": 1, "name": "indicator", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 2, "name": "type", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 3, "name": "confidence", "type": "REAL", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 4, "name": "source_peer", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 5, "name": "action", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 6, "name": "nonce", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 7, "name": "created_at", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 8, "name": "expires_at", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 },
+        { "cid": 9, "name": "received_at", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 0 }
+      ]
     }
   }
 }

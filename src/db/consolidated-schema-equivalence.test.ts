@@ -83,20 +83,20 @@ describe("consolidated migration baseline", () => {
           .toEqual(table.foreignKeys,);
       }
 
-      expect(Object.keys(golden.tables,).length,).toBe(264,);
+      expect(Object.keys(golden.tables,).length,).toBe(266,);
     } finally {
       await db.destroy();
     }
   });
 
-  test("has exactly 252 inline creates and both FTS tables", async () => {
+  test("has exactly 254 inline creates and both FTS tables", async () => {
     const creates = fileNames.flatMap((name,) => {
       const source = readFileSync(path.join(MIGRATIONS_DIR, name,), "utf-8",);
       return [...source.matchAll(/\.createTable\("([^"]+)",\)/g,),].map((m,) => m[1]!);
     },);
 
-    expect(creates.length,).toBe(252,);
-    expect(new Set(creates,).size,).toBe(252,);
+    expect(creates.length,).toBe(254,);
+    expect(new Set(creates,).size,).toBe(254,);
     expect([...SCHEMA.tableNames,].sort(),).toEqual([...creates,].sort(),);
 
     const sqlite = new Database(":memory:",);
