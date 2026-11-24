@@ -40,8 +40,16 @@ export function pinnedWasmBindgenVersion(): string | null {
 /** Official component server (no keys, version-pinned URLs). */
 export const DIST_BASE = "https://static.rust-lang.org/dist";
 
-/** Repo-local overlay root; scratchpad, gitignored. */
-export const OVERLAY_ROOT = join(import.meta.dir, "..", "..", ".tmp", "native-toolchain",);
+/**
+ * Shared build-scratch root: cargo's `CARGO_TARGET_DIR` default
+ * (`/tmp/cargo` per operator directive 2026-11-24). Build outputs never live
+ * under the repo's `.tmp/` — that tree is the check-runner/report cache, and
+ * a repo-local overlay would re-download once per worktree.
+ */
+export const BUILD_SCRATCH_ROOT = process.env.CARGO_TARGET_DIR ?? "/tmp/cargo";
+
+/** wasm std overlay root under the shared build scratch. */
+export const OVERLAY_ROOT = join(BUILD_SCRATCH_ROOT, "native-toolchain",);
 
 /** One discovered rustc installation. */
 export interface RustcInstall {

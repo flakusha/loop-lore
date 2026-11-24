@@ -32,10 +32,10 @@ import { createHash, } from "node:crypto";
 import { appendFileSync, chmodSync, existsSync, mkdirSync, readFileSync, } from "node:fs";
 import { homedir, } from "node:os";
 import { dirname, join, } from "node:path";
-import { pinnedWasmBindgenVersion, REPO_ROOT, } from "./shared";
+import { BUILD_SCRATCH_ROOT, pinnedWasmBindgenVersion, REPO_ROOT, } from "./shared";
 
-/** Where the provisioned CLI lives (scratchpad, gitignored). */
-const INSTALL_ROOT = join(REPO_ROOT, ".tmp", "wasm-bindgen",);
+/** Where the provisioned CLI lives (shared build scratch, never the repo tree). */
+const INSTALL_ROOT = join(BUILD_SCRATCH_ROOT, "wasm-bindgen",);
 
 /** Release base for the official prebuilt binaries. */
 const RELEASE_BASE = "https://github.com/wasm-bindgen/wasm-bindgen/releases/download";
