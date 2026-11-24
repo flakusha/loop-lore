@@ -65,18 +65,12 @@ export function defaultPluginStatus(origin: PluginOrigin,): PluginStatus {
 }
 
 /**
- * Persist a plugin's config override, preserving any existing row status.
+ * Persist a plugin's config override on its own (name, origin) row.
  *
- * A config write never decides approval. It may have to create the row itself
- * (the loader's own insert is best-effort and can fail), so a brand-new row is
- * given the same origin default the loader would have written rather than an
- * invented state — a `core` plugin whose row went missing stays active. An
- * existing row keeps whatever the admin decided.
- *
- * Rows are name-keyed (PRIMARY KEY), so a row earned by another origin is
- * handed over here only because a config PUT is an explicit admin action.
- * Its approval resets to the new origin's default: writing config must never
- * approve a community/local plugin.
+ * A config write never decides approval. A brand-new row gets the origin
+ * default the loader would have written; an existing row keeps the admin's
+ * status. Rows are keyed by (name, origin), so a same-named row from another
+ * origin is a different row that this write cannot re-point or re-approve.
  * @param db - Kysely handle.
  * @param name - Plugin name.
  * @param stored - Config object to store.
@@ -92,14 +86,6 @@ export async function writeStoredPluginConfig(
   const configJson = jsonStringifyOr(stored,);
   const status = defaultPluginStatus(origin,);
   const enabledAt = status === PluginStatus.Active ? new Date().toISOString() : null;
-  const existing = await db
-    .selectFrom("plugin_state",)
-    .select("origin",)
-    .where("name", "=", name,)
-    .executeTakeFirst();
-
-  // A NULL (pre-111) or foreign-origin row cannot carry its approval over.
-  const originChanged = existing !== undefined && existing.origin !== origin;
   await db
     .insertInto("plugin_state",)
     .values({
@@ -110,17 +96,7 @@ export async function writeStoredPluginConfig(
       config_json: configJson,
     },)
     .onConflict((oc,) =>
-      oc.column("name",).doUpdateSet(
-        originChanged
-          ? {
-            origin,
-            status,
-            enabled_at: enabledAt,
-            disabled_at: status === PluginStatus.Disabled ? new Date().toISOString() : null,
-            config_json: configJson,
-          }
-          : { origin, config_json: configJson, },
-      ),
+      oc.columns(["name", "origin",],).doUpdateSet({ config_json: configJson, },),
     )
     .execute();
 }

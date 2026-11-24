@@ -149,8 +149,8 @@ export function pluginRoutes(
             .values({ name, origin: plugin.origin, status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             .onConflict((oc,) =>
               oc
-                .column("name",)
-                .doUpdateSet({ origin: plugin.origin, status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
+                .columns(["name", "origin",],)
+                .doUpdateSet({ status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             )
             .execute();
         } catch {
@@ -199,7 +199,7 @@ export function pluginRoutes(
             .insertInto("plugin_state",)
             .values({ name, origin: plugin.origin, status: "disabled", disabled_at: new Date().toISOString(), },)
             .onConflict((oc,) =>
-              oc.column("name",).doUpdateSet({ origin: plugin.origin, status: "disabled", disabled_at: new Date().toISOString(), },)
+              oc.columns(["name", "origin",],).doUpdateSet({ status: "disabled", disabled_at: new Date().toISOString(), },)
             )
             .execute();
         } catch {

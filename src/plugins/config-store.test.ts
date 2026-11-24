@@ -25,14 +25,15 @@ describe("config-store", () => {
   });
 
   /**
+   * Every origin row for a name — the composite key lets them coexist.
    * @param name
    */
-  async function rowFor(name: string,) {
+  async function rowsFor(name: string,) {
     return await db
       .selectFrom("plugin_state",)
       .select(["status", "origin", "config_json",],)
       .where("name", "=", name,)
-      .executeTakeFirst();
+      .execute();
   }
 
   test("the origin default approves core and nothing else", () => {
@@ -55,7 +56,7 @@ describe("config-store", () => {
   test("a first write for an unknown name does not approve it", async () => {
     await writeStoredPluginConfig(db, "cfg-unapproved", { mode: "x", }, "community",);
 
-    const row = await rowFor("cfg-unapproved",);
+    const [row,] = await rowsFor("cfg-unapproved",);
 
     expect(row?.status,).toBe("disabled",);
     expect(row?.config_json,).toBe(`{"mode":"x"}`);
@@ -64,7 +65,7 @@ describe("config-store", () => {
   test("a first write for a core plugin does not demote it", async () => {
     await writeStoredPluginConfig(db, "cfg-core", { mode: "z", }, "core",);
 
-    const row = await rowFor("cfg-core",);
+    const [row,] = await rowsFor("cfg-core",);
 
     expect(row?.status,).toBe("active",);
   });
@@ -77,19 +78,19 @@ describe("config-store", () => {
 
     await writeStoredPluginConfig(db, "cfg-approved", { mode: "y", }, "core",);
 
-    const row = await rowFor("cfg-approved",);
+    const [row,] = await rowsFor("cfg-approved",);
 
     expect(row?.status,).toBe("active",);
     expect(await readStoredPluginConfig(db, "cfg-approved", "core",),).toEqual({ mode: "y" });
   });
 
-  test("a core row is invisible to a same-name community plugin and transfers no approval", async () => {
+  test("a community write cannot touch a same-name core row", async () => {
     await db
       .insertInto("plugin_state",)
       .values({
         name: "cfg-core-collision",
         origin: "core",
-        status: "active",
+        status: "disabled",
         config_json: `{"mode":"core"}`,
       },)
       .execute();
@@ -99,9 +100,11 @@ describe("config-store", () => {
 
     await writeStoredPluginConfig(db, "cfg-core-collision", { mode: "community", }, "community",);
 
-    const row = await rowFor("cfg-core-collision",);
-    expect(row,).toMatchObject({ origin: "community", status: "disabled", config_json: `{"mode":"community"}` },);
-    expect(await readStoredPluginConfig(db, "cfg-core-collision", "core",),).toEqual({});
+    const rows = await rowsFor("cfg-core-collision",);
+    expect(rows,).toHaveLength(2,);
+    expect(rows.find((r,) => r.origin === "core",),).toMatchObject({ status: "disabled", config_json: `{"mode":"core"}` },);
+    expect(rows.find((r,) => r.origin === "community",),).toMatchObject({ status: "disabled", config_json: `{"mode":"community"}` },);
+    expect(await readStoredPluginConfig(db, "cfg-core-collision", "core",),).toEqual({ mode: "core" },);
   });
 
   test("a NULL-origin backfill row transfers no approval to community/local", async () => {
@@ -114,8 +117,10 @@ describe("config-store", () => {
 
       await writeStoredPluginConfig(db, name, { mode: "new", }, origin,);
 
-      const row = await rowFor(name,);
-      expect(row,).toMatchObject({ origin, status: "disabled", },);
+      const rows = await rowsFor(name,);
+      expect(rows,).toHaveLength(2,);
+      expect(rows.find((r,) => r.origin === null,),).toMatchObject({ status: "active", },);
+      expect(rows.find((r,) => r.origin === origin,),).toMatchObject({ status: "disabled", },);
       expect(await readStoredPluginConfig(db, name, origin,),).toEqual({ mode: "new" },);
     }
   });
@@ -123,7 +128,7 @@ describe("config-store", () => {
   test("a core write with no row lands active and reads back", async () => {
     await writeStoredPluginConfig(db, "cfg-fresh-core", { mode: "fresh", }, "core",);
 
-    const row = await rowFor("cfg-fresh-core",);
+    const [row,] = await rowsFor("cfg-fresh-core",);
     expect(row,).toMatchObject({ origin: "core", status: "active", },);
     expect(await readStoredPluginConfig(db, "cfg-fresh-core", "core",),).toEqual({ mode: "fresh" },);
   });

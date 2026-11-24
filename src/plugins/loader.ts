@@ -454,9 +454,9 @@ async function persistPluginState({ db, name, origin, }: PluginApprovalOpts): Pr
     await db
       .insertInto("plugin_state")
       .values({ name, origin, status, enabled_at: selfApproved ? new Date().toISOString() : null, })
-      // An existing row keeps its origin and admin decision; only explicit
-      // admin enable/config writes move a row to another origin.
-      .onConflict((oc) => oc.column("name").doNothing(),)
+      // Rows are keyed by (name, origin): a same-named plugin from another
+      // origin has its own row and its own admin decision.
+      .onConflict((oc) => oc.columns(["name", "origin",],).doNothing(),)
       .execute();
   } catch (error) {
     // Best-effort, but never silent: a caller that assumes the row landed

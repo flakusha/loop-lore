@@ -239,10 +239,10 @@ describe("migration numbering is sequential from 001", () => {
 
     expect(prefixes[0],).toBe(1,);
 
-    // The consolidated baseline plus honeypot and mesh intel appends: 001..016.
-    const expected = Array.from({ length: 16, }, (_, i,) => i + 1,);
-    expect(MIGRATION_NAMES,).toHaveLength(16,);
-    expect(prefixes, "prefixes must be 001..016 with no gaps",).toEqual(expected,);
+    // The baseline plus honeypot, mesh intel and plugin-origin appends: 001..017.
+    const expected = Array.from({ length: 17, }, (_, i,) => i + 1,);
+    expect(MIGRATION_NAMES,).toHaveLength(17,);
+    expect(prefixes, "prefixes must be 001..017 with no gaps",).toEqual(expected,);
 
     // No parked numbers: every slot in the baseline is shipped.
     const parked = expected.filter((n,) => !prefixes.includes(n,));
@@ -688,4 +688,77 @@ describe("chat purpose classification (final schema)", () => {
     const second = await chatsByName();
     expect(second,).toEqual(first,);
   }, 120000,);
+});
+
+// ── Migration 017 — plugin_state identity ────────────────────
+
+describe("017_plugin_state_origin_key — composite identity", () => {
+  test("up preserves rows and columns; down restores the name key", async () => {
+    const { db: sqlite, kysely, } = createTestKysely();
+    try {
+      const all = await loadAllMigrations();
+      for (const ancestor of MIGRATION_NAMES.slice(0, MIGRATION_NAMES.indexOf("017_plugin_state_origin_key",),)) {
+        await all[ancestor]!.up(kysely,);
+      }
+
+      await sql`INSERT INTO plugin_state (name, status, config_json) VALUES ('legacy-null', 'active', '{"mode":"x"}')`
+        .execute(kysely,);
+
+      await sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'core', 'disabled')`.execute(kysely,);
+
+      const migration = all["017_plugin_state_origin_key"]!;
+      await migration.up(kysely,);
+
+      const columns = sqlite.query("PRAGMA table_info(plugin_state)",).all() as Array<
+        { name: string; pk: number; notnull: number; dflt_value: string | null }
+      >;
+
+      expect(columns.map((c,) => c.name),).toEqual([
+        "name",
+        "status",
+        "enabled_at",
+        "disabled_at",
+        "created_at",
+        "updated_at",
+        "config_json",
+        "origin",
+      ],);
+
+      expect(columns.find((c,) => c.name === "name")?.pk,).toBe(1,);
+      expect(columns.find((c,) => c.name === "name")?.notnull,).toBe(1,);
+      expect(columns.find((c,) => c.name === "origin")?.pk,).toBe(2,);
+      expect(columns.find((c,) => c.name === "origin")?.notnull,).toBe(0,);
+      expect(columns.find((c,) => c.name === "status")?.dflt_value,).toBe("'active'",);
+
+      const legacy = sqlite.query("SELECT status, config_json, origin FROM plugin_state WHERE name = 'legacy-null'",)
+        .get() as { status: string; config_json: string; origin: string | null };
+
+      expect(legacy,).toEqual({ status: "active", config_json: `{"mode":"x"}`, origin: null, },);
+
+      await sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'community', 'disabled')`.execute(
+        kysely,
+      );
+
+      const origins = sqlite.query("SELECT origin FROM plugin_state WHERE name = 'shared' ORDER BY origin",).all();
+      expect(origins,).toHaveLength(2,);
+      await expect(
+        sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'core', 'active')`.execute(kysely,),
+      ).rejects.toThrow();
+
+      await migration.down!(kysely,);
+      const downColumns = sqlite.query("PRAGMA table_info(plugin_state)",).all() as Array<{ name: string; pk: number }>;
+      expect(downColumns,).toHaveLength(8,);
+      expect(downColumns.find((c,) => c.name === "name")?.pk,).toBe(1,);
+      expect(downColumns.find((c,) => c.name === "origin")?.pk,).toBe(0,);
+      const kept = sqlite.query("SELECT name, origin, status FROM plugin_state ORDER BY name",).all() as Array<
+        { name: string; origin: string | null; status: string }
+      >;
+
+      expect(kept.find((r,) => r.name === "shared")?.origin,).toBe("core",);
+      expect(kept.find((r,) => r.name === "shared")?.status,).toBe("disabled",);
+    } finally {
+      await kysely.destroy();
+      sqlite.close();
+    }
+  });
 });

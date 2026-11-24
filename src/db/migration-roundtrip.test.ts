@@ -74,8 +74,8 @@ try {
 }
 
 describe("migration roundtrip", () => {
-  test("found the 16-file baseline", () => {
-    expect(migrationNames,).toHaveLength(16,);
+  test("found the 17-file baseline", () => {
+    expect(migrationNames,).toHaveLength(17,);
   });
 
   test("provider order matches the shared migration comparator", async () => {

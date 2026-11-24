@@ -4305,7 +4305,7 @@
       "type": "table",
       "name": "plugin_state",
       "tbl_name": "plugin_state",
-      "sql": "CREATE TABLE plugin_state (name text primary key, status text default 'active' not null, enabled_at text, disabled_at text, created_at text default (datetime('now')) not null, updated_at text default (datetime('now')) not null, config_json text, origin text)"
+      "sql": "CREATE TABLE plugin_state ( name text not null, status text default 'active' not null, enabled_at text, disabled_at text, created_at text default (datetime('now')) not null, updated_at text default (datetime('now')) not null, config_json text, origin text, constraint pk_plugin_state primary key (name, origin) )"
     },
     {
       "type": "table",
@@ -10815,14 +10815,14 @@
     },
     "plugin_state": {
       "info": [
-        { "cid": 0, "name": "name", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 1 },
+        { "cid": 0, "name": "name", "type": "TEXT", "notnull": 1, "dflt_value": null, "pk": 1 },
         { "cid": 1, "name": "status", "type": "TEXT", "notnull": 1, "dflt_value": "'active'", "pk": 0 },
         { "cid": 2, "name": "enabled_at", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 0 },
         { "cid": 3, "name": "disabled_at", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 0 },
         { "cid": 4, "name": "created_at", "type": "TEXT", "notnull": 1, "dflt_value": "datetime('now')", "pk": 0 },
         { "cid": 5, "name": "updated_at", "type": "TEXT", "notnull": 1, "dflt_value": "datetime('now')", "pk": 0 },
         { "cid": 6, "name": "config_json", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 0 },
-        { "cid": 7, "name": "origin", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 0 }
+        { "cid": 7, "name": "origin", "type": "TEXT", "notnull": 0, "dflt_value": null, "pk": 2 }
       ],
       "foreignKeys": []
     },

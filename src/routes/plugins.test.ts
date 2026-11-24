@@ -113,6 +113,38 @@ describe("POST /api/plugins/:name/enable", () => {
     expect(registry.isEnabled("disable-me",),).toBe(true,);
   });
 
+  test("enabling a same-name community plugin leaves a disabled core row alone", async () => {
+    const name = "cross-origin-enable";
+    await db
+      .insertInto("plugin_state",)
+      .values({ name, origin: "core", status: "disabled", },)
+      .execute();
+
+    registry.register({
+      manifest: { name, version: "1.0", description: "", author: "test", },
+      origin: "community",
+      directory: "/tmp",
+    },);
+
+    registry.setEnabled(name, false,);
+
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/plugins/${name}/enable`, { method: "POST", },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const rows = await db
+      .selectFrom("plugin_state",)
+      .select(["origin", "status",],)
+      .where("name", "=", name,)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
+    expect(rows.find((r,) => r.origin === "core")?.status,).toBe("disabled",);
+    expect(rows.find((r,) => r.origin === "community")?.status,).toBe("active",);
+  });
+
   test("returns 400 for already enabled plugin", async () => {
     const app = createPluginApp(db, "admin",);
     const res = await app.handle(

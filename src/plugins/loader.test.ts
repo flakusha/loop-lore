@@ -29,6 +29,7 @@ import { writeStoredPluginConfig, } from "./config-store";
 import { dispatchPluginRoute, forgetLoadedPlugin, initializePlugin, isPluginInitialized, loadAllPlugins, loadSinglePlugin, registry, scanAvailablePlugins, unloadAllPlugins, } from "./loader";
 import { executePluginTool, } from "./tool-executor";
 import { STRICT_CODEGEN_FLAG, } from "./tool-policy";
+import type { PluginOrigin, } from "./types";
 
 // ── Fixture sources (written to temp dirs, imported by the loader) ──
 
@@ -196,6 +197,10 @@ function stubDb(options: StubDbOptions = {},): Kysely<DB> {
             pick({
               column: (col: string,) => {
                 options.conflictCols?.push(col,);
+                return { doNothing: () => "do-nothing", };
+              },
+              columns: (cols: string[],) => {
+                options.conflictCols?.push(...cols,);
                 return { doNothing: () => "do-nothing", };
               },
             },);
@@ -438,8 +443,8 @@ describe("loadSinglePlugin", () => {
 
     expect(registry.getPlugin("fixture-dup")?.manifest.version,).toBe("2.0.0",);
     expect(inserts,).toHaveLength(2,);
-    // Both persists target the name column with do-nothing on conflict.
-    expect(conflictCols,).toEqual(["name", "name",]);
+    // Both persists target (name, origin) with do-nothing on conflict.
+    expect(conflictCols,).toEqual(["name", "origin", "name", "origin",]);
   });
 
   test("treats plugin_state persistence as best-effort", async () => {
@@ -718,6 +723,21 @@ describe("origin-scoped approval", () => {
     return row?.status;
   }
 
+  /**
+   * @param name
+   * @param origin
+   */
+  async function persistedStatusAt(name: string, origin: PluginOrigin,): Promise<string | undefined> {
+    const row = await db
+      .selectFrom("plugin_state",)
+      .select("status",)
+      .where("name", "=", name,)
+      .where("origin", "=", origin,)
+      .executeTakeFirst();
+
+    return row?.status;
+  }
+
   test("a community plugin with no plugin_state row lands non-active and does not dispatch", async () => {
     const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-approval-community", "/approval/community", "community",), });
 
@@ -745,6 +765,37 @@ describe("origin-scoped approval", () => {
     expect(registry.isEnabled("fixture-approval-core",),).toBe(true,);
     const res = await dispatchPluginRoute({ request: new Request("http://x/approval/core",), },);
     expect(await res?.text(),).toBe("core",);
+  });
+
+  test("a same-name non-core write cannot re-enable a disabled core plugin", async () => {
+    const name = "fixture-disabled-core-repoint";
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, "/approval/disabled-core", "core",), });
+
+    await loadSinglePlugin(db, name, coreDir, "core",);
+    expect(await persistedStatusAt(name, "core",),).toBe("active",);
+
+    await db
+      .updateTable("plugin_state",)
+      .set({ status: "disabled", disabled_at: new Date().toISOString(), },)
+      .where("name", "=", name,)
+      .where("origin", "=", "core",)
+      .execute();
+
+    registry.setEnabled(name, false,);
+    expect(await persistedStatusAt(name, "core",),).toBe("disabled",);
+
+    // The admin config route writes a row for a same-named community plugin.
+    await writeStoredPluginConfig(db, name, { mode: "community", }, "community",);
+
+    expect(await persistedStatusAt(name, "core",),).toBe("disabled",);
+    expect(await persistedStatusAt(name, "community",),).toBe("disabled",);
+
+    // A later core load re-reads its own row: still disabled, route not served.
+    registry.unregister(name,);
+    forgetLoadedPlugin(name,);
+    await loadSinglePlugin(db, name, coreDir, "core",);
+    expect(registry.isEnabled(name,),).toBe(false,);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/approval/disabled-core",), },),).toBeNull();
   });
 
   test("a community plugin cannot overwrite a same-name core registration", async () => {
@@ -921,13 +972,15 @@ describe("origin-scoped approval", () => {
       await dispatchPluginRoute({ request: new Request("http://x/inherited/community",), },),
     ).toBeNull();
 
-    const row = await db
+    const rows = await db
       .selectFrom("plugin_state",)
       .select(["origin", "status",],)
       .where("name", "=", "fixture-inherited-core",)
-      .executeTakeFirst();
+      .execute();
 
-    expect(row,).toMatchObject({ origin: "core", status: "active", },);
+    expect(rows,).toHaveLength(2,);
+    expect(rows.find((r,) => r.origin === "core",),).toMatchObject({ status: "active", },);
+    expect(rows.find((r,) => r.origin === "community",),).toMatchObject({ status: "disabled", },);
   });
 
   test("a NULL-origin backfill row does not enable community or local", async () => {
