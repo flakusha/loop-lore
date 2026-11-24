@@ -46190,6 +46190,20 @@
     "status": "Not Started",
     "git_issue": "55d6d79"
   },
+  "TASK-HARNESS-DEFAULT-PROFILE-ALIAS": {
+    "hash": "d0fd157",
+    "git_issue": "d0fd157",
+    "extid": "TASK-HARNESS-DEFAULT-PROFILE-ALIAS",
+    "type": "TASK",
+    "title": "harness default profile alias",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-default-profile-alias.md",
+    "status": "in_progress"
+  },
   "TASK-HARNESS-DELEGATED-PERMISSION-GRANTS": {
     "hash": "176912d",
     "git_issue": "176912d",
@@ -46517,6 +46531,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem.md",
     "status": "done"
+  },
+  "TASK-HARNESS-PROFILE-TRANSPORT-FIELD": {
+    "hash": "e3e759c",
+    "git_issue": "e3e759c",
+    "extid": "TASK-HARNESS-PROFILE-TRANSPORT-FIELD",
+    "type": "TASK",
+    "title": "harness profile transport field",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-profile-transport-field.md",
+    "status": "in_progress"
   },
   "TASK-HARNESS-PROGRAMMATIC-API": {
     "hash": "a893dc4",
