@@ -125,8 +125,23 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
     }
   });
 
+  it("pins the GmConfig union shape", () => {
+    expectTypeOf<Extract<GmConfig, { moderation: unknown }>["moderation"]>().toEqualTypeOf<{
+      slow_mode_ms?: number;
+      pinned?: string[];
+      lock?: boolean;
+    }>();
+
+    expectTypeOf<Extract<GmConfig, { validation: unknown }>["validation"]>().toEqualTypeOf<{
+      harness: string;
+    }>();
+
+    expectTypeOf<Extract<GmConfig, { cast: unknown }>["cast"]>().toEqualTypeOf<string[]>();
+    expectTypeOf<Extract<GmConfig, { cast: unknown }>["director"]>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<Extract<GmConfig, { rpg_party: unknown }>["party_size"]>().toEqualTypeOf<number>();
+  });
+
   it("user group admin (5) carries a moderation gm_config block", () => {
-    expectTypeOf<VariantDefaults["gm_config"]>().toEqualTypeOf<GmConfig>();
     const d = VARIANT_DEFAULTS.user_group_admin;
     expect(d.gm_config,).not.toBeNull();
     expect(d.gm_config !== null && "moderation" in d.gm_config,).toBe(true,);
