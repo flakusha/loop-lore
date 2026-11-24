@@ -62,6 +62,21 @@ export interface DecoyListener {
   stop(): Promise<void>;
 }
 
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "::1", "[::1]", "localhost",],);
+
+/**
+ * Boot preflight for public decoy exposure. The decoy module stays config-free;
+ * the caller passes the real app's resolved auth setting.
+ * @param host - decoy bind host
+ * @param authRequired - `auth.required` from the real app config
+ * @throws when a public bind is paired with `auth.required=false`
+ */
+export function assertPublicDecoyAllowed(host: string, authRequired: boolean,): void {
+  if (!LOOPBACK_HOSTS.has(host.trim().toLowerCase(),) && authRequired !== true) {
+    throw new Error("Public honeypot bind requires auth.required=true on the real app",);
+  }
+}
+
 const DEFAULT_MAX_BODY_BYTES = 1024;
 const DEFAULT_MAX_CONCURRENT_TARPITS = 4;
 const DEFAULT_MAX_REQUESTS = 30;

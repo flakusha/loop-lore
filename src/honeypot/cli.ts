@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Run the decoy listener as a standalone process (never autostarted). */
+import { loadConfig, } from "../config/load";
 import { getDatabase, resetDatabaseSingleton, } from "../db";
 import { createLogger, getLogger, } from "../logger";
 import { loadHoneypotConfig, } from "./config";
-import { startDecoyListener, } from "./decoy-listener";
+import { assertPublicDecoyAllowed, startDecoyListener, } from "./decoy-listener";
 import { createDecoyHitSink, } from "./ingest";
 
 const configPath = process.env.HONEYPOT_CONFIG;
@@ -25,6 +26,13 @@ const rawTarpitMs = process.env.HONEYPOT_TARPIT_MS ?? String(fileConfig.tarpitMs
 const tarpitMs = Number(rawTarpitMs,);
 if (!Number.isFinite(tarpitMs,) || tarpitMs < 0) {
   process.stderr.write(`HONEYPOT_TARPIT_MS must be a non-negative number, got ${rawTarpitMs}\n`,);
+  process.exit(2,);
+}
+
+try {
+  assertPublicDecoyAllowed(host, loadConfig().auth.required,);
+} catch (error) {
+  process.stderr.write(`${(error as Error).message}\n`,);
   process.exit(2,);
 }
 

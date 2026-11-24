@@ -5,6 +5,11 @@
  * Advisory mesh intel feed: bounded push + delta pull over the existing mesh
  * PSK and trusted-peer guard. No block decision, no auto-apply, no caller-
  * supplied authority — delists are scoped to the authenticated peer.
+ *
+ * Provenance limit: the shared mesh PSK authenticates the MESH, not an
+ * individual member. A valid proof means "a trusted mesh member sent this",
+ * never "this specific peer authored it". Per-peer attribution needs the
+ * ed25519/RFC 9421 upgrade (S5) and is not claimed here.
  */
 import type { Elysia, } from "elysia";
 import {

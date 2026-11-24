@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { readFileSync, } from "node:fs";
 import {
+  assertPublicDecoyAllowed,
   type DecoyHit,
   type DecoyListener,
   startDecoyListener,
@@ -140,5 +142,34 @@ describe("isolated decoy listener", () => {
     const inherited = await fetch(`${listener.url}/__proto__`,);
     expect(inherited.status,).toBe(404,);
     expect(hits.at(-1,)?.kind,).toBe("unknown",);
+  });
+
+  test("the report page accepts no input and mints no credential", async () => {
+    const res = await fetch(`${listener.url}/report-security`, {
+      body: "username=admin&finding=fake",
+      method: "POST",
+    },);
+
+    expect(res.status,).toBe(404,);
+    expect(await res.text(),).not.toContain("<form",);
+    expect(res.headers.get("set-cookie",),).toBeNull();
+  });
+});
+
+describe("decoy boundary", () => {
+  test("public bind requires auth.required=true on the real app", () => {
+    expect(() => assertPublicDecoyAllowed("127.0.0.1", false,)).not.toThrow();
+    expect(() => assertPublicDecoyAllowed("::1", false,)).not.toThrow();
+    expect(() => assertPublicDecoyAllowed("0.0.0.0", true,)).not.toThrow();
+    expect(() => assertPublicDecoyAllowed("0.0.0.0", false,)).toThrow(/auth\.required=true/,);
+  });
+
+  test("the decoy module imports no app, DB, session, or plugin machinery", () => {
+    const source = readFileSync(new URL("./decoy-listener.ts", import.meta.url,), "utf8",);
+    const imports = source.split("\n",).filter((line,) => /^import\b/.test(line,)).join("\n",);
+
+    for (const banned of ["createApp", "getDatabase", "session", "plugin", "../db", "../server",]) {
+      expect(imports,).not.toContain(banned,);
+    }
   });
 });

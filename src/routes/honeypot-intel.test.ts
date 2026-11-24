@@ -136,6 +136,28 @@ describe("mesh intel feed", () => {
     }
   });
 
+  test("a trusted peer cannot attribute intel to another peer", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await upsertPeer(db, { origin: PEER_A, state: "trusted", },);
+      await upsertPeer(db, { origin: PEER_B, state: "trusted", },);
+      const forged: IntelFeed = {
+        origin: PEER_A,
+        records: [{ ...record(), sourcePeer: PEER_B, },],
+      };
+
+      const res = await post(db, "/api/mesh/intel/push", {
+        ...forged,
+        proof: await signIntelFeed(PSK, forged,),
+      },);
+
+      expect(res.status,).toBe(400,);
+      expect(await listActiveIntel(db,),).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
   test("delist is scoped to the authenticated peer", async () => {
     const { db, } = await createTestDb();
     try {

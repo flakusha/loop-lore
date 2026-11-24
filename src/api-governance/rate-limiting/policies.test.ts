@@ -22,6 +22,8 @@ describe("policy registry", () => {
     expect(intelPolicy.windowMs,).toBe(60_000,);
     expect(intelPolicy.max,).toBeLessThan(defaultPolicy.max,);
     expect(policies[intelPolicy.name],).toBe(intelPolicy,);
+    expect(policyForRoute("/api/mesh/intel/push",),).toBe(intelPolicy,);
+    expect(policyForRoute("/api/mesh/intel/pull",),).toBe(intelPolicy,);
   });
 
   test("chat policy is sized for real UI volume, not generation volume", () => {
