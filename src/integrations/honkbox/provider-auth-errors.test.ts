@@ -5,13 +5,17 @@
 
 import { describe, expect, test, } from "bun:test";
 import {
+  cancelHonkboxJob,
   getHonkboxJobs,
+  HonkboxArtifactDeliveryUnavailableError,
   HonkboxAuthError,
   honkboxCustomProviderConfig,
   type HonkboxProbeResult,
   HonkboxScopeError,
+  openHonkboxEventStream,
   parseHonkboxCapabilities,
   runHonkboxChatTurn,
+  runHonkboxImageJob,
 } from "./index";
 
 const SECRET = "test-key-abc123";
@@ -122,6 +126,204 @@ describe("honkbox 401/403 mapping", () => {
       );
 
       expect(failure,).toBeInstanceOf(HonkboxAuthError,);
+      expect((failure as Error).message,).not.toContain(SECRET,);
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("jobs 500 stays a generic dispatch failure, not an auth error", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch =
+      (async () =>
+        new Response("boom", { status: 500, headers: { "Content-Type": "text/plain", }, },)) as unknown as typeof fetch;
+
+    try {
+      const failure = await getHonkboxJobs({ config: config(), probe: liveProbe(), },).then(
+        () => {
+          throw new Error("expected rejection",);
+        },
+        (error: unknown,) => error,
+      );
+
+      expect(failure,).not.toBeInstanceOf(HonkboxAuthError,);
+      expect(failure,).not.toBeInstanceOf(HonkboxScopeError,);
+      expect((failure as Error).message,).toContain("jobs request failed",);
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("cancel 403 surfaces HonkboxScopeError without the key", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({ error: { message: "Missing required scope: jobs", code: "scope_denied", }, },),
+        { status: 403, headers: { "Content-Type": "application/json", }, },
+      )) as unknown as typeof fetch;
+
+    try {
+      const failure = await cancelHonkboxJob({ config: config(), probe: liveProbe(), }, "job 1",).then(
+        () => {
+          throw new Error("expected rejection",);
+        },
+        (error: unknown,) => error,
+      );
+
+      expect(failure,).toBeInstanceOf(HonkboxScopeError,);
+      expect((failure as Error).message,).toContain("jobs",);
+      expect((failure as Error).message,).not.toContain(SECRET,);
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("events 401 surfaces HonkboxAuthError without the key", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({ error: { message: "invalid_api_key", code: "invalid_api_key", }, },),
+        { status: 401, headers: { "Content-Type": "application/json", }, },
+      )) as unknown as typeof fetch;
+
+    try {
+      const failure = await openHonkboxEventStream({ config: config(), probe: liveProbe(), },).then(
+        () => {
+          throw new Error("expected rejection",);
+        },
+        (error: unknown,) => error,
+      );
+
+      expect(failure,).toBeInstanceOf(HonkboxAuthError,);
+      expect((failure as Error).message,).not.toContain(SECRET,);
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("image job 403 is a failed outcome, never the key", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({ error: { message: "Missing required scope: jobs", code: "scope_denied", }, },),
+        { status: 403, headers: { "Content-Type": "application/json", }, },
+      )) as unknown as typeof fetch;
+
+    try {
+      // The image engine never throws on provider failures: auth denials come
+      // back as failed outcomes, so the only assertion is no credential leak.
+      const outcome = await runHonkboxImageJob(
+        { config: config(), probe: liveProbe(), },
+        { prompt: "a cat", n: 1, outputFormat: "png", },
+      );
+
+      expect(outcome.ok,).toBe(false,);
+      if (!outcome.ok) {
+        expect(outcome.error,).not.toContain(SECRET,);
+      }
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+});
+
+describe("honkbox artifact delivery", () => {
+  function artifactProbe(storagePresent: boolean,): HonkboxProbeResult {
+    const probe = liveProbe();
+    if (!probe.ok) { throw new Error("unreachable",); }
+    return {
+      ...probe,
+      capabilities: {
+        ...probe.capabilities,
+        features: { ...probe.capabilities.features, artifactDelivery: true, },
+        storage: { dataDirPresent: storagePresent, },
+      },
+    };
+  }
+
+  test("artifact delivery without server storage fails closed", async () => {
+    const prior = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls += 1;
+      return new Response("{}", { status: 200, },);
+    }) as unknown as typeof fetch;
+
+    try {
+      const failure = await runHonkboxImageJob(
+        { config: config(), probe: artifactProbe(false,), },
+        { prompt: "a cat", n: 1, outputFormat: "png", },
+        { artifactDelivery: true, },
+      ).then(
+        () => {
+          throw new Error("expected rejection",);
+        },
+        (error: unknown,) => error,
+      );
+
+      expect(failure,).toBeInstanceOf(HonkboxArtifactDeliveryUnavailableError,);
+      expect(calls,).toBe(0,);
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("artifact delivery returns descriptors and drops malformed entries", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({
+          artifacts: [
+            { artifact_id: "a1", content_type: "image/png", size_bytes: 10, job_id: "j1", },
+            { bogus: true, },
+            { artifact_id: "", },
+          ],
+          bundle: "b1",
+          job_id: "j1",
+        },),
+        { status: 200, headers: { "Content-Type": "application/json", }, },
+      )) as unknown as typeof fetch;
+
+    try {
+      const outcome = await runHonkboxImageJob(
+        { config: config(), probe: artifactProbe(true,), },
+        { prompt: "a cat", n: 1, outputFormat: "png", },
+        { artifactDelivery: true, },
+      );
+
+      expect(outcome.ok,).toBe(true,);
+      if (outcome.ok && "artifacts" in outcome) {
+        expect(outcome.artifacts,).toHaveLength(1,);
+        expect(outcome.artifacts[0]?.artifact_id,).toBe("a1",);
+      } else {
+        throw new Error("expected artifact-delivery outcome",);
+      }
+    } finally {
+      globalThis.fetch = prior;
+    }
+  });
+
+  test("artifact delivery 403 surfaces HonkboxScopeError without the key", async () => {
+    const prior = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({ error: { message: "Missing required scope: jobs", code: "scope_denied", }, },),
+        { status: 403, headers: { "Content-Type": "application/json", }, },
+      )) as unknown as typeof fetch;
+
+    try {
+      const failure = await runHonkboxImageJob(
+        { config: config(), probe: artifactProbe(true,), },
+        { prompt: "a cat", n: 1, outputFormat: "png", },
+        { artifactDelivery: true, },
+      ).then(
+        () => {
+          throw new Error("expected rejection",);
+        },
+        (error: unknown,) => error,
+      );
+
+      expect(failure,).toBeInstanceOf(HonkboxScopeError,);
       expect((failure as Error).message,).not.toContain(SECRET,);
     } finally {
       globalThis.fetch = prior;

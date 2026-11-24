@@ -100,6 +100,20 @@ function dispatchStatus(error: unknown,): number | undefined {
   return undefined;
 }
 
+/** Server refusal reason off a safeFetch failure body (opt-in `includeErrorBody`).
+ * @param error - the dispatch failure
+ * @returns the server message, or undefined when the body carries none
+ */
+function serverRefusalReason(error: unknown,): string | undefined {
+  if (typeof error !== "object" || error === null) { return undefined; }
+  const body = (error as { body?: unknown }).body;
+  if (typeof body !== "object" || body === null) { return undefined; }
+  const nested = (body as { error?: unknown }).error;
+  if (typeof nested !== "object" || nested === null) { return undefined; }
+  const message = (nested as { message?: unknown }).message;
+  return typeof message === "string" && message.length > 0 ? message : undefined;
+}
+
 /** Map a 401/403 dispatch failure to its named honkbox error; anything else passes through.
  * @param error - the dispatch failure
  * @param status - explicit HTTP status when the error itself carries none (safeFetch reports it on the result)
@@ -112,7 +126,9 @@ function mapHonkboxDispatchError(error: unknown, status?: number,): unknown {
     );
   }
 
-  const message = error instanceof Error ? error.message : String(error,);
+  const message = serverRefusalReason(error,) ??
+    (error instanceof Error ? error.message : String(error,));
+
   const code = status ?? dispatchStatus(error,);
   if (code === 401) {
     return new HonkboxAuthError(
@@ -291,6 +307,20 @@ function parseImageArtifact(value: unknown,): HonkboxImageArtifact | undefined {
   };
 }
 
+/** Throw the named 401/403 error for a failed safeFetch result, else the generic dispatch failure.
+ * @param result - the failed fetch result (status lives on the result, not the error)
+ * @param message - fallback detail for non-auth dispatch failures
+ * @throws {HonkboxAuthError|HonkboxScopeError|HonkboxCapabilityUnavailableError} always throws
+ */
+function throwHonkboxFetchError(
+  result: { readonly error: unknown; readonly status?: number },
+  message: string,
+): never {
+  const mapped = mapHonkboxDispatchError(result.error, result.status,);
+  if (mapped !== result.error) { throw mapped; }
+  throw new HonkboxCapabilityUnavailableError(message,);
+}
+
 /** Direct POST with the artifact-delivery header; the openai image engine only
  * decodes inline b64_json, so this path parses the artifact DTOs itself.
  * @param opts - dispatch settings
@@ -328,14 +358,11 @@ async function runHonkboxArtifactDelivery(
     timeout: opts.config.timeout,
     maxSize: Number.MAX_SAFE_INTEGER,
     handle401: false,
+    includeErrorBody: true,
   },);
 
   if (!result.ok) {
-    const mapped = mapHonkboxDispatchError(result.error, result.status,);
-    if (mapped !== result.error) { throw mapped; }
-    throw new HonkboxCapabilityUnavailableError(
-      `honkbox artifact-delivery request failed: ${result.error.message}`,
-    );
+    throwHonkboxFetchError(result, `honkbox artifact-delivery request failed: ${(result.error as Error).message}`,);
   }
 
   const doc = typeof result.data === "object" && result.data !== null && !Array.isArray(result.data,)
@@ -366,12 +393,13 @@ async function runHonkboxArtifactDelivery(
 
 /** Submit one honkbox image job through the existing `openai` image engine
  * (`{baseUrl}/images/generations`). `jobs` capability is required so the job
- * can be observed through `/v1/jobs`.
+ * can be observed through `/v1/jobs`. The engine never throws on provider
+ * failures: a 401/403 comes back as a failed outcome (its message names the
+ * HTTP status), not a named auth error — only the artifact-delivery overload
+ * below throws.
  * @param opts - config, setup probe and admission state
  * @param imageOpts - prompt, size and output format
  * @returns the image generation outcome
- * @throws {HonkboxAuthError} when honkbox rejects the bearer credential (401)
- * @throws {HonkboxScopeError} when honkbox denies a scoped key (403)
  */
 export async function runHonkboxImageJob(
   opts: HonkboxDispatchOptions,
@@ -436,6 +464,7 @@ export async function getHonkboxJobs(
     `${normalizeHonkboxBaseUrl(opts.config.baseUrl,)}/jobs`,
     {
       handle401: false,
+      includeErrorBody: true,
       ...(opts.config.apiKey
         ? { headers: { Authorization: `Bearer ${opts.config.apiKey}`, }, }
         : {}),
@@ -443,9 +472,7 @@ export async function getHonkboxJobs(
   );
 
   if (!result.ok) {
-    const mapped = mapHonkboxDispatchError(result.error, result.status,);
-    if (mapped !== result.error) { throw mapped; }
-    throw new HonkboxCapabilityUnavailableError(`honkbox jobs request failed: ${result.error.message}`,);
+    throwHonkboxFetchError(result, `honkbox jobs request failed: ${(result.error as Error).message}`,);
   }
 
   return result.data;
@@ -467,6 +494,7 @@ export async function cancelHonkboxJob(
     {
       method: "POST",
       handle401: false,
+      includeErrorBody: true,
       ...(opts.config.apiKey
         ? { headers: { Authorization: `Bearer ${opts.config.apiKey}`, }, }
         : {}),
@@ -474,9 +502,7 @@ export async function cancelHonkboxJob(
   );
 
   if (!result.ok) {
-    const mapped = mapHonkboxDispatchError(result.error, result.status,);
-    if (mapped !== result.error) { throw mapped; }
-    throw new HonkboxCapabilityUnavailableError(`honkbox job cancel failed: ${result.error.message}`,);
+    throwHonkboxFetchError(result, `honkbox job cancel failed: ${(result.error as Error).message}`,);
   }
 
   return true;
@@ -494,6 +520,7 @@ export async function openHonkboxEventStream(
   const result = await safeFetch<Response>(
     `${normalizeHonkboxBaseUrl(opts.config.baseUrl,)}${HONKBOX_EVENTS_PATH}`,
     {
+      // Stream mode never buffers the body, so the server reason is unavailable here.
       stream: true,
       handle401: false,
       ...(opts.config.apiKey
@@ -503,9 +530,7 @@ export async function openHonkboxEventStream(
   );
 
   if (!result.ok) {
-    const mapped = mapHonkboxDispatchError(result.error, result.status,);
-    if (mapped !== result.error) { throw mapped; }
-    throw new HonkboxCapabilityUnavailableError(`honkbox events request failed: ${result.error.message}`,);
+    throwHonkboxFetchError(result, `honkbox events request failed: ${(result.error as Error).message}`,);
   }
 
   return result.data;
