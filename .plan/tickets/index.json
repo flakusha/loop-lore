@@ -9082,6 +9082,20 @@
     "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
     "type": "BUG"
   },
+  "BUG-REPAIR-TELEMETRY-ANALYTICS-UI-CONTRACTS": {
+    "hash": "36af604",
+    "git_issue": "36af604",
+    "extid": "BUG-REPAIR-TELEMETRY-ANALYTICS-UI-CONTRACTS",
+    "type": "BUG",
+    "title": "Repair telemetry analytics UI contracts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-analytics-observability",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-repair-telemetry-analytics-ui-contracts.md",
+    "status": "in_progress"
+  },
   "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT": {
     "epic": "epic-nsfw-moderation-priority",
     "extid": "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT",
@@ -22458,7 +22472,7 @@
     "title": "Generation usage analytics",
     "label": "feat",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-analytics-observability",
     "tags": [],
     "source": ".plan/tickets/FEAT-GENERATION-USAGE-ANALYTICS.md",
     "status": "open"
@@ -57041,11 +57055,12 @@
     "title": "Prompt/turn trace view (why-this-output inspector)",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-analytics-observability",
     "project": "",
     "tags": [
       "observability",
       "prompt-inspector",
+      "trace",
       "research-gap"
     ],
     "source": ".plan/tickets/TASK-prompt-turn-trace-view-why-this-output-inspector.md",
