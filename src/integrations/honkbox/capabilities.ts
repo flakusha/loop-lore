@@ -28,6 +28,10 @@ export const HONKBOX_CAPABILITIES_PATH = "/capabilities";
 /** Probe deadline when the caller does not narrow it. */
 export const DEFAULT_HONKBOX_PROBE_TIMEOUT_MS = 3_000;
 
+/** Freshness bound for cached capability documents: server-side changes
+ * (rotation, scope map, auth mode) re-probe transparently past this age. */
+export const HONKBOX_PROBE_CACHE_TTL_MS = 300_000;
+
 /** Wire-contract major this client understands (`"v1"`). */
 export const HONKBOX_SUPPORTED_API_MAJOR = 1;
 
@@ -236,6 +240,8 @@ export interface ProbeHonkboxOptions {
 export interface GetHonkboxCapabilitiesOptions extends ProbeHonkboxOptions {
   /** Force a fresh probe instead of reusing a cached descriptor. */
   readonly refresh?: boolean;
+  /** Entry max age in ms (default {@link HONKBOX_PROBE_CACHE_TTL_MS}). */
+  readonly maxAgeMs?: number;
 }
 
 /** Who admits GPU work for a honkbox dispatch — exactly one side, never both. */
@@ -315,6 +321,7 @@ interface CachedEntry {
   readonly capabilities: HonkboxCapabilities;
   readonly supported: boolean;
   readonly warning?: string;
+  readonly probedAt: number;
 }
 
 const cache = new Map<string, CachedEntry>();
@@ -431,9 +438,9 @@ export async function probeHonkboxCapabilities(
 }
 
 /**
- * Cached probe: one GET per setup, another only on an explicit refresh.
- * A failed refresh drops the stale entry so the next call re-probes.
- * @param opts - base URL, credential, deadline and optional `refresh`
+ * Cached probe: one GET per setup, another on explicit refresh or a stale
+ * entry. A failed refresh drops the stale entry so the next call re-probes.
+ * @param opts - base URL, credential, deadline, `refresh` and `maxAgeMs`
  * @returns the probe outcome (cached successes carry `cached: true`)
  */
 export async function getHonkboxCapabilities(
@@ -442,7 +449,9 @@ export async function getHonkboxCapabilities(
   const key = honkboxCacheKey(opts.baseUrl, opts.apiKey,);
   if (!opts.refresh) {
     const hit = peekHonkboxCapabilities(opts.baseUrl, opts.apiKey,);
-    if (hit) { return hit; }
+    const entry = cache.get(key,);
+    const maxAge = opts.maxAgeMs ?? HONKBOX_PROBE_CACHE_TTL_MS;
+    if (hit && entry && Date.now() - entry.probedAt < maxAge) { return hit; }
   }
 
   const probed = await probeHonkboxCapabilities(opts,);
@@ -451,6 +460,7 @@ export async function getHonkboxCapabilities(
       capabilities: probed.capabilities,
       supported: probed.supported,
       ...(probed.warning ? { warning: probed.warning, } : {}),
+      probedAt: Date.now(),
     },);
   } else {
     cache.delete(key,);

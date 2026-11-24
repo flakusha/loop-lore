@@ -3,7 +3,7 @@
 
 # TASK: Bearer scope config surface and 403 mapping plus rotation hookup
 
-**Status:** Not Started
+**Status:** In Progress
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-principal-scoped-credentials

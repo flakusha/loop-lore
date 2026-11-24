@@ -508,6 +508,25 @@ describe("capability cache", () => {
     },);
   });
 
+  test("stale entries re-probe, fresh entries stay cached", async () => {
+    let calls = 0;
+    await withMockFetch(() => {
+      calls += 1;
+      return capsResponse();
+    }, async () => {
+      const opts = { baseUrl: "http://127.0.0.1:9010/v1", apiKey: "stale-key", };
+      await getHonkboxCapabilities(opts,);
+      expect(calls,).toBe(1,);
+
+      await getHonkboxCapabilities({ ...opts, maxAgeMs: 0, },);
+      expect(calls,).toBe(2,);
+
+      const cached = await getHonkboxCapabilities({ ...opts, maxAgeMs: Number.MAX_SAFE_INTEGER, },);
+      expect(calls,).toBe(2,);
+      expect(cached.ok && cached.cached,).toBe(true,);
+    },);
+  });
+
   test("a failed refresh drops the stale entry", async () => {
     let status = 200;
     await withMockFetch(
