@@ -28,7 +28,7 @@ const WITH_BOTH = [
   "status_effect",
 ];
 
-/** Tables that already carried `created_at` from 001_init — only `updated_at`. */
+/** Tables that already carried `created_at` from 001_core — only `updated_at`. */
 const WITH_UPDATED_ONLY = ["trade_history", "nsfw_consent_state",];
 
 /**

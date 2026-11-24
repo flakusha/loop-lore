@@ -141,6 +141,7 @@
   "FEDERATION_DUPLICATION_MODE": "federation.duplication.mode",
   "FEDERATION_DUPLICATION_PEERS": "federation.duplication.peers",
   "FEDERATION_WORKLOADOFFLOAD_CLASSES": "federation.workloadOffload.classes",
+  "FEATURES_PROFILE": "features.profile",
   "INTEGRATIONS_ENABLED": "integrations.enabled",
   "INTEGRATIONS_INBOUND_MCPENABLED": "integrations.inbound.mcpEnabled",
   "INTEGRATIONS_INBOUND_ACPENABLED": "integrations.inbound.acpEnabled",

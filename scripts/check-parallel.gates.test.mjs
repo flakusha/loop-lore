@@ -43,6 +43,8 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { resolve, } from "node:path";
+import { invalidProfileSkips, } from "./check/parallel/filter.mjs";
+import { PROFILE_SKIPPABLE_GATES, PROFILE_SKIPS, } from "./check/parallel/gate-table.mjs";
 
 const PROJECT_ROOT = import.meta.dir + "/..";
 const RUNNER = resolve(PROJECT_ROOT, "scripts/check-parallel.mjs",);
@@ -162,28 +164,28 @@ function availableGateNames() {
 }
 
 /**
- * Assert the --skip-gates contract against THREE independent facts instead of
- * a hardcoded gate total (which re-rots on the next registry addition):
+ * Assert the skip contract against THREE independent facts instead of a
+ * hardcoded gate total (which re-rots on the next registry addition). The
+ * optional `profileSkips` merge into the same skip set: a profile may only ADD
+ * names to --skip-gates, never replace it with a whitelist.
  *
- *   1. runner arithmetic  — `skipped N; running R of T` must satisfy
- *      `N == skipNames.length` and `T == R + N` (the line is internally
- *      consistent and the skip count is not a lie about the CSV).
+ *   1. runner arithmetic — `skipped N; running R of T` must satisfy
+ *      `N == (skipNames ∪ profileSkips).length` and `T == R + N`.
  *   2. reported vs. executed — `R` must equal the number of gate verdict
- *      lines the runner actually printed. A filter that reported running 28
- *      but only executed 27 (or double-ran one) fails here.
- *   3. names, not just counts — the executed set must contain NONE of the
- *      skipped names, and `executed union skipped` must equal the live
- *      registry (from `availableGateNames()`), so a filter that silently
- *      dropped an extra gate, or kept one it claimed to skip, fails even
- *      though the arithmetic still balanced.
+ *      lines the runner actually printed.
+ *   3. names — executed contains NONE of the merged skips, and
+ *      `executed ∪ mergedSkips` equals the live registry (from
+ *      `availableGateNames()`), so a filter that silently dropped an extra
+ *      gate, or kept one it claimed to skip, fails even when counts balance.
  */
-function assertSkipFilter(run, skipNames,) {
+function assertSkipFilter(run, skipNames, profileSkips = [],) {
+  const merged = [...new Set([...skipNames, ...profileSkips,],),];
   const line = run.stderr.match(/gates filter: skipped (\d+); running (\d+) of (\d+) gates/,);
   expect(line, `no gates-filter summary on stderr:\n${run.stderr}`,).not.toBeNull();
   const [, skipped, running, total,] = line.map(Number,);
 
-  // (1) internal arithmetic + the skip count reflects the CSV we passed.
-  expect(skipped,).toBe(skipNames.length,);
+  // (1) internal arithmetic + the skip count reflects the names we passed.
+  expect(skipped,).toBe(merged.length,);
   expect(total,).toBe(running + skipped,);
 
   // (2) the runner's claim vs. what it actually executed.
@@ -191,12 +193,12 @@ function assertSkipFilter(run, skipNames,) {
   expect(running,).toBe(executed.length,);
 
   // (3) the names: skipped gates are gone, nothing else vanished.
-  for (const name of skipNames) {
+  for (const name of merged) {
     expect(executed, `skipped gate still executed: ${name}`,).not.toContain(name,);
   }
   const registry = availableGateNames();
   expect(total,).toBe(registry.length,);
-  expect(new Set([...executed, ...skipNames,],),).toEqual(new Set(registry,),);
+  expect(new Set([...executed, ...merged,],),).toEqual(new Set(registry,),);
 }
 
 /**
@@ -462,4 +464,98 @@ describe("selective gate filter — mutual exclusion", () => {
     expect(r.exit,).toBe(2,);
     expect(r.stderr,).toMatch(/error: --gates requires a comma-separated list of gate names/,);
   },);
+});
+
+describe("gate profile — provenance labels, never silent filters", () => {
+  // This file tests filter/provenance, not gate execution: skip everything
+  // except one cheap, green gate. The skip list comes from the runner registry
+  // so a newly added gate cannot quietly escape it and make these five runs
+  // slow again.
+  const KEEP_GATE = "context - weight";
+  const skipAllButCheap = availableGateNames().filter(
+    (name,) => name !== KEEP_GATE,
+  );
+
+  test("unknown, bare and empty profiles exit 2 with the valid list", { timeout: 120_000, }, () => {
+    for (
+      const args of [
+        ["--profile=__bogus__",],
+        ["--profile",],
+        ["--profile=",],
+        ["--profile", "   ",],
+      ]
+    ) {
+      const r = runRunner(args, { defaultSkip: [], },);
+      expect(r.exit, `expected exit 2 for ${args.join(" ",)}`,).toBe(2,);
+      expect(r.stderr,).toMatch(
+        /valid profiles: full, business-only, rpg-chat-only, local-only, relay-only/,
+      );
+    }
+  },);
+
+  test("--profile and --gates are mutually exclusive", { timeout: 120_000, }, () => {
+    const r = runRunner(["--profile=full", "--gates", "md - lint",], { defaultSkip: [], },);
+    expect(r.exit,).toBe(2,);
+    expect(r.stderr,).toMatch(/--gates and --profile are mutually exclusive/,);
+  },);
+
+  // One test per profile, each with its own LONG_RUN_MS budget: a single test
+  // looping all five would need a 5x budget and weaken the timeout contract
+  // for every case in this file.
+  for (const name of Object.keys(PROFILE_SKIPS,)) {
+    test(`${name}: runs the live registry minus only its declared skips`, { timeout: LONG_RUN_MS, }, () => {
+      const declared = PROFILE_SKIPS[name];
+      const r = runRunner(["--profile", name, "--skip-gates", skipAllButCheap.join(",",),], {
+        defaultSkip: [],
+        timeout: LONG_RUN_MS,
+      },);
+      assertSkipFilter({ stderr: r.stderr, stdout: r.stdout, }, skipAllButCheap, declared,);
+      if (name !== "full") {
+        expect(r.stderr, `no profile line for ${name}`,).toMatch(
+          new RegExp(
+            `gates filter: profile=${name} skipped ${declared.length}; running \\d+ of \\d+ gates`,
+          ),
+        );
+      }
+      // An auditor must be able to tell afterwards which profile claimed the
+      // coverage. Read THIS run's report via its own RUN_ID (see readOwnReport).
+      const report = readOwnReport(r.stdout,);
+      expect(report,).not.toBeNull();
+      expect(report.profile,).toBe(name,);
+      expect(report.skippedByProfile,).toEqual([...declared,],);
+    },);
+  }
+
+  test("protected and stale profile skips are rejected by the pure validator", () => {
+    const available = [
+      "typecheck - backend",
+      "e2e - browser (qa subset)",
+      "e2e - browser (baseline)",
+    ];
+    const rejected = invalidProfileSkips(
+      ["typecheck - backend", "e2e - browser (qa subset)",],
+      available,
+      PROFILE_SKIPPABLE_GATES,
+    );
+    expect(rejected.protected,).toEqual(
+      ["typecheck - backend", "e2e - browser (qa subset)",],
+    );
+    expect(rejected.stale,).toEqual([],);
+
+    const allowed = invalidProfileSkips(
+      ["e2e - browser (baseline)",],
+      available,
+      PROFILE_SKIPPABLE_GATES,
+    );
+    expect(allowed.protected,).toEqual([],);
+    expect(allowed.stale,).toEqual([],);
+
+    const stale = invalidProfileSkips(
+      ["no - such - gate",],
+      available,
+      PROFILE_SKIPPABLE_GATES,
+    );
+    expect(stale.stale,).toEqual(["no - such - gate",],);
+    expect(stale.protected,).toEqual([],);
+  });
 });

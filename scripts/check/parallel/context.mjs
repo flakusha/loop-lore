@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 265
 
 /**
  * Diff-scope context for the parallel check runner: `--diff-base` resolution,
@@ -73,6 +74,52 @@ if (GATES_FILTER && SKIP_GATES_FILTER) {
   console.error("error: --gates and --skip-gates are mutually exclusive",);
   process.exit(2,);
 }
+
+// ── Feature profile selector ────────────────────────────────────
+// `--profile=<name>` / `--profile <name>` labels the gate run for provenance.
+// All five profiles ship the SAME source tree, so a profile is NOT a gate
+// filter: every gate still enforces in every profile. A typo must never fall
+// through to a green full run claiming coverage it did not announce, so
+// missing, empty and unknown values are usage errors listing the valid names.
+// --gates is rejected (a whitelist could silently drop a gate) while
+// --skip-gates composes (skip-only, fail-closed).
+// Keep the names in sync with FEATURE_PROFILES in the core config schema.
+export const FEATURE_PROFILES = [
+  "full",
+  "business-only",
+  "rpg-chat-only",
+  "local-only",
+  "relay-only",
+];
+
+function profileUsage(detail,) {
+  console.error(`error: ${detail}`,);
+  console.error(`valid profiles: ${FEATURE_PROFILES.join(", ",)}`,);
+  process.exit(2,);
+}
+
+function parseProfile() {
+  const spaceIdx = process.argv.indexOf("--profile",);
+  const eqIdx = process.argv.findIndex((a,) => a.startsWith("--profile=",));
+  if (spaceIdx === -1 && eqIdx === -1) { return "full"; }
+  if (GATES_FILTER) {
+    profileUsage("--gates and --profile are mutually exclusive",);
+  }
+  const raw = spaceIdx !== -1
+    ? process.argv[spaceIdx + 1]
+    : process.argv[eqIdx].slice("--profile=".length,);
+  // A following flag is not a profile name: consuming it would hide the typo
+  // and leave the real flag unparsed.
+  if (raw === undefined || raw.startsWith("--",) || raw.trim() === "") {
+    profileUsage("--profile requires a profile name",);
+  }
+  const name = raw.trim();
+  if (!FEATURE_PROFILES.includes(name,)) {
+    profileUsage(`unknown profile ${JSON.stringify(name,)}`,);
+  }
+  return name;
+}
+export const PROFILE = parseProfile();
 
 /**
  * Files `git diff --name-only base HEAD` reports, plus uncommitted

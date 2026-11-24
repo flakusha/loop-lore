@@ -21,6 +21,7 @@ import { createAsyncStore, setStore, } from "./async";
 import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
+import { featuresForOpts, type FeatureSurface, } from "./features/surface";
 import type { TranslatorFn, } from "./i18n/types";
 import { getLogger, } from "./logger";
 import { authenticateRequest, } from "./middleware/auth";
@@ -55,6 +56,8 @@ import { onValidationError, } from "./validation";
 export interface AppDeps {
   database: Db;
   config: Config;
+  /** Resolved capability surface; defaults to the config profile when absent. */
+  features?: FeatureSurface;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
   /** API catch-all dispatcher — server-internal, kept off the type to avoid
    *  elysia-app ↔ server cycle. Injected by `server/start.ts`. */
@@ -76,6 +79,7 @@ export interface AppDeps {
  */
 export function createApp(deps: AppDeps,) {
   const { database, config, handleNonApiRequest, handleApiRequest, } = deps;
+  const features = featuresForOpts(deps,);
 
   // Wire the async request-result store once at boot.
   // The status endpoint, idempotency replay, and `triggerAutoGeneration`
@@ -290,9 +294,9 @@ export function createApp(deps: AppDeps,) {
   // Mounted before plugins so they can read apiVersion from context.
   app.use(versionResolver(),);
 
-  registerPlugins(app, { database, config, asyncStore, },);
+  registerPlugins(app, { database, config, asyncStore, features, },);
 
-  app.use(v1Routes({ database, config, asyncStore, },),);
+  app.use(v1Routes({ database, config, asyncStore, features, },),);
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
@@ -318,6 +322,11 @@ export function createApp(deps: AppDeps,) {
     if (!userId) {
       const { unauthorizedResponse, } = await import("./routes/http-utils");
       return unauthorizedResponse();
+    }
+
+    if (!features.generation) {
+      const { notFoundResponse, } = await import("./routes/http-utils");
+      return notFoundResponse();
     }
 
     if (!config.assets.enabled) {

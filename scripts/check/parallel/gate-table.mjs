@@ -8,12 +8,13 @@
  * builders in `gates.mjs`, which owns the assembly.
  */
 
-import { NOOP_OK, } from "./context.mjs";
+import { FEATURE_PROFILES, NOOP_OK, } from "./context.mjs";
 
 // oxlint-disable-next-line sort-keys
 export const checks = {
   // Type checking
-  "typecheck - backend": "bun run typecheck",
+  "typecheck - backend": "bun run typecheck:backend",
+  "typecheck - core": "bun run typecheck:core",
   // Bun 1.4.4's built-in TS7 checker (the version every workflow pins).
   // Not a substitute for the tsgo gates —
   // but it CAN select a project: `bun --check --tsconfig-override=<project>`
@@ -24,14 +25,10 @@ export const checks = {
   // their own projects). ~1.1s, so it rides along in check:fast.
   "typecheck - bun": "bun run typecheck:bun",
   "typecheck - frontend": "bun run typecheck:frontend",
-  "typecheck - coverage": "bun run typecheck:coverage",
-  "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
-  // scripts/** sat outside every coverage gate: tsconfig.backend.json is
-  // src/** minus src/frontend/**, so the backend floor never saw it, and it
-  // has no frontend sibling. Same 95% any-count floor via its own project.
-  // Measured at 97.25% on landing, so the gate opens green rather than
-  // opening as a waiver.
-  "typecheck - coverage - scripts": "bun run typecheck:coverage:scripts",
+  // Three 95% type-coverage floors (backend, frontend, scripts) are ONE gate:
+  // separate rows only multiplied the red output for a single contract. The
+  // aggregate script runs all three projects; none is skipped or downgraded.
+  "typecheck - coverage": "bun run typecheck:coverage:all",
   // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
   // the in-repo scripts/ CLI ships outside tsconfig.backend.json (src/** only).
   // Scoped tsconfig.scripts.json keeps name resolution so unimported
@@ -44,7 +41,7 @@ export const checks = {
   // src/ modules imported by scripts keep their discriminated-union
   // narrowing. The residual debt it surfaced (bun query<T, Params> arity,
   // two test-cast sites) was cleared; do not re-relax strict.
-  "typecheck - scripts": "bunx tsgo --noEmit -p tsconfig.scripts.json",
+  "typecheck - scripts": "bun run typecheck:scripts",
   // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
   // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
   "lint - eslint": "bun run lint:eslint",
@@ -290,3 +287,20 @@ export const ADVISORY_GATES = new Set([
   "branches - audit",
   // e2e - browser (qa subset) is BLOCKING (see its entry in `checks`).
 ],);
+
+// Feature profiles are provenance labels over ONE shipped tree: every gate
+// runs in every profile until a build manifest proves a source root absent.
+// All five skip lists are therefore empty by default; a future skip needs BOTH
+// proven-absent source and an entry in the capability allowlist below (both
+// checked in filter.mjs). A profile must never become a gate whitelist.
+export const PROFILE_SKIPS = Object.fromEntries(
+  FEATURE_PROFILES.map((name,) => [name, [],]),
+);
+
+/**
+ * Gates a profile MAY skip, and only with a proven build-manifest reason.
+ * `e2e - browser (baseline)` is the sole entry: it is the one gate whose
+ * absence can be proven by a build without a browser bundle. The QA subset,
+ * coverage gate, test chunks and all static gates stay protected.
+ */
+export const PROFILE_SKIPPABLE_GATES = new Set(["e2e - browser (baseline)",],);

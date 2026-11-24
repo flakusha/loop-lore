@@ -1718,6 +1718,24 @@
         "duplication"
       ]
     },
+    "features": {
+      "type": "object",
+      "description": "Feature profile: a gating lens over shipped features, never a config rewriter. Default `full`.",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "full",
+            "business-only",
+            "rpg-chat-only",
+            "local-only",
+            "relay-only"
+          ],
+          "default": "full",
+          "description": "Feature profile to gate surfaces; an explicit unknown value fails boot."
+        }
+      }
+    },
     "seeding": {
       "type": "object",
       "description": "Database seeding configuration (default users, characters, etc.)",

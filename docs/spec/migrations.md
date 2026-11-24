@@ -8,7 +8,7 @@ Source of truth for schema changes. Authoritative implementation: `src/db/migrat
 ## Layout
 
 - `src/db/migrations/001_core.ts` … `014_support_singletons.ts` — the 14-file S2 baseline: one final-form `.createTable` per table, inline Kysely DSL only, raw SQL for indexes/triggers/FTS.
-- `src/db/migrations/NNN_name.ts` — future appends, sequential from `015_*`.
+- `src/db/migrations/NNN_name.ts` — future appends; `015_*` and `016_*` are shipped, so the next free number is `017_*`.
 - `src/db/migrate.ts` — runs the Migrator plus `assertMigrationsNotStale`, which fails fast when an applied migration no longer exists on disk; local DBs are disposable (export → `db:reinit` → import).
 - `src/db/data-migrations/` — row-level data transforms with their own runner (see its README).
 

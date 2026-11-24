@@ -25,6 +25,7 @@
 import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { featuresForOpts, type FeatureSurface, } from "../features/surface";
 import { buildIdRoutes, } from "../routes/build-id";
 import { federationRoutes, } from "../routes/federation";
 import { healthRoutes, } from "../routes/health";
@@ -36,6 +37,8 @@ import { viewRoutes, } from "../routes/views";
 export interface RegisterPluginsOpts {
   database: Db;
   config: Config;
+  /** Resolved capability surface; defaults to the config profile when absent. */
+  features?: FeatureSurface;
   /** Async request-result store (request_results table writer). */
   asyncStore: import("../async/store").AsyncStore;
   /**
@@ -60,14 +63,15 @@ type PluginHost = {
  */
 export function registerPlugins(app: PluginHost, opts: RegisterPluginsOpts,): void {
   const { database, config, asyncStore, } = opts;
+  const features = featuresForOpts(opts,);
   const handleOpts = { database, config, asyncStore, };
   // ── Public routes (auth runs but won't block) ───────────────────────────────
   // Explicit unversioned probe prefix: the `/api` default is load-bearing (see
   // the header comment), so pin it here rather than relying on the default.
   app.use(healthRoutes(handleOpts, "/api",),);
   app.use(livenessRoutes({ database: handleOpts.database, config, },),);
-  app.use(metricsRoutes({ config, },),);
-  app.use(federationRoutes({ config, database, },),);
+  if (features.telemetry) { app.use(metricsRoutes({ config, },),); }
+  if (features.federation) { app.use(federationRoutes({ config, database, },),); }
   app.use(buildIdRoutes(),);
 
   // views stays UNGUARDED: server-rendered HTML under /views/*, deliberately

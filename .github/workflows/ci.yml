@@ -97,6 +97,12 @@ jobs:
       - name: Run local gate suite
         run: bun run check:ci
 
+      # A profile flag leaking into check:ci would silently shrink the suite.
+      # The guard reads the run's own report and derives the expected gate count
+      # from the live registry — no literal to rot when a gate is added.
+      - name: Assert full gate coverage
+        run: bun run scripts/check/check-profile-provenance.mjs
+
   check:
     name: Typecheck + Lint + Format
     runs-on: ubuntu-24.04

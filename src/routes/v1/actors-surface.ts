@@ -6,6 +6,7 @@
  */
 import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { featuresForOpts, } from "../../features/surface";
 import { actorE2EPubkeyRoutes, } from "../actor-e2e-pubkeys";
 import { actorItemsRoutes, } from "../actor-items";
 import { actorLoreEntriesRoutes, } from "../actor-lore-entries";
@@ -52,44 +53,50 @@ export function actorsSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
-  return new Elysia({ name: "v1-actors", },)
-    // ── Actors / characters ──────────────────────────────────
-    .use(charactersRoutes(handleOpts, prefix,),)
-    .use(actorE2EPubkeyRoutes(handleOpts, prefix,),)
-    .use(actorItemsRoutes(handleOpts, prefix,),)
-    .use(actorMemoriesRoutes(handleOpts, prefix,),)
-    .use(actorLoreEntriesRoutes(handleOpts, prefix,),)
-    .use(actorNotesRoutes(handleOpts, prefix,),)
-    .use(characterTraitsRoutes(handleOpts, prefix,),)
-    .use(characterWorldSetupRoutes(handleOpts, prefix,),)
-    .use(characterInternalTraitsRoutes(handleOpts, prefix,),)
-    .use(characterGrowthRoutes(handleOpts, prefix,),)
-    .use(characterMoodRoutes(handleOpts, prefix,),)
-    .use(characterRelationshipsRoutes(handleOpts, prefix,),)
-    .use(characterAvatarsRoutes(handleOpts, prefix,),)
-    .use(characterEmotionsRoutes(handleOpts, prefix,),)
-    .use(characterEmotionAvatarsRoutes(handleOpts, prefix,),)
-    .use(wardrobeRoutes(handleOpts, prefix,),)
-    .use(wardrobeAvatarRoutes(handleOpts, prefix,),)
-    .use(outfitOverrideRoutes(handleOpts, prefix,),)
-    .use(characterAvailabilityRoutes(handleOpts, prefix,),)
-    .use(characterLicensingRoutes(handleOpts, prefix,),)
-    .use(characterIoRoutes(handleOpts, prefix,),)
-    // ── Worlds & RPG ─────────────────────────────────────────
-    .use(worldsRoutes(handleOpts, prefix,),)
-    .use(worldLoreEntriesRoutes(handleOpts, prefix,),)
-    .use(questsRoutes({ database, }, prefix,),)
-    .use(storyTurnsRoutes(handleOpts, prefix,),)
-    .use(storyStatesRoutes({ database, }, prefix,),)
-    .use(storyItemsRoutes({ database, }, prefix,),)
-    .use(craftingRecipeRoutes(handleOpts, prefix,),)
-    .use(craftingStationRoutes(handleOpts, prefix,),)
-    .use(craftingAttemptRoutes(handleOpts, prefix,),)
-    .use(craftingDiscoveryRoutes(handleOpts, prefix,),)
-    .use(craftingOrderRoutes(handleOpts, prefix,),)
-    .use(npcMovementRoutes(handleOpts, prefix,),)
-    .use(rpgRoutes(handleOpts, prefix,),)
-    .use(battleRoutes(handleOpts, prefix,),)
-    .use(tradeRoutes(handleOpts, prefix,),)
-    .use(gmNotesRoutes(handleOpts, prefix,),);
+  const app = new Elysia({ name: "v1-actors", },);
+  if (!featuresForOpts(opts,).chat) { return app; }
+  app.use(
+    new Elysia({ name: "v1-actors-routes", },)
+      // ── Actors / characters ──────────────────────────────────
+      .use(charactersRoutes(handleOpts, prefix,),)
+      .use(actorE2EPubkeyRoutes(handleOpts, prefix,),)
+      .use(actorItemsRoutes(handleOpts, prefix,),)
+      .use(actorMemoriesRoutes(handleOpts, prefix,),)
+      .use(actorLoreEntriesRoutes(handleOpts, prefix,),)
+      .use(actorNotesRoutes(handleOpts, prefix,),)
+      .use(characterTraitsRoutes(handleOpts, prefix,),)
+      .use(characterWorldSetupRoutes(handleOpts, prefix,),)
+      .use(characterInternalTraitsRoutes(handleOpts, prefix,),)
+      .use(characterGrowthRoutes(handleOpts, prefix,),)
+      .use(characterMoodRoutes(handleOpts, prefix,),)
+      .use(characterRelationshipsRoutes(handleOpts, prefix,),)
+      .use(characterAvatarsRoutes(handleOpts, prefix,),)
+      .use(characterEmotionsRoutes(handleOpts, prefix,),)
+      .use(characterEmotionAvatarsRoutes(handleOpts, prefix,),)
+      .use(wardrobeRoutes(handleOpts, prefix,),)
+      .use(wardrobeAvatarRoutes(handleOpts, prefix,),)
+      .use(outfitOverrideRoutes(handleOpts, prefix,),)
+      .use(characterAvailabilityRoutes(handleOpts, prefix,),)
+      .use(characterLicensingRoutes(handleOpts, prefix,),)
+      .use(characterIoRoutes(handleOpts, prefix,),)
+      // ── Worlds & RPG ─────────────────────────────────────────
+      .use(worldsRoutes(handleOpts, prefix,),)
+      .use(worldLoreEntriesRoutes(handleOpts, prefix,),)
+      .use(questsRoutes({ database, }, prefix,),)
+      .use(storyTurnsRoutes(handleOpts, prefix,),)
+      .use(storyStatesRoutes({ database, }, prefix,),)
+      .use(storyItemsRoutes({ database, }, prefix,),)
+      .use(craftingRecipeRoutes(handleOpts, prefix,),)
+      .use(craftingStationRoutes(handleOpts, prefix,),)
+      .use(craftingAttemptRoutes(handleOpts, prefix,),)
+      .use(craftingDiscoveryRoutes(handleOpts, prefix,),)
+      .use(craftingOrderRoutes(handleOpts, prefix,),)
+      .use(npcMovementRoutes(handleOpts, prefix,),)
+      .use(rpgRoutes(handleOpts, prefix,),)
+      .use(battleRoutes(handleOpts, prefix,),)
+      .use(tradeRoutes(handleOpts, prefix,),)
+      .use(gmNotesRoutes(handleOpts, prefix,),),
+  );
+
+  return app;
 }

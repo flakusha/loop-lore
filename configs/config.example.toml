@@ -8,6 +8,14 @@
 # THIS instance's dir, never to CWD or the config dir.
 # Overriding a path here makes it literal — not relative to this file.
 
+[features]
+profile = "full"
+# profile = "business-only"
+# profile = "rpg-chat-only"
+# profile = "local-only"
+# profile = "relay-only"
+# An explicit unknown profile fails boot; omitting this section keeps `full`.
+
 [server]
 port = 3000
 host = "localhost"

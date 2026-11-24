@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 315
+// size-allow: 330
 import { serve, } from "bun";
 import { join, } from "node:path";
 import { initAgeGate, } from "../age-gate/controller";
@@ -17,6 +17,7 @@ import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
+import { featuresForOpts, } from "../features/surface";
 import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
@@ -80,6 +81,7 @@ export async function start() {
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
   let config = loadConfig();
+  const features = featuresForOpts({ config, },);
   // Pin the effective server bind before any path resolution so the DB and
   // runtime instance dirs derive the same slug (explicit args still win).
   setEffectiveServerBind(config.server,);
@@ -92,30 +94,35 @@ export async function start() {
   // the outbound ACP runtime from the same snapshot (a disabled config
   // composes nothing; both take effect on restart).
   const harnessAcp = config.harness?.acp ?? { enabled: false, profiles: [], };
-  initHarnessAdminSettings(harnessAcp,);
-  initHarnessRuntime(harnessAcp,);
+  if (features.harness) {
+    initHarnessAdminSettings(harnessAcp,);
+    initHarnessRuntime(harnessAcp,);
+  }
+
   // Inbound MCP/ACP studio servers (§3.3): seed the effective-settings store
   // from the file layer. Deny-by-default — an omitted `integrations.inbound`
   // section seeds as "disabled, no principal", so the stdio entrypoints
   // refuse to serve until the operator configures it.
-  initInboundSettings(
-    config.integrations?.inbound ?? {
-      mcpEnabled: false,
-      acpEnabled: false,
-      principalUserId: "",
-      principalScope: "read",
-      // Loopback default mirrors the schema default; remote bind is refused
-      // by the proxy listener, not defaulted here.
-      proxyBind: "127.0.0.1",
-    },
-  );
+  if (features.harness) {
+    initInboundSettings(
+      config.integrations?.inbound ?? {
+        mcpEnabled: false,
+        acpEnabled: false,
+        principalUserId: "",
+        principalScope: "read",
+        // Loopback default mirrors the schema default; remote bind is refused
+        // by the proxy listener, not defaulted here.
+        proxyBind: "127.0.0.1",
+      },
+    );
+  }
 
   // RSI repo-access tier: seeded from the file layer only (absent = off);
   // the operator's stored admin override re-applies below, after the DB
   // opens. Disabled by default; never auto-enabled.
-  initRepoAccessSettings(config.harness?.repoAccess,);
+  if (features.harness) { initRepoAccessSettings(config.harness?.repoAccess,); }
 
-  initAssistantQuota(config.assistant,);
+  if (features.chat || features.business) { initAssistantQuota(config.assistant,); }
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
   initConfigHotApply(config,);
@@ -150,7 +157,7 @@ export async function start() {
 
   // Federation budgets live in in-process counters: reload the persisted rows
   // before the first peer-work request can reach the admission guard.
-  if (config.federation?.enabled === true) {
+  if (config.federation?.enabled === true && features.federation) {
     const { reloadPerformanceQuota, } = await import("../federation/performance-quota-store");
     await reloadPerformanceQuota({ database, enabled: true, },);
   }
@@ -171,6 +178,7 @@ export async function start() {
   const app = createApp({
     database,
     config,
+    features,
     handleNonApiRequest,
     handleApiRequest,
   },);
@@ -332,7 +340,7 @@ export async function start() {
   // process → failed `interrupted`), then pumps, so `queued` rows left by a
   // previous process resume here; the dispatch gate re-judges every turn at
   // run time under the enqueueing principal.
-  if (harnessAcp.enabled) {
+  if (harnessAcp.enabled && features.harness) {
     initHarnessTurnQueue({ database, runtime: getHarnessRuntime, },);
   }
 
@@ -411,7 +419,9 @@ export async function start() {
   // `authRequired` lets the loader warn when a plugin's `requiresAuth` /
   // `permissions` cannot be enforced (solo mode auto-authenticates everyone
   // as the `solo` super-user).
-  await loadAllPlugins(database, { authRequired: config.auth.required, },);
+  if (features.plugins) {
+    await loadAllPlugins(database, { authRequired: config.auth.required, },);
+  }
 
   // ── Pre-compress static assets + hash-inject HTML ──────
   await initAssetCompression(logger,);
@@ -423,7 +433,9 @@ export async function start() {
   // Local-only relay target for `--proxy` stdio shims (see
   // maybeStartStdioProxyListener): starts only when an inbound server is
   // enabled, and never reads stdio itself.
-  const stdioProxy = await maybeStartStdioProxyListener(database, config,);
+  const stdioProxy = features.harness
+    ? await maybeStartStdioProxyListener(database, config,)
+    : undefined;
 
   // One-line boot readiness summary (TASK-boot-readiness-summary): check ids
   // + ok/off only, never values, hints, or paths. The promotion field reports

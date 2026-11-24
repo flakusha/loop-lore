@@ -22,6 +22,7 @@ import { Value, } from "@sinclair/typebox/value";
 import { Elysia, t, } from "elysia";
 import { createHmac, timingSafeEqual, } from "node:crypto";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { featuresForOpts, } from "../../features/surface";
 import type { AdapterMessage, MessageBridge, } from "../../integrations";
 import { resolveCredential, } from "../../integrations";
 import type { RateLimitConfig, RateLimiter, } from "../../middleware/rate-limit";
@@ -252,7 +253,7 @@ function toErrorResponse(result: WebhookIngestError,): Response {
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { integrations: { webhooks: { [adapter: string]: { post: { ...; }; }; }; }; }; }, { ...; }, { ...; }>}
  */
 export function integrationsSurface(
-  _opts: RegisterPluginsOpts,
+  opts: RegisterPluginsOpts,
   seams: IntegrationsSurfaceOpts = {},
 ) {
   const deps: WebhookIngestDeps = {
@@ -261,32 +262,39 @@ export function integrationsSurface(
     limiter: seams.limiter ?? createRateLimiter(seams.rateLimit ?? DEFAULT_WEBHOOK_RATE_LIMIT,),
   };
 
-  return new Elysia({ name: "v1-integrations", },)
-    .post(
-      "/api/v1/integrations/webhooks/:adapter",
-      async ({ request, params, headers, },) => {
-        // RAW bytes first: the HMAC is computed over exactly what was sent,
-        // never over a re-serialized parse of the body.
-        const rawBody = await request.text();
-        const result = await ingestWebhook(
-          { deps, adapter: params.adapter, rawBody, signature: headers[WEBHOOK_SIGNATURE_HEADER], },
-        );
+  const app = new Elysia({ name: "v1-integrations", },);
+  if (!featuresForOpts(opts,).business) { return app; }
 
-        if (!result.ok) { return toErrorResponse(result,); }
-        return jsonResponse(
-          { ok: true, dispatched: result.dispatched, },
-          HttpStatus.Accepted,
-        );
-      },
-      {
-        // parse: "none" — the handler reads request.text() for the raw HMAC
-        // bytes; sibling JSON routes in the composed barrel force Elysia's
-        // body inference, which would consume the stream first and make the
-        // raw read throw "Body is already used" → 500 (same hazard as the
-        // /api/v1/assets upload route in elysia-app.ts).
-        parse: "none",
-        params: t.Object({ adapter: t.String({ minLength: 1, },), },),
-        headers: t.Object({ "x-loop-lore-signature": t.Optional(t.String(),), },),
-      },
-    );
+  app.use(
+    new Elysia({ name: "v1-integrations-routes", },)
+      .post(
+        "/api/v1/integrations/webhooks/:adapter",
+        async ({ request, params, headers, },) => {
+          // RAW bytes first: the HMAC is computed over exactly what was sent,
+          // never over a re-serialized parse of the body.
+          const rawBody = await request.text();
+          const result = await ingestWebhook(
+            { deps, adapter: params.adapter, rawBody, signature: headers[WEBHOOK_SIGNATURE_HEADER], },
+          );
+
+          if (!result.ok) { return toErrorResponse(result,); }
+          return jsonResponse(
+            { ok: true, dispatched: result.dispatched, },
+            HttpStatus.Accepted,
+          );
+        },
+        {
+          // parse: "none" — the handler reads request.text() for the raw HMAC
+          // bytes; sibling JSON routes in the composed barrel force Elysia's
+          // body inference, which would consume the stream first and make the
+          // raw read throw "Body is already used" → 500 (same hazard as the
+          // /api/v1/assets upload route in elysia-app.ts).
+          parse: "none",
+          params: t.Object({ adapter: t.String({ minLength: 1, },), },),
+          headers: t.Object({ "x-loop-lore-signature": t.Optional(t.String(),), },),
+        },
+      ),
+  );
+
+  return app;
 }

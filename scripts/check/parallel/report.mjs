@@ -33,7 +33,8 @@ import {
   RUN_ID,
   RUN_TMP_DIR,
 } from "./config.mjs";
-import { noopReason, } from "./context.mjs";
+import { noopReason, PROFILE, } from "./context.mjs";
+import { PROFILE_SKIPPED_GATES, } from "./filter.mjs";
 import { GIT_CONTEXT, } from "./git-context.mjs";
 import { pruneOldReports, pruneOldRunTmpDirs, } from "./retention.mjs";
 import { GIWT_ISSUE_CLI_UNAVAILABLE, } from "./runner.mjs";
@@ -176,6 +177,12 @@ export function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
     // staleness; runId disambiguates concurrent runs.
     runId: RUN_ID,
     mode: MODE,
+    // Feature profile declared by `--profile` and the profile-induced skips
+    // actually applied (empty for all five profiles today). CI rejects a
+    // report that does not claim full coverage, so a profile flag leaking
+    // into the full-suite path is red instead of quietly smaller.
+    profile: PROFILE,
+    skippedByProfile: [...PROFILE_SKIPPED_GATES,],
     worktreeName: path.basename(PROJECT_ROOT,),
     branch: GIT_CONTEXT.branch,
     gitHead: GIT_CONTEXT.gitHead,

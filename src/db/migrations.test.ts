@@ -471,7 +471,7 @@ describe("migration staleness guard", () => {
     const first = MIGRATION_NAMES[0]!;
     const { [first]: _dropped, ...filtered } = migrations;
     await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(
-      /no longer exist|append-only|Recovery/,
+      /no longer exist|predates|Recovery/,
     );
   });
 

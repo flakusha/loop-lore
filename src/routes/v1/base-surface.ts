@@ -6,6 +6,7 @@
 import { Elysia, } from "elysia";
 import { ageGateRoutes, } from "../../age-gate/controller";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { featuresForOpts, } from "../../features/surface";
 import { localInferenceRoutes, } from "../../inference/routes";
 import { createMessageBridge, type MessageBridge, } from "../../integrations/bridge";
 import { createEmailAdapter, EMAIL_ADAPTER_NAME, type EmailTransport, } from "../../integrations/email/adapter";
@@ -122,13 +123,14 @@ export function createMfaBridge(
  */
 export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge },) {
   const { database, config, } = opts;
-  const bridge = opts.bridge ?? createMfaBridge(config,);
+  const features = featuresForOpts(opts,);
+  const bridge = opts.bridge ?? (features.business ? createMfaBridge(config,) : undefined);
   const handleOpts = { database, config, bridge, };
   const prefix = "/api/v1";
 
   // NOTE: each surface is its own Elysia barrel on purpose -- one chain of this
   // size exceeds TypeScript's instantiation depth (TS2589 in the typecheck gate).
-  return new Elysia({ name: "v1", },)
+  const app = new Elysia({ name: "v1", },)
     // MUST be registered BEFORE the route plugins: Elysia's onAfterHandle
     // only wraps routes declared after the hook (proven by probe test).
     .onAfterHandle(
@@ -144,8 +146,11 @@ export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge
     .use(healthRoutes(handleOpts, prefix,),)
     .use(authPublicRoutes(handleOpts, prefix,),)
     .use(emojiRoutes({ prefix, },),)
-    .use(i18nRoutes(handleOpts, prefix,),)
-    .use(telemetryRoutes(handleOpts, prefix,),)
+    .use(i18nRoutes(handleOpts, prefix,),);
+
+  if (features.telemetry) { app.use(telemetryRoutes(handleOpts, prefix,),); }
+
+  app
     .use(frontendLogsRoutes(prefix,),)
     .use(localInferenceRoutes(undefined, prefix,),)
     .use(ageGateRoutes({ database, }, prefix,),)
@@ -155,17 +160,25 @@ export function baseSurface(opts: RegisterPluginsOpts & { bridge?: MessageBridge
     .use(sessionsRoutes(handleOpts, prefix,),)
     .use(switchSessionRoutes(handleOpts, prefix,),)
     .use(apiKeysRoutes(handleOpts, prefix,),)
-    .use(settingsRoutes(handleOpts, prefix,),)
-    .use(comfyUIModelRoutes(handleOpts, prefix,),)
-    .use(ivssAuthoringRoutes({ database, }, prefix,),)
-    .use(ivssAssemblyRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
-    .use(ivssRunRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
-    .use(workflowSelectionRoutes({ database, }, prefix,),)
-    .use(planningRoutes({ database, }, prefix,),)
-    .use(planningBoardRoutes({ database, }, prefix,),)
+    .use(settingsRoutes(handleOpts, prefix,),);
+
+  if (features.generation) {
+    app
+      .use(comfyUIModelRoutes(handleOpts, prefix,),)
+      .use(ivssAuthoringRoutes({ database, }, prefix,),)
+      .use(ivssAssemblyRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
+      .use(ivssRunRoutes({ config, database, uploadDir: config.assets?.uploadDir ?? "", },),)
+      .use(workflowSelectionRoutes({ database, }, prefix,),)
+      .use(planningRoutes({ database, }, prefix,),)
+      .use(planningBoardRoutes({ database, }, prefix,),);
+  }
+
+  app
     .use(actorPlanRoutes({ database, }, prefix,),)
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
     .use(keyManagementRoutes({ database, }, prefix,),)
     .use(setupRoutes(handleOpts, prefix,),);
+
+  return app;
 }
