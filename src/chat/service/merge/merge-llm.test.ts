@@ -145,6 +145,30 @@ describe("merge-llm", () => {
 
       expect(messages[1]!.content,).toContain("REJECTED",);
     });
+
+    test("includes the style hint when supplied", () => {
+      const messages = buildMergePromptMessages({
+        systemPrompt: "sys",
+        sharedContext: [],
+        versions: [["a",], ["b",],],
+        mode: MergeMode.Combined,
+        styleHint: "terse, in medias res",
+      },);
+
+      expect(messages[1]!.content,).toContain("=== STYLE ===",);
+      expect(messages[1]!.content,).toContain("terse, in medias res",);
+    });
+
+    test("omits the style section when no hint is supplied", () => {
+      const messages = buildMergePromptMessages({
+        systemPrompt: "sys",
+        sharedContext: [],
+        versions: [["a",], ["b",],],
+        mode: MergeMode.Combined,
+      },);
+
+      expect(messages[1]!.content,).not.toContain("=== STYLE ===",);
+    });
   });
 
   describe("parseMergeDraft", () => {

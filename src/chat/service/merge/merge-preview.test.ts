@@ -195,6 +195,34 @@ describe("merge-preview", () => {
     expect("ok" in result && result.ok,).toBe(true,);
     if (!("ok" in result)) { return; }
     expect(callMergeLlmMock,).toHaveBeenCalledTimes(1,);
+    const noHintMessages = callMergeLlmMock.mock.calls[0]![4] as { content: string }[];
+    expect(noHintMessages[1]!.content,).not.toContain("=== STYLE ===",);
+  });
+
+  test("passes the style hint into the LLM prompt when regenerating", async () => {
+    if (!ISOLATED) { return; }
+    const mergeId = await seedMerge(MergeMode.Combined,);
+    callMergeLlmMock.mockClear();
+
+    const result = await buildPreview({
+      database: tdb.db,
+      config: { templates: { llm: {}, }, } as never,
+      params: {
+        chatId,
+        mergeId,
+        actorId,
+        userRole: null,
+        regenerate: true,
+        styleHint: "terse, in medias res",
+      },
+    },);
+
+    expect("ok" in result && result.ok,).toBe(true,);
+    if (!("ok" in result)) { return; }
+    expect(callMergeLlmMock,).toHaveBeenCalledTimes(1,);
+    const messages = callMergeLlmMock.mock.calls[0]![4] as { content: string }[];
+    expect(messages[1]!.content,).toContain("=== STYLE ===",);
+    expect(messages[1]!.content,).toContain("terse, in medias res",);
   });
 
   test("overlay mode returns hunks", async () => {

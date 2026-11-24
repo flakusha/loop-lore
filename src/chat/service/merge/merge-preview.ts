@@ -191,6 +191,7 @@ export async function buildPreview(options: BuildPreviewOptions,): Promise<Build
     sharedContext: ancestorLines,
     versions: truncatedVersions,
     mode,
+    styleHint: request.styleHint,
   },);
 
   const llmResult = await callMergeLlm(database, config, chatId, actorId, messages,);
