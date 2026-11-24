@@ -78,6 +78,8 @@ if (ISOLATED) {
   mock.module("../age-gate/controller", () => ({
     ageGateConfig: { update: () => {}, },
     initAgeGate: () => {},
+    // start() calls this on boot; importers link it under --isolate too.
+    applyStoredAgeGateConfig: async () => {},
   }),);
 
   mock.module("../config/cert", () => ({
@@ -98,6 +100,9 @@ if (ISOLATED) {
       initAnonymousMode: () => {},
       initSmk: async () => {},
       encryptMessageContent: async () => {
+        throw new Error("not stubbed",);
+      },
+      decryptMessageContent: async () => {
         throw new Error("not stubbed",);
       },
       getSmk: () => null,
@@ -229,6 +234,9 @@ if (ISOLATED) {
 
       return [];
     },
+    // The provider registry imports this alongside scanAllProviders; a
+    // partial mock breaks module linking for every importer under --isolate.
+    getUnhealthyProviders: () => [],
   }),);
 
   // Only seedDefaults is CALLED here (dynamic import in start()), but the

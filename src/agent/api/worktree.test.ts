@@ -42,8 +42,15 @@ afterEach(async () => {
 
 async function tokenWithWorktreeScope(): Promise<{ id: string; raw: string }> {
   const id = crypto.randomUUID();
-  const { raw, hash, } = mintAgentToken();
-  await db.insertInto("agent_tokens",).values({ id, token_hash: hash, scope: AgentTokenScope.Worktree, },).execute();
+  const { raw, hash, expiresAt, } = mintAgentToken();
+  await db.insertInto("agent_tokens",).values({
+    id,
+    token_hash: hash,
+    scope: AgentTokenScope.Worktree,
+    // NULL expiry is a pre-policy credential and fails closed into 401.
+    expires_at: expiresAt,
+  },).execute();
+
   return { id, raw, };
 }
 

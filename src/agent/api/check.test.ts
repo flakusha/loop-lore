@@ -31,9 +31,14 @@ afterEach(async () => {
 
 async function setup(): Promise<{ raw: string; worktreeId: string }> {
   const tokenId = crypto.randomUUID();
-  const { raw, hash, } = mintAgentToken();
-  await db.insertInto("agent_tokens",).values({ id: tokenId, token_hash: hash, scope: AgentTokenScope.Check, },)
-    .execute();
+  const { raw, hash, expiresAt, } = mintAgentToken();
+  await db.insertInto("agent_tokens",).values({
+    id: tokenId,
+    token_hash: hash,
+    scope: AgentTokenScope.Check,
+    // NULL expiry is a pre-policy credential and fails closed into 401.
+    expires_at: expiresAt,
+  },).execute();
 
   const worktreeId = crypto.randomUUID();
   await db.insertInto("rsi_agent_worktrees",).values({

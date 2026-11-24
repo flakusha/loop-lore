@@ -39,11 +39,13 @@ function makeApp(): Elysia {
 
 /** Insert one agent-token row for a freshly generated plaintext. */
 async function insertToken(scope: AgentTokenScope,): Promise<string> {
-  const { raw, hash, } = mintAgentToken();
+  const { raw, hash, expiresAt, } = mintAgentToken();
   await db.insertInto("agent_tokens",).values({
     id: crypto.randomUUID(),
     token_hash: hash,
     scope,
+    // NULL expiry is a pre-policy credential and fails closed into 401.
+    expires_at: expiresAt,
   },).execute();
 
   return raw;
