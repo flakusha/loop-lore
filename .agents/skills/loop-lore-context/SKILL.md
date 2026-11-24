@@ -6,7 +6,7 @@ description: >
   and quick-reference commands.
 version: 1.0.0
 author: loop-lore contributors
-license: Apache-2.0 OR MIT
+license: Apache-2.0
 metadata:
   agents:
     tags: [loop-lore, sillytavern, rpg-chat, bun, typescript]
@@ -22,44 +22,45 @@ LLM RPG chat platform inspired by SillyTavern, Odysseus, and Open WebUI. Built o
 
 ## Technology Constraints
 
-| Layer    | Required                  |
-| -------- | ------------------------- |
-| Runtime  | Bun (`bun run` directly)  |
-| Language | TypeScript 5.4+ strict    |
-| Database | `bun:sqlite` + Kysely     |
-| TUI      | blessed + blessed-contrib |
-| Web      | htmx + Alpine.js          |
+| Layer    | Required                                |
+| -------- | --------------------------------------- |
+| Runtime  | Bun (`bun run` directly)                |
+| Language | TypeScript 5.4+ strict                  |
+| Database | `bun:sqlite` + Kysely                   |
+| TUI      | @oh-my-pi/pi-tui (subpath imports only) |
+| Web      | htmx + Alpine.js                        |
 
 ## Key Paths
 
 See **AGENTS.md** → "Directory Structure (Key Paths)" for the full listing.
 
-Key directories: `src/db/` (Kysely + schema), `src/routes/` (REST handlers), `src/generation/` (LLM), `src/turning/` (orchestration), `src/crypto/` (encryption), `src/frontend/` (htmx + Alpine), `src/tui/` (blessed widgets), `src/validation/schemas.ts` (TypeBox), `src/regex/` (extraction pipeline), `src/rpg/` (combat, quests, skills, loot), `src/characters/` (avatar, mood, traits), `src/assets/` (metadata extraction), `src/memory/` (budget, provisioning), `src/story/` (multi-LLM story engine).
+Key directories: `src/db/` (Kysely + schema), `src/routes/` (REST handlers), `src/generation/` (LLM), `src/turning/` (orchestration), `src/crypto/` (encryption), `src/frontend/` (htmx + Alpine), `src/tui/` (pi-tui widgets, subpath imports only), `src/validation/schemas/` (Elysia `t`/TypeBox), `src/regex/` (extraction pipeline), `src/rpg/` (combat, quests, skills, loot), `src/characters/` (avatar, mood, traits), `src/assets/` (metadata extraction), `src/memory/` (budget, provisioning), `src/story/` (multi-LLM story engine).
 
 ## ⚠️ Zod/TypeBox Trap
 
-Specs describe Zod in `src/schemas/` — **does not exist**. Real stack: **Elysia `t` (TypeBox)** in `src/validation/schemas.ts`.
+Specs that describe Zod schemas in `src/schemas/` are wrong — that directory holds domain types (consent, nsfw-rating, reputation), not validation schemas. Real stack: **Elysia `t` (TypeBox)** in `src/validation/schemas/` (a directory, one module per domain).
 
 ## Coding Conventions
 
 See **`.agents/references/recommendations.md`** for full patterns. Key rules:
 
 - **Types**: Interfaces > types; enums for fixed sets; strict mode
-- **Files**: One feature per file; <200 lines; `index.ts` exports public API
+- **Files**: One feature per file; 250L default line budget (not a hard ceiling); `index.ts` exports public API
 - **Naming**: camelCase vars/fns, PascalCase classes, UPPER_SNAKE constants
 - **Async**: Always handle promises; no bare `.then()` chains
-- **JSDoc**: All public exports — @param, @returns, @throws, @example
+- **JSDoc**: Minimal. `@throws` REQUIRED on any function that throws, returns `Result.err`, or rejects; `@param`/`@returns` only when the type does not suffice; no `@example`, blocks ≤3 lines
 - **Imports**: Never import DB-specific modules in services (use Kysely types)
 
 ## Quick-Reference Commands
 
 ```bash
-bun run check        # typecheck + lint + format + md lint + db schema gate
-bun test src/        # unit tests
-bun run db:migrate   # DB migrations
+bun run check          # parallel gate runner (typecheck, lint, format, md lint, schema + migration gates, tests)
+bun run test:unit      # unit tests (parallel, isolated)
+bun run db:migrate     # apply DB migrations
 # After a migration change, regenerate schema artifacts (fails `check` otherwise):
 bun run db:sync-types && bun run db:sync-manifest
-giwt list   # active worktrees
+bun run schemas:check  # verify generated artifacts match the migrations
+bun node_modules/giwt/src/cli.ts list   # active worktrees (pinned giwt)
 ```
 
 ## Key Design Decisions
@@ -75,7 +76,7 @@ giwt list   # active worktrees
 
 ## Common Pitfalls
 
-1. **Forgetting `screen.render()` after TUI updates.** Blessed requires manual re-render.
+1. **Forgetting `requestRender()` after a TUI state change.** The pi-tui shell repaints only on request; widgets expose `render(width)`.
 2. **Importing DB-specific modules in services/controllers.** Use Kysely types + db instance only.
 3. **Bare `.then()` waterfalls.** Always await or .catch().
 4. **Skipping doc reading.** Always read relevant `docs/` before implementing.
