@@ -54,12 +54,29 @@ export function setByPath(object: Record<string, unknown>, path: string, value: 
 }
 
 /**
+ * Parse a numeric scalar, falling back on blank, non-finite or below-minimum
+ * values. Keeps malformed env input from reaching numeric config fields.
+ * @param value - raw env or config scalar
+ * @param fallback - value used when the scalar is unusable
+ * @param min - smallest accepted value (default: no lower bound)
+ */
+export function parseFiniteNumber(
+  value: string,
+  fallback: number,
+  min = Number.NEGATIVE_INFINITY,
+): number {
+  if (value.trim() === "") { return fallback; }
+  const parsed = Number(value,);
+  return Number.isFinite(parsed,) && parsed >= min ? parsed : fallback;
+}
+
+/**
  * @param value
  * @param targetType
  * @returns void
  */
 export function coerceValue(value: string, targetType: string,): unknown {
-  if (targetType === "number") { return Number(value,); }
+  if (targetType === "number") { return parseFiniteNumber(value, 0,); }
   if (targetType === "boolean") {
     if (value === "true" || value === "1") { return true; }
     if (value === "false" || value === "0") { return false; }

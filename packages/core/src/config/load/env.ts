@@ -5,7 +5,7 @@
 
 import { isWellFormedBcp47, } from "../../../../i18n/src/bcp47";
 import type { Config, ProviderInstanceConfig, } from "../schema";
-import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
+import { coerceValue, getTypeOfPath, parseFiniteNumber, setByPath, } from "./parse";
 
 /**
  * @param config
@@ -109,12 +109,8 @@ export function applyProviderEnvVars(config: Config,): void {
     baseUrl,
     apiKey: process.env.LLM_PROVIDER_API_KEY,
     model: process.env.LLM_PROVIDER_MODEL ?? "default",
-    timeout: Number.isNaN(Number(process.env.LLM_PROVIDER_TIMEOUT,),)
-      ? 30_000
-      : Number(process.env.LLM_PROVIDER_TIMEOUT,),
-    retries: Number.isNaN(Number(process.env.LLM_PROVIDER_RETRIES,),)
-      ? 3
-      : Number(process.env.LLM_PROVIDER_RETRIES,),
+    timeout: parseFiniteNumber(process.env.LLM_PROVIDER_TIMEOUT ?? "", 30_000, 0,),
+    retries: parseFiniteNumber(process.env.LLM_PROVIDER_RETRIES ?? "", 3, 0,),
     allowUserApiKey: allowUserKey === undefined ? true : ENABLED_VALUES.has(allowUserKey,),
     locale,
     models: {},

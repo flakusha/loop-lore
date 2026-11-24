@@ -300,6 +300,23 @@ describe("applyProviderEnvVars", () => {
     }
   });
 
+  test("falls back for non-finite or negative TIMEOUT and RETRIES", () => {
+    const restore = withEnv({
+      LLM_PROVIDER_BASE_URL: "http://localhost/v1",
+      LLM_PROVIDER_TIMEOUT: "Infinity",
+      LLM_PROVIDER_RETRIES: "-3",
+    },);
+
+    try {
+      const config = freshConfig();
+      applyProviderEnvVars(config,);
+      expect(config.generation.providers.openaiCompatible[0]?.timeout,).toBe(30_000,);
+      expect(config.generation.providers.openaiCompatible[0]?.retries,).toBe(3,);
+    } finally {
+      restore();
+    }
+  });
+
   test("allowUserApiKey stays true when LLM_PROVIDER_ALLOW_USER_KEY is unset", () => {
     const restore = withEnv({
       LLM_PROVIDER_BASE_URL: "http://localhost/v1",

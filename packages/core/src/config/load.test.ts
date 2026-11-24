@@ -217,6 +217,14 @@ describe("validateConfig", () => {
     },).toThrow(/port/,);
   });
 
+  test("rejects a non-finite port that bypasses range comparisons", () => {
+    const config = validConfig();
+    config.server.port = Number.NaN;
+    expect(() => {
+      validateConfig(config,);
+    },).toThrow(/port/,);
+  });
+
   test("throws on port 65536", () => {
     const config = validConfig();
     config.server.port = 65_536;

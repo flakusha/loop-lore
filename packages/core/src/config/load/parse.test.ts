@@ -9,6 +9,7 @@ import {
   getTypeOfPath,
   normalizeConfig,
   parseFileContent,
+  parseFiniteNumber,
   setByPath,
 } from "./parse";
 
@@ -57,6 +58,15 @@ describe("coerceValue", () => {
   test("number targets parse to numbers", () => {
     expect(coerceValue("42", "number",),).toBe(42,);
     expect(coerceValue("", "number",),).toBe(0,);
+    expect(coerceValue("Infinity", "number",),).toBe(0,);
+    expect(coerceValue("abc", "number",),).toBe(0,);
+  });
+
+  test("parseFiniteNumber rejects blank, non-finite and out-of-range values", () => {
+    expect(parseFiniteNumber("12.5", 7,),).toBe(12.5,);
+    expect(parseFiniteNumber("   ", 7,),).toBe(7,);
+    expect(parseFiniteNumber("Infinity", 7,),).toBe(7,);
+    expect(parseFiniteNumber("-2", 7, 0,),).toBe(7,);
   });
 
   test("boolean targets accept true/1 and false/0, pass through anything else", () => {

@@ -88,7 +88,10 @@ export const validate = (config: Config,): void => {
   validateFeatureProfile(config,);
   validateByoKey(config,);
 
-  if (config.server.port < 0 || config.server.port > 65_535) {
+  if (
+    !Number.isFinite(config.server.port,) ||
+    config.server.port < 0 || config.server.port > 65_535
+  ) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
   }
 

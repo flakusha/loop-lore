@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 275
 
 /**
  * Minimal JSON-RPC 2.0 client over a child process's stdio, framed as
@@ -12,6 +13,12 @@
 import { type ChildProcessWithoutNullStreams, spawn, } from "node:child_process";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { scrubEnv, } from "./env-scrub";
+
+/**
+ * Upper bound on one unterminated child stdout line. A child that never sends
+ * a newline must not grow this process without limit.
+ */
+export const MAX_JSONRPC_LINE_BYTES = 1 << 20;
 
 /** Options for the connection. */
 export interface JsonRpcProcessOptions {
@@ -213,6 +220,18 @@ export class JsonRpcProcess {
     this.child = null;
   }
 
+  /** Tear the transport down when the child emits an overlong line. */
+  private failOversizedLine(): void {
+    if (this.closed) { return; }
+    this.closed = true;
+    this.buffer = "";
+    const child = this.child;
+    const detail = `child stdout line exceeds ${MAX_JSONRPC_LINE_BYTES} bytes`;
+    this.failAll(detail,);
+    child?.kill();
+    this.opts.onExit?.(detail,);
+  }
+
   /** Spawn the child and wire stdio handlers. */
   private spawnChild(): void {
     const [cmd, ...args] = this.opts.command;
@@ -235,13 +254,24 @@ export class JsonRpcProcess {
     this.child = child;
     child.stdout.setEncoding("utf8",);
     child.stdout.on("data", (chunk: string,) => {
+      if (this.closed) { return; }
       this.buffer += chunk;
       let newline = this.buffer.indexOf("\n",);
       while (newline >= 0) {
         const line = this.buffer.slice(0, newline,).trimEnd();
         this.buffer = this.buffer.slice(newline + 1,);
+
+        if (Buffer.byteLength(line, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+          this.failOversizedLine();
+          return;
+        }
+
         if (line.length > 0) { this.handleLine(line,); }
         newline = this.buffer.indexOf("\n",);
+      }
+
+      if (Buffer.byteLength(this.buffer, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+        this.failOversizedLine();
       }
     },);
 
