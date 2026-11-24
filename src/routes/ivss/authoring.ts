@@ -345,6 +345,10 @@ async function touchParents(
     .execute();
 }
 
+function toReorderRow(row: { id: string; scenarioId: string; sceneId?: string | null },): ReorderRow {
+  return { id: row.id, scenarioId: row.scenarioId, sceneId: row.sceneId ?? null, };
+}
+
 /** @returns the rows for a reorder request, normalized to their parent ids */
 async function reorderRows(
   database: Kysely<DB>,
@@ -365,11 +369,7 @@ async function reorderRows(
       .where("scenarios.owner_id", "=", userId,)
       .execute();
 
-    return rows.map((row,) => ({
-      id: row.id,
-      scenarioId: row.scenarioId,
-      sceneId: null,
-    }));
+    return rows.map(toReorderRow,);
   }
 
   if (kind === "shot") {
@@ -386,11 +386,7 @@ async function reorderRows(
       .where("scenarios.owner_id", "=", userId,)
       .execute();
 
-    return rows.map((row,) => ({
-      id: row.id,
-      scenarioId: row.scenarioId,
-      sceneId: row.sceneId,
-    }));
+    return rows.map(toReorderRow,);
   }
 
   const rows = await database
@@ -406,11 +402,7 @@ async function reorderRows(
     .where("scenarios.owner_id", "=", userId,)
     .execute();
 
-  return rows.map((row,) => ({
-    id: row.id,
-    scenarioId: row.scenarioId,
-    sceneId: row.sceneId,
-  }));
+  return rows.map(toReorderRow,);
 }
 
 /**

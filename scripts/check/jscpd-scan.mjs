@@ -32,7 +32,7 @@ const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
 /**
  * Paths excluded from every jscpd scan: generated code, vendored assets and
- * the non-TypeScript front-end templates. `scripts/check/test-gaps.mjs`
+ * the non-TypeScript front-end templates and JSON fixture data. `scripts/check/test-gaps.mjs`
  * (SKIP_PATTERNS) mirrors this list for the coverage gate.
  */
 export const JSCPD_IGNORE = [
@@ -46,6 +46,7 @@ export const JSCPD_IGNORE = [
   "frontend/alpine/**",
   "validation/schemas/*",
   "db/schema-*.ts",
+  "**/fixtures/**",
 ];
 
 /**
