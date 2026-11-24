@@ -201,6 +201,23 @@ describe("generateImagesWithFailover", () => {
 
     expect(viaFailover,).toEqual(expected,);
   },);
+
+  it("refuses an invalid workflow graph before any provider executes", async () => {
+    // An object is a graph, not a library name: the shared gate rejects the
+    // empty graph with a 400 failure. attemptCandidate records EVERY provider
+    // execution on `attempts`, so its absence proves no backend was reached.
+    const outcome = await generateImagesWithFailover(
+      [{ ...BASE, name: "gen-a", },],
+      "generate",
+      { ...OPTS, workflow: {} as unknown as string, },
+    );
+
+    expect(outcome.ok,).toBe(false,);
+    const failed = outcome as ImageGenFailure;
+    expect(failed.status,).toBe(400,);
+    expect(failed.error,).toContain("Invalid workflow graph",);
+    expect(failed.attempts,).toBeUndefined();
+  });
 });
 
 describe("generateImagesWithFailover BYO keys", () => {
