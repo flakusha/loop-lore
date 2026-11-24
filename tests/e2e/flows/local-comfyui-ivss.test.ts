@@ -15,6 +15,7 @@ import {
   type ComfyUIWorkflow,
 } from "../../../src/generation/providers/comfyui";
 import { getWorkflowLoader, } from "../../../src/generation/workflow-loader";
+import { buildSubstitutionVars, } from "../../../src/generation/workflow-substitutor";
 
 const BASE = process.env.LLAMA_SWAP_BASE_URL ?? "http://127.0.0.1:7180";
 const COMFY_BASE = `${BASE}/upstream/comfyui_auto`;
@@ -41,7 +42,9 @@ async function reachable(): Promise<boolean> {
 }
 
 /** Resolve the operator-supplied workflow without pinning a development name.
- * @returns the workflow, or null when absent/unreadable
+ * Live mode throws on a loader failure so a named workflow cannot pass in
+ * milliseconds without submitting; presence-only mode still skips quietly.
+ * @returns the workflow, or null when absent/unreadable in presence-only mode
  */
 async function loadWorkflow(): Promise<ComfyUIWorkflow | null> {
   if (!WORKFLOW) { return null; }
@@ -51,11 +54,16 @@ async function loadWorkflow(): Promise<ComfyUIWorkflow | null> {
     return await file.json() as ComfyUIWorkflow;
   }
 
-  try {
-    return await getWorkflowLoader().loadWorkflow({ name: WORKFLOW, vars: {}, },);
-  } catch {
-    return null;
+  const vars = buildSubstitutionVars({ prompt: "A small red cube on a studio table", },);
+  if (!LIVE) {
+    try {
+      return await getWorkflowLoader().loadWorkflow({ name: WORKFLOW, vars, },);
+    } catch {
+      return null;
+    }
   }
+
+  return await getWorkflowLoader().loadWorkflow({ name: WORKFLOW, vars, },);
 }
 
 describe("local ComfyUI via llama-swap", () => {
