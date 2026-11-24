@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
   # CI has no .credentials.env; skip only the gate suite's GPG preflight.
   CHECK_SKIP_GPG_PRECHECK: "1"
 

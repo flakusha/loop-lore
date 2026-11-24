@@ -10,7 +10,7 @@ concurrency:
 
 env:
   # Pinned to the local toolchain; `bun --check` (the `typecheck - bun` gate) needs Bun 1.4.3+.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 jobs:
   commit-lint:

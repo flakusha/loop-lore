@@ -20,7 +20,7 @@ env:
   # `typecheck - bun` gate, which runs `bun --check` — the TS7 checker Bun
   # ships from 1.4.3 on. A floating `latest` or an older minor runs the gate
   # on a Bun that cannot do what the gate asks.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 jobs:
   gates:

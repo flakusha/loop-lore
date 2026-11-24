@@ -24,7 +24,7 @@ env:
   # One Bun version for the whole workflow: it matches the local toolchain
   # (the repo ships a `bun.lock` text lockfile) and satisfies the
   # `typecheck - bun` gate, which runs `bun --check`.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 jobs:
   gates:
