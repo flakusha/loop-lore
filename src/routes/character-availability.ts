@@ -8,10 +8,34 @@
  * usage policies, activity restrictions, and content policies.
  */
 import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { jsonStringifyOr, } from "../utils";
 import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+
+/**
+ * @param ctx - route context holding the session identity and the actor id param
+ * @param database - database handle
+ * @returns the actorId, or a 401/404 response to return
+ */
+async function requireActorAccess(
+  ctx: any,
+  database: Kysely<DB>,
+): Promise<{ actorId: string } | Response> {
+  const userId = requireUserId(ctx,);
+  if (userId instanceof Response) { return userId; }
+  const { actorId, } = ctx.params;
+  if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+    return jsonError({
+      message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+      status: HttpStatus.NotFound,
+    },);
+  }
+
+  return { actorId, };
+}
 
 /**
  * @param opts
@@ -24,17 +48,9 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
   return new Elysia({ name: "character-availability", },)
     // ── Get availability for an actor ──────────────────────────
     .get(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireActorAccess(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       const availability = await database
         .selectFrom("character_availability",)
@@ -66,18 +82,10 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     },)
     // ── Create or update availability ──────────────────────────
     .post(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
+      const access = await requireActorAccess(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
       const { status, usage_policy, activity_restrictions, content_policy, nsfw_policy, } = ctx.body;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
 
       // Upsert
       const existing = await database
@@ -139,17 +147,9 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     },)
     // ── Delete availability ────────────────────────────────────
     .delete(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (userId instanceof Response) { return userId; }
-
-      const { actorId, } = ctx.params;
-
-      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
-        return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+      const access = await requireActorAccess(ctx, database,);
+      if (access instanceof Response) { return access; }
+      const { actorId, } = access;
 
       await database
         .deleteFrom("character_availability",)

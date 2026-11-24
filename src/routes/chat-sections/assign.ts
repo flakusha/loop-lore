@@ -4,8 +4,8 @@
 import { Elysia, t, } from "elysia";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
-import { chatAccess, } from "./access";
+import { jsonResponse, } from "../http-utils";
+import { requireChatAccess, } from "./access";
 import { type HandlerOpts, MessageSectionAssignBody, MessageSectionAssignResponse, } from "./types";
 
 /**
@@ -22,13 +22,10 @@ export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
       .post(
         `${prefix}/chats/:id/messages/:messageId/section`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
           const messageId = ctx.params.messageId as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
 
           const body = ctx.body as { sectionId: string | null };
           const sectionId = body.sectionId ?? null;

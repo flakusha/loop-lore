@@ -2,10 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
-import { chatAccess, } from "./access";
+import { jsonResponse, } from "../http-utils";
+import { requireChatAccess, } from "./access";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -22,13 +21,10 @@ export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
       .delete(
         `${prefix}/chats/:id/sections/:sectionId`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
           const sectionId = ctx.params.sectionId as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
 
           await database.deleteFrom("chat_sections",).where("id", "=", sectionId,).where("chat_id", "=", chatId,)
             .execute();

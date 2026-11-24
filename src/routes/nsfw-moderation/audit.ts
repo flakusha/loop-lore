@@ -7,7 +7,7 @@
 import { Elysia, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, parsePaginationParams, } from "../http-utils";
+import { errorMessage, jsonError, jsonResponse, parsePaginationParams, } from "../http-utils";
 import { auditQuery, requireAdminUsers, requireModerationReview, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -35,7 +35,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
           const actions = await svc.getAuditLog(ctx.params.userId, { limit, offset, },);
           return jsonResponse({ ...SuccessResponse, data: actions, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, {
         params: userIdParam,
@@ -52,7 +52,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
           const data = await svc.exportUserData(ctx.params.userId, auth,);
           return jsonResponse({ ...SuccessResponse, data, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, { params: userIdParam, response: { 200: SuccessResponse, 403: ErrorResponse, 500: ErrorResponse, }, },)
       .delete(`${prefix}/nsfw/moderation/export/:userId`, async (ctx: any,) => {
@@ -62,7 +62,7 @@ export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
           await svc.deleteUserData(ctx.params.userId, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, { params: userIdParam, response: { 200: SuccessResponse, 403: ErrorResponse, 500: ErrorResponse, }, },)
   );

@@ -4,8 +4,8 @@
 import { Elysia, t, } from "elysia";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
-import { chatAccess, } from "./access";
+import { jsonResponse, } from "../http-utils";
+import { requireChatAccess, } from "./access";
 import { validateSectionLocation, } from "./location-validation";
 import { ChatSectionUpdateBody, type HandlerOpts, } from "./types";
 
@@ -23,13 +23,10 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
       .patch(
         `${prefix}/chats/:id/sections/:sectionId`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
           const sectionId = ctx.params.sectionId as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
 
           const body = ctx.body as { label?: string; description?: string; locationId?: string | null };
           const section = await database

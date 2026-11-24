@@ -7,9 +7,9 @@
 import { Elysia, t, } from "elysia";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
+import { requireChatAccess, } from "../chat-sections/access";
+import { jsonResponse, } from "../http-utils";
 import { getChatBackground, setChatBackground, } from "./service";
-import { chatAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -25,12 +25,9 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/chats/:id/background`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
 
           const background = await getChatBackground(database, chatId,);
           return jsonResponse({ data: background, },);
@@ -52,12 +49,9 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       .post(
         `${prefix}/chats/:id/background`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
 
           const { backgroundId, } = ctx.body as { backgroundId: string };
           const background = await database
@@ -90,12 +84,9 @@ export function assignmentRoutes(opts: HandlerOpts, prefix = "/api",) {
       .delete(
         `${prefix}/chats/:id/background`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
 
           await database.deleteFrom("chat_background_assignments",).where("chat_id", "=", chatId,).execute();
           return jsonResponse({ ok: true, },);

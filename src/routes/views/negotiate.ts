@@ -77,3 +77,16 @@ export function redirectUnlessFragment(
 
   return null;
 }
+
+/**
+ * @param ctx - route context (request headers only)
+ * @param jsonEnabled - false for htmx-only partials that have no JSON branch
+ * @returns the JSON preference and the redirect to return, if any
+ */
+export function negotiateFragment(
+  ctx: { request: Request },
+  jsonEnabled: boolean,
+): { wantsJson: boolean; redirect: Response | null } {
+  const wantsJson = jsonEnabled ? wantsJsonViewModel({ accept: ctx.request.headers.get("Accept",), },) : false;
+  return { wantsJson, redirect: redirectUnlessFragment(ctx, wantsJson,), };
+}

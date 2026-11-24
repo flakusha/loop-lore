@@ -8,7 +8,7 @@ import { Elysia, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import type { NsfwUserPrefs, } from "../../nsfw/moderation-service/types";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { errorMessage, jsonError, jsonResponse, } from "../http-utils";
 import {
   log,
   requireOwnOrAdmin,
@@ -60,7 +60,7 @@ export function preferencesRoutes(opts: HandlerOpts, prefix = "/api",) {
           const prefs = (await svc.getPreferences(ctx.params.userId,)) ?? defaultPrefs(ctx.params.userId,);
           return jsonResponse({ ...SuccessResponse, data: prefs, },);
         } catch (error: unknown) {
-          const msg = error instanceof Error ? error.message : String(error,);
+          const msg = errorMessage(error,);
           log().error("Failed to get NSFW preferences", error instanceof Error ? error : undefined,);
           return jsonError(msg, 500,);
         }
@@ -72,7 +72,7 @@ export function preferencesRoutes(opts: HandlerOpts, prefix = "/api",) {
           const prefs = await svc.updatePreferences(ctx.params.userId, ctx.body,);
           return jsonResponse({ ...SuccessResponse, data: prefs, },);
         } catch (error: unknown) {
-          const msg = error instanceof Error ? error.message : String(error,);
+          const msg = errorMessage(error,);
           return jsonError(msg, 500,);
         }
       }, { params: userIdParam, body: updatePrefsBody, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)

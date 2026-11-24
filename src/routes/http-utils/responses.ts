@@ -14,6 +14,7 @@ export {
   badRequestResponse,
   conflictResponse,
   emotionJobNotFoundResponse,
+  errorMessage,
   forbiddenResponse,
   internalError,
   internalErrorResponse,

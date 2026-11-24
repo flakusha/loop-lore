@@ -2,13 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Chat backgrounds — shared helpers: chat access guard and background schemas.
+ * Chat backgrounds — shared schemas.
  */
 import { t, } from "elysia";
-import type { Kysely, } from "kysely";
-import { isChatOwner, } from "../../chat/service";
-import type { DB, } from "../../db/schema";
-import { can, } from "../../users/permissions";
 
 export const BACKGROUND_TYPES = ["static", "parallax", "animated", "video", "particle",];
 
@@ -22,25 +18,3 @@ export const ChatBackgroundCreateBody = t.Object({
   config: OptionalNullableString,
   priority: t.Optional(t.Number(),),
 },);
-
-/**
- * @param database
- * @param chatId
- * @param userId
- * @param userRole
- * @returns {Promise<boolean>}
- */
-export async function chatAccess(
-  database: Kysely<DB>,
-  chatId: string,
-  userId: string,
-  userRole: string | null,
-): Promise<boolean> {
-  const chat = await database
-    .selectFrom("chats",)
-    .select("id",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-
-  return !!chat && ((await isChatOwner(database, chatId, userId,)) || can(userRole, "admin.chat",));
-}

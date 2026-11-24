@@ -23,7 +23,7 @@
 import { Elysia, t, } from "elysia";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, parsePaginationParams, requireUserId, } from "../http-utils";
+import { errorMessage, jsonError, jsonResponse, parsePaginationParams, requireUserId, } from "../http-utils";
 import { requireAdminUsers, requireModerationReview, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -75,7 +75,7 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const result = await svc.submitAppeal(userId, actionId, reason,);
           return jsonResponse({ ...SuccessResponse, data: result, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 400,);
+          return jsonError(errorMessage(error,), 400,);
         }
       }, {
         body: submitAppealBody,
@@ -89,7 +89,7 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const appeals = await svc.getUserAppeals(userId,);
           return jsonResponse({ ...SuccessResponse, data: appeals, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, { response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
       // Pending queue — admin/moderator only.
@@ -107,7 +107,7 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const appeals = await svc.getPendingAppeals(pagination.pageSize,);
           return jsonResponse({ ...SuccessResponse, data: appeals, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, {
         query: t.Object({ limit: t.Optional(t.String(),), },),
@@ -122,7 +122,7 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
           await svc.reviewAppeal(ctx.params.id, auth, status, reviewNote,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 400,);
+          return jsonError(errorMessage(error,), 400,);
         }
       }, {
         params: appealIdParam,
@@ -139,7 +139,7 @@ export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
           await svc.executeReversal(ctx.params.id, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 400,);
+          return jsonError(errorMessage(error,), 400,);
         }
       }, {
         params: appealIdParam,

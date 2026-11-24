@@ -15,6 +15,14 @@ export const API_VERSION = "1" as const;
 /** Shared meta block for all API responses. */
 export const API_META: ApiResponseMeta = { api_version: API_VERSION, };
 
+/**
+ * @param error - caught value
+ * @returns its message for Error instances, String() otherwise
+ */
+export function errorMessage(error: unknown,): string {
+  return error instanceof Error ? error.message : String(error,);
+}
+
 const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.BadRequest]: ErrorCode.BadRequest,
   [HttpStatus.Unauthorized]: ErrorCode.Unauthorized,
