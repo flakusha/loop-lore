@@ -4,13 +4,13 @@
 # TASK: Admin LLM execution analytics — per-model/per-provider tokens, latency, cost rollups
 
 **Status:** Not Started
-**Priority:** medium
+**Priority:** high
 **Effort:** Medium
 **Epic:** epic-analytics-observability
 **Summary:** Add one admin-only rollup endpoint over `telemetry_events` grouped by model x provider, so admins get fleet-wide LLM spend/latency/error analysis.
-**Context:** Found 2026-09-27 during LLM execution-stats analysis. Per-user analytics exist; the admin fleet-wide cut does not. Builds on the latency and cost tickets; blocked by neither.
+**Context:** Found 2026-09-27 during LLM execution-stats analysis. Per-user analytics exist; the admin fleet-wide cut does not. Depends on the canonical usage envelope and shared pricing registry so token, cost, and completeness fields are trustworthy.
 **Acceptance Criteria:** See ## Acceptance Criteria below.
-**Related:** BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa, TASK-per-model-per-provider-cost-attribution-for-llm-execution-st, FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha, src/routes/telemetry.ts, src/routes/analytics.ts, src/routes/admin/aux-telemetry.ts
+**Related:** BUG-repair-telemetry-analytics-ui-contracts, TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call, TASK-per-model-per-provider-cost-attribution-for-llm-execution-st, FEAT-GENERATION-USAGE-ANALYTICS, BUG-generation-completed-latencyms-hardcoded-to-0-on-two-emit-pa, FEAT-admin-analytics-latency-p50-p95-p99-trends-sse-live-push-cha, src/routes/telemetry.ts, src/routes/analytics.ts, src/routes/admin/aux-telemetry.ts
 
 ## Summary
 
@@ -21,7 +21,7 @@ Admins have per-user conversation analytics (`GET /api/analytics/overview` — u
 - Existing cuts: `telemetry.ts:77` summary (total count), `:105` models (count by event_type), `:136` errors (grouped counts), `:171` daily (counts by day) — all counts, no token/latency/cost dimensions.
 - Data available: `generation.completed` carries prompt/completion/totalTokens + latencyMs + model + provider (post-store.ts:147, non-stream.ts:170, stream-to-client.ts:233); `aux.call` carries the same via aux-telemetry.ts.
 - Pattern to copy: `src/routes/admin/aux-telemetry.ts` — server-source-only, HMAC PII posture, `MAX_LIMIT` cap, `since` window clamp, `aggregate_only` mode, `admin.system` gate.
-- Frontend: `src/frontend/alpine/admin-system.ts` analytics tab already renders summary/daily/errors/conversation-overview — new widget plugs into the same tab, no new page.
+- Frontend: `src/frontend/alpine/admin-analytics.ts` and `src/components/admin/analytics-panel.html` already render summary/daily/errors/conversation-overview — new widget plugs into the same tab, no new page.
 
 ## Why
 
@@ -29,7 +29,7 @@ Admins have per-user conversation analytics (`GET /api/analytics/overview` — u
 
 ## Scope
 
-- New `GET /api/telemetry/analytics/llm-usage` (naming per implementer): `source = 'server'`, `admin.system` gate, `since` window (default 24h, max 7d, same clamps as aux-telemetry), grouped by `(model, provider)` with `totalCalls`, `successCount`, `failureCount`, `totalPromptTokens`, `totalCompletionTokens`, `avgLatencyMs`, `costEstimate` (flat rate until the pricing ticket lands — mark `estimated: true`).
+- New `GET /api/telemetry/analytics/llm-usage` (naming per implementer): `source = 'server'`, `admin.system` gate, bounded `since` window, grouped by `(model, provider)` with calls/successes/failures, prompt/completion/total/cache tokens, average latency, observed/estimated/missing cost, and `costCoverage`.
 - `aggregate_only`-style default: rollup rows only, no per-event PII; follow aux-telemetry.ts redaction posture (no `event_data`/`user_id`/`chat_id` on the wire).
 - Admin-system.ts widget: one table/cards block rendering the rollup (no Chart.js — E10 owns charts).
 - Tests: seeded fixture asserts per-model grouping, window clamp, non-admin rejection, no PII on the wire.
@@ -41,3 +41,6 @@ Admins have per-user conversation analytics (`GET /api/analytics/overview` — u
 - [ ] Window clamps + response cap match aux-telemetry posture; no PII on the wire
 - [ ] Admin analytics tab renders the rollup without polling regressions
 - [ ] Non-admin requests rejected (401/403); `bun test src/routes/telemetry.test.ts` green
+- [ ] Token totals include cache classes only when reported; missing usage is not counted as zero.
+- [ ] Cost response separates observed/estimated/missing values and exposes aggregate coverage.
+- [ ] Daily series uses timezone-aware buckets and includes empty days inside the bounded window.

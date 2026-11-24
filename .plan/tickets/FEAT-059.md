@@ -13,9 +13,9 @@ related: [FEAT-062, FEAT-060, FEAT-068]
 **Status:** Done
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
+**Summary:** Conversation analytics dashboard shipped across overview, per-chat, character, quality, and admin surfaces.
+**Context:** Implementation predated the usage-statistics research; status reconciled against mounted routes, frontend components, and tests on 2026-11-24.
+**Acceptance Criteria:** All criteria below are implemented and covered by route/component tests.
 
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
@@ -32,28 +32,34 @@ Users managing multiple chats and characters need visibility into usage patterns
 
 ## Current State
 
-- `src/telemetry/` — telemetry service with `trackTelemetry()` for page views + events
-- `src/chat/context-stats.ts` — per-message context stats
-- `src/frontend/alpine/context-window.ts` — real-time token display
-- No persistent conversation metrics or dashboard UI
+- `src/routes/analytics/` implements overview, per-chat, character, and quality rollups; routes are mounted and tested.
+- `src/frontend/alpine/admin-analytics.ts` and `src/components/admin/analytics-panel.html` render the admin dashboard.
+- `src/frontend/alpine/chat/analytics.ts` renders the per-chat analytics panel.
+- Metrics are computed from existing message/generation facts; no duplicate `chat_metrics` table was introduced.
 
 ## Acceptance Criteria
 
-- [ ] **Metrics collection** — track per-chat: message count (user/assistant/system), total tokens used, average message length, generation latency (ms), active time span
-- [ ] **`/api/analytics/overview`** — returns aggregate stats across all chats: total messages, total tokens, top 5 chats by token usage, average session length
-- [ ] **`/api/analytics/chats/:id`** — returns per-chat detailed metrics with optional date range filter
-- [ ] **Dashboard page** — new admin/dashboard route with charts: message volume (line chart), token usage (stacked bar by role), latency distribution (histogram)
-- [ ] **Character comparison** — table comparing characters by total messages, average response length, token efficiency
-- [ ] Unit tests for metrics aggregation queries
+- [x] **Metrics collection** — track per-chat: message count (user/assistant/system), total tokens used, average message length, generation latency (ms), active time span
+- [x] **`/api/analytics/overview`** — returns aggregate stats across all chats: total messages, total tokens, top 5 chats by token usage, average session length
+- [x] **`/api/analytics/chats/:id`** — returns per-chat detailed metrics with optional date range filter
+- [x] **Dashboard page** — admin analytics tab with message volume, token usage by role, and latency distribution
+- [x] **Character comparison** — table comparing characters by total messages, average response length, token efficiency
+- [x] Unit tests for metrics aggregation queries
 
 ## Implementation Notes
 
-- New `chat_metrics` table: `chat_id`, `role`, `token_count`, `latency_ms`, `created_at` (aggregated on message create)
-- Or: compute on-the-fly from existing `messages` table + `generation_logs` (if exists) — avoid duplicate storage
+- Implemented with on-the-fly queries over existing message/generation facts; no duplicate `chat_metrics` table.
+- Dashboard uses Alpine.js and CSS-based bars; no chart library dependency.
 - Dashboard: Alpine.js component with lightweight chart rendering (CSS-based bars, no chart library dependency)
 - API: single `analytics` route file under `src/routes/`
 - Date range: ISO string params, default last 30 days
 - Size gate: analytics files <250L each
+
+
+## Verification
+
+- `src/routes/analytics.test.ts` covers overview, date filtering, per-chat, and character rollups.
+- `src/frontend/alpine/admin-analytics.test.ts` and `src/frontend/alpine/chat/analytics.test.ts` cover dashboard projection and per-chat state.
 
 ## Dependencies
 

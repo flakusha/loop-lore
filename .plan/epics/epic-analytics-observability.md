@@ -63,3 +63,29 @@ Open work is feature-level (dashboard UI, memory visualizer), not route wiring.
   - Ticket: `FEAT-memory-visualizer-knowledge-graph-over-asset-links` (issue 2ce5c57)
 - [ ] [gap-audit E13] Engagement: activity streaks, DAU/MAU, achievements dashboard
   - Ticket: `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard` (issue 93bff55)
+
+
+## Usage Analytics Promotion (2026-11-24)
+
+Open WebUI/LibreChat/LiteLLM/Langfuse patterns are promoted into existing ticket ownership. No new analytics service, event pipeline, rollup table, or usage ledger is introduced.
+
+| Candidate | Owner | State | Dependency / boundary |
+| --- | --- | --- | --- |
+| C0 — telemetry UI/API contracts | `BUG-repair-telemetry-analytics-ui-contracts` | In Progress | First; repairs purge confirmation, distinct counts, daily active users, and narrow error rows. |
+| C1 — canonical usage envelope | `TASK-cache-token-propagation-into-execusage-exec-log-and-aux-call` | Not Started | Owns usage normalization and missing/partial semantics; pricing owns calculated cost. |
+| C2 — shared pricing registry | `TASK-per-model-per-provider-cost-attribution-for-llm-execution-st` | Not Started | Token-class prices, provenance, observed/estimated/missing cost, and coverage. |
+| C3 — admin model × provider rollup | `TASK-admin-llm-execution-analytics-per-model-per-provider-rollups` | Not Started | Depends on C1/C2; bounded aggregate-only endpoint and existing admin tab. |
+| C4 — Personal Usage | `FEAT-GENERATION-USAGE-ANALYTICS` | Not Started | Depends on C1/C2/C7; user-scoped 7/30/90-day usage, spend completeness, active days, models/providers. |
+| C5 — activity and engagement | `FEAT-engagement-activity-streaks-dau-mau-achievements-dashboard` | Not Started | Admin DAU/MAU/streaks/achievements stay here; self-service activity merges into C4. |
+| C6 — turn/session trace inspector | `TASK-prompt-turn-trace-view-why-this-output-inspector` | Not Started | Reuses generation/message/aux facts; content permission stays stricter than aggregates. |
+| C7 — deletion and retention | `TASK-embedding-and-telemetry-retention-policies` | Not Started | Decide hashed-telemetry retention/deletion before broad C4 rollout. |
+| C8 — charts, percentiles, SSE, generic metrics, export | Existing E10/SSE and trace-id tickets | Deferred | Add only after C0-C4 numbers are trustworthy; export needs separate permission/classification. |
+
+### Promotion Rules
+
+- Missing usage is not zero; unknown pricing is not free.
+- Provider-reported cost wins over calculated cost.
+- Aggregates sum known-cost rows only and expose completeness.
+- Per-call snapshots and cumulative turn/message totals must not be double-counted.
+- Personal and admin aggregate endpoints never expose raw identifiers or content.
+- `FEAT-059` is reconciled as Done; its existing dashboard is not duplicated by C4.

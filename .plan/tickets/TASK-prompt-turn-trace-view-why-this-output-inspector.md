@@ -6,19 +6,31 @@
 **Status:** Not Started
 **Priority:** medium
 **Effort:** Medium
-**Tags:** observability, prompt-inspector, research-gap
+**Epic:** epic-analytics-observability
+**Tags:** observability, prompt-inspector, trace, research-gap
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
+**Summary:** Add a permissioned turn/session trace inspector that explains model output from existing generation attempts, messages, and aux telemetry.
+**Context:** Open WebUI session explorer/waterfall patterns validate the product shape. Loop-Lore already persists generation attempts, assistant/tool-result messages, and aux telemetry; no parallel trace store is needed.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
+**Related:** TASK-observability-traceid-plus-true-histograms, TASK-admin-llm-execution-analytics-per-model-per-provider-rollups, FEAT-GENERATION-USAGE-ANALYTICS
 
-**Summary:**
+## Summary
 
-Builder-mindshare bet (research 01 proxy 3: Lumina/time-travel-debugging signal) + ST prompt-itemization (research 06: per-category token breakdown graph, TokenHandler per-component counts). Gap: no why-did-the-model-do-that view — turn trace backed by aux-pipeline judge trail + per-section token breakdown in chat UI. Research: .tmp/research/ai-cheat/01-outside-takes.md gaps 6-7, 06-observability-sandbox.md ST section.
+Provide a why-this-output view for a single turn/session: model/provider, prompt-section token breakdown when available, generation attempts, tool results, aux judge trail, latency, usage, and failure/cancel reason.
 
-**Context:**
+## Scope
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+- Reuse `generation_attempts`, assistant/tool-result messages, and aux telemetry.
+- Owning-user access by default; admin content access requires the existing explicit chat-content permission.
+- Aggregate usage endpoints remain separate from raw prompt/message content and must not inherit content-export permission implicitly.
+- Stable trace/attempt identifiers and correlation across generation, tool, and aux events.
+- One bounded trace response; no generic analytics explorer or new event pipeline.
 
-**Acceptance Criteria:**
+## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] Trace view reconstructs a seeded turn from existing generation/message/aux facts.
+- [ ] Attempts preserve per-call versus cumulative usage semantics and do not double-count cost.
+- [ ] Owning-user, other-user, and admin-without-content-permission access cases are tested.
+- [ ] Raw prompt/message content never appears in aggregate analytics responses.
+- [ ] Failure, cancellation, retry, and tool-result paths render without hiding the terminal outcome.
+- [ ] Trace identifiers correlate across generation and aux telemetry.
