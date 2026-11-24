@@ -29660,6 +29660,20 @@
     "title": "Asset Templates and Presets",
     "type": "TASK"
   },
+  "TASK-ASSET-TEXT-EXTRACTION-VIA-HONKBOX-RECOGNIZE": {
+    "hash": "31f94d7",
+    "git_issue": "31f94d7",
+    "extid": "TASK-ASSET-TEXT-EXTRACTION-VIA-HONKBOX-RECOGNIZE",
+    "type": "TASK",
+    "title": "Asset text extraction via honkbox recognize",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-ingestion",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-text-extraction-via-honkbox-recognize.md",
+    "status": "open"
+  },
   "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM": {
     "epic": "epic-asset-transform-metadata",
     "extid": "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM",
@@ -32178,6 +32192,20 @@
     ],
     "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md",
     "status": "done"
+  },
+  "TASK-BEARER-SCOPE-CONFIG-SURFACE-AND-403-MAPPING-PLUS-ROTATION-HO": {
+    "hash": "0110299",
+    "git_issue": "0110299",
+    "extid": "TASK-BEARER-SCOPE-CONFIG-SURFACE-AND-403-MAPPING-PLUS-ROTATION-HO",
+    "type": "TASK",
+    "title": "Bearer scope config surface and 403 mapping plus rotation hookup",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-principal-scoped-credentials",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bearer-scope-config-surface-and-403-mapping-plus-rotation-ho.md",
+    "status": "open"
   },
   "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
     "epic": "epic-enemies-monsters",
@@ -37453,6 +37481,20 @@
     "title": "Config Migration Tool",
     "type": "TASK"
   },
+  "TASK-CONNECTION-HARDENING-FOR-HONKBOX-DISPATCH": {
+    "hash": "197ed90",
+    "git_issue": "197ed90",
+    "extid": "TASK-CONNECTION-HARDENING-FOR-HONKBOX-DISPATCH",
+    "type": "TASK",
+    "title": "Connection hardening for honkbox dispatch",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-server-lifecycle-hardening",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-connection-hardening-for-honkbox-dispatch.md",
+    "status": "open"
+  },
   "TASK-CONNECTION-PROFILES-MASTER-PRESET-ONE-NAMED-BUNDLE-PER-CHAT": {
     "hash": "b4c40f6",
     "git_issue": "b4c40f6",
@@ -37752,6 +37794,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-continuous-fuzzing-cluster-scheduler-corpus-sync-crash-triag.md",
     "status": "Not Started"
+  },
+  "TASK-CONTROLNET-REQUEST-PATH-FOR-HONKBOX-AND-COMFYUI-IMAGE": {
+    "hash": "fc7403f",
+    "git_issue": "fc7403f",
+    "extid": "TASK-CONTROLNET-REQUEST-PATH-FOR-HONKBOX-AND-COMFYUI-IMAGE",
+    "type": "TASK",
+    "title": "ControlNet request path for honkbox and ComfyUI image",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-reference-conditioned-generation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-controlnet-request-path-for-honkbox-and-comfyui-image.md",
+    "status": "open"
   },
   "TASK-CONVERSATION-BRANCHING": {
     "epic": "epic-conversation-branching",
@@ -47083,6 +47139,34 @@
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
   },
+  "TASK-HONKBOX-AUDIO-ROUTES-FOR-TTS-STT-VAD": {
+    "hash": "a999467",
+    "git_issue": "a999467",
+    "extid": "TASK-HONKBOX-AUDIO-ROUTES-FOR-TTS-STT-VAD",
+    "type": "TASK",
+    "title": "Honkbox audio routes for TTS STT VAD",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-tts-foundation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-audio-routes-for-tts-stt-vad.md",
+    "status": "Blocked"
+  },
+  "TASK-HONKBOX-FACE-DETECTION-CONSUMER-FOR-AVATAR-CROP-GATE": {
+    "hash": "9352e23",
+    "git_issue": "9352e23",
+    "extid": "TASK-HONKBOX-FACE-DETECTION-CONSUMER-FOR-AVATAR-CROP-GATE",
+    "type": "TASK",
+    "title": "Honkbox face-detection consumer for avatar crop gate",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-wardrobe-avatar-variants",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-face-detection-consumer-for-avatar-crop-gate.md",
+    "status": "Blocked"
+  },
   "TASK-HONKBOX-FEATURE-KEYS-DECISIONS-FLIP-AND-FIZGIG-GATE": {
     "hash": "e39340b",
     "git_issue": "e39340b",
@@ -49317,6 +49401,20 @@
     "source": ".plan/tickets/TASK-jwt-add-issuer-claim.md",
     "status": "done"
   },
+  "TASK-JWT-CONSUMER-FOR-AGENT-TOKENS-AND-MESH-MEMBER-AUTH": {
+    "hash": "2230d2a",
+    "git_issue": "2230d2a",
+    "extid": "TASK-JWT-CONSUMER-FOR-AGENT-TOKENS-AND-MESH-MEMBER-AUTH",
+    "type": "TASK",
+    "title": "JWT consumer for agent tokens and mesh member auth",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jwt-consumer-for-agent-tokens-and-mesh-member-auth.md",
+    "status": "Blocked"
+  },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "epic-auth-access",
     "extid": "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT",
@@ -51486,6 +51584,20 @@
     "tags": [],
     "title": "Matting fallback aux-pipeline job",
     "type": "TASK"
+  },
+  "TASK-MATTING-VIA-HONKBOX-AS-FIRST-CHOICE": {
+    "hash": "df84186",
+    "git_issue": "df84186",
+    "extid": "TASK-MATTING-VIA-HONKBOX-AS-FIRST-CHOICE",
+    "type": "TASK",
+    "title": "Matting via honkbox as first choice",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-avatar-alpha-vn-layering",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-matting-via-honkbox-as-first-choice.md",
+    "status": "Blocked"
   },
   "TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP": {
     "hash": "3fd4937",
@@ -54685,6 +54797,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-omp-adapter.md",
     "status": "Not Started"
+  },
+  "TASK-ONE-LLM-OWNER-DECISION-PLUS-HONKBOX-NATIVE-MODEL-MANAGEMENT": {
+    "hash": "b098402",
+    "git_issue": "b098402",
+    "extid": "TASK-ONE-LLM-OWNER-DECISION-PLUS-HONKBOX-NATIVE-MODEL-MANAGEMENT",
+    "type": "TASK",
+    "title": "One LLM owner decision plus honkbox-native model management",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-local-process-swarm",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-one-llm-owner-decision-plus-honkbox-native-model-management.md",
+    "status": "open"
   },
   "TASK-OPEN-IN-EDITOR-HANDOFF": {
     "hash": "1358401",
@@ -59788,6 +59914,20 @@
     "title": "Shared Reputation Schema",
     "type": "TASK"
   },
+  "TASK-RERANK-VIA-HONKBOX-WHEN-CAPABILITY-ENABLED": {
+    "hash": "0c775c2",
+    "git_issue": "0c775c2",
+    "extid": "TASK-RERANK-VIA-HONKBOX-WHEN-CAPABILITY-ENABLED",
+    "type": "TASK",
+    "title": "Rerank via honkbox when capability enabled",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-retrieval",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rerank-via-honkbox-when-capability-enabled.md",
+    "status": "open"
+  },
   "TASK-REROLL-EMOTION-COMMAND": {
     "hash": "e114243",
     "git_issue": "e114243",
@@ -62899,6 +63039,20 @@
     "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md",
     "status": "Not Started"
   },
+  "TASK-SSE-RESUME-CURSOR-FOR-HONKBOX-EVENTS": {
+    "hash": "73b07ff",
+    "git_issue": "73b07ff",
+    "extid": "TASK-SSE-RESUME-CURSOR-FOR-HONKBOX-EVENTS",
+    "type": "TASK",
+    "title": "SSE resume cursor for honkbox events",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-realtime-transports",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sse-resume-cursor-for-honkbox-events.md",
+    "status": "Blocked"
+  },
   "TASK-STABILITY-AI-IMAGE-PROVIDER-IMPLEMENTATION": {
     "hash": "1f5978b",
     "git_issue": "1f5978b",
@@ -64103,6 +64257,20 @@
     ],
     "title": "Thumbnail Generation (256px WebP at upload)",
     "type": "TASK"
+  },
+  "TASK-THUMBNAIL-RESIZE-VIA-HONKBOX-IMAGE-OPS": {
+    "hash": "3647b51",
+    "git_issue": "3647b51",
+    "extid": "TASK-THUMBNAIL-RESIZE-VIA-HONKBOX-IMAGE-OPS",
+    "type": "TASK",
+    "title": "Thumbnail resize via honkbox image-ops",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-asset-transform-metadata",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-thumbnail-resize-via-honkbox-image-ops.md",
+    "status": "open"
   },
   "TASK-TICKET-EPIC-LINK-BACKFILL": {
     "epic": "(none — hygiene/self-contained)",
@@ -66327,6 +66495,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
     "status": "Not Started"
+  },
+  "TASK-VISION-CHAT-PARTS-VIA-HONKBOX-LLM-VISION": {
+    "hash": "6af8b0f",
+    "git_issue": "6af8b0f",
+    "extid": "TASK-VISION-CHAT-PARTS-VIA-HONKBOX-LLM-VISION",
+    "type": "TASK",
+    "title": "Vision chat parts via honkbox llm-vision",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-chat-product-features",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vision-chat-parts-via-honkbox-llm-vision.md",
+    "status": "Blocked"
   },
   "TASK-VISUAL-NOVEL-MODE": {
     "epic": "epic-visual-novel-mode",
