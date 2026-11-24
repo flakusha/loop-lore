@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 400
+// size-allow: 510
 
 /**
  * Honkbox Custom-provider wiring.
@@ -32,6 +32,10 @@ import {
   registerProvider,
   unregisterProvider,
 } from "../../generation/providers/registry";
+import {
+  ProviderAuthError,
+  ProviderError,
+} from "../../generation/providers/types";
 import type {
   GenerateRequest,
   GenerateResponse,
@@ -65,6 +69,62 @@ export class HonkboxCapabilityUnavailableError extends Error {
     super(message,);
     this.name = "HonkboxCapabilityUnavailableError";
   }
+}
+
+/** Raised when honkbox rejects the bearer credential (401 invalid_api_key). Never carries the key. */
+export class HonkboxAuthError extends Error {
+  /** */
+  constructor(message: string,) {
+    super(message,);
+    this.name = "HonkboxAuthError";
+  }
+}
+
+/** Raised when honkbox denies a scoped key (403 missing scope). The server names the scope; the key is never echoed. */
+export class HonkboxScopeError extends Error {
+  /** */
+  constructor(message: string,) {
+    super(message,);
+    this.name = "HonkboxScopeError";
+  }
+}
+
+/** HTTP status off a dispatch failure, or undefined when the error carries none. */
+function dispatchStatus(error: unknown,): number | undefined {
+  if (error instanceof ProviderError) { return error.statusCode; }
+  if (typeof error === "object" && error !== null && "status" in error) {
+    const status = (error as { status?: unknown }).status;
+    return typeof status === "number" ? status : undefined;
+  }
+
+  return undefined;
+}
+
+/** Map a 401/403 dispatch failure to its named honkbox error; anything else passes through.
+ * @param error - the dispatch failure
+ * @param status - explicit HTTP status when the error itself carries none (safeFetch reports it on the result)
+ * @returns the named error for 401/403, else the original
+ */
+function mapHonkboxDispatchError(error: unknown, status?: number,): unknown {
+  if (error instanceof ProviderAuthError) {
+    return new HonkboxAuthError(
+      `honkbox bearer rejected (401 ${error.message}) — check the apiKey, which is never logged`,
+    );
+  }
+
+  const message = error instanceof Error ? error.message : String(error,);
+  const code = status ?? dispatchStatus(error,);
+  if (code === 401) {
+    return new HonkboxAuthError(
+      `honkbox bearer rejected (401 ${message}) — check the apiKey, which is never logged`,
+    );
+  }
+
+  if (code === 403) {
+    return new HonkboxScopeError(`honkbox scope denied (403 ${message})`,);
+  }
+
+  return error;
 }
 
 /** @param probe - the probe outcome, or undefined when no setup probe ran
@@ -175,6 +235,8 @@ export async function setupHonkboxCustomProvider(
  * @param opts - config, setup probe and admission state
  * @param request - the generation request (model, messages, params)
  * @returns the single chat turn response
+ * @throws {HonkboxAuthError} when honkbox rejects the bearer credential (401)
+ * @throws {HonkboxScopeError} when honkbox denies a scoped key (403)
  */
 export async function runHonkboxChatTurn(
   opts: HonkboxDispatchOptions,
@@ -182,7 +244,11 @@ export async function runHonkboxChatTurn(
 ): Promise<GenerateResponse> {
   assertDispatchable(opts.probe, opts.localAdmission ?? false, [],);
   const provider = new OpenAiCompatibleProvider(opts.config,);
-  return await provider.complete(request,);
+  try {
+    return await provider.complete(request,);
+  } catch (error) {
+    throw mapHonkboxDispatchError(error,);
+  }
 }
 
 /** Wire DTO `ImageArtifact` returned by artifact-delivery image responses. */
@@ -265,6 +331,8 @@ async function runHonkboxArtifactDelivery(
   },);
 
   if (!result.ok) {
+    const mapped = mapHonkboxDispatchError(result.error, result.status,);
+    if (mapped !== result.error) { throw mapped; }
     throw new HonkboxCapabilityUnavailableError(
       `honkbox artifact-delivery request failed: ${result.error.message}`,
     );
@@ -302,6 +370,8 @@ async function runHonkboxArtifactDelivery(
  * @param opts - config, setup probe and admission state
  * @param imageOpts - prompt, size and output format
  * @returns the image generation outcome
+ * @throws {HonkboxAuthError} when honkbox rejects the bearer credential (401)
+ * @throws {HonkboxScopeError} when honkbox denies a scoped key (403)
  */
 export async function runHonkboxImageJob(
   opts: HonkboxDispatchOptions,
@@ -346,12 +416,17 @@ export async function runHonkboxImageJob(
     generationTimeout: opts.config.timeout,
   };
 
-  return await generateImages(imageConfig, imageOpts,);
+  try {
+    return await generateImages(imageConfig, imageOpts,);
+  } catch (error) {
+    throw mapHonkboxDispatchError(error,);
+  }
 }
 
 /** List honkbox jobs (`GET {baseUrl}/jobs`) for run observability.
  * @param opts - config, setup probe and admission state
  * @returns the job list as returned by the server
+ * @throws {HonkboxAuthError|HonkboxScopeError} on 401/403 dispatch failures
  */
 export async function getHonkboxJobs(
   opts: HonkboxDispatchOptions,
@@ -368,6 +443,8 @@ export async function getHonkboxJobs(
   );
 
   if (!result.ok) {
+    const mapped = mapHonkboxDispatchError(result.error, result.status,);
+    if (mapped !== result.error) { throw mapped; }
     throw new HonkboxCapabilityUnavailableError(`honkbox jobs request failed: ${result.error.message}`,);
   }
 
@@ -378,6 +455,7 @@ export async function getHonkboxJobs(
  * @param opts - config, setup probe and admission state
  * @param jobId - the job id from `/v1/jobs`
  * @returns true when the server accepted the cancel
+ * @throws {HonkboxAuthError|HonkboxScopeError} on 401/403 dispatch failures
  */
 export async function cancelHonkboxJob(
   opts: HonkboxDispatchOptions,
@@ -396,6 +474,8 @@ export async function cancelHonkboxJob(
   );
 
   if (!result.ok) {
+    const mapped = mapHonkboxDispatchError(result.error, result.status,);
+    if (mapped !== result.error) { throw mapped; }
     throw new HonkboxCapabilityUnavailableError(`honkbox job cancel failed: ${result.error.message}`,);
   }
 
@@ -405,6 +485,7 @@ export async function cancelHonkboxJob(
 /** Open the honkbox SSE lifecycle feed (`GET {baseUrl}/events`).
  * @param opts - config, setup probe and admission state
  * @returns the live response whose body streams job state
+ * @throws {HonkboxAuthError|HonkboxScopeError} on 401/403 dispatch failures
  */
 export async function openHonkboxEventStream(
   opts: HonkboxDispatchOptions,
@@ -422,6 +503,8 @@ export async function openHonkboxEventStream(
   );
 
   if (!result.ok) {
+    const mapped = mapHonkboxDispatchError(result.error, result.status,);
+    if (mapped !== result.error) { throw mapped; }
     throw new HonkboxCapabilityUnavailableError(`honkbox events request failed: ${result.error.message}`,);
   }
 

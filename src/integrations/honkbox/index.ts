@@ -66,7 +66,9 @@ export type {
 export {
   cancelHonkboxJob,
   getHonkboxJobs,
+  HonkboxAuthError,
   HonkboxCapabilityUnavailableError,
+  HonkboxScopeError,
   openHonkboxEventStream,
   runHonkboxChatTurn,
   runHonkboxImageJob,
