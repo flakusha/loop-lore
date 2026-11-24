@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 484
 // src/config/load/first-boot.ts — First-boot PII secret promotion
 //
 // Fresh clone plus plain `bun run start` with no env vars fails at

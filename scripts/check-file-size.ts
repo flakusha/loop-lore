@@ -54,11 +54,19 @@ import {
 } from "../src/cli/parser";
 
 // src is the original scope; scripts/ and plugins/ joined when their drift was
-// called out (see BUG-size-strict-pre-existing-dev-drift). tests/ stays exempt:
+// called out (see BUG-size-strict-pre-existing-dev-drift); packages/ joined when
+// the package cut moved the core sources out of src/ — a file that leaves the
+// scanned tree would otherwise escape the budget silently. tests/ stays exempt:
 // flows and helpers are test specifications. scripts/worktree/ is the giwt fork
 // pending deletion (AGENTS.md "Related: loop-lore's fork") — splitting it is
 // wasted work, the canonical giwt files carry the fix now.
-const GLOBS = ["src/**/*.ts", "scripts/**/*.ts", "scripts/**/*.mjs", "plugins/**/*.ts",];
+const GLOBS = [
+  "src/**/*.ts",
+  "scripts/**/*.ts",
+  "scripts/**/*.mjs",
+  "plugins/**/*.ts",
+  "packages/**/*.ts",
+];
 
 // Auto-generated files carry this banner (emitted by scripts/generate-db-types.ts
 // and scripts/generate-schema-manifest.ts). They are owned by their generator;

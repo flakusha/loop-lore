@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 344
 // src/config/sections/harness.ts — external-harness config section
 //
 // Defaults + section class + JSON-schema meta for `harness.acp`, plus the
