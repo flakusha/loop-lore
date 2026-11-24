@@ -9,14 +9,19 @@ import { ErrorResponse, } from "../../validation/schemas";
  * @param spec - response map, summary, description and OpenAPI tags
  * @returns route options for an Elysia handler
  */
-export function routeSpec(spec: {
-  response: Record<number, TSchema>;
+export function routeSpec<
+  const TResponse extends Record<number, TSchema>,
+  const TParams extends TSchema | undefined = undefined,
+  const TBody extends TSchema | undefined = undefined,
+  const TQuery extends TSchema | undefined = undefined,
+>(spec: {
+  response: TResponse;
   summary: string;
   description: string;
   tags: string[];
-  params?: TSchema;
-  body?: TSchema;
-  query?: TSchema;
+  params?: TParams;
+  body?: TBody;
+  query?: TQuery;
 },) {
   return {
     ...(spec.params ? { params: spec.params, } : {}),
@@ -26,11 +31,11 @@ export function routeSpec(spec: {
       ...spec.response,
       401: ErrorResponse,
       404: ErrorResponse,
-    },
+    } as const,
     detail: {
       summary: spec.summary,
       description: spec.description,
       tags: spec.tags,
-    },
-  };
+    } as const,
+  } as const;
 }
