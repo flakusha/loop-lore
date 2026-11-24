@@ -41,6 +41,8 @@ import { requestIdMiddleware, } from "./middleware/request-id";
 import { requireAuthGuard, } from "./middleware/require-auth-guard";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
+import { registry, } from "./plugins";
+import { normalizePluginRoutePath, } from "./plugins/registry-policy";
 import { redirectTo, } from "./routes/http-utils";
 import { deprecationAfterHandle, } from "./routes/middleware/deprecation-headers";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
@@ -370,21 +372,31 @@ export function createApp(deps: AppDeps,) {
     const url = new URL(request.url,);
 
     if (url.pathname.startsWith("/api/",)) {
+      // The auth derive above resolves identity without rejecting, so it has
+      // to be handed on explicitly — otherwise plugin routes can never enforce
+      // their own `requiresAuth` / `permissions`. `t` rides along so a denial
+      // body is localised the same way every other route's is.
+      const callApi = () => handleApiRequest({ request, database, config, caller: { userId, userRole, }, t, },);
+
       // Redirect unversioned /api/{resource} → /api/v1/{resource} (N-1 rule:
       // keep this shim one full release after v1 ships; see
       // docs/spec/api-versioning.md). Already-versioned /api/v1/* must NOT
       // be redirected (would double-prefix); they fall through to plugin
       // dispatch below, which 404s unless the v1 barrel serves the path.
       // /api/views/* stays unversioned (embedded HTML, not JSON API).
+      // An enabled plugin registered at an exact unversioned path is the one
+      // exception: it is dispatched at that path so the handler's own
+      // pathname guard sees the path it registered (renpy-export's @vN shape).
       if (!url.pathname.startsWith("/api/v1/",) && !url.pathname.startsWith("/api/views/",)) {
+        const normalized = normalizePluginRoutePath(url.pathname,);
+        const hasPluginRoute = registry.getRouteCandidates(request.method, normalized,)
+          .some(({ plugin, },) => registry.isEnabled(plugin,));
+
+        if (hasPluginRoute) { return callApi(); }
         return versionRedirect("v1",)({ request, },);
       }
 
-      // The auth derive above resolves identity without rejecting, so it has
-      // to be handed on explicitly — otherwise plugin routes can never enforce
-      // their own `requiresAuth` / `permissions`. `t` rides along so a denial
-      // body is localised the same way every other route's is.
-      return handleApiRequest({ request, database, config, caller: { userId, userRole, }, t, },);
+      return callApi();
     }
 
     return handleNonApiRequest(request,);

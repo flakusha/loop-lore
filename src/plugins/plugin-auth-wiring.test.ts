@@ -29,6 +29,8 @@ import { createTestDb, } from "../test-utils/create-test-db";
 const SECRET_PATH = "/api/v1/plugin-wiring/secret";
 /** Same shape, no access fields — must stay public. */
 const OPEN_PATH = "/api/v1/plugin-wiring/open";
+/** Unversioned plugin path (the renpy-export @vN shape) — must not 308. */
+const UNVERSIONED_PATH = "/api/plugin-wiring/unversioned";
 
 let db: Kysely<DB>;
 let config: Config;
@@ -57,6 +59,12 @@ beforeAll(async () => {
       method: "GET",
       path: OPEN_PATH,
       handler: async () => { calls += 1; return new Response("open",); },
+    },
+    {
+      method: "GET",
+      path: UNVERSIONED_PATH,
+      handler: async () => { calls += 1; return new Response("unversioned",); },
+      requiresAuth: true,
     },
   ],);
 
@@ -111,6 +119,13 @@ describe("authenticated caller (solo mode)", () => {
     const res = await get(SECRET_PATH,);
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toBe("secret");
+    expect(calls,).toBe(1,);
+  },);
+
+  test("an unversioned plugin route dispatches at its registered path, not a 308", async () => {
+    const res = await get(UNVERSIONED_PATH,);
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toBe("unversioned");
     expect(calls,).toBe(1,);
   },);
 
