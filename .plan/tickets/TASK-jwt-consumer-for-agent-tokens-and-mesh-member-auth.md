@@ -6,6 +6,7 @@
 **Status:** Blocked
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-auth-access
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 
 **Summary:**
