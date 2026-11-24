@@ -179,6 +179,11 @@ describe("World autonomy panel E2E", () => {
 
           const prefs = row?.autonomy_preferences;
           if (typeof prefs === "string" && prefs.includes("serene",)) { stored = prefs; }
+
+          // Yield between reads: the server runs in this process, so a tight
+          // await loop starves the event loop and the PUT that writes this row
+          // never gets to run before the deadline.
+          await Bun.sleep(50,);
         }
 
         expect(stored,).toContain("serene",);
@@ -260,6 +265,11 @@ describe("World autonomy panel E2E", () => {
 
           const cfg = row?.autonomy_config;
           if (typeof cfg === "string" && cfg.includes("brisk",)) { stored = cfg; }
+
+          // Yield between reads: the server runs in this process, so a tight
+          // await loop starves the event loop and the PUT that writes this row
+          // never gets to run before the deadline.
+          await Bun.sleep(50,);
         }
 
         expect(stored,).toContain("brisk",);
