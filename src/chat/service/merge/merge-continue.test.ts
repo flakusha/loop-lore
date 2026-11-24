@@ -12,7 +12,8 @@
  */
 import { beforeAll, describe, expect, mock, test, } from "bun:test";
 import { randomUUID, } from "node:crypto";
-import { MessageRole, } from "../../../db/enums";
+import { initAgeGate, } from "../../../age-gate/controller";
+import { AgeGateMode, MessageRole, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { createTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -302,5 +303,51 @@ describe("merge-continue", () => {
 
     expect("ok" in result,).toBe(false,);
     if (!("ok" in result)) { expect(result.code,).toBe("bad_request",); }
+  });
+
+  test("age gate blocks prompt continuation before inserting a user message", async () => {
+    const mergeId = await seedConfirmedMerge();
+    if (ISOLATED) { insertUserMessageRowMock.mockClear(); }
+    const before = await tdb.db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    let result: Awaited<ReturnType<typeof continueFromMerge>> | undefined;
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+    try {
+      result = await continueFromMerge({
+        database: tdb.db,
+        config: {} as never,
+        params: {
+          chatId,
+          mergeId,
+          actorId,
+          userRole: null,
+          prompt: "blocked by age gate",
+          responderId: undefined,
+        },
+        request: new Request("http://localhost",),
+      },);
+    } finally {
+      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+    }
+
+    expect(result,).toBeDefined();
+    if (!result) { return; }
+    expect("ok" in result,).toBe(false,);
+    if (!("ok" in result)) { expect(result.code,).toBe("forbidden",); }
+    if (ISOLATED) {
+      expect(insertUserMessageRowMock,).not.toHaveBeenCalled();
+    } else {
+      const after = await tdb.db
+        .selectFrom("messages",)
+        .select("id",)
+        .where("chat_id", "=", chatId,)
+        .execute();
+
+      expect(after,).toHaveLength(before.length,);
+    }
   });
 });
