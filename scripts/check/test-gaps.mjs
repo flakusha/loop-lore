@@ -71,6 +71,7 @@ import {
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SRC_DIR = path.join(PROJECT_ROOT, "src",);
 const CORE_SRC_DIR = path.join(PROJECT_ROOT, "packages", "core", "src",);
+const ASSETS_SRC_DIR = path.join(PROJECT_ROOT, "packages", "assets", "src",);
 const DEFAULT_BASELINE = path.join(import.meta.dir, "test-gaps-baseline.json",);
 
 /**
@@ -435,7 +436,11 @@ function main() {
   // Walk core alongside src: src/@loop-lore/core re-export shims define
   // nothing themselves, so charging them for core exports would double-count.
   const coreFiles = existsSync(CORE_SRC_DIR,) ? walk(CORE_SRC_DIR,) : [];
-  const fresh = collectGaps([...walk(SRC_DIR,), ...coreFiles,],);
+  // The assets cut moved src/assets + src/image-edit canonical tests under
+  // packages/assets/src; the src shims are pure re-exports, so walking only
+  // src/ would lose their reachability edges to src/ exports.
+  const assetsFiles = existsSync(ASSETS_SRC_DIR,) ? walk(ASSETS_SRC_DIR,) : [];
+  const fresh = collectGaps([...walk(SRC_DIR,), ...coreFiles, ...assetsFiles,],);
 
   if (args.write) {
     const known = readBaselineIfPresent(baselinePath,);
