@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { existsSync, readFileSync, } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
 import path from "node:path";
+import { SOURCE_ROOTS, TEST_ROOTS, } from "../source-paths.mjs";
 import {
   COVERAGE_DIR,
   JSCPD_DIR,
@@ -15,12 +17,13 @@ import { DIFF_ROOT, } from "./context.mjs";
 import { checks, } from "./gate-table.mjs";
 
 /**
- * Resource contract: these tests own NOTHING.
+ * Resource contract: the path assertions own NOTHING. The preload probe at
+ * the end allocates one unique OS temp dir (never a fixed repo .tmp path)
+ * and removes it in `finally`; it shares no global or port.
  *
  * They only read module-level constants derived from import.meta.dir and
- * assert on them. No tmp file, port, database or shared global is allocated,
- * so there is nothing to tear down and nothing for a parallel runner to
- * interleave. Importing context.mjs is side-effect free without --diff-base:
+ * assert on them. No shared state is allocated, so nothing can interleave.
+ * Importing context.mjs is side-effect free without --diff-base:
  * changedFiles() returns [] for a null base and the gate flags are absent.
  *
  * Why this file exists: the split moved these modules from scripts/ down to
@@ -99,5 +102,121 @@ describe("typecheck gate script wiring", () => {
       .filter(([, script,],) => !script || !(script in scripts))
       .map(([name,],) => name);
     expect(missing,).toEqual([],);
+  });
+});
+
+/**
+ * Slice-2 gate coverage. Every registry entry must be consumed by a real
+ * consumer; a new workspace under packages/ must either gain a direct
+ * typecheck gate or fail here instead of silently skipping coverage.
+ */
+const readText = (rel: string,): string => readFileSync(path.join(REPO_ROOT, rel,), "utf8",);
+const gateCommands = checks as Record<string, string>;
+const workspaces = readdirSync(path.join(REPO_ROOT, "packages",), { withFileTypes: true, },)
+  .filter((entry,) => entry.isDirectory())
+  .map((entry,) => entry.name)
+  .sort();
+const rootScripts = (JSON.parse(readText("package.json",),) as { scripts: Record<string, string> }).scripts;
+
+describe("workspace typecheck gates", () => {
+  test("every workspace has a direct gate and resolving aliases", () => {
+    expect(workspaces.length,).toBeGreaterThan(0,);
+    for (const ws of workspaces) {
+      const script = `typecheck:${ws}`;
+      expect(rootScripts[script],).toBeDefined();
+      expect(rootScripts[script],).toContain(`packages/${ws}/tsconfig.json`,);
+      expect(gateCommands[`typecheck - ${ws}`],).toBe(`bun run ${script}`,);
+      expect(existsSync(path.join(REPO_ROOT, "packages", ws, "tsconfig.json",),),).toBe(true,);
+      expect(existsSync(path.join(REPO_ROOT, "packages", ws, "src/index.ts",),),).toBe(true,);
+      for (const cfg of ["tsconfig.backend.json", "tsconfig.frontend.json",]) {
+        const paths = (JSON.parse(readText(cfg,),) as {
+          compilerOptions: { paths: Record<string, string[]> };
+        }).compilerOptions.paths;
+        expect(paths[`@loop-lore/${ws}`],).toEqual([`./packages/${ws}/src/index.ts`,],);
+        expect(paths[`@loop-lore/${ws}/*`],).toEqual([`./packages/${ws}/src/*`,],);
+      }
+    }
+  });
+});
+
+describe("test root consumption", () => {
+  const gatesSource = readText("scripts/check/parallel/gates.mjs",);
+
+  test("every TEST_ROOTS entry is named in the gate builder and exists", () => {
+    for (const [key, root,] of Object.entries(TEST_ROOTS,)) {
+      expect(gatesSource,).toContain(`TEST_ROOTS.${key}`,);
+      expect(existsSync(path.join(REPO_ROOT, root,),),).toBe(true,);
+    }
+  });
+
+  test("unit and coverage gates walk both src and packages", () => {
+    expect(gatesSource,).toContain("walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,)",);
+    expect(gatesSource,).toContain("walkTestFiles(PROJECT_ROOT, TEST_ROOTS.packages,)",);
+  });
+});
+
+describe("source root consumption", () => {
+  const knip = readText("knip.json",);
+  const jscpd = readText("scripts/check/jscpd-scan.mjs",);
+  const dprint = JSON.parse(readText("dprint.json",),) as { excludes: string[] };
+  const eslint = readText("eslint.config.mjs",);
+
+  test("every SOURCE_ROOTS entry reaches scanners and is not lint/format excluded", () => {
+    expect(jscpd,).toContain("SOURCE_ROOTS",);
+    for (const root of SOURCE_ROOTS) {
+      expect(knip,).toContain(`"${root}**`,);
+      expect(dprint.excludes,).not.toContain(root,);
+      expect(dprint.excludes,).not.toContain(`${root.replace(/\/$/, "",)}/**`,);
+      expect(eslint,).not.toContain(`"${root}"`,);
+    }
+  });
+});
+
+describe("bunfig preload inheritance", () => {
+  test("no workspace overrides the root preload", () => {
+    for (const ws of workspaces) {
+      expect(existsSync(path.join(REPO_ROOT, "packages", ws, "bunfig.toml",),),).toBe(false,);
+    }
+  });
+
+  test("root preload sets a per-process DB path", () => {
+    expect(readText("bunfig.toml",),).toContain('preload = ["./tests/setup-globals.ts"]',);
+    const preload = readText("tests/setup-globals.ts",);
+    expect(preload,).toContain("LOOP_LORE_DB_PATH",);
+    expect(preload,).toContain("process.pid",);
+    expect(preload,).toContain("tmpdir()",);
+  });
+
+  test("a test run from the repo root inherits the preload", () => {
+    // Isolation from the tree is deliberate: a fixed repo .tmp path would be
+    // shared across parallel workers and could collide with other lanes.
+    const dir = mkdtempSync(path.join(tmpdir(), "loop-lore-roots-preload-",),);
+    try {
+      const file = path.join(dir, "preload.test.ts",);
+      writeFileSync(
+        file,
+        [
+          'import { expect, test } from "bun:test";',
+          'test("preload inherited", () => {',
+          '  const db = process.env.LOOP_LORE_DB_PATH ?? "";',
+          `  expect(db.startsWith(${JSON.stringify(path.join(tmpdir(), "loop-lore-test-",),)})).toBe(true);`,
+          "  expect(db.includes(String(process.pid),),).toBe(true,);",
+          "});",
+          "",
+        ].join("\n",),
+      );
+      const env = { ...process.env, };
+      delete env.LOOP_LORE_DB_PATH;
+      const result = Bun.spawnSync({
+        cmd: [process.execPath, "test", file,],
+        cwd: REPO_ROOT,
+        env,
+        stdout: "pipe",
+        stderr: "pipe",
+      },);
+      expect(result.exitCode,).toBe(0,);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });

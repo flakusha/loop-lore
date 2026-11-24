@@ -15,6 +15,7 @@ export const checks = {
   // Type checking
   "typecheck - backend": "bun run typecheck:backend",
   "typecheck - core": "bun run typecheck:core",
+  "typecheck - i18n": "bun run typecheck:i18n",
   // Bun 1.4.5's built-in TS7 checker (the version every workflow pins).
   // Not a substitute for the tsgo gates —
   // but it CAN select a project: `bun --check --tsconfig-override=<project>`

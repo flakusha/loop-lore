@@ -46,6 +46,7 @@
     "typecheck": "bun run typecheck:backend",
     "typecheck:backend": "tsgo --noEmit --project tsconfig.backend.json",
     "typecheck:core": "tsgo --noEmit --project packages/core/tsconfig.json",
+    "typecheck:i18n": "tsgo --noEmit --project packages/i18n/tsconfig.json",
     "typecheck:bun": "bun --check",
     "typecheck:frontend": "tsgo --noEmit --project tsconfig.frontend.json",
     "typecheck:coverage": "type-coverage --strict --at-least 95 --project tsconfig.backend.json",
