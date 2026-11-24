@@ -459,15 +459,13 @@
           <tr>
             <th>Time</th>
             <th>Type</th>
-            <th>Session</th>
           </tr>
         </thead>
         <tbody aria-busy="true">
-          <template x-for="e in errorEvents.slice(0, 20)" :key="e.id">
+          <template x-for="e in errorEvents.slice(0, 20)" :key="`${e.event_type}:${e.source}:${e.created_at}`">
             <tr>
               <td x-text="formatDate(e.created_at)" style="font-size: 12px; white-space: nowrap"></td>
               <td x-text="e.event_type" style="font-size: 12px"></td>
-              <td x-text="e.session_id?.slice(0, 8) || '-'" style="font-size: 12px"></td>
             </tr>
           </template>
         </tbody>

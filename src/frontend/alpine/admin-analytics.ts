@@ -119,7 +119,7 @@ const ROLE_COLORS = { user: "#4f46e5", assistant: "#059669", system: "#d97706", 
 export const adminAnalytics = {
   analyticsSummary: { total: 0, distinct_sessions: 0, distinct_users: 0, },
   dailyStats: [] as { count: number; active_users: number; date: string }[],
-  errorEvents: [] as { id: string; event_type: string; session_id: string | null; created_at: string }[],
+  errorEvents: [] as { event_type: string; source: string; created_at: string; occurrences: number }[],
   conversationOverview: {
     totalMessages: 0,
     totalTokens: 0,
@@ -243,7 +243,7 @@ export const adminAnalytics = {
     if (this.purgingAnalytics) { return; }
     this.purgingAnalytics = true;
     try {
-      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90", { method: "DELETE", },);
+      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90&confirm=PURGE", { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.telemetryPurged",),);
         await this.loadAnalytics();

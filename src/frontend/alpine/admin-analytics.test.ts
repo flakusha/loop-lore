@@ -30,7 +30,7 @@ function makeState() {
   return {
     ...adminAnalytics,
     dailyStats: [] as { count: number; active_users: number; date: string }[],
-    errorEvents: [],
+    errorEvents: [] as typeof adminAnalytics.errorEvents,
     analyticsCharacters: [] as {
       id: string;
       name: string;
@@ -64,7 +64,15 @@ function routeResponses(): void {
       ],);
     }
 
-    if (url.startsWith("/api/v1/telemetry/analytics/errors",)) { return Response.json([],); }
+    if (url.startsWith("/api/v1/telemetry/analytics/errors",)) {
+      return Response.json([{
+        event_type: "generation.failed",
+        source: "server",
+        created_at: "2026-10-03T00:00:00.000Z",
+        occurrences: 2,
+      },],);
+    }
+
     if (url.startsWith("/api/v1/telemetry/analytics/purge",)) { return Response.json({ ok: true, },); }
     if (url === "/api/v1/analytics/overview") {
       return Response.json({
@@ -162,6 +170,13 @@ describe("adminAnalytics.loadAnalytics", () => {
     await state.loadAnalytics();
 
     expect(state.analyticsSummary.total,).toBe(5,);
+    expect(state.errorEvents,).toEqual([{
+      event_type: "generation.failed",
+      source: "server",
+      created_at: "2026-10-03T00:00:00.000Z",
+      occurrences: 2,
+    },],);
+
     // Role segments sum to the role token total; percentages round to 33/67.
     expect(state.analyticsRoleSegments.map((s,) => s.tokens),).toEqual([100, 200, 0,],);
     expect(state.analyticsRoleSegments.map((s,) => s.pct),).toEqual([33, 67, 0,],);
@@ -266,6 +281,27 @@ describe("adminAnalytics.purgeAnalytics", () => {
     await state.purgeAnalytics();
     expect(toasts.some((toast,) => toast.type === "success"),).toBe(true,);
     expect(state.purgingAnalytics,).toBe(false,);
+  });
+
+  test("includes the required purge confirmation token", async () => {
+    const state = makeState();
+    routeResponses();
+    let purgeUrl = "";
+    const base = handler;
+    handler = async (url,) => {
+      if (url.startsWith("/api/v1/telemetry/analytics/purge",)) {
+        purgeUrl = url;
+        return Response.json({ ok: true, },);
+      }
+
+      return base(url,);
+    };
+
+    await state.purgeAnalytics();
+
+    const request = new URL(purgeUrl, "http://localhost",);
+    expect(request.searchParams.get("days",),).toBe("90",);
+    expect(request.searchParams.get("confirm",),).toBe("PURGE",);
   });
 
   test("toasts the server message when the purge fails", async () => {
