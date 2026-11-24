@@ -79,10 +79,10 @@ export interface TurnRequirement {
   /** Explicit tier preference (overrides the taskType default). */
   preferredTier?: HarnessTierId;
   /**
-   * Restrict admission to this one profile. The isolation gate allows a
-   * dispatch only against an admin-configured profile, so a gated caller pins
-   * the profile it was cleared for instead of letting the failover walk run
-   * the turn on a different one.
+   * Pinned-only: restrict admission to this one admin-configured profile.
+   * A pinned dispatch names the profile the gate cleared; omit for an
+   * unpinned dispatch so the failover walk may choose any gated profile.
+   * `default` is an alias, never a profile name, and must not appear here.
    */
   profile?: string;
 }

@@ -11,8 +11,8 @@
  *    caller's);
  * 2. prior run summaries recalled from harness-scoped memory prefix the
  *    prompt (same chat only — the harness scope isolation boundary);
- * 3. the composed runtime's selector runs the turn, pinned to the gated
- *    profile, so the failover walk cannot drift onto another one;
+ * 3. the composed runtime's selector runs the turn: pinned to the gated
+ *    profile when one was named, otherwise walking its failover order;
  * 4. the exec log records the run under the `harness` task type with the
  *    profile, tier and ACP session id, and the run summary is embedded as a
  *    harness-scoped memory for the next turn in this chat;
@@ -85,8 +85,11 @@ export interface DispatchHarnessTurnOptions {
   role: string | null;
   /** The authenticated user the execution is attributed to. */
   userId: string | null;
-  /** The admin-configured profile to run. */
-  profile: string;
+  /**
+   * Exact profile name to pin. Omit, pass empty, or pass `default` to let the
+   * selector's failover order pick a gated profile at run time.
+   */
+  profile?: string;
   /** The prompt the harness works on. */
   prompt: string;
   /** The database the turn's rows land in. */
@@ -141,15 +144,15 @@ export async function dispatchHarnessTurn(
   const requirement: TurnRequirement = {
     taskType: HARNESS_TASK_TYPE,
     needsCapabilities: [],
-    // Pinned: the profile the gate cleared is the profile that runs.
-    profile: options.profile,
+    // Pinned keeps the gate-cleared profile; unpinned omits the field so the
+    // selector runs its existing failover order.
+    ...(gate.unpinned ? {} : { profile: gate.profile.name, }),
     ...(options.tier ? { preferredTier: options.tier, } : {}),
   };
 
   const run = {
     taskType: toHarnessTaskType(HARNESS_TASK_TYPE,),
     task: options.prompt.replace(/\s+/g, " ",).trim().slice(0, 200,),
-    profile: options.profile,
     turnId: turnKey,
   };
 
@@ -170,6 +173,8 @@ export async function dispatchHarnessTurn(
   } catch (error) {
     recordExecRun({
       ...run,
+      // No selector resolution on failure: never stamp the caller's alias.
+      profile: "unresolved",
       model: "",
       runMs: Date.now() - startedAt,
       result: "error",
@@ -179,6 +184,8 @@ export async function dispatchHarnessTurn(
     throw new HarnessDispatchError("turn_failed", (error as Error).message,);
   }
 
+  // Exec-log attribution: the profile the selector resolved, never the
+  // caller's name (which may be the `default` alias).
   const { result, } = attributed;
   const okRecord = buildRunRecord({
     ...run,

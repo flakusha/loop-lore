@@ -12,7 +12,11 @@ import {
   initHarnessAdminSettings,
   resetHarnessAdminSettings,
 } from "./admin-settings";
-import { assertHarnessExecution, type HarnessIsolationVerdict, } from "./isolation-gate";
+import {
+  assertHarnessExecution,
+  type HarnessIsolationVerdict,
+  normalizeHarnessProfileName,
+} from "./isolation-gate";
 
 // Parallel-safety: the admin-settings singleton is process-shared and other
 // files seed it; every case in THIS file runs against an UNSEEDED store so
@@ -36,9 +40,25 @@ function configWith(overrides?: Partial<HarnessConfig["acp"]>,): HarnessConfig {
   return { acp: { enabled: true, profiles: [PROFILE,], ...overrides, }, };
 }
 
-/** Assert an allowed verdict and return it narrowed. */
-function expectAllowed(verdict: HarnessIsolationVerdict,): HarnessIsolationVerdict & { allowed: true } {
-  if (!verdict.allowed) { throw new Error(`expected an allowed verdict, got ${verdict.code}`,); }
+/** Assert a pinned allowed verdict and return it narrowed. */
+function expectAllowed(
+  verdict: HarnessIsolationVerdict,
+): Extract<HarnessIsolationVerdict, { unpinned: false }> {
+  if (!verdict.allowed || verdict.unpinned) {
+    throw new Error(`expected a pinned verdict, got ${verdict.allowed ? "unpinned" : verdict.code}`,);
+  }
+
+  return verdict;
+}
+
+/** Assert an unpinned allowed verdict and return it narrowed. */
+function expectUnpinned(
+  verdict: HarnessIsolationVerdict,
+): Extract<HarnessIsolationVerdict, { unpinned: true }> {
+  if (!verdict.allowed || !verdict.unpinned) {
+    throw new Error(`expected an unpinned verdict, got ${verdict.allowed ? "pinned" : verdict.code}`,);
+  }
+
   return verdict;
 }
 
@@ -144,6 +164,85 @@ describe("assertHarnessExecution", () => {
     },);
 
     expect(verdict,).toMatchObject({ allowed: false, code: "harness_disabled", },);
+  });
+
+  it("admits the default alias without synthesizing a profile", () => {
+    const verdict = expectUnpinned(assertHarnessExecution({
+      config: configWith(),
+      role: "solo",
+      userId: "user-1",
+      profileName: "default",
+    },),);
+
+    expect(verdict.unpinned,).toBe(true,);
+    expect(verdict.profile,).toBeNull();
+    expect(verdict.userId,).toBe("user-1",);
+  });
+
+  it("admits an omitted or empty profile name as unpinned", () => {
+    for (const profileName of [undefined, "",]) {
+      const verdict = expectUnpinned(assertHarnessExecution({
+        config: configWith(),
+        role: "admin",
+        userId: "root",
+        profileName,
+      },),);
+
+      expect(verdict.profile,).toBeNull();
+    }
+  });
+
+  it("denies unpinned requests when no profile is configured", () => {
+    for (const profileName of ["default", undefined, "",]) {
+      const verdict = assertHarnessExecution({
+        config: configWith({ profiles: [], },),
+        role: "admin",
+        userId: "root",
+        profileName,
+      },);
+
+      expect(verdict,).toMatchObject({ allowed: false, code: "profile_unknown", },);
+    }
+  });
+
+  it("still pins an exact name when the alias is not requested", () => {
+    const verdict = expectAllowed(assertHarnessExecution({
+      config: configWith(),
+      role: "admin",
+      userId: "root",
+      profileName: "omp-main",
+    },),);
+
+    expect(verdict.unpinned,).toBe(false,);
+    expect(verdict.profile,).toBe(PROFILE,);
+  });
+
+  it("keeps the gate order for the alias: disabled, then role, then profile", () => {
+    expect(assertHarnessExecution({
+      config: configWith({ enabled: false, },),
+      role: "user",
+      userId: "u",
+      profileName: "default",
+    },),).toMatchObject({ allowed: false, code: "harness_disabled", },);
+
+    expect(assertHarnessExecution({
+      config: configWith(),
+      role: "user",
+      userId: "u",
+      profileName: "default",
+    },),).toMatchObject({ allowed: false, code: "role_denied", },);
+  });
+});
+
+describe("normalizeHarnessProfileName", () => {
+  it("treats default, omitted and empty as unpinned", () => {
+    expect(normalizeHarnessProfileName("default",),).toEqual({ pinned: false, },);
+    expect(normalizeHarnessProfileName(undefined,),).toEqual({ pinned: false, },);
+    expect(normalizeHarnessProfileName("",),).toEqual({ pinned: false, },);
+  });
+
+  it("treats every other string as a pinned exact name", () => {
+    expect(normalizeHarnessProfileName("omp-main",),).toEqual({ pinned: true, name: "omp-main", },);
   });
 });
 
