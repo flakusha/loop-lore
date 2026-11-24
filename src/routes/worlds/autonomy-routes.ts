@@ -25,13 +25,11 @@ import { AutonomyScheduler, } from "../../autonomy/scheduler";
 import { NO_CHAT, } from "../../autonomy/scheduler/store";
 import type { DB, } from "../../db/schema";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, jsonError, jsonResponse, routeAuthError, routeDetail, routeNotFoundError, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import {
-  actorOverrideResponse,
   actorOverrideSchema,
   autonomyControl,
-  controlResponse,
   controlSchema,
   setActorAutonomy,
 } from "./autonomy-control";
@@ -139,13 +137,13 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         query: autonomyQuery,
-        response: { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, },
-        detail: {
+        response: { 200: t.Any(), ...routeAuthError(), 403: ErrorResponse, },
+        ...routeDetail({
           summary: "Get the autonomy config for a world",
           description:
             "Returns the per-layer overrides, the resolved config, the built-in presets, the persisted simulation cursor, and — when scopeId is given — the current budget window.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -153,13 +151,13 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
       async (ctx: any,) => autonomyControl(database, ctx,),
       {
         ...controlSchema,
-        response: controlResponse,
-        detail: {
+        response: { 200: t.Any(), ...routeAuthError(), 403: ErrorResponse, },
+        ...routeDetail({
           summary: "Pause, resume, or single-step a world's autonomy loop",
           description:
             "Human-in-loop control over the world tick. `step` forces one tick regardless of the pause flag and cursor; the pause survives it.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .put(
@@ -167,13 +165,13 @@ export function autonomyRoutes(opts: HandleOpts, prefix = "/api",) {
       async (ctx: any,) => setActorAutonomy(database, ctx,),
       {
         ...actorOverrideSchema,
-        response: actorOverrideResponse,
-        detail: {
+        response: { 200: t.Any(), ...routeAuthError(), 403: ErrorResponse, ...routeNotFoundError(), },
+        ...routeDetail({
           summary: "Set a character's autonomy pacing override",
           description:
             "Writes the per-actor layer (the highest-precedence override) and returns the full resolved layer set. Send an empty object to clear the override.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

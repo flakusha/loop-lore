@@ -27,7 +27,15 @@ import {
   ResourceError,
 } from "../../worlds/resources";
 import { resolvePrimaryActorId, } from "../actor-access";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  notFoundResponse,
+  routeDetail,
+  routeNotFoundError,
+} from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -72,8 +80,8 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         query: t.Object({ locationId: t.Optional(t.String(),), },),
-        response: { 200: t.Object({ data: t.Array(ResourceSummary,), },), 404: ErrorResponse, },
-        detail: { summary: "List harvestable nodes at a location", tags: ["Worlds",], },
+        response: { 200: t.Object({ data: t.Array(ResourceSummary,), },), ...routeNotFoundError(), },
+        ...routeDetail({ summary: "List harvestable nodes at a location", tags: ["Worlds",], },),
       },
     )
     .post(
@@ -124,9 +132,9 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
             },),
           },),
           400: ErrorResponse,
-          404: ErrorResponse,
+          ...routeNotFoundError(),
         },
-        detail: { summary: "Attempt an extraction against a node instance", tags: ["Worlds",], },
+        ...routeDetail({ summary: "Attempt an extraction against a node instance", tags: ["Worlds",], },),
       },
     )
     .post(
@@ -140,8 +148,8 @@ export function resourceRoutes(opts: HandleOpts, prefix = "/api",) {
         return jsonResponse({ data: result, },);
       },
       {
-        response: { 200: t.Object({ data: t.Object({ regenerated: t.Integer(), },), },), 404: ErrorResponse, },
-        detail: { summary: "Restore nodes whose respawn window has elapsed", tags: ["Worlds",], },
+        response: { 200: t.Object({ data: t.Object({ regenerated: t.Integer(), },), },), ...routeNotFoundError(), },
+        ...routeDetail({ summary: "Restore nodes whose respawn window has elapsed", tags: ["Worlds",], },),
       },
     );
 }

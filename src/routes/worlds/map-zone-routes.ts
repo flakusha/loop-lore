@@ -22,7 +22,7 @@ import {
   upsertZone,
 } from "../../worlds/maps";
 import type { Zone, ZoneInput, } from "../../worlds/maps";
-import { jsonResponse, routeSpec, } from "../http-utils";
+import { jsonResponse, routeAuthError, routeDetail, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { mapGate, MapSchemas, mapServiceErrorResponse, } from "./map-routes-shared";
 import type { HandleOpts, } from "./types";
@@ -128,13 +128,13 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         beforeHandle: [ownerGate,],
         body: ZoneBody,
-        response: { 201: MapSchemas.Zone, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, },
-        detail: {
+        response: { 201: MapSchemas.Zone, 400: ErrorResponse, ...routeAuthError(), 403: ErrorResponse, },
+        ...routeDetail({
           summary: "Create map zone",
           description:
             "Add a rectangular region to a map. Boundaries are inclusive on all four edges. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(

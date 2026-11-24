@@ -32,16 +32,31 @@ export function routeSpec<const TResponse extends Record<number, TSchema>,>(spec
   } as const;
 }
 
+/** 401 entry for routes that declare auth failures but no 404. */
+export function routeAuthError() {
+  return { 401: ErrorResponse, };
+}
+
+/** 404 entry for routes that declare a missing resource but no 401. */
+export function routeNotFoundError() {
+  return { 404: ErrorResponse, };
+}
 /** Standard auth error entries for inline Elysia response maps. */
 export function routeErrors() {
-  return { 401: ErrorResponse, 404: ErrorResponse, };
+  return { ...routeAuthError(), ...routeNotFoundError(), };
 }
 
 /** OpenAPI detail entry for inline Elysia route options. */
 export function routeDetail(spec: {
   summary: string;
-  description: string;
+  description?: string;
   tags: string[];
 },) {
-  return { detail: spec, };
+  return {
+    detail: {
+      summary: spec.summary,
+      ...(spec.description ? { description: spec.description, } : {}),
+      tags: spec.tags,
+    },
+  };
 }

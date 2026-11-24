@@ -24,7 +24,15 @@ import {
   validateImportLicense,
 } from "../../worlds/license";
 import type { LicenseInput, UseFlag as UseFlagType, } from "../../worlds/license";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, routeSpec, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  routeAuthError,
+  routeDetail,
+  routeSpec,
+} from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -47,11 +55,6 @@ const LicenseSchema = t.Object({
   allowedUse: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
   prohibitedUse: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
 },);
-
-/** The use flags the vocabulary defines. */
-const UseFlagsResponse = {
-  200: t.Object({ data: t.Array(t.String(),), },),
-};
 
 /** Body accepted when creating or replacing a license. */
 const LicenseBody = t.Object({
@@ -152,12 +155,12 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         beforeHandle: [ownerGate,],
         body: LicenseBody,
-        response: { 200: LicenseSchema, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, },
-        detail: {
+        response: { 200: LicenseSchema, 400: ErrorResponse, ...routeAuthError(), 403: ErrorResponse, },
+        ...routeDetail({
           summary: "Replace world license",
           description: "Set the world's license. Provide exactly one of spdxId or licenseText. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -226,12 +229,12 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       () => jsonResponse({ data: USE_FLAGS, },),
       {
         beforeHandle: [accessGate,],
-        response: UseFlagsResponse,
-        detail: {
+        response: { 200: t.Object({ data: t.Array(t.String(),), },), },
+        ...routeDetail({
           summary: "List use flags",
           description: "Every use flag the license vocabulary defines.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

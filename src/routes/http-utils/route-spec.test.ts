@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Elysia, t, } from "elysia";
 import { describe, expect, expectTypeOf, test, } from "bun:test";
-import { routeDetail, routeErrors, routeSpec, } from "./route-spec";
+import { routeAuthError, routeDetail, routeErrors, routeNotFoundError, routeSpec, } from "./route-spec";
 
 // Guard the root cause: passing a factory call as the whole options object
 // loses Elysia's literal ctx inference. If routeSpec ever regains schema
@@ -64,8 +64,14 @@ describe("routeSpec", () => {
 
   test("inline helpers match routeSpec entries", () => {
     expect(routeErrors(),).toEqual({ 401: expect.anything(), 404: expect.anything(), },);
+    expect(routeAuthError(),).toEqual({ 401: expect.anything(), },);
+    expect(routeNotFoundError(),).toEqual({ 404: expect.anything(), },);
     expect(routeDetail({ summary: "Read thing", description: "Reads one thing", tags: ["Things",], },),).toEqual({
       detail: { summary: "Read thing", description: "Reads one thing", tags: ["Things",], },
+    },);
+
+    expect(routeDetail({ summary: "Read thing", tags: ["Things",], },),).toEqual({
+      detail: { summary: "Read thing", tags: ["Things",], },
     },);
   });
 });

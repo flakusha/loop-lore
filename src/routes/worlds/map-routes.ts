@@ -15,7 +15,7 @@ import { MapType, } from "../../db/enums-story";
 import { ErrorResponse, } from "../../validation/schemas";
 import { createMap, listMaps, } from "../../worlds/maps";
 import type { CreateMapInput, } from "../../worlds/maps";
-import { jsonResponse, routeSpec, } from "../http-utils";
+import { jsonResponse, routeAuthError, routeDetail, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { mapGate, MapSchemas, mapServiceErrorResponse, } from "./map-routes-shared";
 import type { HandleOpts, } from "./types";
@@ -57,12 +57,12 @@ export function mapRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         beforeHandle: [ownerGate,],
         body: CreateMapBody,
-        response: { 201: MapSchemas.Map, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, },
-        detail: {
+        response: { 201: MapSchemas.Map, 400: ErrorResponse, ...routeAuthError(), 403: ErrorResponse, },
+        ...routeDetail({
           summary: "Create map",
           description: "Create a 2D or 3D tile surface for the world. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(

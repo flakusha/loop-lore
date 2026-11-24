@@ -7,7 +7,15 @@ import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
 import { prettyJson, } from "../export-shared/helpers";
-import { extractAuth, HttpStatus, jsonError, parsePaginationParams, routeSpec, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  parsePaginationParams,
+  routeAuthError,
+  routeDetail,
+  routeSpec,
+} from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
@@ -62,14 +70,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
             },),
           },),
           400: ErrorResponse,
-          401: ErrorResponse,
+          ...routeAuthError(),
         },
-        detail: {
+        ...routeDetail({
           summary: "List worlds",
           description:
             "List all worlds visible to the authenticated user. Optional q filters by name substring (case-insensitive).",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -93,14 +101,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         body: WorldCreateBody,
         response: {
           201: t.Object({ id: t.String(), },),
-          401: ErrorResponse,
+          ...routeAuthError(),
           403: ErrorResponse,
         },
-        detail: {
+        ...routeDetail({
           summary: "Create world",
           description: "Create a new world. Requires authentication.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
