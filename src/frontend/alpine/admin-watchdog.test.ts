@@ -35,11 +35,11 @@ function row(overrides: Partial<WatchdogEventRow> = {},): WatchdogEventRow {
 }
 
 let calls: string[] = [];
-let handler: ApiFetchMock = async () => Response.json({ data: [], },);
+let handler: ApiFetchMock = async () => Response.json({ state: null, events: [], },);
 
 beforeEach(() => {
   calls = [];
-  handler = async () => Response.json({ data: [], },);
+  handler = async () => Response.json({ state: null, events: [], },);
   g.apiFetch = (url: string,) => {
     calls.push(url,);
     return handler(url,);
@@ -97,7 +97,7 @@ test("the recency filter keeps the rows written inside the window", () => {
 });
 
 test("the panel loads the rows from the read route", async () => {
-  handler = async () => Response.json({ data: [row({ id: 7, },),], },);
+  handler = async () => Response.json({ state: "wait", events: [row({ id: 7, },),], },);
   const state = createAdminWatchdog();
   await state.init();
   expect(calls,).toEqual(["/api/v1/admin/watchdog/events?limit=200",],);
@@ -109,7 +109,8 @@ test("the panel loads the rows from the read route", async () => {
 test("the panel filters the loaded rows", async () => {
   handler = async () =>
     Response.json({
-      data: [row({ id: 1, },), row({ id: 2, event_kind: "crash", decision_kind: "restart", },),],
+      state: "restart",
+      events: [row({ id: 1, },), row({ id: 2, event_kind: "crash", decision_kind: "restart", },),],
     },);
 
   const state = createAdminWatchdog();

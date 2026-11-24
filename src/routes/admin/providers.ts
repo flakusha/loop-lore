@@ -3,7 +3,13 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders, } from "../../admin/provider-health";
+import {
+  getHealthCache,
+  getProviderHealth,
+  getWatchdogHealth,
+  providerToSummary,
+  scanAllProviders,
+} from "../../admin/provider-health";
 import type { DB, } from "../../db/schema";
 import { listProviders, } from "../../generation/providers/registry";
 import type { ModelFit, } from "../../models/fit-lookup";
@@ -52,11 +58,13 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
       },)
       // ── Provider management ────────────────────────────────
-      .get(`${prefix}/admin/providers`, (ctx: any,) => {
+      .get(`${prefix}/admin/providers`, async (ctx: any,) => {
         const userId = requirePermissionUserId(ctx, "admin.system",);
         if (typeof userId !== "string") { return userId; }
 
         const health = getHealthCache();
+        // Admin-only: never merged into the shared cache read by /api/health.
+        const watchdog = opts.database ? await getWatchdogHealth(opts.database,) : null;
         const providers = Array.from(listProviders(), (p,) => {
           const status = health.find((h,) => h.name === p.name);
           return {
@@ -71,10 +79,13 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
           };
         },);
 
-        return jsonResponse({ providers, },);
+        return jsonResponse({ providers, watchdog, },);
       }, {
         response: {
-          200: t.Object({ providers: t.Array(t.Any(),), },),
+          200: t.Object({
+            providers: t.Array(t.Any(),),
+            watchdog: t.Union([t.Any(), t.Null(),],),
+          },),
           403: ErrorResponse,
         },
       },)

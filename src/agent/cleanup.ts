@@ -8,9 +8,11 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils";
 import { parseExpiryMs, toDate, } from "../utils/date";
 import { MAX_WORKTREE_BYTES, } from "./api/sandbox";
 import type { RemoveWorktree, } from "./api/types";
+import { NO_AGENT_TOKEN_DIGEST, recordAgentAction, } from "./audit";
 
 export const MAX_WORKTREE_IDLE_MS = 24 * 60 * 60 * 1000;
 export const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
@@ -51,6 +53,15 @@ export async function cleanupIdleWorktrees(opts: CleanupOpts,): Promise<number> 
       .set({ removed_at: toDate(nowMs,).toISOString(), },)
       .where("id", "=", row.id,)
       .execute();
+
+    const metadata = safeJsonStringify({ idle, oversize, },);
+    await recordAgentAction(opts.database, {
+      tokenDigest: NO_AGENT_TOKEN_DIGEST,
+      action: "worktree_gc",
+      result: "removed",
+      worktreeId: row.id,
+      metadata: metadata.ok ? metadata.value : null,
+    },);
 
     removed++;
   }

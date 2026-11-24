@@ -8,8 +8,9 @@
  *   GET /api/v1/admin/watchdog/events?limit=200
  *
  * Read-only by design: the rows are written solely by the supervisor's
- * `onTransition` seam, so a mutator here would forge the log. The state badge
- * and both filters are derived client-side over the rows the route returns.
+ * `onTransition` seam, so a mutator here would forge the log. The route
+ * returns `{ state, events }`; the badge and both filters are derived
+ * client-side over the returned rows.
  */
 import { sqliteUtcToIso, toDate, } from "../../utils/date";
 import { getThrownErrorMessage, } from "../fe-fetch";
@@ -229,8 +230,8 @@ export function createAdminWatchdog(): AdminWatchdogState {
           headers: { Accept: "application/json", },
         },);
 
-        const body = await res.json() as { data?: WatchdogEventRow[] };
-        this.rows = Array.isArray(body.data,) ? body.data : [];
+        const body = await res.json() as { events?: WatchdogEventRow[] };
+        this.rows = Array.isArray(body.events,) ? body.events : [];
       } catch (error) {
         this.error = watchdogErrorMessage(error,);
         this.rows = [];
