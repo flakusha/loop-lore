@@ -1387,7 +1387,7 @@
 
     "get-tsconfig": ["get-tsconfig@4.14.3", "", { "dependencies": { "resolve-pkg-maps": "^1.0.0" } }, "sha512-++QEw4DIY7WGoukz+/+A/8dGYPT9l9yIadnmSgZ8Rjr3YVSVDipQSO9CdnJo9ePqFqUUqh+wk9uIaoiAwsiPkA=="],
 
-    "giwt": ["giwt@github:flakusha/giwt#123eb61", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "hasInstallScript": true, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-123eb61", "sha512-L/in7STwXeOcNsQX/edIvezBBKFGjux+dKHyEYyKm3u54XwYwWG6vSwfMRlYL98s3kfiz3sbEihOxEZ4Zr8Azg=="],
+    "giwt": ["giwt@github:flakusha/giwt#0f3002c", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "hasInstallScript": true, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-0f3002c", "sha512-TBJDUp7e7PZPDe90Jn8UgMkDVwXgtk6NHivnhwiShd9l3YrnKIbCHR23rgeSuNXpv7GRc9BveslF6Wkq7sjn+g=="],
 
     "glob": ["glob@14.0.6", "", { "dependencies": { "minimatch": "^11.0.5", "minipass": "^7.1.3", "path-scurry": "^3.0.0" } }, "sha512-OwXjVP2svY5EyLY75Vek96C8qK43gqrt4xsZ+qSILdnaEiJPXkd62mcfUSNx/TQErQRdu5uM5kF67sfONragKw=="],
 
