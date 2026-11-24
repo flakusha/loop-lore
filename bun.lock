@@ -83,6 +83,10 @@
       "name": "@loop-lore/i18n",
       "version": "1.0.0",
     },
+    "packages/plugins": {
+      "name": "@loop-lore/plugins",
+      "version": "1.0.0",
+    },
   },
   "packages": {
     "@algolia/abtesting": ["@algolia/abtesting@1.27.0", "", { "dependencies": { "@algolia/client-common": "5.61.0", "@algolia/requester-browser-xhr": "5.61.0", "@algolia/requester-fetch": "5.61.0", "@algolia/requester-node-http": "5.61.0" } }, "sha512-XXm0DTCmSzHT40mn0Hs8H00pBcuaqQET0BsWfaHrQdijNfrhSZPLueGVQvYAeSeXVuS420arotSfgqY25nFNbA=="],

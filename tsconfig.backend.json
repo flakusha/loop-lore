@@ -14,7 +14,10 @@
       "@loop-lore/i18n": ["./packages/i18n/src/index.ts"],
       "@loop-lore/i18n/*": ["./packages/i18n/src/*"],
       "@loop-lore/assets": ["./packages/assets/src/index.ts"],
-      "@loop-lore/assets/*": ["./packages/assets/src/*"]
+      "@loop-lore/assets/*": ["./packages/assets/src/*"],
+      "@loop-lore/plugins": ["./packages/plugins/src/index.ts"],
+      "@loop-lore/plugins/root/*": ["./packages/plugins/*"],
+      "@loop-lore/plugins/*": ["./packages/plugins/src/*"]
     },
     "types": ["bun"],
     "strict": true,

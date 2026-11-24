@@ -155,6 +155,9 @@
   "ignore": [
     "src/**",
     "packages/**",
+    // Plugin shims re-export canonical code under packages/plugins (ignored above);
+    // the loader reaches them through dynamic manifest imports knip cannot trace.
+    "plugins/**",
     // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs
     // (`await $`bun run src/build/copy-icons.ts`` / `... src/build/compress.ts`),
     // never statically imported — knip cannot follow a Bun shell template.

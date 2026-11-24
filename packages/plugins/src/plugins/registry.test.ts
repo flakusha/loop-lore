@@ -1,0 +1,246 @@
+import { describe, test, expect, beforeEach, afterAll } from "bun:test";
+import { registry } from "./registry";
+import type { LoadedPlugin, RouteDefinition, ToolDefinition } from "./types";
+
+/**
+ *
+ * @param name
+ * @param origin
+ */
+function makePlugin(name: string, origin: "core" | "community" | "local" = "community"): LoadedPlugin {
+  return {
+    manifest: {
+      name,
+      version: "1.0.0",
+      description: `Test plugin ${name}`,
+      author: "test",
+    },
+    origin,
+    directory: `/tmp/plugins/${name}`,
+  };
+}
+
+afterAll(() => {
+  registry.unregisterAll();
+},);
+
+describe("Plugin Registry", () => {
+  beforeEach(() => {
+    registry.unregisterAll();
+  });
+
+  describe("register / getPlugin / listPlugins", () => {
+    test("registers and retrieves a plugin", () => {
+      const plugin = makePlugin("test-plugin");
+      registry.register(plugin);
+      expect(registry.getPlugin("test-plugin")).toBe(plugin);
+    });
+
+    test("lists all registered plugins", () => {
+      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p2"));
+      const list = registry.listPlugins();
+      expect(list).toHaveLength(2);
+      expect(list.map((p) => p.manifest.name).sort((a, b) => a.localeCompare(b))).toEqual(["p1", "p2"]);
+    });
+
+    test("returns undefined for unknown plugin", () => {
+      expect(registry.getPlugin("nonexistent")).toBeUndefined();
+    });
+  });
+
+  describe("getPluginsByOrigin", () => {
+    test("filters by origin", () => {
+      registry.register(makePlugin("core-1", "core"));
+      registry.register(makePlugin("community-1", "community"));
+      registry.register(makePlugin("local-1", "local"));
+
+      expect(registry.getPluginsByOrigin("core")).toHaveLength(1);
+      expect(registry.getPluginsByOrigin("community")).toHaveLength(1);
+      expect(registry.getPluginsByOrigin("local")).toHaveLength(1);
+    });
+  });
+
+  describe("origin capabilities", () => {
+    test("rejects registration without plugin provenance", () => {
+      expect(() => registry.addTools("unknown", [])).toThrow("unregistered plugin");
+    });
+
+    test("rejects community migrations while allowing local migrations", () => {
+      const migration = { version: 1, name: "test", up: async () => {} };
+      registry.register(makePlugin("community", "community"));
+      expect(() => registry.addMigrations("community", [migration])).toThrow("cannot register migrations");
+
+      registry.register(makePlugin("local", "local"));
+      registry.addMigrations("local", [migration]);
+      expect(registry.getAllMigrations()).toEqual([migration]);
+    });
+  });
+
+  describe("routes", () => {
+    test("addRoutes and getAllRoutes", () => {
+      const route: RouteDefinition = {
+        method: "GET",
+        path: "/api/test",
+        handler: async () => new Response("ok"),
+      };
+
+      registry.register(makePlugin("p1"));
+      registry.addRoutes("p1", [route]);
+
+      expect(registry.getAllRoutes()).toEqual([route]);
+      expect(registry.getPluginRoutes("p1")).toEqual([route]);
+      expect(registry.getPluginRoutes("nonexistent")).toEqual([]);
+    });
+
+    test("multiple plugins' routes are merged", () => {
+      const r1: RouteDefinition = { method: "GET", path: "/a", handler: async () => new Response("a") };
+      const r2: RouteDefinition = { method: "POST", path: "/b", handler: async () => new Response("b") };
+      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p2"));
+      registry.addRoutes("p1", [r1]);
+      registry.addRoutes("p2", [r2]);
+
+      expect(registry.getAllRoutes()).toHaveLength(2);
+    });
+  });
+
+  describe("tools", () => {
+    test("addTools and getAllTools", () => {
+      const tool: ToolDefinition = {
+        name: "test-tool",
+        description: "A test tool",
+        parameters: {},
+        handler: async () => ({ content: "result" }),
+      };
+
+      registry.register(makePlugin("p1"));
+      registry.addTools("p1", [tool]);
+
+      expect(registry.getAllTools()).toEqual([tool]);
+    });
+  });
+
+  describe("agentRoles", () => {
+    test("getAllAgentRoles and getAgentRole", () => {
+      const role = {
+        id: "card-battler",
+        name: "Card Battler",
+        description: "Card combat NPC",
+        systemPrompt: "You are a card battler.",
+        tools: ["play_card_battle"],
+      };
+
+      registry.register(makePlugin("p1"));
+      registry.addAgentRoles("p1", [role]);
+
+      expect(registry.getAllAgentRoles()).toEqual([role]);
+      expect(registry.getAgentRole("card-battler")).toEqual(role);
+    });
+
+    test("getAgentRole returns undefined for unknown id", () => {
+      registry.register(makePlugin("p1"));
+      registry.addAgentRoles("p1", [{ id: "x", name: "X", description: "", systemPrompt: "", tools: [] }]);
+
+      expect(registry.getAgentRole("missing")).toBeUndefined();
+    });
+  });
+
+  describe("uiComponents", () => {
+    test("addUIComponents and getAllUIComponents", () => {
+      const component = { type: "web", name: "sidebar", location: "chat.sidebar", } as const;
+      registry.register(makePlugin("p1"));
+      registry.addUIComponents("p1", [component]);
+
+      expect(registry.getAllUIComponents()).toEqual([component]);
+    });
+
+    test("merges components across plugins in registration order", () => {
+      const a = { type: "web", name: "a", location: "chat.sidebar", } as const;
+      const b = { type: "tui", name: "b", location: "chat.header", } as const;
+      const c = { type: "web", name: "c", location: "chat.sidebar", } as const;
+      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p2"));
+      registry.addUIComponents("p1", [a, b]);
+      registry.addUIComponents("p2", [c]);
+
+      expect(registry.getAllUIComponents()).toEqual([a, b, c]);
+    });
+  });
+
+  describe("lifecycle", () => {
+    test("unregisterAll clears everything", () => {
+      registry.register(makePlugin("p1"));
+      registry.addRoutes("p1", [{ method: "GET", path: "/x", handler: async () => new Response("x") }]);
+
+      registry.unregisterAll();
+
+      expect(registry.listPlugins()).toEqual([]);
+      expect(registry.getAllRoutes()).toEqual([]);
+    });
+
+    test("isEnabled / setEnabled", () => {
+      registry.register(makePlugin("p1"));
+      expect(registry.isEnabled("p1")).toBe(true);
+
+      registry.setEnabled("p1", false);
+      expect(registry.isEnabled("p1")).toBe(false);
+
+      registry.setEnabled("p1", true);
+      expect(registry.isEnabled("p1")).toBe(true);
+    });
+
+    test("re-registering preserves disabled state", () => {
+      registry.register(makePlugin("p1", "local"));
+      registry.setEnabled("p1", false);
+      registry.register(makePlugin("p1", "local"));
+
+      expect(registry.isEnabled("p1")).toBe(false);
+    });
+
+    test("disabled plugin tools and event handlers are omitted", () => {
+      registry.register(makePlugin("p1", "local"));
+      registry.addTools("p1", [
+        { name: "tool", description: "", parameters: {}, handler: async () => ({ content: "ok" }) },
+      ]);
+
+      registry.addEventHandlers("p1", [{ event: "test", handler: async () => {} }]);
+
+      registry.setEnabled("p1", false);
+
+      expect(registry.getAllTools()).toEqual([]);
+      expect(registry.getAllEventHandlers()).toEqual([]);
+    });
+
+    test("listPluginStates returns all states", () => {
+      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p2"));
+      registry.setEnabled("p2", false);
+
+      const states = registry.listPluginStates();
+      expect(states).toHaveLength(2);
+      expect(states.find((s) => s.name === "p1")!.enabled).toBe(true);
+      expect(states.find((s) => s.name === "p2")!.enabled).toBe(false);
+    });
+  });
+
+  describe("eventHandlers", () => {
+    test("addEventHandlers and getAllEventHandlers", () => {
+      const handler = { event: "test.event", handler: async () => {} };
+      registry.register(makePlugin("p1"));
+      registry.addEventHandlers("p1", [handler]);
+
+      expect(registry.getAllEventHandlers()).toEqual([handler]);
+    });
+  });
+
+  describe("migrations", () => {
+    test("addMigrations and getAllMigrations", () => {
+      const migration = { version: 1, name: "test", up: async () => {} };
+      registry.register(makePlugin("p1", "local"));
+      registry.addMigrations("p1", [migration]);
+
+      expect(registry.getAllMigrations()).toEqual([migration]);
+    });
+  });
+});

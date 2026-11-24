@@ -10,7 +10,7 @@ import { readdirSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { type BeRoute, callExtent, lineOf, norm, ROOT, walk, } from "./shared";
 
-const BE_SCAN_DIRS = ["src/routes", "src", "plugins", "packages/assets",];
+const BE_SCAN_DIRS = ["src/routes", "src", "plugins", "packages/assets", "packages/plugins",];
 const BE_EXTRA_FILES = new Set(["src/elysia-app.ts",],);
 const BE_FILE_RE = /(route|controller)\.ts$/i;
 function isBeFile(p: string,): boolean {
