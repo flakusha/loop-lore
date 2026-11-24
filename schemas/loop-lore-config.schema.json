@@ -3086,6 +3086,14 @@
                     "default": "omp",
                     "description": "Which shipped ACP adapter speaks this profile (default omp)"
                   },
+                  "transport": {
+                    "type": "string",
+                    "enum": [
+                      "acp"
+                    ],
+                    "default": "acp",
+                    "description": "Driver transport for this profile (only ACP stdio is implemented)"
+                  },
                   "command": {
                     "type": "array",
                     "items": {

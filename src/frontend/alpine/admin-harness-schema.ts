@@ -196,6 +196,8 @@ export const HarnessProfileSettingsSchema = Type.Object({
   name: Type.String(),
   /** `harness` flavor, defaulted to `"omp"` when the profile omitted it. */
   flavor: Type.String(),
+  /** Transport driving the profile (only ACP stdio is implemented). */
+  transport: Type.Literal("acp",),
   usageClasses: Type.Array(Type.String(),),
   subscriptionBacked: Type.Boolean(),
   /** Locale key (`harness.tos.note.*`) of the provider ToS note. */

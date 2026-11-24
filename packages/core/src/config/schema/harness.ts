@@ -34,6 +34,12 @@ export const HARNESS_FLAVORS = [
 /** Which shipped adapter speaks a profile's wire. */
 export type HarnessFlavor = (typeof HARNESS_FLAVORS)[number];
 
+/** Transports a profile may use (runtime list: wire/validation cannot drift). */
+export const HARNESS_TRANSPORTS = ["acp",] as const;
+
+/** Which driver speaks a profile transport. */
+export type HarnessTransport = (typeof HARNESS_TRANSPORTS)[number];
+
 /** One tier: the concrete model id plus what it is trusted to do. */
 export interface AcpTierConfig {
   /**
@@ -93,6 +99,11 @@ export interface AcpProfileConfig {
   strategy?: "failover";
   /** Which shipped adapter speaks this profile's wire. Default: `"omp"`. */
   harness?: HarnessFlavor;
+  /**
+   * Transport used to drive this profile. Only ACP stdio has a driver; sdk
+   * is rejected at config validation until a second driver exists.
+   */
+  transport?: HarnessTransport;
   /** Optional usage caps (rpm / tokensPerDay). */
   limits?: AcpProfileLimits;
   /** Optional breaker thresholds. */

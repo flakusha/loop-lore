@@ -33,6 +33,7 @@ import { getRepoAccessSettings, } from "../../integrations/harness/repo-access";
 function decorateProfile(p: HarnessProfileSettingsView,): {
   name: string;
   flavor: string;
+  transport: "acp";
   usageClasses: string[];
   subscriptionBacked: boolean;
   noteKey: string;
@@ -42,6 +43,7 @@ function decorateProfile(p: HarnessProfileSettingsView,): {
   return {
     name: p.name,
     flavor: p.flavor,
+    transport: p.transport,
     usageClasses: [...tos.usageClasses,],
     subscriptionBacked: tos.subscriptionBacked,
     noteKey: tos.noteKey,

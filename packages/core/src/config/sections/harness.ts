@@ -14,6 +14,7 @@ import {
   HARNESS_CAPABILITIES,
   HARNESS_FLAVORS,
   HARNESS_TIERS,
+  HARNESS_TRANSPORTS,
   type HarnessConfig,
   type HarnessTierId,
 } from "../schema/harness";
@@ -61,7 +62,8 @@ export function isConcreteModelId(model: string,): boolean {
  * @param acp - the `harness.acp` sub-config to check
  * @throws {Error} If any profile is malformed: duplicate name, empty command,
  * unknown tier key, missing/invalid tier model, unknown capability, a
- * non-numeric limit, or a non-boolean ToS acknowledgement flag.
+ * non-numeric limit, reserved alias name, unsupported transport, or a
+ * non-boolean ToS acknowledgement flag.
  */
 export function validateAcpProfiles(acp: HarnessConfig["acp"],): void {
   if (!acp.enabled) { return; }
@@ -79,6 +81,9 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
   if (typeof p.name !== "string" || p.name.trim() === "") {
     throw new Error("harness.acp.profiles[] entry is missing a name",);
   }
+  if (p.name === "default") {
+    throw new Error("harness.acp.profiles: default is reserved for implicit failover and cannot name a profile",);
+  }
 
   if (seen.has(p.name,)) {
     throw new Error(`harness.acp.profiles: duplicate profile name "${p.name}"`,);
@@ -90,6 +95,13 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
       `harness.acp.profiles["${p.name}"]: unknown harness flavor "${p.harness}" (allowed: ${
         HARNESS_FLAVORS.join(", ",)
       })`,
+    );
+  }
+  if (p.transport !== undefined && !HARNESS_TRANSPORTS.includes(p.transport,)) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].transport "${
+        String(p.transport,)
+      }" is not implemented (only "acp" is supported)`,
     );
   }
 
@@ -317,6 +329,12 @@ export const harnessMeta = {
                 enum: [...HARNESS_FLAVORS,],
                 default: "omp",
                 description: "Which shipped ACP adapter speaks this profile (default omp)",
+              },
+              transport: {
+                type: "string",
+                enum: [...HARNESS_TRANSPORTS,],
+                default: "acp",
+                description: "Driver transport for this profile (only ACP stdio is implemented)",
               },
               command: {
                 type: "array",
