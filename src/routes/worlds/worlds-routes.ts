@@ -7,7 +7,7 @@ import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
 import { prettyJson, } from "../export-shared/helpers";
-import { extractAuth, HttpStatus, jsonError, parsePaginationParams, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, parsePaginationParams, routeSpec, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
@@ -109,18 +109,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           200: t.Any(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Get world",
-          description: "Get a world by ID with its locations.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Get world",
+        description: "Get a world by ID with its locations.",
+        tags: ["Worlds",],
+      },),
     )
     .get(
       `${prefix}/worlds/:worldId/export`,
@@ -142,19 +138,15 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
           },
         },);
       },
-      {
+      routeSpec({
         response: {
           200: t.Any(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Export world",
-          description:
-            "Download a world (locations, lore, quests, states) as a round-trippable WorldBundle JSON, importable via POST /api/import/world. Owner only.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Export world",
+        description:
+          "Download a world (locations, lore, quests, states) as a round-trippable WorldBundle JSON, importable via POST /api/import/world. Owner only.",
+        tags: ["Worlds",],
+      },),
     )
     .put(
       `${prefix}/worlds/:worldId`,
@@ -168,19 +160,15 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      {
+      routeSpec({
         body: WorldUpdateBody,
         response: {
           200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Update world",
-          description: "Update a world's properties. Owner or admin only.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Update world",
+        description: "Update a world's properties. Owner or admin only.",
+        tags: ["Worlds",],
+      },),
     )
     .delete(
       `${prefix}/worlds/:worldId`,
@@ -188,18 +176,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           204: t.Void(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Delete world",
-          description: "Delete a world and all its locations. Owner or admin only.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Delete world",
+        description: "Delete a world and all its locations. Owner or admin only.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/initialize-states`,
@@ -207,17 +191,13 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Initialize world states",
-          description: "Initialize default state machines for a world's locations and NPCs.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Initialize world states",
+        description: "Initialize default state machines for a world's locations and NPCs.",
+        tags: ["Worlds",],
+      },),
     );
 }

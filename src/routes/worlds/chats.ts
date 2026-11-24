@@ -5,8 +5,7 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { unauthorized, } from "../../validation/middleware";
-import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, jsonResponse, } from "../http-utils";
+import { extractAuth, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -77,20 +76,16 @@ export function chatsRoutes(opts: HandleOpts, prefix = "/api",) {
         const locationId = (ctx.query?.locationId as string | undefined) ?? null;
         return handleListWorldChats(database, ctx.params.worldId as string, userId, userRole, locationId,);
       },
-      {
+      routeSpec({
         params: t.Object({ worldId: t.String(), },),
         query: t.Optional(t.Object({ locationId: t.Optional(t.String(),), },),),
         response: {
           200: t.Object({ data: t.Array(t.Any(),), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "List world chats",
-          description:
-            "List chats in a world the user participates in, optionally filtered by location (world channel tree).",
-          tags: ["Worlds", "Chats",],
-        },
-      },
+        summary: "List world chats",
+        description:
+          "List chats in a world the user participates in, optionally filtered by location (world channel tree).",
+        tags: ["Worlds", "Chats",],
+      },),
     );
 }

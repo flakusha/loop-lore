@@ -16,7 +16,7 @@
 import { Elysia, t, } from "elysia";
 import { TravelRouteService, } from "../../locations";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -39,14 +39,12 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         const list = await routes.listRoutes(ctx.params.worldId,);
         return jsonResponse({ data: list, },);
       },
-      {
-        response: { 200: t.Object({ data: t.Array(t.Any(),), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "List travel routes",
-          description: "All travel routes defined in a world.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 200: t.Object({ data: t.Array(t.Any(),), },), },
+        summary: "List travel routes",
+        description: "All travel routes defined in a world.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/travel-routes`,
@@ -69,7 +67,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
         }
       },
-      {
+      routeSpec({
         body: t.Object({
           name: t.String({ minLength: 1, maxLength: 200, },),
           kind: t.String({ minLength: 1, maxLength: 40, },),
@@ -77,13 +75,11 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           secondsPerUnit: t.Optional(t.Number({ minimum: 1, maximum: 86400, },),),
           waypoints: t.Optional(t.Array(t.String(),),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Create travel route",
-          description: "Create a new travel route. kind ∈ sea/road/air/rail/custom.",
-          tags: ["Worlds",],
-        },
-      },
+        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
+        summary: "Create travel route",
+        description: "Create a new travel route. kind ∈ sea/road/air/rail/custom.",
+        tags: ["Worlds",],
+      },),
     )
     .get(
       `${prefix}/worlds/:worldId/travel-routes/:routeId`,
@@ -96,14 +92,12 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         const stops = await routes.listStops(ctx.params.routeId,);
         return jsonResponse({ data: { ...route, stops, }, },);
       },
-      {
-        response: { 200: t.Object({ data: t.Any(), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Get travel route with stops",
-          description: "Detail view of a travel route including ordered stops.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 200: t.Object({ data: t.Any(), },), },
+        summary: "Get travel route with stops",
+        description: "Detail view of a travel route including ordered stops.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/travel-routes/:routeId/stops`,
@@ -127,7 +121,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
         }
       },
-      {
+      routeSpec({
         body: t.Object({
           locationId: t.String(),
           stopOrder: t.Number({ minimum: 0, },),
@@ -136,13 +130,11 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           coordY: t.Optional(t.Number(),),
           coordZ: t.Optional(t.Number(),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Add stop to route",
-          description: "Append a stop to a travel route. World-scoped; cross-world stops rejected.",
-          tags: ["Worlds",],
-        },
-      },
+        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
+        summary: "Add stop to route",
+        description: "Append a stop to a travel route. World-scoped; cross-world stops rejected.",
+        tags: ["Worlds",],
+      },),
     )
     .delete(
       `${prefix}/worlds/:worldId/travel-routes/:routeId/stops/:stopId`,
@@ -157,14 +149,12 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         await routes.removeStop(ctx.params.routeId, ctx.params.stopId,);
         return new Response(null, { status: 204, },);
       },
-      {
-        response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Remove stop from route",
-          description: "Delete a stop by id, scoped to the route.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 204: t.Void(), },
+        summary: "Remove stop from route",
+        description: "Delete a stop by id, scoped to the route.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/travel-routes/:routeId/attach/:locId`,
@@ -179,14 +169,12 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
         }
       },
-      {
-        response: { 200: t.Object({ ok: t.Boolean(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Attach transport to route",
-          description: "Bind a transport location (kind=transport) to a route so its travel_progress advances.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 200: t.Object({ ok: t.Boolean(), },), 400: ErrorResponse, },
+        summary: "Attach transport to route",
+        description: "Bind a transport location (kind=transport) to a route so its travel_progress advances.",
+        tags: ["Worlds",],
+      },),
     )
     .delete(
       `${prefix}/worlds/:worldId/travel-routes/:routeId/attach/:locId`,
@@ -197,13 +185,11 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
         await routes.detachTransport(ctx.params.locId, ctx.params.routeId,);
         return new Response(null, { status: 204, },);
       },
-      {
-        response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "Detach transport from route",
-          description: "Clear current_route_id; transport stops advancing.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 204: t.Void(), },
+        summary: "Detach transport from route",
+        description: "Clear current_route_id; transport stops advancing.",
+        tags: ["Worlds",],
+      },),
     );
 }

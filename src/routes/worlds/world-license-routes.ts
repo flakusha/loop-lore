@@ -24,7 +24,7 @@ import {
   validateImportLicense,
 } from "../../worlds/license";
 import type { LicenseInput, UseFlag as UseFlagType, } from "../../worlds/license";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -70,16 +70,6 @@ const LicenseBody = t.Object({
 const ValidateImportBody = t.Object({
   declaredProhibitedUse: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
 },);
-
-/** Response of the import-preflight POST. */
-const ValidateImportResponse = {
-  200: t.Union([
-    t.Object({ ok: t.Literal(true,), },),
-    t.Object({ ok: t.Literal(false,), violations: t.Array(t.String(),), },),
-  ],),
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
 
 /**
  * Build an Elysia beforeHandle gate from one world-permission check.
@@ -140,12 +130,12 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        response: { 200: LicenseSchema, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: LicenseSchema, },
           summary: "Read world license",
           description: "The world's shareability terms: SPDX id or custom text, attribution, and use flags.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .put(
@@ -182,28 +172,26 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        response: {
-          200: t.Object({
-            world_id: t.String(),
-            spdx_or_custom: t.UnionEnum(LICENSE_KINDS,),
-            spdx_id: t.Union([t.String(), t.Null(),],),
-            license_text: t.Union([t.String(), t.Null(),],),
-            attribution: t.Object({
-              author: t.Optional(t.String(),),
-              url: t.Optional(t.String(),),
-              notice: t.Optional(t.String(),),
+        ...routeSpec({
+          response: {
+            200: t.Object({
+              world_id: t.String(),
+              spdx_or_custom: t.UnionEnum(LICENSE_KINDS,),
+              spdx_id: t.Union([t.String(), t.Null(),],),
+              license_text: t.Union([t.String(), t.Null(),],),
+              attribution: t.Object({
+                author: t.Optional(t.String(),),
+                url: t.Optional(t.String(),),
+                notice: t.Optional(t.String(),),
+              },),
+              allowed_use: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
+              prohibited_use: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
             },),
-            allowed_use: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
-            prohibited_use: t.Array(t.UnionEnum(USE_FLAGS_WIRE,),),
-          },),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+          },
           summary: "License manifest",
           description: "The license block as embedded in an export bundle.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -219,13 +207,18 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        body: ValidateImportBody,
-        response: ValidateImportResponse,
-        detail: {
+        ...routeSpec({
+          body: ValidateImportBody,
+          response: {
+            200: t.Union([
+              t.Object({ ok: t.Literal(true,), },),
+              t.Object({ ok: t.Literal(false,), violations: t.Array(t.String(),), },),
+            ],),
+          },
           summary: "Validate an import against the license",
           description: "Reports whether a declared set of uses is permitted. Never mutates anything.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(

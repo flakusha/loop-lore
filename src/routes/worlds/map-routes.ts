@@ -15,7 +15,7 @@ import { MapType, } from "../../db/enums-story";
 import { ErrorResponse, } from "../../validation/schemas";
 import { createMap, listMaps, } from "../../worlds/maps";
 import type { CreateMapInput, } from "../../worlds/maps";
-import { jsonResponse, } from "../http-utils";
+import { jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { mapGate, MapSchemas, mapServiceErrorResponse, } from "./map-routes-shared";
 import type { HandleOpts, } from "./types";
@@ -31,13 +31,6 @@ const CreateMapBody = t.Object({
   height: t.Number({ minimum: 1, },),
   tileAssetId: t.Optional(t.Union([t.String(), t.Null(),],),),
 },);
-
-/** Map-list envelope. */
-const MapListResponse = {
-  200: t.Object({ data: t.Array(MapSchemas.Map,), },),
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
 
 /**
  * Map routes: create a tile surface and list the world's surfaces.
@@ -80,12 +73,12 @@ export function mapRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        response: MapListResponse,
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Array(MapSchemas.Map,), },), },
           summary: "List maps",
           description: "Every map surface owned by the world, oldest first.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

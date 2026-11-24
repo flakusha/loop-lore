@@ -10,7 +10,7 @@ import { LocationEdgeService, } from "../../locations/edge-graph";
 import { EdgeTravelService, } from "../../locations/edge-travel";
 import { jsonParseOr, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -172,25 +172,23 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
-        body: t.Object({
-          toId: t.String(),
-          mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
-          gameHours: t.Optional(t.Number({ minimum: 0, },),),
-          requiresDiscovery: t.Optional(t.Boolean(),),
-          cost: t.Optional(t.Record(t.String(), t.Any(),),),
-        },),
-        response: {
-          201: EdgeSchema,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          body: t.Object({
+            toId: t.String(),
+            mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
+            gameHours: t.Optional(t.Number({ minimum: 0, },),),
+            requiresDiscovery: t.Optional(t.Boolean(),),
+            cost: t.Optional(t.Record(t.String(), t.Any(),),),
+          },),
+          response: {
+            201: EdgeSchema,
+            400: ErrorResponse,
+            403: ErrorResponse,
+          },
           summary: "Create location edge",
           description: "Create one directed adjacency edge from a location. World owner or admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -275,24 +273,22 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
-        body: t.Partial(t.Object({
-          mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
-          gameHours: t.Number({ minimum: 0, },),
-          requiresDiscovery: t.Boolean(),
-          cost: t.Record(t.String(), t.Any(),),
-        },),),
-        response: {
-          200: EdgeSchema,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          body: t.Partial(t.Object({
+            mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
+            gameHours: t.Number({ minimum: 0, },),
+            requiresDiscovery: t.Boolean(),
+            cost: t.Record(t.String(), t.Any(),),
+          },),),
+          response: {
+            200: EdgeSchema,
+            400: ErrorResponse,
+            403: ErrorResponse,
+          },
           summary: "Update location edge",
           description: "Edit an edge's mode, travel time, discovery gating, or cost. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .delete(
@@ -345,29 +341,27 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        body: t.Object({
-          toId: t.String(),
-          mode: t.String(),
-          actorId: t.Optional(t.String(),),
-        },),
-        response: {
-          200: t.Object({
-            edgeId: t.String(),
-            actorId: t.String(),
+        ...routeSpec({
+          body: t.Object({
             toId: t.String(),
             mode: t.String(),
-            goldCharged: t.Union([t.Number(), t.Null(),],),
+            actorId: t.Optional(t.String(),),
           },),
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+          response: {
+            200: t.Object({
+              edgeId: t.String(),
+              actorId: t.String(),
+              toId: t.String(),
+              mode: t.String(),
+              goldCharged: t.Union([t.Number(), t.Null(),],),
+            },),
+            400: ErrorResponse,
+          },
           summary: "Travel via location edge",
           description: "Move the actor along one adjacency edge. Locked edges return 404 not-yet-discovered; " +
             "free-jump charges its cost (cooldown, then gold).",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(

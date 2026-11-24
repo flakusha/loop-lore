@@ -21,7 +21,6 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { ErrorResponse, } from "../../validation/schemas";
 import { ConditionsError, getConditions, } from "../../worlds/conditions";
 import {
   MINUTES_PER_DAY,
@@ -31,7 +30,7 @@ import {
   type Weather,
   weatherAt,
 } from "../../worlds/conditions-rules";
-import { extractAuth, } from "../http-utils";
+import { extractAuth, routeSpec, } from "../http-utils";
 import { sseStream, } from "../sse-stream";
 import { requireWorldAccess, } from "./access";
 import type { HandleOpts, } from "./types";
@@ -184,14 +183,12 @@ export function worldStreamRoutes(opts: HandleOpts, prefix = "/api",) {
         if (accessErr) { return accessErr; }
         return new WorldConditionsStreamer(database, ctx.params.worldId as string,).open();
       },
-      {
-        response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "World conditions stream",
-          description:
-            "SSE stream of the world's current conditions (time of day, weather, season, temperature, forecast). Emits a `conditions` event on connect and whenever conditions change.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 200: t.Any(), },
+        summary: "World conditions stream",
+        description:
+          "SSE stream of the world's current conditions (time of day, weather, season, temperature, forecast). Emits a `conditions` event on connect and whenever conditions change.",
+        tags: ["Worlds",],
+      },),
     );
 }

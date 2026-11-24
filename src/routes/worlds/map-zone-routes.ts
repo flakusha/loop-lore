@@ -22,7 +22,7 @@ import {
   upsertZone,
 } from "../../worlds/maps";
 import type { Zone, ZoneInput, } from "../../worlds/maps";
-import { jsonResponse, } from "../http-utils";
+import { jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { mapGate, MapSchemas, mapServiceErrorResponse, } from "./map-routes-shared";
 import type { HandleOpts, } from "./types";
@@ -97,29 +97,6 @@ const PointQuery = t.Object({
   z: t.Optional(t.Number(),),
 },);
 
-/** Zone-list envelope shared by the two zone reads. */
-const ZoneListResponse = {
-  200: t.Object({ data: t.Array(MapSchemas.Zone,), },),
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
-
-/** Point-resolve envelope: the zone, or null when the point is off-map. */
-const ZoneAtPointResponse = {
-  200: t.Object({ data: t.Union([MapSchemas.Zone, t.Null(),],), },),
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
-
-/** Response of the anchor POST. */
-const AnchorResponse = {
-  200: MapSchemas.Zone,
-  400: ErrorResponse,
-  401: ErrorResponse,
-  403: ErrorResponse,
-  404: ErrorResponse,
-};
-
 /**
  * Map zone routes: upsert, list, anchor to a location, and point resolve.
  * @param opts handler options carrying the DB handle
@@ -170,12 +147,12 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        response: ZoneListResponse,
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Array(MapSchemas.Zone,), },), },
           summary: "List map zones",
           description: "Every zone on a map, ordered by layer then position.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -197,13 +174,13 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
-        body: t.Object({ locationId: t.String({ minLength: 1, },), },),
-        response: AnchorResponse,
-        detail: {
+        ...routeSpec({
+          body: t.Object({ locationId: t.String({ minLength: 1, },), },),
+          response: { 200: MapSchemas.Zone, 400: ErrorResponse, 403: ErrorResponse, },
           summary: "Anchor zone to location",
           description: "Link a zone to the fractal location it stands for. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -223,14 +200,14 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        query: PointQuery,
-        response: ZoneAtPointResponse,
-        detail: {
+        ...routeSpec({
+          query: PointQuery,
+          response: { 200: t.Object({ data: t.Union([MapSchemas.Zone, t.Null(),],), },), },
           summary: "Resolve zone at a tile",
           description: "The zone covering a tile, or null when the point falls outside every zone. " +
             "Boundary tiles on all four edges are inside the zone.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }
