@@ -11,7 +11,7 @@
  *     `chat_id`, or `session_id` directly are rejected (those are
  *     server-derived from `ctx.userId` / `ctx.sessionId` / chat context).
  *   - `TelemetryAnalyticsErrorsRow` mirrors the server-side projection:
- *     id / event_type / created_at / occurrences only. `event_data`,
+ *     event_type / source / created_at / occurrences only. `event_data`,
  *     `user_id`, `chat_id`, `session_id` are NOT in the response shape.
  */
 
@@ -93,7 +93,6 @@ export const TelemetryEventBody = t.Union(
 
 /** Narrow server-side projection of a failed telemetry event. */
 export const TelemetryAnalyticsErrorsRow = t.Object({
-  id: t.String(),
   event_type: t.String(),
   source: t.String(),
   created_at: t.String(),
