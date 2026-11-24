@@ -63,6 +63,8 @@ interface HonkboxStatusView {
   readonly jobsEnabled: boolean;
   readonly eventsEnabled: boolean;
   readonly toolsEnabled: boolean;
+  readonly scopesEnabled: boolean;
+  readonly scopeConsumers: readonly string[];
   readonly externalTools: readonly { readonly id: string; readonly available: boolean }[];
   readonly cached: boolean;
 }
@@ -82,6 +84,8 @@ const HonkboxStatusResponse = t.Object({
   jobsEnabled: t.Boolean(),
   eventsEnabled: t.Boolean(),
   toolsEnabled: t.Boolean(),
+  scopesEnabled: t.Boolean(),
+  scopeConsumers: t.Array(t.String(),),
   externalTools: t.Array(t.Object({
     id: t.String(),
     available: t.Boolean(),
@@ -108,6 +112,8 @@ function unavailableStatus(configured: boolean, reason: string,): HonkboxStatusV
     jobsEnabled: false,
     eventsEnabled: false,
     toolsEnabled: false,
+    scopesEnabled: false,
+    scopeConsumers: [],
     externalTools: [],
     cached: false,
   };
@@ -171,7 +177,7 @@ async function readStatus(opts: HonkboxStatusRouteOpts,): Promise<HonkboxStatusV
     return { ...unavailableStatus(true, probe.warning ?? "unsupported-contract",), state: "degraded", };
   }
 
-  const { queue, externalTools, } = probe.capabilities;
+  const { queue, externalTools, scopes, } = probe.capabilities;
   return {
     configured: true,
     state: "available",
@@ -183,6 +189,8 @@ async function readStatus(opts: HonkboxStatusRouteOpts,): Promise<HonkboxStatusV
     jobsEnabled: isHonkboxFeatureEnabled(probe, "jobs",),
     eventsEnabled: isHonkboxFeatureEnabled(probe, "events",),
     toolsEnabled: isHonkboxFeatureEnabled(probe, "tools",),
+    scopesEnabled: scopes?.enabled ?? false,
+    scopeConsumers: scopes?.enabled ? [...scopes.consumers,] : [],
     externalTools: (externalTools?.tools ?? []).map((tool,) => ({
       id: tool.id,
       available: isHonkboxExternalToolAvailable(probe, tool.id,),

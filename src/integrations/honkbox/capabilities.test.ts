@@ -157,6 +157,29 @@ describe("parseHonkboxCapabilities", () => {
     expect(caps.models,).toBe("/v1/models",);
   });
 
+  test("parses the scoped-consumer surface, absent when the server omits it", () => {
+    const parsed = parseHonkboxCapabilities(capabilitiesDoc({
+      scopes: { enabled: true, scopes: ["HONKBOX_READ_KEY", 42, "",], },
+    },),);
+
+    expect(parsed.ok,).toBe(true,);
+    if (!parsed.ok) { return; }
+    expect(parsed.capabilities.scopes,).toEqual({
+      enabled: true,
+      consumers: ["HONKBOX_READ_KEY",],
+    },);
+
+    const absent = parseHonkboxCapabilities(capabilitiesDoc(),);
+    expect(absent.ok,).toBe(true,);
+    if (!absent.ok) { return; }
+    expect(absent.capabilities.scopes,).toBeUndefined();
+
+    const malformed = parseHonkboxCapabilities(capabilitiesDoc({ scopes: "scoped", },),);
+    expect(malformed.ok,).toBe(true,);
+    if (!malformed.ok) { return; }
+    expect(malformed.capabilities.scopes,).toBeUndefined();
+  });
+
   test("mirrors the feature-on audio.cpp + decisions snapshot", () => {
     const parsed = parseHonkboxCapabilities(capabilitiesDoc({
       features: {

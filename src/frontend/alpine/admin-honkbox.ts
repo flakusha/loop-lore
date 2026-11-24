@@ -27,6 +27,8 @@ export interface HonkboxStatus {
   jobsEnabled: boolean;
   eventsEnabled: boolean;
   toolsEnabled: boolean;
+  scopesEnabled: boolean;
+  scopeConsumers: string[];
   externalTools: { id: string; available: boolean }[];
   cached: boolean;
 }
@@ -55,6 +57,8 @@ function unavailableStatus(): HonkboxStatus {
     jobsEnabled: false,
     eventsEnabled: false,
     toolsEnabled: false,
+    scopesEnabled: false,
+    scopeConsumers: [],
     externalTools: [],
     cached: false,
   };
@@ -81,6 +85,10 @@ function normalizeStatus(body: Partial<HonkboxStatus>,): HonkboxStatus {
     jobsEnabled: body.jobsEnabled === true,
     eventsEnabled: body.eventsEnabled === true,
     toolsEnabled: body.toolsEnabled === true,
+    scopesEnabled: body.scopesEnabled === true,
+    scopeConsumers: Array.isArray(body.scopeConsumers,)
+      ? body.scopeConsumers.filter((name,): name is string => typeof name === "string")
+      : [],
     externalTools: tools.filter((tool,) => typeof tool?.id === "string").map((tool,) => ({
       id: tool.id,
       available: tool.available === true,

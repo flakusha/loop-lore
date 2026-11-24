@@ -25,6 +25,7 @@ const CAPABILITIES = {
   server: { name: "honkbox", version: "0.9.0", },
   features: { jobs: true, events: true, blender: true, artifact_delivery: true, },
   auth: { mode: "bearer", },
+  scopes: { enabled: true, scopes: ["HONKBOX_READ_KEY",], },
   tools: {
     tool_choice_honored: ["auto",],
     tool_choice_clamped: [],
@@ -154,7 +155,29 @@ test("successful probe exposes queue, flags and external-tool availability", asy
   expect(body.eventsEnabled,).toBe(true,);
   expect(body.toolsEnabled,).toBe(true,);
   expect(body.externalTools,).toEqual([{ id: "blender", available: true, },],);
+  expect(body.scopesEnabled,).toBe(true,);
+  expect(body.scopeConsumers,).toEqual(["HONKBOX_READ_KEY",],);
   expect(body.cached,).toBe(true,);
   expect(text,).not.toContain(SECRET,);
   expect(text,).not.toContain(BASE,);
+});
+
+test("probe without the scopes section reports disabled with empty consumers", async () => {
+  const { scopes: _omitted, ...doc } = CAPABILITIES;
+  const parsed = parseHonkboxCapabilities(doc,);
+  if (!parsed.ok) { throw new Error(`invalid fixture: ${parsed.error}`,); }
+  const probe: HonkboxProbeResult = {
+    ok: true,
+    capabilities: parsed.capabilities,
+    supported: true,
+    latencyMs: 3,
+    cached: true,
+  };
+
+  const res = await makeApp("admin", { probe: async () => probe, },).handle(new Request(URL_PATH,),);
+  expect(res.status,).toBe(200,);
+  const body = await res.json() as Record<string, unknown>;
+  expect(body.state,).toBe("available",);
+  expect(body.scopesEnabled,).toBe(false,);
+  expect(body.scopeConsumers,).toEqual([],);
 });

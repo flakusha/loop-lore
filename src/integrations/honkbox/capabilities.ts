@@ -137,6 +137,14 @@ export interface HonkboxAuth {
   readonly mode: string;
 }
 
+/** Scoped-credential surface (`Capabilities::scopes`): whether scoped keys are
+ * enabled and which scoped consumers exist, by key env-var NAME (never
+ * values). Absent on older servers, which only know the single legacy key. */
+export interface HonkboxScopes {
+  readonly enabled: boolean;
+  readonly consumers: readonly string[];
+}
+
 /** One per-kind admission queue row (`QueueCapabilities::kinds`). */
 export interface HonkboxQueueKind {
   readonly kind: string;
@@ -159,6 +167,7 @@ export interface HonkboxCapabilities {
   readonly features: HonkboxFeatureFlags;
   readonly formats: HonkboxFormats;
   readonly auth: HonkboxAuth;
+  readonly scopes?: HonkboxScopes;
   readonly queue: HonkboxQueue;
   readonly imageOps?: { readonly ops: readonly string[] };
   readonly tools?: {
@@ -577,6 +586,7 @@ export function parseHonkboxCapabilities(
   const recognition = asObject(doc.recognition,);
   const externalTools = asObject(doc.external_tools,);
   const storage = asObject(doc.storage,);
+  const scopes = asObject(doc.scopes,);
 
   return {
     ok: true,
@@ -635,6 +645,14 @@ export function parseHonkboxCapabilities(
         },
       },
       auth: { mode: asString(auth?.mode,) ?? "none", },
+      ...(scopes
+        ? {
+          scopes: {
+            enabled: asBool(scopes.enabled,),
+            consumers: asStringArray(scopes.scopes,),
+          },
+        }
+        : {}),
       queue: {
         gpuSlots: asNumber(queue?.gpu_slots,),
         queueWaitSecs: asNumber(queue?.queue_wait_secs,),

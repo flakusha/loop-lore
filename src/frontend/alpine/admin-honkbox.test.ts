@@ -25,6 +25,8 @@ const AVAILABLE: HonkboxStatus & { meta?: unknown } = {
   jobsEnabled: true,
   eventsEnabled: true,
   toolsEnabled: true,
+  scopesEnabled: true,
+  scopeConsumers: ["HONKBOX_READ_KEY",],
   externalTools: [{ id: "blender", available: true, }, { id: "ffmpeg", available: false, },],
   cached: true,
   meta: { version: 1, },
@@ -63,6 +65,8 @@ test("loadStatus projects the contracted status fields", async () => {
   expect(state.status.queueWaitSecs,).toBe(45,);
   expect(state.status.retryAfterSecs,).toBe(5,);
   expect(state.status.jobsEnabled,).toBe(true,);
+  expect(state.status.scopesEnabled,).toBe(true,);
+  expect(state.status.scopeConsumers,).toEqual(["HONKBOX_READ_KEY",],);
   expect(state.status.externalTools,).toEqual([
     { id: "blender", available: true, },
     { id: "ffmpeg", available: false, },
@@ -106,12 +110,20 @@ test("loadStatus surfaces an HTTP error without marking honkbox available", asyn
 
 test("loadStatus fails closed on a malformed response", async () => {
   handler = async () =>
-    Response.json({ configured: true, state: "healthy", gpuSlots: "many", externalTools: [null,], },);
+    Response.json({
+      configured: true,
+      state: "healthy",
+      gpuSlots: "many",
+      scopeConsumers: "HONKBOX_READ_KEY",
+      externalTools: [null,],
+    },);
 
   await state.loadStatus();
 
   expect(state.status.state,).toBe("unavailable",);
   expect(state.status.configured,).toBe(true,);
   expect(state.status.gpuSlots,).toBeNull();
+  expect(state.status.scopesEnabled,).toBe(false,);
+  expect(state.status.scopeConsumers,).toEqual([],);
   expect(state.status.externalTools,).toEqual([],);
 });
