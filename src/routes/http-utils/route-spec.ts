@@ -41,6 +41,7 @@ export function routeAuthError() {
 export function routeNotFoundError() {
   return { 404: ErrorResponse, };
 }
+
 /** Standard auth error entries for inline Elysia response maps. */
 export function routeErrors() {
   return { ...routeAuthError(), ...routeNotFoundError(), };

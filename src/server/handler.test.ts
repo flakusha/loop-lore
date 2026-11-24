@@ -139,7 +139,7 @@ describe("plugin route resolution", () => {
 
   test("the assistant-facing tool message names the URL that resolves", () => {
     const source = readFileSync(
-      join(import.meta.dir, "..", "..", "plugins", "core", "card-battle", "plugin.ts",),
+      join(import.meta.dir, "..", "..", "packages", "plugins", "core", "card-battle", "plugin.ts",),
       "utf8",
     );
 

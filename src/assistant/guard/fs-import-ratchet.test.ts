@@ -84,8 +84,6 @@ const STATEMENT_BOUNDARY = /[;{}]$/;
  * ratchet forces.
  */
 const BASELINE = [
-  "src/assets/test-helpers.ts",
-  "src/assets/variant-path.ts",
   "src/build/compress.ts",
   "src/build/copy-icons.ts",
   "src/build/egui-artifact.ts",
@@ -127,7 +125,6 @@ const BASELINE = [
   // allowlist through the interceptor instead of resolving actual symlinks),
   // same deliberate interception-proof form as worktree-scope.ts above.
   "src/integrations/harness/repo-access/principal-scope.ts",
-  "src/plugins/loader.ts",
   // ACP fs-read bridge: its `open` must observe the REAL filesystem — the
   // bridge serves the agent's reads inside the profile's sandbox root, and
   // `open` sits in the interceptor's WRITE member list, so a policed call
