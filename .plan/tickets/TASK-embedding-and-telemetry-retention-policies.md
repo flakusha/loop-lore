@@ -18,3 +18,5 @@
 - [ ] Embeddings older than configured retention are deleted; no orphans after actor/world deletion.
 - [ ] Old telemetry partitions dropped on schedule; sampling rate reduces volume by configured factor.
 - [ ] `bun run check` green.
+
+**Amendment 2026-11-24 (Open WebUI usage-stats research C7, `.tmp/research/openwebui-usage-statistics-patterns-2026-11-24.md`):** before broad personal analytics, decide: whether hashed usage telemetry is retained independently of chats; add account/chat deletion propagation or a documented retention exception; keep content export permission separate from aggregate metrics. First acceptance proof: deleting a user/chat leaves no telemetry rows that policy says must be removed; retained rows have an explicit TTL and documented purpose.

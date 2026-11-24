@@ -15,3 +15,6 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+- [ ] External results can never set `pinned` (adapter drops/ignores pinned flags; test proves a pinned-marked external hit does not bypass budget/filter)
+- [ ] External hits enter at rank phase and are charged against the section token budget + `maxPerMessage` (no post-budget append; see BUG-keyphrase-forced-recall-bypasses-the-memory-token-budget)
+- [ ] External results are ranked by scope/privacy/semantic floor only, not by comfort/intimacy/mood gates (inputs are neutral constants until TASK-wire-real-comfort-intimacy-and-mood-inputs-into-memory-injec lands)
