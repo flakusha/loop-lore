@@ -102,17 +102,22 @@ function registerTestChunkGates(checks,) {
     "diff-scoped: the scoped coverage gate runs exactly the diff's tests",
   );
   const emptyReason = (tree,) => noopSkip(`no *.test.ts files matched under ${tree}/`,);
-  const srcTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),);
+  // Package tests live outside src/; before TEST_ROOTS.packages they only ran
+  // through src/native/*.test.ts re-export shims, which are now removed.
+  const unitTests = DIFF_BASE ? [] : [
+    ...filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),),
+    ...filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.packages,),),
+  ];
   const pluginTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.plugins,),);
   const scriptTests = DIFF_BASE ? [] : filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.scripts,),);
-  checks[TEST_CHUNK_GATE_NAMES[0]] = srcTests.length > 0
+  checks[TEST_CHUNK_GATE_NAMES[0]] = unitTests.length > 0
     ? testChunkCommand({
       coverageDirRel: CHUNK_COVERAGE_DIRS.src,
-      files: srcTests,
+      files: unitTests,
       jobs: SRC_TEST_JOBS,
       suite: "src",
     },)
-    : (DIFF_BASE ? scopedReason : emptyReason(TEST_ROOTS.src,));
+    : (DIFF_BASE ? scopedReason : emptyReason("src/, packages/"));
   // tests/e2e/ stays a DIRECTORY argument exactly like the former mega gate:
   // bun discovers `*.test.ts` under it (the `*.browser.ts` specs are not
   // test files and never ran there).
@@ -187,7 +192,10 @@ function coverageCommand() {
     // call site) are required — an empty plugins/ tree legitimately has no
     // chunk, and tests/e2e/ always exists.
     const chunks = [];
-    if (filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),).length > 0) {
+    if (
+      filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),).length > 0
+      || filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.packages,),).length > 0
+    ) {
       chunks.push(`${CHUNK_COVERAGE_DIRS.src}/lcov.info`,);
     }
     if (filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.plugins,),).length > 0) {

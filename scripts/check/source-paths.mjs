@@ -12,9 +12,10 @@ import { existsSync, readdirSync, statSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 
-/** Canonical roots for the four test chunks. */
+/** Canonical roots for the four test chunks; `packages` feeds the src chunk. */
 export const TEST_ROOTS = Object.freeze({
   e2e: "tests/e2e/",
+  packages: "packages",
   plugins: "plugins",
   scripts: "scripts",
   src: "src",

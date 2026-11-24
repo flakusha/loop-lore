@@ -10,6 +10,8 @@
  * exercises that branch without needing an actual unsupported host.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
+import { existsSync, } from "node:fs";
+import { dirname, join, relative, sep, } from "node:path";
 import { resolveNativeBinaryPath, } from "./loader";
 
 /** Snapshot + restore to avoid bleeding into other test files. */
@@ -54,4 +56,22 @@ describe("resolveNativeBinaryPath — unsupported platform", () => {
       }
     }
   });
+});
+
+/** Walk up to the cargo workspace manifest — independent of the loader depth. */
+function findCargoRoot(start: string,): string {
+  let dir = start;
+  while (!existsSync(join(dir, "Cargo.toml",),) && dirname(dir,) !== dir) {
+    dir = dirname(dir,);
+  }
+  return dir;
+}
+
+test("resolves the binary under the cargo workspace target dir", () => {
+  const cargoRoot = findCargoRoot(import.meta.dir,);
+  const candidate = resolveNativeBinaryPath();
+  expect(candidate,).not.toBeNull();
+  const rel = relative(cargoRoot, candidate ?? "",);
+  expect(rel.split(sep,)[0],).toBe("target",);
+  expect(rel,).not.toContain(join("packages", "core", "target",),);
 });

@@ -118,10 +118,9 @@ export function __resetNativeModuleCache(): void {
 /**
  * Locate the shared library for the current platform/arch.
  *
- * Resolves against the repo's in-tree release target dir (`target/release/`
- * at the workspace root). Relative to the repo root so the sample works from
- * any cwd — `import.meta.dir` points at `src/native/`, so `../..` lands on
- * the repo root.
+ * Resolves against the cargo workspace `target/` at the repo root. Anchored
+ * at this module (now `packages/core/src/native/`), so the sample works from
+ * any cwd; the regression test pins the repo-root marker.
  * @returns Absolute path to the binary, or null when this platform is unsupported.
  */
 export function resolveNativeBinaryPath(): string | null {
@@ -130,21 +129,12 @@ export function resolveNativeBinaryPath(): string | null {
     return null;
   }
 
-  const repoRoot = join(import.meta.dir, "..", "..",);
-  const debugCandidate = join(
-    repoRoot,
-    "target",
-    "debug",
-    fileName,
-  );
-
-  const releaseCandidate = join(
-    repoRoot,
-    "target",
-    "release",
-    fileName,
-  );
-
+  // ponytail: assumes the fixed monorepo depth; loader.test.ts pins the
+  // Cargo.toml marker so a future move fails the test instead of silently
+  // probing a package-local target/.
+  const repoRoot = join(import.meta.dir, "..", "..", "..", "..",);
+  const debugCandidate = join(repoRoot, "target", "debug", fileName,);
+  const releaseCandidate = join(repoRoot, "target", "release", fileName,);
   return existsSync(releaseCandidate,) ? releaseCandidate : debugCandidate;
 }
 
