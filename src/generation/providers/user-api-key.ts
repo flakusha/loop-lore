@@ -11,7 +11,7 @@
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { decryptValue, deriveUserKek, kekAad, } from "../../crypto";
+import { decryptValue, deriveUserKek, kekAad, } from "../../crypto/byok";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
