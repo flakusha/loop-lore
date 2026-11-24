@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 
 import { existsSync, readFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
@@ -29,6 +30,7 @@ let layoutConfigCache: {
   fileRoot: string;
   terminalEnabled: boolean;
   docsEnabled: boolean;
+  authRequired: boolean;
 } | null = null;
 
 /** Server startup passes the same resolved `config.docs` used for /docs/ serving. */
@@ -39,17 +41,24 @@ export function configureDocsNav(enabled: boolean,): void {
   docsNavOverride = enabled;
 }
 
+/** Test seam: drop cached layout config so a mutated config is re-read. */
+export function resetLayoutConfigCache(): void {
+  layoutConfigCache = null;
+}
+
 function layoutConfig(): {
   scheme: string;
   fileRoot: string;
   terminalEnabled: boolean;
   docsEnabled: boolean;
+  authRequired: boolean;
 } {
   layoutConfigCache ??= {
     scheme: loadConfig().web.editor,
     fileRoot: resolve(VIEWS_DIR, "..", "..",),
     terminalEnabled: loadConfig().web.terminal.enabled,
     docsEnabled: loadConfig().docs?.enabled !== false,
+    authRequired: loadConfig().auth.required,
   };
 
   return layoutConfigCache;
@@ -76,6 +85,21 @@ const DOCS_NAV_HTML = `
           <span>📚</span> <span>{{{t("navigation.docs")}}}</span>
         </a>
 `.trim();
+
+/**
+ * Demo-login entry point. Replaces `{{demoLoginLink}}` in views/login.html;
+ * omitted in required mode because the endpoint refuses anonymous minting.
+ */
+const DEMO_LOGIN_LINK_HTML = `<a
+      href="/"
+      class="login-demo-link"
+      hx-post="/api/v1/demo-login"
+      hx-target="body"
+      hx-swap="outerHTML"
+      data-testid="demo-login"
+    >
+      {{{t("auth.demoMode")}}}
+    </a>`;
 
 /**
  * @param content
@@ -129,6 +153,11 @@ function wrapWithLayout(
   layout = layout.replace("{{locale}}", () => safeLocale,);
   layout = layout.replace("{{localeDir}}", () => LOCALE_REGISTRY[safeLocale].direction,);
   if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
+  layout = layout.replace(
+    "{{demoLoginLink}}",
+    () => (layoutConfig().authRequired ? "" : DEMO_LOGIN_LINK_HTML),
+  );
+
   // i18n: replace {{{t("key")}}} with translated string
   layout = applyI18n(layout, t,);
   // Inject locale strings synchronously so Alpine t() calls resolve before fetch completes

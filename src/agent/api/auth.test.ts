@@ -47,7 +47,7 @@ afterEach(async () => {
   await destroyTestDb(testDb,);
 },);
 
-/** Insert one agent-token row; NULL expiry means "never expires". */
+/** Insert one agent-token row with a live expiry unless a test overrides it. */
 async function insertToken(
   scope: AgentTokenScope,
   options: { expiresAt?: string | null } = {},
@@ -57,7 +57,11 @@ async function insertToken(
     id: crypto.randomUUID(),
     token_hash: hash,
     scope,
-    expires_at: options.expiresAt ?? null,
+    // NULL is a pre-policy credential and now fails closed, so ordinary
+    // fixtures must carry a real stamp (RA-10).
+    expires_at: options.expiresAt === undefined
+      ? new Date(Date.now() + 60_000,).toISOString()
+      : options.expiresAt,
   },).execute();
 
   return raw;
@@ -296,5 +300,37 @@ describe("agent token TTL — fail-closed expiry", () => {
       .where("token_hash", "=", hashAgentToken(raw,),).execute();
 
     expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
+  });
+});
+
+describe("agent token fail-closed row shape (RA-10 / F-02)", () => {
+  test("a NULL expiry is denied, never an eternal bearer", async () => {
+    const raw = await insertToken(AgentTokenScope.Worktree, { expiresAt: null, },);
+
+    expect(await verifyAgentToken(db, raw,),).toBeNull();
+    expect((await whoami(makeApp(), raw,)).status,).toBe(401,);
+  });
+
+  test("a non-canonical scope is rejected instead of cast", async () => {
+    // The DB CHECK admits only canonical values, so feed verifyAgentToken a
+    // fake corrupt row directly. The assertion is on the verifier's
+    // fail-closed result, not on the stub's data.
+    const row = {
+      id: "corrupt-scope",
+      scope: "agent:ALL",
+      revoked_at: null,
+      last_used_at: null,
+      expires_at: new Date(Date.now() + 60_000,).toISOString(),
+    };
+
+    const stub = {
+      selectFrom: () => ({
+        select: () => ({
+          where: () => ({ executeTakeFirst: async () => row, }),
+        }),
+      }),
+    } as unknown as Kysely<DB>;
+
+    expect(await verifyAgentToken(stub, "llra_corrupt",),).toBeNull();
   });
 });

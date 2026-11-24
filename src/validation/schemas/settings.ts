@@ -42,10 +42,47 @@ export const SettingsUpdateAllowedKeys = [
   "backupEnabled",
   "backupTypes",
   "comfyUiModels",
+  // Keys the shipped settings UI already writes through
+  // PATCH /users/me/settings — the allowlist must not reject its own client.
+  "contentLocale",
+  "workflowSelections",
+  "enterToSend",
+  "autoScroll",
+  "inlinePreview",
 ] as const;
 
 /** */
 export type SettingsUpdateKey = (typeof SettingsUpdateAllowedKeys)[number];
+
+/**
+ * Keys in `body` that are outside the closed allowlist (RA-03). Shared by all
+ * five settings write paths so none of them can silently merge a new key.
+ * @param body - client-supplied settings object
+ * @returns rejected key names
+ */
+export function rejectedSettingsKeys(body: Record<string, unknown>,): string[] {
+  return Object.keys(body,).filter(
+    (key,) => !(SettingsUpdateAllowedKeys as readonly string[]).includes(key,),
+  );
+}
+
+/**
+ * The 400 envelope for a rejected key set, identical on every write path.
+ * Kept here so the validation layer does not import from `routes/`.
+ * @param rejectedKeys
+ * @returns Response
+ */
+export function settingsKeysRejectedResponse(rejectedKeys: string[],): Response {
+  return Response.json(
+    {
+      error: "Unknown settings keys are not allowed",
+      code: "BAD_REQUEST",
+      details: { rejectedKeys, allowedKeys: [...SettingsUpdateAllowedKeys,], },
+      meta: { api_version: "1", },
+    },
+    { status: 400, },
+  );
+}
 
 /**
  * Body schema for PATCH /api/settings — DOCUMENTATION ONLY. The route

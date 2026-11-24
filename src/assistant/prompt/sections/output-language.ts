@@ -23,31 +23,20 @@ export const outputLanguageSection: SectionBuilder = {
   name: "outputLanguage",
   enabled: () => true,
   build: async (ctx,) => {
-    // gm_config rides the AssembleChat projection (prompt-assembler
-    // loadProjections selects it) — prefer it, fall back to a live read so
-    // direct section.build callers in tests stay covered. story_state is
-    // only fetched when the gm_config rung yields nothing (read-through
-    // fallback for legacy autoTranslateLang chats).
-    const gmConfig = ctx.chat.gm_config ?? (await ctx.db
-      .selectFrom("chats",)
-      .select(["gm_config",],)
-      .where("id", "=", ctx.chat.id,)
-      .executeTakeFirst())?.gm_config ??
-      null;
+    // gm_config rides the AssembleChat projection. When it does not resolve
+    // a language, ONE select fetches both rungs so the legacy story_state
+    // fallback no longer costs a second round trip.
+    const projected = ctx.chat.gm_config;
+    const row = readChatContentLanguage(projected, null,)
+      ? null
+      : await ctx.db
+        .selectFrom("chats",)
+        .select(["gm_config", "story_state",],)
+        .where("id", "=", ctx.chat.id,)
+        .executeTakeFirst();
 
-    if (readChatContentLanguage(gmConfig, null,)) {
-      const locale = readChatContentLanguage(gmConfig, null,) ?? "";
-      return directive(locale,);
-    }
-
-    const storyState = await ctx.db
-      .selectFrom("chats",)
-      .select(["story_state",],)
-      .where("id", "=", ctx.chat.id,)
-      .executeTakeFirst()
-      .then((row,) => row?.story_state ?? null);
-
-    const locale = readChatContentLanguage(gmConfig, storyState,);
+    const gmConfig = projected ?? row?.gm_config ?? null;
+    const locale = readChatContentLanguage(gmConfig, row?.story_state,);
     if (!locale) { return []; }
 
     return directive(locale,);

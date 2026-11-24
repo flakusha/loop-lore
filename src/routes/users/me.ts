@@ -15,7 +15,13 @@ import { AssetLinkEntity, } from "../../db/enums";
 import { isWellFormedBcp47, } from "../../i18n/bcp47";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
-import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../validation/schemas";
+import {
+  ErrorResponse,
+  rejectedSettingsKeys,
+  settingsKeysRejectedResponse,
+  SuccessResponse,
+  UserProfileUpdateBody,
+} from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
@@ -79,6 +85,15 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           }
 
           if (body.settings) {
+            if (typeof body.settings !== "object" || Array.isArray(body.settings,)) {
+              return jsonError({ message: "settings must be an object", status: HttpStatus.BadRequest, },);
+            }
+
+            // Whole-blob writes must obey the same closed allowlist as the
+            // merge routes (RA-03).
+            const rejectedKeys = rejectedSettingsKeys(body.settings as Record<string, unknown>,);
+            if (rejectedKeys.length > 0) { return settingsKeysRejectedResponse(rejectedKeys,); }
+
             const settingsResult = safeJsonStringify(body.settings,);
             if (!settingsResult.ok) {
               return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
@@ -129,6 +144,9 @@ export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
               status: HttpStatus.BadRequest,
             },);
           }
+
+          const rejectedKeys = rejectedSettingsKeys(body,);
+          if (rejectedKeys.length > 0) { return settingsKeysRejectedResponse(rejectedKeys,); }
 
           const user = await opts.database
             .selectFrom("users",)

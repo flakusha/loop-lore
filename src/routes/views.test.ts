@@ -1,12 +1,13 @@
 /**
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
-import { beforeAll, describe, expect, test, } from "bun:test";
+import { afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertChats, insertUsers, } from "../test-utils/insert-helpers";
 import { applyI18n, viewRoutes, } from "./views";
+import { resetLayoutConfigCache, } from "./views/layout";
 
 beforeAll(() => {
   // The layout-wrapped views call wrapWithLayout → editorBootstrap →
@@ -144,6 +145,53 @@ describe("views serve with layout wrapping", () => {
     expect(res.status,).toBe(200,);
     const body = await res.text();
     expect(body,).toContain("<!doctype html>",);
+  });
+});
+
+describe("/views/login demo-login affordance", () => {
+  const env = process.env;
+  const authRequiredBefore = env.AUTH_REQUIRED;
+  const jwtSecretBefore = env.AUTH_JWT_SECRET;
+
+  afterEach(() => {
+    if (authRequiredBefore === undefined) { delete env.AUTH_REQUIRED; }
+    else { env.AUTH_REQUIRED = authRequiredBefore; }
+
+    if (jwtSecretBefore === undefined) { delete env.AUTH_JWT_SECRET; }
+    else { env.AUTH_JWT_SECRET = jwtSecretBefore; }
+
+    resetLayoutConfigCache();
+  },);
+
+  async function renderLogin(authRequired: boolean,): Promise<string> {
+    if (authRequired) {
+      env.AUTH_REQUIRED = "true";
+      env.AUTH_JWT_SECRET = "p3-demo-login-test-secret-0123456789abcdef";
+    } else {
+      delete env.AUTH_REQUIRED;
+    }
+
+    resetLayoutConfigCache();
+    const res = await viewRoutes({ database: mockDb, },).handle(
+      new Request("http://localhost/views/login",),
+    );
+
+    expect(res.status,).toBe(200,);
+    return await res.text();
+  }
+
+  test("omits demo-login when auth.required is true", async () => {
+    const body = await renderLogin(true,);
+    expect(body,).not.toContain('data-testid="demo-login"',);
+    expect(body,).not.toContain('hx-post="/api/v1/demo-login"',);
+    expect(body,).not.toContain("{{demoLoginLink}}",);
+  });
+
+  test("renders demo-login when auth.required is false", async () => {
+    const body = await renderLogin(false,);
+    expect(body,).toContain('data-testid="demo-login"',);
+    expect(body,).toContain('hx-post="/api/v1/demo-login"',);
+    expect(body,).not.toContain("{{demoLoginLink}}",);
   });
 });
 

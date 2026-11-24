@@ -9,7 +9,9 @@
  */
 import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { initSmk, } from "../../crypto/smk";
 import type { DB, } from "../../db/schema";
 import { LoggerImpl, } from "../../logger/logger";
 import { registry, } from "../../plugins/registry";
@@ -605,5 +607,152 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
 
     expect(jsonParseOr<Record<string, unknown>>(slow!.metadata ?? "{}", {},).tool_error,).toBe(true,);
     expect(jsonParseOr<Record<string, unknown>>(slow!.content, {},).error,).toContain("timed out",);
+  });
+},);
+
+describeReal("CG-18 residual — tool-result rows are FTS-searchable", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let suffix: string;
+  let userId: string;
+  let actorId: string;
+  let chatId: string;
+
+  beforeEach(async () => {
+    suffix = randomUUID().replaceAll("-", "",);
+    userId = `u-${suffix}`;
+    actorId = `a-${suffix}`;
+    chatId = `c-${suffix}`;
+    const created = await createTestDb();
+    db = created.db;
+    sqlite = created.sqlite;
+
+    await db.insertInto("users",).values({
+      id: userId,
+      username: `u${suffix}`,
+      display_name: "CG18 User",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+      encryption_secret: "f".repeat(64,),
+    },).execute();
+
+    await insertActors(db, "CG18 Actor", {
+      id: actorId,
+      actor_type: "character",
+      owner_id: userId,
+      agent_type: "ai",
+      settings: "{}",
+      import_spec: "raw",
+      data_source_format: "json",
+      data_raw: null,
+    } as never,);
+
+    await db.insertInto("chats",).values({
+      id: chatId,
+      name: "CG18 Chat",
+      type: "direct",
+      mode: "direct",
+      created_by: userId,
+      max_turns: null,
+      encryption_level: "standard",
+    } as never,).execute();
+  },);
+
+  afterEach(() => {
+    registry.unregisterAll();
+    sqlite.close();
+  },);
+
+  test("encryption off: persists content_plaintext so FTS MATCH finds the tool-result row", async () => {
+    const token = `cg18tool${suffix}`;
+    const content = `watchword ${token} end`;
+    registry.addTools("test-plugin", [
+      {
+        name: "fts_tool",
+        description: "fts",
+        parameters: {},
+        handler: async () => ({ content, }),
+      },
+    ],);
+
+    await executeToolCalls(
+      [{ id: `tc-${suffix}`, function: { name: "fts_tool", arguments: "{}", }, },],
+      { db, actorId, chatId, },
+    );
+
+    const row = await db
+      .selectFrom("messages",)
+      .select(["id", "content_plaintext",],)
+      .where("chat_id", "=", chatId,)
+      .where("content_type", "=", "tool_result",)
+      .executeTakeFirstOrThrow();
+
+    expect(row.content_plaintext,).toBe(content,);
+
+    const match = await sql<
+      { message_id: string }
+    >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${token}`.execute(db,);
+
+    expect(match.rows.map((r,) => r.message_id),).toContain(row.id,);
+  });
+
+  test("encryption on: row stays FTS-searchable and gets no duplicate blind tokens", async () => {
+    const token = `cg18enc${suffix}`;
+    const content = `watchword ${token} end`;
+    await initSmk({
+      serverEncryptionKey: "a".repeat(64,),
+      required: false,
+      compressThreshold: 1024,
+      compressAlgorithm: "gzip",
+    },);
+
+    process.env.ENABLE_TOKEN_INDEXING = "1";
+    try {
+      registry.addTools("test-plugin", [
+        {
+          name: "fts_tool_enc",
+          description: "fts",
+          parameters: {},
+          handler: async () => ({ content, }),
+        },
+      ],);
+
+      await executeToolCalls(
+        [{ id: `tc-enc-${suffix}`, function: { name: "fts_tool_enc", arguments: "{}", }, },],
+        { db, actorId, chatId, },
+      );
+
+      const row = await db
+        .selectFrom("messages",)
+        .select(["id", "content", "content_plaintext",],)
+        .where("chat_id", "=", chatId,)
+        .where("content_type", "=", "tool_result",)
+        .executeTakeFirstOrThrow();
+
+      expect(row.content,).not.toBe(content,);
+      expect(row.content_plaintext,).toBe(content,);
+
+      const match = await sql<
+        { message_id: string }
+      >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${token}`.execute(db,);
+
+      expect(match.rows.map((r,) => r.message_id),).toContain(row.id,);
+
+      const blind = await db
+        .selectFrom("message_search_tokens",)
+        .select("term",)
+        .where("message_id", "=", row.id,)
+        .execute();
+
+      expect(blind,).toHaveLength(0,);
+    } finally {
+      delete process.env.ENABLE_TOKEN_INDEXING;
+      await initSmk({
+        required: false,
+        compressThreshold: 1024,
+        compressAlgorithm: "gzip",
+      },);
+    }
   });
 },);

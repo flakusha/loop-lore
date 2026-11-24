@@ -129,6 +129,7 @@ async function persistToolResults(
         role: MessageRole.Assistant,
         content: storedContent,
         key_id: storedKeyId,
+        content_plaintext: result.content,
         content_type: MessageContentType.ToolResult,
         content_format: MessageContentFormat.Markdown,
         content_encoding: ContentEncoding.Identity,
@@ -138,13 +139,14 @@ async function persistToolResults(
       },)
       .execute();
 
-    // The row carries no plaintext mirror: index blind tokens for the token
-    // tier (no-op unless ENABLE_TOKEN_INDEXING=1; best-effort like the insert).
+    // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+    // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
     await indexMessageSearchTokens(ctx.db, {
       messageId: toolResultId,
       chatId: ctx.chatId,
       plaintext: result.content,
       keyId: storedKeyId,
+      plaintextMirror: result.content,
     },);
   }
 }

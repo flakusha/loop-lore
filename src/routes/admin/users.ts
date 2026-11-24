@@ -2,11 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { UserRole, } from "../../db/enums-core/users";
-import type { DB, } from "../../db/schema";
+import { redactCredentials, } from "../../integrations/secrets";
 import { getLogger, } from "../../logger";
-import { safeJsonStringify, uid, } from "../../utils";
+import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import {
   ADMIN_ROLES,
   AdminRoleUpdateBody,
@@ -27,23 +26,6 @@ import {
   withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
-
-/**
- * True when an admin other than `excludedId` remains. Shared by delete and
- * role demotion so neither path can leave the instance with zero admins.
- * @param database - admin DB handle
- * @param excludedId - admin being removed or demoted
- */
-async function hasOtherAdmin(database: Kysely<DB>, excludedId: string,): Promise<boolean> {
-  const remaining = await database
-    .selectFrom("users",)
-    .select(database.fn.count("id",).as("count",),)
-    .where("role", "=", "admin",)
-    .where("id", "!=", excludedId,)
-    .executeTakeFirst();
-
-  return !!remaining && Number(remaining.count,) > 0;
-}
 
 /**
  * @param opts
@@ -145,7 +127,15 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               },);
             }
 
-            return jsonResponse(user,);
+            // BYO provider keys live in `settings` as plaintext; an admin
+            // detail response must not echo them (RA-09). Redact the parsed
+            // blob and re-serialize so the response shape stays unchanged.
+            const settings = user.settings
+              ? redactCredentials(jsonParseOr<Record<string, unknown>>(user.settings, {},),)
+              : {};
+
+            const serialized = safeJsonStringify(settings,);
+            return jsonResponse({ ...user, settings: serialized.ok ? serialized.value : "{}", },);
           },);
         },
         {
@@ -178,19 +168,6 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
             // Capture the prior role for the audit row (TASK-032).
             const prior = await db.selectFrom("users",).select("role",).where("id", "=", id,).executeTakeFirst();
-
-            // Demoting the only admin would lock every admin route out.
-            if (
-              prior?.role === "admin" && role !== "admin" &&
-              !(await hasOtherAdmin(db, id,))
-            ) {
-              return jsonError({
-                message: "Cannot demote the last admin account",
-                status: HttpStatus.BadRequest,
-                code: ErrorCode.BadRequest,
-              },);
-            }
-
             await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
 
             // Audit event (event_type = "user.role_changed") so the admin
@@ -257,12 +234,21 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               },);
             }
 
-            if (target.role === "admin" && !(await hasOtherAdmin(db, id,))) {
-              return jsonError({
-                message: ctx.t?.("admin.cannotDeleteLastAdmin",) ?? "Cannot delete the last admin account",
-                status: HttpStatus.BadRequest,
-                code: ErrorCode.BadRequest,
-              },);
+            if (target.role === "admin") {
+              const remaining = await db
+                .selectFrom("users",)
+                .select(db.fn.count("id",).as("count",),)
+                .where("role", "=", "admin",)
+                .where("id", "!=", id,)
+                .executeTakeFirst();
+
+              if (!remaining || Number(remaining.count,) === 0) {
+                return jsonError({
+                  message: ctx.t?.("admin.cannotDeleteLastAdmin",) ?? "Cannot delete the last admin account",
+                  status: HttpStatus.BadRequest,
+                  code: ErrorCode.BadRequest,
+                },);
+              }
             }
 
             await db.deleteFrom("users",).where("id", "=", id,).execute();

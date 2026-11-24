@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { formatTime, } from "./date";
+import { calculateAge, formatTime, } from "./date";
 
 describe("utils/date formatTime (real logic)", () => {
   it("standard format includes dashes and colon", () => {
@@ -19,5 +19,16 @@ describe("utils/date formatTime (real logic)", () => {
     const s = formatTime({ date: new Date("2026-01-01",), },);
     expect(typeof s,).toBe("string",);
     expect(s.length,).toBeGreaterThan(0,);
+  });
+});
+
+describe("utils/date calculateAge (real logic)", () => {
+  it("treats a UTC-today birth date as age zero regardless of host offset", () => {
+    const today = new Date().toISOString().slice(0, 10,);
+    expect(calculateAge(today,),).toBe(0,);
+  });
+
+  it("returns null for an invalid date", () => {
+    expect(calculateAge("not-a-date",),).toBeNull();
   });
 });

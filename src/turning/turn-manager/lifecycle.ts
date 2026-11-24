@@ -42,7 +42,6 @@ export async function requestRegeneration(
  */
 export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { return; }
-  host.state.pendingRegeneration = null;
   await persistState(host, (state,) => {
     state.pendingRegeneration = null;
   },);
@@ -56,7 +55,6 @@ export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
  */
 export async function pause(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
-  host.state.isPaused = true;
   await persistState(host, (state,) => {
     state.isPaused = true;
   },);
@@ -70,7 +68,6 @@ export async function pause(host: TurnManagerHost,): Promise<void> {
  */
 export async function resume(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
-  host.state.isPaused = false;
   await persistState(host, (state,) => {
     state.isPaused = false;
   },);
@@ -84,8 +81,6 @@ export async function resume(host: TurnManagerHost,): Promise<void> {
  */
 export async function resetTurnCounter(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
-  host.state.currentTurn = 0;
-  host.state.currentActorId = null;
   await persistState(host, (state,) => {
     state.currentTurn = 0;
     state.currentActorId = null;

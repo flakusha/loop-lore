@@ -31,6 +31,7 @@ import type { DB, } from "../../db/schema";
 import { assertValidWrite, } from "../../db/validators/enforce";
 import { encryptStoredContent, } from "../../generation/generate-route/tool-result-persist";
 import { findByIdempotencyKey, isIdempotencyUniqueViolation, } from "../../routes/messages/swipe-race-insert";
+import { indexMessageSearchTokens, } from "../../search";
 import { safeJsonStringify, } from "../../utils";
 import { isTerminalToolStatus, } from "./acp-session-update";
 import { type HarnessTurnResult, } from "./adapter-types";
@@ -174,6 +175,7 @@ export async function persistHarnessTurn(
         role: MessageRole.Assistant,
         content: assistantContent.storedContent,
         key_id: assistantContent.storedKeyId,
+        content_plaintext: transcript.text,
         content_format: MessageContentFormat.Markdown,
         content_type: MessageContentType.Text,
         content_encoding: ContentEncoding.Identity,
@@ -193,6 +195,15 @@ export async function persistHarnessTurn(
         token_cost: turn.costUsd ?? null,
       },).execute();
 
+      // The mirror feeds FTS5; blind tokens stay a fallback for mirrorless rows.
+      await indexMessageSearchTokens(trx, {
+        messageId: assistantId,
+        chatId,
+        plaintext: transcript.text,
+        keyId: assistantContent.storedKeyId,
+        plaintextMirror: transcript.text,
+      },);
+
       const ids: string[] = [];
       for (const [index, result,] of finished.entries()) {
         const id = randomUUID();
@@ -205,6 +216,7 @@ export async function persistHarnessTurn(
           role: MessageRole.Assistant,
           content: content.storedContent,
           key_id: content.storedKeyId,
+          content_plaintext: result.content,
           content_format: MessageContentFormat.Markdown,
           content_type: MessageContentType.ToolResult,
           content_encoding: ContentEncoding.Identity,
@@ -212,6 +224,14 @@ export async function persistHarnessTurn(
           visibility: MessageVisibility.Visible,
           metadata: toolResultMetadata(result,),
         },).execute();
+
+        await indexMessageSearchTokens(trx, {
+          messageId: id,
+          chatId,
+          plaintext: result.content,
+          keyId: content.storedKeyId,
+          plaintextMirror: result.content,
+        },);
 
         ids.push(id,);
       }

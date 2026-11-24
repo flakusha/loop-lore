@@ -146,6 +146,51 @@ describe("federation-peer-save — savePeer", () => {
     expect(raw,).toContain("hasSharedToken",);
     await db.destroy();
   });
+
+  test("blocks a link-local origin before the probe fires (RA-08)", async () => {
+    const { db, } = await createTestDb();
+    try {
+      let probed = false;
+      const probeFetch: PeerProbeFetch = async () => {
+        probed = true;
+        return {
+          ok: true,
+          status: 200,
+          body: {
+            instanceId: "metadata",
+            workloadClasses: [PeerWorkloadClass.Chat,],
+          },
+        };
+      };
+
+      const res = await savePeer(optsFor(db, probeFetch,), "admin-1", {
+        origin: "http://169.254.169.254",
+      },);
+
+      expect(res.status,).toBe(400,);
+      const body = await res.json() as { data?: { reason?: string } };
+      expect(body.data?.reason,).toBe("blocked_origin",);
+      expect(probed,).toBe(false,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  test("blocks a private RFC1918 origin even with a shared token", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await savePeer(optsFor(db,), "admin-1", {
+        origin: "http://10.0.0.5",
+        sharedToken: "local-secret",
+      },);
+
+      expect(res.status,).toBe(400,);
+      const body = await res.json() as { data?: { reason?: string } };
+      expect(body.data?.reason,).toBe("blocked_origin",);
+    } finally {
+      await db.destroy();
+    }
+  });
 });
 
 describe("federation-peer-save — badOriginResponse", () => {

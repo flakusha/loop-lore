@@ -6,7 +6,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertMessages, } from "../test-utils/insert-helpers";
 import { TurnManager, } from "./turn-manager";
-import { createInitialState, } from "./turn-manager/state";
+import { createInitialState, persistState, } from "./turn-manager/state";
 
 let db: Kysely<DB>;
 const userId = "user-turn-1";
@@ -363,6 +363,29 @@ describe("TurnManager", () => {
 
       expect(tm.stateSnapshot!.pendingRegeneration,).toBeNull();
     });
+
+    // The other lifecycle dispatchers carried the same dead pre-mutation:
+    // with no chat row the write cannot land, so in-memory state must not
+    // claim the change either.
+    test("lifecycle helpers do not mutate state when the chat row is missing", async () => {
+      const tm = new TurnManager({ db, chatId: "chat-deleted", },);
+      const initial = {
+        ...createInitialState(),
+        currentTurn: 7,
+        currentActorId: "actor-ai-1",
+        isPaused: false,
+        pendingRegeneration: { turnId: "t0", attempt: 1, reason: "test", },
+      };
+
+      tm.state = initial;
+
+      await tm.clearRegeneration();
+      await tm.pause();
+      await tm.resume();
+      await tm.resetTurnCounter();
+
+      expect(tm.stateSnapshot,).toEqual(initial,);
+    });
   });
 
   describe("refreshOrder()", () => {
@@ -377,6 +400,18 @@ describe("TurnManager", () => {
   });
 
   describe("state persistence", () => {
+    test("persistState rejects when story_state cannot be serialized", async () => {
+      const { chatId, } = await makeChat();
+      const tm = new TurnManager({ db, chatId, },);
+      await tm.initialize();
+
+      await expect(
+        persistState(tm, (state,) => {
+          (state as unknown as Record<string, unknown>).bad = 1n;
+        },),
+      ).rejects.toThrow(/failed to serialize story_state/,);
+    });
+
     test("persists state across TurnManager instances", async () => {
       const { chatId, } = await makeChat();
       const tm1 = new TurnManager({ db, chatId, },);

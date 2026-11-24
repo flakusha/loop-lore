@@ -113,12 +113,14 @@ export async function loadAllPlugins(
 /**
  * Sorted subdirectory names under a plugin root — the per-plugin folders.
  * @param fullDir - Resolved plugin root directory
- * @returns Directory names in deterministic (locale-compare) order.
+ * @returns Directory names in deterministic code-point order.
  */
 function pluginDirNames(fullDir: string,): string[] {
   const entries = readdirSync(fullDir, { withFileTypes: true },);
   const names = entries.filter((e) => e.isDirectory(),).map((e,) => e.name,);
-  names.sort((a, b) => a.localeCompare(b,),);
+  // localeCompare picks different winners under tr-TR; migration discovery
+  // uses the same code-point ordering.
+  names.sort((a, b,) => a < b ? -1 : a > b ? 1 : 0,);
   return names;
 }
 

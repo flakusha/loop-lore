@@ -98,12 +98,13 @@ export class WsHandler extends TransportBase<WsOptions> {
     if (!this.ws) { return; }
     const queue = this.pendingMessages;
     this.pendingMessages = [];
-    for (const data of queue) {
+    for (const [index, data,] of queue.entries()) {
       try {
         this.ws.send(typeof data === "string" ? data : (data as unknown as Parameters<WebSocket["send"]>[0]),);
       } catch (err) {
-        // Re-buffer on send failure so a transient error doesn't drop the message.
-        this.pendingMessages.unshift(...queue.slice(queue.indexOf(data,),),);
+        // Re-buffer from the FAILED index. indexOf() found the first equal
+        // value and re-queued payloads that had already gone out.
+        this.pendingMessages.unshift(...queue.slice(index,),);
         throw err;
       }
     }

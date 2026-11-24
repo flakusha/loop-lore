@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { compareMigrationNames, } from "../src/db/migrate";
+import { compareMigrationNames, MIGRATION_FILENAME, } from "../src/db/migrate";
 
 describe("migration ordering gate: compareMigrationNames", () => {
   test("sorts a misordered list by numeric prefix, then alphabetically", () => {
@@ -20,5 +20,14 @@ describe("migration ordering gate: compareMigrationNames", () => {
       "003_init.ts",
       "010_later.ts",
     ],);
+  });
+});
+
+describe("migration filename gate: MIGRATION_FILENAME", () => {
+  test("excludes colocated test files and strays", () => {
+    expect(MIGRATION_FILENAME.test("001_init.ts",),).toBe(true,);
+    expect(MIGRATION_FILENAME.test("001_init.test.ts",),).toBe(false,);
+    expect(MIGRATION_FILENAME.test("README.md",),).toBe(false,);
+    expect("001_init.ts".match(MIGRATION_FILENAME,)?.[1],).toBe("001",);
   });
 });

@@ -1,7 +1,8 @@
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import {
   clearDetectors,
   detectPolicyMismatch,
+  isolateDetectors,
   registerDefaultNullDetector,
   registerPolicyDetector,
 } from "./policy-detector";
@@ -33,8 +34,17 @@ function makeDetector(name: string, result: DetectorResult,): PolicyDetector {
 }
 
 describe("policy-detector registry", () => {
+  let restore: () => void = () => {};
+
+  beforeEach(() => {
+    restore = isolateDetectors([],);
+  },);
+
+  afterEach(() => {
+    restore();
+  },);
+
   test("null detector reports no mismatch", async () => {
-    clearDetectors();
     registerDefaultNullDetector();
     const result = await detectPolicyMismatch("anything at all", DEFAULT_POLICY_DETECTION,);
     expect(result.detected,).toBe(false,);
@@ -42,7 +52,6 @@ describe("policy-detector registry", () => {
   });
 
   test("registered detector fires on match", async () => {
-    clearDetectors();
     registerPolicyDetector(makeDetector("keyword", { detected: true, confidence: 0.9, },),);
     const result = await detectPolicyMismatch("this is ban", DEFAULT_POLICY_DETECTION,);
     expect(result.detected,).toBe(true,);
@@ -50,7 +59,6 @@ describe("policy-detector registry", () => {
   });
 
   test("disabled config short-circuits before detection", async () => {
-    clearDetectors();
     registerPolicyDetector(makeDetector("always", { detected: true, confidence: 1, },),);
     const result = await detectPolicyMismatch("this is ban", {
       ...DEFAULT_POLICY_DETECTION,
@@ -61,16 +69,40 @@ describe("policy-detector registry", () => {
   });
 
   test("first positive detector short-circuits", async () => {
-    clearDetectors();
     registerPolicyDetector(makeDetector("first", { detected: true, confidence: 0.5, },),);
     registerPolicyDetector(makeDetector("second", { detected: true, confidence: 0.99, },),);
     const result = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
     expect(result.confidence,).toBeCloseTo(0.5,);
   });
 
-  test("clearDetectors removes all", async () => {
+  test("isolateDetectors restores the previous registry", async () => {
+    registerPolicyDetector(makeDetector("outer", { detected: false, confidence: 0.2, },),);
+    const innerRestore = isolateDetectors([
+      makeDetector("inner", { detected: true, confidence: 0.9, },),
+    ],);
+
+    const inside = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
+    expect(inside.confidence,).toBeCloseTo(0.9,);
+
+    innerRestore();
+    const outside = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
+    expect(outside.detected,).toBe(false,);
+    expect(outside.confidence,).toBeCloseTo(0.2,);
+  });
+
+  test("clearDetectors empties the active registry", async () => {
+    registerPolicyDetector(makeDetector("first", { detected: true, confidence: 0.7, },),);
+    registerPolicyDetector(makeDetector("second", { detected: true, confidence: 0.4, },),);
+
+    const before = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
+    expect(before.detected,).toBe(true,);
+    expect(before.confidence,).toBeCloseTo(0.7,);
+
     clearDetectors();
-    const result = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
-    expect(result.detected,).toBe(false,);
+
+    const after = await detectPolicyMismatch("content", DEFAULT_POLICY_DETECTION,);
+    expect(after.detected,).toBe(false,);
+    expect(after.confidence,).toBeCloseTo(0,);
+    expect(after.indicators,).toEqual([],);
   });
 });

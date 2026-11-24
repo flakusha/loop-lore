@@ -1088,4 +1088,19 @@ describe("plugin discovery scan — scanAvailablePlugins", () => {
 
     expect(found,).toEqual([],);
   });
+
+  test("orders directories by code point, not the active locale", async () => {
+    const root = makePluginDir({});
+    for (const [dir, name,] of [["a", "fixture-order-a"], ["B", "fixture-order-B"],] as const) {
+      mkdirSync(join(root, dir,), { recursive: true, },);
+      writeFileSync(
+        join(root, dir, "plugin.ts",),
+        `export const plugin = { name: "${name}", version: "1.0.0", description: "o", author: "test" };\n`,
+      );
+    }
+
+    const found = await scanAvailablePlugins({ roots: [{ origin: "local", dir: root, },], },);
+    // Code point puts "B" (0x42) before "a" (0x61); localeCompare does not.
+    expect(found.map((p,) => p.manifest.name,),).toEqual(["fixture-order-B", "fixture-order-a",],);
+  });
 });

@@ -24,6 +24,8 @@ interface LiveJob {
   handle: { stop(): void } | null;
   lastRunAt: string | null;
   lastError: string | null;
+  /** Parsed once at boot, refreshed once per run — never per status poll. */
+  nextRunAt: string | null;
   runCount: number;
 }
 
@@ -42,10 +44,10 @@ export function defineJob(def: CronJobDef,): CronJobDef {
  * returns null when it cannot compute a next fire time.
  * @param name
  * @param schedule
- * @returns void
+ * @returns ISO next fire time, cached on the live job for status reads
  * @throws {Error} when the expression is malformed or yields no next fire time
  */
-function assertValidSchedule(name: string, schedule: string,): void {
+function assertValidSchedule(name: string, schedule: string,): string {
   let parsed: Date | null = null;
   try {
     parsed = Bun.cron.parse(schedule,);
@@ -57,6 +59,8 @@ function assertValidSchedule(name: string, schedule: string,): void {
   if (parsed === null) {
     throw new Error(`Invalid cron schedule for job "${name}": ${schedule}`,);
   }
+
+  return parsed.toISOString();
 }
 
 /**
@@ -98,6 +102,13 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       job.lastError = String(error,);
       ctx.logger.error(`cron job failed: ${job.def.name}`, undefined, { error: String(error,), },);
       throw error;
+    } finally {
+      // Refresh once per actual run; getStatus() is polled and must not parse.
+      try {
+        job.nextRunAt = Bun.cron.parse(job.schedule,)?.toISOString() ?? null;
+      } catch {
+        job.nextRunAt = null;
+      }
     }
   }
 
@@ -112,13 +123,14 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       handle: null,
       lastRunAt: null,
       lastError: null,
+      nextRunAt: null,
       runCount: 0,
     };
 
     live.set(def.name, job,);
     if (!enabled) { continue; }
 
-    assertValidSchedule(def.name, schedule,);
+    job.nextRunAt = assertValidSchedule(def.name, schedule,);
     const ctx: JobContext = {
       database,
       config,
@@ -142,7 +154,7 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
       schedule: job.schedule,
       enabled: job.enabled,
       lastRunAt: job.lastRunAt,
-      nextRunAt: job.enabled ? (Bun.cron.parse(job.schedule,)?.toISOString() ?? null) : null,
+      nextRunAt: job.enabled ? job.nextRunAt : null,
       lastError: job.lastError,
       runCount: job.runCount,
     }),);

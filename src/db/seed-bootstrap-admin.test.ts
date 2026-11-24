@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { Config, } from "../config/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -92,5 +92,29 @@ describe("seedBootstrapAdmin (multi-user mode)", () => {
     const solo = await db2.selectFrom("users",).select("id",).where("role", "=", "solo",).executeTakeFirst();
     expect(solo,).toBeDefined();
     await db2.destroy();
+  });
+
+  test("rolls the admin user back when its actor insert fails", async () => {
+    const { db: db2, } = await createTestDb();
+    try {
+      await sql`CREATE TRIGGER fail_user_actor BEFORE INSERT ON actors
+        WHEN NEW.actor_type = 'user'
+        BEGIN SELECT RAISE(ABORT, 'forced actor failure'); END`.execute(db2,);
+
+      await seedDefaultActors(
+        db2,
+        multiUserConfig({ adminUsername: "atomic", adminPassword: "sup3rsecret", },),
+      );
+
+      const admin = await db2
+        .selectFrom("users",)
+        .select("id",)
+        .where("username", "=", "atomic",)
+        .executeTakeFirst();
+
+      expect(admin,).toBeUndefined();
+    } finally {
+      await db2.destroy();
+    }
   });
 });

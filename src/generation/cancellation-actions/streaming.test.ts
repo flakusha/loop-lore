@@ -42,11 +42,13 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertGenerationAttempts, } from "../../test-utils/insert-helpers";
 import { activeGenerations, } from "../cancellation-tracker";
 import type { ActiveGeneration, } from "../cancellation-tracker/types";
-import { clearDetectors, registerPolicyDetector, } from "../policy-detector";
+import { isolateDetectors, } from "../policy-detector";
 import { StreamingRepetitionDetector, } from "../repetition-detector/streaming";
 import { DEFAULT_REPETITION_DETECTION, } from "../types";
 import type { GenerationEvents, } from "../types";
 import { processStreamingChunk, } from "./streaming";
+
+let restoreDetectors: () => void = () => {};
 
 /**
  * Build a minimal ActiveGeneration for test purposes. Fields used by the
@@ -81,7 +83,7 @@ function buildActive(overrides: Partial<ActiveGeneration> = {},): ActiveGenerati
  * Register a stub policy detector that always reports a mismatch.
  */
 function registerStubPolicyDetector(): void {
-  registerPolicyDetector({
+  restoreDetectors = isolateDetectors([{
     name: "test-stub",
     analyze: async () => ({
       detected: true,
@@ -93,7 +95,7 @@ function registerStubPolicyDetector(): void {
         severity: PolicySeverity.High,
       },],
     }),
-  },);
+  },],);
 }
 
 /**
@@ -168,7 +170,8 @@ describe("processStreamingChunk", () => {
 
   afterEach(() => {
     activeGenerations.clear();
-    clearDetectors();
+    restoreDetectors();
+    restoreDetectors = () => {};
   },);
 
   test("returns Complete immediately when no active generation is registered", async () => {

@@ -93,30 +93,41 @@ export function mountMeshIntelApi(app: Elysia, opts: MeshRouteOpts,): void {
       return error("source peer mismatch", HttpStatus.BadRequest, ErrorCode.BadRequest,);
     }
 
-    const now = new Date();
-    await pruneExpiredIntel(database, now,);
-    const active = await countActiveForPeer(database, origin, now,);
-    const reports = parsed.feed.records.filter((record,) => record.action === "report");
-    if (active + reports.length > MAX_PER_PEER) {
+    // One transaction: prune is a write, so it takes the SQLite write lock
+    // before the budget count. Concurrent pushes from one peer then cannot
+    // both pass the cap check and insert past it.
+    const result = await database.transaction().execute(async (trx,) => {
+      const now = new Date();
+      await pruneExpiredIntel(trx, now,);
+      const active = await countActiveForPeer(trx, origin, now,);
+      const reports = parsed.feed.records.filter((record,) => record.action === "report");
+      if (active + reports.length > MAX_PER_PEER) {
+        return { budgetExceeded: true as const, };
+      }
+
+      let accepted = 0;
+      let delisted = 0;
+      let duplicates = 0;
+      for (const record of parsed.feed.records) {
+        if (record.action === "delist") {
+          delisted += await delistIntelForPeer(trx, record.indicator, origin,);
+        } else if (await recordIntel(trx, record, now,)) {
+          accepted += 1;
+        } else {
+          duplicates += 1;
+        }
+
+        audit(record.action, record.indicator, origin,);
+      }
+
+      return { accepted, budgetExceeded: false as const, delisted, duplicates, };
+    },);
+
+    if (result.budgetExceeded) {
       return error("peer intel budget exhausted", HttpStatus.TooManyRequests, ErrorCode.TooManyRequests,);
     }
 
-    let accepted = 0;
-    let delisted = 0;
-    let duplicates = 0;
-    for (const record of parsed.feed.records) {
-      if (record.action === "delist") {
-        delisted += await delistIntelForPeer(database, record.indicator, origin,);
-      } else if (await recordIntel(database, record, now,)) {
-        accepted += 1;
-      } else {
-        duplicates += 1;
-      }
-
-      audit(record.action, record.indicator, origin,);
-    }
-
-    return jsonResponse({ accepted, delisted, duplicates, },);
+    return jsonResponse({ accepted: result.accepted, delisted: result.delisted, duplicates: result.duplicates, },);
   },);
 
   app.post("/api/mesh/intel/pull", async ({ body, },) => {

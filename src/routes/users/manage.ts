@@ -15,6 +15,8 @@ import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { forbidden, notFound, } from "../../validation/middleware";
 import {
   ErrorResponse,
+  rejectedSettingsKeys,
+  settingsKeysRejectedResponse,
   SettingsUpdateAllowedKeys,
   SuccessResponse,
   UserIdParams,
@@ -85,6 +87,14 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const updates: Record<string, unknown> = {};
           if (body.displayName !== undefined) { updates.display_name = body.displayName; }
           if (body.settings) {
+            if (typeof body.settings !== "object" || Array.isArray(body.settings,)) {
+              return jsonError({ message: "settings must be an object", status: HttpStatus.BadRequest, },);
+            }
+
+            // Whole-blob writes obey the same closed allowlist (RA-03).
+            const rejectedKeys = rejectedSettingsKeys(body.settings as Record<string, unknown>,);
+            if (rejectedKeys.length > 0) { return settingsKeysRejectedResponse(rejectedKeys,); }
+
             const settingsResult = safeJsonStringify(body.settings,);
             if (!settingsResult.ok) {
               return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);

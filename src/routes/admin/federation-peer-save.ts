@@ -22,12 +22,14 @@
  * stored `pending`, never `trusted`, and the operator is told why.
  */
 
-import { PEER_INSTANCE_KINDS, PEER_WORKLOAD_CLASSES, } from "../../db/enums";
+import { PEER_INSTANCE_KINDS, PEER_WORKLOAD_CLASSES, PeerLinkKind, } from "../../db/enums";
 import { setPeerState, } from "../../federation/coordinator";
 import { canonicalOrigin, } from "../../federation/peer-fetch";
 import { type PeerProbeFetch, probePeerHealth, } from "../../federation/peer-health-probe";
 import { PeerWorkloadValidationError, savePeerWorkload, } from "../../federation/peer-registry";
+import { derivedLinkKind, } from "../../federation/peer-registry-validation";
 import { getChildLogger, } from "../../logger";
+import { validateFetchUrl, } from "../../utils/url-validation";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import {
   auditFederationChange,
@@ -78,6 +80,21 @@ export async function savePeer(
 
   for (const entry of body.allowedWorkloadClasses ?? []) {
     if (!isWorkloadClass(entry,)) { return notInEnumResponse("allowedWorkloadClasses", entry, PEER_WORKLOAD_CLASSES,); }
+  }
+
+  // RA-08: the probe issues a server-side GET to an admin-supplied origin.
+  // Reuse the private/link-local guard behind guardUrl so a stored peer can
+  // never point the server at cloud metadata or an RFC1918 address. Loopback
+  // is released here: validatePeerWorkloadSave already rejects it without a
+  // token, and loopback-with-token is the supported local probe target.
+  const urlVerdict = await validateFetchUrl(origin,);
+  if (urlVerdict.local === true && derivedLinkKind(origin,) !== PeerLinkKind.Loopback) {
+    return jsonError({
+      message: `Peer origin is not allowed: ${urlVerdict.error ?? "private address"}`,
+      status: HttpStatus.BadRequest,
+      code: ErrorCode.BadRequest,
+      data: { reason: "blocked_origin", },
+    },);
   }
 
   const trust = configTrustFor(opts, origin,);

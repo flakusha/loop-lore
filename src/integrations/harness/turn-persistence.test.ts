@@ -12,7 +12,9 @@
  * subprocess (unique mkdtemp dir) and reaps it in a finally block.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { type KyselyPlugin, SelectQueryNode, } from "kysely";
+import { type KyselyPlugin, SelectQueryNode, sql, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { initSmk, } from "../../crypto/smk";
 import { MessageStatus, } from "../../db/enums";
 import { parseToolCalls, parseToolResultMeta, } from "../../routes/messages/helpers";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -386,5 +388,136 @@ describe("persistHarnessTurn", () => {
     expect(second.assistantMessageId,).toBe(first.assistantMessageId,);
     const rows = await fixture.db.selectFrom("messages",).selectAll().execute();
     expect(rows,).toHaveLength(2,);
+  });
+});
+
+describe("CG-18 residual — harness turn rows are FTS-searchable", () => {
+  /** Transcript with unique watchwords for both the assistant and tool rows. */
+  function ftsTranscript(assistantWord: string, toolWord: string,): HarnessTurnTranscript {
+    return {
+      text: `assistant watchword ${assistantWord} end`,
+      thinking: [],
+      modes: [],
+      toolCalls: [
+        { id: `tc-${toolWord}`, name: "grep", kind: "read", arguments: "{}", },
+      ],
+      toolResults: [
+        {
+          toolCallId: `tc-${toolWord}`,
+          name: "grep",
+          status: "completed",
+          content: `tool watchword ${toolWord} end`,
+          error: false,
+        },
+      ],
+    };
+  }
+
+  it("encryption off: assistant and tool rows carry mirrors and FTS MATCH finds both", async () => {
+    const assistantWord = `cg18harness${randomUUID().replaceAll("-", "",)}`;
+    const toolWord = `cg18toolrow${randomUUID().replaceAll("-", "",)}`;
+    const persisted = await persistHarnessTurn({
+      database: fixture.db,
+      chatId,
+      actorId,
+      profile: "omp",
+      transcript: ftsTranscript(assistantWord, toolWord,),
+      turn: turn(),
+      turnKey: `cg18-${assistantWord}`,
+    },);
+
+    const assistant = await fixture.db
+      .selectFrom("messages",)
+      .select(["id", "content_plaintext",],)
+      .where("id", "=", persisted.assistantMessageId,)
+      .executeTakeFirstOrThrow();
+
+    const toolRow = await fixture.db
+      .selectFrom("messages",)
+      .select(["id", "content_plaintext",],)
+      .where("id", "=", persisted.toolResultIds[0]!,)
+      .executeTakeFirstOrThrow();
+
+    expect(assistant.content_plaintext,).toBe(`assistant watchword ${assistantWord} end`,);
+    expect(toolRow.content_plaintext,).toBe(`tool watchword ${toolWord} end`,);
+
+    for (const [word, id,] of [[assistantWord, assistant.id,], [toolWord, toolRow.id,],] as const) {
+      const match = await sql<
+        { message_id: string }
+      >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${word}`.execute(fixture.db,);
+
+      expect(match.rows.map((r,) => r.message_id),).toContain(id,);
+    }
+  });
+
+  it("encryption on: both rows stay FTS-searchable without blind tokens", async () => {
+    const assistantWord = `cg18encasst${randomUUID().replaceAll("-", "",)}`;
+    const toolWord = `cg18enctool${randomUUID().replaceAll("-", "",)}`;
+    await initSmk({
+      serverEncryptionKey: "c".repeat(64,),
+      required: false,
+      compressThreshold: 1024,
+      compressAlgorithm: "gzip",
+    },);
+
+    process.env.ENABLE_TOKEN_INDEXING = "1";
+    try {
+      await fixture.db.updateTable("users",).set({ encryption_secret: "d".repeat(64,), },)
+        .where("id", "=", userId,).execute();
+
+      await fixture.db.updateTable("chats",).set({ encryption_level: "standard", },)
+        .where("id", "=", chatId,).execute();
+
+      const persisted = await persistHarnessTurn({
+        database: fixture.db,
+        chatId,
+        actorId,
+        profile: "omp",
+        transcript: ftsTranscript(assistantWord, toolWord,),
+        turn: turn(),
+        turnKey: `cg18enc-${assistantWord}`,
+      },);
+
+      for (
+        const [id, expected,] of [
+          [persisted.assistantMessageId, `assistant watchword ${assistantWord} end`,],
+          [persisted.toolResultIds[0]!, `tool watchword ${toolWord} end`,],
+        ] as const
+      ) {
+        const row = await fixture.db
+          .selectFrom("messages",)
+          .select(["content", "content_plaintext",],)
+          .where("id", "=", id,)
+          .executeTakeFirstOrThrow();
+
+        expect(row.content,).not.toBe(expected,);
+        expect(row.content_plaintext,).toBe(expected,);
+      }
+
+      for (const word of [assistantWord, toolWord,]) {
+        const match = await sql<
+          { message_id: string }
+        >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${word}`.execute(fixture.db,);
+
+        expect(match.rows.map((r,) => r.message_id),).toContain(
+          word === assistantWord ? persisted.assistantMessageId : persisted.toolResultIds[0]!,
+        );
+      }
+
+      const blind = await fixture.db
+        .selectFrom("message_search_tokens",)
+        .select("term",)
+        .where("message_id", "in", [persisted.assistantMessageId, ...persisted.toolResultIds,],)
+        .execute();
+
+      expect(blind,).toHaveLength(0,);
+    } finally {
+      delete process.env.ENABLE_TOKEN_INDEXING;
+      await initSmk({
+        required: false,
+        compressThreshold: 1024,
+        compressAlgorithm: "gzip",
+      },);
+    }
   });
 });

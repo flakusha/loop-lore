@@ -178,6 +178,16 @@ describe("rewrapCredential", () => {
 });
 
 describe("redactCredentials", () => {
+  test("redacts a BYO apiKey (RA-09)", () => {
+    const record = { provider: "openai", apiKey: "sk-plain-secret", theme: "dark", };
+    const redacted = redactCredentials(record,);
+
+    expect(redacted.apiKey,).toBe(REDACTED_MARKER,);
+    expect(redacted.provider,).toBe("openai",);
+    expect(redacted.theme,).toBe("dark",);
+    expect(record.apiKey,).toBe("sk-plain-secret",);
+  });
+
   test("redacts every sensitive kind in a nested config record, leaks no plaintext", async () => {
     const key = await makeKey();
     const sealedToken = await sealCredential("matrix-syt-token", { smk: () => key, },);

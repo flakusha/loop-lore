@@ -26,12 +26,15 @@ interface ChatRows {
  * A Kysely stub that answers the two `chats` selects the section issues.
  * @param rows - the row the select resolves to
  */
-function stubDb(rows: ChatRows,): Kysely<DB> {
+function stubDb(rows: ChatRows, calls: { n: number } = { n: 0, },): Kysely<DB> {
   const db = {
     selectFrom: (_table: string,) => ({
       select: (_cols: string[],) => ({
         where: () => ({
-          executeTakeFirst: async () => rows,
+          executeTakeFirst: async () => {
+            calls.n += 1;
+            return rows;
+          },
         }),
       }),
     }),
@@ -44,9 +47,13 @@ function stubDb(rows: ChatRows,): Kysely<DB> {
  * @param rows - the chat row the stub resolves to
  * @param gmConfig - the pre-projected `gm_config` on the chat projection
  */
-function ctxWith(rows: ChatRows, gmConfig?: string | null,): AssembleContext {
+function ctxWith(
+  rows: ChatRows,
+  gmConfig?: string | null,
+  calls: { n: number } = { n: 0, },
+): AssembleContext {
   return {
-    db: stubDb(rows,),
+    db: stubDb(rows, calls,),
     actor: {
       id: "actor-1",
       display_name: "A",
@@ -108,5 +115,21 @@ describe("outputLanguageSection", () => {
     // "xx" is not in the translate catalog, so the language never resolves and
     // the section stays silent rather than naming a language it cannot speak.
     expect(await outputLanguageSection.build(ctx,),).toEqual([],);
+  });
+
+  test("fallback path fetches both rungs in one select", async () => {
+    const calls = { n: 0, };
+    const ctx = ctxWith({ story_state: JSON.stringify({ autoTranslateLang: "ja", },), }, undefined, calls,);
+    const msgs = await outputLanguageSection.build(ctx,);
+
+    expect(msgs[0]?.content,).toContain("Japanese",);
+    expect(calls.n,).toBe(1,);
+  });
+
+  test("projected content language needs no select at all", async () => {
+    const calls = { n: 0, };
+    const ctx = ctxWith({}, JSON.stringify({ contentLanguage: "de", },), calls,);
+    await outputLanguageSection.build(ctx,);
+    expect(calls.n,).toBe(0,);
   });
 });

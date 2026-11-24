@@ -40,6 +40,10 @@ export interface AssetPreviewModalState {
 let restoreFocus: HTMLElement | null = null;
 let savedOverflow: string | null = null;
 
+// Monotonic id (omniSearch idiom): a slow earlier response must not open a
+// stale asset after the user has clicked another one.
+let previewSeq = 0;
+
 /**
  * @param bytes
  */
@@ -140,6 +144,7 @@ export function assetPreviewModal(): AssetPreviewModalState {
  * @returns {Promise<void>}
  */
 export async function openAssetPreviewById(id: string,): Promise<void> {
+  const seq = ++previewSeq;
   // Inline fetch — no delegation to the legacy #preview-modal global.
   // Doing both would render two stacked overlays, which the spec
   // explicitly rejects. We fetch the asset payload ourselves, set
@@ -153,9 +158,12 @@ export async function openAssetPreviewById(id: string,): Promise<void> {
     const res = await feFetch(`/api/v1/assets/${id}`,);
     asset = (await res.json()) as PreviewAssetLike;
   } catch {
+    if (seq !== previewSeq) { return; }
     showToast("error", t("gallery.previewFailed",),);
     return;
   }
+
+  if (seq !== previewSeq) { return; }
 
   asset.url = `/api/v1/assets/${id}/raw`;
   const modal = document.querySelector<HTMLElement>("#asset-preview-modal",);

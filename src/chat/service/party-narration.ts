@@ -80,6 +80,7 @@ export async function injectPartyNarration(
         role: MessageRole.System,
         content: storedContent,
         key_id: storedKeyId,
+        content_plaintext: text,
         content_type: MessageContentType.Narration,
         content_format: MessageContentFormat.Markdown,
         content_encoding: ContentEncoding.Identity,
@@ -88,13 +89,14 @@ export async function injectPartyNarration(
       },)
       .execute();
 
-    // The row carries no plaintext mirror: index blind tokens for the token
-    // tier (no-op unless ENABLE_TOKEN_INDEXING=1; best-effort like the insert).
+    // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+    // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
     await indexMessageSearchTokens(database, {
       messageId: narrationId,
       chatId,
       plaintext: text,
       keyId: storedKeyId,
+      plaintextMirror: text,
     },);
   } catch {
     /* non-fatal — party mutation already applied */

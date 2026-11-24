@@ -3,6 +3,7 @@
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { createHash, } from "node:crypto";
 import type { DB, } from "../db/schema";
 import { createTestDb, resetTestDb, type TestDb, } from "../test-utils/create-test-db";
 import {
@@ -69,22 +70,20 @@ describe("classifyDecoyHit (pure)", () => {
     expect(bait?.source,).toBe("decoy",);
   });
 
-  test("breach is suspicion and self-reported whitehat stays local", () => {
-    const breach = classifyDecoyHit(makeHit({ kind: "breach", path: "/trap/breach", },),);
-    const report = classifyDecoyHit(makeHit({ kind: "report", path: "/report-security", },),);
-    expect(breach?.label,).toBe("suspicion",);
-    expect(breach?.confidence,).toBe(0.5,);
-    expect(report?.label,).toBe("whitehat",);
-    expect(report?.confidence,).toBe(0.2,);
-    expect(report?.source,).toBe("decoy",);
-  });
-
   test("indicator is a stable digest, never a raw IP", () => {
     const first = classifyDecoyHit(makeHit(),);
     const again = classifyDecoyHit(makeHit(),);
     expect(first?.indicator,).toBe(again?.indicator,);
     expect(first?.indicator,).not.toContain(IP,);
     expect(first?.indicator.startsWith("decoy:",),).toBe(true,);
+  });
+
+  test("indicator is keyed, never a bare unsalted IP digest", () => {
+    const bare = createHash("sha256",).update(IP,).digest("hex",).slice(0, 32,);
+    const indicator = classifyDecoyHit(makeHit(),)!.indicator;
+    expect(indicator,).not.toContain(bare,);
+    // Still stable within one process so write-path pruning can dedupe.
+    expect(indicator,).toBe(classifyDecoyHit(makeHit(),)!.indicator,);
   });
 });
 

@@ -1,7 +1,7 @@
 /**
  * Tests for users routes — profile, settings, admin operations
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
@@ -222,5 +222,93 @@ describe("usersRoutes", () => {
 
     const user = await db.selectFrom("users",).selectAll().where("id", "=", targetId,).executeTakeFirst();
     expect(user,).toBeUndefined();
+  });
+});
+
+describe("settings allowlist on all write paths (RA-03)", () => {
+  let db: Kysely<DB>;
+  let userId: string;
+
+  beforeEach(async () => {
+    ({ db, } = await createTestDb());
+    userId = uid();
+    await db.insertInto("users",).values({
+      id: userId,
+      username: `allow-${userId}`,
+      display_name: "Allow",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  /** Read the stored blob — the assertion is on persistence, not on status alone. */
+  async function stored(): Promise<Record<string, unknown>> {
+    const row = await db.selectFrom("users",).select("settings",).where("id", "=", userId,).executeTakeFirst();
+
+    return JSON.parse(row?.settings ?? "{}",) as Record<string, unknown>;
+  }
+
+  test("PATCH /users/me/settings rejects a privilege key without persisting it", async () => {
+    const res = await createApp(db, userId,).handle(
+      new Request("http://localhost/api/users/me/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ theme: "dark", isAdmin: true, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(await stored(),).toEqual({},);
+  });
+
+  test("PATCH /users/me/settings still accepts the UI's own keys", async () => {
+    const res = await createApp(db, userId,).handle(
+      new Request("http://localhost/api/users/me/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          contentLocale: "fr-FR",
+          workflowSelections: { sdxl: "base", },
+          enterToSend: true,
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const settings = await stored();
+    expect(settings.contentLocale,).toBe("fr-FR",);
+    expect(settings.workflowSelections,).toEqual({ sdxl: "base", },);
+    expect(settings.enterToSend,).toBe(true,);
+  });
+
+  test("PUT /users/me rejects a privilege key inside settings", async () => {
+    const res = await createApp(db, userId,).handle(
+      new Request("http://localhost/api/users/me", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ settings: { provider: "openai", role: "admin", }, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(await stored(),).toEqual({},);
+  });
+
+  test("PUT /users/:id rejects a privilege key inside settings", async () => {
+    const res = await createApp(db, "admin-user", "admin",).handle(
+      new Request(`http://localhost/api/users/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ settings: { theme: "dark", isAdmin: true, }, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(await stored(),).toEqual({},);
   });
 });

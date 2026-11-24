@@ -8,13 +8,13 @@
  * unique decoy token replayed into a real surface, which is not built here.
  */
 import type { Kysely, } from "kysely";
-import { createHash, } from "node:crypto";
+import { createHmac, randomBytes, } from "node:crypto";
 import type { DB, } from "../db/schema";
 import { toDate, } from "../utils/date";
 import type { DecoyHit, } from "./decoy-listener";
 
 /** Suspicion is a path/behavior signal; proof is reserved for token replay. */
-export type IndicatorLabel = "proof" | "suspicion" | "whitehat";
+export type IndicatorLabel = "proof" | "suspicion";
 
 /** Only the local decoy produces labels in this slice. */
 export type IndicatorSource = "decoy";
@@ -42,35 +42,26 @@ export interface IndicatorRow {
 /** Lifetime of a local label. Short by design; no cross-instance reuse. */
 export const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
+/** Process-local key: correlatable within a run, unlinkable across restarts. */
+const INDICATOR_KEY = randomBytes(32,);
+
 /**
  * Classify a decoy hit. Benign or unrecognized hits are not stored.
- * A self-reported "whitehat" label is local-only: it never grants access,
- * suppresses another label, or enters mesh intel.
  * @param hit - hit emitted by the decoy listener
- * @returns a local label, or null when nothing should be recorded
+ * @returns a suspicion label, or null when nothing should be recorded
  */
 export function classifyDecoyHit(hit: DecoyHit,): IndicatorClassification | null {
   if (hit.kind === "robots" || hit.kind === "unknown") { return null; }
 
-  const digest = createHash("sha256",)
+  const digest = createHmac("sha256", INDICATOR_KEY,)
     .update(hit.ip ?? "unknown",)
     .digest("hex",)
     .slice(0, 32,);
 
-  let confidence = 0.4;
-  let label: IndicatorLabel = "suspicion";
-
-  if (hit.kind === "fake-auth") { confidence = 0.6; }
-  else if (hit.kind === "breach") { confidence = 0.5; }
-  else if (hit.kind === "report") {
-    confidence = 0.2;
-    label = "whitehat";
-  }
-
   return {
-    confidence,
+    confidence: hit.kind === "fake-auth" ? 0.6 : 0.4,
     indicator: `decoy:${digest}:${hit.kind}`,
-    label,
+    label: "suspicion",
     source: "decoy",
   };
 }

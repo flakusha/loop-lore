@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 265
 
 /**
  * RSI agent API token auth (TASK-recursive-self-improvement-agent-api-router-
@@ -20,7 +21,7 @@
  */
 import type { Kysely, } from "kysely";
 import { randomBytes, } from "node:crypto";
-import type { AgentTokenScope, } from "../../db/enums";
+import { AgentTokenScope, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getChildLogger, } from "../../logger";
 import { extractBearerToken, } from "../../middleware/auth/token";
@@ -149,20 +150,33 @@ export async function verifyAgentToken(
     return null;
   }
 
-  // Only canonical ISO instants (the mint's toISOString output) count: a
-  // loose string such as "12/31/9999" parses to a future date and must not
-  // extend a credential's lifetime. Anything malformed, unparseable or past
-  // fails closed into the guard's existing 401, before the usage stamp.
-  if (row.expires_at !== null) {
-    const expiresAt = toDate(row.expires_at,);
-    if (
-      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(row.expires_at,) ||
-      Number.isNaN(expiresAt.getTime(),) ||
-      expiresAt.getTime() <= Date.now()
-    ) {
-      log?.debug("agent token expired or malformed expiry", { tokenId: row.id, },);
-      return null;
-    }
+  // A NULL expiry is a pre-policy credential: fail closed like the
+  // integration-token sibling, never an eternal bearer. Only canonical ISO
+  // instants (the mint's toISOString output) count: a loose string such as
+  // "12/31/9999" parses to a future date and must not extend a lifetime.
+  // Absent, malformed, unparseable or past expiries all fail closed into the
+  // guard's existing 401, before the usage stamp.
+  if (row.expires_at === null) {
+    log?.debug("agent token has no expiry", { tokenId: row.id, },);
+    return null;
+  }
+
+  const expiresAt = toDate(row.expires_at,);
+  if (
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(row.expires_at,) ||
+    Number.isNaN(expiresAt.getTime(),) ||
+    expiresAt.getTime() <= Date.now()
+  ) {
+    log?.debug("agent token expired or malformed expiry", { tokenId: row.id, },);
+    return null;
+  }
+
+  // Runtime scope validation: a legacy/foreign row must not smuggle an
+  // unchecked value past the type system (F-02). Deny before the stamp.
+  const scope = Object.values(AgentTokenScope,).find((candidate,) => candidate === row.scope);
+  if (scope === undefined) {
+    log?.debug("agent token has an invalid scope", { tokenId: row.id, },);
+    return null;
   }
 
   // Throttled usage stamp (audit hygiene, not a security decision). A
@@ -182,7 +196,7 @@ export async function verifyAgentToken(
     log?.warn("failed to update agent token last_used_at", { tokenId: row.id, err, },);
   }
 
-  return { id: row.id, scope: row.scope as AgentTokenScope, };
+  return { id: row.id, scope, };
 }
 
 /** Build the 429 response with the shared X-RateLimit-* headers. */

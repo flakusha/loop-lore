@@ -92,14 +92,6 @@ export async function checkAndPruneContext(
       promoted: pruneResult.promoted.length,
       tokensSaved: pruneResult.tokensSaved,
     },);
-  } else if (pruneResult.promoted.length > 0) {
-    // Promotion to long-term memory requires the memory-write pipeline; that
-    // handoff is out of scope this round. Log the count so the signal is not
-    // lost (the messages themselves stay visible).
-    log.info("context pruning: promotion candidates identified (memory write deferred)", {
-      promoted: pruneResult.promoted.length,
-      chatId,
-    },);
   }
 
   return true;

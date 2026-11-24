@@ -24,16 +24,7 @@
 
     <div class="login-divider"></div>
 
-    <a
-      href="/"
-      class="login-demo-link"
-      hx-post="/api/v1/demo-login"
-      hx-target="body"
-      hx-swap="outerHTML"
-      data-testid="demo-login"
-    >
-      {{{t("auth.demoMode")}}}
-    </a>
+    {{demoLoginLink}}
 
     <a href="/register" class="login-signup-link" data-testid="signup-link">
       {{{t("auth.signupLink")}}}

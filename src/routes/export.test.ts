@@ -421,3 +421,44 @@ describe("exportRoutes", () => {
     expect((manifest.contents as Record<string, number>).story,).toBeGreaterThanOrEqual(1,);
   });
 });
+
+describe("export body validation (RA-07)", () => {
+  // Fresh DB per case: validation rejects before the handler, so no rows are
+  // needed and no case can inherit another case's state.
+  async function withApp(
+    run: (app: Elysia,) => Promise<void>,
+  ): Promise<void> {
+    const tdb = await createTestDb();
+    try {
+      await run(createApp(tdb.db, "test-user",),);
+    } finally {
+      await tdb.db.destroy();
+    }
+  }
+
+  test("a wrong-typed include is rejected instead of throwing a 500", async () => {
+    await withApp(async (app,) => {
+      const res = await postExport(app, { include: 5, } as unknown as Record<string, unknown>,);
+      expect(res.status,).toBe(422,);
+    },);
+  });
+
+  test("a non-array chat_ids is rejected before reaching Kysely", async () => {
+    await withApp(async (app,) => {
+      const res = await postExport(app, { chat_ids: "abc", } as unknown as Record<string, unknown>,);
+      expect(res.status,).toBe(422,);
+    },);
+  });
+
+  test("a correctly typed body still exports", async () => {
+    await withApp(async (app,) => {
+      const res = await postExport(app, {
+        include: [],
+        format: "json",
+        chat_ids: [uid(),],
+      },);
+
+      expect(res.status,).toBe(200,);
+    },);
+  });
+});

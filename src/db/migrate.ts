@@ -17,11 +17,11 @@ export { runDataMigrations, } from "./data-migrations/runner";
 
 /**
  * Migration filename regex — three-digit numeric prefix then `_` then name.
- * Stray files (README.md, dotfiles, helpers) are filtered out so they
- * cannot accidentally register as a migration. BUG-migration-ordering-
- * ambiguous-via-localecompare-duplicate-num.
+ * Stray files (README.md, dotfiles, helpers, colocated `*.test.ts`) are
+ * filtered out so they cannot accidentally register as a migration.
+ * BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
  */
-const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
+export const MIGRATION_FILENAME = /^(\d{3})_(?!.*\.test\.ts$).+\.ts$/;
 
 /**
  * Extract the leading numeric prefix from a migration filename, or NaN
@@ -239,13 +239,22 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   log.info("Database migrations completed successfully",);
 }
 
-/** */
-async function migrate(): Promise<void> {
+/**
+ * CLI entrypoint. The DB factory is injectable so the failure path can
+ * assert the handle is released when migrations throw.
+ * @param options - optional DB factory for tests
+ */
+export async function migrate(options: {
+  openDatabase?: () => ReturnType<typeof getDatabase>;
+} = {},): Promise<void> {
   createLogger();
   const config = loadConfig();
-  const database = getDatabase(resolveDbPath(process.env, config.server,),);
-  await runMigrations(database,);
-  await database.destroy();
+  const database = options.openDatabase?.() ?? getDatabase(resolveDbPath(process.env, config.server,),);
+  try {
+    await runMigrations(database,);
+  } finally {
+    await database.destroy();
+  }
 }
 
 // Run only when executed directly (bun run src/db/migrate.ts).

@@ -265,4 +265,39 @@ describe("mesh intel feed", () => {
       await db.destroy();
     }
   });
+
+  test("concurrent pushes cannot both pass the per-peer budget", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await upsertPeer(db, { origin: PEER_A, state: "trusted", },);
+      const base = record();
+      const seed = Array.from({ length: MAX_PER_PEER - 1, }, (_, i,) => ({
+        action: "report",
+        confidence: 0.4,
+        created_at: base.createdAt,
+        expires_at: base.expiresAt,
+        id: crypto.randomUUID(),
+        indicator: `decoy:${i.toString(16,).padStart(8, "0",)}:suspicion`,
+        nonce: `race-seed-${i}`,
+        received_at: base.createdAt,
+        source_peer: PEER_A,
+        type: "suspicion",
+      }),);
+
+      await db.insertInto("mesh_intel_reports",).values(seed,).execute();
+
+      const bodies = await Promise.all([record(), record(),].map(async (entry,) => {
+        const feed: IntelFeed = { origin: PEER_A, records: [entry,], };
+        return { ...feed, proof: await signIntelFeed(PSK, feed,), };
+      },),);
+
+      const results = await Promise.all(bodies.map((body,) => post(db, "/api/mesh/intel/push", body,)),);
+
+      expect(results.map((r,) => r.status).sort(),).toEqual([200, 429,],);
+      const rows = await db.selectFrom("mesh_intel_reports",).select(["id",],).execute();
+      expect(rows,).toHaveLength(MAX_PER_PEER,);
+    } finally {
+      await db.destroy();
+    }
+  });
 });

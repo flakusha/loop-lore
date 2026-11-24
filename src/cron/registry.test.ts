@@ -216,4 +216,37 @@ describe("cron registry", () => {
       scheduler.stop();
     }
   });
+
+  test("status reads reuse the boot-validated next run without reparsing", () => {
+    const original = Bun.cron.parse;
+    let parses = 0;
+    (Bun.cron as unknown as { parse: typeof Bun.cron.parse }).parse = ((
+      expression: string,
+    ) => {
+      parses += 1;
+      return original(expression,);
+    }) as typeof Bun.cron.parse;
+
+    let scheduler: ReturnType<typeof startScheduler> | undefined;
+    try {
+      scheduler = startScheduler(makeDeps({
+        cronImpl: makeFactory([],),
+        jobs: [defineJob({
+          name: "a.job",
+          schedule: "@hourly",
+          enabled: true,
+          run: async () => {},
+        },),],
+      },),);
+
+      expect(parses,).toBe(1,);
+      scheduler.getStatus();
+      scheduler.getStatus();
+      expect(parses,).toBe(1,);
+      expect(scheduler.getStatus()[0]?.nextRunAt,).not.toBeNull();
+    } finally {
+      (Bun.cron as unknown as { parse: typeof Bun.cron.parse }).parse = original;
+      scheduler?.stop();
+    }
+  });
 });

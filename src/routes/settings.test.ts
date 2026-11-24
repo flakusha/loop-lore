@@ -13,6 +13,7 @@ import { createSqliteDialect, } from "../db/index";
 import { getMigrationFiles, } from "../db/migrate";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
+import { rejectedSettingsKeys, settingsKeysRejectedResponse, } from "../validation/schemas/settings";
 import { settingsRoutes, } from "./settings";
 
 /** Apply the consolidated 14-file baseline to the in-memory DB. */
@@ -358,5 +359,37 @@ describe("GET /api/settings/export", () => {
 
     const res = await app.handle(new Request("http://localhost/api/settings/export",),);
     expect(res.status,).toBe(401,);
+  });
+});
+
+describe("settings key allowlist (RA-03)", () => {
+  test("rejectedSettingsKeys rejects only keys outside the closed allowlist", () => {
+    expect(rejectedSettingsKeys({
+      theme: "dark",
+      contentLocale: "en",
+      workflowSelections: {},
+      enterToSend: true,
+      autoScroll: false,
+      inlinePreview: true,
+    },),).toEqual([],);
+
+    expect(rejectedSettingsKeys({
+      theme: "dark",
+      admin: true,
+      plugin_state: "x",
+    },),).toEqual(["admin", "plugin_state",],);
+  });
+
+  test("settingsKeysRejectedResponse returns the shared 400 envelope", async () => {
+    const res = settingsKeysRejectedResponse(["admin",],);
+    expect(res.status,).toBe(400,);
+
+    const body = await res.json();
+    expect(body.error,).toBe("Unknown settings keys are not allowed",);
+    expect(body.code,).toBe("BAD_REQUEST",);
+    expect(body.details.rejectedKeys,).toEqual(["admin",],);
+    expect(body.details.allowedKeys,).toContain("theme",);
+    expect(body.details.allowedKeys,).toContain("inlinePreview",);
+    expect(body.meta.api_version,).toBe("1",);
   });
 });

@@ -3,7 +3,7 @@
 // size-allow: 330
 import { serve, } from "bun";
 import { join, } from "node:path";
-import { initAgeGate, } from "../age-gate/controller";
+import { applyStoredAgeGateConfig, initAgeGate, } from "../age-gate/controller";
 import { initAssistantQuota, } from "../assistant/quota/engine";
 import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
 import { ensureTlsCerts, } from "../config/cert";
@@ -325,6 +325,8 @@ export async function start() {
   await seedDefaults(database, config,);
   // Apply persisted admin NSFW overrides (if any) so the toggle survives restart.
   await applyStoredNsfwConfig(database,);
+  // Same for the age gate admin overrides (RA-13).
+  await applyStoredAgeGateConfig(database,);
   // Same for the harness admin settings (ACP enable + ToS acknowledgements).
   await applyStoredHarnessSettings(database,);
   // Same for the inbound MCP/ACP studio settings (server switches + principal).

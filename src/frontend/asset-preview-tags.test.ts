@@ -17,7 +17,7 @@ import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import "./asset-preview";
 
 let calls: { url: string; opts: RequestInit }[] = [];
-let feHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
+let feHandler: ((url: string, opts: RequestInit,) => Response | Promise<Response>) | null = null;
 // Gated: bun's mock.module is process-global — unguarded, later files in a
 // shared-process `bun test src/` run resolve ./fe-fetch to the 404 stub
 // (BUG 9c8bea1 cross-file contamination). Canonical gates run --isolate.
@@ -413,6 +413,44 @@ describeOrSkip("renderAutocomplete", () => {
       expect(calls.some((c,) => c.url.startsWith("/api/v1/tag-autocomplete?q=t",)),).toBe(true,);
       expect(tagDom.ac.innerHTML,).toContain('data-autocomplete-tag="tavern"',);
       expect(tagDom.ac.style.display,).toBe("flex",);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test("stale autocomplete response does not overwrite newer suggestions", async () => {
+    vi.useFakeTimers();
+    try {
+      serveTags([], [],);
+      await previewHost.openAssetPreview!("a1",);
+
+      const slow = Promise.withResolvers<Response>();
+      const fast = Promise.withResolvers<Response>();
+      feHandler = (url,) =>
+        url.includes("q=fantasy",)
+          ? fast.promise
+          : url.includes("q=fan",)
+          ? slow.promise
+          : new Response("{}", { status: 404, },);
+
+      tagDom.input.value = "fan";
+      tagDom.input.dispatch("input",);
+      vi.advanceTimersByTime(150,);
+      await flushMicrotasks();
+
+      tagDom.input.value = "fantasy";
+      tagDom.input.dispatch("input",);
+      vi.advanceTimersByTime(150,);
+      await flushMicrotasks();
+
+      fast.resolve(jsonResponse({ tags: ["fantasy",], },),);
+      await flushMicrotasks();
+      expect(tagDom.ac.innerHTML,).toContain('data-autocomplete-tag="fantasy"',);
+
+      slow.resolve(jsonResponse({ tags: ["fan",], },),);
+      await flushMicrotasks();
+      expect(tagDom.ac.innerHTML,).toContain('data-autocomplete-tag="fantasy"',);
+      expect(tagDom.ac.innerHTML,).not.toContain('data-autocomplete-tag="fan"',);
     } finally {
       vi.useRealTimers();
     }

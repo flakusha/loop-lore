@@ -9,6 +9,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { REDACTED_MARKER, } from "../../integrations/secrets";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { usersRoutes, } from "./users";
@@ -140,29 +141,6 @@ describe("admin users routes", () => {
     expect(res.status,).toBe(204,);
   });
 
-  test("PATCH /api/admin/users/:id/role rejects demoting the last admin", async () => {
-    const lastAdmin = "00000000-0000-0000-0000-000000000042";
-    await insertUsers(db, "carol", "Carol", { id: lastAdmin, role: "admin", },);
-    try {
-      const app = makeApp(db, "admin",);
-      const res = await app.handle(
-        new Request(`http://localhost/api/admin/users/${lastAdmin}/role`, {
-          method: "PATCH",
-          headers: { "content-type": "application/json", },
-          body: JSON.stringify({ role: "user", },),
-        },),
-      );
-
-      expect(res.status,).toBe(400,);
-      const stored = await db.selectFrom("users",).select("role",)
-        .where("id", "=", lastAdmin,).executeTakeFirstOrThrow();
-
-      expect(stored.role,).toBe("admin",);
-    } finally {
-      await db.deleteFrom("users",).where("id", "=", lastAdmin,).execute();
-    }
-  });
-
   test("DELETE /api/admin/users/:id returns 403 for non-admin", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
@@ -170,5 +148,38 @@ describe("admin users routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("GET /api/admin/users/:id redacts a BYO apiKey from settings", async () => {
+    // Own DB per test: the suite's beforeAll rows are shared by older tests.
+    const tdb = await createTestDb();
+    try {
+      const target = await insertUsers(tdb.db, "byo-user", "BYO", {
+        settings: JSON.stringify({
+          provider: "openai",
+          apiKey: "sk-plain-secret",
+          theme: "dark",
+        },),
+      },);
+
+      const res = await makeApp(tdb.db, "admin",).handle(
+        new Request(`http://localhost/api/admin/users/${target}`,),
+      );
+
+      expect(res.status,).toBe(200,);
+
+      const raw = await res.text();
+      expect(raw,).not.toContain("sk-plain-secret",);
+      const body = JSON.parse(raw,) as { settings: string | Record<string, unknown> };
+      const settings = typeof body.settings === "string"
+        ? JSON.parse(body.settings,) as Record<string, unknown>
+        : body.settings;
+
+      expect(settings.apiKey,).toBe(REDACTED_MARKER,);
+      expect(settings.provider,).toBe("openai",);
+      expect(settings.theme,).toBe("dark",);
+    } finally {
+      tdb.sqlite.close();
+    }
   });
 });

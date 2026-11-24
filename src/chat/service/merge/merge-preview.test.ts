@@ -17,6 +17,7 @@ import { createLogger, } from "../../../logger";
 import { createTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../../../test-utils/insert-helpers";
 import { ISOLATED, } from "../../../test-utils/isolate-only";
+import { parseMetadata, } from "./merge-render";
 
 const OWNER_ID = randomUUID();
 const STRANGER_ID = randomUUID();
@@ -43,7 +44,7 @@ if (ISOLATED) {
 }
 
 const { buildPreview, } = await import("./merge-preview");
-const { insertMergeRow, insertSourceRows, updateMergeMetadata, } = await import("./merge-store");
+const { insertMergeRow, insertSourceRows, loadMerge, updateMergeMetadata, } = await import("./merge-store");
 
 const { MergeMode, } = await import("./merge-criteria");
 
@@ -62,7 +63,10 @@ beforeAll(async () => {
   tipB = await insertMessages(db, CHAT_ID, OWNER_ID, MessageRole.Assistant, "tipB", { parent_id: midId, } as never,);
 },);
 
-async function seedMerge(mode: string,): Promise<string> {
+async function seedMerge(
+  mode: string,
+  tips: [string, string,] = [tipA, tipB,],
+): Promise<string> {
   const mergeId = await insertMergeRow(tdb.db, {
     chatId,
     baseMessageId: midId,
@@ -74,8 +78,8 @@ async function seedMerge(mode: string,): Promise<string> {
   await insertSourceRows(tdb.db, {
     mergeId,
     sources: [
-      { ordinal: 0, branchId: null, tipMessageId: tipA, },
-      { ordinal: 1, branchId: null, tipMessageId: tipB, },
+      { ordinal: 0, branchId: null, tipMessageId: tips[0], },
+      { ordinal: 1, branchId: null, tipMessageId: tips[1], },
     ],
   },);
 
@@ -291,5 +295,49 @@ describe("merge-preview", () => {
 
     expect("ok" in result,).toBe(false,);
     if (!("ok" in result)) { expect(result.code,).toBe("llm_parse",); }
+  });
+
+  test("mode 5 compares physical lines and clears a stale guard flag on regenerate", async () => {
+    if (!ISOLATED) { return; }
+    const multilineTip = await insertMessages(
+      tdb.db,
+      chatId,
+      actorId,
+      MessageRole.Assistant,
+      "line1\nline2\nline3",
+      { parent_id: midId, } as never,
+    );
+
+    const mergeId = await seedMerge(MergeMode.SinglePlusGlean, [multilineTip, tipB,],);
+    await updateMergeMetadata(tdb.db, {
+      mergeId,
+      metadata: { changedRatio: 1, guardExceeded: true, },
+    },);
+
+    callMergeLlmMock.mockClear();
+    callMergeLlmMock.mockResolvedValueOnce({
+      ok: true,
+      content: JSON.stringify([{ role: "assistant", content: "line1\nline2\nline3", },],),
+    },);
+
+    const result = await buildPreview({
+      database: tdb.db,
+      config: { templates: { llm: {}, }, } as never,
+      params: {
+        chatId,
+        mergeId,
+        actorId,
+        userRole: null,
+        regenerate: true,
+        styleHint: undefined,
+      },
+    },);
+
+    expect("ok" in result && result.ok,).toBe(true,);
+    if (!("ok" in result)) { return; }
+    const row = await loadMerge(tdb.db, mergeId,);
+    const metadata = parseMetadata(row?.metadata ?? null,);
+    expect(metadata.changedRatio,).toBe(0,);
+    expect(metadata.guardExceeded,).toBe(false,);
   });
 });

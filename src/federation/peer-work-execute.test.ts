@@ -166,4 +166,35 @@ describe("createLocalPeerWorkExecutor", () => {
     // owns that behaviour. The call itself succeeds.
     expect(response.content,).toBe("x",);
   });
+
+  test("same assignmentKey reuses one scheduler id", async () => {
+    const entered = Promise.withResolvers<void>();
+    const release = Promise.withResolvers<void>();
+    const base = stubProvider();
+    let streamed = 0;
+    const gated: LLMProvider = {
+      ...base.provider,
+      stream: async (
+        _req: { model: string; params: Record<string, unknown> },
+        handler: (chunk: ChunkEvent,) => void,
+      ) => {
+        streamed += 1;
+        entered.resolve();
+        await release.promise;
+        handler({ type: "content", content: "x", },);
+        return stubResponse([{ type: "content", content: "x", },],);
+      },
+    };
+
+    registerProvider(STUB, gated,);
+    const executor = createLocalPeerWorkExecutor({ config: testConfig(), },);
+    const opts = { request: REQUEST, onChunk: () => {}, signal: new AbortController().signal, };
+
+    const first = executor.run(opts,);
+    await entered.promise;
+    await expect(executor.run(opts,),).rejects.toThrow(/duplicate id/,);
+    release.resolve();
+    expect((await first).content,).toBe("x",);
+    expect(streamed,).toBe(1,);
+  });
 });

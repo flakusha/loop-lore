@@ -132,42 +132,59 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
 
   const adminId = uid();
   try {
-    await database
-      .insertInto("users",)
-      .values({
-        id: adminId,
-        username,
-        display_name: username,
-        secret_hash: await hashPassword(password,),
-        role: UserRole.Admin,
-        status: UserStatus.Active,
-        settings: "{}",
-        // Per-user blind-index key for the token search tier (TASK-019).
-        encryption_secret: generateEncryptionSecret(),
-      },)
-      .execute();
+    // Both rows or neither: a user without its actor is unrecoverable because
+    // the next seed sees the admin and skips.
+    await database.transaction().execute(async (trx,) => {
+      await trx
+        .insertInto("users",)
+        .values({
+          id: adminId,
+          username,
+          display_name: username,
+          secret_hash: await hashPassword(password,),
+          role: UserRole.Admin,
+          status: UserStatus.Active,
+          settings: "{}",
+          // Per-user blind-index key for the token search tier (TASK-019).
+          encryption_secret: generateEncryptionSecret(),
+        },)
+        .execute();
 
-    // Actor row so the admin can own chats/entities (chat_participants.actor_id → actors.id)
-    await database
-      .insertInto("actors",)
-      .values({
-        id: adminId,
-        actor_type: "user",
-        display_name: username,
-        user_id: adminId,
-        owner_id: adminId,
-        agent_type: "none",
-        settings: "{}",
-        import_spec: "raw",
-        data_source_format: "json",
-        data_raw: null,
-        row_version: 0,
-      },)
-      .execute();
+      // Actor row so the admin can own chats/entities (chat_participants.actor_id → actors.id)
+      await trx
+        .insertInto("actors",)
+        .values({
+          id: adminId,
+          actor_type: "user",
+          display_name: username,
+          user_id: adminId,
+          owner_id: adminId,
+          agent_type: "none",
+          settings: "{}",
+          import_spec: "raw",
+          data_source_format: "json",
+          data_raw: null,
+          row_version: 0,
+        },)
+        .execute();
+    },);
 
     log.info(`Bootstrap admin "${username}" created`,);
   } catch (error) {
-    // Race: another process created the admin concurrently, or username taken.
-    log.debug("Bootstrap admin creation skipped or failed (race/duplicate)", { error: String(error,), },);
+    if (isDuplicateKeyError(error,)) {
+      log.debug("Bootstrap admin creation skipped (race/duplicate)", { error: String(error,), },);
+    } else {
+      log.error("Bootstrap admin creation failed", error instanceof Error ? error : new Error(String(error,),),);
+    }
   }
+}
+
+/**
+ * Identify the only failure that means "someone else seeded it first".
+ * @param error - caught insert error
+ * @returns true for unique/constraint violations
+ */
+function isDuplicateKeyError(error: unknown,): boolean {
+  return error instanceof Error &&
+    /SQLITE_CONSTRAINT|unique constraint|duplicate key/i.test(error.message,);
 }

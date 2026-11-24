@@ -307,10 +307,12 @@ export function parseExpiryMs(input: unknown,): number | null {
 export function calculateAge(birthDate: string,): number | null {
   const birth = toDate(birthDate,);
   if (Number.isNaN(birth.getTime(),)) { return null; }
+  // Canonical date-only strings parse as UTC midnight; reading local
+  // calendar fields would shift the birthday by a day on offset hosts.
   const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  const monthDiff = now.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+  let age = now.getUTCFullYear() - birth.getUTCFullYear();
+  const monthDiff = now.getUTCMonth() - birth.getUTCMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getUTCDate() < birth.getUTCDate())) {
     age--;
   }
 
