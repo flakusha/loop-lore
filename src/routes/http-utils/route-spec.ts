@@ -31,3 +31,17 @@ export function routeSpec<const TResponse extends Record<number, TSchema>,>(spec
     } as const,
   } as const;
 }
+
+/** Standard auth error entries for inline Elysia response maps. */
+export function routeErrors() {
+  return { 401: ErrorResponse, 404: ErrorResponse, };
+}
+
+/** OpenAPI detail entry for inline Elysia route options. */
+export function routeDetail(spec: {
+  summary: string;
+  description: string;
+  tags: string[];
+},) {
+  return { detail: spec, };
+}

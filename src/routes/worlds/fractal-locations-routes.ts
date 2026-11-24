@@ -9,7 +9,7 @@
 import { type Context, Elysia, t, } from "elysia";
 import { ActorPositionService, type LocationTreeNode, LocationTreeService, } from "../../locations";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, routeDetail, routeErrors, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -53,14 +53,13 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         response: {
           200: t.Object({ data: t.Array(t.Any(),), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Recursive location tree",
           description: "All locations in a world as a parent/child tree using recursive CTE.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -88,12 +87,12 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
           physicalLocationId: t.String(),
           spatialLocationId: t.String(),
         },),
-        response: { 200: t.Object({ ok: t.Boolean(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        response: { 200: t.Object({ ok: t.Boolean(), },), 400: ErrorResponse, ...routeErrors(), },
+        ...routeDetail({
           summary: "Set actor position",
           description: "Place an actor at (physical, spatial) location pair. Same world enforced server-side.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -107,12 +106,12 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
         return jsonResponse({ data: pos, },);
       },
       {
-        response: { 200: t.Object({ data: t.Any(), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        response: { 200: t.Object({ data: t.Any(), },), ...routeErrors(), },
+        ...routeDetail({
           summary: "Get actor position",
           description: "Returns physical + spatial location ids and the entered_at timestamp.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -129,14 +128,13 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         response: {
           200: t.Object({ data: t.Array(t.Any(),), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Location ancestors",
           description: "Ancestors of a location, root-most first, excluding itself.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -153,14 +151,13 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         response: {
           200: t.Object({ data: t.Array(t.Any(),), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Location descendants",
           description: "All locations below a location, breadth-first, excluding itself.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -184,14 +181,13 @@ export function fractalLocationsRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         response: {
           200: t.Object({ data: t.Array(t.Any(),), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Location path",
           description: "Root-to-leaf breadcrumb path: ancestors followed by the location itself.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import { describe, expect, expectTypeOf, test, } from "bun:test";
 import { Elysia, t, } from "elysia";
-import { routeSpec, } from "./route-spec";
+import { describe, expect, expectTypeOf, test, } from "bun:test";
+import { routeDetail, routeErrors, routeSpec, } from "./route-spec";
 
 // Guard the root cause: passing a factory call as the whole options object
 // loses Elysia's literal ctx inference. If routeSpec ever regains schema
@@ -61,5 +60,12 @@ describe("routeSpec", () => {
     );
 
     expect(app,).toBeDefined();
+  });
+
+  test("inline helpers match routeSpec entries", () => {
+    expect(routeErrors(),).toEqual({ 401: expect.anything(), 404: expect.anything(), },);
+    expect(routeDetail({ summary: "Read thing", description: "Reads one thing", tags: ["Things",], },),).toEqual({
+      detail: { summary: "Read thing", description: "Reads one thing", tags: ["Things",], },
+    },);
   });
 });

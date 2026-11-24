@@ -17,7 +17,15 @@ import {
   getConditions,
   listConditionHistory,
 } from "../../worlds/conditions";
-import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonResponse,
+  routeDetail,
+  routeErrors,
+} from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -82,12 +90,12 @@ export function worldConditionsRoutes(opts: HandleOpts, prefix = "/api",) {
         }
       },
       {
-        response: { 200: t.Object({ data: ConditionsSchema, },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        response: { 200: t.Object({ data: ConditionsSchema, },), ...routeErrors(), },
+        ...routeDetail({
           summary: "Get world conditions",
           description: "Current weather, time of day, season and temperature for a world.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -112,14 +120,13 @@ export function worldConditionsRoutes(opts: HandleOpts, prefix = "/api",) {
         query: t.Object({ limit: t.Optional(t.Number({ minimum: 1, maximum: MAX_HISTORY_LIMIT, },),), },),
         response: {
           200: t.Object({ data: t.Array(HistoryEntrySchema,), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "List world condition history",
           description: "Newest-first ledger of condition changes, keyed by world minute.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -148,14 +155,13 @@ export function worldConditionsRoutes(opts: HandleOpts, prefix = "/api",) {
         response: {
           201: t.Object({ data: ConditionsSchema, },),
           400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Advance world conditions",
           description: "Roll time of day, day counter, season and seeded weather to a world minute.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

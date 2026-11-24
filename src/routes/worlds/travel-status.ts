@@ -19,13 +19,12 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { parseJsonList, } from "../../utils";
-import { ErrorResponse, } from "../../validation/schemas";
 import type {
   PartyStatus,
   TransportStatus,
   TravelStatusPayload,
 } from "../../validation/schemas/travel-wire";
-import { extractAuth, jsonResponse, } from "../http-utils";
+import { extractAuth, jsonResponse, routeDetail, routeErrors, } from "../http-utils";
 import { requireWorldAccess, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -201,15 +200,14 @@ export function travelStatusRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         response: {
           200: t.Object({ data: t.Any(), },),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...routeErrors(),
         },
-        detail: {
+        ...routeDetail({
           summary: "Travel status",
           description:
             "Active transports (route progress, next stop) and parties (fast-travel state) for a world, with location hazards.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }
