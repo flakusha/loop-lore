@@ -49,6 +49,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     // ── Get availability for an actor ──────────────────────────
     .get(
       `${prefix}/actors/:actorId/availability`,
+      // ctx.t is derive-only (absent from Elysia Context); typed-Ctx pattern: cast ctx to Context & { t } at the boundary (skill://route-ctx-typing).
       async (ctx: any,) => {
         const access = await requireActorAccess(ctx, database,);
         if (access instanceof Response) { return access; }
@@ -83,7 +84,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     // ── Create or update availability ──────────────────────────
     .post(
       `${prefix}/actors/:actorId/availability`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const access = await requireActorAccess(ctx, database,);
         if (access instanceof Response) { return access; }
         const { actorId, } = access;
@@ -148,7 +149,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     // ── Delete availability ────────────────────────────────────
     .delete(
       `${prefix}/actors/:actorId/availability`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const access = await requireActorAccess(ctx, database,);
         if (access instanceof Response) { return access; }
         const { actorId, } = access;

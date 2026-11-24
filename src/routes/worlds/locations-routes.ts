@@ -25,7 +25,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds-locations", },)
     .get(
       `${prefix}/worlds/:worldId/locations`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
         const pageSize = Number(ctx.query?.pageSize,) || 20;
@@ -53,7 +53,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/locations`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleCreateLocation(
           database,
@@ -74,7 +74,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .get(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetLocation(
           database,
@@ -95,7 +95,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .put(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateLocation(
           database,
@@ -117,7 +117,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/locations/:locId/move`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleMoveLocation(
           database,
@@ -141,7 +141,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .delete(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteLocation(
           database,

@@ -67,7 +67,7 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds-anomalies", },)
     .get(
       `${prefix}/worlds/:worldId/anomalies`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -95,7 +95,7 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -139,7 +139,7 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/sweep`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -159,7 +159,7 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/:anomalyId/discover`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
