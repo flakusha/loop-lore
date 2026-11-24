@@ -187,7 +187,7 @@
     "@elysia/openapi": "^1.4.17",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@noble/hashes": "^2.4.0",
-    "@oh-my-pi/pi-tui": "18.22.2",
+    "@oh-my-pi/pi-tui": "19.1.1",
     "@optique/core": "^1.4.0",
     "@optique/run": "^1.4.0",
     "@sinclair/typebox": "^0.34.52",
