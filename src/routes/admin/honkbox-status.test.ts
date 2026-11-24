@@ -162,6 +162,25 @@ test("successful probe exposes queue, flags and external-tool availability", asy
   expect(text,).not.toContain(BASE,);
 });
 
+test("file-config endpoint resolves without touching the secret store", async () => {
+  const res = await makeApp("admin", {
+    config: {
+      generation: {
+        providers: {
+          openaiCompatible: [{ name: "honkbox", baseUrl: BASE, apiKey: SECRET, },],
+        },
+      },
+    } as unknown as Config,
+    resolveEndpoint: undefined,
+  },).handle(new Request(URL_PATH,),);
+
+  expect(res.status,).toBe(200,);
+  const body = await res.json() as Record<string, unknown>;
+  expect(body.state,).toBe("available",);
+  expect(body.configured,).toBe(true,);
+  expect(body.scopesEnabled,).toBe(true,);
+});
+
 test("probe without the scopes section reports disabled with empty consumers", async () => {
   const { scopes: _omitted, ...doc } = CAPABILITIES;
   const parsed = parseHonkboxCapabilities(doc,);
