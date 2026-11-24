@@ -11,6 +11,7 @@ export * from "./auth-narrowing";
 export * from "./parse";
 export * from "./redirect";
 export * from "./responses";
+export * from "./route-spec";
 export * from "./status";
 export * from "./tagged-boundary";
 export * from "./types";

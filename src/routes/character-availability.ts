@@ -11,9 +11,9 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonStringifyOr, } from "../utils";
-import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
+import { ActorIdParams, AvailabilityBody, SuccessResponse, } from "../validation/schemas";
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
-import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, routeSpec, } from "./http-utils";
 
 /**
  * @param ctx - route context holding the session identity and the actor id param
@@ -47,127 +47,121 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
 
   return new Elysia({ name: "character-availability", },)
     // ── Get availability for an actor ──────────────────────────
-    .get(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const access = await requireActorAccess(ctx, database,);
-      if (access instanceof Response) { return access; }
-      const { actorId, } = access;
+    .get(
+      `${prefix}/actors/:actorId/availability`,
+      async (ctx: any,) => {
+        const access = await requireActorAccess(ctx, database,);
+        if (access instanceof Response) { return access; }
+        const { actorId, } = access;
 
-      const availability = await database
-        .selectFrom("character_availability",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .executeTakeFirst();
+        const availability = await database
+          .selectFrom("character_availability",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
 
-      if (!availability) {
-        return jsonError({
-          message: ctx.t?.("characters.availabilityNotFound",) ?? "Availability not found",
-          status: HttpStatus.NotFound,
-        },);
-      }
+        if (!availability) {
+          return jsonError({
+            message: ctx.t?.("characters.availabilityNotFound",) ?? "Availability not found",
+            status: HttpStatus.NotFound,
+          },);
+        }
 
-      return jsonResponse(availability,);
-    }, {
-      params: ActorIdParams,
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-        404: ErrorResponse,
+        return jsonResponse(availability,);
       },
-      detail: {
+      routeSpec({
+        params: ActorIdParams,
+        response: { 200: SuccessResponse, },
         summary: "Get character availability settings",
         description:
           "Returns the availability status, usage policy, activity restrictions, and content policy for the specified actor.",
         tags: ["Characters", "Availability",],
-      },
-    },)
+      },),
+    )
     // ── Create or update availability ──────────────────────────
-    .post(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const access = await requireActorAccess(ctx, database,);
-      if (access instanceof Response) { return access; }
-      const { actorId, } = access;
-      const { status, usage_policy, activity_restrictions, content_policy, nsfw_policy, } = ctx.body;
+    .post(
+      `${prefix}/actors/:actorId/availability`,
+      async (ctx: any,) => {
+        const access = await requireActorAccess(ctx, database,);
+        if (access instanceof Response) { return access; }
+        const { actorId, } = access;
+        const { status, usage_policy, activity_restrictions, content_policy, nsfw_policy, } = ctx.body;
 
-      // Upsert
-      const existing = await database
-        .selectFrom("character_availability",)
-        .selectAll()
-        .where("actor_id", "=", actorId,)
-        .executeTakeFirst();
+        // Upsert
+        const existing = await database
+          .selectFrom("character_availability",)
+          .selectAll()
+          .where("actor_id", "=", actorId,)
+          .executeTakeFirst();
 
-      if (existing) {
+        if (existing) {
+          await database
+            .updateTable("character_availability",)
+            .set({
+              status: status ?? existing.status,
+              usage_policy: usage_policy ?? existing.usage_policy,
+              activity_restrictions: activity_restrictions
+                ? jsonStringifyOr(activity_restrictions,)
+                : existing.activity_restrictions,
+              content_policy: content_policy ?? existing.content_policy,
+              nsfw_policy: nsfw_policy ?? existing.nsfw_policy,
+              updated_at: new Date().toISOString(),
+            },)
+            .where("id", "=", existing.id,)
+            .execute();
+
+          return jsonResponse({ id: existing.id, updated: true, },);
+        }
+
+        const id = crypto.randomUUID();
         await database
-          .updateTable("character_availability",)
-          .set({
-            status: status ?? existing.status,
-            usage_policy: usage_policy ?? existing.usage_policy,
-            activity_restrictions: activity_restrictions
-              ? jsonStringifyOr(activity_restrictions,)
-              : existing.activity_restrictions,
-            content_policy: content_policy ?? existing.content_policy,
-            nsfw_policy: nsfw_policy ?? existing.nsfw_policy,
+          .insertInto("character_availability",)
+          .values({
+            id,
+            actor_id: actorId,
+            status: status ?? "available",
+            usage_policy: usage_policy ?? null,
+            activity_restrictions: activity_restrictions ? jsonStringifyOr(activity_restrictions,) : "[]",
+            content_policy: content_policy ?? null,
+            nsfw_policy: nsfw_policy ?? null,
+            created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },)
-          .where("id", "=", existing.id,)
           .execute();
 
-        return jsonResponse({ id: existing.id, updated: true, },);
-      }
-
-      const id = crypto.randomUUID();
-      await database
-        .insertInto("character_availability",)
-        .values({
-          id,
-          actor_id: actorId,
-          status: status ?? "available",
-          usage_policy: usage_policy ?? null,
-          activity_restrictions: activity_restrictions ? jsonStringifyOr(activity_restrictions,) : "[]",
-          content_policy: content_policy ?? null,
-          nsfw_policy: nsfw_policy ?? null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },)
-        .execute();
-
-      return jsonCreated({ id, },);
-    }, {
-      params: ActorIdParams,
-      body: AvailabilityBody,
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-        404: ErrorResponse,
+        return jsonCreated({ id, },);
       },
-      detail: {
+      routeSpec({
+        params: ActorIdParams,
+        body: AvailabilityBody,
+        response: { 200: SuccessResponse, },
         summary: "Create or update character availability",
         description:
           "Upserts availability settings for an actor including status, usage policy, activity restrictions, content policy, and NSFW policy.",
         tags: ["Characters", "Availability",],
-      },
-    },)
+      },),
+    )
     // ── Delete availability ────────────────────────────────────
-    .delete(`${prefix}/actors/:actorId/availability`, async (ctx: any,) => {
-      const access = await requireActorAccess(ctx, database,);
-      if (access instanceof Response) { return access; }
-      const { actorId, } = access;
+    .delete(
+      `${prefix}/actors/:actorId/availability`,
+      async (ctx: any,) => {
+        const access = await requireActorAccess(ctx, database,);
+        if (access instanceof Response) { return access; }
+        const { actorId, } = access;
 
-      await database
-        .deleteFrom("character_availability",)
-        .where("actor_id", "=", actorId,)
-        .execute();
+        await database
+          .deleteFrom("character_availability",)
+          .where("actor_id", "=", actorId,)
+          .execute();
 
-      return jsonResponse({ ok: true, },);
-    }, {
-      params: ActorIdParams,
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-        404: ErrorResponse,
+        return jsonResponse({ ok: true, },);
       },
-      detail: {
+      routeSpec({
+        params: ActorIdParams,
+        response: { 200: SuccessResponse, },
         summary: "Delete character availability settings",
         description: "Removes all availability settings for the specified actor.",
         tags: ["Characters", "Availability",],
-      },
-    },);
+      },),
+    );
 }
