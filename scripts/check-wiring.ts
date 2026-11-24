@@ -40,7 +40,7 @@
 import { Glob, } from "bun";
 import { checkReleaseGateWiring, readWorkflowFiles, } from "./check/release-gate-wiring";
 
-const ROOT = import.meta.dir + "/..";
+const ROOT = process.env.WIRING_ROOT ?? import.meta.dir + "/..";
 const errors: string[] = [];
 
 // ── Collect mount-point source text ────────────────────────────────
@@ -155,30 +155,13 @@ async function checkServiceWiring() {
 await checkServiceWiring();
 
 // ── 3. Plugin registration ─────────────────────────────────────────
-// Plugins are discovered dynamically by `src/plugins/loader.ts` scanning
-// `plugins/core`, `plugins/community`, `plugins/local`. Verify each plugin
-// directory has a `plugin.ts` manifest and that the loader references the
-// plugin directories (so a plugin cannot silently go unloaded).
-const pluginGlob = new Glob("plugins/{core,community}/*/plugin.ts",);
-const pluginLoader = await Bun.file(ROOT + "/src/plugins/loader.ts",).text();
-const loaderCoversCore = pluginLoader.includes('"plugins/core"',);
-const loaderCoversCommunity = pluginLoader.includes('"plugins/community"',);
-if (!loaderCoversCore) {
-  errors.push("[wiring] plugin loader does not scan plugins/core",);
-}
-if (!loaderCoversCommunity) {
-  errors.push("[wiring] plugin loader does not scan plugins/community",);
-}
-for await (const pluginFile of pluginGlob.scan({ cwd: ROOT, },)) {
-  const pluginName = pluginFile.split("/",).slice(2, -1,)[0];
-  // Each plugin manifest must declare a `name` matching its directory so the
-  // loader's state-keying (plugin_state by name) stays consistent.
-  const text = await Bun.file(ROOT + "/" + pluginFile,).text();
-  const nameMatch = text.match(/name:\s*["']([^"']+)["']/,);
-  if (!nameMatch || nameMatch[1] !== pluginName) {
-    errors.push(`[wiring] plugin \`${pluginName}\` (${pluginFile}) manifest name mismatch or missing`,);
-  }
-}
+// Plugins are discovered dynamically by the plugin loader scanning
+// `plugins/core`, `plugins/community`, `plugins/local`. Canonical manifests
+// and the loader now live under `packages/plugins/**`; the old `plugins/**`
+// and `src/plugins/**` files are re-export shims. Scan every root, prefer
+// canonical files where a shim duplicates them, and keep every original
+// assertion (loader tiers + per-plugin manifest names).
+errors.push(...await checkPluginWiring(ROOT,),);
 
 // ── 4. Route-test coverage ─────────────────────────────────────────
 // Non-blocking advisory: surfaces route factories with no direct test
@@ -228,3 +211,68 @@ if (errors.length > 0) {
 }
 
 console.log("[wiring] OK - all route factories mounted, services wired, plugins registered, routes tested.",);
+
+// Exported so the narrow regression test can exercise discovery against an
+// isolated fixture root without running the whole gate.
+export async function checkPluginWiring(root: string,): Promise<string[]> {
+  const errors: string[] = [];
+
+  // Canonical package files first; legacy app roots are still scanned so no
+  // plugin subject is dropped. A shim duplicating a canonical manifest is
+  // ignored (canonical wins), otherwise the shim is checked as-is.
+  const manifestRoots = ["packages/plugins", "plugins", "src/plugins",];
+  const manifests = new Map<string, { file: string; text: string; canonical: boolean }>();
+  for (const base of manifestRoots) {
+    const canonical = base === "packages/plugins";
+    const glob = new Glob(`${base}/{core,community}/*/plugin.ts`,);
+    for await (const file of glob.scan({ cwd: root, },)) {
+      const parts = file.split("/",);
+      const key = `${parts[parts.length - 3]}/${parts[parts.length - 2]}`;
+      const previous = manifests.get(key,);
+      if (previous && (previous.canonical || !canonical)) { continue; }
+      manifests.set(key, {
+        file,
+        text: await Bun.file(root + "/" + file,).text(),
+        canonical,
+      },);
+    }
+  }
+
+  for (const [key, manifest,] of manifests) {
+    const name = key.split("/",)[1]!;
+    // Each manifest must declare a `name` matching its directory so the
+    // state-keying used by the loader (plugin_state by name) stays consistent.
+    const nameMatch = manifest.text.match(/name:\s*["\x27]([^"\x27]+)["\x27]/,);
+    if (!nameMatch || nameMatch[1] !== name) {
+      errors.push(`[wiring] plugin \`${name}\` (${manifest.file}) manifest name mismatch or missing`,);
+    }
+  }
+
+  // Prefer the canonical loader. A loader that exists but stops scanning a
+  // tier is a violation; the shim is never accepted as a substitute.
+  const loaderCandidates = [
+    "packages/plugins/src/plugins/loader.ts",
+    "src/plugins/loader.ts",
+  ];
+  let loaderFile: string | undefined;
+  for (const candidate of loaderCandidates) {
+    if (await Bun.file(root + "/" + candidate,).exists()) {
+      loaderFile = candidate;
+      break;
+    }
+  }
+  if (!loaderFile) {
+    errors.push(
+      "[wiring] plugin loader not found (expected packages/plugins/src/plugins/loader.ts or src/plugins/loader.ts)",
+    );
+  } else {
+    const loader = await Bun.file(root + "/" + loaderFile,).text();
+    for (const dir of ["plugins/core", "plugins/community",]) {
+      if (!loader.includes(`"${dir}"`,)) {
+        errors.push(`[wiring] plugin loader does not scan ${dir}`,);
+      }
+    }
+  }
+
+  return errors;
+}
