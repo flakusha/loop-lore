@@ -1,0 +1,23 @@
+<!-- SPDX-License-Identifier: Apache-2.0-->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors-->
+
+# TASK: SSE resume cursor for honkbox events
+
+**Status:** Blocked
+**Priority:** Medium
+**Effort:** Medium
+**Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
+
+**Summary:**
+
+Scope: readHonkboxFrames sends Last-Event-ID or since; snapshot fallback stays for cursor-less servers. AC: reconnect replays only missed events. Depends: honkbox T4 SSE resume cursor.
+
+**Context:**
+
+(fill in before starting: why this change, constraints, alternatives considered.)
+
+**Acceptance Criteria:**
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
