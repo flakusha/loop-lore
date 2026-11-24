@@ -244,6 +244,7 @@ describe("harnessRoutes", () => {
           {
             name: string;
             flavor: string;
+            transport: "acp";
             usageClasses: string[];
             subscriptionBacked: boolean;
             noteKey: string;
@@ -257,6 +258,7 @@ describe("harnessRoutes", () => {
       expect(body.profiles,).toHaveLength(2,);
       expect(body.profiles[0],).toEqual({
         name: "omp-main",
+        transport: "acp",
         flavor: "omp",
         usageClasses: ["api", "local",],
         subscriptionBacked: false,

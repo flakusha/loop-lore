@@ -73,6 +73,7 @@ const SETTINGS = {
     {
       name: "omp-main",
       flavor: "omp",
+      transport: "acp",
       usageClasses: ["api", "local",],
       subscriptionBacked: false,
       noteKey: "harness.tos.note.omp",
@@ -82,6 +83,7 @@ const SETTINGS = {
     {
       name: "cc-sub",
       flavor: "claude-code",
+      transport: "acp",
       usageClasses: ["subscription-backed", "api",],
       subscriptionBacked: true,
       noteKey: "harness.tos.note.claude-code",
