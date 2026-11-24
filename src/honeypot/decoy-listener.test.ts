@@ -82,6 +82,54 @@ describe("isolated decoy listener", () => {
     expect(blocked.headers.get("Retry-After",),).toBeDefined();
   });
 
+  test("breach page is a static fixture and is classified", async () => {
+    const res = await fetch(`${listener.url}/trap/breach`,);
+    expect(res.status,).toBe(200,);
+    expect(await res.text(),).toContain("Synthetic fixture",);
+    expect(hits.at(-1,)?.kind,).toBe("breach",);
+  });
+
+  test("report page becomes a whitehat hit only after repeated contact", async () => {
+    await fetch(`${listener.url}/report-security`,);
+    expect(hits.at(-1,)?.kind,).toBe("bait",);
+
+    for (let i = 0; i < 5; i += 1) {
+      await fetch(`${listener.url}/admin`,);
+    }
+
+    await fetch(`${listener.url}/report-security`,);
+    expect(hits.at(-1,)?.kind,).toBe("report",);
+  });
+
+  test("tarpit delays only repeated bait hits", async () => {
+    await listener.stop();
+    listener = startDecoyListener({ tarpitMs: 150, },);
+
+    for (let i = 0; i < 5; i += 1) {
+      await fetch(`${listener.url}/admin`,);
+    }
+
+    const started = Date.now();
+    const response = await fetch(`${listener.url}/admin`,);
+    await response.arrayBuffer();
+    expect(Date.now() - started,).toBeGreaterThanOrEqual(80,);
+    expect(response.status,).toBe(200,);
+  });
+
+  test("deny rules block literal user agents before any hit", async () => {
+    await listener.stop();
+    listener = startDecoyListener({
+      denyRules: [{ userAgent: "BlockedBot", },],
+    },);
+
+    const res = await fetch(`${listener.url}/admin`, {
+      headers: { "user-agent": "BlockedBot/1.0", },
+    },);
+
+    expect(res.status,).toBe(404,);
+    expect(hits,).toHaveLength(0,);
+  });
+
   test("unknown paths return a small 404 without app fingerprints", async () => {
     const res = await fetch(`${listener.url}/api/v1/health`,);
     expect(res.status,).toBe(404,);

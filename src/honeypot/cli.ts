@@ -4,14 +4,27 @@
 /** Run the decoy listener as a standalone process (never autostarted). */
 import { getDatabase, resetDatabaseSingleton, } from "../db";
 import { createLogger, getLogger, } from "../logger";
+import { loadHoneypotConfig, } from "./config";
 import { startDecoyListener, } from "./decoy-listener";
 import { createDecoyHitSink, } from "./ingest";
 
-const host = process.env.HONEYPOT_HOST ?? "127.0.0.1";
-const rawPort = process.env.HONEYPOT_PORT ?? "8099";
+const configPath = process.env.HONEYPOT_CONFIG;
+const fileConfig = configPath === undefined
+  ? { denyRules: [], }
+  : await loadHoneypotConfig(configPath,);
+
+const host = process.env.HONEYPOT_HOST ?? fileConfig.host ?? "127.0.0.1";
+const rawPort = process.env.HONEYPOT_PORT ?? String(fileConfig.port ?? 8099,);
 const port = Number(rawPort,);
 if (!Number.isInteger(port,) || port < 0 || port > 65_535) {
   process.stderr.write(`HONEYPOT_PORT must be an integer 0-65535, got ${rawPort}\n`,);
+  process.exit(2,);
+}
+
+const rawTarpitMs = process.env.HONEYPOT_TARPIT_MS ?? String(fileConfig.tarpitMs ?? 0,);
+const tarpitMs = Number(rawTarpitMs,);
+if (!Number.isFinite(tarpitMs,) || tarpitMs < 0) {
+  process.stderr.write(`HONEYPOT_TARPIT_MS must be a non-negative number, got ${rawTarpitMs}\n`,);
   process.exit(2,);
 }
 
@@ -22,12 +35,15 @@ const sink = createDecoyHitSink(getDatabase(), {
 },);
 
 const listener = startDecoyListener({
+  denyRules: fileConfig.denyRules,
   host,
+  maxConcurrentTarpits: fileConfig.maxConcurrentTarpits,
   onHit: (hit,) => {
     getLogger().info("honeypot hit", { module: "honeypot", ...hit, },);
     void sink(hit,);
   },
   port,
+  tarpitMs,
 },);
 
 getLogger().info("honeypot decoy listener started", {

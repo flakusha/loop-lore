@@ -69,6 +69,16 @@ describe("classifyDecoyHit (pure)", () => {
     expect(bait?.source,).toBe("decoy",);
   });
 
+  test("breach is suspicion and self-reported whitehat stays local", () => {
+    const breach = classifyDecoyHit(makeHit({ kind: "breach", path: "/trap/breach", },),);
+    const report = classifyDecoyHit(makeHit({ kind: "report", path: "/report-security", },),);
+    expect(breach?.label,).toBe("suspicion",);
+    expect(breach?.confidence,).toBe(0.5,);
+    expect(report?.label,).toBe("whitehat",);
+    expect(report?.confidence,).toBe(0.2,);
+    expect(report?.source,).toBe("decoy",);
+  });
+
   test("indicator is a stable digest, never a raw IP", () => {
     const first = classifyDecoyHit(makeHit(),);
     const again = classifyDecoyHit(makeHit(),);
