@@ -11,7 +11,7 @@ import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../../middleware/auth";
 import type { RateLimiter, } from "../../middleware/rate-limit";
-import { HttpStatus, jsonError, } from "../http-utils";
+import { forbiddenResponse, HttpStatus, jsonError, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
 import {
   demoLoginLimiter,
@@ -171,6 +171,12 @@ async function handleDemoLogin(
   peerIp?: string | null,
   limiter: RateLimiter = demoLoginLimiter,
 ): Promise<Response> {
+  // RA-15: demo login grants the admin-equivalent solo role. In required
+  // mode no anonymous caller may mint that session, on either route prefix.
+  if (config.auth.required) {
+    return forbiddenResponse(undefined, t,);
+  }
+
   const ip = getClientIp(request, config, peerIp ?? null,);
   // BUG-demo-login-endpoint-bypasses-rate-limiter: enforce the same per-IP
   // gate as /api/auth/login. Without this, an attacker can spam session

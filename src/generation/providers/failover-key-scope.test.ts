@@ -17,6 +17,8 @@ import type { Config, } from "../../config/schema";
 import { encryptValue, } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
+import { QuotaEngine, } from "../quota-engine";
+import { callWithResource, } from "../resource-provider";
 import { callWithFailover, } from "./call-with-failover";
 import { buildFailoverList, registerProvider, resolveProvider, unregisterProvider, } from "./registry";
 import type { GenerateRequest, LLMProvider, } from "./types";
@@ -39,6 +41,7 @@ const SECRET = "fks-encryption-key";
 const PRIMARY = "fks-vendor-a";
 const FALLBACK = "fks-vendor-b";
 const USER_ID = "fks-user";
+const RESOURCE_USER = "fks-resource-user";
 
 /**
  * Install the recording doubles for one chain. registerProvider is
@@ -185,5 +188,48 @@ describeReal("callWithFailover — BYO key scoping", () => {
     expect(response.content,).toBe("fallback answered",);
     expect(seen[PRIMARY],).toEqual(["sk-server-key",],);
     expect(seen[FALLBACK],).toEqual(["sk-server-key",],);
+  });
+
+  test("callWithResource resolves each fallback's own BYO key", async () => {
+    const seen: Record<string, (string | undefined)[]> = { [PRIMARY]: [], [FALLBACK]: [], };
+    installChain(seen, PRIMARY, FALLBACK,);
+
+    await testDb.insertInto("users",).values({
+      id: RESOURCE_USER,
+      username: RESOURCE_USER,
+      display_name: "Resource User",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
+      user_id: RESOURCE_USER,
+      provider_name: PRIMARY,
+      api_key_encrypted: await encryptValue("sk-user-secret-for-a", SECRET,),
+    },).execute();
+
+    const resourceId = "fks-resource";
+    await testDb.insertInto("resource_records",).values({
+      id: resourceId,
+      owner_id: RESOURCE_USER,
+      type: "inference",
+      provider: PRIMARY,
+      endpoint: "",
+      credential_ref: "",
+      quota: JSON.stringify({ requestsPerMinute: 5, },),
+      status: "active",
+    },).execute();
+
+    const response = await callWithResource(
+      resourceId,
+      { model: "m", messages: [], params: {}, },
+      { db: testDb, config: byoConfig(), userId: RESOURCE_USER, quota: new QuotaEngine(), },
+    );
+
+    expect(response.content,).toBe("fallback answered",);
+    expect(seen[PRIMARY],).toEqual(["sk-user-secret-for-a",],);
+    expect(seen[FALLBACK],).toEqual([undefined,],);
   });
 },);

@@ -17,6 +17,7 @@ describe("Auth E2E", () => {
   beforeAll(async () => {
     // Use auth.required=true so unauthenticated requests get 401
     server = await createTestServer({ auth: { required: true, }, },);
+    await seedUsers(server.db,);
     api = createClient(server.url,);
   },);
 
@@ -31,15 +32,15 @@ describe("Auth E2E", () => {
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
-  test("POST /api/v1/demo-login creates session and returns cookie", async () => {
+  test("POST /api/v1/demo-login is refused when auth.required=true", async () => {
     const res = await api.post("/api/v1/demo-login",);
-    expect(res.ok,).toBe(true,);
-    expect(api.token,).toBeTruthy();
+    expect(res.status,).toBe(403,);
+    expect(api.token,).toBeNull();
   });
 
   test("GET /api/v1/auth/me returns user info after login", async () => {
-    // Ensure logged in
-    await api.login();
+    // Required mode has no anonymous demo session; authenticate a seeded user.
+    expect(await api.loginAs(SEED.user.username, SEED.user.password,),).toBe(true,);
     const res = await api.get<{
       id: string;
       username: string;
@@ -49,12 +50,12 @@ describe("Auth E2E", () => {
 
     expect(res.ok,).toBe(true,);
     expect(res.data,).toBeTruthy();
-    expect(res.data!.role,).toBe("solo",);
+    expect(res.data!.role,).toBe("user",);
   });
 
   test("POST /api/v1/auth/logout clears session", async () => {
-    // Login first
-    await api.login();
+    // Login first (seeded user — demo-login is disabled in required mode).
+    expect(await api.loginAs(SEED.user.username, SEED.user.password,),).toBe(true,);
     expect(api.token,).toBeTruthy();
 
     // Logout

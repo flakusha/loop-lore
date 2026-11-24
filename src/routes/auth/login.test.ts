@@ -34,11 +34,12 @@ const USER_ID = "user-login-alice";
 /**
  * @param overrides
  * @param overrides.jwtSecret
+ * @param overrides.required
  */
-function makeConfig(overrides?: { jwtSecret?: string },): Config {
+function makeConfig(overrides?: { jwtSecret?: string; required?: boolean },): Config {
   return {
     auth: {
-      required: true,
+      required: overrides?.required ?? false,
       registrationOpen: true,
       sessionTimeoutHours: 24,
       maxSessionsPerUser: 10,
@@ -448,6 +449,27 @@ describe("handleDemoLogin", () => {
     // A different peer keeps its own budget
     const ok = await handleDemoLogin(makeRequest(), db, makeConfig(), undefined, "10.0.0.2", demoLimiter,);
     expect(ok.status,).toBe(200,);
+  });
+
+  // RA-15: required mode must never mint an admin-equivalent solo session.
+  test("refuses demo-login with 403 when auth.required is true", async () => {
+    const before = await db.selectFrom("sessions",).select("id",).execute();
+
+    const res = await handleDemoLogin(
+      makeRequest(),
+      db,
+      makeConfig({ required: true, },),
+      undefined,
+      null,
+      demoLimiter,
+    );
+
+    expect(res.status,).toBe(403,);
+    expect(res.headers.get("Set-Cookie",),).toBeNull();
+    expect(res.headers.get("HX-Redirect",),).toBeNull();
+    expect(demoLimiter.peek("unknown",).remaining,).toBe(5,);
+    const after = await db.selectFrom("sessions",).select("id",).execute();
+    expect(after.length,).toBe(before.length,);
   });
 });
 

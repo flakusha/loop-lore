@@ -22,6 +22,7 @@ import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { callWithFailover, } from "../generation/providers/call-with-failover";
 import { getProvider, resolveProvider, } from "../generation/providers/registry";
+import { ByoKeyDecryptError, } from "../generation/providers/user-api-key";
 import { getSchedulerManager, } from "../generation/scheduler";
 import { PriorityLevel, } from "../llm";
 import { getLogger, } from "../logger";
@@ -137,7 +138,10 @@ export async function callAux(
     },);
 
     apiKey = resolved.resolvedApiKey;
-  } catch {
+  } catch (error) {
+    // An undecryptable stored key is fatal: proceeding would silently bill
+    // the operator for a request the user believed used their own key.
+    if (error instanceof ByoKeyDecryptError) { return null; }
     // Non-fatal — fall back to the provider instance's configured key
   }
 

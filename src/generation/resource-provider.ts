@@ -103,7 +103,10 @@ export async function callWithResource(
   // Compose, not replace: the registry owns resolution order and failover;
   // the facade only guards quota before and accounts usage after.
   const callList = buildFailoverList(resolved.resolvedProviderName, opts.config,);
-  const response = await callWithFailover(callList, { ...req, apiKey: req.apiKey ?? resolved.resolvedApiKey, },);
+  // Do not pre-resolve one key for the whole chain: callWithFailover re-resolves
+  // per provider so a fallback never receives the primary's BYO secret, and
+  // allowUserApiKey:false is honoured on every hop.
+  const response = await callWithFailover(callList, { ...req, resolveApiKey: resolved.resolveApiKey, },);
   await quota.recordTokenUsage(record.id, response.usage?.totalTokens ?? 0,);
   if (opts.db) {
     await opts.db
