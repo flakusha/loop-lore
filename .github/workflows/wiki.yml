@@ -1,0 +1,63 @@
+name: Wiki
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "docs/guide/**"
+      - "docs/i18n/**"
+      - "README.md"
+      - "scripts/publish-wiki.ts"
+      - ".github/workflows/wiki.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: wiki-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  BUN_VERSION: "1.4.5"
+
+jobs:
+  publish:
+    name: Publish user docs to wiki
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      # No install: scripts/publish-wiki.ts uses node builtins only.
+      - name: Stage wiki pages
+        run: bun run scripts/publish-wiki.ts -- --wiki-dir wiki-stage --check
+
+      - name: Clone wiki
+        run: |
+          if ! git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" wiki; then
+            # First run (or wiki disabled): stage an empty repo so the
+            # failure surfaces at push time, not here.
+            mkdir -p wiki
+            git -C wiki init -b master
+            git -C wiki remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git"
+          fi
+
+      - name: Sync and push
+        run: |
+          cp wiki-stage/*.md wiki/
+          git -C wiki config user.name "github-actions[bot]"
+          git -C wiki config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C wiki add -A
+          if git -C wiki status --porcelain | grep -q .; then
+            git -C wiki commit -m "docs(wiki): sync user-facing docs from ${{ github.sha }}"
+            git -C wiki push origin HEAD:master
+          else
+            echo "Wiki already in sync."
+          fi
