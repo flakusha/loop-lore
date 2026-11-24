@@ -117,7 +117,7 @@ function registerTestChunkGates(checks,) {
       jobs: SRC_TEST_JOBS,
       suite: "src",
     },)
-    : (DIFF_BASE ? scopedReason : emptyReason("src/, packages/"));
+    : (DIFF_BASE ? scopedReason : emptyReason("src/, packages/",));
   // tests/e2e/ stays a DIRECTORY argument exactly like the former mega gate:
   // bun discovers `*.test.ts` under it (the `*.browser.ts` specs are not
   // test files and never ran there).
@@ -193,8 +193,8 @@ function coverageCommand() {
     // chunk, and tests/e2e/ always exists.
     const chunks = [];
     if (
-      filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),).length > 0
-      || filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.packages,),).length > 0
+      filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.src,),).length > 0 ||
+      filterPaths(walkTestFiles(PROJECT_ROOT, TEST_ROOTS.packages,),).length > 0
     ) {
       chunks.push(`${CHUNK_COVERAGE_DIRS.src}/lcov.info`,);
     }

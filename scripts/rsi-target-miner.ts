@@ -26,16 +26,14 @@ const REVIEW_PATTERN = /\b(migration|auth|secrets?|security|credentials)\b/i;
 const RSI_PATTERN = /\brsi\b|recursive-self-improvement/i;
 const TOOLING_PATTERN = /\b(script|tooling|cli|check|checks|gate|gates|deterministic|automation|refactor)\b/i;
 
-export interface RankedTarget {
-  extid: string;
-  title: string;
-  score: number;
-  bucket: "auto-file-candidate" | "human-review";
-  reasons: string[];
-}
-
 export interface MinerResult {
-  ranked: RankedTarget[];
+  ranked: Array<{
+    extid: string;
+    title: string;
+    score: number;
+    bucket: "auto-file-candidate" | "human-review";
+    reasons: string[];
+  }>;
   counts: {
     total: number;
     autoFileCandidates: number;
@@ -49,7 +47,7 @@ export interface MinerResult {
  * @returns deterministic ranked result; no timestamps, no I/O
  */
 export function rankTargets(entries: Record<string, IndexEntry>,): MinerResult {
-  const ranked: RankedTarget[] = [];
+  const ranked: MinerResult["ranked"] = [];
 
   for (const entry of Object.values(entries,)) {
     const status = (entry.status ?? "open").toLowerCase();
