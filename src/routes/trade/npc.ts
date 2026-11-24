@@ -8,7 +8,7 @@ import { resolveActorAccess, } from "../actor-access";
 import { badRequestResponse, jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import type { TradeRoutesOptions, } from "./shared";
-import { executeResponse, tradeLineSchema, } from "./shared";
+import { executeResponse, requireTradeWorldAccess, tradeLineSchema, } from "./shared";
 
 /**
  * NPC trade routes — buy-from-NPC and sell-to-NPC, each a player-vs-NPC
@@ -24,6 +24,14 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/buy-from-npc`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as {
           buyerActorId: string;
           npcActorId: string;
@@ -68,6 +76,14 @@ export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/sell-to-npc`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as {
           sellerActorId: string;
           npcActorId: string;

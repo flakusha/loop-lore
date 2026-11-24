@@ -166,6 +166,14 @@ describe("tradeHistoryRoutes", () => {
     expect(body.history.length,).toBeLessThanOrEqual(1,);
   });
 
+  test("404 when the caller cannot access the world", async () => {
+    const res = await authedApp(otherUserId,).handle(
+      new Request(url(`?actorId=${strangerActorId}`,),),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
+
   test("403 when the actor belongs to another user", async () => {
     const res = await authedApp(userId,).handle(
       new Request(url(`?actorId=${strangerActorId}`,),),

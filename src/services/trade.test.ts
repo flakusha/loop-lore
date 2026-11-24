@@ -134,6 +134,24 @@ describe("TradeService — offer lifecycle", () => {
     expect(doubleCancel.reason,).toContain("cancelled",);
   });
 
+  test("world-bound mutations reject offers from another world", async () => {
+    const svc = new TradeService(db,);
+    const id = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 11,
+    },);
+
+    const wrongWorld = `${worldId}-other`;
+
+    // Both wrong-world calls fail before claiming or transferring anything.
+    expect((await svc.cancelOffer(id, buyer, wrongWorld,)).success,).toBe(false,);
+    expect((await svc.acceptOffer(id, seller, wrongWorld,)).success,).toBe(false,);
+    expect((await svc.cancelOffer(id, buyer, worldId,)).success,).toBe(true,);
+  });
+
   // ── acceptOffer — happy path ──────────────────────────
 
   test("acceptOffer transfers items + gold and records history", async () => {

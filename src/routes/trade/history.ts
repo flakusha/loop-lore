@@ -6,7 +6,7 @@ import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
 import { jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
-import type { TradeRoutesOptions, } from "./shared";
+import { requireTradeWorldAccess, type TradeRoutesOptions, } from "./shared";
 
 /**
  * Trade history route — query past trades for a world, optionally
@@ -22,6 +22,14 @@ export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .get(`${prefix}/worlds/:worldId/trade/history`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         // actorId is required, not optional: history is participant-scoped, so
         // omitting it would return every trade in the world to any caller.
         const denied = await resolveActorAccess(opts.database, ctx.query.actorId, userId,);

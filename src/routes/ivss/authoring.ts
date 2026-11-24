@@ -20,7 +20,8 @@ import {
 } from "../../db/enums-generation";
 import type { DB, } from "../../db/schema";
 import { sqliteUtcToIso, toDate, } from "../../utils/date";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { requireWorldAccess, } from "../worlds/access";
 
 type ScenarioRow = Selectable<DB["scenarios"]>;
 type SceneRow = Selectable<DB["scenario_scenes"]>;
@@ -442,13 +443,14 @@ export function ivssAuthoringRoutes(
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
       const { worldId, title, } = ctx.body;
-      const world = await database
-        .selectFrom("worlds",)
-        .select("id",)
-        .where("id", "=", worldId,)
-        .executeTakeFirst();
+      const worldErr = await requireWorldAccess(
+        database,
+        worldId,
+        userId,
+        extractAuth(ctx,).userRole,
+      );
 
-      if (!world) { return notFound(); }
+      if (worldErr) { return worldErr; }
       const now = toDate().toISOString();
       const id = crypto.randomUUID();
       await database

@@ -102,6 +102,15 @@ async function call(
 }
 
 describe("IVSS authoring routes", () => {
+  test("POST /api/v1/ivss/scenarios denies a world the caller cannot access", async () => {
+    const res = await call(STRANGER, "POST", "/api/v1/ivss/scenarios", {
+      worldId: WORLD,
+      title: "Not mine",
+    },);
+
+    expect(res.status,).toBe(404,);
+  });
+
   test("creates a scenario, scene, shot and fragment end to end", async () => {
     const scenarioRes = await call(OWNER, "POST", "/api/v1/ivss/scenarios", {
       worldId: WORLD,

@@ -27,6 +27,7 @@ import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
+import { requireWorldAccess, } from "../worlds/access";
 import { tradeHistoryRoutes, } from "./history";
 import { npcTradeRoutes, } from "./npc";
 import { tradeOfferRoutes, } from "./offers";
@@ -64,6 +65,14 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
       .get(`${prefix}/worlds/:worldId/trade/balance`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireWorldAccess(
+          database,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const actorId = ctx.query.actorId as string | undefined;
         if (!actorId) { return badRequestResponse("actorId query param required",); }
         const denied = await resolveActorAccess(database, actorId, userId,);
@@ -89,6 +98,14 @@ export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): 
       .post(`${prefix}/worlds/:worldId/trade/execute`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireWorldAccess(
+          database,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as {
           buyerActorId: string;
           sellerActorId: string;

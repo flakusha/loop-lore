@@ -8,7 +8,7 @@ import { resolveActorAccess, } from "../actor-access";
 import { badRequestResponse, jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import type { TradeRoutesOptions, } from "./shared";
-import { executeResponse, tradeLineSchema, } from "./shared";
+import { executeResponse, requireTradeWorldAccess, tradeLineSchema, } from "./shared";
 
 /**
  * Trade offer routes — create, list, accept and cancel pending offers.
@@ -25,6 +25,14 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/offers`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as {
           buyerActorId: string;
           sellerActorId: string;
@@ -66,6 +74,14 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .get(`${prefix}/worlds/:worldId/trade/offers`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const actorId = ctx.query.actorId as string;
         if (!actorId) { return badRequestResponse("actorId query param required",); }
         const denied = await resolveActorAccess(opts.database, actorId, userId,);
@@ -103,10 +119,23 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/offers/:offerId/accept`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as { actorId: string };
         const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
         if (denied) { return denied; }
-        const res = await opts.svc().acceptOffer(ctx.params.offerId, body.actorId,);
+        const res = await opts.svc().acceptOffer(
+          ctx.params.offerId,
+          body.actorId,
+          ctx.params.worldId,
+        );
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Accept failed",); }
         return jsonResponse({ ok: true, ...res, },);
       }, {
@@ -127,6 +156,14 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/offers/:offerId/counter`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as {
           counterActorId: string;
           buyerItems?: TradeLine[];
@@ -139,6 +176,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
         const res = await opts.svc().counterOffer({
           offerId: ctx.params.offerId,
           counterActorId: body.counterActorId,
+          worldId: ctx.params.worldId,
           buyerItems: body.buyerItems,
           sellerItems: body.sellerItems,
           price: body.price,
@@ -169,10 +207,23 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/offers/:offerId/cancel`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
+        const worldErr = await requireTradeWorldAccess(
+          opts,
+          ctx.params.worldId,
+          userId,
+          ctx.userRole as string | null,
+        );
+
+        if (worldErr) { return worldErr; }
         const body = ctx.body as { buyerActorId: string };
         const denied = await resolveActorAccess(opts.database, body.buyerActorId, userId,);
         if (denied) { return denied; }
-        const res = await opts.svc().cancelOffer(ctx.params.offerId, body.buyerActorId,);
+        const res = await opts.svc().cancelOffer(
+          ctx.params.offerId,
+          body.buyerActorId,
+          ctx.params.worldId,
+        );
+
         if (!res.success) { return badRequestResponse(res.reason ?? "Cancel failed",); }
         return jsonResponse({ ok: true, },);
       }, {

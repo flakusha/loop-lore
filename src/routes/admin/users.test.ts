@@ -140,6 +140,29 @@ describe("admin users routes", () => {
     expect(res.status,).toBe(204,);
   });
 
+  test("PATCH /api/admin/users/:id/role rejects demoting the last admin", async () => {
+    const lastAdmin = "00000000-0000-0000-0000-000000000042";
+    await insertUsers(db, "carol", "Carol", { id: lastAdmin, role: "admin", },);
+    try {
+      const app = makeApp(db, "admin",);
+      const res = await app.handle(
+        new Request(`http://localhost/api/admin/users/${lastAdmin}/role`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ role: "user", },),
+        },),
+      );
+
+      expect(res.status,).toBe(400,);
+      const stored = await db.selectFrom("users",).select("role",)
+        .where("id", "=", lastAdmin,).executeTakeFirstOrThrow();
+
+      expect(stored.role,).toBe("admin",);
+    } finally {
+      await db.deleteFrom("users",).where("id", "=", lastAdmin,).execute();
+    }
+  });
+
   test("DELETE /api/admin/users/:id returns 403 for non-admin", async () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
