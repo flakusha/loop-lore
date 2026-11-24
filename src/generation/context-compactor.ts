@@ -82,8 +82,16 @@ export class ContextCompactor {
       return { messages, compacted: false, droppedTokens: 0, };
     }
 
-    const keep = messages.slice(-this.keepLast,);
-    const older = messages.slice(0, messages.length - this.keepLast,);
+    // System messages carry character / lore / policy instructions: never
+    // fold them into an extractive digest. Preserve them verbatim and compact
+    // only the conversation after them (CG-01).
+    const system = messages.filter((m,) => m.role === "system");
+    const rest = messages.filter((m,) => m.role !== "system");
+    const keep = rest.slice(-this.keepLast,);
+    const older = rest.slice(0, rest.length - this.keepLast,);
+    if (older.length === 0) {
+      return { messages, compacted: false, droppedTokens: 0, };
+    }
 
     const segments = Array.from(older, (m,) => `${m.role}: ${m.content ?? ""}`,);
     const summary = await this.summarizer(segments,);
@@ -95,7 +103,7 @@ export class ContextCompactor {
 
     const droppedTokens = this.totalTokens(older,);
     return {
-      messages: [summaryMessage, ...keep,],
+      messages: [...system, summaryMessage, ...keep,],
       compacted: true,
       summary,
       droppedTokens,

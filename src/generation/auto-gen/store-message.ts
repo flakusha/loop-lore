@@ -166,6 +166,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
             role: MessageRole.Assistant,
             content: encResult.storedContent,
             key_id: encResult.keyId,
+            content_plaintext: storedText,
             content_type: MessageContentType.Text,
             content_format: MessageContentFormat.Markdown,
             content_encoding: ContentEncoding.Identity,
@@ -200,13 +201,14 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     return { swipeIndex: outcome.value ?? null, };
   },);
 
-  // The row carries no plaintext mirror: index blind tokens for the token
-  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+  // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
   await indexMessageSearchTokens(database, {
     messageId,
     chatId,
     plaintext: storedText,
     keyId: encResult.keyId,
+    plaintextMirror: storedText,
   },);
 
   // Game-state extraction (FEAT-game-state-extraction-and-analysis-pipeline):

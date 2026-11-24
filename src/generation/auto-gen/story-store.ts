@@ -170,6 +170,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
       role: MessageRole.Assistant,
       content: storedContent,
       key_id: storedKeyId,
+      content_plaintext: response,
       content_type: MessageContentType.Text,
       content_format: MessageContentFormat.Markdown,
       content_encoding: contentEncoding,
@@ -191,13 +192,14 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     },)
     .execute();
 
-  // The row carries no plaintext mirror: index blind tokens for the token
-  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+  // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
   await indexMessageSearchTokens(database, {
     messageId,
     chatId,
     plaintext: response,
     keyId: storedKeyId,
+    plaintextMirror: response,
   },);
 
   return { messageId, };

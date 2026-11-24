@@ -160,6 +160,25 @@ describe("TurnManager", () => {
       const tm = new TurnManager({ db, chatId: "any", },);
       await expect(tm.selectNextActor(),).rejects.toThrow("TurnManager not initialized",);
     });
+
+    test("never selects an actor impersonated in this chat", async () => {
+      const { chatId, tm, } = await makeChat();
+      await db
+        .updateTable("chat_participants",)
+        .set({ impersonate_actor_id: "actor-ai-1", },)
+        .where("chat_id", "=", chatId,)
+        .where("actor_id", "=", "actor-narrator",)
+        .execute();
+
+      await tm.initialize();
+      const picked: (string | null)[] = [];
+      for (let i = 0; i < 6; i++) {
+        picked.push(await tm.selectNextActor(),);
+      }
+
+      expect(picked,).not.toContain("actor-ai-1",);
+      expect(picked,).toContain("actor-ai-2",);
+    });
   });
 
   describe("pause/resume", () => {

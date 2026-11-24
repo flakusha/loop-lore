@@ -256,4 +256,23 @@ describe("skip cooldown + mute parity (turn-talkativity-skip AC6 / moderation AC
       await db.destroy();
     }
   });
+
+  test("non-mention auto-advance never selects an impersonated actor", async () => {
+    const { db, userId, } = await seedUser();
+    try {
+      const { chatId, luna, max, } = await seedGroup(db, userId,);
+      await db
+        .updateTable("chat_participants",)
+        .set({ impersonate_actor_id: luna, },)
+        .where("chat_id", "=", chatId,)
+        .where("actor_id", "=", max,)
+        .execute();
+
+      for (let attempt = 0; attempt < 3; attempt++) {
+        expect(await selectNextGroupActor({ db, chatId, },),).toBe(max,);
+      }
+    } finally {
+      await db.destroy();
+    }
+  });
 });
