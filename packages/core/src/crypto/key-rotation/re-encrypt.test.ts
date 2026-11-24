@@ -5,16 +5,16 @@
  * from actor keys, encrypts messages, and verifies re-encryption updates
  * key_id while keeping content decryptable with the current chat key.
  */
-import type { DB, } from "@/db/schema";
-import { createTestDb, resetTestDb, } from "@/test-utils/create-test-db";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, resetTestDb, } from "../../../../../src/test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
   insertChats,
   insertUsers,
-} from "@/test-utils/insert-helpers";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+} from "../../../../../src/test-utils/insert-helpers";
 import { generateActorKey, } from "../actor-keys";
 import { type ChatKey, deriveChatKeyForChat, } from "../chat-keys";
 import { compressThenEncrypt, decryptThenDecompress, } from "../pipeline";

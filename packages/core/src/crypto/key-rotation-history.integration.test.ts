@@ -10,10 +10,10 @@
  * - `messagesReEncrypted` is 0 (no re-encryption needed).
  * - The OLD actor key has `status="expired"`.
  */
-import type { DB, } from "@/db/schema";
-import { createTestDb, resetTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import { createTestDb, resetTestDb, } from "../../../../src/test-utils/create-test-db";
 import { generateActorKey, } from "./actor-keys";
 import { deriveChatKeyForChat, } from "./chat-keys";
 import { rotateActorKey, } from "./key-rotation/rotate";

@@ -7,7 +7,7 @@
  * Flow per log() call:
  *   level filter → timestamp → censor → limits → enqueue
  */
-import { formatTime, unixSec, } from "@/utils/date";
+import { formatTime, unixSec, } from "../utils/date";
 import { censorMeta, fieldNamesToRules, } from "./censors";
 import { levelFromConfig, shouldEmit, } from "./levels";
 import { applyLimits, } from "./limits";

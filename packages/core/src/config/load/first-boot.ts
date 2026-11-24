@@ -22,10 +22,10 @@
 // A failed promotion never blocks boot with a half-state: without a file to
 // write to, behavior is exactly today's throw.
 
-import { getLogger, } from "@/logger";
-import { findMainRepoRoot, } from "@/utils/git-worktree";
 import fs from "node:fs";
 import path from "node:path";
+import { getLogger, } from "../../logger";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { Config, } from "../schema";
 import {
   DEFAULT_CONFIG_FILES,

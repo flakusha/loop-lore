@@ -22,6 +22,7 @@ import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
+import { FEATURES_DEFAULTS, } from "./features";
 import { FEDERATION_DEFAULTS, } from "./federation";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
@@ -91,6 +92,7 @@ export const createConfigSchema = () => {
     dynamicResponse: deepClone(DYNAMIC_RESPONSE_DEFAULTS,),
     frontend: deepClone(FRONTEND_DEFAULTS,),
     federation: deepClone(FEDERATION_DEFAULTS,),
+    features: deepClone(FEATURES_DEFAULTS,),
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
@@ -128,6 +130,7 @@ export const createConfigSchema = () => {
         dynamicResponse: sections.dynamicResponse,
         frontend: sections.frontend,
         federation: sections.federation,
+        features: sections.features,
         seeding: sections.seeding,
         cron: sections.cron,
         harness: sections.harness,

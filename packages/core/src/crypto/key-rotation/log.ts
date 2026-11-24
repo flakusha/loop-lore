@@ -4,7 +4,7 @@
 /**
  * Shared key-rotation logger.
  */
-import { getLogger, type Logger, } from "@/logger";
+import { getLogger, type Logger, } from "../../logger";
 
 /**
  * Shared key-rotation logger.

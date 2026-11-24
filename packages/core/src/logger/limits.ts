@@ -7,7 +7,7 @@
  * Applied at Logger.log() before queue dispatch.
  */
 
-import { safeJsonStringify, } from "@/utils";
+import { safeJsonStringify, } from "../utils/safe-json";
 import type { LogEntry, SizeLimits, } from "./types";
 
 const DEFAULTS: Required<SizeLimits> = {

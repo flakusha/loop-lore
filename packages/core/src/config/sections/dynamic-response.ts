@@ -3,7 +3,7 @@
 
 // src/config/sections/dynamic-response.ts — Dynamic response config section
 
-import { ResponseCompression, } from "@/db/enums";
+import { ResponseCompression, } from "../../../../../src/db/enums";
 
 export const DYNAMIC_RESPONSE_DEFAULTS = {
   enabled: true,

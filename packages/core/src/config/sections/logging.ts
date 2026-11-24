@@ -3,7 +3,7 @@
 
 // src/config/sections/logging.ts — Logging config section
 
-import { LogLevel, } from "@/db/enums";
+import { LogLevel, } from "../../../../../src/db/enums";
 
 export const LOGGING_DEFAULTS = {
   level: LogLevel.Debug,

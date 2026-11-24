@@ -6,7 +6,7 @@
 // Shared across Character Core, Chat Lifecycle, and NSFW systems.
 // Provides the 5-tier rating enum and runtime enforcement contract.
 
-import { ContentIntensity, } from "@/db/enums-character/nsfw";
+import { ContentIntensity, } from "../../../../src/db/enums-character/nsfw";
 
 // ── Rating Enum ───────────────────────────────────────────────
 

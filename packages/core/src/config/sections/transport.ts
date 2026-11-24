@@ -3,7 +3,7 @@
 
 // src/config/sections/transport.ts — Transport config section
 
-import { TransportProtocol, } from "@/db/enums";
+import { TransportProtocol, } from "../../../../../src/db/enums";
 import type { TransportCompressionConfig, TransportLimitsConfig, } from "../schema";
 
 export const TRANSPORT_COMPRESSION_DEFAULTS = {

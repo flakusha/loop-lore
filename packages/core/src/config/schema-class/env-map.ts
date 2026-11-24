@@ -12,6 +12,7 @@ import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
+import { FEATURES_DEFAULTS, } from "./features";
 import { FEDERATION_DEFAULTS, } from "./federation";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
@@ -61,6 +62,7 @@ export const envMap = (): EnvMap => {
     frontend: FRONTEND_DEFAULTS,
     cron: CRON_DEFAULTS,
     federation: FEDERATION_DEFAULTS,
+    features: FEATURES_DEFAULTS,
     integrations: INTEGRATIONS_DEFAULTS,
     prompt: PROMPT_DEFAULTS,
     web: WEB_DEFAULTS,
@@ -101,6 +103,7 @@ export const envMap = (): EnvMap => {
   add("frontend", s.frontend,);
   add("cron", s.cron,);
   add("federation", s.federation,);
+  add("features", s.features,);
   add("integrations", s.integrations,);
   add("prompt", s.prompt,);
   add("web", s.web,);

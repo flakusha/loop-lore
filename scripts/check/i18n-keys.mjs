@@ -4,6 +4,7 @@
 
 /**
  * i18n static-key gate — extracts all t("...") call sites from src/ and
+ * packages/ and
  * asserts each key exists in en.json. BLOCKING: t() returns the raw dotted
  * key on miss, so a missing catalog entry means users see key paths.
  *
@@ -21,12 +22,13 @@
  * registerCommand calls included), not a static source scan — the static
  * extractor skips template/concatenated keys and can never see these.
  */
-import { readdirSync, readFileSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, } from "node:fs";
 import { join, relative, } from "node:path";
 
 // TODO(env): bun-only — import.meta.dir is bun-specific. Add node shim when node target lands.
 const PROJECT_ROOT = import.meta.dir.replace(/\/scripts\/check$/, "",);
 const SRC_DIR = join(PROJECT_ROOT, "src",);
+const PACKAGES_DIR = join(PROJECT_ROOT, "packages",);
 const EN_JSON = join(PROJECT_ROOT, "src", "public", "locales", "en.json",);
 
 /** Flatten nested object to dot-notation keys. */
@@ -115,7 +117,10 @@ async function main() {
   const en = JSON.parse(readFileSync(EN_JSON, "utf-8",),);
   const catalog = flatten(en,);
 
-  const files = collectFiles(SRC_DIR,);
+  const files = [
+    ...collectFiles(SRC_DIR,),
+    ...(existsSync(PACKAGES_DIR,) ? collectFiles(PACKAGES_DIR,) : []),
+  ];
   const allKeys = [];
   for (const f of files) {
     const text = readFileSync(f, "utf-8",);

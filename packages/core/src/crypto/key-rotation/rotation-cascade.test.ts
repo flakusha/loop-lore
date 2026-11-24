@@ -10,11 +10,11 @@
  * (key-distribution.ts rotation UPDATE). Both rotations must succeed and
  * each must leave an audit row.
  */
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
-import { createTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, } from "../../../../../src/test-utils/create-test-db";
+import { createLogger, } from "../../logger";
 import { generateActorKey, } from "../actor-keys";
 import { getChatKey, rotateKeyOnLeave, } from "../key-distribution";
 import { getSmk, initSmk, } from "../smk";

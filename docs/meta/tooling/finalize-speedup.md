@@ -133,7 +133,7 @@ around the whole `bun run check` invocation:
 
 | mode | command | wall | peak RSS |
 | --- | --- | --- | --- |
-| plain (full) | `bun run check --gates "lint - eslint,md - lint"` | **28.23s** | **21 752 676 kB** (21.1 GB) |
+| plain (full) | `bun run check:parallel --gates "lint - eslint,md - lint"` | **28.23s** | **21 752 676 kB** (21.1 GB) |
 | diff-scoped | `bun run check --diff-base dev --gates "lint - eslint,md - lint"` | **3.53s** | **1 592 572 kB** (1.6 GB) |
 
 The scoped report shows the narrowing actually engaged (`.tmp/check-report.json`

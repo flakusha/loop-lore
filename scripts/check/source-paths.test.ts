@@ -4,13 +4,20 @@
 import { expect, test, } from "bun:test";
 
 import { changedModules, isScopedDiffSrcFile, } from "./parallel/context.mjs";
-import { moduleName, TEST_ROOTS, } from "./source-paths.mjs";
+import { moduleName, SOURCE_ROOTS, TEST_ROOTS, } from "./source-paths.mjs";
 
 test("test roots are a single flat registry", () => {
   expect(TEST_ROOTS.src,).toBe("src",);
   expect(TEST_ROOTS.e2e,).toBe("tests/e2e/",);
   expect(TEST_ROOTS.plugins,).toBe("plugins",);
   expect(TEST_ROOTS.scripts,).toBe("scripts",);
+});
+
+test("scanner roots cover app and package sources", () => {
+  expect(SOURCE_ROOTS,).toEqual(["src/", "packages/",],);
+  for (const file of ["src/chat/x.ts", "packages/core/src/config/x.ts",]) {
+    expect(SOURCE_ROOTS.some((root,) => file.startsWith(root,)),).toBe(true,);
+  }
 });
 
 test("module bucketing keeps core flat and prefixes other workspaces", () => {

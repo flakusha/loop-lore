@@ -15,9 +15,9 @@
 // else is restart-required by default. `requiresRestart` is surfaced to the
 // admin API so the UI can flag edits that need a restart.
 
-import { REQUIRES_RESTART_KEYS, } from "@/admin/config-keys";
-import { getLogger, } from "@/logger";
-import { safeJsonStringify, } from "@/utils";
+import { REQUIRES_RESTART_KEYS, } from "../../../../src/admin/config-keys";
+import { getLogger, } from "../logger";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { coerceValue, getTypeOfPath, setByPath, } from "./load/parse";
 import type { Config, } from "./schema/config";
 

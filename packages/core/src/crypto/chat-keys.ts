@@ -16,8 +16,8 @@
  * - `getChatParticipantActorIds` is preserved for non-crypto callers.
  */
 
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
 import { decryptBytes, encryptBytes, } from "./actor-key-bytes";
 import type { ActorKeyData, } from "./actor-keys";
 import { decryptThenDecompress, extractKeyIdFromPayload, } from "./pipeline";

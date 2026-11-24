@@ -6,7 +6,7 @@
 import type {
   DetailLevel,
   SdGenMode,
-} from "@/generation/prompt-templates";
+} from "../../../../../src/generation/prompt-templates";
 import type { ClassifiersTemplateConfig, } from "./templates-classifiers";
 import type { WorkflowTemplateConfig, } from "./templates-workflow";
 

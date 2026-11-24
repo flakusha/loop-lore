@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { DbType, } from "@/db/enums";
-import { createLogger, type Logger, setGlobalLogger, } from "@/logger";
 import { describe, expect, test, } from "bun:test";
+import { DbType, } from "../../../../../src/db/enums";
+import { createLogger, type Logger, setGlobalLogger, } from "../../logger";
 import {
   databaseLocation,
   networkFilesystemWarning,

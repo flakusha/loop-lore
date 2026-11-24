@@ -21,6 +21,7 @@ const localeCache = new Map<Locale, FlatTranslationMap>();
 const rawCache = new Map<Locale, TranslationMap>();
 
 /** Path to locales directory */
+// TODO(env): bun-only — import.meta.dir; add node shim when node target lands.
 const LOCALES_DIR = join(import.meta.dir, "../public/locales",);
 
 /**

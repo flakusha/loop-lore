@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { ageGateConfig, initAgeGate, } from "@/age-gate/controller";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { ageGateConfig, initAgeGate, } from "../../../../src/age-gate/controller";
 import {
   configureAssistantQuota,
   enforceQuota,
   QuotaExceededError,
-} from "@/assistant/quota/engine";
-import { quotaStorageOptions, } from "@/assistant/quota/storage";
-import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "@/logger";
+} from "../../../../src/assistant/quota/engine";
+import { quotaStorageOptions, } from "../../../../src/assistant/quota/storage";
 import {
   getRuntimeNsfwConfig,
   initNsfwRuntimeConfig,
   resetNsfwRuntimeConfig,
-} from "@/nsfw/runtime-config";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+} from "../../../../src/nsfw/runtime-config";
+import { createLogger, getLogger, type LogLevel, setGlobalLogger, } from "../logger";
 import {
   applyConfigChange,
   applyConfigWrite,

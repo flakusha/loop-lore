@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
+import { describe, expect, test, } from "bun:test";
+import { createConfigSchema, envMap, jsonSchema, validate, } from "../schema-class";
 import {
   clampPromptBudget,
   clampPromptRatio,
@@ -13,8 +14,7 @@ import {
   PROMPT_TOKEN_CAP_DEFAULT,
   promptMeta,
   PromptSection,
-} from "@/config/sections/prompt";
-import { describe, expect, test, } from "bun:test";
+} from "./prompt";
 
 describe("PromptSection", () => {
   test("defaults keep the historical 1024-token caps", () => {

@@ -8,10 +8,10 @@
  * via `log().error`, and MUST persist the audit row when the
  * insert succeeds.
  */
-import type { DB, } from "@/db/schema";
-import { createTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, } from "../../../../../src/test-utils/create-test-db";
 import { recordRotationAuditLeave, } from "./rotation-history";
 
 let db: Kysely<DB>;

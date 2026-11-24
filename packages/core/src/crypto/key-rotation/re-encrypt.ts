@@ -17,11 +17,11 @@
  * The internal `reEncryptWithKeys` is used by `rotateKeyOnLeave` which passes
  * explicit old+new keys to correctly handle key rotation.
  */
-import { getAssetFilePath, } from "@/assets/service/file-system";
-import type { DB, } from "@/db/schema";
-import { getLogger, } from "@/logger";
 import type { Kysely, } from "kysely";
 import fs from "node:fs";
+import { getAssetFilePath, } from "../../../../../src/assets/service/file-system";
+import type { DB, } from "../../../../../src/db/schema";
+import { getLogger, } from "../../logger";
 import { decryptAssetBlob, encryptAssetBlob, } from "../asset-encryption";
 import type { ChatKey, } from "../chat-keys";
 import { deriveChatKeyForChat, } from "../chat-keys";

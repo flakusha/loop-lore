@@ -12,8 +12,12 @@
  * Pure module — no DB access, no I/O.
  */
 
-import { isSecretConfigKeyName, PER_CHAT_OVERRIDABLE_KEYS, REQUIRES_RESTART_KEYS, } from "@/admin/config-keys";
-import { SettingsUpdateAllowedKeys, } from "@/validation/schemas";
+import {
+  isSecretConfigKeyName,
+  PER_CHAT_OVERRIDABLE_KEYS,
+  REQUIRES_RESTART_KEYS,
+} from "../../../../../src/admin/config-keys";
+import { SettingsUpdateAllowedKeys, } from "../../../../../src/validation/schemas";
 import { jsonSchema, } from "../schema-class";
 import type { StandaloneKey, } from "./menu-data";
 import {

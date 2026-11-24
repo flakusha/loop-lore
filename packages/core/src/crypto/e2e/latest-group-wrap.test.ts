@@ -9,10 +9,10 @@
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 
-import type { DB, } from "@/db/schema";
-import { createTestDb, } from "@/test-utils/create-test-db";
-import { uid, } from "@/utils";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, } from "../../../../../src/test-utils/create-test-db";
+import { uid, } from "../../../../../src/utils";
 import { exportPublicJwk, generateKeyPair, } from "./key-pairs";
 import { latestGroupWrapForRecipient, } from "./latest-group-wrap";
 import { recordGroupWrap, } from "./wrap-sender-key";

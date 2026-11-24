@@ -11,10 +11,10 @@
  *   "rotated".
  * - messagesReEncrypted is always 0 (stable per-chat keys; no re-encrypt).
  */
-import type { DB, } from "@/db/schema";
-import { createTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, } from "../../../../../src/test-utils/create-test-db";
 import { generateActorKey, } from "../actor-keys";
 import { getSmk, initSmk, } from "../smk";
 import { rotateActorKey, } from "./rotate";

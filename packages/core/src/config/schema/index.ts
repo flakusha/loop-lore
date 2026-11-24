@@ -19,6 +19,7 @@ export * from "./db";
 export * from "./docs";
 export * from "./dynamic-response";
 export * from "./encryption";
+export * from "./features";
 export * from "./federation";
 export * from "./frontend";
 export * from "./generation";

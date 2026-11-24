@@ -3,9 +3,9 @@
 
 // src/config/load/load.ts — Config load pipeline
 
-import { findMainRepoRoot, } from "@/utils/git-worktree";
 import fs from "node:fs";
 import path from "node:path";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { Config, } from "../schema";
 import { createConfigSchema, validate, } from "../schema-class";
 import { findExpansionFile, runTemplateExpansion, validateExpansionConfigErrors, } from "../template-expansion";

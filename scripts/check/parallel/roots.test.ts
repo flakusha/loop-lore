@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { existsSync, } from "node:fs";
+import { existsSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import {
   COVERAGE_DIR,
@@ -12,6 +12,7 @@ import {
   REPORT_PATH,
 } from "./config.mjs";
 import { DIFF_ROOT, } from "./context.mjs";
+import { checks, } from "./gate-table.mjs";
 
 /**
  * Resource contract: these tests own NOTHING.
@@ -84,5 +85,19 @@ describe("paths derived from PROJECT_ROOT", () => {
     for (const p of [REPORT_PATH, PER_RUN_REPORT_PATH, COVERAGE_DIR, JSCPD_DIR,]) {
       expect(p.startsWith(PROJECT_ROOT + path.sep,),).toBe(true,);
     }
+  });
+});
+
+describe("typecheck gate script wiring", () => {
+  const manifest: unknown = JSON.parse(readFileSync(path.join(REPO_ROOT, "package.json",), "utf8",),);
+  const scripts = (manifest as { scripts: Record<string, string> }).scripts;
+
+  test("every typecheck gate delegates to a package.json script", () => {
+    const missing = Object.entries(checks,)
+      .filter(([name,],) => name.startsWith("typecheck - ",))
+      .map(([name, cmd,],) => [name, /^bun run ([^\s]+)$/.exec(cmd,)?.[1],] as const)
+      .filter(([, script,],) => !script || !(script in scripts))
+      .map(([name,],) => name);
+    expect(missing,).toEqual([],);
   });
 });

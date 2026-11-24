@@ -3,7 +3,7 @@
 
 // src/config/schema/federation.ts — Federation/mesh interconnect config types
 
-import { type PeerWorkloadClass, } from "@/db/enums-federation";
+import { type PeerWorkloadClass, } from "../../../../../src/db/enums-federation";
 
 /** Per-peer trust override consumed by the TLS peer-trust ticket. */
 export interface FederationPeerTrustConfig {

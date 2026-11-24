@@ -8,11 +8,11 @@
 //
 // Each domain schema is a subset of the full ConfigSchema.
 
-import { createLogger, } from "@/logger";
-import { safeJsonStringify, } from "@/utils";
 import { mkdirSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { createLogger, } from "../logger";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { jsonSchema, } from "./schema-class";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);

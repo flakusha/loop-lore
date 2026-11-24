@@ -17,11 +17,11 @@
  * binaries throw".
  */
 
-import { createLogger, } from "@/logger";
 import { afterEach, beforeAll, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { isAbsolute, join, } from "node:path";
+import { createLogger, } from "../logger";
 import { ensureTlsCerts, } from "./cert";
 import { DATA_DIR, } from "./constants";
 import { SERVER_DEFAULTS, } from "./sections/server";

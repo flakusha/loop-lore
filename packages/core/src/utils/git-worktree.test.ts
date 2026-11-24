@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describeOrSkip, ISOLATED, } from "@/test-utils/isolate-only";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import * as realFs from "node:fs";
 import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import { createRequire, } from "node:module";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { describeOrSkip, ISOLATED, } from "../../../../src/test-utils/isolate-only";
 import { findMainRepoRoot, } from "./git-worktree.ts";
 
 // The module under test reads through the default import

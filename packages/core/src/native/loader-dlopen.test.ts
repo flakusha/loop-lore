@@ -12,8 +12,11 @@
  * stub must not leak into shared-process runs.
  */
 
-import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "@/test-utils/isolate-only";
 import { expect, mock, test, } from "bun:test";
+import {
+  describeOrSkip as describeOrSkipIsolated,
+  ISOLATED as ISOLATED_RUN,
+} from "../../../../src/test-utils/isolate-only";
 
 const stub = { mode: "ok" as "ok" | "mismatch" | "throw", dlopenCalls: 0, };
 

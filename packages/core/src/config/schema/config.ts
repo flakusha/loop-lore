@@ -19,6 +19,7 @@ import type { DbConfig, } from "./db";
 import type { DocumentationConfig, } from "./docs";
 import type { DynamicResponseConfig, } from "./dynamic-response";
 import type { EncryptionConfig, } from "./encryption";
+import type { FeaturesConfig, } from "./features";
 import type { FederationConfig, } from "./federation";
 import type { FrontendConfig, } from "./frontend";
 import type { GenerationConfig, } from "./generation";
@@ -71,6 +72,7 @@ export interface Config {
   frontend: FrontendConfig;
   cron: CronConfig;
   federation: FederationConfig;
+  features?: FeaturesConfig;
   integrations: IntegrationsConfig;
   harness: HarnessConfig;
   prompt: PromptConfig;

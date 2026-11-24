@@ -3,9 +3,9 @@
 
 // src/config/schema/providers.ts — LLM / image generation provider config types
 //
-// Enum types sourced from @/db/enums.
+// Enum types sourced from the canonical app DB enums (src/db/enums).
 
-import type { AudioApiFamily, ImageApiFamily, VideoApiFamily, } from "@/db/enums";
+import type { AudioApiFamily, ImageApiFamily, VideoApiFamily, } from "../../../../../src/db/enums";
 
 /** */
 export interface ModelLimits {

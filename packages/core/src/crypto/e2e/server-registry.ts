@@ -21,10 +21,11 @@
  *     not handled here.
  */
 
-import type { DB, } from "@/db/schema";
-import { safeJsonParse, safeJsonStringify, uid, } from "@/utils";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { uid, } from "../../../../../src/utils";
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
 

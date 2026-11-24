@@ -10,9 +10,9 @@
  * Keys are stored in `actor_keys` table, encrypted at rest by SMK.
  */
 
-import type { DB, } from "@/db/schema";
-import { uid, } from "@/utils";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import { uid, } from "../../../../src/utils";
 import { decryptBytes, encryptBytes, } from "./actor-key-bytes";
 
 // ── Types ──────────────────────────────────────────────────

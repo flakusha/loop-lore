@@ -4,11 +4,11 @@
 // src/config/sections/integrations.test.ts — integrations section: all-off
 // defaults, sensitive marking, env override wiring.
 
-import { createLogger, } from "@/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { createLogger, } from "../../logger";
 import { loadConfig, } from "../load";
 import { INTEGRATIONS_DEFAULTS, integrationsMeta, } from "./integrations";
 

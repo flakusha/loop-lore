@@ -5,7 +5,7 @@
 //
 // Spawn external servers (llama.cpp, sd.cpp, llama-swap proxy) at startup.
 
-import type { SdModelType, } from "@/db/enums";
+import type { SdModelType, } from "../../../../../src/db/enums";
 
 /** */
 export interface LlamaCppAutoStartConfig {

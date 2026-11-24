@@ -5,8 +5,8 @@
 // exported validators are re-exported there so existing import paths keep
 // working).
 
-import { VALID_CONTENT_RATINGS, } from "@/characters/validator/constants";
-import { jsonStringifyOr, } from "@/utils";
+import { VALID_CONTENT_RATINGS, } from "../../../../../src/characters/validator/constants";
+import { jsonStringifyOr, } from "../../utils/safe-json";
 
 // Single source of truth: src/characters/validator/constants.ts builds this
 // from the ContentRating enum, which is also what

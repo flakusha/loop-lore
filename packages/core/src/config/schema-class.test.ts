@@ -5,7 +5,7 @@
  * defaults sanity checks.
  */
 
-import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
+import { createConfigSchema, envMap, jsonSchema, validate, } from "./schema-class";
 
 import { describe, expect, test, } from "bun:test";
 

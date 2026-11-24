@@ -17,6 +17,10 @@ root = "dev"
 # suite — drop it when finalizing beside other lanes (the 12-worker peak is
 # ~30GB tree-isolated).
 test = "bun run test:unit:finalize"
+# Step 2 must keep the FULL gate set: `bun run check` is now the fast local
+# default (it skips only the ~9-minute browser baseline). CI uses `check:ci`;
+# finalize goes through the explicit full path so no enforcement is lost.
+check = "bun run check:extended"
 
 [status.aliases]
 # Free-form legacy statuses -> the closed plan vocabulary

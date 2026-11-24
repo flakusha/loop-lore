@@ -5,8 +5,8 @@
 
 import { describe, expect, test, } from "bun:test";
 
-import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
-import { WEB_DEFAULTS, WebSection, } from "@/config/sections/web";
+import { createConfigSchema, envMap, jsonSchema, validate, } from "../schema-class";
+import { WEB_DEFAULTS, WebSection, } from "./web";
 
 describe("WebSection", () => {
   test("defaults: editor vscode, terminal disabled and localhost-only", () => {

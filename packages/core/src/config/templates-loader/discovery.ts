@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { findMainRepoRoot, } from "@/utils/git-worktree";
 import fs from "node:fs";
 import path from "node:path";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { TemplatesConfig, } from "../sections/templates";
 
 // ── File Discovery ──────────────────────────────────────────

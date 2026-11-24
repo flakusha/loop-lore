@@ -14,6 +14,7 @@ import { db, } from "./db";
 import { docs, } from "./docs";
 import { dynamicResponse, } from "./dynamic-response";
 import { encryption, } from "./encryption";
+import { features, } from "./features";
 import { federation, } from "./federation";
 import { frontend, } from "./frontend";
 import { generation, } from "./generation";
@@ -87,6 +88,7 @@ export const jsonSchema = (): JSONSchema => {
       dynamicResponse,
       frontend,
       federation,
+      features,
       seeding,
       templates,
       characters,

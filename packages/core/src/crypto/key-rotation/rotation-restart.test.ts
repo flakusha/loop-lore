@@ -11,16 +11,16 @@
  * file — including a fresh `runMigrations` pass, exactly what boot does — and
  * asserts the `rotation_history` row reads back intact.
  */
-import { createSqliteDialect, } from "@/db/index";
-import { runMigrations, } from "@/db/migrate";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { mkdirSync, mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { createSqliteDialect, } from "../../../../../src/db/index";
+import { runMigrations, } from "../../../../../src/db/migrate";
+import type { DB, } from "../../../../../src/db/schema";
+import { createLogger, } from "../../logger";
 import { recordRotationAuditLeave, } from "./rotation-history";
 
 createLogger({ level: "error", },);

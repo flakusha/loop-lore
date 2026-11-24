@@ -3,7 +3,7 @@
 
 // src/config/sections/age-gate.ts — Age gate config section
 
-import { AgeGateMode, } from "@/db/enums";
+import { AgeGateMode, } from "../../../../../src/db/enums";
 
 export const AGE_GATE_DEFAULTS = {
   enabled: false,

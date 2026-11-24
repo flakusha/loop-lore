@@ -20,6 +20,7 @@ import { readFileSync, } from "node:fs";
 import path from "node:path";
 import { JSCPD_IGNORE, jscpdScanArgs, jscpdScanCommand, } from "./jscpd-scan.mjs";
 import { checks, } from "./parallel/gates.mjs";
+import { SOURCE_ROOTS, } from "./source-paths.mjs";
 
 const REPO_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
@@ -43,6 +44,7 @@ test("the gate's command carries the shared ignore list", () => {
 test("the CLI arguments carry the same list as the command string", () => {
   const args = jscpdScanArgs({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", },);
   expect(args,).toContain(JSCPD_IGNORE.join(",",),);
+  for (const root of SOURCE_ROOTS) { expect(args,).toContain(root,); }
   expect(jscpdScanCommand({ minLines: 4, minTokens: 30, reporters: "json", output: ".tmp/x", },),)
     .toContain(JSCPD_IGNORE.join(",",),);
 });

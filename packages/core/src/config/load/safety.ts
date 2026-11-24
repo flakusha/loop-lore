@@ -3,8 +3,8 @@
 
 // src/config/load/safety.ts — Database safety guards
 
-import { DbType, } from "@/db/enums";
-import { getLogger, } from "@/logger";
+import { DbType, } from "../../../../../src/db/enums";
+import { getLogger, } from "../../logger";
 import type { Config, } from "../schema";
 import { DB_PATH_ENV_VAR, } from "../state-dir";
 import {

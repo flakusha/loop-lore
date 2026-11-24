@@ -12,11 +12,11 @@
  * chat encryption keys. Signing keys are used for HTTP Signatures in
  * ActivityPub federation.
  */
-import { assertFederationConsent, } from "@/characters/services/federation-consent";
-import type { DB, } from "@/db/schema";
-import { safeJsonStringify, } from "@/utils";
 import type { Kysely, } from "kysely";
+import { assertFederationConsent, } from "../../../../src/characters/services/federation-consent";
+import type { DB, } from "../../../../src/db/schema";
 import { encryptBytes, } from "../crypto/actor-key-bytes";
+import { safeJsonStringify, } from "../utils/safe-json";
 import { getSmk, } from "./smk";
 export interface ActivityPubActorKey {
   id: string;

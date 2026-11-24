@@ -12,8 +12,8 @@
  * The old actor key is atomically expired + a new one created via rotateActorKey.
  * On any failure, the error is surfaced (not swallowed).
  */
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import { listActorKeys, rotateActorKey as rotateActorKeyCrud, } from "../actor-keys";
 import { log, } from "./log";
 import type { RotationResult, } from "./types";

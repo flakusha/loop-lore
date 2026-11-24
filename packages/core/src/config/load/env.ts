@@ -3,7 +3,7 @@
 
 // src/config/load/env.ts — Environment variable application
 
-import { isWellFormedBcp47, } from "@/i18n/bcp47";
+import { isWellFormedBcp47, } from "../../../../i18n/src/bcp47";
 import type { Config, ProviderInstanceConfig, } from "../schema";
 import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
 

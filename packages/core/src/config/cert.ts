@@ -11,9 +11,9 @@
  * Certificates are valid for 365 days and stored at the configured paths.
  */
 
-import { getLogger, } from "@/logger";
 import { chmodSync, existsSync, mkdirSync, } from "node:fs";
 import { dirname, } from "node:path";
+import { getLogger, } from "../logger";
 import { resolveInstancePath, } from "./instance-path";
 import type { TlsConfig, } from "./schema";
 import { resolveInstanceDir, } from "./state-dir";

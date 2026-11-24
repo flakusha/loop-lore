@@ -3,7 +3,7 @@
 
 // src/config/schema/idempotency.ts — idempotency middleware configuration
 
-import type { IdempotencyBackend, } from "@/middleware/idempotency";
+import type { IdempotencyBackend, } from "../../../../../src/middleware/idempotency";
 
 /** */
 export interface IdempotencyConfig {

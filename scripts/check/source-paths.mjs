@@ -20,6 +20,9 @@ export const TEST_ROOTS = Object.freeze({
   src: "src",
 },);
 
+/** Source roots for repo-wide scanners (jscpd, madge); package roots cover workspace src trees. */
+export const SOURCE_ROOTS = Object.freeze(["src/", "packages/",],);
+
 const SOURCE_PREFIX = /^(?:packages\/([^/]+)\/)?src\//;
 
 /**

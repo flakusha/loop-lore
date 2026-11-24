@@ -29,7 +29,9 @@ records today's wiring, not a frozen inventory.
   test-gap and coverage (`206-219`), frontend template / innerHTML guards
   (`220-226`), browser gates (`227-236`). `e2e - browser (qa subset)` is
   blocking by operator ruling; the full `e2e - browser (baseline)` is the
-  heavy path (`gate-table.mjs:227-236`).
+  heavy path (`gate-table.mjs:227-236`). The default `bun run check` skips
+  only that heavy path; `check:ci` and `check:extended` (giwt finalize) run
+  it, so CI and landing keep full enforcement.
 - **SKIP means "not evaluated"**, not pass: empty diff scope, absent Rust
   toolchain, or unreachable issue CLI (`report.mjs:93-114`;
   `gate-table.mjs:67-76`). A missing Rust toolchain is a supported state —
@@ -64,8 +66,9 @@ The runner writes the canonical report after every run, atomically
 `scripts/check/parallel/report.mjs:220-251`). It is git-ignored.
 
 - Provenance: `schemaVersion`, `runId`, `mode`, `worktreeName`, `branch`,
-  `gitHead`, `gitDirty`, `gpgPrecheck`. Compare `gitHead` with the worktree's
-  current HEAD before trusting a report (`report.mjs:169-188`).
+  `gitHead`, `gitDirty`, `gpgPrecheck`, `profile`, `skippedByProfile`. Compare
+  `gitHead` with the worktree's current HEAD before trusting a report
+  (`report.mjs` provenance block).
 - `summary`: `total`, `passed`, `skipped`, `advisory`, `failed`, `durationMs`.
   Top-level `passed` reflects blocking failures only — a run with red
   advisory gates can still say `passed: true` (`report.mjs:162-196`).
@@ -88,6 +91,17 @@ The runner writes the canonical report after every run, atomically
 - `--gates <csv>` whitelists gates; `--skip-gates <csv>` excludes them.
   Unknown names and bare flags are usage errors, never a silent full run
   (`context.mjs:35-52`).
+- `--profile=<name>` / `--profile <name>` (`full`, `business-only`,
+  `rpg-chat-only`, `local-only`, `relay-only`; default `full`) labels the run
+  for provenance, not filtering: all five ship the same source tree, so every
+  gate still runs in every profile. Unknown/empty values and `--profile`
+  combined with `--gates` exit 2; `--skip-gates` composes. `PROFILE_SKIPS`
+  (`gate-table.mjs`) is empty for all five profiles until a build manifest
+  proves a source root absent, and only `e2e - browser (baseline)` is in
+  `PROFILE_SKIPPABLE_GATES`. CI selects no profile and asserts the report says
+  `profile=full`, zero `skippedByProfile` entries, and `summary.total` equal to
+  the live registry size (`scripts/check/check-profile-provenance.mjs`,
+  `ci.yml`).
 - `--jobs N` / `CHECK_JOBS` cap light-pool concurrency; heavy gates are always
   serialized (`scripts/check-parallel.mjs:13-24`). Test parallelism:
   `CHECK_TEST_JOBS`, `CHECK_SRC_TEST_JOBS`, `CHECK_TEST_POOL`

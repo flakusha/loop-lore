@@ -3,7 +3,6 @@
 
 // src/config/load/first-boot.test.ts — Empty-env boot promotion.
 
-import { createLogger, } from "@/logger";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import {
   chmodSync,
@@ -19,6 +18,7 @@ import {
 } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { createLogger, } from "../../logger";
 import type { Config, } from "../schema";
 import { createConfigSchema, } from "../schema-class";
 import {
@@ -580,6 +580,9 @@ describe("publishOrAdoptFirstBootSecrets (concurrent loser)", () => {
   });
 });
 
+const NODE_ENV_BEFORE_SUITE = process.env["NODE_ENV"];
+
 afterAll(() => {
-  delete process.env["NODE_ENV"];
+  if (NODE_ENV_BEFORE_SUITE === undefined) { delete process.env["NODE_ENV"]; }
+  else { process.env["NODE_ENV"] = NODE_ENV_BEFORE_SUITE; }
 },);

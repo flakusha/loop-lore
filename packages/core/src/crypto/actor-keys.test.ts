@@ -13,10 +13,10 @@ import {
   rotateActorKey,
 } from "./actor-keys";
 
-import type { DB, } from "@/db/schema";
-import { createTestDb, } from "@/test-utils/create-test-db";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import { createTestDb, } from "../../../../src/test-utils/create-test-db";
 import { getSmk, initSmk, } from "./smk";
 
 const VALID_HEX_KEY = "a".repeat(64,);

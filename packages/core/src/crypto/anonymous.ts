@@ -10,7 +10,7 @@
  * Admin sees real identities for moderation.
  */
 
-import type { Config, } from "@/config/schema";
+import type { Config, } from "../config/schema";
 
 let _anonymousEnabled = false;
 

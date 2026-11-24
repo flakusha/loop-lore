@@ -4,8 +4,8 @@
 /**
  * Find actor keys that have expired.
  */
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 
 /**
  * Find actor keys that have expired based on rotation days config.

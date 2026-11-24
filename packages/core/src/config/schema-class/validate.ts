@@ -3,6 +3,7 @@
 
 // src/config/schema-class/validate.ts — config validation
 import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
+import { FEATURE_PROFILES, } from "../schema/features";
 import { COMFYUI_MODEL_EXTENSIONS, isComfyUIModelName, } from "../schema/providers";
 import { validateAcpProfiles, } from "../sections/harness";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
@@ -46,6 +47,20 @@ function validateComfyUIModels(config: Config,): void {
 }
 
 /**
+ * Feature profiles gate surfaces; an explicit unknown value is boot-rot.
+ * @param config - Merged config to check.
+ * @throws {Error} If features.profile is explicitly unknown.
+ */
+function validateFeatureProfile(config: Config,): void {
+  const profile = config.features?.profile;
+  if (profile !== undefined && !(FEATURE_PROFILES as readonly string[]).includes(profile,)) {
+    throw new Error(
+      `Invalid features.profile: "${profile}". Must be one of: ${FEATURE_PROFILES.join(", ",)}`,
+    );
+  }
+}
+
+/**
  * @param config - Fully merged config to check, after defaults are applied.
  * @throws {Error} If any config value fails schema validation.
  */
@@ -70,6 +85,7 @@ export const validate = (config: Config,): void => {
     );
   }
 
+  validateFeatureProfile(config,);
   validateByoKey(config,);
 
   if (config.server.port < 0 || config.server.port > 65_535) {

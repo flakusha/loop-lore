@@ -4,11 +4,11 @@
 // src/config/template-expansion/run.test.ts — Edge cases for run.ts
 // (runTemplateExpansion: discovery, result tracking, error containment).
 
-import { createLogger, } from "@/logger";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { createLogger, } from "../../logger";
 import type { AvatarTemplateConfig, } from "../sections/templates";
 import { findExpansionFile, runTemplateExpansion, validateExpansionConfigErrors, } from "./run";
 

@@ -35,9 +35,10 @@
  *     ciphertexts are NOT re-encrypted for new joiners).
  */
 
-import type { DB, } from "@/db/schema";
-import { safeJsonStringify, uid, } from "@/utils";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { uid, } from "../../../../../src/utils";
+import { safeJsonStringify, } from "../../utils/safe-json";
 import {
   hkdfExpandToBytes,
   KEY_LENGTH,

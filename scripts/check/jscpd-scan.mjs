@@ -26,6 +26,7 @@
  */
 import path from "node:path";
 import { integer, object, option, optional, runScript, string, withDefault, } from "../../src/cli/parser";
+import { SOURCE_ROOTS, } from "./source-paths.mjs";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
@@ -58,7 +59,7 @@ export const JSCPD_IGNORE = [
 export function jscpdScanArgs({ minLines, minTokens, reporters, output, },) {
   const args = [
     "jscpd",
-    "src/",
+    ...SOURCE_ROOTS,
     "--min-lines",
     String(minLines,),
     "--min-tokens",

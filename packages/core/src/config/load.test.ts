@@ -1,8 +1,8 @@
-import { createLogger, getLogger, type Logger, setGlobalLogger, } from "@/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { createLogger, getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
   coerceValue,
   deepMerge,

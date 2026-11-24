@@ -8,8 +8,8 @@
 // keep the multi-instance guard active by default, keyed on the RESOLVED
 // database path instead of an opt-in counter.
 
-import { DbType, } from "@/db/enums";
-import { getChildLogger, } from "@/logger";
+import { DbType, } from "../../../../../src/db/enums";
+import { getChildLogger, } from "../../logger";
 import { DB_PATH_ENV_VAR, resolveStateRoot, type StateEnv, } from "../state-dir";
 import { isNetworkFilesystem, } from "./fs";
 

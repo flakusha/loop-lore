@@ -5,8 +5,8 @@
 // types (split from templates.ts; re-exported there so existing
 // ../sections/templates import paths keep working).
 
-import type { AuxTaskName, } from "@/aux-pipeline/types";
-import type { ChatMode, } from "@/db/enums-core/users";
+import type { AuxTaskName, } from "../../../../../src/aux-pipeline/types";
+import type { ChatMode, } from "../../../../../src/db/enums-core/users";
 import type { MergeStrategy, } from "./templates";
 
 // ── Classifier Template Packs (epic-classifier-template-packs) ──

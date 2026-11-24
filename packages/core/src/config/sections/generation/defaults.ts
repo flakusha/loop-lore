@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { GenerationRoutingConfig, } from "@/generation/routing/routing-config";
+import type { GenerationRoutingConfig, } from "../../../../../../src/generation/routing/routing-config";
 import type {
   GenerationConfig,
   GenerationFlowControl,

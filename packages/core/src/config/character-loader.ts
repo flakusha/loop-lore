@@ -7,10 +7,10 @@
 // Supports single-character and multi-character files (YAML/TOML).
 // Merges all found characters by name (user wins on conflict).
 
-import type { ContentRating, } from "@/characters/spec";
-import { findMainRepoRoot, } from "@/utils/git-worktree";
 import fs from "node:fs";
 import path from "node:path";
+import type { ContentRating, } from "../../../../src/characters/spec";
+import { findMainRepoRoot, } from "../utils/git-worktree";
 import type { CharacterTemplateConfig, } from "./sections/templates";
 
 // ── Types ─────────────────────────────────────────────────────
@@ -222,4 +222,4 @@ export function loadCharacterFiles(cwd?: string,): CharacterTemplateConfig["temp
 export {
   findCharacterFiles,
 };
-export { findMainRepoRoot, } from "@/utils/git-worktree";
+export { findMainRepoRoot, } from "../utils/git-worktree";

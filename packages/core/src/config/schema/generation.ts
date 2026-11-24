@@ -3,8 +3,8 @@
 
 // src/config/schema/generation.ts — Generation config type
 
-import type { OutputStylePreset, } from "@/chat/output-style";
-import type { GenerationRoutingConfig, } from "@/generation/routing/routing-config";
+import type { OutputStylePreset, } from "../../../../../src/chat/output-style";
+import type { GenerationRoutingConfig, } from "../../../../../src/generation/routing/routing-config";
 import type { AutoStartConfig, } from "./auto-start";
 import type { GenerationProvidersConfig, } from "./providers";
 

@@ -6,8 +6,8 @@
 // Watches configs/ directory for changes and reloads domain configs
 // without restarting the application.
 
-import { createLogger, } from "@/logger";
 import { type FSWatcher, watch, } from "node:fs";
+import { createLogger, } from "../logger";
 import { type Config, } from "./schema";
 
 const log = createLogger({ level: "info", },);

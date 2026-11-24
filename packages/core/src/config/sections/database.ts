@@ -3,7 +3,7 @@
 
 // src/config/sections/database.ts — Database config section
 
-import { DbType, } from "@/db/enums";
+import { DbType, } from "../../../../../src/db/enums";
 import { DATA_DIR, } from "../constants";
 
 export const DATABASE_DEFAULTS = {

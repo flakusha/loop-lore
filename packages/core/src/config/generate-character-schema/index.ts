@@ -11,11 +11,11 @@
  * Outputs: schemas/character-card.schema.json
  */
 
-import { createLogger, } from "@/logger";
-import { safeJsonStringify, } from "@/utils";
 import { mkdirSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { createLogger, } from "../../logger";
+import { safeJsonStringify, } from "../../utils/safe-json";
 import { dataProperties, } from "./data-core.js";
 import { extensionsProperties, } from "./extensions.js";
 
