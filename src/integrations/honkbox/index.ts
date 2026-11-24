@@ -27,6 +27,7 @@ export {
   getHonkboxCapabilities,
   HONKBOX_CAPABILITIES_PATH,
   HONKBOX_FEATURE_KEYS,
+  HONKBOX_PROBE_CACHE_TTL_MS,
   HONKBOX_SUPPORTED_API_MAJOR,
   honkboxAdmissionDecision,
   HonkboxAdmissionError,

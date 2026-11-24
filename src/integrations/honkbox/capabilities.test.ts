@@ -17,6 +17,7 @@ import {
   getHonkboxCapabilities,
   HONKBOX_CAPABILITIES_PATH,
   HONKBOX_FEATURE_KEYS,
+  HONKBOX_PROBE_CACHE_TTL_MS,
   HONKBOX_SUPPORTED_API_MAJOR,
   honkboxAdmissionDecision,
   HonkboxAdmissionError,
@@ -521,9 +522,13 @@ describe("capability cache", () => {
       await getHonkboxCapabilities({ ...opts, maxAgeMs: 0, },);
       expect(calls,).toBe(2,);
 
-      const cached = await getHonkboxCapabilities({ ...opts, maxAgeMs: Number.MAX_SAFE_INTEGER, },);
+      const cached = await getHonkboxCapabilities({ ...opts, maxAgeMs: HONKBOX_PROBE_CACHE_TTL_MS, },);
       expect(calls,).toBe(2,);
       expect(cached.ok && cached.cached,).toBe(true,);
+
+      const fresh = await getHonkboxCapabilities(opts,);
+      expect(calls,).toBe(2,);
+      expect(fresh.ok && fresh.cached,).toBe(true,);
     },);
   });
 
