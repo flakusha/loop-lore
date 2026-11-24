@@ -14,6 +14,7 @@ import { applyRequestId, resolveRequestId, } from "../middleware/request-id";
 import { dispatchPluginRoute, type PluginCaller, } from "../plugins";
 import { applyDeprecationHeaders, } from "../routes/middleware/deprecation-headers";
 import { governanceAfterHook, governanceBeforeHook, } from "../routes/v1/governance";
+import { scoreRequestSignals, } from "./request-heuristics";
 
 /**
  * Wrap the Elysia app so EVERY outgoing response (routes, errors, static,
@@ -108,6 +109,8 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
   const durationMs = Math.round(performance.now() - startMs,);
   const severity = response.status >= 500 ? "error" : response.status >= 400 ? "warn" : "info";
 
+  const heuristic = scoreRequestSignals(url.pathname, request.headers,);
+
   const entry = {
     module: "http",
     requestId,
@@ -117,6 +120,9 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
     durationMs,
     userId,
     handle,
+    ...(heuristic.signals.length === 0
+      ? {}
+      : { heuristic: { score: heuristic.score, signals: heuristic.signals, }, }),
   };
 
   try {
