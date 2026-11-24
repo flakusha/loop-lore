@@ -5,28 +5,20 @@ import type { TSchema, } from "@sinclair/typebox";
 import { ErrorResponse, } from "../../validation/schemas";
 
 /**
- * Build Elysia route options with shared auth errors and OpenAPI detail.
+ * Shared Elysia option fragments: standard auth errors and OpenAPI detail.
+ * Spread inline into route options so Elysia still infers exact `params`,
+ * `body` and `query` for unannotated handlers; a factory call as the whole
+ * options object loses inference in this Elysia version.
  * @param spec - response map, summary, description and OpenAPI tags
- * @returns route options for an Elysia handler
+ * @returns `response` with 401/404 and `detail` for inline spreading
  */
-export function routeSpec<
-  const TResponse extends Record<number, TSchema>,
-  const TParams extends TSchema | undefined = undefined,
-  const TBody extends TSchema | undefined = undefined,
-  const TQuery extends TSchema | undefined = undefined,
->(spec: {
+export function routeSpec<const TResponse extends Record<number, TSchema>,>(spec: {
   response: TResponse;
   summary: string;
   description: string;
   tags: string[];
-  params?: TParams;
-  body?: TBody;
-  query?: TQuery;
 },) {
   return {
-    ...(spec.params ? { params: spec.params, } : {}),
-    ...(spec.body ? { body: spec.body, } : {}),
-    ...(spec.query ? { query: spec.query, } : {}),
     response: {
       ...spec.response,
       401: ErrorResponse,

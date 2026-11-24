@@ -83,13 +83,15 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
           },),
         },);
       },
-      routeSpec({
+      {
         query: t.Object({ locationId: t.String(), },),
-        response: { 200: t.Object({ data: t.Array(t.Any(),), },), 400: ErrorResponse, },
-        summary: "List location anomalies",
-        description: "Every anomaly currently attached to one location, newest last.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Array(t.Any(),), },), 400: ErrorResponse, },
+          summary: "List location anomalies",
+          description: "Every anomaly currently attached to one location, newest last.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies`,
@@ -125,13 +127,15 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
           throw error;
         }
       },
-      routeSpec({
+      {
         body: PlaceBody,
-        response: { 201: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
-        summary: "Place an anomaly",
-        description: "Attach a new anomaly to a location. Starts undiscovered.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 201: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
+          summary: "Place an anomaly",
+          description: "Attach a new anomaly to a location. Starts undiscovered.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/sweep`,
@@ -144,12 +148,14 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
           removed: await expireAnomalies({ db: database, now: new Date(), worldId: ctx.params.worldId, },),
         },);
       },
-      routeSpec({
-        response: { 200: t.Object({ removed: t.Number(), },), },
-        summary: "Sweep expired anomalies",
-        description: "Delete this world's anomalies whose lifetime has run out. Permanent ones are untouched.",
-        tags: ["Worlds",],
-      },),
+      {
+        ...routeSpec({
+          response: { 200: t.Object({ removed: t.Number(), },), },
+          summary: "Sweep expired anomalies",
+          description: "Delete this world's anomalies whose lifetime has run out. Permanent ones are untouched.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/:anomalyId/discover`,
@@ -173,12 +179,15 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
           throw error;
         }
       },
-      routeSpec({
+      {
         body: DiscoverBody,
-        response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
-        summary: "Roll for anomaly discovery",
-        description: "Seeded roll against the anomaly's discovery chance. The same seed always resolves the same way.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
+          summary: "Roll for anomaly discovery",
+          description:
+            "Seeded roll against the anomaly's discovery chance. The same seed always resolves the same way.",
+          tags: ["Worlds",],
+        },),
+      },
     );
 }

@@ -32,22 +32,24 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         const q = typeof ctx.query?.q === "string" ? ctx.query.q : undefined;
         return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole, q,);
       },
-      routeSpec({
-        response: {
-          200: t.Object({
-            data: t.Array(t.Any(),),
-            pagination: t.Object({
-              page: t.Number(),
-              pageSize: t.Number(),
-              total: t.Number(),
-              totalPages: t.Number(),
+      {
+        ...routeSpec({
+          response: {
+            200: t.Object({
+              data: t.Array(t.Any(),),
+              pagination: t.Object({
+                page: t.Number(),
+                pageSize: t.Number(),
+                total: t.Number(),
+                totalPages: t.Number(),
+              },),
             },),
-          },),
-        },
-        summary: "List locations",
-        description: "List locations in a world. Optional q filters by name substring (case-insensitive).",
-        tags: ["Worlds",],
-      },),
+          },
+          summary: "List locations",
+          description: "List locations in a world. Optional q filters by name substring (case-insensitive).",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/locations`,
@@ -61,12 +63,14 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
-        summary: "Create location",
-        description: "Create a new location in a world.",
-        tags: ["Worlds",],
-      },),
+      {
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
+          summary: "Create location",
+          description: "Create a new location in a world.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .get(
       `${prefix}/worlds/:worldId/locations/:locId`,
@@ -80,12 +84,14 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
-        response: { 200: t.Any(), },
-        summary: "Get location",
-        description: "Get a location by ID.",
-        tags: ["Worlds",],
-      },),
+      {
+        ...routeSpec({
+          response: { 200: t.Any(), },
+          summary: "Get location",
+          description: "Get a location by ID.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .put(
       `${prefix}/worlds/:worldId/locations/:locId`,
@@ -100,12 +106,14 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
-        response: { 200: SuccessResponse, 400: ErrorResponse, },
-        summary: "Update location",
-        description: "Update a location's properties.",
-        tags: ["Worlds",],
-      },),
+      {
+        ...routeSpec({
+          response: { 200: SuccessResponse, 400: ErrorResponse, },
+          summary: "Update location",
+          description: "Update a location's properties.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/locations/:locId/move`,
@@ -120,14 +128,16 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
+      {
         body: t.Object({ newParentId: t.Union([t.String(), t.Null(),],), },),
-        response: { 200: SuccessResponse, 400: ErrorResponse, },
-        summary: "Move location",
-        description:
-          "Move a location (and its subtree) under a new parent. Rejects self-parents, cycles and cross-world parents with 400.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 200: SuccessResponse, 400: ErrorResponse, },
+          summary: "Move location",
+          description:
+            "Move a location (and its subtree) under a new parent. Rejects self-parents, cycles and cross-world parents with 400.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .delete(
       `${prefix}/worlds/:worldId/locations/:locId`,
@@ -141,11 +151,13 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
-        response: { 204: t.Void(), },
-        summary: "Delete location",
-        description: "Delete a location from a world.",
-        tags: ["Worlds",],
-      },),
+      {
+        ...routeSpec({
+          response: { 204: t.Void(), },
+          summary: "Delete location",
+          description: "Delete a location from a world.",
+          tags: ["Worlds",],
+        },),
+      },
     );
 }

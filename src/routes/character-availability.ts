@@ -69,14 +69,16 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
 
         return jsonResponse(availability,);
       },
-      routeSpec({
+      {
         params: ActorIdParams,
-        response: { 200: SuccessResponse, },
-        summary: "Get character availability settings",
-        description:
-          "Returns the availability status, usage policy, activity restrictions, and content policy for the specified actor.",
-        tags: ["Characters", "Availability",],
-      },),
+        ...routeSpec({
+          response: { 200: SuccessResponse, },
+          summary: "Get character availability settings",
+          description:
+            "Returns the availability status, usage policy, activity restrictions, and content policy for the specified actor.",
+          tags: ["Characters", "Availability",],
+        },),
+      },
     )
     // ── Create or update availability ──────────────────────────
     .post(
@@ -131,15 +133,17 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
 
         return jsonCreated({ id, },);
       },
-      routeSpec({
+      {
         params: ActorIdParams,
         body: AvailabilityBody,
-        response: { 200: SuccessResponse, },
-        summary: "Create or update character availability",
-        description:
-          "Upserts availability settings for an actor including status, usage policy, activity restrictions, content policy, and NSFW policy.",
-        tags: ["Characters", "Availability",],
-      },),
+        ...routeSpec({
+          response: { 200: SuccessResponse, },
+          summary: "Create or update character availability",
+          description:
+            "Upserts availability settings for an actor including status, usage policy, activity restrictions, content policy, and NSFW policy.",
+          tags: ["Characters", "Availability",],
+        },),
+      },
     )
     // ── Delete availability ────────────────────────────────────
     .delete(
@@ -156,12 +160,14 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
 
         return jsonResponse({ ok: true, },);
       },
-      routeSpec({
+      {
         params: ActorIdParams,
-        response: { 200: SuccessResponse, },
-        summary: "Delete character availability settings",
-        description: "Removes all availability settings for the specified actor.",
-        tags: ["Characters", "Availability",],
-      },),
+        ...routeSpec({
+          response: { 200: SuccessResponse, },
+          summary: "Delete character availability settings",
+          description: "Removes all availability settings for the specified actor.",
+          tags: ["Characters", "Availability",],
+        },),
+      },
     );
 }
