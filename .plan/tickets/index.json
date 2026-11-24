@@ -6526,6 +6526,20 @@
     "title": "keynav stale unsubscribe deletes live handler set",
     "type": "BUG"
   },
+  "BUG-KEYPHRASE-FORCED-RECALL-BYPASSES-THE-MEMORY-TOKEN-BUDGET": {
+    "hash": "92c0441",
+    "git_issue": "92c0441",
+    "extid": "BUG-KEYPHRASE-FORCED-RECALL-BYPASSES-THE-MEMORY-TOKEN-BUDGET",
+    "type": "BUG",
+    "title": "Keyphrase forced recall bypasses the memory token budget",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-keyphrase-forced-recall-bypasses-the-memory-token-budget.md",
+    "status": "open"
+  },
   "BUG-KYSELY-ANY-TYPE-SAFETY-GAPS-IN-DB-LAYER": {
     "hash": "6738d32",
     "git_issue": "6738d32",
@@ -6933,6 +6947,20 @@
     "tags": [],
     "source": ".plan/tickets/BUG-memory-extraction-store-writes-memories-without-a-transactio.md",
     "status": "done"
+  },
+  "BUG-MEMORY-INJECTION-COOLDOWN-NEVER-FIRES-IN-PRODUCTION": {
+    "hash": "25a1c3d",
+    "git_issue": "25a1c3d",
+    "extid": "BUG-MEMORY-INJECTION-COOLDOWN-NEVER-FIRES-IN-PRODUCTION",
+    "type": "BUG",
+    "title": "Memory injection cooldown never fires in production",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-injection-cooldown-never-fires-in-production.md",
+    "status": "open"
   },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
@@ -8606,6 +8634,20 @@
     "tags": [],
     "title": "promptOverride schema has no maxLength - token-bomb storage vector",
     "type": "BUG"
+  },
+  "BUG-PRUNE-PROMOTED-MESSAGES-NEVER-REACH-THE-MEMORY-STORE": {
+    "hash": "52118c3",
+    "git_issue": "52118c3",
+    "extid": "BUG-PRUNE-PROMOTED-MESSAGES-NEVER-REACH-THE-MEMORY-STORE",
+    "type": "BUG",
+    "title": "Prune-promoted messages never reach the memory store",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-prune-promoted-messages-never-reach-the-memory-store.md",
+    "status": "open"
   },
   "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
     "hash": "910710d",
@@ -19911,7 +19953,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-059.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-059: Conversation analytics dashboard",
     "type": "FEAT"
@@ -33274,6 +33316,20 @@
     "title": "Caddy TLS termination with automatic HTTPS",
     "type": "TASK"
   },
+  "TASK-CAP-SEMANTIC-RECALL-TOPK-AND-PRE-BUDGET-COST-ACROSS-MEMORY-O": {
+    "hash": "8eee692",
+    "git_issue": "8eee692",
+    "extid": "TASK-CAP-SEMANTIC-RECALL-TOPK-AND-PRE-BUDGET-COST-ACROSS-MEMORY-O",
+    "type": "TASK",
+    "title": "Cap semantic recall topK and pre-budget cost across memory owners",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cap-semantic-recall-topk-and-pre-budget-cost-across-memory-o.md",
+    "status": "open"
+  },
   "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING": {
     "epic": "epic-lore-knowledge",
     "extid": "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING",
@@ -39141,6 +39197,20 @@
     "title": "DB: asset delete no tx, N+1 memory purge, column allowlist, playthrough ownership",
     "type": "TASK"
   },
+  "TASK-DB-BACKED-INJECTION-HISTORY-AND-KEYPHRASE-COOLDOWN-FOR-MEMOR": {
+    "hash": "69fe8cd",
+    "git_issue": "69fe8cd",
+    "extid": "TASK-DB-BACKED-INJECTION-HISTORY-AND-KEYPHRASE-COOLDOWN-FOR-MEMOR",
+    "type": "TASK",
+    "title": "DB-backed injection history and keyphrase cooldown for memory injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-backed-injection-history-and-keyphrase-cooldown-for-memor.md",
+    "status": "open"
+  },
   "TASK-DB-CONTENT-VERSIONING": {
     "epic": "epic-db-content-versioning",
     "extid": "TASK-DB-CONTENT-VERSIONING",
@@ -41750,6 +41820,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-engine-feedback-loop.md",
     "status": "Not Started"
+  },
+  "TASK-ENGRAM-MEMORY-ADAPTER-AS-FIRST-EXTERNAL-BACKEND": {
+    "hash": "a01a2cc",
+    "git_issue": "a01a2cc",
+    "extid": "TASK-ENGRAM-MEMORY-ADAPTER-AS-FIRST-EXTERNAL-BACKEND",
+    "type": "TASK",
+    "title": "Engram memory adapter as first external backend",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-engram-memory-adapter-as-first-external-backend.md",
+    "status": "open"
   },
   "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE": {
     "epic": "epic-conversation-branching",
@@ -55425,6 +55509,20 @@
     "title": "Per-command Valves-like options schema",
     "type": "TASK"
   },
+  "TASK-PER-HARNESS-FAMILY-MEMORY-ADAPTERS-AFTER-ENGRAM-EACH-EVAL-GA": {
+    "hash": "7ac6da6",
+    "git_issue": "7ac6da6",
+    "extid": "TASK-PER-HARNESS-FAMILY-MEMORY-ADAPTERS-AFTER-ENGRAM-EACH-EVAL-GA",
+    "type": "TASK",
+    "title": "Per-harness-family memory adapters after engram, each eval-gated",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-harness-family-memory-adapters-after-engram-each-eval-ga.md",
+    "status": "open"
+  },
   "TASK-PER-LOCAL-BOX-SERIAL-VIDEO-DISPATCH-GATE": {
     "hash": "78a333c",
     "git_issue": "78a333c",
@@ -58357,6 +58455,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md",
     "status": "Not Started"
+  },
+  "TASK-RECONCILE-STALE-DONE-MEMORY-DISTILLATION-AND-DREAMS-TICKET": {
+    "hash": "7be026c",
+    "git_issue": "7be026c",
+    "extid": "TASK-RECONCILE-STALE-DONE-MEMORY-DISTILLATION-AND-DREAMS-TICKET",
+    "type": "TASK",
+    "title": "Reconcile stale-Done memory distillation and dreams ticket",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-stale-done-memory-distillation-and-dreams-ticket.md",
+    "status": "open"
   },
   "TASK-RECONCILE-STALE-PLAN-STATUS-FOR-SHIPPED-SUBSYSTEMS": {
     "hash": "adde248",
@@ -65868,6 +65980,48 @@
     "title": "Unified hold semantics — per-chat pause gates primary generate route",
     "type": "TASK"
   },
+  "TASK-UNIFIED-MEMORY-READER-WITH-RANK-FUSION-AND-BUDGET-LAST-GUARA": {
+    "hash": "926c542",
+    "git_issue": "926c542",
+    "extid": "TASK-UNIFIED-MEMORY-READER-WITH-RANK-FUSION-AND-BUDGET-LAST-GUARA",
+    "type": "TASK",
+    "title": "Unified memory reader with rank fusion and budget-last guarantee",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memory-reader-with-rank-fusion-and-budget-last-guara.md",
+    "status": "open"
+  },
+  "TASK-UNIFIED-MEMORY-WRITER-WITH-NATIVE-FIRST-BEST-EFFORT-FAN-OUT": {
+    "hash": "56a425b",
+    "git_issue": "56a425b",
+    "extid": "TASK-UNIFIED-MEMORY-WRITER-WITH-NATIVE-FIRST-BEST-EFFORT-FAN-OUT",
+    "type": "TASK",
+    "title": "Unified memory writer with native-first best-effort fan-out",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memory-writer-with-native-first-best-effort-fan-out.md",
+    "status": "open"
+  },
+  "TASK-UNIFIED-MEMORYBACKEND-SEAM-WITH-NATIVE-AUTHORITY": {
+    "hash": "acb6354",
+    "git_issue": "acb6354",
+    "extid": "TASK-UNIFIED-MEMORYBACKEND-SEAM-WITH-NATIVE-AUTHORITY",
+    "type": "TASK",
+    "title": "Unified MemoryBackend seam with native authority",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memorybackend-seam-with-native-authority.md",
+    "status": "open"
+  },
   "TASK-UNIFY-401-GUARD-HELPERS": {
     "epic": "epic-code-quality",
     "extid": "TASK-UNIFY-401-GUARD-HELPERS",
@@ -67494,6 +67648,20 @@
     "tags": [],
     "title": "Wire Quests Routes",
     "type": "TASK"
+  },
+  "TASK-WIRE-REAL-COMFORT-INTIMACY-AND-MOOD-INPUTS-INTO-MEMORY-INJEC": {
+    "hash": "e217927",
+    "git_issue": "e217927",
+    "extid": "TASK-WIRE-REAL-COMFORT-INTIMACY-AND-MOOD-INPUTS-INTO-MEMORY-INJEC",
+    "type": "TASK",
+    "title": "Wire real comfort, intimacy, and mood inputs into memory injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-real-comfort-intimacy-and-mood-inputs-into-memory-injec.md",
+    "status": "open"
   },
   "TASK-WIRE-REPLAYABILITY-ROUTES": {
     "epic": "epic-replayability",

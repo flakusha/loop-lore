@@ -1,6 +1,6 @@
 ---
 title: "FEAT-059: Conversation analytics dashboard"
-status: Not Started
+status: Done
 priority: medium
 labels: [feature, analytics, frontend]
 epic: epic-analytics-observability
@@ -10,7 +10,7 @@ related: [FEAT-062, FEAT-060, FEAT-068]
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -59,3 +59,5 @@ Users managing multiple chats and characters need visibility into usage patterns
 
 - Blocked by: nothing
 - Blocks: FEAT-062 (generation quality metrics extends this data)
+
+**Resolved:** 2026-11-24 registry-driven close: git issue dd8e05d (registry tip: 12786748d Konstantin Fedotov Close issue)
