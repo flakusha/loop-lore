@@ -78,7 +78,7 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
           return factionErrorResponse(e,);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           category: t.Union([
             t.Literal("honor",),
@@ -93,11 +93,13 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
           delta: t.Number({ minimum: -100, maximum: 100, },),
           reason: t.Optional(t.String({ maxLength: 2000, },),),
         },),
-        response: { ...DataResponse, ...Errors, },
-        summary: "Record karma event",
-        description: "Fold a karma delta into overall and its category.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { ...DataResponse, ...Errors, },
+          summary: "Record karma event",
+          description: "Fold a karma delta into overall and its category.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .get(
       `${prefix}/worlds/:worldId/actors/:actorId/factions/:factionId/standing`,
@@ -157,15 +159,17 @@ export function karmaRoutes(opts: HandleOpts, prefix = "/api",) {
           return factionErrorResponse(e,);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           delta: t.Number({ minimum: -100, maximum: 100, },),
           reason: t.Optional(t.String({ maxLength: 2000, },),),
         },),
-        response: { ...DataResponse, ...Errors, },
-        summary: "Adjust faction standing",
-        description: "Move an actor's standing with a faction.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { ...DataResponse, ...Errors, },
+          summary: "Adjust faction standing",
+          description: "Move an actor's standing with a faction.",
+          tags: ["Worlds",],
+        },),
+      },
     );
 }

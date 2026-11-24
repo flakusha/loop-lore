@@ -174,8 +174,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
+        body: t.Object({ locationId: t.String({ minLength: 1, },), },),
         ...routeSpec({
-          body: t.Object({ locationId: t.String({ minLength: 1, },), },),
           response: { 200: MapSchemas.Zone, 400: ErrorResponse, 403: ErrorResponse, },
           summary: "Anchor zone to location",
           description: "Link a zone to the fractal location it stands for. Owner/admin only.",
@@ -200,8 +200,8 @@ export function mapZoneRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
+        query: PointQuery,
         ...routeSpec({
-          query: PointQuery,
           response: { 200: t.Object({ data: t.Union([MapSchemas.Zone, t.Null(),],), },), },
           summary: "Resolve zone at a tile",
           description: "The zone covering a tile, or null when the point falls outside every zone. " +

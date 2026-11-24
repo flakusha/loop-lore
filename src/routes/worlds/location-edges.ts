@@ -167,14 +167,14 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
+        body: t.Object({
+          toId: t.String(),
+          mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
+          gameHours: t.Optional(t.Number({ minimum: 0, },),),
+          requiresDiscovery: t.Optional(t.Boolean(),),
+          cost: t.Optional(t.Record(t.String(), t.Any(),),),
+        },),
         ...routeSpec({
-          body: t.Object({
-            toId: t.String(),
-            mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
-            gameHours: t.Optional(t.Number({ minimum: 0, },),),
-            requiresDiscovery: t.Optional(t.Boolean(),),
-            cost: t.Optional(t.Record(t.String(), t.Any(),),),
-          },),
           response: {
             201: EdgeSchema,
             400: ErrorResponse,
@@ -274,13 +274,13 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
+        body: t.Partial(t.Object({
+          mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
+          gameHours: t.Number({ minimum: 0, },),
+          requiresDiscovery: t.Boolean(),
+          cost: t.Record(t.String(), t.Any(),),
+        },),),
         ...routeSpec({
-          body: t.Partial(t.Object({
-            mode: t.Union(EDGE_MODES.map((m,) => t.Literal(m,)),),
-            gameHours: t.Number({ minimum: 0, },),
-            requiresDiscovery: t.Boolean(),
-            cost: t.Record(t.String(), t.Any(),),
-          },),),
           response: {
             200: EdgeSchema,
             400: ErrorResponse,
@@ -347,12 +347,12 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
+        body: t.Object({
+          toId: t.String(),
+          mode: t.String(),
+          actorId: t.Optional(t.String(),),
+        },),
         ...routeSpec({
-          body: t.Object({
-            toId: t.String(),
-            mode: t.String(),
-            actorId: t.Optional(t.String(),),
-          },),
           response: {
             200: t.Object({
               edgeId: t.String(),

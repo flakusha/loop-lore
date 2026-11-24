@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { Elysia, t, } from "elysia";
 import { describe, expect, expectTypeOf, test, } from "bun:test";
+import { Elysia, t, } from "elysia";
 import { routeAuthError, routeDetail, routeErrors, routeNotFoundError, routeSpec, } from "./route-spec";
 
 // Guard the root cause: passing a factory call as the whole options object

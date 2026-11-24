@@ -168,15 +168,17 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
           userRole,
         );
       },
-      routeSpec({
+      {
         body: WorldUpdateBody,
-        response: {
-          200: SuccessResponse,
-        },
-        summary: "Update world",
-        description: "Update a world's properties. Owner or admin only.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: {
+            200: SuccessResponse,
+          },
+          summary: "Update world",
+          description: "Update a world's properties. Owner or admin only.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .delete(
       `${prefix}/worlds/:worldId`,

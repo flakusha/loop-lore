@@ -71,17 +71,19 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
           return factionErrorResponse(e,);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           name: t.String({ minLength: 1, maxLength: 200, },),
           description: t.Optional(t.String({ maxLength: 4000, },),),
           alignment: t.Optional(t.String(),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), ...Errors, },
-        summary: "Create faction",
-        description: "Define a faction in a world.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), ...Errors, },
+          summary: "Create faction",
+          description: "Define a faction in a world.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .post(
       `${prefix}/worlds/:worldId/factions/:factionId/members`,
@@ -109,13 +111,15 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
           return factionErrorResponse(e,);
         }
       },
-      routeSpec({
+      {
         body: t.Object({ actorId: t.String({ minLength: 1, },), role: t.Optional(t.String(),), },),
-        response: { 201: t.Object({ id: t.String(), },), ...Errors, },
-        summary: "Add faction member",
-        description: "Seat an actor in a faction.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), ...Errors, },
+          summary: "Add faction member",
+          description: "Seat an actor in a faction.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .delete(
       `${prefix}/worlds/:worldId/factions/:factionId/members/:actorId`,
@@ -192,7 +196,7 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
           return factionErrorResponse(e,);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           factionA: t.String({ minLength: 1, },),
           factionB: t.String({ minLength: 1, },),
@@ -200,24 +204,28 @@ export function factionRoutes(opts: HandleOpts, prefix = "/api",) {
           deltaStanding: t.Optional(t.Number({ minimum: -100, maximum: 100, },),),
           reason: t.Optional(t.String({ maxLength: 2000, },),),
         },),
-        response: { ...DataResponse, ...Errors, },
-        summary: "Set relationship",
-        description: "Change a pair's status or score.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { ...DataResponse, ...Errors, },
+          summary: "Set relationship",
+          description: "Change a pair's status or score.",
+          tags: ["Worlds",],
+        },),
+      },
     );
 
   for (const route of DIPLOMACY_ROUTES) {
     app.post(
       `${prefix}/worlds/:worldId/factions/relationships/${route.path}`,
       async (ctx: any,) => runDiplomacy(database, ctx, route.verb,),
-      routeSpec({
+      {
         body: PairBody,
-        response: { ...DataResponse, ...Errors, },
-        summary: route.summary,
-        description: route.description,
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { ...DataResponse, ...Errors, },
+          summary: route.summary,
+          description: route.description,
+          tags: ["Worlds",],
+        },),
+      },
     );
   }
 

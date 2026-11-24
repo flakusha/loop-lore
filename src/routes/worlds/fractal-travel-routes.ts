@@ -67,7 +67,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           name: t.String({ minLength: 1, maxLength: 200, },),
           kind: t.String({ minLength: 1, maxLength: 40, },),
@@ -75,11 +75,13 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           secondsPerUnit: t.Optional(t.Number({ minimum: 1, maximum: 86400, },),),
           waypoints: t.Optional(t.Array(t.String(),),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
-        summary: "Create travel route",
-        description: "Create a new travel route. kind ∈ sea/road/air/rail/custom.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
+          summary: "Create travel route",
+          description: "Create a new travel route. kind ∈ sea/road/air/rail/custom.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .get(
       `${prefix}/worlds/:worldId/travel-routes/:routeId`,
@@ -121,7 +123,7 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           return jsonError({ message: e instanceof Error ? e.message : String(e,), status: HttpStatus.BadRequest, },);
         }
       },
-      routeSpec({
+      {
         body: t.Object({
           locationId: t.String(),
           stopOrder: t.Number({ minimum: 0, },),
@@ -130,11 +132,13 @@ export function fractalTravelRoutes(opts: HandleOpts, prefix = "/api",) {
           coordY: t.Optional(t.Number(),),
           coordZ: t.Optional(t.Number(),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
-        summary: "Add stop to route",
-        description: "Append a stop to a travel route. World-scoped; cross-world stops rejected.",
-        tags: ["Worlds",],
-      },),
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
+          summary: "Add stop to route",
+          description: "Append a stop to a travel route. World-scoped; cross-world stops rejected.",
+          tags: ["Worlds",],
+        },),
+      },
     )
     .delete(
       `${prefix}/worlds/:worldId/travel-routes/:routeId/stops/:stopId`,

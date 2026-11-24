@@ -210,8 +210,8 @@ export function worldLicenseRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
+        body: ValidateImportBody,
         ...routeSpec({
-          body: ValidateImportBody,
           response: {
             200: t.Union([
               t.Object({ ok: t.Literal(true,), },),

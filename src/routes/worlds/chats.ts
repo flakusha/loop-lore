@@ -76,16 +76,18 @@ export function chatsRoutes(opts: HandleOpts, prefix = "/api",) {
         const locationId = (ctx.query?.locationId as string | undefined) ?? null;
         return handleListWorldChats(database, ctx.params.worldId as string, userId, userRole, locationId,);
       },
-      routeSpec({
+      {
         params: t.Object({ worldId: t.String(), },),
         query: t.Optional(t.Object({ locationId: t.Optional(t.String(),), },),),
-        response: {
-          200: t.Object({ data: t.Array(t.Any(),), },),
-        },
-        summary: "List world chats",
-        description:
-          "List chats in a world the user participates in, optionally filtered by location (world channel tree).",
-        tags: ["Worlds", "Chats",],
-      },),
+        ...routeSpec({
+          response: {
+            200: t.Object({ data: t.Array(t.Any(),), },),
+          },
+          summary: "List world chats",
+          description:
+            "List chats in a world the user participates in, optionally filtered by location (world channel tree).",
+          tags: ["Worlds", "Chats",],
+        },),
+      },
     );
 }
