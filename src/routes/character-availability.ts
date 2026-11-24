@@ -49,7 +49,7 @@ export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",)
     // ── Get availability for an actor ──────────────────────────
     .get(
       `${prefix}/actors/:actorId/availability`,
-      // ctx.t is derive-only (absent from Elysia Context); typed-Ctx pattern: cast ctx to Context & { t } at the boundary (skill://route-ctx-typing).
+      // ctx.t is derive-only (absent from Elysia Context); keep `any` here for the i18n lookup.
       async (ctx: any,) => {
         const access = await requireActorAccess(ctx, database,);
         if (access instanceof Response) { return access; }
