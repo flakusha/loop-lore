@@ -9,52 +9,69 @@
  *   - the (chat_type, chat_mode, chat_purpose) triple is unique per variant
  *   - mismatched triples are rejected by validateVariantTriple
  *   - the extended ChatPurpose enum contains all old + new strings
+ *
+ * The type contract is the point here, so shape claims are pinned at compile
+ * time with `expectTypeOf` (same convention as
+ * src/frontend/alpine/world-types.test.ts): a widened field type, a widened
+ * enum union, or a missing/extra variant key fails
+ * `tsgo --noEmit --project tsconfig.backend.json` instead of slipping past a
+ * runtime-only check.
  */
 
-import { describe, expect, it, } from "bun:test";
+import { describe, expect, expectTypeOf, it, } from "bun:test";
 import { ChatMode, ChatPurpose, ChatType, } from "../db/enums-core/users";
 import {
   CHAT_VARIANTS,
   type ChatVariant,
   getVariantDefaults,
+  type GmConfig,
   validateVariantTriple,
   VARIANT_DEFAULTS,
+  type VariantDefaults,
 } from "./types/variants";
 
 describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
-  it("covers all 12 variants", () => {
-    expect(Object.keys(VARIANT_DEFAULTS,).length,).toBe(12,);
-    for (const v of CHAT_VARIANTS) {
-      expect(VARIANT_DEFAULTS[v],).toBeDefined();
-    }
+  it("pins the 12-member ChatVariant union and the tables that cover it", () => {
+    expectTypeOf<ChatVariant>().toEqualTypeOf<
+      | "assistant"
+      | "assistant_group"
+      | "user_1x1"
+      | "user_group"
+      | "user_group_admin"
+      | "llm_only"
+      | "llm_only_group"
+      | "llm_only_group_gm"
+      | "character"
+      | "character_group"
+      | "rpg"
+      | "rpg_group"
+    >();
+
+    expectTypeOf<(typeof CHAT_VARIANTS)[number]>().toEqualTypeOf<ChatVariant>();
+    expectTypeOf<keyof typeof VARIANT_DEFAULTS>().toEqualTypeOf<ChatVariant>();
   });
 
-  it("each variant resolves to valid ChatType / ChatMode / ChatPurpose", () => {
-    const validTypes = Object.fromEntries(Object.values(ChatType,).map((s,) => [s, true,]),) as Record<string, true>;
-    const validModes = Object.fromEntries(Object.values(ChatMode,).map((s,) => [s, true,]),) as Record<string, true>;
-    const validPurposes = Object.fromEntries(Object.values(ChatPurpose,).map((s,) => [s, true,]),) as Record<
-      string,
-      true
-    >;
-
-    for (const v of CHAT_VARIANTS) {
-      const d = VARIANT_DEFAULTS[v];
-      expect(validTypes[d.chat_type],).toBe(true,);
-      expect(validModes[d.chat_mode],).toBe(true,);
-      expect(validPurposes[d.chat_purpose],).toBe(true,);
-    }
+  it("every variant resolves to valid ChatType / ChatMode / ChatPurpose", () => {
+    expectTypeOf<ChatType>().toEqualTypeOf<"direct" | "group">();
+    expectTypeOf<VariantDefaults["chat_type"]>().toEqualTypeOf<ChatType>();
+    expectTypeOf<VariantDefaults["chat_mode"]>().toEqualTypeOf<ChatMode>();
+    expectTypeOf<VariantDefaults["chat_purpose"]>().toEqualTypeOf<ChatPurpose>();
   });
 
   it("every variant has max_turns (number|null) and auto_advance ∈ {0,1}", () => {
+    expectTypeOf<VariantDefaults["max_turns"]>().toEqualTypeOf<number | null>();
+    expectTypeOf<VariantDefaults["auto_advance"]>().toEqualTypeOf<0 | 1>();
+
     for (const v of CHAT_VARIANTS) {
       const d = VARIANT_DEFAULTS[v];
       const validMt = d.max_turns === null || Number.isFinite(d.max_turns,);
       expect(validMt,).toBe(true,);
-      expect([0, 1,],).toContain(d.auto_advance,);
     }
   });
 
   it("talkativity is a number in [1,10]", () => {
+    expectTypeOf<VariantDefaults["talkativity"]>().toEqualTypeOf<number>();
+
     for (const v of CHAT_VARIANTS) {
       const t = VARIANT_DEFAULTS[v].talkativity;
       expect(t,).toBeGreaterThanOrEqual(1,);
@@ -109,20 +126,22 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
   });
 
   it("user group admin (5) carries a moderation gm_config block", () => {
+    expectTypeOf<VariantDefaults["gm_config"]>().toEqualTypeOf<GmConfig>();
     const d = VARIANT_DEFAULTS.user_group_admin;
     expect(d.gm_config,).not.toBeNull();
-    expect((d.gm_config as Record<string, unknown>).moderation,).toBeDefined();
+    expect(d.gm_config !== null && "moderation" in d.gm_config,).toBe(true,);
   });
 
   it("character group (10) carries a cast gm_config block", () => {
     const d = VARIANT_DEFAULTS.character_group;
     expect(d.gm_config,).not.toBeNull();
-    expect((d.gm_config as Record<string, unknown>).cast,).toBeDefined();
+    expect(d.gm_config !== null && "cast" in d.gm_config,).toBe(true,);
   });
 });
 
 describe("getVariantDefaults", () => {
-  it("returns the entry for a known variant", () => {
+  it("returns VariantDefaults | undefined for a string key", () => {
+    expectTypeOf<ReturnType<typeof getVariantDefaults>>().toEqualTypeOf<VariantDefaults | undefined>();
     expect(getVariantDefaults("assistant",),).toBe(VARIANT_DEFAULTS.assistant,);
   });
 
@@ -132,6 +151,14 @@ describe("getVariantDefaults", () => {
 });
 
 describe("validateVariantTriple", () => {
+  it("takes a ChatVariant plus three strings and returns string | null", () => {
+    expectTypeOf<Parameters<typeof validateVariantTriple>>().toEqualTypeOf<
+      [ChatVariant, string, string, string,]
+    >();
+
+    expectTypeOf<ReturnType<typeof validateVariantTriple>>().toEqualTypeOf<string | null>();
+  });
+
   it("returns null when the supplied triple matches the variant", () => {
     for (const v of CHAT_VARIANTS) {
       const d = VARIANT_DEFAULTS[v];
@@ -179,6 +206,18 @@ describe("ChatPurpose enum — back-compat + 6 new values", () => {
   });
 
   it("exposes exactly nine values", () => {
+    expectTypeOf<ChatPurpose>().toEqualTypeOf<
+      | "main"
+      | "side"
+      | "notes"
+      | "assistant"
+      | "roleplay"
+      | "rpg"
+      | "social"
+      | "guided"
+      | "validation"
+    >();
+
     expect(Object.keys(ChatPurpose,).length,).toBe(9,);
   });
 });
@@ -191,6 +230,7 @@ describe("ChatMode enum — adds battle for variants 6/7/12", () => {
   });
 
   it("adds battle", () => {
+    expectTypeOf<ChatMode>().toEqualTypeOf<"direct" | "group" | "story" | "battle">();
     expect(ChatMode.Battle,).toBe("battle",);
   });
 });
