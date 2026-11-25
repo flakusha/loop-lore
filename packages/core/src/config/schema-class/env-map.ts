@@ -21,6 +21,7 @@ import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
+import { MCP_DEFAULTS, } from "./mcp";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
@@ -50,6 +51,7 @@ export const envMap = (): EnvMap => {
     auth: AUTH_DEFAULTS,
     transport: TRANSPORT_DEFAULTS,
     messages: MESSAGES_DEFAULTS,
+    mcp: MCP_DEFAULTS,
     nsfw: NSFW_DEFAULTS,
     observability: OBSERVABILITY_DEFAULTS,
     hooks: HOOKS_DEFAULTS,
@@ -91,6 +93,7 @@ export const envMap = (): EnvMap => {
   add("auth", s.auth,);
   add("transport", s.transport,);
   add("messages", s.messages,);
+  add("mcp", s.mcp,);
   add("nsfw", s.nsfw,);
   add("observability", s.observability,);
   add("hooks", s.hooks,);

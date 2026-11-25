@@ -34,6 +34,7 @@ export {
 } from "./integrations";
 export { ITEMS_DEFAULTS, itemsMeta, ItemsSection, } from "./items";
 export { LOGGING_DEFAULTS, loggingMeta, LoggingSection, } from "./logging";
+export { MCP_DEFAULTS, mcpMeta, validateMcpConfig, } from "./mcp";
 export { MESSAGES_DEFAULTS, messagesMeta, MessagesSection, } from "./messages";
 export { NSFW_DEFAULTS, nsfwMeta, NsfwSection, } from "./nsfw";
 export {

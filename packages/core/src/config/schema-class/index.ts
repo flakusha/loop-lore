@@ -32,6 +32,7 @@ import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
+import { MCP_DEFAULTS, } from "./mcp";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
@@ -81,6 +82,7 @@ export const createConfigSchema = () => {
     auth: deepClone(AUTH_DEFAULTS,),
     transport: deepClone(TRANSPORT_DEFAULTS,),
     messages: deepClone(MESSAGES_DEFAULTS,),
+    mcp: deepClone(MCP_DEFAULTS,),
     nsfw: deepClone(NSFW_DEFAULTS,),
     observability: deepClone(OBSERVABILITY_DEFAULTS,),
     hooks: deepClone(HOOKS_DEFAULTS,),
@@ -119,6 +121,7 @@ export const createConfigSchema = () => {
         auth: sections.auth,
         transport: sections.transport,
         messages: sections.messages,
+        mcp: sections.mcp,
         nsfw: sections.nsfw,
         observability: sections.observability,
         hooks: sections.hooks,

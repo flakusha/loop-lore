@@ -72,6 +72,10 @@ export interface AcpProfileHealth {
  * One MCP server handed to the harness agent via ACP `session/new` (stdio
  * only — the passthrough is verbatim, so an http/sse entry has no wire
  * mapping yet; add one when a profile needs it).
+ *
+ * This is the per-profile ACP passthrough, not the top-level
+ * `[mcp.servers.*]` section (`./mcp.ts`): entries here are sent verbatim to
+ * the agent; that section is loop-lore's own client config, validated at load.
  */
 export interface McpServerConfig {
   /** Server name, as the agent sees it. */

@@ -6,6 +6,7 @@ import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
 import { FEATURE_PROFILES, } from "../schema/features";
 import { COMFYUI_MODEL_EXTENSIONS, isComfyUIModelName, } from "../schema/providers";
 import { validateAcpProfiles, } from "../sections/harness";
+import { validateMcpConfig, } from "../sections/mcp";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
 
 /**
@@ -199,6 +200,10 @@ export const validate = (config: Config,): void => {
       );
     }
   }
+
+  // Declarative MCP servers: reject conflicting transports, shell-ish stdio
+  // commands and non-http(s) endpoints at load, not at registration.
+  validateMcpConfig(config.mcp,);
 
   // External harness profiles: duplicate names, unknown tier keys, and
   // non-`provider/id` models are config rot — reject at load, not at dispatch.

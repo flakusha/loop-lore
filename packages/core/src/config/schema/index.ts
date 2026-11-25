@@ -29,6 +29,7 @@ export * from "./hooks";
 export * from "./integrations";
 export * from "./items";
 export * from "./logging";
+export * from "./mcp";
 export * from "./messages";
 export * from "./nsfw";
 export * from "./observability";

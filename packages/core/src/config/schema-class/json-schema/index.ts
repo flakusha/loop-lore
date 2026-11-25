@@ -25,6 +25,7 @@ import { idempotency, } from "./idempotency";
 import { integrations, } from "./integrations";
 import { items, } from "./items";
 import { logging, } from "./logging";
+import { mcp, } from "./mcp";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
 import { observability, } from "./observability";
@@ -77,6 +78,7 @@ export const jsonSchema = (): JSONSchema => {
       auth,
       transport,
       messages,
+      mcp,
       nsfw,
       observability,
       hooks,

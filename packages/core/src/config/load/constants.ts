@@ -30,6 +30,7 @@ export const DOMAINS = [
   "auth",
   "transport",
   "messages",
+  "mcp",
   "nsfw",
   "generation",
   "byokey",
