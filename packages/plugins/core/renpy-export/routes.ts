@@ -38,7 +38,10 @@ export function makeExportHandler(db: Kysely<DB>,) {
 
     let model;
     try {
-      model = await gatherExportModel(db, { chatIds: input.value.chatIds, },);
+      model = await gatherExportModel(db, {
+        chatIds: input.value.chatIds,
+        callerUserId: caller.userId,
+      },);
     } catch (error) {
       return jsonError(error instanceof Error ? error.message : "export failed", HttpStatus.NotFound,);
     }

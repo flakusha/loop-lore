@@ -27,6 +27,7 @@ describe("gatherExportModel", () => {
   let ownerId: string;
   let chatId: string;
   let aliceId: string;
+  let outsiderId: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
@@ -38,6 +39,8 @@ describe("gatherExportModel", () => {
     await insertActors(db, "Owner", { id: ownerId, user_id: ownerId, owner_id: ownerId, } as never,);
     aliceId = randomUUID();
     await insertActors(db, "Alice", { id: aliceId, } as never,);
+    outsiderId = randomUUID();
+    await insertUsers(db, `outsider-${outsiderId}`, "Outsider", { id: outsiderId, } as never,);
 
     chatId = randomUUID();
     await insertChats(db, "Tavern Night", ownerId, {
@@ -61,7 +64,7 @@ describe("gatherExportModel", () => {
   },);
 
   test("played path resolves in root-to-tip order with speaker slugs", async () => {
-    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], },);
+    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], callerUserId: ownerId, },);
     expect(model.chats,).toHaveLength(1,);
     const chat = model.chats[0]!;
     expect(chat.label,).toBe("chat_tavern_night",);
@@ -74,7 +77,7 @@ describe("gatherExportModel", () => {
   },);
 
   test("sibling branches surface as menu stubs", async () => {
-    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], },);
+    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], callerUserId: ownerId, },);
     const stubs = model.chats[0]?.stubs ?? [];
     expect(stubs,).toHaveLength(1,);
     expect(stubs[0]?.label,).toBe("Sneak past",);
@@ -82,7 +85,7 @@ describe("gatherExportModel", () => {
   },);
 
   test("participant actors resolve as characters", async () => {
-    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], },);
+    const model = await gatherExportModel(tdb.db, { chatIds: [chatId,], callerUserId: ownerId, },);
     const slugs = model.characters.map((c,) => c.slug,);
     expect(slugs,).toContain("alice",);
     expect(slugs,).toContain("owner",);
@@ -95,11 +98,15 @@ describe("gatherExportModel", () => {
       visibility: "public" as never,
     },);
     await tdb.db.updateTable("actors",).set({ avatar_asset_id: assetId, },).where("id", "=", aliceId,).execute();
-    const before = await gatherExportModel(tdb.db, { chatIds: [chatId,], },);
+    const before = await gatherExportModel(tdb.db, { chatIds: [chatId,], callerUserId: ownerId, },);
     expect(before.images.size,).toBe(0,);
   },);
 
   test("unknown chat throws", async () => {
-    await expect(gatherExportModel(tdb.db, { chatIds: [randomUUID(),], },),).rejects.toThrow("chat not found",);
+    await expect(gatherExportModel(tdb.db, { chatIds: [randomUUID(),], callerUserId: ownerId, },),).rejects.toThrow("chat not found",);
+  },);
+
+  test("rejects chats the caller does not own", async () => {
+    await expect(gatherExportModel(tdb.db, { chatIds: [chatId,], callerUserId: outsiderId, },),).rejects.toThrow("chat not found",);
   },);
 },);

@@ -21,7 +21,7 @@ import {
 } from "../../../../src/test-utils/insert-helpers";
 import { EXPORT_PATH, makeExportHandler, } from "./routes";
 
-const CALLER = { userId: "u1", userRole: "member", };
+let CALLER = { userId: "", userRole: "member", };
 const post = (body: unknown) => new Request(`http://x${EXPORT_PATH}`, {
   method: "POST",
   body: JSON.stringify(body,),
@@ -30,12 +30,14 @@ const post = (body: unknown) => new Request(`http://x${EXPORT_PATH}`, {
 describe("POST /api/renpy/export@v1", () => {
   let tdb: TestDb;
   let chatId: string;
+  let ownerId: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
     tdb = await createTestDb();
     const { db, } = tdb;
-    const ownerId = randomUUID();
+    ownerId = randomUUID();
+    CALLER = { userId: ownerId, userRole: "member", };
     await insertUsers(db, `owner-${ownerId}`, "Owner", { id: ownerId, } as never,);
     await insertActors(db, "Owner", { id: ownerId, user_id: ownerId, owner_id: ownerId, } as never,);
     chatId = randomUUID();
@@ -68,6 +70,12 @@ describe("POST /api/renpy/export@v1", () => {
 
   test("404s unknown chats", async () => {
     const res = await makeExportHandler(tdb.db,)(post({ chatIds: [randomUUID(),], }), CALLER,);
+    expect(res?.status,).toBe(404,);
+  },);
+
+  test("404s chats the caller does not own", async () => {
+    const outsider = { userId: randomUUID(), userRole: "member", };
+    const res = await makeExportHandler(tdb.db,)(post({ chatIds: [chatId,], }), outsider,);
     expect(res?.status,).toBe(404,);
   },);
 

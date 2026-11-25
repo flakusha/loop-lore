@@ -3,7 +3,7 @@
 
 # TASK: RenPy export script generator (pure function)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
@@ -20,6 +20,6 @@ Pure .rpy text builder in plugins/core/renpy-export: normalized export model (ch
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

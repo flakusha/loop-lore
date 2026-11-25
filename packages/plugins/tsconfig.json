@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.backend.json",
   "include": [
-    "src"
+    "src",
+    "core/renpy-export"
   ]
 }

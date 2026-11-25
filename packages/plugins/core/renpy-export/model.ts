@@ -10,11 +10,13 @@
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../../../src/db/schema";
 import { slugify, uniqueSlugs, } from "./script";
-import type { RenpyCharacter, RenpyExportChat, RenpyExportForkStub, RenpyExportMessage, RenpyExportModel, } from "./types";
+import type { RenpyCharacter, RenpyExportChat, RenpyForkStub, RenpyExportModel, } from "./types";
 
 /** Input for {@link gatherExportModel}. */
 export interface GatherExportOptions {
   chatIds: string[];
+  /** Caller whose chat_owners rows authorize the export. */
+  callerUserId: string;
 }
 
 interface ChatRow {
@@ -37,11 +39,21 @@ interface BranchRow {
   name: string;
 }
 
-async function loadChat(db: Kysely<DB>, chatId: string,): Promise<ChatRow> {
+/**
+ * Load a chat only when the caller is one of its owners.
+ * @throws {Error} when the chat is missing or not owned by the caller.
+ */
+async function loadChat(db: Kysely<DB>, chatId: string, callerUserId: string,): Promise<ChatRow> {
   const row = await db
     .selectFrom("chats",)
     .select(["id", "name", "active_branch_id",],)
     .where("id", "=", chatId,)
+    .where((eb,) => eb.exists(
+      eb.selectFrom("chat_owners",)
+        .select("user_id",)
+        .whereRef("chat_owners.chat_id", "=", "chats.id",)
+        .where("chat_owners.user_id", "=", callerUserId,),
+    ),)
     .executeTakeFirst();
   if (!row) { throw new Error(`chat not found: ${chatId}`,); }
   return { id: row.id, name: row.name, active_branch_id: row.active_branch_id, };
@@ -81,7 +93,7 @@ async function chatMessageIds(db: Kysely<DB>, chat: ChatRow,): Promise<string[]>
   return rows.map((row,) => row.id,);
 }
 
-async function chatForkStubs(db: Kysely<DB>, chatId: string,): Promise<RenpyExportForkStub[]> {
+async function chatForkStubs(db: Kysely<DB>, chatId: string,): Promise<RenpyForkStub[]> {
   const branches: BranchRow[] = await db
     .selectFrom("chat_branches",)
     .select(["id", "parent_message_id", "name",],)
@@ -107,11 +119,11 @@ export async function gatherExportModel(
 ): Promise<RenpyExportModel> {
   // Pass 1: raw per-message author ids in played-path order; collect the
   // distinct author set for one slug-assignment step below.
-  const rawChats: { id: string; name: string; authors: string[]; texts: string[]; stubs: RenpyExportForkStub[] }[] = [];
+  const rawChats: { id: string; name: string; authors: string[]; texts: string[]; stubs: RenpyForkStub[] }[] = [];
   const meta = new Map<string, { displayName: string; avatarAssetId: string | null }>();
 
   for (const chatId of options.chatIds) {
-    const chat = await loadChat(db, chatId,);
+    const chat = await loadChat(db, chatId, options.callerUserId,);
     const ids = await chatMessageIds(db, chat,);
     const rows = ids.length > 0 ? await db
       .selectFrom("messages",)
