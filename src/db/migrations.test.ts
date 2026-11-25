@@ -239,10 +239,10 @@ describe("migration numbering is sequential from 001", () => {
 
     expect(prefixes[0],).toBe(1,);
 
-    // The baseline plus honeypot, mesh intel and plugin-origin appends: 001..017.
-    const expected = Array.from({ length: 17, }, (_, i,) => i + 1,);
-    expect(MIGRATION_NAMES,).toHaveLength(17,);
-    expect(prefixes, "prefixes must be 001..017 with no gaps",).toEqual(expected,);
+    // The baseline plus honeypot, mesh intel, plugin-origin and harness exec-log appends: 001..018.
+    const expected = Array.from({ length: 18, }, (_, i,) => i + 1,);
+    expect(MIGRATION_NAMES,).toHaveLength(18,);
+    expect(prefixes, "prefixes must be 001..018 with no gaps",).toEqual(expected,);
 
     // No parked numbers: every slot in the baseline is shipped.
     const parked = expected.filter((n,) => !prefixes.includes(n,));

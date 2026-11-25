@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Colocated contract test for 018_harness_runs_calls. The filename has no
- * numeric prefix on purpose: the migration-discovery regexes require `NNN_`
- * and would otherwise import this test as a migration.
+ * Contract test for 018_harness_runs_calls, kept outside the migrations
+ * directory so the migration-discovery regexes cannot import it as a
+ * migration. The filename has no numeric prefix for the same reason.
  */
 import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 
-import { createSqliteDialect, } from "../index";
-import { down, up, } from "./018_harness_runs_calls";
+import { createSqliteDialect, } from "./index";
+import { down, up, } from "./migrations/018_harness_runs_calls";
 
 interface ColumnInfo {
   name: string;
@@ -95,9 +95,9 @@ describe("018_harness_runs_calls", () => {
 
     // Status is a text vocabulary, never a boolean; cost NULL keeps the
     // exec log's "unknown price" meaning distinct from zero.
-    expect(runs.find((column,) => column.name === "status")?.type,).toBe("text",);
-    expect(calls.find((column,) => column.name === "status")?.type,).toBe("text",);
-    expect(runs.find((column,) => column.name === "cost_usd")?.type,).toBe("real",);
+    expect(runs.find((column,) => column.name === "status")?.type.toLowerCase(),).toBe("text",);
+    expect(calls.find((column,) => column.name === "status")?.type.toLowerCase(),).toBe("text",);
+    expect(runs.find((column,) => column.name === "cost_usd")?.type.toLowerCase(),).toBe("real",);
 
     const foreignKeys = raw.query("PRAGMA foreign_key_list('harness_calls')",).all() as {
       table: string;
