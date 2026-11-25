@@ -10,7 +10,7 @@
  */
 
 import { expect, test, } from "bun:test";
-import { noopReason, } from "./context.mjs";
+import { noopReason, noopSkip, } from "./context.mjs";
 import { applyDiffScopedStaticGates, browserSpecPaths, pickScopedFiles, } from "./gates-scope.mjs";
 
 const TS = /\.(ts|tsx|js|jsx|mjs|cjs|md)$/;
@@ -94,10 +94,15 @@ test("browser spec paths carry the ./ prefix so bun runs them as files", () => {
 
 test("scoped code-only diff noop-marks both plan gates", () => {
   const checks = baseChecks();
+  const before = { ...checks, };
   applyDiffScopedStaticGates(checks, ["src/a.ts", "docs/b.md",], true,);
-  for (const name of PLAN_GATES) {
-    expect(noopReason(checks[name],), name,).toBe("no .plan/ files in diff",);
-  }
+  // Only the two advisory plan gates move; the static commands stay real.
+  const skipped = noopSkip("no .plan/ files in diff",);
+  expect(checks,).toEqual({
+    ...before,
+    "plan - validate": skipped,
+    "plan - ticket index (sync)": skipped,
+  },);
 });
 
 test("scoped .plan diff keeps both plan gates real", () => {
