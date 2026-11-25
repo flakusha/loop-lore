@@ -32,6 +32,7 @@ import {
   enforceAgeGate,
   enforceInjectionGate,
   enforceMuteGate,
+  enforceNsfwConsentGate,
   enforceVnDecisionGate,
 } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
@@ -107,6 +108,19 @@ export async function prepareUserMessage(params: SendIntakeParams,): Promise<Sen
   // minor can neither send nor trigger pipeline work in any chat.
   const ageRejection = await enforceAgeGate(database, actorId,);
   if (ageRejection) { return { ok: false, response: ageRejection, }; }
+
+  // ── NSFW consent verdict — shared with forwards and participant-add.
+  // Sits beside the age gate, before idempotency and every side effect.
+  const consentRejection = await enforceNsfwConsentGate({
+    database,
+    config,
+    userId: actorId,
+    chatId,
+    actorId,
+    surface: "send",
+  },);
+
+  if (consentRejection) { return { ok: false, response: consentRejection, }; }
 
   // ── Idempotency: short-circuit if a row already covers this key.
   // Runs before any side effect (NSFW audit, backoff resets,

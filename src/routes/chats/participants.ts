@@ -23,6 +23,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
+import { enforceNsfwConsentGate, } from "../messages/guards";
 import type { HandlerOpts, } from "./types";
 
 /** */
@@ -36,7 +37,7 @@ function log(): Logger {
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { chats: { ":id": { participants: { ...; }; }; }; }; } & { ...; } & { ...; } & { ...; }, { ...; }, { ...; }>}
  */
 export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
 
   return (
     new Elysia({ name: "chats-participants", },)
@@ -115,6 +116,20 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .select("user_id",)
             .where("id", "=", body.actorId,)
             .executeTakeFirst();
+
+          // Same verdict as send, after ownership/actor resolution and before
+          // any membership, key-distribution or invite side effect. The guard
+          // skips the verdict entirely for non-NSFW chats/actors.
+          const consentRejection = await enforceNsfwConsentGate({
+            database,
+            config,
+            userId,
+            chatId: id,
+            actorId: body.actorId,
+            surface: "participant_add",
+          },);
+
+          if (consentRejection) { return consentRejection; }
 
           const result = await joinParty(database, {
             chatId: id,

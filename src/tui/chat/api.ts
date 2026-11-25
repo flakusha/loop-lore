@@ -5,7 +5,7 @@
 // One API client surface for the TUI chat widgets: request shaping, envelope
 // parsing and the stale-chat guards all read the same page/pagination contract.
 import type { CommandValveSpec, } from "../../assistant/commands/valves";
-import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
+import { jsonParseOr, safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
 import { openSendStream, } from "./stream";
 import type { ChatHost, ChatMessage, } from "./types";
 
@@ -43,6 +43,29 @@ export function setFetch(fn: typeof _realFetch,): void {
 /** Attachment descriptor for a message send, mirroring `MessageCreateBody`. */
 export interface MessageAttachment {
   assetId: string;
+}
+
+/** Pull the stable reason out of an error envelope (any carrier). */
+export function failureReason(
+  payload: { code?: string; error?: string; data?: { reason?: string } },
+): string | undefined {
+  return payload.code ?? payload.data?.reason ??
+    (payload.error?.startsWith("NSFW access denied: ",) ? payload.error.slice(20,) : undefined);
+}
+
+/** Surface the server stable reason code from a captured 403 body. */
+function sendFailureMessage(error: Error,): string {
+  const body = (error as Error & { body?: unknown }).body;
+  let reason: string | undefined;
+  if (typeof body === "string") {
+    const parsed = jsonParseOr<{ code?: string; error?: string; data?: { reason?: string } }>(body, {},);
+    reason = failureReason(parsed,);
+    if (!reason && body.startsWith("NSFW access denied: ",)) { reason = body.slice(20,); }
+  } else if (body && typeof body === "object") {
+    reason = failureReason(body as never,);
+  }
+
+  return reason ? error.message + ": " + reason : error.message;
 }
 
 /**
@@ -86,6 +109,9 @@ export async function handleSend(
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
       handle401: false,
+      // Consent/age 403s carry a stable reason in the body; safeFetch only
+      // attaches it to the error when the caller opts in.
+      includeErrorBody: true,
       // This POST blocks on a whole assistant generation server-side, so the
       // shared 30s safeFetch default would abort turns the server completes.
       timeout: host.sendTimeoutMs,
@@ -96,7 +122,7 @@ export async function handleSend(
     host.setStreamContent?.(null,);
 
     if (!result.ok) {
-      host.showError(result.error.message,);
+      host.showError(sendFailureMessage(result.error,),);
       return;
     }
 

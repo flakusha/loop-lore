@@ -27,7 +27,7 @@ import { ErrorResponse, MessageForwardBody, } from "../../validation/schemas";
 import { Id, } from "../../validation/schemas/primitives";
 import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
-import { attachAttachmentsOrForbidden, enforceAgeGate, } from "./guards";
+import { attachAttachmentsOrForbidden, enforceAgeGate, enforceNsfwConsentGate, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { prepareContentStorage, } from "./post";
@@ -77,6 +77,18 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         // message into the target chat, so it gates like a fresh send.
         const ageRejection = await enforceAgeGate(database, actorId,);
         if (ageRejection) { return ageRejection; }
+
+        // Same verdict as a direct send, scoped to the target chat.
+        const consentRejection = await enforceNsfwConsentGate({
+          database,
+          config,
+          userId: actorId,
+          chatId: targetChatId,
+          actorId,
+          surface: "forward",
+        },);
+
+        if (consentRejection) { return consentRejection; }
 
         // Empty string is "no key": storing "" would collide on the unique index.
         const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
