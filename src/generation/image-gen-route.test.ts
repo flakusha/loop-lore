@@ -387,15 +387,21 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
     expect((opts.lora as { name: string }[])[0]?.name,).toBe("style_lora",);
   });
 
-  // (4) Missing prompt → HTTP 400
+  // (4) Missing or empty prompt → HTTP 400
 
-  it("returns HTTP 400 when prompt is missing", async () => {
-    const body = makeBody({ prompt: undefined, },);
-    const res = await handleImageGeneration(body, await migratedDb(), "test-user",);
+  it("returns HTTP 400 when prompt is missing or empty", async () => {
+    const db = await migratedDb();
+    try {
+      for (const prompt of [undefined, "",]) {
+        const res = await handleImageGeneration(makeBody({ prompt, },), db, "test-user",);
 
-    expect(res.status,).toBe(400,);
-    const json = await res.json() as { error: string };
-    expect(json.error,).toContain("prompt",);
+        expect(res.status,).toBe(400,);
+        const json = await res.json() as { error: string };
+        expect(json.error,).toContain("prompt",);
+      }
+    } finally {
+      await db.destroy();
+    }
   });
 
   // (5) No sd provider → HTTP 501

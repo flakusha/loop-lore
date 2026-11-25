@@ -200,9 +200,11 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("400 when neither prompt nor template renders one", async () => {
-    const res = await handleVideoGeneration({}, db, "video-route-user", "user",);
-    expect(res.status,).toBe(400,);
+  test("400 when the prompt is missing or empty", async () => {
+    for (const prompt of [undefined, "",]) {
+      const res = await handleVideoGeneration({ prompt, }, db, "video-route-user", "user",);
+      expect(res.status,).toBe(400,);
+    }
   });
 
   test("400s a prompt of 2001 characters with the bound message", async () => {

@@ -350,4 +350,56 @@ describe("merge-continue", () => {
       expect(after,).toHaveLength(before.length,);
     }
   });
+
+  test("age gate allows prompt continuation when the actor has passed", async () => {
+    if (!ISOLATED) { return; }
+    const mergeId = await seedConfirmedMerge();
+    const previous = await tdb.db
+      .selectFrom("users",)
+      .select(["birth_date", "age_gate_accepted_at",],)
+      .where("id", "=", actorId,)
+      .executeTakeFirst();
+
+    insertUserMessageRowMock.mockClear();
+    maybeAutoReplyMock.mockClear();
+    initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+    let result: Awaited<ReturnType<typeof continueFromMerge>> | undefined;
+    try {
+      await tdb.db.updateTable("users",)
+        .set({
+          birth_date: "2000-01-01",
+          age_gate_accepted_at: "2024-06-01T12:00:00.000Z",
+        },)
+        .where("id", "=", actorId,)
+        .execute();
+
+      result = await continueFromMerge({
+        database: tdb.db,
+        config: {} as never,
+        params: {
+          chatId,
+          mergeId,
+          actorId,
+          userRole: null,
+          prompt: "age gate satisfied",
+          responderId: undefined,
+        },
+        request: new Request("http://localhost",),
+      },);
+    } finally {
+      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+      await tdb.db.updateTable("users",)
+        .set({
+          birth_date: previous?.birth_date ?? null,
+          age_gate_accepted_at: previous?.age_gate_accepted_at ?? null,
+        },)
+        .where("id", "=", actorId,)
+        .execute();
+    }
+
+    expect(result,).toBeDefined();
+    if (!result) { return; }
+    expect("ok" in result && result.ok,).toBe(true,);
+    expect(insertUserMessageRowMock,).toHaveBeenCalledTimes(1,);
+  });
 });
