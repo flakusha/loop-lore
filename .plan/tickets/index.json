@@ -28097,7 +28097,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-admit-external-agent-to-worktree-confined-repo-check.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING": {
     "epic": "epic-platform-api-adoption",
@@ -29295,7 +29295,7 @@
       "api-keys"
     ],
     "source": ".plan/tickets/TASK-api-key-auth-middleware-for-external-agents.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-API-ROUTES": {
     "epic": "epic-api-routes",
@@ -46434,7 +46434,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-FRONTEND-CONSOLIDATION": {
     "hash": "4ae6238",
@@ -46525,7 +46525,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-HARNESS-LEDGER-SURFACING-USER-SIDE-RECURSIVE-SELF-IMPROVEMEN.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-MCP-CALL-AUDIT": {
     "hash": "1710a00",
@@ -51739,7 +51739,7 @@
       "security"
     ],
     "source": ".plan/tickets/TASK-mcp-stdio-server-via-typescript-sdk.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE": {
     "hash": "84db321",
@@ -51781,7 +51781,7 @@
       "tools"
     ],
     "source": ".plan/tickets/TASK-mcp-tool-set-v1-from-facade-registry.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MEDIA-FFPROBE-METADATA-EXTRACTION": {
     "hash": "cdff699",
@@ -52730,7 +52730,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "epic-db-migration-compaction",
@@ -54894,7 +54894,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-omp-adapter.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-ONE-LLM-OWNER-DECISION-PLUS-HONKBOX-NATIVE-MODEL-MANAGEMENT": {
     "hash": "b098402",
@@ -54977,7 +54977,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-openapi-spec-omits-harness-routes-plugin.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-OPENAPI-SPECIFICATION": {
     "epic": "epic-api-governance",
@@ -55003,7 +55003,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-opencode-adapter.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-OPENSCAD-PARAMETRIC-RENDER-VIA-CLI-ALLOWLIST": {
     "hash": "57326b4",
@@ -56634,7 +56634,7 @@
       "auth"
     ],
     "source": ".plan/tickets/TASK-principal-kind-model-and-server-side-resolution.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-PROACTIVE-MESSAGING": {
     "epic": "",
@@ -63526,7 +63526,7 @@
       "security"
     ],
     "source": ".plan/tickets/TASK-streamable-http-mcp-transport-behind-central-guard.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
     "epic": "epic-hidden-carriage-context",
