@@ -18283,7 +18283,7 @@
       "vn"
     ],
     "source": ".plan/epics/epic-renpy-export.md",
-    "status": "open",
+    "status": "done",
     "git_issue": "56f8f61"
   },
   "EPIC-REPLAYABILITY": {
@@ -59794,7 +59794,7 @@
       "ui"
     ],
     "source": ".plan/tickets/TASK-renpy-export-button-in-chat-list-batch-bar.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-RENPY-EXPORT-CORE-PLUGIN-ROUTE-VERSIONED-PATH": {
     "hash": "43f862e",
@@ -59830,7 +59830,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-model-gather-from-db.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-RENPY-EXPORT-SCRIPT-GENERATOR-PURE-FUNCTION": {
     "hash": "e472ddb",
@@ -59848,7 +59848,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-script-generator-pure-function.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS": {
     "epic": "epic-testing-qa",
