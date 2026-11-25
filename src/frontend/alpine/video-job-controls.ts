@@ -9,6 +9,7 @@
  * There is no pre-existing video status polling module in src/frontend; this
  * is the smallest caller that exposes cancel and "delay until later".
  */
+import { type GenerationBusyState, generationBusyState, } from "./generation";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 
@@ -17,7 +18,7 @@ const BASE = "/api/v1/generation";
 export const DEFAULT_DELAY_MS = 60 * 60 * 1000;
 
 /** State + actions bound by `x-data="videoJobControls()"`. */
-export interface VideoJobControls {
+export interface VideoJobControls extends GenerationBusyState {
   jobId: string;
   status: string;
   error: string;
@@ -35,6 +36,7 @@ declare global {
 
 /** Shared method table; the factory gives each Alpine root its own state. */
 export const videoJobControlState: VideoJobControls = {
+  ...generationBusyState,
   jobId: "",
   status: "",
   error: "",
@@ -61,6 +63,8 @@ export const videoJobControlState: VideoJobControls = {
       this.error = payload.data?.error ?? "";
     } catch {
       this.error = "Video job status unavailable";
+    } finally {
+      await this.refreshActive();
     }
   },
 

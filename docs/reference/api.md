@@ -590,6 +590,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/generation/stream/{chatId} | — |
 | POST | /api/v1/generation/test-connection | — |
 | POST | /api/v1/generation/video | Submit a video generation job |
+| POST | /api/v1/generation/video/cancel | Cancel a video generation job by id |
 | GET | /api/v1/generation/video/status/{jobId} | Poll a video generation job |
 | GET | /api/v1/gifs/search | — |
 | GET | /api/v1/harness/escalations | — |

@@ -8,6 +8,13 @@
   data-testid="video-job-controls"
 >
   <span class="video-job-status" x-text="status"></span>
+  <span
+    class="generation-busy"
+    x-show="activeCount > 0"
+    data-testid="generation-busy"
+    x-text="activeCount + ' active generation(s)'"
+  ></span>
+  <span class="generation-busy-error" x-show="activeError" x-text="activeError"></span>
   <button
     type="button"
     class="btn btn-ghost btn-cancel"
