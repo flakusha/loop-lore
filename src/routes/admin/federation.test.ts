@@ -14,7 +14,7 @@
  *      driven through the actual router with the matrix read back from the DB,
  *      not against a reimplementation of the router's precedence logic.
  */
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { beforeEach, describe, expect, setDefaultTimeout, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -32,6 +32,10 @@ import { federationAdminRoutes, } from "./federation";
 import { federationBudgetRoutes, } from "./federation-budgets";
 import { federationPeersRoutes, } from "./federation-peers";
 import { federationUsageRoutes, } from "./federation-usage";
+
+// Each case boots a real route against a fresh in-memory DB; a loaded
+// finalize run can exceed bun's 5s default without any assertion changing.
+setDefaultTimeout(15_000,);
 
 const SECRET = "admin-fed-encryption-key-0123456789";
 const REMOTE = "https://gpu.example";

@@ -11,7 +11,7 @@
 
 import { spawn, } from "bun";
 import { createHash, } from "node:crypto";
-import { readFileSync, } from "node:fs";
+import fs from "node:fs";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 export const REQUIRED_BLENDER_VERSION = "4.5.15";
@@ -257,7 +257,7 @@ export async function runBlenderJob(spec: BlenderJobSpec,): Promise<BlenderJobRe
 
     let recipe: Buffer;
     try {
-      recipe = readFileSync(spec.scriptPath,);
+      recipe = fs.readFileSync(spec.scriptPath,);
     } catch (error) {
       return {
         ok: false,
