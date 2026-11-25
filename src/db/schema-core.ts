@@ -2393,3 +2393,52 @@ export interface MeshIntelReports {
   expires_at: string;
   received_at: string;
 }
+
+// ── harness_runs ────────────────────────────────────────────
+export interface HarnessRuns {
+  id: string;
+  principal_id: string | null;
+  principal_kind: string | null;
+  status: Generated<string>;
+  task: string;
+  task_type: string;
+  command: string | null;
+  model: string | null;
+  git_sha: string | null;
+  branch: string | null;
+  turn_id: string | null;
+  instance_id: string | null;
+  error: string | null;
+  error_category: string | null;
+  tools: string | null;
+  tool_count: number | null;
+  tokens_in: number | null;
+  tokens_out: number | null;
+  cost_usd: number | null;
+  latency_ms: number | null;
+  started_at: string;
+  ended_at: string | null;
+  created_at: Generated<string>;
+}
+
+// ── harness_calls ────────────────────────────────────────────
+export interface HarnessCalls {
+  id: string;
+  run_id: string;
+  principal_id: string | null;
+  principal_kind: string | null;
+  status: Generated<string>;
+  command: string | null;
+  model: string | null;
+  git_sha: string | null;
+  turn_id: string | null;
+  error: string | null;
+  error_category: string | null;
+  tokens_in: number | null;
+  tokens_out: number | null;
+  cost_usd: number | null;
+  latency_ms: number | null;
+  started_at: string;
+  ended_at: string | null;
+  created_at: Generated<string>;
+}

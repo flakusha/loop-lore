@@ -4266,3 +4266,50 @@ export const MeshIntelReportsSchema = t.Object({
   expires_at: t.String(),
   received_at: t.String(),
 },);
+
+// ── harness_runs ────────────────────────────────────────────
+export const HarnessRunsSchema = t.Object({
+  task: t.String(),
+  task_type: t.String(),
+  started_at: t.String(),
+  principal_id: t.Optional(t.String(),),
+  principal_kind: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  command: t.Optional(t.String(),),
+  model: t.Optional(t.String(),),
+  git_sha: t.Optional(t.String(),),
+  branch: t.Optional(t.String(),),
+  turn_id: t.Optional(t.String(),),
+  instance_id: t.Optional(t.String(),),
+  error: t.Optional(t.String(),),
+  error_category: t.Optional(t.String(),),
+  tools: t.Optional(t.String(),),
+  tool_count: t.Optional(t.Number(),),
+  tokens_in: t.Optional(t.Number(),),
+  tokens_out: t.Optional(t.Number(),),
+  cost_usd: t.Optional(t.Number(),),
+  latency_ms: t.Optional(t.Number(),),
+  ended_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── harness_calls ────────────────────────────────────────────
+export const HarnessCallsSchema = t.Object({
+  run_id: t.String(),
+  started_at: t.String(),
+  principal_id: t.Optional(t.String(),),
+  principal_kind: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  command: t.Optional(t.String(),),
+  model: t.Optional(t.String(),),
+  git_sha: t.Optional(t.String(),),
+  turn_id: t.Optional(t.String(),),
+  error: t.Optional(t.String(),),
+  error_category: t.Optional(t.String(),),
+  tokens_in: t.Optional(t.Number(),),
+  tokens_out: t.Optional(t.Number(),),
+  cost_usd: t.Optional(t.Number(),),
+  latency_ms: t.Optional(t.Number(),),
+  ended_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
