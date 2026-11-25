@@ -30,5 +30,15 @@ Shipped: `src/integrations/mcp/stdio-server.ts` attaches `buildMcpServer` to `St
 
 - MCP spec position "tools = arbitrary code execution" applies doubly to exposing ours: the role gate is the security boundary, not network location.
 
+## 2026-11-25 reconciliation
+
+Shipped: stdio (`src/integrations/mcp/stdio-server.ts:54,68,141`) and HTTP
+(`src/integrations/mcp/http-server.ts:61,470`) both attach `buildMcpServer`
+with a server-resolved principal. Residual scope is limited to the decision
+and documentation ACs: record whether an export-flag filter is needed on top
+of the facade manifest, apply it at the inbound seam only if needed, and
+document the `buildInboundFacadeContext` trust boundary. No transport work
+remains; status stays In Progress on those legs.
+
 
 git issue: 5e63952
