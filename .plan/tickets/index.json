@@ -31735,7 +31735,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
     "epic": "epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync",

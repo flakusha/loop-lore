@@ -27,3 +27,5 @@ Operator-facing DB backup download/upload, the admin panel, and opt-in scheduled
 **Context:**
 
 Why: close the deferred operator surface without adding a second timer. Constraints: admin.system auth and traversal-safe bare names at the HTTP boundary; scheduling stays inside src/resource/backup-scheduler.ts and defaults off. Alternative considered: a dedicated cron timer, rejected because the existing event-driven scheduler already covers the triggers and retention.
+
+**Resolved:** 2026-11-25 registry-driven close: git issue cd35549 (registry tip: 083e503b2 Konstantin Fedotov Close issue)
