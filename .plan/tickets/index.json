@@ -29468,7 +29468,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Asset dedup TOCTOU creates duplicate rows and orphan files",
     "type": "TASK"
