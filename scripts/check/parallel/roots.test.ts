@@ -5,6 +5,7 @@ import { describe, expect, test, } from "bun:test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { appTmpRoot, } from "../../../src/test-utils/tmp-root";
 import { SOURCE_ROOTS, TEST_ROOTS, } from "../source-paths.mjs";
 import {
   COVERAGE_DIR,
@@ -183,8 +184,8 @@ describe("bunfig preload inheritance", () => {
     expect(readText("bunfig.toml",),).toContain('preload = ["./tests/setup-globals.ts"]',);
     const preload = readText("tests/setup-globals.ts",);
     expect(preload,).toContain("LOOP_LORE_DB_PATH",);
-    expect(preload,).toContain("process.pid",);
-    expect(preload,).toContain("tmpdir()",);
+    expect(preload,).toContain("appTmpRoot",);
+    expect(preload,).toContain("mkdtempSync",);
   });
 
   test("a test run from the repo root inherits the preload", () => {
@@ -199,8 +200,10 @@ describe("bunfig preload inheritance", () => {
           'import { expect, test } from "bun:test";',
           'test("preload inherited", () => {',
           '  const db = process.env.LOOP_LORE_DB_PATH ?? "";',
-          `  expect(db.startsWith(${JSON.stringify(path.join(tmpdir(), "loop-lore-test-",),)})).toBe(true);`,
-          "  expect(db.includes(String(process.pid),),).toBe(true,);",
+          `  expect(db.startsWith(${
+            JSON.stringify(path.join(process.env.LOOP_LORE_TMP_ROOT?.trim() || tmpdir(), "loop-lore", "test", "db-",),)
+          })).toBe(true);`,
+          '  expect(db.endsWith("loop-lore-test.db",),).toBe(true,);',
           "});",
           "",
         ].join("\n",),
@@ -217,6 +220,19 @@ describe("bunfig preload inheritance", () => {
       expect(result.exitCode,).toBe(0,);
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
+});
+
+describe("app-owned temp root", () => {
+  test("creates an isolated subsystem directory under the configured base", () => {
+    const base = process.env.LOOP_LORE_TMP_ROOT?.trim() || tmpdir();
+    const root = appTmpRoot(`roots-${process.pid}`,);
+    try {
+      expect(existsSync(root,),).toBe(true,);
+      expect(root.startsWith(path.join(base, "loop-lore", "roots-",),),).toBe(true,);
+    } finally {
+      rmSync(root, { recursive: true, force: true, },);
     }
   });
 });

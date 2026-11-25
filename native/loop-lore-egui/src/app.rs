@@ -731,8 +731,12 @@ impl EguiApp {
 
   /// Keep the decoded-thumbnail cache bounded, dropping an offscreen cell first.
   fn evict_gallery_texture(&mut self) {
-    if self.gallery_textures.len() < GALLERY_TEXTURE_CAP { return; }
-    let victim = self.gallery_textures.keys()
+    if self.gallery_textures.len() < GALLERY_TEXTURE_CAP {
+      return;
+    }
+    let victim = self
+      .gallery_textures
+      .keys()
       .find(|id| !self.gallery.cells.iter().any(|c| &c.asset.id == *id))
       .or_else(|| self.gallery_textures.keys().next())
       .cloned();
