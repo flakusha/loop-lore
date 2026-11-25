@@ -10,11 +10,13 @@
  * @module comfyui-provider
  */
 
+import { randomUUID, } from "node:crypto";
 import { loadConfig, } from "../../../../../src/config/load";
 import type { Config, } from "../../../../../src/config/schema";
 import { pickSdProvider, } from "../../../../../src/config/schema";
 import { getDatabase, } from "../../../../../src/db";
 import { ComfyUIClient, type ComfyUIWorkflow, } from "../../../../../src/generation/providers/comfyui";
+import type { ComfyUIProgressEvent, } from "../../../../../src/generation/providers/comfyui-progress";
 import { getLogger, } from "../../../../../src/logger";
 import { extractImageMetadata, } from "../../assets/metadata";
 import { createAsset, linkAsset, } from "../../assets/service";
@@ -87,7 +89,11 @@ export class ComfyUIEditProvider implements ImageEditProvider {
    * parallel.
    * @param config
    */
-  protected getClient(config?: Config, apiKey?: string,): ComfyUIClient {
+  protected getClient(
+    config?: Config,
+    apiKey?: string,
+    progress?: { clientId: string; onProgress: (event: ComfyUIProgressEvent,) => void },
+  ): ComfyUIClient {
     const sdConfig = pickSdProvider((config ?? loadConfig()).generation.providers.sd, "edit",);
 
     return new ComfyUIClient({
@@ -97,6 +103,8 @@ export class ComfyUIEditProvider implements ImageEditProvider {
       // A resolved BYO key wins; the operator's static key is the fallback
       // posture. Stock-unauthenticated servers keep undefined.
       apiKey: apiKey ?? sdConfig?.apiKey,
+      clientId: progress?.clientId,
+      onProgress: progress?.onProgress,
     },);
   }
 
@@ -181,7 +189,16 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     const onProgress = opts.onProgress;
     // One `loadConfig()` for both the client and the upload dir below.
     const config = loadConfig();
-    const client = this.getClient(config, opts.apiKey,);
+    const client = this.getClient(config, opts.apiKey, {
+      clientId: randomUUID(),
+      onProgress: (event: ComfyUIProgressEvent,) => {
+        onProgress?.({
+          status: "running",
+          progress: event.max > 0 ? Math.min(1, event.value / event.max,) : undefined,
+          message: event.node ? `Executing ${event.node}...` : "Executing workflow...",
+        },);
+      },
+    },);
     const database = getDatabase();
     const uploadDir = this.#uploadDir ?? config.assets.uploadDir;
 
