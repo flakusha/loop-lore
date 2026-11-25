@@ -7,6 +7,8 @@ import {
   type AgentActionRow,
   agentActionsQuery,
   createAdminAgentActions,
+  DEFAULT_LIMIT,
+  MAX_LIMIT,
 } from "./admin-agent-actions";
 
 const g = globalThis as unknown as { apiFetch?: ApiFetchMock };
@@ -53,6 +55,13 @@ test("query encoding omits blank filters and clamps the limit", () => {
   );
 
   expect(agentActionsQuery({ limit: Number.NaN, },),).toBe("limit=50",);
+});
+
+test("limit bounds follow the exported route caps", () => {
+  expect(DEFAULT_LIMIT,).toBe(50,);
+  expect(MAX_LIMIT,).toBe(200,);
+  expect(agentActionsQuery({},),).toBe(`limit=${DEFAULT_LIMIT}`,);
+  expect(agentActionsQuery({ limit: 500, },),).toBe(`limit=${MAX_LIMIT}`,);
 });
 
 test("the panel loads rows from the admin audit route", async () => {
