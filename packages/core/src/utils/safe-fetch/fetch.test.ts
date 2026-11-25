@@ -6,7 +6,7 @@
  */
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, } from "./constants";
-import { safeFetch, } from "./fetch";
+import { errorDetail, safeFetch, } from "./fetch";
 
 const originalFetch = globalThis.fetch;
 
@@ -497,5 +497,15 @@ describe("safeFetch — fetchImpl seam", () => {
         }
       },
     );
+  });
+});
+
+describe("errorDetail — rejection body rendering", () => {
+  test("returns string bodies verbatim, stringifies objects, falls back without one", () => {
+    expect(errorDetail(Object.assign(new Error("down",), { body: "busy", },), "unknown",),).toBe("busy",);
+    expect(
+      errorDetail(Object.assign(new Error("down",), { body: { error: "busy", }, },), "unknown",),
+    ).toBe(`{"error":"busy"}`,);
+    expect(errorDetail(new Error("down",), "unknown",),).toBe("unknown",);
   });
 });

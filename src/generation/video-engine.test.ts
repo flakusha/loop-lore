@@ -309,8 +309,8 @@ describe("generateVideoWithFailover — BYO keys", () => {
         const outcome = await generateVideoWithFailover([provider("v2",),], REQUEST, resolve, stubLoader,);
 
         expect(outcome.ok,).toBe(true,);
-        const headers = (inits[0]?.headers ?? {}) as Record<string, string>;
-        expect(headers.authorization,).toBe("Bearer sk-video-byo",);
+        const sentHeaders = new Headers(inits[0]?.headers,);
+        expect(sentHeaders.get("authorization",),).toBe("Bearer sk-video-byo",);
       },
     );
   });
