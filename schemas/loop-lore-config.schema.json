@@ -546,6 +546,77 @@
         "idempotencyExpiryHours"
       ]
     },
+    "mcp": {
+      "type": "object",
+      "description": "Declarative MCP servers loop-lore connects to (stdio or http)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Master switch; absent/false exposes no MCP servers"
+        },
+        "servers": {
+          "type": "object",
+          "description": "Servers keyed by local name; each needs a transport and exactly one of command/url",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Per-server switch"
+              },
+              "transport": {
+                "type": "string",
+                "enum": [
+                  "stdio",
+                  "http"
+                ],
+                "description": "Server transport"
+              },
+              "command": {
+                "type": "string",
+                "description": "stdio executable (argv head, never a shell command)"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "stdio argv tail"
+              },
+              "env": {
+                "type": "object",
+                "description": "stdio environment (string → string)"
+              },
+              "url": {
+                "type": "string",
+                "description": "http endpoint (absolute http(s) URL)"
+              },
+              "headers": {
+                "type": "object",
+                "description": "http request headers (string → string)"
+              },
+              "timeoutMs": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Per-call timeout in ms (0 disables)"
+              },
+              "allowlist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tool names eligible for the registry; empty/absent exports none"
+              }
+            },
+            "required": [
+              "transport"
+            ]
+          }
+        }
+      }
+    },
     "nsfw": {
       "type": "object",
       "description": "NSFW configuration",

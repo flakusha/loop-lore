@@ -58,6 +58,7 @@
   "MESSAGES_MAXGENERATIONRETRIES": "messages.maxGenerationRetries",
   "MESSAGES_GENERATIONTIMEOUTMS": "messages.generationTimeoutMs",
   "MESSAGES_IDEMPOTENCYEXPIRYHOURS": "messages.idempotencyExpiryHours",
+  "MCP_ENABLED": "mcp.enabled",
   "NSFW_ALLOWNSFW": "nsfw.allowNsfw",
   "NSFW_NSFWMINAGE": "nsfw.nsfwMinAge",
   "NSFW_DEFAULTNSFWSCOPE": "nsfw.defaultNsfwScope",
