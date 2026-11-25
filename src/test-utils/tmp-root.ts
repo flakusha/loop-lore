@@ -6,7 +6,7 @@
  * @param subsystem - child bucket (test, honkbox, fake-acp, db-schema)
  * @returns honored LOOP_LORE_TMP_ROOT (trimmed) or tmpdir(), joined with loop-lore/<subsystem>
  */
-import { lstatSync, mkdirSync, realpathSync, } from "node:fs";
+import fs from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, resolve, sep, } from "node:path";
 
@@ -14,13 +14,13 @@ export function appTmpRoot(subsystem: string,): string {
   const override = process.env.LOOP_LORE_TMP_ROOT?.trim();
   const base = override ? override : tmpdir();
   const root = resolve(join(base, "loop-lore", subsystem,),);
-  mkdirSync(root, { recursive: true, mode: 0o700, },);
-  if (lstatSync(root,).isSymbolicLink()) {
+  fs.mkdirSync(root, { recursive: true, mode: 0o700, },);
+  if (fs.lstatSync(root,).isSymbolicLink()) {
     throw new Error(`appTmpRoot escaped base: ${root}`,);
   }
 
-  const realBase = realpathSync(base,);
-  const realRoot = realpathSync(root,);
+  const realBase = fs.realpathSync(base,);
+  const realRoot = fs.realpathSync(root,);
   if (realRoot !== realBase && !realRoot.startsWith(realBase + sep,)) {
     throw new Error(`appTmpRoot escaped base: ${realRoot}`,);
   }
