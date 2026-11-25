@@ -33,7 +33,7 @@ import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
 import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realVideoEngine from "./video-engine";
 import type * as videoGenRoute from "./video-gen-route";
-import { __resetVideoJobsForTests, storeVideoJob, type VideoJob, } from "./video-jobs";
+import { __resetVideoJobsForTests, getVideoJob, storeVideoJob, type VideoJob, } from "./video-jobs";
 
 /** Engine outcome the route test controls per case. */
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
@@ -554,6 +554,31 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
 
     const { terminal, } = await submitAndPoll({ prompt: "a clip", }, pollDb, "video-status-user",);
     expect(terminal["status"],).toBe("done",);
+  });
+
+  test("400s an out-of-window scheduledFor before storing a job", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "bad schedule", scheduledFor: "tomorrow", },
+      pollDb,
+      "video-status-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("deferred submit stores the job without dispatching the engine", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "later clip", scheduledFor: Date.now() + 60_000, },
+      pollDb,
+      "video-status-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(202,);
+    const submitBody = (await res.json()) as { data: { jobId: string } };
+
+    expect(getVideoJob(submitBody.data.jobId,)?.deferred,).toBe(true,);
   });
 
   test("done poll returns id/url/filename/mimeType/provider", async () => {
