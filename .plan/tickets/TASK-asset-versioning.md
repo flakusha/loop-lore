@@ -18,39 +18,37 @@
 
 Implement asset versioning to track changes, enable rollbacks, and maintain history of asset modifications.
 
+**Current state (2026-11-25):** no `asset_versions` table or `AssetVersion` symbol exists in `src;packages`; `dedupe: false` stores a NULL content hash at `packages/assets/src/assets/service/create.ts:39-51`, so current generated rows are not immutable versions of one logical asset. Amend this Not Started ticket before implementation, not alongside a second versioning ticket. Evidence: `.tmp/research/full-cycle-app-integrations-2026-11-25/strict-review.md` C16 and `dcc-and-closed-loop.md:215`.
+
 ## Requirements
 
-### Version Tracking
+### Identity and append-only versions
 
-- New `asset_versions` table
-- Each upload creates new version
-- Version metadata: changelog, size, dimensions
-- Current version pointer in `assets` table
+- A stable logical asset id is distinct from immutable content objects keyed by sha256. `asset_versions` is append-only: version id, content hash, schema version, size, dimensions, MIME and provenance (run id, branch id, story turn id, source/application + version, actor, created_at).
+- Identical same-content ingest is idempotent: no second version and no hash-less row; a repeated restore returns the same version identity.
+- The `assets.current_version_id` pointer moves only by conditional compare-and-swap against an expected previous version/hash in one transaction with the version insert. A losing writer keeps its bytes as an unselected candidate; it never overwrites the winner.
+- Restoring a previous version creates a new immutable version whose provenance names the restored source; history and content objects are never rewritten.
+- Migration and deterministic version ordering; negative paths cover wrong hash/version, duplicate submit, concurrent CAS and unauthorized actor.
 
-### Version Management
+### Browsing
 
-- List all versions of an asset
-- View version details (diff, metadata)
-- Compare versions side-by-side
-- Restore previous version
+- List all versions of an asset; view version details (diff, metadata); compare versions side-by-side.
 
-### Storage Optimization
+### Deferred — outside the correctness slice
 
-- Incremental storage (delta only)
-- Compression for old versions
-- Cleanup policies for old versions
+- Incremental/delta storage, compression of old versions and cleanup retention policies are deferred until version volume is measured.
+
+<!-- ponytail: full-content versions only; add delta/compression once measured volume justifies it. -->
 
 ## Acceptance Criteria
 
-- [ ] `asset_versions` table with version metadata
-- [ ] Version creation on upload
-- [ ] Version listing and browsing
-- [ ] Version comparison (side-by-side)
-- [ ] Version rollback/restore
-- [ ] Incremental storage optimization
-- [ ] Compression for old versions
-- [ ] Unit tests for versioning logic
-- [ ] Integration tests for version workflow
+- [ ] Migration creates append-only `asset_versions` (sha256 content object, schema version, provenance) and a `current_version_id` pointer guarded by CAS.
+- [ ] Upload/re-ingest creates a version with complete provenance; identical same-content ingest creates no duplicate version.
+- [ ] Version listing, detail/diff and side-by-side comparison work for immutable versions.
+- [ ] Restore creates a new version with restore provenance; history and content objects are unchanged.
+- [ ] Stale base-hash/version and concurrent pointer changes fail with a named conflict; the losing candidate is preserved and the current pointer is unchanged.
+- [ ] Wrong hash, duplicate submit and unauthorized-actor paths are covered by tests.
+- [ ] Unit tests for versioning logic and integration tests for the full version workflow pass.
 
 ## Notes
 

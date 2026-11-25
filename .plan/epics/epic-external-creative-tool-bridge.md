@@ -15,17 +15,24 @@
 
 ## Summary
 
-Bring external creative applications into loop-lore as first-class **tool servers over the Model Context Protocol (MCP)**, so the assistant and the workflow engine can drive deterministic editing (crop, rotate, filter, export) and long-running jobs (render, batch export) without a bespoke adapter per application. Second half: adopt MCP's **Tasks** extension as the house state machine for every long-running external operation, which is also the crash-resumable primitive `ServerExternalManager` lacks today.
+Bring external creative applications into loop-lore as first-class **tool servers over the Model Context Protocol (MCP)**, so the assistant and the workflow engine can drive deterministic editing (crop, rotate, filter, export) and long-running jobs (render, batch export) without a bespoke adapter per application. Second half (2026-10-15 intent, superseded for production by the boundary note below): the **Tasks** extension was proposed as the house state machine for long-running external work; durable run state now belongs in the loop-lore run ledger, not MCP Tasks.
 
 Why MCP and not per-app SDKs: llama-swap supervises the OpenAI-compatible model family only. Blender, Krita, LibreOffice, GIMP and Inkscape are not OpenAI-compatible, so a per-app adapter is required for each. MCP is a published protocol with a TS SDK and a stable spec revision, so the adapter is written once and consumed by every app that ships an MCP server.
 
 ## Current-state correction and DCC promotion (2026-11-25)
 
-The historical notes below predate the inbound MCP server now present under
-`src/integrations/mcp/`. Inbound server support is not a production outbound MCP
-client. No production outbound client was verified in the 2026-11-25 integration
-research; typed CLI/API jobs with an explicitly selected backend remain the
-production default. MCP stays optional, local, disposable authoring UX.
+The historical notes below predate the inbound MCP servers now present under
+`src/integrations/mcp/`: `stdio-server.ts` (`connectInboundMcpServer` over
+`StdioServerTransport`) and `http-server.ts` (`buildMcpServer` behind
+`http-allowlist.ts`), both built on the shared facade in
+`src/integrations/loop-lore-facade/mcp/server.ts` (`.tmp/research/full-cycle-app-integrations-2026-11-25/strict-review.md` C11). These are inbound servers loop-lore hosts, not a production outbound MCP client. No production outbound MCP client transport was verified in the 2026-11-25 integration research; the client objects found are in-memory test clients. Typed CLI/API jobs with an explicitly selected backend remain the production default. MCP stays optional, local, disposable authoring UX, and MCP Tasks is not a second durable job ledger.
+
+Observable boundary acceptance:
+
+- [ ] Any new adapter names a production CLI/API operation and selected backend; no production code path depends on an outbound MCP transport.
+- [ ] Inbound MCP servers reuse the shared facade and keep their authz/allowlist tiers; repo and asset authorization is never widened.
+- [ ] MCP Tasks state is never the authoritative loop-lore run or publication record.
+- [ ] Editor/engine automation stays gated on the shared run/version/save-grant contracts above; no app-specific loop-lore job ledger is added.
 
 Expand external-tool coverage by **proven execution capability and a named
 consumer**, not by application name. Native project documents remain human
@@ -56,7 +63,7 @@ No candidate above is an approved implementation ticket.
 
 ## Current State (verified 2026-10-15)
 
-- **No MCP client in the source tree.** Confirmed three independent ways: `docs/research/harness-mcp-wiring.md:301` ("no MCP-related code in the source tree"), `docs/research/roadmap-tracker.md:75`, and `docs/research/doc-00-index.md:40`.
+- **No outbound MCP client in the source tree (2026-10-15 finding, superseded above by inbound servers).** Confirmed three independent ways: `docs/research/harness-mcp-wiring.md:301` ("no MCP-related code in the source tree"), `docs/research/roadmap-tracker.md:75`, and `docs/research/doc-00-index.md:40`.
 - `docs/spec/integrations-architecture.md:86` **already reserves `src/integrations/mcp/`** as the bridge home; `code-map.json:31460` maps `src/plugins/mcp/client.ts` to a target ticket. The shot-caller passes for the target directory already exist.
 - MCP spec revision **2026-07-28**: JSON-RPC 2.0, stateless, per-request capability negotiation. Server features = Resources, Prompts, Tools; client feature = Elicitation. Extensions: **Tasks**, Skills-over-MCP, MCP Apps.
 - Spec security position, quoted: *"Tools represent arbitrary code execution and must be treated with appropriate caution"*, and tool annotations *"MUST be treated as untrusted unless the server is trusted".*
@@ -116,9 +123,9 @@ A `src/integrations/mcp/client.ts` that speaks the 2026-07-28 revision over both
 
 Map MCP tool descriptors (`name`, `inputSchema`, annotations) onto the existing `ToolDefinition` shape so an MCP server's tools appear in the existing plugin tool surface and flow through `executePluginTool`. This is where the dead `sandboxed` field becomes a policy tag (see `epic-security-sandboxing.md`).
 
-### B3 — Tasks extension as the long-operation state machine
+### B3 — Tasks extension (historical pattern, not the production ledger)
 
-Adopt `tasks/get`, `tasks/update`, `tasks/cancel`, the five statuses, `pollIntervalMs`/`ttlMs`, and durable `taskId` persistence as the house pattern for all long-running external work. Directly supplies the crash-resumable job spine that `epic-local-process-swarm.md` needs for external-process survivability.
+Historical 2026-10-15 proposal: map `tasks/get`, `tasks/update`, `tasks/cancel`, the five statuses and `pollIntervalMs`/`ttlMs` onto the loop-lore run ledger; durable `taskId` and crash-resumable state stay owned by loop-lore, not by MCP Tasks (2026-11-25 boundary).
 
 ### B4 — Per-app adapters (one ticket each, gated on B1+B2)
 

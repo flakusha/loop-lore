@@ -80,3 +80,17 @@ the spec.
 ## Verification (2026-11-20)
 
 `bun run typecheck`, `bun run typecheck:frontend`, `bun scripts/check-db-schemas.ts`, and 325 targeted tests (honkbox integration, asset validation, storage budgets, gallery views) green. Real-server loopback smoke proved chat turn, artifact-mode image job, matching SSE `job_result`, mid-run cancel, jobs/events/metrics routes and honkbox-owned GPU admission; asset-store creation/ingest is covered by isolated tests in `src/integrations/honkbox`.
+
+
+## Current-state note and residual scope (2026-11-25)
+
+Landed behavior is unchanged: artifact validation, hashing, selected-result recovery and the verification above remain owned here. The 2026-11-25 review (`.tmp/research/full-cycle-app-integrations-2026-11-25/strict-review.md` C4/C8 and `dcc-and-closed-loop.md:225`) confirms that `src/integrations/honkbox/result-ingest.ts:79-113,473-505` selects one artifact, has no production caller, and does not consume a full result manifest. A separate single-artifact consumer ticket already owns metadata reconciliation (`TASK-honkbox-job-frame-artifact-metadata-and-jobs-replay`); no duplicate consumer ticket is filed here.
+
+Residual scope belongs to the narrow P6 candidate `TASK-honkbox-multi-artifact-result-ingest` (`.tmp/research/full-cycle-app-integrations-2026-11-25/plan-promotion-map.md:26,74`), gated on honkbox P0/P2 plus the `DevelopmentRun` and immutable-version contracts. It is not part of this Done ticket.
+
+**Residual acceptance (not landed scope):**
+
+- [ ] Every manifest output (role, path, sha256, size) is verified and mapped to an immutable asset version and durable run id.
+- [ ] Failed, cancelled or indeterminate runs create no asset row from that run.
+- [ ] Retry after restart creates no duplicate version and never replays foreign consumer bytes.
+- [ ] Missing manifest, wrong hash/version and unauthorized producer produce named errors.
