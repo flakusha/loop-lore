@@ -133,3 +133,38 @@ test("cancelRestore abandons the pending destructive action", () => {
   expect(state.restoreTarget,).toBeNull();
   expect(state.confirmation,).toBe("",);
 });
+
+test("uploadBackup posts a multipart snapshot and reloads the list", async () => {
+  const input = {
+    files: [new File(["sqlite",], "snap.db",),],
+    value: "snap.db",
+  } as unknown as HTMLInputElement;
+
+  state.$refs = { uploadFile: input, };
+  handler = async (url, opts,) => {
+    if (url.endsWith("/upload",)) {
+      expect(opts?.method,).toBe("POST",);
+      expect((opts?.body as FormData).get("file",),).toBeInstanceOf(File,);
+      return Response.json({ backup: { name: "snap.db", sizeBytes: 6, }, }, { status: 201, },);
+    }
+
+    return Response.json({ backups: [BACKUP,], dir: "/data/backups", },);
+  };
+
+  await state.uploadBackup();
+
+  expect(calls[0]?.url,).toBe("/api/v1/admin/db/backup/upload",);
+  expect(state.message,).toBe(t("admin.dbBackup.uploadDone",),);
+  expect(state.uploading,).toBe(false,);
+  expect(input.value,).toBe("",);
+  expect(state.backups,).toEqual([BACKUP,],);
+});
+
+test("uploadBackup refuses an empty file input without a request", async () => {
+  state.$refs = {};
+
+  await state.uploadBackup();
+
+  expect(calls,).toHaveLength(0,);
+  expect(state.error,).toBe(t("admin.dbBackup.uploadFileRequired",),);
+});

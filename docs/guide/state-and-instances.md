@@ -86,6 +86,20 @@ consistent point-in-time copy, and the result is verified to be a SQLite
 database before it is reported as created. `GET /api/admin/db/backup` lists
 existing snapshots with name, size, and modification time.
 
+The same tab downloads a snapshot with **Download** and accepts a validated
+`.db` file through **Upload snapshot**; both routes require `admin.system`.
+
+### Scheduled snapshots
+
+Set `[db] backupEnabled = true` (default `false`) to let the existing
+event-driven backup scheduler write a `VACUUM INTO` snapshot on chat-end,
+asset-upload, world-save and explicit DB-snapshot triggers. No second timer
+is started; leaving the flag off keeps the manual-only flow.
+`[db] snapshotRetention` (default `10`, minimum `1`) caps the files kept in
+the backup directory: after each scheduled write the oldest snapshots beyond
+the cap are pruned. Retention applies to manual snapshots in the same
+directory too.
+
 ### Restoring a backup
 
 Admin panel → **Backups** tab → **Restore** on a snapshot, or

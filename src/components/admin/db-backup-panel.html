@@ -28,6 +28,22 @@
       >
         {{{t("admin.dbBackup.create")}}}
       </button>
+      <input
+        type="file"
+        accept=".db, application/x-sqlite3"
+        x-ref="uploadFile"
+        data-testid="db-backup-file"
+        style="font-size: 12px; max-width: 220px"
+      />
+      <button
+        class="btn btn-secondary btn-sm"
+        @click="uploadBackup()"
+        :disabled="loading || creating || restoring || uploading"
+        data-testid="db-backup-upload"
+      >
+        <span x-show="!uploading">{{{t("admin.dbBackup.upload")}}}</span>
+        <span x-show="uploading">{{{t("admin.dbBackup.uploading")}}}</span>
+      </button>
     </div>
   </div>
 
@@ -79,6 +95,14 @@
                 <span x-text="backup.modifiedAt"></span>
               </div>
             </div>
+            <a
+              class="btn btn-secondary btn-xs"
+              :href="'/api/v1/admin/db/backup/' + encodeURIComponent(backup.name)"
+              download
+              data-testid="db-backup-download"
+            >
+              {{{t("admin.dbBackup.download")}}}
+            </a>
             <button
               class="btn btn-secondary btn-xs"
               @click="beginRestore(backup.name)"

@@ -3,7 +3,7 @@
 
 # TASK: backup download upload scheduling and admin panel follow-up
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-database-backup-recovery.md
@@ -11,19 +11,19 @@
 
 **Summary:**
 
-Database backup and restore are shipped, but the operator-facing HTTP download/upload, scheduled snapshots, retention pruning and frontend admin panel are deferred. Track them as one follow-up slice.
+Operator-facing DB backup download/upload, the admin panel, and opt-in scheduled snapshots with retention all ship. This ticket closes the follow-up tail.
 
-**Evidence (dev 2026-11-18):** TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md:7,32 records the deferral; report .tmp/intercom/plan-wave/15-backup-mobile.md D2/D3; snapshot and restore backend at src/db/backup-restore.ts:99-214 is already green.
+**Evidence:** download/upload/restore at src/routes/admin/db-backup.ts:200-388; admin panel at src/components/admin/db-backup-panel.html and src/frontend/alpine/admin-db-backup.ts; the one scheduler is wired at src/cron/boot.ts:38 with opt-in `[db] backupEnabled` and `[db] snapshotRetention` from packages/core/src/config/sections/database.ts; retention runbook at docs/guide/state-and-instances.md:89.
 
 **Scope:** define snapshot download/verified-upload endpoints behind admin.system; reuse the existing validateSqliteSnapshot guard; wire scheduling through the existing backup scheduler rather than a second timer; add an admin panel view only after the endpoints exist.
 
 **Acceptance Criteria:**
 
-- [ ] download/upload endpoints are authenticated and path-traversal safe
-- [ ] scheduled backups use one scheduler
-- [ ] retention pruning is documented
-- [ ] targeted tests pass
+- [x] download/upload endpoints are authenticated and path-traversal safe
+- [x] scheduled backups use one scheduler
+- [x] retention pruning is documented
+- [x] targeted tests pass
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Why: close the deferred operator surface without adding a second timer. Constraints: admin.system auth and traversal-safe bare names at the HTTP boundary; scheduling stays inside src/resource/backup-scheduler.ts and defaults off. Alternative considered: a dedicated cron timer, rejected because the existing event-driven scheduler already covers the triggers and retention.

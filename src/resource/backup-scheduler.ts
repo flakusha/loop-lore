@@ -38,6 +38,7 @@ interface BackupSchedulerConfig {
   onAssetUpload: boolean;
   onWorldSave: boolean;
   onDbSnapshot: boolean;
+  keepSnapshots: number;
 }
 
 let config: BackupSchedulerConfig = {
@@ -46,6 +47,7 @@ let config: BackupSchedulerConfig = {
   onAssetUpload: true,
   onWorldSave: true,
   onDbSnapshot: true,
+  keepSnapshots: BACKUP_PRUNE_KEEP_DEFAULT,
 };
 
 /** Process-local DB snapshot hook: VACUUM INTO the server-derived dir, then prune. */
@@ -54,12 +56,19 @@ const persistDbSnapshotHook: BackupHook = async () => {
   if (!sqlite) { return; }
   const dir = dbBackupDir();
   await createDbBackup({ sqlite, dir, },);
-  pruneDbSnapshots(dir, BACKUP_PRUNE_KEEP_DEFAULT,);
+  pruneDbSnapshots(dir, config.keepSnapshots,);
 };
 
 /** Flip scheduling toggles; enabling wires the persisting hook into all seams. */
 export function configureBackupScheduling(partial: Partial<BackupSchedulerConfig>,): void {
-  config = { ...config, ...partial, };
+  const keep = partial.keepSnapshots ?? config.keepSnapshots;
+  config = {
+    ...config,
+    ...partial,
+    // ponytail: one snapshot is always retained; a bad config never prunes all.
+    keepSnapshots: Number.isFinite(keep,) ? Math.max(1, Math.floor(keep,),) : BACKUP_PRUNE_KEEP_DEFAULT,
+  };
+
   if (config.enabled) {
     registerBackupHook("onChatEnd", persistBackupHook,);
     registerBackupHook("onAssetUpload", persistBackupHook,);
@@ -76,6 +85,7 @@ export function resetBackupScheduling(): void {
     onAssetUpload: true,
     onWorldSave: true,
     onDbSnapshot: true,
+    keepSnapshots: BACKUP_PRUNE_KEEP_DEFAULT,
   };
 
   const noop = async (): Promise<void> => {/* reset: hooks persist nothing */};

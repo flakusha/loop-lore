@@ -73,6 +73,17 @@
           "default": "${DATA_DIR}/loop-lore.db",
           "description": "SQLite database file path"
         },
+        "backupEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable event-driven DB snapshots through the backup scheduler"
+        },
+        "snapshotRetention": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Number of DB snapshots kept after each scheduled backup"
+        },
         "url": {
           "type": "string",
           "description": "PostgreSQL connection URL"

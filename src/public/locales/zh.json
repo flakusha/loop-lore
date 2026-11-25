@@ -636,7 +636,13 @@
       "createDone": "Backup created",
       "restoreFailed": "Failed to restore backup",
       "restoreDone": "Database restored",
-      "restartRequired": "Restart the server before using the application again — current database handles are closed."
+      "restartRequired": "Restart the server before using the application again — current database handles are closed.",
+      "download": "Download",
+      "upload": "Upload snapshot",
+      "uploading": "Uploading…",
+      "uploadFileRequired": "Choose a .db snapshot first",
+      "uploadDone": "Snapshot uploaded",
+      "uploadFailed": "Failed to upload snapshot"
     },
     "localModels": {
       "tab": "Local Models",
@@ -2800,7 +2806,6 @@
     "empty": "No availability settings for this character yet.",
     "add": "Add availability"
   },
-
   "watchdog": {
     "tab": "Watchdog",
     "title": "Watchdog exec log",

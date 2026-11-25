@@ -5,6 +5,7 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { createLogger, getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
+import { configureBackupScheduling, } from "../resource/backup-scheduler";
 import { defaultJobs, } from "./jobs";
 import { startScheduler, } from "./registry";
 import type { Scheduler, } from "./types";
@@ -32,6 +33,17 @@ function resolveLogger(explicit?: Logger,): Logger {
 }
 
 /**
+ * Apply operator config to the one event-driven backup scheduler.
+ * @param config
+ */
+export function configureAppBackupScheduling(config: Config,): void {
+  configureBackupScheduling({
+    enabled: config.db.backupEnabled,
+    keepSnapshots: config.db.snapshotRetention,
+  },);
+}
+
+/**
  * Start the internal scheduler with the default job catalog: offload scan
  * (replaces startOffloadDaemon), telemetry retention, key-rotation checks,
  * memory decay/purge, and provider rescans. Jobs are unref'd
@@ -41,6 +53,7 @@ function resolveLogger(explicit?: Logger,): Logger {
  * @returns void
  */
 export function startAppScheduler(deps: AppSchedulerDeps,): Scheduler {
+  configureAppBackupScheduling(deps.config,);
   return startScheduler({
     database: deps.database,
     config: deps.config,

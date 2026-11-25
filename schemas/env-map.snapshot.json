@@ -6,6 +6,8 @@
   "SERVER_TLS_CERT": "server.tls.cert",
   "DB_TYPE": "db.type",
   "DB_SQLITEFILENAME": "db.sqliteFilename",
+  "DB_BACKUPENABLED": "db.backupEnabled",
+  "DB_SNAPSHOTRETENTION": "db.snapshotRetention",
   "ASSETS_ENABLED": "assets.enabled",
   "ASSETS_UPLOADDIR": "assets.uploadDir",
   "ASSETS_MAXFILESIZE": "assets.maxFileSize",

@@ -27,6 +27,8 @@ host = "localhost"
 [db]
 type = "sqlite"
 # sqliteFilename = "../loop-lore-data/loop-lore.db" # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default (the server ignores this knob — the DB path comes from LOOP_LORE_DB_PATH)
+# backupEnabled = true # opt in to event-driven DB snapshots through the existing backup scheduler
+# snapshotRetention = 10 # snapshots kept after each scheduled backup (minimum 1)
 
 # For Postgres:
 # type = "postgres"
