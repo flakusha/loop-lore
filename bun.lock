@@ -419,6 +419,8 @@
 
     "@loop-lore/i18n": ["@loop-lore/i18n@workspace:packages/i18n"],
 
+    "@loop-lore/plugins": ["@loop-lore/plugins@workspace:packages/plugins"],
+
     "@markuplint/cli-utils": ["@markuplint/cli-utils@5.3.0", "", { "dependencies": { "detect-installed": "^2.0.4", "eastasianwidth": "^0.3.0", "enquirer": "^2.4.1", "has-yarn": "^4.0.0", "picocolors": "^1.1.1", "strip-ansi": "^7.2.0" } }, "sha512-jp8pQhBik4fFOYHUX+VAdn4yaXzYft+NkWQtXwuGQBZ7sHiTpmWcitYmwOjCAQfWDZFIsLFRlhKpNgAmsyCBvg=="],
 
     "@markuplint/config-presets": ["@markuplint/config-presets@5.6.1", "", {}, "sha512-Xfpvapxi8qwFsxBni7+DlAA5UPwEZNc7iNBt/y+lMUOyZWGGIlwP2WKBYSwoa9V36RF+zqraJgq8/YVq/6Yu3A=="],
@@ -1397,7 +1399,7 @@
 
     "get-tsconfig": ["get-tsconfig@4.14.3", "", { "dependencies": { "resolve-pkg-maps": "^1.0.0" } }, "sha512-++QEw4DIY7WGoukz+/+A/8dGYPT9l9yIadnmSgZ8Rjr3YVSVDipQSO9CdnJo9ePqFqUUqh+wk9uIaoiAwsiPkA=="],
 
-    "giwt": ["giwt@github:flakusha/giwt#0f3002c", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "hasInstallScript": true, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-0f3002c", "sha512-TBJDUp7e7PZPDe90Jn8UgMkDVwXgtk6NHivnhwiShd9l3YrnKIbCHR23rgeSuNXpv7GRc9BveslF6Wkq7sjn+g=="],
+    "giwt": ["giwt@github:flakusha/giwt#41645dd", { "dependencies": { "@optique/core": "^1.2.6", "@optique/run": "^1.2.6" }, "hasInstallScript": true, "bin": { "giwt": "src/cli.ts" } }, "flakusha-giwt-41645dd", "sha512-LNAkhNvHXrbouUbx/h6BS2KtiJu1BrakoJ3XVmCCnEPLVQWKOKMgUvqX4LABvL+z+oXsjOy3OKgh06uxi41kbg=="],
 
     "glob": ["glob@14.0.6", "", { "dependencies": { "minimatch": "^11.0.5", "minipass": "^7.1.3", "path-scurry": "^3.0.0" } }, "sha512-OwXjVP2svY5EyLY75Vek96C8qK43gqrt4xsZ+qSILdnaEiJPXkd62mcfUSNx/TQErQRdu5uM5kF67sfONragKw=="],
 
