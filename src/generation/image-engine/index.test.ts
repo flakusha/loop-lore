@@ -205,11 +205,17 @@ describe("generateImagesWithFailover", () => {
   it("refuses an invalid workflow graph before any provider executes", async () => {
     // An object is a graph, not a library name: the shared gate rejects the
     // empty graph with a 400 failure. attemptCandidate records EVERY provider
-    // execution on `attempts`, so its absence proves no backend was reached.
+    // execution on `attempts`, and key resolution precedes each attempt, so
+    // both being absent proves no backend was reached.
+    const asked: string[] = [];
     const outcome = await generateImagesWithFailover(
       [{ ...BASE, name: "gen-a", },],
       "generate",
       { ...OPTS, workflow: {} as unknown as string, },
+      async (name,) => {
+        asked.push(name,);
+        return undefined;
+      },
     );
 
     expect(outcome.ok,).toBe(false,);
@@ -217,7 +223,36 @@ describe("generateImagesWithFailover", () => {
     expect(failed.status,).toBe(400,);
     expect(failed.error,).toContain("Invalid workflow graph",);
     expect(failed.attempts,).toBeUndefined();
+    expect(asked,).toEqual([],);
   });
+
+  itRealDispatch("passes a sound workflow graph through to the provider", async () => {
+    // Same failover path, valid graph: preflight succeeds and the candidate
+    // still executes (the URL guard answers 400 and records a failed attempt).
+    const validGraph = {
+      "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+      "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+    } as unknown as string;
+
+    const outcome = await generateImagesWithFailover(
+      [failing("gen-a", "generate",),],
+      "generate",
+      { ...OPTS, workflow: validGraph, },
+    );
+
+    expect(outcome.ok,).toBe(false,);
+    const failed = outcome as ImageGenFailure;
+    expect(failed.status,).toBe(400,);
+    expect(failed.error,).toContain("Invalid image provider URL",);
+    expect(failed.attempts,).toEqual(
+      [{
+        provider: "gen-a",
+        outcome: "failed",
+        reason: failed.error,
+        status: 400,
+      },] satisfies FailoverAttempt[],
+    );
+  },);
 });
 
 describe("generateImagesWithFailover BYO keys", () => {
