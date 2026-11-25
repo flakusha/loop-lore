@@ -85,13 +85,20 @@ async function tryZstdCompress(data: Uint8Array, zstd?: WasmZstdModule | null,):
   return wasm.zstd.compress(data, 3,);
 }
 
+/** Bun/Node 2-arg CompressionStream ctor; lib.dom types the 1-arg form only. */
+type BrotliStreamCtor = new(
+  format: CompressionFormat,
+  strategy?: { level?: number },
+) => CompressionStream;
+
 /**
  * @param data
  */
 async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") { return null; }
   try {
-    const stream = new CompressionStream("brotli" as CompressionFormat,);
+    const BrotliWithLevel = CompressionStream as unknown as BrotliStreamCtor;
+    const stream = new BrotliWithLevel("brotli" as CompressionFormat, { level: 4, },);
     const writer = stream.writable.getWriter();
     await writer.write(data as Uint8Array<ArrayBuffer>,);
     await writer.close();
