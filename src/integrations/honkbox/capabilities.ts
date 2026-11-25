@@ -173,7 +173,8 @@ export interface HonkboxCapabilities {
   readonly auth: HonkboxAuth;
   readonly scopes?: HonkboxScopes;
   readonly queue: HonkboxQueue;
-  readonly imageOps?: { readonly ops: readonly string[] };
+  /** Image-ops descriptor; `mattingAvailable` mirrors the sidecar liveness flag. */
+  readonly imageOps?: { readonly ops: readonly string[]; readonly mattingAvailable: boolean };
   readonly tools?: {
     readonly toolChoiceHonored: readonly string[];
     readonly toolChoiceClamped: readonly string[];
@@ -673,7 +674,14 @@ export function parseHonkboxCapabilities(
           ttlSecs: asNumber(row.ttl_secs,),
         })),
       },
-      ...(imageOps ? { imageOps: { ops: asStringArray(imageOps.ops,), }, } : {}),
+      ...(imageOps
+        ? {
+          imageOps: {
+            ops: asStringArray(imageOps.ops,),
+            mattingAvailable: asBool(imageOps.matting_available,),
+          },
+        }
+        : {}),
       ...(tools
         ? {
           tools: {

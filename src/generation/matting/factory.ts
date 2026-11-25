@@ -94,6 +94,7 @@ function createHonkboxMattingProvider(opts: {
         },
         body: body.ok ? body.value : "{}",
         timeout: opts.timeoutMs ?? 120_000,
+        // Base64 PNG payloads exceed safeFetch's default 10MB response cap.
         maxSize: Number.MAX_SAFE_INTEGER,
         handle401: false,
       },);
