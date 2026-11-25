@@ -3,7 +3,8 @@
 
 # TASK: RenPy export core plugin route (versioned path)
 
-**Status:** Done
+**Status:** In Progress
+**Scope:** Fix RenPy export owner scoping, compile error and stale plan status
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
