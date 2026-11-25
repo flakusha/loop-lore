@@ -22,3 +22,9 @@ ComfyUI plugin: node discovery, template registry, GGUF model loading workflow. 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Research addendum (2026-11-25)
+
+- Workflow catalog shape: digest-pinned manifest, version pins, license/NOTICE, no network fetch at runtime.
+- Parameterization surface already owns first-class inputs; do not duplicate it in the template loader.
+- Deferred third-party packs require operator approval before any import.

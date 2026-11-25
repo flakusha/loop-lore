@@ -94,3 +94,8 @@ Residual scope belongs to the narrow P6 candidate `TASK-honkbox-multi-artifact-r
 - [ ] Failed, cancelled or indeterminate runs create no asset row from that run.
 - [ ] Retry after restart creates no duplicate version and never replays foreign consumer bytes.
 - [ ] Missing manifest, wrong hash/version and unauthorized producer produce named errors.
+
+## Research addendum (2026-11-25 DCC)
+
+- Bundle verification and engine importer fixtures stay honkbox-side; loop-lore consumes `manifest.json` plus artifact hashes only.
+- The 2026-11-25 strict review confirms no production caller for `result-ingest.ts` and no full-result-manifest consumer; the separate single-artifact metadata ticket owns that reconciliation. No duplicate ticket is filed here.

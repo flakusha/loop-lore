@@ -44,3 +44,9 @@ GLTF/GLB as a general asset type: validation, thumbnail generation, metadata ext
 ## Acceptance Criteria
 
 - [ ] GLTF models validate and show thumbnails
+
+## Research addendum (2026-11-25)
+
+- Standalone viewer is not a promotion requirement: web and egui renderers are separately gated on named consumers and bundle budget.
+- Metadata extraction should reuse honkbox manifest fields (poly count, material list, artifact hash) when present; do not re-parse GLB on the server for data already carried in the bundle manifest.
+- GLB poster remains an honkbox-generated still until a native renderer lands.

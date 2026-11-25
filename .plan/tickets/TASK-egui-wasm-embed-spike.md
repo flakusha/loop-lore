@@ -202,3 +202,8 @@ or the Elysia app.
 *Sync pending: no git issue yet — register via `giwt ticket` / `bun run plan:sync`.*
 
 git issue: 8955d7b
+
+## Research addendum (2026-11-25)
+
+- `egui-wgpu` is not enabled and prior measurement found a material bundle-size cost; research does not promote a wgpu 3D renderer here.
+- Keep the spike scoped to 2D parity and reuse of the `TextureHandle` sink. If 3D lands later, gate it on a named consumer and a bundle budget decision.

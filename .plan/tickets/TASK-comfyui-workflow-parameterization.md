@@ -108,3 +108,9 @@ The stale `/api/image-edit/*` → `/api/v1/*` doc comments in
 
 
 git issue: cefeb42
+
+## Research addendum (2026-11-25)
+
+- Workflow catalog entries should expose pinned version plus input schema, then reuse this parameterization surface; no separate loader-owned input UI.
+- Gating on a named consumer for new step types is unchanged.
+- Evidence: `.tmp/research/dcc-libraries/README.md`.

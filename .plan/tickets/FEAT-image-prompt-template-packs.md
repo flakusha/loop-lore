@@ -28,3 +28,9 @@ Emotion-avatar prompt assembly is family-blind tag concatenation today. This is 
 - [ ] Optional runtime importers: `__name__`-style wildcard libraries (nesting resolved at import time) and MOSS-style character/style catalog JSON (prompt-text only, content never bundled — upstream NOTICE does not grant third-party character rights)
 - [ ] Example pack YAML shipped alongside the existing `configs/templates/*.example.yaml` files
 - [ ] Tests cover seeding, selection precedence, fallback, and importers
+
+## Research addendum (2026-11-25)
+
+- Reuse the existing wildcard/MOSS importer shape: prompt-text only, no character or content bundling.
+- Gate new pack sources on source URL, digest and license review; no runtime network fetch.
+- Research is scratch-only; no new ticket is filed.

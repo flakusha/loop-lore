@@ -52,3 +52,9 @@ other users, original kept for own gallery metadata view
 - [ ] Rendition lifecycle: parent delete removes rendition rows + files
   (deleteAsset derivative-GC shape); unit tests per epic Work Items
   (determinism where applicable)
+
+## Research addendum (2026-11-25)
+
+- `poster` for model assets means an honkbox turntable still, not a browser-rendered frame; encryption tier and path derivation from asset id remain mandatory.
+- `previewRef`/`posterRef` belong in the shared `GalleryAssetItem` DTO; no new storage table beyond `asset_renditions` is needed for these variants.
+- Evidence: `.tmp/research/gallery-3d-preview/README.md` verification section.

@@ -107,3 +107,9 @@ binding that keeps exports in sync with asset lineage.
 - [`epic-import-export-io.md`](./epic-import-export-io.md) — IO precedent
 
 git issue: afc219c
+
+## Research addendum (2026-11-25)
+
+- Honkbox owns bundle build and verification; loop-lore consumes `manifest.json` plus artifact hashes only.
+- Godot/Bevy importer fixture research is honkbox-side scratch work; no duplicate loop-lore ticket is filed here.
+- Avoid re-deriving engine readiness from filenames or unverified capability flags.

@@ -45,3 +45,9 @@ Wire up registered-but-unwired plugin extension points. The plugin system has ty
 ## Linked Tasks (2026-10-02 research pass)
 
 - `TASK-plugin-host-contract-for-third-party-integration-plugins` — extends this epic's wiring for integration plugins: declared capabilities (adapter, webhook-receiver), granted scopes (channels), egress allowlist, secret-access tokens, background timers, ui-components route (docs/spec/integrations-architecture.md §9)
+
+## Research addendum (2026-11-25)
+
+- Plugin skill/template research (`.tmp/research/dcc-libraries/README.md`) maps catalog ingestion to existing capability declarations: named consumer, source digest, license/NOTICE. No new generic plugin host is needed.
+- Third-party template packs remain prompt-text only; upstream NOTICE does not grant character or content rights.
+- New extension points stay gated on the approved plugin-system tickets rather than speculative DCC wiring.

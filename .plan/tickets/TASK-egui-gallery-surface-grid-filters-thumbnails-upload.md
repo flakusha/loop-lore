@@ -73,3 +73,9 @@ the DOM egui could scrape, and scraping would fork the grid layout.
 (`src/api.rs`), filter state in `GalleryState` (`src/gallery.rs`), type/sort
 dropdowns in `render_gallery` (`src/app.rs`). `cargo test` 60 pass, clippy
 clean, fmt clean; server suites 72 pass; wasm bundle builds.
+
+## Research addendum (2026-11-25)
+
+- egui consumes the same `GalleryAssetItem` DTO. Verified drift: web emits `nsfw`, while Rust parses unsupplied `sizeLabel`/`visibility`; reconcile before adding model fields.
+- Thumbnail fetch and texture cache are currently unbounded; add bounds and cancellation when model posters are introduced.
+- Upload accept lists exclude model MIME; extend after the shared MIME-map fix. wgpu 3D stays outside this ticket.

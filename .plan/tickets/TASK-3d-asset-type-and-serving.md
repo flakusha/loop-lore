@@ -23,3 +23,9 @@ AssetType gains model3d (format-discriminated glb/gltf/ply/spz/usdz via metadata
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Research addendum (2026-11-25)
+
+- Verified gaps: `AssetType.Model` and GLB MIME exist, but `detectAssetType` returns `Other`, `MIME_MAP` lacks `glb`/`gltf`, and egui upload accept lists exclude model MIME.
+- Fix magic-byte detection and MIME mapping in the shared validation path so every caller benefits, rather than patching one route.
+- Serving stays signed `/raw` plus typed `previewRef`/`posterRef`; no browser-only route and no plaintext preview path.

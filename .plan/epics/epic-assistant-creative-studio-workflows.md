@@ -484,3 +484,9 @@ flows (`epic-3d-generation.md`), `world-environment`
 (`TASK-workflow-dispatch-generation-backends`) and the shared asset-picker
 step type (`TASK-workflow-asset-pick-step-type`) are filed under the
 Workflow Engine sub-epic.
+
+## Research addendum (2026-11-25)
+
+- DCC research positions the assistant as orchestrator of honkbox jobs plus asset ingest, not a direct Blender driver. Keep job execution honkbox-owned and results artifact-backed.
+- Editor UI/UX gaps stay in the DCC applications; no loop-lore editor integration is committed without a named consumer.
+- Evidence: `.tmp/research/dcc-libraries/README.md` and `.tmp/research/dcc-closed-loop-honkbox-2026-11-25.md`.

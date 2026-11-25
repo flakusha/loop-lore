@@ -14,3 +14,9 @@
 Imported from git issue 0f6a9ee.
 
 git issue: 0f6a9ee
+
+## Research addendum (2026-11-25)
+
+- Lineage UI consumes `source_asset_id` and derived-variant records already present in the shared asset shape; one filter evaluator should serve both web and egui.
+- 3D/glTF nodes enter lineage only after shared model classification lands; no browser-specific lineage store.
+- Evidence: `.tmp/research/dcc-libraries/README.md` and `.tmp/research/gallery-3d-preview/README.md`. No new ticket is filed.

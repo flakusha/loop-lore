@@ -521,3 +521,8 @@ approval above:
    the same origin default the loader would have written — `defaultPluginStatus`
    is the single definition of that rule, shared by both writers. An existing
    row's status is untouched, so an admin decision is never overwritten.
+
+## Research addendum (2026-11-25)
+
+- Marketplace approval should be digest-bound to reviewed bytes; existing bug tickets already cover rejection paths and config caching.
+- Plugin skill/template ingestion is a manifest-catalog problem, not a new dynamic runtime. Research is scratch-only; no new ticket is filed.

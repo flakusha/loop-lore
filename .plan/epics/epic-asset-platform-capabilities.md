@@ -242,3 +242,11 @@ record the B1 content-addressed store builds on.
 ## Docs-Gap Audit Remainders (2026-09-19)
 
 - [ ] [gap-audit E22] Visual NSFW/PII upload-analysis hook at attachment ingest
+
+## Research addendum (2026-11-25)
+
+- DCC library research (`.tmp/research/dcc-libraries/README.md`) maps the missing gallery seams to existing code: `GalleryAssetItem` is the shared view-model across htmx, JSON consumers and egui; `/thumb` → `eguiThumbReady` → `egui::TextureHandle` is the existing decode sink; signed `/raw` and the preview modal shell are reusable. No new storage primitive is needed for still-image variants.
+- Bundle DTO and a shared filter evaluator are candidate additions to B4/B6, gated on a named consumer: export/gallery must consume `BundleManifestEntry.provenance` and one evaluator must serve both web and egui filters before either is filed as a ticket.
+- Unified preview contract should be expressed as typed `PreviewDescriptor`/`PreviewVariant` values in the shared view-model; web and egui render the same variant tags. Keep `key`, `asset_id`, `sha256` and `size_bytes` as the dedup/evidence spine; `media_kind`, `variant_kind`, `source_asset_id` are additive fields.
+- Album ordered selection stays deferred until a named consumer requires it; the research explicitly rejects speculative gallery wiring for album manifest order.
+- Verified gaps to preserve in acceptance criteria: `AssetType.Model` and GLB MIME exist but `detectAssetType` returns `Other` and `MIME_MAP` lacks `glb`/`gltf`; no GLB poster rendition; both preview modals lack a `model` branch.

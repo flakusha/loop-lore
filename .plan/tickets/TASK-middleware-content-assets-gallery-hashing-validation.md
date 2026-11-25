@@ -146,3 +146,9 @@ The hook is the building block ticket 5 uses for distributed healing.
 - Gallery thumbnail hashing is a future enhancement (not blocking):
   the current gallery serves `assets.thumbnail_path` directly. The
   hook validates the row; the thumbnail's own hash is a follow-up.
+
+## Research addendum (2026-11-25)
+
+- Gallery projection must expose `record_hash` and `content_version` so shader/material variants and derived stills share one asset identity; the existing note about thumbnail hashing as a future enhancement stays true.
+- `GalleryAssetItem` already carries `key`, `asset_id`, `sha256` and `size_bytes`; any new fields are additive, never renames.
+- Evidence: `.tmp/research/dcc-libraries/02-3d-libraries-and-asset-pipeline.md` and `.tmp/research/gallery-3d-preview/03-shared-contract-and-patterns.md`.

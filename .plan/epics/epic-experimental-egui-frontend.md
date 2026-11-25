@@ -356,3 +356,8 @@ htmx → egui → htmx transfers-with-browser-side-context ticket, and the
   is a library, not the live server transport
 
 git issue: a515b55
+
+## Research addendum (2026-11-25)
+
+- Gallery research confirms the egui frontend is 2D-only: glow/WebGL UI, no enabled `egui-wgpu` feature. Reuse `GalleryAssetItem` and the `/thumb` → `eguiThumbReady` → `TextureHandle` sink.
+- No new 3D capability is assumed in this epic. Any wgpu renderer is a separately gated capability with its own bundle budget and named consumer.
