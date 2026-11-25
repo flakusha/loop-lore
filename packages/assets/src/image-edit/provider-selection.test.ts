@@ -56,7 +56,7 @@ describe("image-edit provider selection", () => {
         },
         auth: { mode: "bearer", },
         queue: { gpuSlots: 1, queueWaitSecs: 1, retryAfterSecs: 1, kinds: [], },
-        imageOps: { ops: ["edits",], },
+        imageOps: { ops: ["edits",], mattingAvailable: false, },
         storage: { dataDirPresent: true, },
         openapi: "/v1/openapi.json",
         models: "/v1/models",
