@@ -25,7 +25,7 @@ class CapturingProvider extends ComfyUIEditProvider {
   clientId?: string;
   progressSink?: (event: ComfyUIProgressEvent,) => void;
 
-  protected getClient(
+  protected override getClient(
     _config?: Config,
     _apiKey?: string,
     progress?: ProgressOptions,
@@ -89,5 +89,20 @@ describeOrSkip("image-edit ComfyUI progress", () => {
       progress: 0.75,
       message: "Executing KSampler...",
     },);
+  });
+  test("execute injects the emotion modifier into template params", async () => {
+    const provider = new CapturingProvider();
+    let builtWith: Record<string, unknown> = {};
+    const spyTemplate: WorkflowTemplate = {
+      ...template,
+      build: (params,) => {
+        builtWith = params;
+        return {};
+      },
+    };
+    await provider.execute({ ...request, params: { emotion: "happy", }, }, spyTemplate, {
+      ownerId: "emotion-user",
+    },);
+    expect(builtWith["emotion_modifier"],).toContain("smiling",);
   });
 },);
