@@ -81,7 +81,7 @@ describe("parseMigration", () => {
     const creates = new Map(
       listMigrationFiles(dir,).flatMap((file,) => [...parseMigration(file,).creates.entries(),]),
     );
-    expect(creates.size,).toBe(254,);
+    expect(creates.size,).toBe(256,);
     const users = creates.get("users",);
     expect(users?.createdBy,).toBe("001_core.ts",);
     expect(users?.columns.id?.primaryKey,).toBe(true,);

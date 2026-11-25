@@ -67,8 +67,20 @@ import { uid, } from "../utils";
 // are static imports below so their commands and request shapes pin here
 // (both stay inert at import time — see `src/tui/import-purity.test.ts`).
 import type { LinkedAsset, } from "./asset-view";
-import { dispatchGroupCommand, GROUP_COMMANDS, } from "./chat/group-commands";
-import { dispatchModerationCommand, MODERATION_COMMANDS, } from "./chat/moderation-commands";
+import {
+  dispatchGroupCommand,
+  GROUP_COMMANDS,
+  listParticipants,
+  loadTurnOrder,
+  setImpersonation,
+} from "./chat/group-commands";
+import {
+  deleteMessage,
+  dispatchModerationCommand,
+  hideMessage,
+  loadModerationQueue,
+  MODERATION_COMMANDS,
+} from "./chat/moderation-commands";
 import type { ChatHost, ChatMessage, } from "./chat/types";
 import type { HarnessRunDetail, HarnessRunSummary, } from "./harness/types";
 
@@ -800,6 +812,46 @@ describe("group-chat and moderation TUI commands", () => {
     expect(await dispatchModerationCommand(host, "/help",),).toBe(false,);
     expect(calls,).toEqual([],);
     expect(state.errors,).toEqual([],);
+  });
+
+  test("caller helpers unwrap bare payloads and pin request shapes", async () => {
+    replies = [
+      roster,
+      { turnOrder: null, },
+      { ok: true, },
+      { data: { ok: true, }, },
+      { data: {}, },
+      { data: { flags: [], total: 0, }, },
+    ];
+
+    const people = await listParticipants("chat-1", "tok",);
+    const order = await loadTurnOrder("chat-1", "tok",);
+    const impersonation = await setImpersonation("chat-1", "a-2", "tok",);
+    const hidden = await hideMessage("m-1", "spam", "tok",);
+    const deleted = await deleteMessage("m-1", "tok",);
+    const queue = await loadModerationQueue("pending", "tok",);
+
+    for (const result of [people, order, impersonation, hidden, queue,]) {
+      expect(result.ok,).toBe(true,);
+    }
+
+    if (!people.ok || !order.ok || !impersonation.ok || !hidden.ok || !queue.ok) { return; }
+
+    expect(people.data,).toEqual(roster,);
+    expect(order.data.turnOrder,).toBeNull();
+    expect(impersonation.data,).toEqual({ ok: true, },);
+    expect(hidden.data,).toEqual({ ok: true, },);
+    expect(deleted.ok,).toBe(true,);
+    expect(queue.data.flags,).toEqual([],);
+
+    expect(calls.map((c,) => c.url),).toEqual([
+      "http://localhost:3000/api/v1/chats/chat-1/participants",
+      "http://localhost:3000/api/v1/chats/chat-1/turn-order",
+      "http://localhost:3000/api/v1/chats/chat-1/impersonate",
+      "http://localhost:3000/api/v1/messages/m-1/visibility",
+      "http://localhost:3000/api/v1/messages/m-1",
+      "http://localhost:3000/api/v1/nsfw/moderation/flags?status=pending&limit=20",
+    ],);
   });
 });
 

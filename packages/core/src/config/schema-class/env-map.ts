@@ -70,8 +70,8 @@ export const envMap = (): EnvMap => {
     web: WEB_DEFAULTS,
   };
 
-  const add = (prefix: string, obj: Record<string, unknown>,) => {
-    for (const [key, val,] of Object.entries(obj,)) {
+  const add = (prefix: string, obj: object,) => {
+    for (const [key, val,] of Object.entries(obj as Record<string, unknown>,)) {
       const path = `${prefix}.${key}`;
       const envKey = path.replaceAll(".", "_",).toUpperCase();
       if (val && typeof val === "object" && !Array.isArray(val,)) {

@@ -25,7 +25,6 @@
  */
 
 import { APP_VERSION, } from "../../config/constants";
-import type { Config, } from "../../config/schema";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { runFacadeOp, } from "../loop-lore-facade/registry";
 import type { FacadeRegistry, } from "../loop-lore-facade/registry";

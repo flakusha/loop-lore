@@ -3,6 +3,7 @@
 
 import { afterEach, expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { generationBusyState, } from "./generation";
 import { DEFAULT_DELAY_MS, type VideoJobControls, videoJobControlState, } from "./video-job-controls";
 
 let calls: { url: string; opts: RequestInit }[] = [];
@@ -127,5 +128,13 @@ describeOrSkip("videoJobControls", () => {
     busyStatus = 403;
     await state.refreshActive();
     expect(state.activeError,).toBe("Generation activity unavailable (403)",);
+  });
+
+  test("busy state export reads the caller-scoped count directly", async () => {
+    handler = () => Response.json({ count: 4, },);
+    const state = { ...generationBusyState, };
+    await state.refreshActive();
+    expect(calls.at(-1,)?.url,).toBe("/api/v1/generation/active/me",);
+    expect(state.activeCount,).toBe(4,);
   });
 },);

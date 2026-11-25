@@ -162,6 +162,7 @@ describe("generationRoutes — plugin route mounting", () => {
       name: "active-me",
       method: "GET",
       path: "/api/v1/generation/active/me",
+      expected: 200,
     }, chatId,);
 
     expect(res.status,).toBe(200,);
@@ -175,6 +176,7 @@ describe("generationRoutes — plugin route mounting", () => {
       name: "active-me",
       method: "GET",
       path: "/api/v1/generation/active/me",
+      expected: 200,
     }, chatId,);
 
     expect(res.status,).toBe(401,);

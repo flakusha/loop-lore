@@ -52,7 +52,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 
 <!-- api-reference:generated:begin -->
 
-410 of 1074 operations have no `summary`/`description` in the spec; those rows render as `—`.
+410 of 1075 operations have no `summary`/`description` in the spec; those rows render as `—`.
 
 ## v1 endpoints
 
@@ -570,7 +570,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/export/status/{jobId} | Get export job status |
 | POST | /api/v1/frontend/logs | Ingest frontend logs |
 | GET | /api/v1/generation/active | — |
-| GET | /api/v1/generation/active/me | Active generation count for the caller |
+| GET | /api/v1/generation/active/me | Count the caller's active generations |
 | POST | /api/v1/generation/audio | Generate an audio track from a prompt |
 | POST | /api/v1/generation/audio/ambient | — |
 | POST | /api/v1/generation/cancel | — |

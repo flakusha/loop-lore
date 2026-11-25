@@ -117,7 +117,7 @@ describe("018_harness_runs_calls", () => {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).run("run-1", "u-1", "user", "ok", "review", "review", "abc123", 10, 5, null, 250, "2026-11-25T00:00:00Z",);
 
-    for (const [id, status,] of [["call-1", "ok",], ["call-2", "timeout",],]) {
+    for (const [id, status,] of [["call-1", "ok",], ["call-2", "timeout",],] as const) {
       raw.query(
         `INSERT INTO harness_calls (id, run_id, status, model, tokens_in, tokens_out, cost_usd, started_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,

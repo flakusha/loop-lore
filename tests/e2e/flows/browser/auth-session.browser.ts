@@ -19,6 +19,13 @@ import { afterAll, beforeAll, describe, test, } from "bun:test";
 import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import { AUTH_NOISE_ALLOWLIST, trackPageErrors, } from "../../helpers/htmx-alpine";
 import { seedUsers, } from "../../helpers/seed";
+
+/** After logout the chat shell still fires one joinable-chats probe; the 401 is expected. */
+const LOGOUT_NOISE_ALLOWLIST: readonly RegExp[] = [
+  ...AUTH_NOISE_ALLOWLIST,
+  /Failed to load joinable chats — Error: Unauthorized/,
+];
+
 describe("Auth session E2E", () => {
   let ctx: BrowserTestContext;
 
@@ -97,7 +104,7 @@ describe("Auth session E2E", () => {
   describe("Logout", () => {
     test("logout returns to login and protects authed views", async () => {
       const page = await ctx.openPage();
-      const errors = trackPageErrors(page, { allowlist: AUTH_NOISE_ALLOWLIST, },);
+      const errors = trackPageErrors(page, { allowlist: LOGOUT_NOISE_ALLOWLIST, },);
       try {
         await login(page, "e2euser", "password",);
         // Sidebar footer button — click via evaluate to bypass hit-testing.
