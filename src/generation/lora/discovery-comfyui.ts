@@ -219,35 +219,57 @@ export function injectComfyUILora(
     }
   }
 
-  // A producer feeding both MODEL and CLIP consumers is the loader to insert
-  // after. On repeated injection the previous LoraLoader is that producer, so
-  // each new loader consumes its predecessor's outputs in request order.
+  // An explicit target wins; otherwise prefer a producer feeding both heads
+  // (the previous LoraLoader on a chain), keeping repeated injections in
+  // request order.
   const producerIds = [...producers.keys(),];
-  const producerId = targetNodeId ??
+  const preferred = targetNodeId ??
     producerIds.find((id,) => {
       const slots = producers.get(id,);
       return Boolean(slots?.modelSlots.length && slots.clipSlots.length,);
-    },) ??
-    producerIds[0];
+    },);
 
-  const slots = producerId ? producers.get(producerId,) : undefined;
-  const modelSlot = slots?.modelSlots[0] ?? 0;
-  const clipSlot = slots?.clipSlots[0] ?? 1;
+  const preferredSlots = preferred ? producers.get(preferred,) : undefined;
+  const preferredModelSlot = preferredSlots?.modelSlots[0];
+  const preferredClipSlot = preferredSlots?.clipSlots[0];
+  const firstModel = consumers.find((consumer,) => consumer.key === "model");
+  const firstClip = consumers.find((consumer,) => consumer.key === "clip");
+
+  // MODEL and CLIP heads are independent: split-producer graphs (model from
+  // one loader, clip from another) must not be collapsed to a single source.
+  const modelHead: [string, number,] | undefined = preferred && preferredModelSlot !== undefined
+    ? [preferred, preferredModelSlot,]
+    : firstModel
+    ? [firstModel.producerId, firstModel.slot,]
+    : undefined;
+
+  const clipHead: [string, number,] | undefined = preferred && preferredClipSlot !== undefined
+    ? [preferred, preferredClipSlot,]
+    : firstClip
+    ? [firstClip.producerId, firstClip.slot,]
+    : undefined;
 
   const newNodeId = allocateNodeId(Object.keys(nodes,),);
   nodes[newNodeId] = buildComfyUILoraNode(
     loraName,
     strengthModel,
     strengthClip,
-    producerId ? [producerId, modelSlot,] : undefined,
-    producerId ? [producerId, clipSlot,] : undefined,
+    modelHead,
+    clipHead,
   );
 
+  // `consumers` was captured before the new node existed, so it cannot
+  // rewire the node into itself.
   for (const consumer of consumers) {
-    if (consumer.producerId !== producerId) { continue; }
-    if (consumer.key === "model" && consumer.slot === modelSlot) {
+    if (
+      consumer.key === "model" && modelHead &&
+      consumer.producerId === modelHead[0] && consumer.slot === modelHead[1]
+    ) {
       consumer.inputs.model = [newNodeId, 0,];
-    } else if (consumer.key === "clip" && consumer.slot === clipSlot) {
+    } else if (
+      consumer.key === "clip" && clipHead &&
+      consumer.producerId === clipHead[0] && consumer.slot === clipHead[1]
+    ) {
       consumer.inputs.clip = [newNodeId, 1,];
     }
   }

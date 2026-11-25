@@ -5,6 +5,7 @@
  */
 
 import { beforeEach, describe, expect, it, } from "bun:test";
+import { validateGraph, } from "../builder/graph-validate";
 import {
   clearDiscoveryCache,
   discoverLoras,
@@ -261,6 +262,55 @@ function apiFormatGraph(): Record<string, unknown> {
   };
 }
 
+/** API-format graph with MODEL and CLIP fed by different producers. */
+function splitHeadGraph(): Record<string, unknown> {
+  return {
+    "7": {
+      class_type: "CheckpointLoaderSimple",
+      inputs: { ckpt_name: "sd.safetensors", },
+    },
+    "9": {
+      class_type: "CLIPLoader",
+      inputs: { clip_name: "clip.safetensors", type: "stable_diffusion", },
+    },
+    "2": {
+      class_type: "CLIPTextEncode",
+      inputs: { text: "positive", clip: ["9", 0,], },
+    },
+    "3": {
+      class_type: "CLIPTextEncode",
+      inputs: { text: "negative", clip: ["9", 0,], },
+    },
+    "4": {
+      class_type: "EmptyLatentImage",
+      inputs: { width: 512, height: 512, batch_size: 1, },
+    },
+    "5": {
+      class_type: "KSampler",
+      inputs: {
+        model: ["7", 0,],
+        positive: ["2", 0,],
+        negative: ["3", 0,],
+        latent_image: ["4", 0,],
+        seed: 0,
+        steps: 20,
+        cfg: 8,
+        sampler_name: "euler",
+        scheduler: "normal",
+        denoise: 1,
+      },
+    },
+    "8": {
+      class_type: "VAEDecode",
+      inputs: { samples: ["5", 0,], vae: ["7", 2,], },
+    },
+    "10": {
+      class_type: "SaveImage",
+      inputs: { images: ["8", 0,], filename_prefix: "out", },
+    },
+  };
+}
+
 /** LoraLoader ids and inputs in graph order. */
 function loraLoaders(
   workflow: Record<string, unknown>,
@@ -324,6 +374,36 @@ describe("injectComfyUILora", () => {
     expect(nodes["2"]?.inputs.clip,).toEqual([secondId, 1,],);
     expect(nodes["3"]?.inputs.clip,).toEqual([secondId, 1,],);
     expect(nodes["5"]?.inputs.model,).toEqual([secondId, 0,],);
+  });
+
+  it("handles split MODEL/CLIP producers without touching other links", () => {
+    const source = splitHeadGraph();
+    const snapshot = structuredClone(source,);
+    const result = injectComfyUILora(source, "detail.safetensors", 0.6, 0.5,);
+    const nodes = result as Record<string, TestNode>;
+
+    expect(result,).not.toBe(source,);
+    expect(source,).toEqual(snapshot,);
+
+    const loaders = loraLoaders(result,);
+    expect(loaders.length,).toBe(1,);
+    const entry = loaders[0];
+    expect(entry,).toBeDefined();
+    if (!entry) { return; }
+    const [loaderId, loader,] = entry;
+
+    expect(loader.model,).toEqual(["7", 0,],);
+    expect(loader.clip,).toEqual(["9", 0,],);
+
+    // Every consumer of either head reaches the new node; other links stay.
+    expect(nodes["2"]?.inputs.clip,).toEqual([loaderId, 1,],);
+    expect(nodes["3"]?.inputs.clip,).toEqual([loaderId, 1,],);
+    expect(nodes["5"]?.inputs.model,).toEqual([loaderId, 0,],);
+    expect(nodes["8"]?.inputs.vae,).toEqual(["7", 2,],);
+    expect(nodes["8"]?.inputs.samples,).toEqual(["5", 0,],);
+    expect(nodes["2"]?.inputs.text,).toBe("positive",);
+
+    expect(validateGraph(result,).ok,).toBe(true,);
   });
 });
 
