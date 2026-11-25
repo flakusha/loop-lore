@@ -3,7 +3,8 @@
 
 # TASK: OpenAPI spec omits harness routes plugin
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the generated spec now carries every harness path family — 19 `/api/v1/harness/*` paths in `docs/reference/openapi.json` (e.g. `/api/v1/harness/settings` at `:84952`); the harness route plugins are mounted in the v1 admin surface (`src/routes/v1/admin-surface.ts:21-29,66-103`). The filed premise (harness routes absent from the spec) was stale.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-contract-and-config-tooling

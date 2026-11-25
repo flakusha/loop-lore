@@ -3,7 +3,8 @@
 
 # TASK: Principal kind model and server-side resolution
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the closed principal-kind vocabulary and its server-side resolution shipped — `PRINCIPAL_KINDS` (`src/middleware/principal-kind.ts:29`), fail-closed narrow `toPrincipalKind` (`:63-64`), and the actors-row mapping (`principalKindForActor`, same module). A caller-supplied kind can never assert a principal.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-principal-scoped-credentials

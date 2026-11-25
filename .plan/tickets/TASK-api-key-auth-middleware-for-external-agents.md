@@ -3,7 +3,8 @@
 
 # TASK: API-key auth middleware for external agents
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the external-agent key auth shipped — agent token prefix `llra_` (`src/agent/api/auth.ts:40`), SHA-256 hashing (`:89`), 24h default TTL (`:48-49`), per-token rate limiting (`:203,274,286`), fail-closed on unknown/revoked keys; mint/revoke live at `src/routes/admin/agent-tokens.ts`. The filed premise (no key auth) was stale.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp

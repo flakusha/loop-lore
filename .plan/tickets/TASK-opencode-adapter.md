@@ -3,7 +3,8 @@
 
 # TASK: opencode adapter
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the opencode adapter shipped as a thin generic subclass — `createOpenCodeAdapter` (`src/integrations/harness/opencode.ts:41`), registered at `src/integrations/harness/flavor-factories.ts:31`. The filed premise (no opencode adapter) was stale.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-external-harness-acp

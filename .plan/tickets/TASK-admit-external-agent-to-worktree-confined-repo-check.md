@@ -3,7 +3,8 @@
 
 # TASK: admit external agent to worktree confined repo check
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the worktree-confined repo-check surface shipped — `src/agent/api/worktree.ts`, `src/agent/api/check.ts` and `src/agent/api/sandbox.ts` are mounted through `agentApiRoutes` (`src/agent/api/router.ts:110-111`) inside the v1 standalone surface (`src/routes/v1/standalone-surface.ts:56`). The filed premise (no own-worktree check) was stale.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-harness-rsi-repo-access.md

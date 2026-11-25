@@ -3,7 +3,8 @@
 
 # TASK: harness: executions.jsonl query sidecar (offset index) behind existing exports
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the fixed-width offset sidecar shipped — `src/harness/exec-index.ts:5-21` (33-byte entries, torn/drifted sidecar rejected) with the fast path and tail fallback in `src/harness/query.ts:63-92,116`. The three query exports keep their signatures; the SQLite mirror stays a documented non-goal.
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-harness-integration

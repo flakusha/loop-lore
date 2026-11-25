@@ -3,7 +3,8 @@
 
 # TASK: MCP tool set v1 from facade registry
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the v1 tool set ships from the facade op registry — tools derive from the registry manifest and execution runs through `runFacadeOp` (`src/integrations/mcp/stdio-server.ts:8-13,31-35,59-69`; server build at `:68`). Tool schemas are the registry schemas; tool names are stable.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp

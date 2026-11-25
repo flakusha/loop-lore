@@ -3,7 +3,8 @@
 
 # TASK: MCP stdio server via TypeScript SDK
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the SDK-based MCP stdio server shipped — `src/integrations/mcp/stdio-server.ts` imports the official SDK transport (`:21` `@modelcontextprotocol/sdk/server/stdio.js`) and builds the server from the facade op registry (`:35,68`). Note the shipped file is `stdio-server.ts`, not the ticket-AC path `server.ts`.
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-agentic-integration-mcp-acp
