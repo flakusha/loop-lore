@@ -570,6 +570,7 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/export/status/{jobId} | Get export job status |
 | POST | /api/v1/frontend/logs | Ingest frontend logs |
 | GET | /api/v1/generation/active | — |
+| GET | /api/v1/generation/active/me | Active generation count for the caller |
 | POST | /api/v1/generation/audio | Generate an audio track from a prompt |
 | POST | /api/v1/generation/audio/ambient | — |
 | POST | /api/v1/generation/cancel | — |
@@ -590,7 +591,6 @@ Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{
 | GET | /api/v1/generation/stream/{chatId} | — |
 | POST | /api/v1/generation/test-connection | — |
 | POST | /api/v1/generation/video | Submit a video generation job |
-| POST | /api/v1/generation/video/cancel | Cancel a video generation job by id |
 | GET | /api/v1/generation/video/status/{jobId} | Poll a video generation job |
 | GET | /api/v1/gifs/search | — |
 | GET | /api/v1/harness/escalations | — |

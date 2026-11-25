@@ -105,4 +105,27 @@ describeOrSkip("videoJobControls", () => {
     await state.retry();
     expect(calls,).toHaveLength(0,);
   });
+
+  test("poll reads the caller-scoped busy count and surfaces read errors", async () => {
+    let busyStatus = 200;
+    handler = (url,) => {
+      if (url.includes("/active/me",)) {
+        return busyStatus === 200
+          ? Response.json({ count: 2, },)
+          : new Response("", { status: busyStatus, },);
+      }
+
+      return Response.json({ data: { status: "pending", }, },);
+    };
+
+    const state = fresh();
+    await state.poll("j1",);
+    expect(calls.some((call,) => call.url === "/api/v1/generation/active/me"),).toBe(true,);
+    expect(state.activeCount,).toBe(2,);
+    expect(state.activeError,).toBe("",);
+
+    busyStatus = 403;
+    await state.refreshActive();
+    expect(state.activeError,).toBe("Generation activity unavailable (403)",);
+  });
 },);

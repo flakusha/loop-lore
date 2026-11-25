@@ -11,13 +11,13 @@
  *   GET  /api/v1/generation/status/:chatId — Check generation status
  *   GET  /api/v1/generation/stream/:chatId — HTMX SSE streaming
  *   GET  /api/v1/generation/active         — List active
+ *   GET  /api/v1/generation/active/me      — Count the caller's active jobs
  *   POST /api/v1/generation/retry          — Retry with step-from-point
  *   POST /api/v1/generation/continue       — Continue partial/cancelled message
  *   POST /api/v1/generation/regenerate     — Replace AI response
  *   POST /api/v1/generation/image          — Generate image from prompt
  *   POST /api/v1/generation/video          — Generate video via a ComfyUI workflow
  *   GET  /api/v1/generation/video/status/:jobId — Poll a submitted video job
- *   POST /api/v1/generation/video/cancel — Cancel a video job by id (owner/admin)
  *   POST /api/v1/generation/audio/ambient  — Generate layered ambient scene audio
  *   POST /api/v1/generation/caption        — Caption image assets
  *   POST /api/v1/generation/prompt         — Improve/analyze prompt drafts
@@ -27,12 +27,12 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { type Ctx as VideoCancelCtx, handleVideoCancel, } from "../routes/generation/video-cancel";
 import { handleAmbientGeneration, } from "./audio-gen-route";
 import { handleAudioGeneration, } from "./audio-prompt-route";
 import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
+  type ActiveMeCtx,
   handleBackupHashes,
   handleBackupRestore,
   handleCancelGeneration,
@@ -40,6 +40,7 @@ import {
   handleGenerationStatus,
   handleGenerationStream,
   handleListActiveGenerations,
+  handleOwnActiveCount,
   handleQuotaOverride,
   handleQuotaState,
   handleRegenerate,
@@ -113,6 +114,16 @@ export function generationRoutes(
     return handleListActiveGenerations(database, auth.userId, auth.userRole,);
   },);
 
+  app.get(`${prefix}/generation/active/me`, async (ctx,) => {
+    return handleOwnActiveCount(ctx as unknown as ActiveMeCtx,);
+  }, {
+    detail: {
+      summary: "Count the caller's active generations",
+      description: "Returns { count } for the authenticated caller's own in-flight generations only.",
+      tags: ["Generation",],
+    },
+  },);
+
   app.post(`${prefix}/generation/retry`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleRetryGeneration(readBody(ctx,), database, auth.userId, auth.userRole,);
@@ -159,16 +170,6 @@ export function generationRoutes(
       summary: "Poll a video generation job",
       description: "The job's status and, once it succeeds, the persisted asset. A job owned by another " +
         "user reads as not found.",
-      tags: ["Generation",],
-    },
-  },);
-
-  app.post(`${prefix}/generation/video/cancel`, async (ctx,) => {
-    return handleVideoCancel(readBody(ctx,), ctx as unknown as VideoCancelCtx,);
-  }, {
-    detail: {
-      summary: "Cancel a video generation job by id",
-      description: "Cancels a pending video job by id. Owners may cancel their own job; admins may cancel any job.",
       tags: ["Generation",],
     },
   },);

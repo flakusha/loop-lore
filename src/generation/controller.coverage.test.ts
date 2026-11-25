@@ -59,6 +59,7 @@ const ROUTES: RouteCase[] = [
   // Unknown chat → access denied before the SSE stream is opened.
   { name: "stream", method: "GET", path: "/api/v1/generation/stream/missing-chat", expected: 403, },
   { name: "active", method: "GET", path: "/api/v1/generation/active", expected: 403, },
+  { name: "active-me", method: "GET", path: "/api/v1/generation/active/me", expected: 200, },
   { name: "retry", method: "POST", path: "/api/v1/generation/retry", body: {}, expected: 400, },
   { name: "continue", method: "POST", path: "/api/v1/generation/continue", body: {}, expected: 400, },
   { name: "regenerate", method: "POST", path: "/api/v1/generation/regenerate", body: {}, expected: 400, },
@@ -154,4 +155,28 @@ describe("generationRoutes — plugin route mounting", () => {
       expect(res.status,).toBeGreaterThanOrEqual(400,);
     });
   }
+
+  test("active/me — authenticated caller gets a numeric count", async () => {
+    const app = createAuthApp(db, ownerId,);
+    const res = await fire(app, {
+      name: "active-me",
+      method: "GET",
+      path: "/api/v1/generation/active/me",
+    }, chatId,);
+
+    expect(res.status,).toBe(200,);
+    const data = (await res.json()) as { count?: unknown };
+    expect(typeof data.count,).toBe("number",);
+  });
+
+  test("active/me — anonymous caller gets 401", async () => {
+    const app = createAnonApp(db,);
+    const res = await fire(app, {
+      name: "active-me",
+      method: "GET",
+      path: "/api/v1/generation/active/me",
+    }, chatId,);
+
+    expect(res.status,).toBe(401,);
+  });
 });
