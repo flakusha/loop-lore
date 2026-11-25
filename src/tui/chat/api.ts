@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 320
+// size-allow: 340
 // One API client surface for the TUI chat widgets: request shaping, envelope
 // parsing and the stale-chat guards all read the same page/pagination contract.
 import type { CommandValveSpec, } from "../../assistant/commands/valves";

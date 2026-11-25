@@ -32,6 +32,7 @@ import { failureReason, } from "../../../tui/chat/api";
 import { uid, } from "../../../utils";
 import { createRoutes, } from "../create";
 import { forwardRoutes, } from "../forward";
+import { enforceNsfwConsentGate, } from "../guards";
 
 const BASE = "http://localhost";
 
@@ -222,6 +223,22 @@ describe("NSFW consent verdict on send and forward", () => {
     const audit = await auditRows("nsfw.gate.allowed",);
     expect(audit,).toHaveLength(1,);
     expect(audit[0]!.meta,).toContain("verdict_allowed",);
+  });
+
+  test("shared consent choke point denies directly with the stable code", async () => {
+    const denial = await enforceNsfwConsentGate({
+      database: fixture.db,
+      config,
+      userId,
+      chatId,
+      actorId: userId,
+      surface: "send",
+    },);
+
+    expect(denial,).not.toBeNull();
+    expect(denial!.status,).toBe(403,);
+    assertDenied(await denial!.json() as { code?: string; error?: string },);
+    expect(await auditRows("nsfw.gate.blocked",),).toHaveLength(1,);
   });
 
   test("TUI reads the stable code from any 403 body carrier", () => {
