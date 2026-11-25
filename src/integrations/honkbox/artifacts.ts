@@ -13,8 +13,8 @@
 
 import { createHash, randomUUID, } from "node:crypto";
 import fs from "node:fs/promises";
-import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { appTmpRoot, } from "../../test-utils/tmp-root";
 import { safeFetch, } from "../../utils";
 import {
   type HonkboxCapabilities,
@@ -245,7 +245,7 @@ export async function downloadHonkboxArtifactToTempFile(
 
   // ponytail: one private temp dir per artifact, removed by the caller after
   // createAsset copies the bytes into the asset store; no caller path accepted.
-  const dir = await fs.mkdtemp(join(tmpdir(), "honkbox-artifact-",),);
+  const dir = await fs.mkdtemp(join(appTmpRoot("honkbox",), "honkbox-artifact-",),);
   const path = join(dir, `${randomUUID()}.bin`,);
   const handle = await fs.open(path, "wx", 0o600,);
   const hasher = createHash("sha256",);

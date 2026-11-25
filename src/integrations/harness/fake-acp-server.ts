@@ -30,8 +30,8 @@
 
 import { type ChildProcess, spawn, } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
-import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { appTmpRoot, } from "../../test-utils/tmp-root";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 
 /** Observation-log file name; the child writes it next to its own script. */
@@ -343,7 +343,7 @@ export interface FakeAcpServer {
  * @throws {Error} when the temp dir cannot be created.
  */
 export function startFakeAcp(env: FakeAcpEnv,): FakeAcpServer {
-  const dir = mkdtempSync(join(tmpdir(), "fake-acp-",),);
+  const dir = mkdtempSync(join(appTmpRoot("fake-acp",), "fake-acp-",),);
   const script = join(dir, "fake-acp.cjs",);
   const logPath = join(dir, LOG_FILENAME,);
   // Behavior rides the SCRIPT FILE, not the spawning process's env: the
