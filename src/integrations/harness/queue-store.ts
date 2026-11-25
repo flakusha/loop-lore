@@ -186,6 +186,39 @@ export async function cancelQueuedTurn(
   return Number(result[0]?.numUpdatedRows ?? 0,);
 }
 
+/** Options for cancelling a running turn this instance can still signal. */
+export interface CancelRunningTurnOptions {
+  /** The running turn's id. */
+  id: string;
+  /** ISO timestamp written to `finished_at`. */
+  now: string;
+  /** Human-readable reason kept in `error_message`; no new error code. */
+  reason: string;
+}
+
+/**
+ * Interrupt a running turn. Status-only: the closed `error_code` vocabulary
+ * has no cancelled value, so the reason rides in `error_message`.
+ * @returns 1 when the row moved running → cancelled, else 0.
+ */
+export async function cancelRunningTurn(
+  database: Kysely<DB>,
+  options: CancelRunningTurnOptions,
+): Promise<number> {
+  const result = await database
+    .updateTable("harness_queue_turns",)
+    .set({
+      status: HarnessQueueTurnStatus.Cancelled,
+      error_message: options.reason,
+      finished_at: options.now,
+    },)
+    .where("id", "=", options.id,)
+    .where("status", "=", HarnessQueueTurnStatus.Running,)
+    .execute();
+
+  return Number(result[0]?.numUpdatedRows ?? 0,);
+}
+
 /**
  * Boot recovery options: the booting instance's identity decides which rows
  * are its own crashed work.
@@ -239,11 +272,14 @@ export async function getQueuedTurn(
   return rows[0] ?? null;
 }
 
+/** Hard ceiling on a caller-supplied queue page size. */
+export const MAX_QUEUE_LIMIT = 500;
+
 /** Listing options: newest first, optional batch filter, bounded page. */
 export interface ListQueuedTurnsOptions {
   /** Restrict to one batch's turns. */
   batchId?: string;
-  /** Page size; default 100. */
+  /** Page size; default 100, hard-capped at {@link MAX_QUEUE_LIMIT}. */
   limit?: number;
 }
 
@@ -252,12 +288,17 @@ export async function listQueuedTurns(
   database: Kysely<DB>,
   options: ListQueuedTurnsOptions = {},
 ): Promise<QueuedTurnRow[]> {
+  const requested = options.limit ?? 100;
+  const limit = Number.isFinite(requested,) && requested > 0
+    ? Math.min(Math.trunc(requested,), MAX_QUEUE_LIMIT,)
+    : 100;
+
   return await database
     .selectFrom("harness_queue_turns",)
     .selectAll()
     .$if(options.batchId !== undefined, (qb,) => qb.where("batch_id", "=", options.batchId!,),)
     .orderBy("created_at", "desc",)
     .orderBy("id", "desc",)
-    .limit(options.limit ?? 100,)
+    .limit(limit,)
     .execute();
 }

@@ -51,10 +51,11 @@ async function applyRequestedLoras(
       if (found) {
         workflow = injectComfyUILora(workflow, lora.name, lora.strength,) as ComfyUIWorkflow;
       } else {
-        log()?.warn(
-          "LoRA not found on backend, skipping injection",
-          { loraName: lora.name, backendUrl: baseUrl, },
-        );
+        return {
+          ok: false,
+          error:
+            `Unknown LoRA "${lora.name}" on ComfyUI at ${baseUrl}: no discovered model matches it. Install the file in the loras folder or use a discovered name; the image request was not submitted.`,
+        };
       }
     }
 
@@ -124,6 +125,8 @@ export async function generateComfyUI(
     }
   }
 
+  const pins = opts.modelPins?.[sdConfig.name];
+
   let workflow = await loadComfyUIWorkflow(workflowName, {
     prompt: opts.prompt,
     negativePrompt: opts.negativePrompt,
@@ -135,10 +138,11 @@ export async function generateComfyUI(
     scheduler: opts.scheduler,
     denoise: opts.denoise ?? 1,
     seed: opts.seed,
-    model: opts.model ?? sdConfig.models?.checkpoint,
-    clip: opts.clip ?? sdConfig.models?.clip,
-    vae: opts.vae ?? sdConfig.models?.vae,
-    clip_vision: opts.clipVision ?? sdConfig.models?.clip_vision,
+    model: opts.model ?? pins?.checkpoint ?? sdConfig.models?.checkpoint,
+    diffusion: opts.diffusion ?? pins?.diffusion ?? sdConfig.models?.diffusion,
+    clip: opts.clip ?? pins?.clip ?? sdConfig.models?.clip,
+    vae: opts.vae ?? pins?.vae ?? sdConfig.models?.vae,
+    clip_vision: opts.clipVision ?? pins?.clip_vision ?? sdConfig.models?.clip_vision,
     ...(opts.initImage
       ? {
         input_image: uploadedInitImage,

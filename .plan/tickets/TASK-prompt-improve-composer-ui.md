@@ -10,7 +10,7 @@
 
 
 **Epic:** epic-prompt-improvement
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 
 ## Scope

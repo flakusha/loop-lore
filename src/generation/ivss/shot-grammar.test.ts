@@ -3,6 +3,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import type { ImageEditCategory, TemplateParameter, } from "../../image-edit/types";
+import { validateMinimaxPrompt, } from "../minimax/prompt-format";
 import type { WorkflowPayload, } from "../template-types";
 import { buildWorkflowGraph, } from "../workflow-library/row";
 import { compileShotGrammar, formatShotTimestamp, type ShotGrammarInput, } from "./shot-grammar";
@@ -35,7 +36,7 @@ describe("IVSS shot grammar", () => {
     const reversed = compileShotGrammar({ ...input, shots: [...input.shots,].reverse(), },);
 
     expect(reversed.prompt,).toBe(first.prompt,);
-    expect(first.prompt,).toContain("[Shot 1] At 00:00.000 — Opening beat",);
+    expect(first.prompt,).toContain("[Shot 1] Opening beat",);
     expect(first.prompt,).toContain("[Shot 2] At 00:03.000 — Middle beat",);
     expect(first.prompt,).toContain("[Shot 3] At 00:06.500 — Third beat",);
     expect(first.prompt,).toContain("Narration: Voice over",);
@@ -113,7 +114,7 @@ describe("IVSS shot grammar", () => {
 
     expect(compiled.truncated.some((entry,) => entry.startsWith("shots:",)),).toBe(true,);
     expect(compiled.prompt,).toContain("[Shot 1]",);
-    expect(compiled.prompt,).not.toContain("overall_soundscape:",);
+    expect(compiled.prompt,).toContain("overall_soundscape:\nN/A",);
   });
 
   test("rejects empty scenes and invalid shot windows", () => {
@@ -125,5 +126,12 @@ describe("IVSS shot grammar", () => {
         shots: [{ ...input.shots[0]!, start_ms: 100, end_ms: 0, },],
       },)
     ).toThrow("ends before it starts",);
+  });
+
+  test("emits the shared validated FL/REF grammar, not a style_bible form", () => {
+    const compiled = compileShotGrammar(fixture(),);
+    expect(compiled.prompt,).not.toContain("style_bible:",);
+    expect(compiled.prompt,).toContain("integrated_multimodal_description:",);
+    expect(validateMinimaxPrompt(compiled.prompt, "fl2va",).ok,).toBe(true,);
   });
 });

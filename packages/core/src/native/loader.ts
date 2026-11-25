@@ -16,7 +16,7 @@
 
 import { dlopen, FFIType, } from "bun:ffi";
 import { existsSync, } from "node:fs";
-import { join, } from "node:path";
+import { join, resolve, } from "node:path";
 
 // TODO(env): bun-only — bun:ffi dlopen and import.meta.dir are the single FFI resolution point; add a node adapter here when a node target lands.
 
@@ -118,23 +118,28 @@ export function __resetNativeModuleCache(): void {
 /**
  * Locate the shared library for the current platform/arch.
  *
- * Resolves against the cargo workspace `target/` at the repo root. Anchored
- * at this module (now `packages/core/src/native/`), so the sample works from
- * any cwd; the regression test pins the repo-root marker.
+ * Honors `$CARGO_TARGET_DIR` first (cargo honors the same variable for
+ * build artifacts); otherwise resolves against the cargo workspace `target/`
+ * at the repo root, anchored at this module so it works from any cwd.
+ * @param cargoTargetDir - `$CARGO_TARGET_DIR` passed by the caller; omitted
+ * means the fixed repo-root `target/` path.
  * @returns Absolute path to the binary, or null when this platform is unsupported.
  */
-export function resolveNativeBinaryPath(): string | null {
+export function resolveNativeBinaryPath(cargoTargetDir?: string,): string | null {
   const fileName = BINARY_NAMES[process.platform];
   if (fileName === undefined) {
     return null;
   }
 
-  // ponytail: assumes the fixed monorepo depth; loader.test.ts pins the
-  // Cargo.toml marker so a future move fails the test instead of silently
-  // probing a package-local target/.
+  // ponytail: assumes the fixed monorepo depth when no override is set;
+  // loader.test.ts pins the Cargo.toml marker so a future move fails the test
+  // instead of silently probing a package-local target/.
   const repoRoot = join(import.meta.dir, "..", "..", "..", "..",);
-  const debugCandidate = join(repoRoot, "target", "debug", fileName,);
-  const releaseCandidate = join(repoRoot, "target", "release", fileName,);
+  const targetRoot = cargoTargetDir?.trim()
+    ? resolve(cargoTargetDir.trim(),)
+    : join(repoRoot, "target",);
+  const debugCandidate = join(targetRoot, "debug", fileName,);
+  const releaseCandidate = join(targetRoot, "release", fileName,);
   return existsSync(releaseCandidate,) ? releaseCandidate : debugCandidate;
 }
 
@@ -152,7 +157,7 @@ export function getNativeModule(): {
     return cachedModule;
   }
 
-  const binaryPath = resolveNativeBinaryPath();
+  const binaryPath = resolveNativeBinaryPath(process.env.CARGO_TARGET_DIR,);
   if (binaryPath === null || !existsSync(binaryPath,)) {
     cachedModule = null;
     return cachedModule;
@@ -200,7 +205,7 @@ export function getNativeStatus(): {
     available: module !== null,
     implementation: module === null ? "none" : "rust",
     version: module?.version,
-    binaryPath: resolveNativeBinaryPath() ?? undefined,
+    binaryPath: resolveNativeBinaryPath(process.env.CARGO_TARGET_DIR,) ?? undefined,
     platform: process.platform,
   };
 }

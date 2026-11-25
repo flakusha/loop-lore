@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // One fragment-run pipeline; types stay with the pipeline they describe.
-// size-allow: 455
+// size-allow: 510
 
 /**
  * IVSS fragment run pipeline — one render fragment through local ComfyUI.
@@ -31,6 +31,7 @@ import type { ComfyUIMaskOriginalRef, } from "../providers/comfyui-upload";
 import { dispatchThroughVideoGate, VIDEO_QUEUE_WAIT_MS, type VideoGateDispatchOptions, } from "../video-dispatch-gate";
 import { cancelVideoJob, completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "../video-jobs";
 import { getWorkflowLoader, } from "../workflow-loader";
+import { hasTerminalSink, } from "../workflow-loader/workflow-validation";
 import { uploadIvssReferences, } from "./reference-upload";
 import { resolveRetakeLatent, } from "./retake";
 import { compileShotGrammar, } from "./shot-grammar";
@@ -155,6 +156,26 @@ export interface IvssRunHandle {
 
 /** H3 checkpoints and latent packages land in non-video output buckets. */
 const LATENT_FILE_RE = /\.(latent|safetensors)$/i;
+
+/**
+ * Fail a fragment whose pinned workflow cannot render. The shipped H3
+ * fragment JSONs are Note-only placeholders; refuse before submit with the
+ * exact fix instead of surfacing a late loader error.
+ * @param workflowId - pinned workflow name
+ * @param detail - loader error, when the graph never resolved
+ * @returns an Error carrying an actionable 422 status
+ */
+function fragmentWorkflowError(workflowId: string, detail?: string,): Error & { status: number } {
+  const error = new Error(
+    `Fragment workflow "${workflowId}" has no terminal sink (${detail ?? "loaded graph has no output node"}). ` +
+      "The shipped MiniMax H3 fragment JSONs are Note-only placeholders: replace configs/workflows/" +
+      `${workflowId}.json with a real ComfyUI API-format graph ending in a video sink ` +
+      "(SaveVideo / VHS_VideoCombine / DaSiWa_EnhancedVideoCombine) plus a latent package sink, then retry.",
+  ) as Error & { status: number };
+
+  error.status = 422;
+  return error;
+}
 
 function cancellation(): Error & { status: number } {
   const error = new Error("IVSS run cancelled",) as Error & { status: number };
@@ -381,7 +402,17 @@ export async function startIvssFragmentRun(
               : {}),
           };
 
-          const workflow = await load(fragment.workflow_id, variables,);
+          let workflow: ComfyUIWorkflow;
+          try {
+            workflow = await load(fragment.workflow_id, variables,);
+          } catch (error) {
+            throw fragmentWorkflowError(
+              fragment.workflow_id,
+              error instanceof Error ? error.message : String(error,),
+            );
+          }
+
+          if (!hasTerminalSink(workflow,)) { throw fragmentWorkflowError(fragment.workflow_id,); }
 
           // Cancel during upload/load must win before the prompt is submitted.
           if (cancelled) { throw cancellation(); }

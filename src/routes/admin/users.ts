@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import type { Db, } from "../../db";
 import type { UserRole, } from "../../db/enums-core/users";
 import { redactCredentials, } from "../../integrations/secrets";
 import { getLogger, } from "../../logger";
@@ -26,6 +27,34 @@ import {
   withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
+
+/**
+ * Whether deleting `id` or moving it to `nextRole` would leave zero admins.
+ * Shared by admin delete, admin role patch and the v1 user delete route.
+ * @param database - user database
+ * @param id - target user id
+ * @param nextRole - role after the change; undefined means deletion
+ * @returns true when the mutation must be refused
+ */
+export async function wouldRemoveLastAdmin(
+  database: Db,
+  id: string,
+  nextRole?: string,
+): Promise<boolean> {
+  const target = await database
+    .selectFrom("users",).select("role",).where("id", "=", id,).executeTakeFirst();
+
+  if (!target || target.role !== "admin" || nextRole === "admin") { return false; }
+
+  const remaining = await database
+    .selectFrom("users",)
+    .select(database.fn.count("id",).as("count",),)
+    .where("role", "=", "admin",)
+    .where("id", "!=", id,)
+    .executeTakeFirst();
+
+  return !remaining || Number(remaining.count,) === 0;
+}
 
 /**
  * @param opts
@@ -168,6 +197,15 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
             // Capture the prior role for the audit row (TASK-032).
             const prior = await db.selectFrom("users",).select("role",).where("id", "=", id,).executeTakeFirst();
+
+            if (await wouldRemoveLastAdmin(db, id, role,)) {
+              return jsonError({
+                message: ctx.t?.("admin.cannotDemoteLastAdmin",) ?? "Cannot demote the last admin account",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
             await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
 
             // Audit event (event_type = "user.role_changed") so the admin
@@ -234,21 +272,12 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               },);
             }
 
-            if (target.role === "admin") {
-              const remaining = await db
-                .selectFrom("users",)
-                .select(db.fn.count("id",).as("count",),)
-                .where("role", "=", "admin",)
-                .where("id", "!=", id,)
-                .executeTakeFirst();
-
-              if (!remaining || Number(remaining.count,) === 0) {
-                return jsonError({
-                  message: ctx.t?.("admin.cannotDeleteLastAdmin",) ?? "Cannot delete the last admin account",
-                  status: HttpStatus.BadRequest,
-                  code: ErrorCode.BadRequest,
-                },);
-              }
+            if (await wouldRemoveLastAdmin(db, id,)) {
+              return jsonError({
+                message: ctx.t?.("admin.cannotDeleteLastAdmin",) ?? "Cannot delete the last admin account",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
             }
 
             await db.deleteFrom("users",).where("id", "=", id,).execute();

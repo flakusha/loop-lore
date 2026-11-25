@@ -3,7 +3,7 @@
 
 # BUG: Plugin approval must be keyed by plugin name and origin
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Critical
 **Effort:** Medium
 **Epic:** epic-plugin-system

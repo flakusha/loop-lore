@@ -39,8 +39,8 @@ function selectMessagesToPrune(
     if (!score || !msg) { continue; }
 
     const msgTokens = estimateTokens(msg.content,);
-    // Never prune if it would drop below target
-    if (currentTokens - msgTokens < config.targetTokens * 0.8) { break; }
+    // One oversized message must not abort pruning of smaller candidates.
+    if (currentTokens - msgTokens < config.targetTokens * 0.8) { continue; }
 
     toPrune.add(idx,);
     currentTokens -= msgTokens;
@@ -98,7 +98,7 @@ export function pruneMessages(
   }
 
   // Score all messages
-  const scores = Array.from(messages, (msg,) => scoreMessage(msg,),);
+  const scores = Array.from(messages, (msg,) => scoreMessage(msg, config,),);
 
   // Sort by score ascending (lowest first = most likely to prune)
   const sortedIndices = Array.from({ length: scores.length, }, (_, i,) => i,).sort(

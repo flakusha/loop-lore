@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 330
+// size-allow: 350
 import { serve, } from "bun";
 import { join, } from "node:path";
 import { applyStoredAgeGateConfig, initAgeGate, } from "../age-gate/controller";
@@ -46,6 +46,8 @@ import { createNonApiHandler, } from "./static-files";
 import { createTerminalGateway, type TerminalSocketData, } from "./terminal-ws";
 import { isTerminalUpgradeRequest, } from "./terminal-ws-protocol";
 
+import { runWatchdogSupervisor, watchdogBootMode, } from "./watchdog/boot";
+
 import {
   applyStoredRepoAccessSettings,
   initRepoAccessSettings,
@@ -78,6 +80,12 @@ function autoProviderName(apiFamily: string,): string {
 }
 
 export async function start() {
+  // Opt-in process supervision. Supervised children carry LOOP_LORE_WATCHDOG=1
+  // and never re-supervise; default startup stays a plain server.
+  if (watchdogBootMode(process.env,) === "supervisor") {
+    process.exit(await runWatchdogSupervisor(),);
+  }
+
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
   let config = loadConfig();
@@ -470,6 +478,6 @@ export async function start() {
   }, {
     // Under supervision an uncaught exception must stay a hard crash so the
     // watchdog sees the non-zero exit. Signal-triggered clean exits are intact.
-    installCrashHandlers: process.env.LOOP_LORE_WATCHDOG !== "1",
+    installCrashHandlers: watchdogBootMode(process.env,) !== "child",
   },);
 }

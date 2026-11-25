@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 270
+// size-allow: 340
 // Cohesive turn queue: enqueue, claim, dispatch, recover, cancel.
 
 /**
@@ -48,6 +48,7 @@ import {
 } from "./dispatch";
 import {
   cancelQueuedTurn,
+  cancelRunningTurn,
   claimNextQueuedTurn,
   completeQueuedTurn,
   failQueuedTurn,
@@ -133,7 +134,7 @@ export class HarnessQueueError extends Error {
 /** The outcome of a cancel attempt — a Result, not a throw. */
 export type HarnessQueueCancelResult =
   | { ok: true }
-  | { ok: false; code: "unknown_turn" | "not_cancellable" };
+  | { ok: false; code: "unknown_turn" | "not_cancellable"; reason: string };
 
 /** The queue service: enqueue batches, observe, cancel, drain. */
 export interface HarnessTurnQueue {
@@ -145,8 +146,10 @@ export interface HarnessTurnQueue {
    */
   enqueue(options: EnqueueHarnessTurnBatchOptions,): Promise<{ batchId: string; turnIds: string[] }>;
   /**
-   * Cancel a turn that has not started. A running/finished turn is refused
-   * (`not_cancellable`), an unknown id reads `unknown_turn`.
+   * Cancel a queued turn, or interrupt one running on this instance via the
+   * harness client's `session/cancel` seam. A finished turn or a turn owned
+   * by another instance is refused (`not_cancellable`) with a typed reason;
+   * an unknown id reads `unknown_turn`.
    */
   cancel(turnId: string,): Promise<HarnessQueueCancelResult>;
   /** List turns, newest first, optionally scoped to one batch. */
@@ -180,6 +183,8 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
   let pumping = false;
   /** THIS instance's async-work count — never shared across instances. */
   let pending = 0;
+  /** Turns whose live harness session was cancelled; their row stays cancelled. */
+  const cancelled = new Set<string>();
   /** Waiters this instance's `idle()` parked while its work was in flight. */
   const drained: Array<() => void> = [];
 
@@ -225,6 +230,10 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
       // `requested_role` is an enqueue-time audit snapshot, never an auth
       // input: the dispatch re-resolves the caller's live role immediately
       // before the gate, so no earlier verdict is consumed here.
+      // ponytail: the live re-check inside dispatch and this claim/dispatch
+      // window are not atomic — a demotion in between can still run at the
+      // cleared role. Upgrade path: one short DB transaction/shared gate held
+      // across re-check, claim and dispatch admission.
 
       const outcome = await dispatch({
         runtime,
@@ -237,6 +246,8 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
         actorId: row.actor_id,
         turnKey: row.turn_key ?? undefined,
       },);
+
+      if (cancelled.has(row.id,)) { return; }
 
       await completeQueuedTurn(options.database, row.id, {
         resultMessageId: outcome.messageId,
@@ -259,11 +270,13 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
         ? error.code
         : HarnessQueueErrorCode.TurnFailed;
 
-      await failQueuedTurn(options.database, row.id, {
-        errorCode: code,
-        errorMessage: (error as Error).message,
-        finishedAt: new Date().toISOString(),
-      },);
+      if (!cancelled.has(row.id,)) {
+        await failQueuedTurn(options.database, row.id, {
+          errorCode: code,
+          errorMessage: (error as Error).message,
+          finishedAt: new Date().toISOString(),
+        },);
+      }
 
       log()?.warn("harness queued turn failed", {
         turnId: row.id,
@@ -274,6 +287,7 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
       },);
     } finally {
       inFlight.delete(row.profile,);
+      cancelled.delete(row.id,);
       void track(pump(),);
     }
   }
@@ -321,13 +335,59 @@ export function createHarnessTurnQueue(options: CreateHarnessTurnQueueOptions,):
 
     async cancel(turnId,) {
       const row = await getQueuedTurn(options.database, turnId,);
-      if (!row) { return { ok: false, code: "unknown_turn", }; }
-      if (row.status !== HarnessQueueTurnStatus.Queued) {
-        return { ok: false, code: "not_cancellable", };
+      if (!row) {
+        return { ok: false, code: "unknown_turn", reason: `queue turn "${turnId}" is unknown`, };
       }
 
-      const changed = await cancelQueuedTurn(options.database, turnId, new Date().toISOString(),);
-      return changed > 0 ? { ok: true, } : { ok: false, code: "not_cancellable", };
+      if (row.status === HarnessQueueTurnStatus.Queued) {
+        const changed = await cancelQueuedTurn(options.database, turnId, new Date().toISOString(),);
+        return changed > 0
+          ? { ok: true, }
+          : { ok: false, code: "not_cancellable", reason: "the turn was already claimed by a pump", };
+      }
+
+      if (row.status !== HarnessQueueTurnStatus.Running) {
+        return { ok: false, code: "not_cancellable", reason: `the turn is already ${row.status}`, };
+      }
+
+      if (![...inFlight.values(),].includes(row.id,)) {
+        return { ok: false, code: "not_cancellable", reason: "the running turn belongs to another instance", };
+      }
+
+      // The client already speaks `session/cancel`; this is its queue-side
+      // seam. A turn running on a factory-created (non-registry) connection
+      // has no signalable adapter on this instance and is refused, not faked.
+      const adapter = options.runtime()?.registry?.connection(row.profile,);
+      if (!adapter) {
+        return {
+          ok: false,
+          code: "not_cancellable",
+          reason: "the running turn has no live harness session on this instance",
+        };
+      }
+
+      try {
+        await adapter.cancel();
+      } catch (error) {
+        return {
+          ok: false,
+          code: "not_cancellable",
+          reason: `the harness refused cancel: ${(error as Error).message}`,
+        };
+      }
+
+      const changed = await cancelRunningTurn(options.database, {
+        id: row.id,
+        now: new Date().toISOString(),
+        reason: "cancelled by caller via ACP session/cancel",
+      },);
+
+      if (changed === 0) {
+        return { ok: false, code: "not_cancellable", reason: "the turn finished before the cancel could be recorded", };
+      }
+
+      cancelled.add(row.id,);
+      return { ok: true, };
     },
 
     async listTurns(listOptions = {},) {

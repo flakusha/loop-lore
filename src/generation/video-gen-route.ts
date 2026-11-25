@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 430
+// size-allow: 450
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).
@@ -25,6 +25,7 @@ import { getHonkboxCapabilities, isHonkboxFeatureEnabled, } from "../integration
 import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
+import { resolveStoredComfyUIModelPins, } from "../routes/comfyui-models";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
@@ -113,6 +114,12 @@ interface VideoGenBody {
   frames?: number;
   width?: number;
   height?: number;
+  /** Picked ComfyUI model roles (checkpoint alias `model`, plus diffusion). */
+  model?: string;
+  diffusion?: string;
+  clip?: string;
+  vae?: string;
+  clip_vision?: string;
   /** User template whose rendered body becomes the prompt. */
   templateId?: string;
   /** {{variable}} values for the template body. */
@@ -123,7 +130,7 @@ interface VideoGenBody {
   messageId?: string;
   /** Explicit per-request workflow; overrides the stored/config selection. */
   workflow?: string;
-  /** LoRA config when a structured caller supplies one — validated, not applied. */
+  /** LoRA config; validated then refused — the video path cannot apply LoRA. */
   lora?: unknown;
   /** Plain per-cut scenario for MiniMax FL/REF prompt conversion. */
   details?: string;
@@ -176,6 +183,17 @@ export async function handleVideoGeneration(
 
   if (!preflight.ok) {
     return Response.json({ error: preflight.error, status: 400, }, { status: 400, },);
+  }
+
+  // A dropped LoRA request must never return a LoRA-free clip as success.
+  // Video workflows have no LoRA application seam; refuse before any job is
+  // stored rather than silently ignoring the pick.
+  if (req.lora !== undefined) {
+    return Response.json({
+      error:
+        "LoRA was requested but the video generation path cannot apply it. Use image generation with a LoRA-capable ComfyUI workflow, or omit lora; no video job was submitted.",
+      status: 400,
+    }, { status: 400, },);
   }
 
   const db = database ?? getDatabase();
@@ -304,6 +322,14 @@ export async function handleVideoGeneration(
     ? providers
     : providers.map((provider,) => ({ ...provider, workflow, }));
 
+  // Persisted picks are per instance; resolving by name keeps failover
+  // candidates from borrowing another provider's model selection.
+  const modelPins = await resolveStoredComfyUIModelPins(
+    db,
+    userId,
+    [...new Set(requestProviders.map((provider,) => provider.name),),],
+  );
+
   // MiniMax H3 FL/REF exports need the Director heading/shot grammar: a plain
   // scenario would otherwise substitute into an unformatted prompt. Convert
   // through the shared AUX seam (one retry inside) and fail closed on failure.
@@ -352,6 +378,12 @@ export async function handleVideoGeneration(
     frames: req.frames,
     width: req.width,
     height: req.height,
+    model: req.model,
+    diffusion: req.diffusion,
+    clip: req.clip,
+    vae: req.vae,
+    clipVision: req.clip_vision,
+    modelPins,
   };
 
   // Deadline: the slowest candidate's generationTimeout. The quota gate

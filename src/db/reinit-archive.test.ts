@@ -20,6 +20,7 @@ import {
   MAX_AGE_DAYS,
   MAX_ARCHIVES,
   parseArchiveStamp,
+  parseRetentionLimit,
   pruneArchives,
 } from "./reinit-archive";
 
@@ -59,6 +60,17 @@ afterEach(() => {
     tmpDir = undefined;
   }
 },);
+
+describe("parseRetentionLimit", () => {
+  test("falls back only when unset; rejects empty, non-numeric and non-positive overrides", () => {
+    expect(parseRetentionLimit("X", undefined, 10,),).toBe(10,);
+    expect(parseRetentionLimit("X", "4", 10,),).toBe(4,);
+    expect(() => parseRetentionLimit("X", "", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "ten", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "0", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "-1", 10,)).toThrow("X must be a positive integer",);
+  });
+});
 
 describe("parseArchiveStamp", () => {
   test("parses the move-at timestamp from an archive name", () => {

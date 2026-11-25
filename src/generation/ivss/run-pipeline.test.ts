@@ -118,7 +118,7 @@ describe("IVSS ComfyUI run pipeline", () => {
     (loaded: Array<{ name: string; vars: Record<string, string | number | boolean> }>,): IvssWorkflowLoader =>
     async (name, vars,) => {
       loaded.push({ name, vars, },);
-      return { "1": { class_type: "StubSaveVideo", inputs: { prompt: vars.prompt, }, }, };
+      return { "1": { class_type: "SaveVideo", inputs: { prompt: vars.prompt, }, }, };
     };
 
   const immediateDispatch: IvssRunDispatch = async (opts,) => {
@@ -313,7 +313,7 @@ describe("IVSS ComfyUI run pipeline", () => {
   });
 
   const PLAIN_FRAGMENT_GRAPH: ComfyUIWorkflow = {
-    "1": { class_type: "StubSaveVideo", inputs: { prompt: "{{prompt}}", }, },
+    "1": { class_type: "SaveVideo", inputs: { prompt: "{{prompt}}", }, },
   };
 
   test("run without a captured latent fails loudly instead of a silent null", async () => {
@@ -902,5 +902,32 @@ describe("IVSS ComfyUI run pipeline", () => {
     if (result.ok) { throw new Error("expected deadline",); }
     expect(result.status,).toBe(504,);
     expect(result.error,).toContain("deadline",);
+  });
+
+  test("refuses a fragment pinned to a Note-only placeholder workflow", async () => {
+    const seeded = await seedScene();
+    const { client, calls, } = makeClient();
+    const noteOnly: IvssWorkflowLoader = async () => ({
+      "1": { class_type: "Note", inputs: { text: "placeholder", }, },
+    });
+
+    const handle = await startIvssFragmentRun({
+      database: seeded.db,
+      uploadDir,
+      ownerId: seeded.ownerId,
+      fragmentId: seeded.fragmentId,
+      client,
+      loadWorkflow: noteOnly,
+      dispatch: immediateDispatch,
+    },);
+
+    const result = await handle.done;
+
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.status,).toBe(422,);
+    expect(result.error,).toContain("no terminal sink",);
+    expect(result.error,).toContain("replace configs/workflows/",);
+    expect(calls.submitted,).toHaveLength(0,);
   });
 });

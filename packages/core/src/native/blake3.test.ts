@@ -95,7 +95,7 @@ describe("native status", () => {
     const { binaryPath, } = getNativeStatus();
     const supported = ["linux", "darwin", "win32",].includes(process.platform,);
     if (supported) {
-      expect(binaryPath,).toContain("target",);
+      expect(binaryPath,).toContain("loop_lore_native",);
     }
   });
 

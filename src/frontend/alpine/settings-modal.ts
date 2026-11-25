@@ -22,6 +22,8 @@ settingsModal = function() {
       clipRole: { candidates: string[]; selected: string | null };
       diffusionRole: { candidates: string[]; selected: string | null };
       vaeRole: { candidates: string[]; selected: string | null };
+      checkpointRole?: { candidates: string[]; selected: string | null };
+      clipVisionRole?: { candidates: string[]; selected: string | null };
     },
 
     /**
@@ -73,8 +75,16 @@ settingsModal = function() {
       const models = this.comfyModels;
       if (!models) { return; }
       const selection: Record<string, unknown> = { noVae: models.noVae, };
-      for (const role of ["clip", "diffusion", "vae",] as const) {
-        const selected = models[`${role}Role`].selected;
+      for (
+        const [role, view,] of [
+          ["clip", models.clipRole,],
+          ["diffusion", models.diffusionRole,],
+          ["vae", models.vaeRole,],
+          ["checkpoint", models.checkpointRole,],
+          ["clip_vision", models.clipVisionRole,],
+        ] as const
+      ) {
+        const selected = view?.selected;
         if (selected) { selection[role] = selected; }
       }
 

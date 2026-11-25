@@ -486,9 +486,9 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(engineCalls,).toBe(before,);
   });
 
-  test("valid graph and LoRA config still reach the engine", async () => {
+  test("valid LoRA config is refused before the engine", async () => {
     const before = engineCalls;
-    const { submitStatus, } = await submitAndPoll(
+    const res = await handleVideoGeneration(
       {
         prompt: "a clip",
         workflow: {
@@ -499,10 +499,11 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
       },
       db,
       "video-route-user",
+      "user",
     );
 
-    expect(submitStatus,).toBe(202,);
-    expect(engineCalls,).toBeGreaterThan(before,);
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
   });
 
   beforeEach(() => {

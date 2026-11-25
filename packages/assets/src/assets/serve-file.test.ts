@@ -3,6 +3,7 @@
 
 /** Tests for the asset file-serving helper. */
 import { describe, expect, test, } from "bun:test";
+import { AssetVisibility, } from "../../../../src/db/enums";
 import { serveFile, } from "./serve-file";
 
 import { join, } from "node:path";
@@ -25,13 +26,24 @@ describe("serveFile", () => {
     expect((await res.text()).length,).toBeGreaterThan(0,);
   });
 
-  test("honors custom cache control and extra headers", async () => {
+  test("private and shared assets are never cached by shared caches", async () => {
+    const privateRes = await serveFile(EXISTING, "application/json", {
+      visibility: AssetVisibility.Private,
+    },);
+    const sharedRes = await serveFile(EXISTING, "application/json", {
+      visibility: AssetVisibility.Shared,
+    },);
+    expect(privateRes.headers.get("Cache-Control",),).toBe("private, no-store",);
+    expect(sharedRes.headers.get("Cache-Control",),).toBe("private, no-store",);
+  });
+
+  test("public assets keep immutable caching and honor extra headers", async () => {
     const res = await serveFile(EXISTING, "application/json", {
-      cacheControl: "no-store",
+      visibility: AssetVisibility.Public,
       extraHeaders: { "X-Custom": "yes", },
     },);
 
-    expect(res.headers.get("Cache-Control",),).toBe("no-store",);
+    expect(res.headers.get("Cache-Control",),).toMatch(/public, max-age=\d+, immutable/,);
     expect(res.headers.get("X-Custom",),).toBe("yes",);
   });
 });

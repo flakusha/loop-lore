@@ -21,7 +21,7 @@ import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import type { ContentEncoding, } from "../../db/enums";
-import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { uid, } from "../../utils";
 import { ErrorResponse, MessageForwardBody, } from "../../validation/schemas";
 import { Id, } from "../../validation/schemas/primitives";
@@ -88,8 +88,12 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonCreated({ id: existingId, droppedAttachments: 0, },);
         }
 
-        const filteredContent = filterProfanity(plaintext,);
-        const hasProfanity = containsProfanity(plaintext,);
+        const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+        const { text: filteredContent, hasProfanity, } = applyProfanityWritePolicy(
+          profanityEnabled,
+          plaintext,
+        );
+
         await flagNsfwUserMessage(database, actorId, targetChatId, plaintext,);
 
         const links = await database
@@ -164,11 +168,8 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           throw err;
         }
 
-        if (hasProfanity) {
-          const profanityFilter = (await getConfigValue(database, "profanity_filter",)) === "true";
-          if (profanityFilter) {
-            await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
-          }
+        if (hasProfanity && profanityEnabled) {
+          await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
         }
 
         if (forwardable.length > 0) {

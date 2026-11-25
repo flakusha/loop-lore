@@ -3,7 +3,7 @@
 
 # TASK: RenPy export core plugin route (versioned path)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export

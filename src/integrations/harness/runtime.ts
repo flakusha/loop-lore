@@ -121,7 +121,8 @@ const MAX_READ_BYTES = 1024 * 1024;
  * @param root - the sandbox root the read is confined to
  * @param path - the path the agent asked for
  * @returns the file's text
- * @throws {JsonRpcRequestError} when the path escapes the root, names a secret file, or the read fails
+ * @throws {JsonRpcRequestError} when the path escapes the root, names a secret
+ *   file, is over the 1 MiB read cap, or the read fails
  */
 export async function readSandboxedText(root: string, path: string,): Promise<string> {
   if (isSecretBasename(path,)) {
@@ -148,17 +149,26 @@ export async function readSandboxedText(root: string, path: string,): Promise<st
   }
 
   try {
-    // ponytail: the reader answers the whole file, capped at 1 MiB (the
-    // outer bound); the adapter slices the requested line range out of it.
+    // A silent 1 MiB slice would hand the agent a truncated file that looks
+    // complete; refuse oversized reads so the agent can narrow its request.
     const handle = await open(resolved, "r",);
     try {
+      const { size, } = await handle.stat();
+      if (size > MAX_READ_BYTES) {
+        throw new JsonRpcRequestError(
+          `the requested file is ${size} bytes, over the ${MAX_READ_BYTES}-byte fs/read_text_file limit`,
+          -32000,
+        );
+      }
+
       const buffer = Buffer.alloc(MAX_READ_BYTES,);
       const { bytesRead, } = await handle.read(buffer, 0, MAX_READ_BYTES, 0,);
       return buffer.toString("utf8", 0, bytesRead,);
     } finally {
       await handle.close();
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof JsonRpcRequestError) { throw error; }
     log()?.warn("harness fs read failed", { root, path, },);
     throw new JsonRpcRequestError("the requested file could not be read", -32000,);
   }

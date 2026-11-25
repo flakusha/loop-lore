@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { LoRAConfig, } from "../../generation/lora/types";
+import type { ComfyUIModelOverrides, } from "../providers/comfyui-model-discovery";
 /**
  * Reference image for the ComfyUI `img2img` workflow. ComfyUI-path-only —
  * other providers ignore it. The caller resolves and authorizes the owning
@@ -42,11 +43,15 @@ export interface ImageGenOptions {
   workflow?: string;
   /** Optional LoRAs to inject into the generation pipeline. */
   lora?: LoRAConfig[];
-  /** Picked model roles; fall back to the provider's config pins. */
+  /** Picked model roles; fall back to persisted pins then config pins. */
   model?: string;
+  /** Diffusion/UNET pick, distinct from the checkpoint `model` role. */
+  diffusion?: string;
   clip?: string;
   vae?: string;
   clipVision?: string;
+  /** Persisted pins keyed by provider name; request fields win over these. */
+  modelPins?: Record<string, ComfyUIModelOverrides>;
   /** Optional ComfyUI init/reference image for the img2img workflow. */
   initImage?: InitImage;
   /** BYO API key for this request (resolved user key). When set it overrides

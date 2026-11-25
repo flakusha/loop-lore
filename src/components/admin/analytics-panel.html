@@ -413,6 +413,35 @@
           </template>
         </tbody>
       </table>
+      <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Generation Events</h3>
+      <div
+        x-show="analyticsModelEvents.length === 0"
+        class="empty-state"
+        style="padding: var(--space-4); font-size: 13px"
+      >
+        No generation events recorded
+      </div>
+      <table
+        x-show="analyticsModelEvents.length > 0"
+        class="admin-table"
+        data-testid="analytics-model-events"
+        style="margin-bottom: var(--space-6)"
+      >
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody aria-busy="true">
+          <template x-for="e in analyticsModelEvents" :key="e.event_type">
+            <tr>
+              <td x-text="e.event_type"></td>
+              <td x-text="e.count"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
       <h3
         style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)"
         x-text="t('admin.knowledgeGraph')"

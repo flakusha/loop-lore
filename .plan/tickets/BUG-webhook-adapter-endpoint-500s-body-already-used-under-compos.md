@@ -3,7 +3,7 @@
 
 # BUG: Webhook adapter endpoint 500s Body already used under composed v1 barrel
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

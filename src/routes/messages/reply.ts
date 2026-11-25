@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { type Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { AsyncStore, } from "../../async/store";
 import { triggerMessageTranslation, } from "../../chat/message-translations";
@@ -23,7 +24,7 @@ import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { checkPaused, } from "../../group-chat/turn-selector";
-import { filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import {
@@ -129,7 +130,11 @@ export async function maybeAutoReply(
       // is always the persisted row — no in-place auto-translate replacement
       // (`assistantContent = outbound.text` is gone). Translation happens
       // after the store as an additive variant row, fire-and-forget.
-      const assistantContent = filterProfanity(assistantResponse.content,) ?? "";
+      const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+      const assistantContent = applyProfanityWritePolicy(
+        profanityEnabled,
+        assistantResponse.content,
+      ).text;
 
       let replyStoredContent = assistantContent;
       const replyEncoding = "identity";

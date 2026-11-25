@@ -3,7 +3,7 @@
 
 # BUG: story escalate action posts /story/escalate but route is /gm/escalate
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

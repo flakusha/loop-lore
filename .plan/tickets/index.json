@@ -207,7 +207,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-ADDLOOTENTRY-ACCEPTS-NEGATIVE-WEIGHTS-SILENTLY-CORRUPTING-TH.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-ADDXP-ACCEPTS-NEGATIVE-XP-PRODUCING-NAN-LEVEL-STORED-IN-DB": {
     "hash": "8924253",
@@ -3128,7 +3128,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-config-schema-generators-exit-1-silently.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
     "epic": "epic-nsfw-integration-gaps",
@@ -3236,7 +3236,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-CONTEXT-WINDOW-REORDERS-MESSAGES-SHARING-AN-IDENTICAL-CREATE.md",
-    "status": "open"
+    "status": "Wontfix"
   },
   "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
     "epic": "",
@@ -3353,7 +3353,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "epic": "",
@@ -3432,7 +3432,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-csrf-gate-rejects-the-tui-s-bearer-only-posts-so-every-tui-w.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES": {
     "epic": "epic-i18n",
@@ -6538,7 +6538,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-keyphrase-forced-recall-bypasses-the-memory-token-budget.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-KYSELY-ANY-TYPE-SAFETY-GAPS-IN-DB-LAYER": {
     "hash": "6738d32",
@@ -6798,7 +6798,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-LORA-DISCOVER-MANAGE-ROUTES-LACK-ADMIN-GUARD.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-LORE-CONSISTENCY-SCORER-ENTITY-MATCHING-BRANCH-UNREACHABLE-D": {
     "hash": "9f7d4ef",
@@ -6960,7 +6960,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-injection-cooldown-never-fires-in-production.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
@@ -8449,7 +8449,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-plugin-approval-must-be-keyed-by-plugin-name-and-origin.md",
-    "status": "open",
+    "status": "Done",
     "git_issue": "739f614"
   },
   "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR": {
@@ -8647,7 +8647,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-prune-promoted-messages-never-reach-the-memory-store.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
     "hash": "910710d",
@@ -8949,7 +8949,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-reduced-motion-global-floor-must-become-per-rule-handling.md",
-    "status": "open",
+    "status": "Done",
     "git_issue": "735a0ce"
   },
   "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS": {
@@ -9094,7 +9094,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-repair-telemetry-analytics-ui-contracts.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT": {
     "epic": "epic-nsfw-moderation-priority",
@@ -9507,7 +9507,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-SEED-ADOPTION-CAN-ADOPT-A-USER-S-OWN-ACTOR-ROW.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
     "hash": "d71ac02",
@@ -9685,7 +9685,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-setup-state-tls-check-uses-unreanchored-cert-paths.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -9998,7 +9998,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-stale-hashed-bundles-in-dist-public-make-the-served-page-run.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT": {
     "epic": "",
@@ -10122,7 +10122,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-story-escalate-action-posts-story-escalate-but-route-is-gm-e.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
     "epic": "",
@@ -10174,7 +10174,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-STORY-POINT-EARN-SPEND-API-RETURNS-BOGUS-LEDGER-ID.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
     "hash": "9e05192",
@@ -10369,7 +10369,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-telemetry-retention-days-must-validate-nonpositive-and-non-numeric-input.md",
-    "status": "open",
+    "status": "Done",
     "git_issue": "2387a37"
   },
   "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS": {
@@ -11143,7 +11143,7 @@
     "label": "bug",
     "priority": "critical",
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
-    "status": "fixed-in-worktree",
+    "status": "Done",
     "tags": [],
     "title": "vn-choices IDOR guard does not compile (merge `3ab26ccd`)",
     "type": "BUG"
@@ -11172,7 +11172,7 @@
     "epic": "epic-review-20261025-api-governance-perimeter",
     "tags": [],
     "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md",
-    "status": "Not Started"
+    "status": "Done"
   },
   "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES": {
     "epic": "",
@@ -11225,7 +11225,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-webhook-adapter-endpoint-500s-body-already-used-under-compos.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
     "hash": "ebafd77",
@@ -12722,7 +12722,7 @@
       "3d",
       "gallery"
     ],
-    "source": ".plan/tickets/epic-asset-generation-metadata.md",
+    "source": ".plan/epics/epic-asset-generation-metadata.md",
     "status": "Not Started"
   },
   "EPIC-ASSET-LINEAGE-PROVENANCE": {
@@ -12741,7 +12741,7 @@
       "hash",
       "gallery"
     ],
-    "source": ".plan/tickets/epic-asset-lineage-provenance.md",
+    "source": ".plan/epics/epic-asset-lineage-provenance.md",
     "status": "Not Started"
   },
   "EPIC-ASSET-PLATFORM-CAPABILITIES": {
@@ -13217,7 +13217,7 @@
       "websocket",
       "bun"
     ],
-    "source": ".plan/tickets/epic-browser-editor-support.md",
+    "source": ".plan/epics/epic-browser-editor-support.md",
     "status": "Not Started"
   },
   "EPIC-BYOK-API-KEYS": {
@@ -15552,7 +15552,7 @@
       "manifest",
       "packaging"
     ],
-    "source": ".plan/tickets/epic-game-asset-pipeline-export.md",
+    "source": ".plan/epics/epic-game-asset-pipeline-export.md",
     "status": "Not Started"
   },
   "EPIC-GAME-ENGINE-SDKS": {
@@ -15907,7 +15907,7 @@
       "collaboration",
       "browser-editors"
     ],
-    "source": ".plan/tickets/epic-image-video-scenario-studio.md",
+    "source": ".plan/epics/epic-image-video-scenario-studio.md",
     "status": "Not Started"
   },
   "EPIC-IMMERSION-CONSISTENCY-GATE": {
@@ -18717,7 +18717,7 @@
       "reuse",
       "propagation"
     ],
-    "source": ".plan/tickets/epic-scene-environment-world-generation.md",
+    "source": ".plan/epics/epic-scene-environment-world-generation.md",
     "status": "Not Started"
   },
   "EPIC-SCHEMA": {
@@ -19442,7 +19442,7 @@
       "assets",
       "assistant"
     ],
-    "source": ".plan/tickets/epic-view-set-generation.md",
+    "source": ".plan/epics/epic-view-set-generation.md",
     "status": "Not Started"
   },
   "EPIC-VISUAL-NOVEL-MODE": {
@@ -20122,7 +20122,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-065-template-system.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "# Template System — Unified Architecture Spec",
     "type": "FEAT"
@@ -23393,7 +23393,7 @@
     "label": "feat",
     "priority": "high",
     "source": ".plan/tickets/FEAT-npc-navigation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "NPC Navigation",
     "type": "FEAT"
@@ -24209,7 +24209,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-time-scale.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Time Scale",
     "type": "FEAT"
@@ -32947,7 +32947,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "testing",
       "e2e",
@@ -38054,7 +38054,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Coverage gate: true multi-worker fanout investigation",
     "type": "TASK"
@@ -39360,7 +39360,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-dbrt-validation-gaps.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "DB Roundtrip Tests — Validate Inserted Values",
     "type": "TASK"
@@ -39799,7 +39799,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE": {
     "hash": "041ce61",
@@ -40211,7 +40211,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -40228,7 +40228,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-profanity-filter.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -40245,7 +40245,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -44603,7 +44603,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-frontend-story-mode-ui.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Frontend Story Mode UI",
     "type": "TASK"
@@ -46356,7 +46356,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-default-profile-alias.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-HARNESS-DELEGATED-PERMISSION-GRANTS": {
     "hash": "176912d",
@@ -46420,7 +46420,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-exec-log.md",
-    "status": "Not Started",
+    "status": "Done",
     "git_issue": "4879281"
   },
   "TASK-HARNESS-EXECUTIONS-JSONL-QUERY-SIDECAR-OFFSET-INDEX-BEHIND-E": {
@@ -46698,7 +46698,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-profile-transport-field.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-HARNESS-PROGRAMMATIC-API": {
     "hash": "a893dc4",
@@ -47792,7 +47792,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-i18n-template-strings.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "i18n Template String Replacement",
     "type": "TASK"
@@ -52864,7 +52864,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-mobile-touch-gestures.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Mobile Touch Gestures",
     "type": "TASK"
@@ -56906,7 +56906,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Composer \"improve my prompt\" UI affordance",
     "type": "TASK"
@@ -56919,7 +56919,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-improve-shared-service.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Prompt improvement shared service (gradation levels)",
     "type": "TASK"
@@ -56932,7 +56932,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-injection-two-step-validation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Two-step prompt/message injection validation",
     "type": "TASK"
@@ -59030,7 +59030,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md",
-    "status": "⬜ Not Started",
+    "status": "Done",
     "tags": [
       "watchdog",
       "supervisor",
@@ -59812,7 +59812,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-core-plugin-route-versioned-path.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-RENPY-EXPORT-MODEL-GATHER-FROM-DB": {
     "hash": "dc2e726",
@@ -63324,7 +63324,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-story-alpine.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "story",
       "frontend",

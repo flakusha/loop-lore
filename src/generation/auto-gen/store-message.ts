@@ -8,6 +8,7 @@
  * generated assistant message.
  */
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
 import type { Config, } from "../../config/schema";
 import {
   ContentEncoding,
@@ -20,6 +21,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { extractAndStore, } from "../../game-state";
 import { getLogger, } from "../../logger";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import {
@@ -111,7 +113,10 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
   // BUG-regex-transform-runs-at-store-time-not-render-time: transforms
   // moved to render-time (resolveMessageContent). Stored text is the raw
   // LLM output.
-  const storedText = content;
+  // The same `profanity_filter` flag that governs user text governs
+  // generated assistant text: off stores the raw LLM output, on censors it.
+  const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+  const storedText = applyProfanityWritePolicy(profanityEnabled, content,).text;
 
   // ── Encryption ────────────────────────────────────────────────
   const smk = d.getSmk() ?? undefined;

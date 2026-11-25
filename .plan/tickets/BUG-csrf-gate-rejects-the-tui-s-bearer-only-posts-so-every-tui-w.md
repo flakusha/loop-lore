@@ -3,7 +3,7 @@
 
 # BUG: CSRF gate rejects the TUI's Bearer-only POSTs, so every TUI write 403s in multi-user mode
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

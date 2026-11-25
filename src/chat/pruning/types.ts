@@ -26,6 +26,8 @@ export interface MessageScore {
   relevanceScore: number;
   importanceScore: number;
   combinedScore: number;
+  /** Combined score cleared the configured keepThreshold. */
+  shouldKeep: boolean;
   shouldPromote: boolean;
   shouldPrune: boolean;
   reasons: string[];

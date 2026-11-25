@@ -3,7 +3,7 @@
 
 # Template System — Unified Architecture Spec
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Reconciliation pass 2026-10-01 — Phases 1–4 shipped (DB table, service, admin routes, image wiring). Public template routes shipped at `/api/v1/templates` (flat, not per-modality nested). LLM static-content `{{var}}` substitution done in `template-render.ts:179-197`; user config (`llm.example.yaml`) variable substitution is not wired — tracked in `TASK-template-unified-variable-engine.md`. Video/audio scaffolds shipped 2026-10-01 (registries + `/api/templates/video|audio` routes; apply 501 until providers land). Migration path's `parts/` subdirectory reference is stale (actual: flat `NNN_name.ts` files in `src/db/migrations/`).
 
 **Priority:** medium

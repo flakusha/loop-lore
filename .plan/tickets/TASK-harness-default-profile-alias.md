@@ -3,7 +3,7 @@
 
 # TASK: harness default profile alias
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-harness-integration

@@ -3,7 +3,7 @@
 
 # BUG: Memory injection cooldown never fires in production
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-memory-knowledge-systems

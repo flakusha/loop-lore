@@ -366,7 +366,7 @@ describe("age-gate controller", () => {
     test.each<[string, Record<string, unknown>, string, unknown,]>([
       ["updates enabled flag", { enabled: true, }, "enabled", true,],
       ["updates minimumAge", { minimumAge: 21, }, "minimumAge", 21,],
-      ["updates mode", { mode: AgeGateMode.Verification, }, "mode", AgeGateMode.Verification,],
+      ["updates mode", { mode: AgeGateMode.None, }, "mode", AgeGateMode.None,],
     ],)("%s", async (_name, body, key, value,) => {
       const res = await handleAdminUpdateConfig(mockDb, "admin", body,);
       expect(res.status,).toBe(200,);
@@ -378,14 +378,23 @@ describe("age-gate controller", () => {
       const res = await handleAdminUpdateConfig(mockDb, "admin", {
         enabled: true,
         minimumAge: 21,
-        mode: AgeGateMode.Verification,
+        mode: AgeGateMode.SelfDeclaration,
       },);
 
       expect(res.status,).toBe(200,);
       const data = (await res.json()) as { enabled: boolean; minimumAge: number; mode: AgeGateMode };
       expect(data.enabled,).toBe(true,);
       expect(data.minimumAge,).toBe(21,);
-      expect(data.mode,).toBe(AgeGateMode.Verification,);
+      expect(data.mode,).toBe(AgeGateMode.SelfDeclaration,);
+    });
+
+    test("rejects verification mode with a clear error", async () => {
+      const res = await handleAdminUpdateConfig(mockDb, "admin", {
+        mode: AgeGateMode.Verification,
+      },);
+
+      expect(res.status,).toBe(400,);
+      expect(await res.text(),).toContain("verification mode is not supported",);
     });
   });
 
@@ -487,6 +496,26 @@ describe("admin age-gate config persistence (RA-13)", () => {
       expect(applied.enabled,).toBe(true,);
       expect(applied.minimumAge,).toBe(21,);
       expect(applied.mode,).toBe(AgeGateMode.None,);
+    } finally {
+      await tdb.db.destroy();
+    }
+  });
+
+  test("ignores a persisted verification mode instead of self-declaring", async () => {
+    createLogger({ level: "error", },);
+    const tdb = await createTestDb();
+    try {
+      await tdb.db.insertInto("system_config",).values({
+        key: "ageGate.mode",
+        value: AgeGateMode.Verification,
+        description: "unsupported",
+      },).execute();
+
+      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+
+      await applyStoredAgeGateConfig(tdb.db,);
+
+      expect(getRuntimeConfig().mode,).toBe(AgeGateMode.SelfDeclaration,);
     } finally {
       await tdb.db.destroy();
     }

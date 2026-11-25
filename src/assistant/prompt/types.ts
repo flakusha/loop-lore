@@ -228,6 +228,10 @@ export interface AssembleContext {
    * `memorySection` end-to-end run is deterministic instead of ~25-35% flaky.
    */
   randomFn?: () => number;
+  /** Current turn number for injection cooldowns. Derived from the chat when omitted. */
+  turnNumber?: number;
+  /** memoryId → last injected turn. Derived from the audit log when omitted. */
+  injectionHistory?: ReadonlyMap<string, number>;
   /**
    * Single-assembly injection gate (epic-hidden-carriage-context). Present
    * only when the chat opted into the hidden carriage or an explicit

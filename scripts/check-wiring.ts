@@ -63,22 +63,30 @@ const mountSource = [registerPlugins, elysiaApp, ...v1SurfaceSources,].join("\n"
 // `src/routes/<name>/index.ts` that exports a `*Routes` factory.
 const routeFileGlob = new Glob("src/routes/*.ts",);
 const routeDirGlob = new Glob("src/routes/*/index.ts",);
+// Canonical packages own route factories too (assets, image-edit). They are
+// composed into src/routes/v1/*, which is part of mountSource below.
+const packageRouteGlobs = [
+  new Glob("packages/*/src/**/*routes.ts",),
+  new Glob("packages/*/src/**/controller.ts",),
+];
 
 const routeFactories = new Set<string>();
 
-async function collectRouteFactories() {
-  for await (const file of routeFileGlob.scan({ cwd: ROOT, },)) {
+async function collectFactories(glob: Glob,): Promise<void> {
+  for await (const file of glob.scan({ cwd: ROOT, },)) {
     if (file.includes(".test.",)) { continue; }
     const text = await Bun.file(ROOT + "/" + file,).text();
     for (const m of text.matchAll(/export (?:function|const) ([a-zA-Z]+Routes)/g,)) {
       routeFactories.add(m[1],);
     }
   }
-  for await (const file of routeDirGlob.scan({ cwd: ROOT, },)) {
-    const text = await Bun.file(ROOT + "/" + file,).text();
-    for (const m of text.matchAll(/export (?:function|const) ([a-zA-Z]+Routes)/g,)) {
-      routeFactories.add(m[1],);
-    }
+}
+
+async function collectRouteFactories() {
+  await collectFactories(routeFileGlob,);
+  await collectFactories(routeDirGlob,);
+  for (const glob of packageRouteGlobs) {
+    await collectFactories(glob,);
   }
 }
 
@@ -168,8 +176,10 @@ errors.push(...await checkPluginWiring(ROOT,),);
 // reference. Many pre-existing routes are exercised via parent-barrel or
 // sub-route tests, so this is reported as a warning, not a gate failure.
 const testGlob = new Glob("src/routes/**/*.test.ts",);
+const packageTestGlob = new Glob("packages/**/*.test.ts",);
 const testFiles = new Set<string>();
 for await (const f of testGlob.scan({ cwd: ROOT, },)) { testFiles.add(f,); }
+for await (const f of packageTestGlob.scan({ cwd: ROOT, },)) { testFiles.add(f,); }
 
 const warnings: string[] = [];
 for (const factory of routeFactories) {

@@ -31,6 +31,7 @@ import {
   type InsertQueuedTurn,
   insertQueuedTurns,
   listQueuedTurns,
+  MAX_QUEUE_LIMIT,
   type QueuedTurnRow,
   recoverInterruptedTurns,
 } from "./queue-store";
@@ -347,6 +348,13 @@ describe("listQueuedTurns", () => {
     ],);
 
     expect((await listQueuedTurns(db, { limit: 2, },)).map((row,) => row.id),).toEqual(["t3", "t2",],);
+  });
+
+  it("caps an oversized page at the hard limit", async () => {
+    await insertQueuedTurns(db, Array.from({ length: MAX_QUEUE_LIMIT + 5, }, (_, i,) => turn(`cap-${i}`,),),);
+
+    const rows = await listQueuedTurns(db, { limit: 999_999, },);
+    expect(rows,).toHaveLength(MAX_QUEUE_LIMIT,);
   });
 
   it("returns an empty list for an empty queue", async () => {

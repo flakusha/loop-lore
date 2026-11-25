@@ -189,6 +189,47 @@ describe("generateVideoWithFailover — run outcomes (injected loader)", () => {
       expect(outcome.error,).toContain("timed out",);
     },);
   });
+
+  test("threads persisted model pins into workflow variables", async () => {
+    let captured: { prompt: string; [key: string]: unknown } | undefined;
+    const pinLoader = async (
+      _name: string,
+      vars: { prompt: string; [key: string]: unknown },
+    ): Promise<typeof LOADED_WORKFLOW> => {
+      captured = vars;
+      return LOADED_WORKFLOW;
+    };
+
+    await withMockFetch(happyFetch("p1", "out.mp4",), async () => {
+      const outcome = await generateVideoWithFailover(
+        [provider("v1", "txt2video", { models: { clip: "config-clip.safetensors", }, },),],
+        {
+          ...REQUEST,
+          modelPins: {
+            v1: {
+              checkpoint: "pinned.ckpt",
+              diffusion: "h3.gguf",
+              clip: "user-clip.safetensors",
+              vae: "user-vae.safetensors",
+              clip_vision: "vision.safetensors",
+            },
+          },
+        },
+        undefined,
+        pinLoader,
+      );
+
+      expect(outcome.ok,).toBe(true,);
+    },);
+
+    expect(captured,).toMatchObject({
+      model: "pinned.ckpt",
+      diffusion: "h3.gguf",
+      clip: "user-clip.safetensors",
+      vae: "user-vae.safetensors",
+      clip_vision: "vision.safetensors",
+    },);
+  });
 });
 
 describe("generateVideoWithFailover — BYO keys", () => {

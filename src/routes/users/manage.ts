@@ -22,6 +22,7 @@ import {
   UserIdParams,
   UserProfileUpdateBody,
 } from "../../validation/schemas";
+import { wouldRemoveLastAdmin, } from "../admin/users";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
@@ -216,6 +217,13 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             return forbidden();
           }
 
+          if (await wouldRemoveLastAdmin(opts.database, targetId,)) {
+            return jsonError({
+              message: "Cannot delete the last admin account",
+              status: HttpStatus.BadRequest,
+            },);
+          }
+
           await opts.database.deleteFrom("users",).where("id", "=", targetId,).execute();
 
           return jsonNoContent();
@@ -224,6 +232,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           params: UserIdParams,
           response: {
             204: t.Void(),
+            400: ErrorResponse,
             401: ErrorResponse,
             403: ErrorResponse,
           },

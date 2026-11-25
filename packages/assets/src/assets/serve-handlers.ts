@@ -220,8 +220,10 @@ export async function handleServeCompressed({
 
   // Fall back to raw if no compressed variant exists
   if (!fullPath) {
-    return await serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
+    return await serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type, {
+      visibility: resolved.asset.visibility,
+    },);
   }
 
-  return await serveFile(fullPath, "image/webp",);
+  return await serveFile(fullPath, "image/webp", { visibility: resolved.asset.visibility, },);
 }

@@ -118,6 +118,44 @@ describe("trade routes (auth-gated)", () => {
     expect(res.status,).toBe(403,);
   });
 
+  test("offer creation rejected for foreign seller actor", async () => {
+    const foreignUserId = uid();
+    await insertUsers(
+      db,
+      `foreign-seller-${foreignUserId}`,
+      "Foreign Seller Owner",
+      { id: foreignUserId, role: "solo", status: "active", settings: "{}", } as never,
+    );
+
+    const foreignSeller = uid();
+    await insertActors(db, "Foreign Seller", { id: foreignSeller, user_id: foreignUserId, } as never,);
+
+    const before = await db.selectFrom("crafting_orders",)
+      .select((eb,) => eb.fn.count<number>("id",).as("count",))
+      .executeTakeFirst();
+
+    const app = authedApp();
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/trade/offers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          buyerActorId: buyer,
+          sellerActorId: foreignSeller,
+          buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+          price: 1,
+        },),
+      },),
+    );
+
+    expect(res.status,).toBe(403,);
+    const after = await db.selectFrom("crafting_orders",)
+      .select((eb,) => eb.fn.count<number>("id",).as("count",))
+      .executeTakeFirst();
+
+    expect(after?.count,).toBe(before?.count,);
+  });
+
   test("execute trades items and gold atomically", async () => {
     const app = authedApp();
     const res = await app.handle(

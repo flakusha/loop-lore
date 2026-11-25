@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 320
 
 /**
  * MiniMax H3 FL/REF prompt-format conversion.
@@ -150,6 +151,102 @@ export function minimaxModeForWorkflow(workflow: string | undefined,): MinimaxMo
   ) { return "fl2va"; }
 
   return null;
+}
+
+/** One shot's text for the shared H3 grammar. */
+export interface MinimaxGrammarShot {
+  description: string;
+  /** Offset from scene start, in ms; used for cuts after shot 1. */
+  startMs: number;
+  narration?: string;
+  camera?: string;
+}
+
+/** Structured input to the shared, pure H3 grammar assembler. */
+export interface MinimaxGrammarInput {
+  mode: MinimaxMode;
+  shots: readonly MinimaxGrammarShot[];
+  style?: string | null;
+  soundscape?: string | null;
+  music?: string | null;
+  references?: string[];
+  durationSeconds?: number;
+}
+
+export type MinimaxGrammarResult =
+  | { ok: true; prompt: string }
+  | { ok: false; missing: string[] };
+
+/** @param ms - scene offset in ms @returns mm:ss.mmm cut stamp */
+function grammarCut(ms: number,): string {
+  const safe = Number.isFinite(ms,) && ms > 0 ? Math.floor(ms,) : 0;
+  const minutes = Math.floor(safe / 60_000,);
+  const seconds = Math.floor((safe % 60_000) / 1_000,);
+  return `${String(minutes,).padStart(2, "0",)}:${String(seconds,).padStart(2, "0",)}.${
+    String(safe % 1_000,).padStart(3, "0",)
+  }`;
+}
+
+/**
+ * Assemble the one FL/REF grammar shared by the video route and IVSS
+ * fragments, validated by the same pure validator as AUX output.
+ * @param input - mode, shots, optional sections and endpoint duration
+ * @returns the valid prompt, or the failed checks for a caller to repair
+ */
+export function assembleMinimaxPrompt(input: MinimaxGrammarInput,): MinimaxGrammarResult {
+  const shotLines = input.shots.map((shot, index,) => {
+    const head = index === 0
+      ? `[Shot 1] ${shot.description.trim()}`
+      : `[Shot ${index + 1}] At ${grammarCut(shot.startMs,)} — ${shot.description.trim()}`;
+
+    const lines = [head,];
+    if (shot.narration?.trim()) { lines.push(`Narration: ${shot.narration.trim()}`,); }
+    if (shot.camera?.trim()) { lines.push(`Camera: ${shot.camera.trim()}`,); }
+    return lines.join("\n",);
+  },);
+
+  const soundscape = input.soundscape?.trim() || "N/A";
+  const music = input.music?.trim() || "N/A";
+
+  let prompt: string;
+  if (input.mode === "fl2va") {
+    const alignment =
+      `How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; ` +
+      `Picture 2 (from Shot ${input.shots.length}) aligns with the ${
+        (input.durationSeconds ?? 0).toFixed(2,)
+      }-second mark of the target video.`;
+
+    const style = input.style?.trim();
+    prompt = [
+      alignment,
+      "",
+      `integrated_multimodal_description:\n${style ? `${style}\n\n` : ""}${shotLines.join("\n\n",)}`,
+      `overall_soundscape:\n${soundscape}`,
+      `non_diegetic_music:\n${music}`,
+    ].join("\n\n",);
+  } else {
+    const labels = input.references?.length
+      ? input.references.map((ref, index,) => `<Subject ${index + 1}> is shown in ${ref}.`).join("\n",)
+      : "N/A";
+
+    const retention = input.references?.length
+      ? input.references.map((_ref, index,) => `<Subject ${index + 1}> (appears in [Shot 1]): fully_preserved`).join(
+        "\n",
+      )
+      : "N/A";
+
+    prompt = [
+      `subject_definitions:\n${labels}`,
+      `summary:\n${input.shots[0]?.description.trim() ?? "N/A"}`,
+      `retention_analysis:\n${retention}`,
+      `detailed_description:\n${shotLines.join("\n\n",)}`,
+      `overall_soundscape:\n${soundscape}`,
+      `non_diegetic_music:\n${music}`,
+    ].join("\n\n",);
+  }
+
+  const check = validateMinimaxPrompt(prompt, input.mode, { references: input.references, },);
+  return check.ok ? { ok: true, prompt, } : { ok: false, missing: check.missing, };
 }
 
 export interface MinimaxFormatInput {

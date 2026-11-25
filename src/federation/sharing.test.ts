@@ -150,8 +150,8 @@ describe("reservation lifecycle", () => {
       sizeBytes: 12,
     },);
 
-    await advanceReservation(db, id, "pushed",);
-    await advanceReservation(db, id, "confirmed",);
+    await advanceReservation(db, { id, next: "pushed", },);
+    await advanceReservation(db, { id, next: "confirmed", },);
     const row = await db
       .selectFrom("mesh_reservations",)
       .select(["state",],)
@@ -170,7 +170,7 @@ describe("reservation lifecycle", () => {
       sizeBytes: 1,
     },);
 
-    await expect(advanceReservation(db, id, "confirmed",),).rejects.toThrow(
+    await expect(advanceReservation(db, { id, next: "confirmed", },),).rejects.toThrow(
       "illegal reservation transition",
     );
   });
@@ -227,6 +227,43 @@ describe("delivery", () => {
       .executeTakeFirstOrThrow();
 
     expect(row.state,).toBe("confirmed",);
+  });
+
+  test("an envelope that differs from its reservation is rejected", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    await upsertPeer(db, { origin: "https://c.example", state: "trusted", },);
+    const mismatches = [
+      { senderOrigin: "https://c.example", hash: null, extraBytes: 0, },
+      { senderOrigin: "https://b.example", hash: "f".repeat(64,), extraBytes: 0, },
+      { senderOrigin: "https://b.example", hash: null, extraBytes: 1, },
+    ];
+
+    for (const [index, input,] of mismatches.entries()) {
+      const envelope = await sealed({
+        id: `mismatch-${index}`,
+        origin: "https://b.example",
+        clock: 5,
+      },);
+
+      const reservationId = await createInboundReservation(db, {
+        senderOrigin: input.senderOrigin,
+        contentHash: input.hash ?? envelope.hash,
+        sizeBytes: envelope.size + input.extraBytes,
+      },);
+
+      await expect(
+        receiveDelivery(db, envelope, cipher, { reservationId, },),
+      ).rejects.toThrow("reservation mismatch",);
+
+      const row = await db
+        .selectFrom("mesh_reservations",)
+        .select(["state",],)
+        .where("id", "=", reservationId,)
+        .executeTakeFirstOrThrow();
+
+      expect(row.state,).toBe("reserved",);
+    }
   });
 
   test("lower clock is stale; tampered hash throws", async () => {

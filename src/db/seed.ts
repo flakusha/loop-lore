@@ -21,10 +21,10 @@ const ASSISTANT_ID = "assistant-default";
  *
  * Safe to call on every startup — checks for existence first.
  * @param database - Kysely instance
- * @param config
+ * @param config - resolved config; required so required-auth mode is never mistaken for solo mode
  * @returns {Promise<void>}
  */
-export async function seedDefaultActors(database: Kysely<DB>, config?: Config,): Promise<void> {
+export async function seedDefaultActors(database: Kysely<DB>, config: Config,): Promise<void> {
   const log = getLogger().child({ module: "seed", },);
 
   // Seed default Assistant actor
@@ -46,7 +46,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         display_name: "Assistant",
         description:
           "Helps with character, location, and world generation; prompt refinement; text review; and general creative assistance.",
-        system_prompt: resolveSystemPrompt(config?.templates?.llm, "assistant",) || ASSISTANT_SYSTEM_PROMPT,
+        system_prompt: resolveSystemPrompt(config.templates?.llm, "assistant",) || ASSISTANT_SYSTEM_PROMPT,
         user_id: null,
         owner_id: null,
         visibility: "public",
@@ -63,7 +63,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
 
   // Mode split: solo/demo mode seeds a demo solo user (admin-equivalent);
   // multi-user mode bootstraps a real admin from config/env when none exists.
-  const soloMode = !config?.auth.required;
+  const soloMode = !config.auth.required;
 
   if (soloMode) {
     // Seed demo solo user (creates if no admin or solo user exists) — for demo mode admin access
@@ -79,7 +79,7 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         .insertInto("users",)
         .values({
           id: soloId,
-          username: config?.auth.demoUsername ?? "demo",
+          username: config.auth.demoUsername ?? "demo",
           display_name: "Demo User",
           role: UserRole.Solo,
           status: UserStatus.Active,

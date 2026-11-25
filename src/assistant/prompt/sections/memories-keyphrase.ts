@@ -20,6 +20,7 @@
  */
 import type { Kysely, } from "kysely";
 import { getConfigValue, } from "../../../admin/config";
+import { estimateTokens, } from "../../../chat/token-utils";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
@@ -47,6 +48,8 @@ export interface KeyphraseRecallCtx {
   chat: { id: string };
   actor: { id: string };
   params: { userId?: string };
+  /** Turn number recorded on injection audit rows for cooldown tracking. */
+  turnNumber?: number;
 }
 
 /**
@@ -124,6 +127,36 @@ export async function collectKeyphraseHits(
 }
 
 /**
+ * Fit forced hits into the same token budget as the rest of the section.
+ * Ordered by importance then id so a tight budget drops the least useful
+ * hits deterministically instead of overflowing the section.
+ * @param hits - keyphrase matches to force
+ * @param pinnedTokens - tokens already committed by pinned memories
+ * @param maxTokens - section token budget
+ * @returns hits that fit
+ */
+export function fitKeyphraseHitsToBudget(
+  hits: readonly MemoryEntry[],
+  pinnedTokens: number,
+  maxTokens: number,
+): MemoryEntry[] {
+  const kept: MemoryEntry[] = [];
+  let used = pinnedTokens;
+  const ordered = [...hits,].sort(
+    (a, b,) => b.importance - a.importance || a.id.localeCompare(b.id,),
+  );
+
+  for (const hit of ordered) {
+    const tokens = estimateTokens(hit.content,);
+    if (used + tokens > maxTokens) { continue; }
+    used += tokens;
+    kept.push(hit,);
+  }
+
+  return kept;
+}
+
+/**
  * Merge keyphrase hits into the injected set: forced entries bypass the
  * probabilistic filter (bounded by the per-message limit), start their
  * cooldown, and are recorded in the memory audit log with
@@ -167,6 +200,7 @@ export async function applyKeyphraseRecalls(
       action: "inject",
       details: {
         chatId: ctx.chat.id,
+        turnNumber: ctx.turnNumber ?? null,
         keyphrase: true,
         keyphraseIds: group.map((entry,) => entry.id),
       },

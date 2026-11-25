@@ -1,5 +1,45 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Workspaces are auto-detected from package.json. Root-level entry/project
+  // are ignored in a workspace project, so package reach needs its own block.
+  "workspaces": {
+    ".": {
+      "entry": [
+        "src/server/index.ts",
+        "src/tui/app.ts",
+        "src/db/migrations/*.ts",
+        "src/frontend/alpine-init.ts",
+        "src/frontend/pages.ts",
+        "src/frontend/chat-vendor.ts",
+        "src/frontend/chat-list.ts",
+        "src/frontend/locale-init.ts",
+        "src/frontend/egui-bridge.ts",
+        "src/frontend/wasm-loader.ts",
+        "src/frontend/terminal-xterm.ts",
+        "src/frontend/alpine/local-engine.worker.ts",
+        "src/frontend/alpine/wllama-engine.worker.ts",
+        "plugins/core/*/plugin.ts",
+        "plugins/core/*/index.ts",
+        "plugins/community/*/plugin.ts",
+        "scripts/backup-sqlite.ts",
+        "scripts/validate-backup-restore.ts",
+        "scripts/check-no-shell-refs.ts",
+        "scripts/check-migration-ordering.ts",
+        "bin/lolo.ts"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "scripts/**/*.ts",
+        "scripts/**/*.mjs",
+        "tests/**/*.ts",
+        "plugins/**/*.ts"
+      ]
+    },
+    "packages/*": {
+      "entry": ["src/index.ts", "**/plugin.ts"],
+      "project": ["src/**/*.ts"]
+    }
+  },
   "entry": [
     // The two app roots. knip hints "Remove redundant entry pattern" for them
     // (it dedupes them against `project`), but that is WRONG here: deleting them
@@ -154,8 +194,10 @@
   ],
   "ignore": [
     "src/**",
-    "packages/**",
-    // Plugin shims re-export canonical code under packages/plugins (ignored above);
+    // Package tests are discovered by bun, not import edges (same class as
+    // src/** above). Package source itself is PROJECT scope and gate-visible.
+    "packages/**/*.test.ts",
+    // Plugin shims re-export canonical code under packages/plugins;
     // the loader reaches them through dynamic manifest imports knip cannot trace.
     "plugins/**",
     // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs

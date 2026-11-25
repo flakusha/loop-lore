@@ -330,12 +330,13 @@ describe("federationRoutes — mesh-deliver", () => {
   async function reserveFor(
     origin: string,
     sizeBytes: number,
+    contentHash = `hash-${origin}-${sizeBytes}`,
   ): Promise<string> {
     const db = await dbFor();
     await upsertPeer(db, { origin, state: "trusted", },);
     const body = {
       senderOrigin: origin,
-      contentHash: `hash-${origin}-${sizeBytes}`,
+      contentHash,
       sizeBytes,
     };
 
@@ -383,13 +384,14 @@ describe("federationRoutes — mesh-deliver", () => {
   test("valid envelope stores and verifies (A→B integrity)", async () => {
     // Deliver is now gated on a trusted peer that holds a reservation
     // (BUG-federation-authorization-who-may-publish-an-actor-undefined).
-    const reservationId = await reserveFor("https://a.example", 20,);
     const envelope = await sealContent({
       id: "route-content-1",
       origin: "https://a.example",
       content: "cross-server payload",
       cipher: routeCipher,
     },);
+
+    const reservationId = await reserveFor("https://a.example", envelope.size, envelope.hash,);
 
     const res = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(res.status,).toBe(200,);
@@ -469,21 +471,22 @@ describe("federationRoutes — mesh-deliver", () => {
   test("reserve → deliver confirms the reservation", async () => {
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://route-peer.example", state: "trusted", },);
-    const reserve = await postSignedReserve({
-      senderOrigin: "https://route-peer.example",
-      contentHash: "route-hash-1",
-      sizeBytes: 18,
-    },);
-
-    expect(reserve.status,).toBe(200,);
-    const { reservationId, } = (await reserve.json()) as { reservationId: string };
-    expect(typeof reservationId,).toBe("string",);
     const envelope = await sealContent({
       id: "route-content-3",
       origin: "https://route-peer.example",
       content: "reserved payload!!",
       cipher: routeCipher,
     },);
+
+    const reserve = await postSignedReserve({
+      senderOrigin: "https://route-peer.example",
+      contentHash: envelope.hash,
+      sizeBytes: envelope.size,
+    },);
+
+    expect(reserve.status,).toBe(200,);
+    const { reservationId, } = (await reserve.json()) as { reservationId: string };
+    expect(typeof reservationId,).toBe("string",);
 
     const deliver = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(deliver.status,).toBe(200,);

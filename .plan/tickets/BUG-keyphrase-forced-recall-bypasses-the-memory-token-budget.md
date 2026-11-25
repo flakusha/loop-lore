@@ -3,7 +3,7 @@
 
 # BUG: Keyphrase forced recall bypasses the memory token budget
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-memory-knowledge-systems

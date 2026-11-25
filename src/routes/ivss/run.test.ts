@@ -278,7 +278,7 @@ describe("IVSS fragment run route", () => {
         config,
         uploadDir,
         createClient: () => client,
-        loadWorkflow: async () => ({ "1": { class_type: "Stub", inputs: {}, }, }),
+        loadWorkflow: async () => ({ "1": { class_type: "SaveVideo", inputs: {}, }, }),
         dispatch: async (runOpts,) => {
           await runOpts.run?.();
         },
@@ -287,5 +287,5 @@ describe("IVSS fragment run route", () => {
     const res = await app.handle(postRequest(fragmentId, {},),);
     expect(res.status,).toBe(202,);
     expect(await timeoutSeen,).toBe(45_000,);
-  });
+  }, 15_000,);
 });

@@ -150,6 +150,26 @@ describe("admin users routes", () => {
     expect(res.status,).toBe(403,);
   });
 
+  test("PATCH role refuses to demote the last admin", async () => {
+    const tdb = await createTestDb();
+    try {
+      const target = await insertUsers(tdb.db, "only-admin", "Only Admin", { role: "admin", },);
+      const res = await makeApp(tdb.db, "admin",).handle(
+        new Request(`http://localhost/api/admin/users/${target}/role`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ role: "user", },),
+        },),
+      );
+
+      expect(res.status,).toBe(400,);
+      const row = await tdb.db.selectFrom("users",).select("role",).where("id", "=", target,).executeTakeFirst();
+      expect(row?.role,).toBe("admin",);
+    } finally {
+      tdb.sqlite.close();
+    }
+  });
+
   test("GET /api/admin/users/:id redacts a BYO apiKey from settings", async () => {
     // Own DB per test: the suite's beforeAll rows are shared by older tests.
     const tdb = await createTestDb();

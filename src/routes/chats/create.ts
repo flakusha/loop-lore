@@ -50,7 +50,6 @@ type Ctx = Context & AuthContext;
  */
 async function checkAgeGate(database: HandlerOpts["database"], userId: string,): Promise<Response | null> {
   const config = getRuntimeConfig();
-  if (!config.enabled || config.mode === "none") { return null; }
   const user = await database
     .selectFrom("users",)
     .select(["birth_date", "age_gate_accepted_at",],)

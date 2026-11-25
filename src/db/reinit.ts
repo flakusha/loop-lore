@@ -56,7 +56,7 @@ async function reinit(): Promise<void> {
   const dialect = createSqliteDialect(sqlite,);
   const db = new Kysely<DB>({ dialect, },);
   await runMigrations(db,);
-  await seedDefaultActors(db,);
+  await seedDefaultActors(db, config,);
   await seedHarnessModelCapabilities(db,);
   await db.destroy();
   log.info("Database reinitialized successfully",);

@@ -71,8 +71,9 @@ export async function receiveDelivery(
     .execute();
 
   if (opts.reservationId !== undefined) {
-    await advanceReservation(database, opts.reservationId, "pushed",);
-    await advanceReservation(database, opts.reservationId, "confirmed",);
+    const bound = { origin: envelope.origin, hash: envelope.hash, size: envelope.size, };
+    await advanceReservation(database, { id: opts.reservationId, next: "pushed", bound, },);
+    await advanceReservation(database, { id: opts.reservationId, next: "confirmed", bound, },);
   }
 
   return "stored";

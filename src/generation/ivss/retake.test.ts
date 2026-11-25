@@ -155,7 +155,7 @@ describe("IVSS latent retake", () => {
       client: renderClient(),
       loadWorkflow: async (_name, vars,) => {
         loaded.push(vars,);
-        return { "1": { class_type: "Stub", inputs: {}, }, };
+        return { "1": { class_type: "SaveVideo", inputs: {}, }, };
       },
       dispatch: async (opts,) => {
         await opts.run?.();
@@ -200,7 +200,7 @@ describe("IVSS latent retake", () => {
       client: renderClient(),
       loadWorkflow: async (_name, vars,) => {
         loaded.push(vars,);
-        return { "1": { class_type: "Stub", inputs: {}, }, };
+        return { "1": { class_type: "SaveVideo", inputs: {}, }, };
       },
       dispatch: async (opts,) => {
         await opts.run?.();

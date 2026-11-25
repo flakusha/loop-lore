@@ -3,7 +3,7 @@
 
 # BUG: Prune-promoted messages never reach the memory store
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-memory-knowledge-systems

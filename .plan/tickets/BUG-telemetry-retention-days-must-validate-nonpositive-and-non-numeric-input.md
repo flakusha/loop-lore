@@ -3,7 +3,7 @@
 
 # BUG: Telemetry retention days must validate nonpositive and non-numeric input
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-telemetry

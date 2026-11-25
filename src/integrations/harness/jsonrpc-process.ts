@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 275
+// size-allow: 300
 
 /**
  * Minimal JSON-RPC 2.0 client over a child process's stdio, framed as
@@ -11,6 +11,7 @@
  */
 
 import { type ChildProcessWithoutNullStreams, spawn, } from "node:child_process";
+import { getChildLogger, } from "../../logger";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { scrubEnv, } from "./env-scrub";
 
@@ -19,6 +20,15 @@ import { scrubEnv, } from "./env-scrub";
  * a newline must not grow this process without limit.
  */
 export const MAX_JSONRPC_LINE_BYTES = 1 << 20;
+
+/**
+ * Bounded tail kept from child stderr. stderr is piped (never inherited) so a
+ * chatty agent cannot pollute the server's own diagnostics; it must still be
+ * DRAINED or ~64 KiB of output blocks the child and stalls every flavor.
+ */
+export const MAX_STDERR_TAIL_BYTES = 8 * 1024;
+/** One logged stderr line never exceeds this many characters. */
+const MAX_STDERR_LOG_CHARS = 512;
 
 /** Options for the connection. */
 export interface JsonRpcProcessOptions {
@@ -89,6 +99,8 @@ export class JsonRpcProcess {
   private nextId = 1;
   private readonly pending = new Map<number, PendingEntry>();
   private buffer = "";
+  /** Bounded tail of the child's stderr, newest bytes last. */
+  private stderrTailBuffer = Buffer.alloc(0,);
   private closed = false;
   private readonly opts: Required<Pick<JsonRpcProcessOptions, "requestTimeoutMs">> & JsonRpcProcessOptions;
 
@@ -149,6 +161,14 @@ export class JsonRpcProcess {
   /** The ids of requests still awaiting a response (introspection for cancellation). */
   pendingIds(): number[] {
     return [...this.pending.keys(),];
+  }
+
+  /**
+   * The bounded stderr tail, for diagnostics after a child misbehaves.
+   * @returns at most {@link MAX_STDERR_TAIL_BYTES} bytes of stderr text.
+   */
+  stderrTail(): string {
+    return this.stderrTailBuffer.toString("utf8",);
   }
 
   /**
@@ -252,6 +272,24 @@ export class JsonRpcProcess {
     }
 
     this.child = child;
+
+    // Drain stderr unconditionally: a full pipe blocks the child even when
+    // nobody reads the diagnostics. Keep only a bounded tail and one bounded
+    // log line per chunk.
+    child.stderr.on("data", (chunk: Buffer,) => {
+      const merged = Buffer.concat([this.stderrTailBuffer, chunk,],);
+      this.stderrTailBuffer = merged.length > MAX_STDERR_TAIL_BYTES
+        ? merged.subarray(merged.length - MAX_STDERR_TAIL_BYTES,)
+        : merged;
+
+      const text = chunk.toString("utf8",).trim();
+      if (text.length > 0) {
+        getChildLogger("harness-acp",)?.warn("harness child stderr", {
+          text: text.slice(0, MAX_STDERR_LOG_CHARS,),
+        },);
+      }
+    },);
+
     child.stdout.setEncoding("utf8",);
     child.stdout.on("data", (chunk: string,) => {
       if (this.closed) { return; }

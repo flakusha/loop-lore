@@ -56,6 +56,44 @@ function parseAdminOverride(raw: string | undefined,): ComfyUIModelOverrides | u
 }
 
 /**
+ * Resolve persisted user/admin pins for generation paths. User picks win
+ * over the admin entry; config-file pins stay the engine's own fallback.
+ * @param database - DB handle
+ * @param userId - owner whose settings carry per-provider picks
+ * @param providerNames - distinct provider instance names in one request
+ * @returns validated overrides keyed by provider name
+ */
+export async function resolveStoredComfyUIModelPins(
+  database: Kysely<DB>,
+  userId: string,
+  providerNames: readonly string[],
+): Promise<Record<string, ComfyUIModelOverrides>> {
+  const userRow = await database
+    .selectFrom("users",)
+    .select("settings",)
+    .where("id", "=", userId,)
+    .executeTakeFirst();
+
+  const settings = jsonParseOr<{ comfyUiModels?: Record<string, unknown> }>(
+    userRow?.settings ?? "{}",
+    {},
+  );
+
+  const pins: Record<string, ComfyUIModelOverrides> = {};
+  for (const name of providerNames) {
+    const user = parseOverrides(settings.comfyUiModels?.[name],);
+    const admin = parseAdminOverride(
+      await getConfigValue(database, comfyUIModelConfigKey(name,),),
+    );
+
+    const merged: ComfyUIModelOverrides = { ...admin, ...user, };
+    if (Object.keys(merged,).length > 0) { pins[name] = merged; }
+  }
+
+  return pins;
+}
+
+/**
  * @param opts - config snapshot + database handle
  * @param prefix - route prefix
  * @returns Elysia plugin with the ComfyUI model-discovery endpoint

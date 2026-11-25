@@ -84,7 +84,8 @@ export type {
 /**
  * Record → the summary row the list endpoint returns.
  * @param record
- * @returns Summary view (drops `tools`, `pattern`, `patternDetail`, `toolingGap`, `msg`).
+ * @returns Summary view (drops `tools`, `pattern`, `patternDetail`, `toolingGap`,
+ *   `msg`; keeps the attribution fields `profile` and `instanceId`).
  */
 export function toSummary(record: HarnessRunRecord,): HarnessRunSummary {
   return {
@@ -106,6 +107,7 @@ export function toSummary(record: HarnessRunRecord,): HarnessRunSummary {
     gitSha: record.gitSha,
     pid: record.pid,
     turnId: record.turnId,
+    profile: record.profile ?? null,
     instanceId: record.instanceId ?? null,
   };
 }

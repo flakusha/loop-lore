@@ -91,7 +91,8 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
    * @param {string} name
    * @returns {Promise<void>}
    */
-  async unloadPlugin(name: string,) {
+  async uninstallPlugin(name: string,) {
+    if (!confirm(`Uninstall plugin "${name}"? Its approval and config will be deleted.`,)) { return; }
     try {
       const res = await apiFetch(`/api/v1/plugins/${name}`, { method: "DELETE", },);
       if (!res.ok) {
@@ -100,7 +101,7 @@ export const pluginState: Partial<ModelsState> & ThisType<ModelsState> = {
         return;
       }
 
-      showToast("success", "Plugin unloaded",);
+      showToast("success", "Plugin uninstalled",);
     } catch {
       showToast("error", t("toasts.networkError",),);
       return;

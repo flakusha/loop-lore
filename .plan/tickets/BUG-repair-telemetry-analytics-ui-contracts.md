@@ -3,7 +3,7 @@
 
 # BUG: Repair telemetry analytics UI contracts
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-analytics-observability

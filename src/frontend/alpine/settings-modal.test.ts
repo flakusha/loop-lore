@@ -16,6 +16,8 @@ type Globals = {
       clipRole: { selected: string | null };
       diffusionRole: { selected: string | null };
       vaeRole: { selected: string | null };
+      checkpointRole?: { selected: string | null };
+      clipVisionRole?: { selected: string | null };
     } | null;
   };
 };
@@ -120,5 +122,34 @@ describe("settingsModal ComfyUI model selector", () => {
     const state = globals.settingsModal!();
     await state.load();
     expect(state.comfyModels,).toBeNull();
+  });
+
+  test("persists checkpoint and clip_vision picks supplied by the API", async () => {
+    globals.apiFetch = async (url, init,) => {
+      calls.push({ url, init, },);
+      return Response.json({
+        provider: "h3-local",
+        noVae: false,
+        clipRole: { selected: null, },
+        diffusionRole: { selected: null, },
+        vaeRole: { selected: null, },
+        checkpointRole: { selected: "base.ckpt", },
+        clipVisionRole: { selected: "vision.safetensors", },
+      },);
+    };
+
+    const state = globals.settingsModal!();
+    await state.load();
+    await state.saveComfyModels();
+    const patch = calls.find((call,) => call.url === "/api/v1/settings" && call.init?.method === "PATCH");
+    const body = JSON.parse(String(patch!.init!.body,),) as {
+      comfyUiModels: Record<string, Record<string, unknown>>;
+    };
+
+    expect(body.comfyUiModels["h3-local"],).toEqual({
+      noVae: false,
+      checkpoint: "base.ckpt",
+      clip_vision: "vision.safetensors",
+    },);
   });
 });

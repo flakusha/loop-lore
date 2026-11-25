@@ -4,12 +4,17 @@
 import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { setConfig, } from "../admin/config";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
 import type { DB, } from "../db/schema";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
-import { comfyUIModelConfigKey, comfyUIModelRoutes, } from "./comfyui-models";
+import {
+  comfyUIModelConfigKey,
+  comfyUIModelRoutes,
+  resolveStoredComfyUIModelPins,
+} from "./comfyui-models";
 
 const USER_ID = "model-settings-user";
 const originalFetch = globalThis.fetch;
@@ -167,6 +172,34 @@ describe("GET /api/v1/comfyui/models", () => {
 
     expect(body.provider,).toBeNull();
     expect(body.clipRole,).toMatchObject({ candidates: [], selected: null, source: "none", },);
+  });
+
+  test("resolves persisted user and admin pins for generation paths", async () => {
+    await setConfig(
+      fixture.db,
+      comfyUIModelConfigKey("h3-local",),
+      JSON.stringify({ clip: "admin-clip.safetensors", diffusion: "admin.safetensors", },),
+      "test pin",
+    );
+
+    try {
+      const pins = await resolveStoredComfyUIModelPins(
+        fixture.db,
+        USER_ID,
+        ["h3-local", "other-provider",],
+      );
+
+      expect(pins["h3-local"],).toMatchObject({
+        clip: "user-clip.safetensors",
+        diffusion: "admin.safetensors",
+      },);
+
+      expect(pins["other-provider"],).toBeUndefined();
+    } finally {
+      await fixture.db.deleteFrom("system_config",)
+        .where("key", "=", comfyUIModelConfigKey("h3-local",),)
+        .execute();
+    }
   });
 });
 

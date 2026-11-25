@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { getConfigValue, } from "../../admin/config";
 import {
   type ContentEncoding,
   MessageContentFormat,
@@ -10,7 +11,7 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
-import { filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { uid, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -55,7 +56,8 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!section) { return notFound("Section not found in this chat",); }
 
           const body = ctx.body as { text: string };
-          const content = filterProfanity(body.text,);
+          const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+          const content = applyProfanityWritePolicy(profanityEnabled, body.text,).text;
 
           const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
             database,

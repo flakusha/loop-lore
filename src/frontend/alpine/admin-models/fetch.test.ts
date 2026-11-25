@@ -13,9 +13,15 @@ import type { ApiFetchMock, } from "../../tests/test-types";
 
 // All five sub-states use the ambient `apiFetch` global (no htmx import), so
 // stub globalThis directly and restore afterwards — never mock.module i18n.
-const g = globalThis as unknown as { apiFetch?: ApiFetchMock; showToast?: (...args: unknown[]) => void };
+const g = globalThis as unknown as {
+  apiFetch?: ApiFetchMock;
+  showToast?: (...args: unknown[]) => void;
+  confirm?: (message: string,) => boolean;
+};
+
 const originalFetch = g.apiFetch;
 const originalToast = g.showToast;
+const originalConfirm = g.confirm;
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
@@ -37,11 +43,14 @@ beforeEach(() => {
   g.showToast = (type, message,) => {
     toasts.push({ type: type as string, message: message as string, },);
   };
+
+  g.confirm = () => true;
 },);
 
 afterEach(() => {
   g.apiFetch = originalFetch;
   g.showToast = originalToast;
+  g.confirm = originalConfirm;
 },);
 
 describe("capabilitiesState fetch", () => {
@@ -308,7 +317,7 @@ describe("pluginState fetch", () => {
     expect(loaded,).toBe(0,);
   });
 
-  test("unloadPlugin deletes by name and refreshes both lists", async () => {
+  test("uninstallPlugin deletes by name and refreshes both lists", async () => {
     mockFetch(200, { ok: true, },);
     let loaded = 0;
     let discovered = 0;
@@ -322,14 +331,14 @@ describe("pluginState fetch", () => {
       },
     };
 
-    await pluginState.unloadPlugin!.call(ctx, "pl",);
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
     expect(calls[0]!.url,).toBe("/api/v1/plugins/pl",);
     expect(calls[0]!.opts.method,).toBe("DELETE",);
     expect(loaded,).toBe(1,);
     expect(discovered,).toBe(1,);
   });
 
-  test("unloadPlugin surfaces the disabled precondition message", async () => {
+  test("uninstallPlugin surfaces the disabled precondition message", async () => {
     mockFetch(400, { error: "Plugin must be disabled before uninstalling", },);
     let loaded = 0;
     const ctx = {
@@ -340,8 +349,24 @@ describe("pluginState fetch", () => {
       loadDiscover: async () => {},
     };
 
-    await pluginState.unloadPlugin!.call(ctx, "pl",);
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
     expect(toasts[0],).toEqual({ type: "error", message: "Plugin must be disabled before uninstalling", },);
+    expect(loaded,).toBe(0,);
+  });
+
+  test("uninstallPlugin sends no DELETE when the operator cancels", async () => {
+    g.confirm = () => false;
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
+    expect(calls,).toHaveLength(0,);
     expect(loaded,).toBe(0,);
   });
 });

@@ -12,6 +12,7 @@
  */
 import { estimateTokens, } from "../../chat/token-utils";
 import { safeJsonStringify, } from "../../utils";
+import { assembleMinimaxPrompt, } from "../minimax/prompt-format";
 
 /** Default prompt budget, in estimated tokens. */
 const DEFAULT_MAX_TOKENS = 1024;
@@ -89,7 +90,8 @@ export function formatShotTimestamp(ms: number,): string {
  * Compile a scene into a byte-stable prompt and workflow variables.
  * @param input - Scene, shots and optional audio/style sections
  * @param options - Budget override
- * @throws {Error} When the scene has no shots or a shot ends before it starts
+ * @throws {Error} When the scene has no shots, a shot ends before it starts,
+ * or the assembled prompt fails the shared MiniMax grammar validator
  * @returns The prompt, variable map and dropped-section report
  */
 export function compileShotGrammar(
@@ -110,54 +112,65 @@ export function compileShotGrammar(
     }
   }
 
+  const mode = input.scene.mode === "ref2va" ? "ref2va" : "fl2va";
   const rawSections: Record<"style" | "music" | "soundscape", string | undefined> = {
     style: input.style?.trim() || undefined,
     music: input.music?.trim() || undefined,
     soundscape: input.soundscape?.trim() || undefined,
   };
 
-  const sections: Record<"style" | "music" | "soundscape", string | undefined> = {
-    style: rawSections.style ? `style_bible:\n${rawSections.style}` : undefined,
-    music: rawSections.music ? `non_diegetic_music:\n${rawSections.music}` : undefined,
-    soundscape: rawSections.soundscape ? `overall_soundscape:\n${rawSections.soundscape}` : undefined,
-  };
-
-  let shotLines = shots.map((shot, index,) => {
-    const lines = [`[Shot ${index + 1}] At ${formatShotTimestamp(shot.start_ms,)} — ${shot.description.trim()}`,];
-    if (shot.narration?.trim()) { lines.push(`Narration: ${shot.narration.trim()}`,); }
-    if (shot.camera_json?.trim()) { lines.push(`Camera: ${shot.camera_json.trim()}`,); }
-    return lines.join("\n",);
-  },);
-
-  const assemble = (): string =>
-    [sections.style, shotLines.join("\n\n",), sections.soundscape, sections.music,]
-      .filter((part,): part is string => Boolean(part,))
-      .join("\n\n",);
-
-  const maxTokens = options.maxTokens ?? DEFAULT_MAX_TOKENS;
-  const truncated: string[] = [];
-  while (estimateTokens(assemble(),) > maxTokens) {
-    const next = DROP_ORDER.find((key,) => Boolean(sections[key],));
-    if (next) {
-      sections[next] = undefined;
-      rawSections[next] = undefined;
-      truncated.push(next,);
-      continue;
-    }
-
-    if (shotLines.length === 1) { break; }
-    truncated.push(`shots:${shotLines.length}`,);
-    shotLines = shotLines.slice(0, -1,);
-  }
-
-  if (estimateTokens(assemble(),) > maxTokens) { truncated.push("prompt-over-budget",); }
-
-  const prompt = assemble();
   const firstMs = Math.min(...shots.map((shot,) => shot.start_ms),);
   const lastMs = Math.max(...shots.map((shot,) => shot.end_ms),);
   const fps = input.scene.fps && input.scene.fps > 0 ? input.scene.fps : DEFAULT_FPS;
   const durationFrames = Math.ceil(((lastMs - firstMs) / 1000) * fps,);
   const durationSecs = Number(((lastMs - firstMs) / 1000).toFixed(3,),);
+
+  let grammarShots = shots.map((shot,) => ({
+    description: shot.description,
+    startMs: shot.start_ms,
+    ...(shot.narration?.trim() ? { narration: shot.narration, } : {}),
+    ...(shot.camera_json?.trim() ? { camera: shot.camera_json, } : {}),
+  }));
+
+  const grammarFor = () =>
+    assembleMinimaxPrompt({
+      mode,
+      shots: grammarShots,
+      style: rawSections.style,
+      soundscape: rawSections.soundscape,
+      music: rawSections.music,
+      durationSeconds: durationSecs,
+    },);
+
+  /** Invalid grammar assembles empty, so the budget loop never spins on it. */
+  const assemble = (): string => {
+    const result = grammarFor();
+    return result.ok ? result.prompt : "";
+  };
+
+  const maxTokens = options.maxTokens ?? DEFAULT_MAX_TOKENS;
+  const truncated: string[] = [];
+  while (estimateTokens(assemble(),) > maxTokens) {
+    const next = DROP_ORDER.find((key,) => Boolean(rawSections[key],));
+    if (next) {
+      rawSections[next] = undefined;
+      truncated.push(next,);
+      continue;
+    }
+
+    if (grammarShots.length === 1) { break; }
+    truncated.push(`shots:${grammarShots.length}`,);
+    grammarShots = grammarShots.slice(0, -1,);
+  }
+
+  if (estimateTokens(assemble(),) > maxTokens) { truncated.push("prompt-over-budget",); }
+
+  const grammar = grammarFor();
+  if (!grammar.ok) {
+    throw new Error(`IVSS MiniMax prompt grammar mismatch: ${grammar.missing.join(", ",)}`,);
+  }
+
+  const prompt = grammar.prompt;
 
   const builderState = {
     version: 1,

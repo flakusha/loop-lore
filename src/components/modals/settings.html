@@ -122,6 +122,41 @@
               <p style="font-size: var(--fs-xs); color: var(--text-secondary)">
                 <span x-text="comfyModels.provider"></span> — <span x-text="comfyModels.clipRole.source"></span>
               </p>
+
+              <template x-if="comfyModels.checkpointRole">
+                <div class="form-group">
+                  <label class="form-label" for="settings-comfy-checkpoint">Checkpoint</label>
+                  <select
+                    id="settings-comfy-checkpoint"
+                    class="form-select"
+                    x-model="comfyModels.checkpointRole.selected"
+                    @change="saveComfyModels()"
+                    data-testid="comfy-model-checkpoint"
+                  >
+                    <option value="">First discovered model</option>
+                    <template x-for="name in comfyModels.checkpointRole.candidates" :key="name">
+                      <option :value="name" x-text="name"></option>
+                    </template>
+                  </select>
+                </div>
+              </template>
+              <template x-if="comfyModels.clipVisionRole">
+                <div class="form-group">
+                  <label class="form-label" for="settings-comfy-clip-vision">CLIP vision</label>
+                  <select
+                    id="settings-comfy-clip-vision"
+                    class="form-select"
+                    x-model="comfyModels.clipVisionRole.selected"
+                    @change="saveComfyModels()"
+                    data-testid="comfy-model-clip-vision"
+                  >
+                    <option value="">First discovered model</option>
+                    <template x-for="name in comfyModels.clipVisionRole.candidates" :key="name">
+                      <option :value="name" x-text="name"></option>
+                    </template>
+                  </select>
+                </div>
+              </template>
               <div class="form-group">
                 <label class="form-label" for="settings-comfy-clip">Text encoder</label>
                 <select

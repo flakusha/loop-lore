@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+// size-allow: 280
 /**
  * inbound ACP studio server — agent side (epic-agentic-integration-mcp-acp
  * §3.3: ACP v1, stdio NDJSON; "sessions map onto the EXISTING chats /
@@ -50,11 +50,33 @@ export interface AcpAgentDeps {
   ctx: FacadeContext;
   /** Sink for every JSON-RPC message this server emits (stdio NDJSON). */
   write: (message: unknown,) => void;
+  /** Optional human responder for an `elicitation/create` ask. */
+  elicit?: (request: AcpElicitationRequest,) => Promise<AcpElicitationAnswer>;
 }
+
+/** Typed `elicitation/create` ask the Studio client sends to this agent. */
+export interface AcpElicitationRequest {
+  sessionId: string;
+  message: string;
+  mode?: string;
+}
+
+/** Typed answer to an elicitation ask (`action` is the ACP wire field). */
+export interface AcpElicitationAnswer {
+  action: "accept" | "decline" | "cancel";
+}
+
+/** Hard bounds on the optional per-session fields. */
+const MAX_SESSION_DIRECTORIES = 32;
+const MAX_REPLAY_MESSAGES = 20;
+const MAX_ELICITATION_MESSAGE_CHARS = 2000;
 
 /** One live ACP session: the loop-lore chat it maps onto. */
 interface AcpSession {
   chatId: string;
+  cwd: string | null;
+  additionalDirectories: string[];
+  modeId: string | null;
 }
 
 /** A JSON-RPC request carrying a method (notification when id absent). */
@@ -162,8 +184,143 @@ export function createAcpAgentHandler(deps: AcpAgentDeps,): (line: string,) => P
         }
 
         const sessionId = `acp-${crypto.randomUUID()}`;
-        sessions.set(sessionId, { chatId, },);
+        const cwd = typeof params.cwd === "string" && params.cwd !== "" ? params.cwd : null;
+        const additionalDirectories = Array.isArray(params.additionalDirectories,)
+          ? params.additionalDirectories
+            .filter((entry,): entry is string => typeof entry === "string" && entry !== "")
+            .slice(0, MAX_SESSION_DIRECTORIES,)
+          : [];
+
+        sessions.set(sessionId, { chatId, cwd, additionalDirectories, modeId: null, },);
         respond(id, { sessionId, },);
+        return;
+      }
+
+      case "session/list": {
+        respond(id, {
+          sessions: [...sessions.entries(),].map(([sessionId, session,],) => ({
+            sessionId,
+            cwd: session.cwd,
+            additionalDirectories: session.additionalDirectories,
+            modeId: session.modeId,
+          })),
+        },);
+
+        return;
+      }
+
+      case "session/resume": {
+        const sessionId = typeof params.sessionId === "string" ? params.sessionId : "";
+        const session = sessions.get(sessionId,);
+        if (session === undefined) {
+          fail(id, ACP_ERRORS.unknownSession, `unknown session "${sessionId}"`,);
+          return;
+        }
+
+        // Re-attach without replay: the next prompt continues the same chat.
+        respond(id, { sessionId, cwd: session.cwd, },);
+        return;
+      }
+
+      case "session/load": {
+        const sessionId = typeof params.sessionId === "string" ? params.sessionId : "";
+        const session = sessions.get(sessionId,);
+        if (session === undefined) {
+          fail(id, ACP_ERRORS.unknownSession, `unknown session "${sessionId}"`,);
+          return;
+        }
+
+        // Replay reuses the same facade op as the HTTP history surface, so
+        // authorization and enrichment stay identical. The page size is the
+        // bound — a client cannot ask this agent to stream its whole log.
+        const history = await runFacadeOp(deps.registry, deps.ctx, "chat.history", {
+          chatId: session.chatId,
+          page: 1,
+          pageSize: MAX_REPLAY_MESSAGES,
+        },);
+
+        if (!history.ok) {
+          fail(
+            id,
+            ACP_ERRORS.serverError,
+            `facade op "chat.history" failed with status ${history.status}`,
+            history.json,
+          );
+
+          return;
+        }
+
+        const data = (history.json as { data?: unknown[] } | null)?.data ?? [];
+        for (const row of data.slice(0, MAX_REPLAY_MESSAGES,)) {
+          const text = typeof row === "object" && row !== null
+            ? (row as Record<string, unknown>).content
+            : undefined;
+
+          if (typeof text !== "string" || text.length === 0) { continue; }
+
+          send({
+            jsonrpc: "2.0",
+            method: "session/update",
+            params: {
+              sessionId,
+              update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text, }, },
+            },
+          },);
+        }
+
+        respond(id, { sessionId, },);
+        return;
+      }
+
+      case "session/set_mode":
+      case "set_mode": {
+        const sessionId = typeof params.sessionId === "string" ? params.sessionId : "";
+        const session = sessions.get(sessionId,);
+        if (session === undefined) {
+          fail(id, ACP_ERRORS.unknownSession, `unknown session "${sessionId}"`,);
+          return;
+        }
+
+        const modeId = typeof params.modeId === "string" ? params.modeId : "";
+        if (modeId === "") {
+          fail(id, ACP_ERRORS.invalidParams, "session/set_mode requires a modeId",);
+          return;
+        }
+
+        session.modeId = modeId;
+        respond(id, { currentModeId: modeId, },);
+        return;
+      }
+
+      case "elicitation/create": {
+        const sessionId = typeof params.sessionId === "string" ? params.sessionId : "";
+        if (!sessions.has(sessionId,)) {
+          fail(id, ACP_ERRORS.unknownSession, `unknown session "${sessionId}"`,);
+          return;
+        }
+
+        const message = typeof params.message === "string"
+          ? params.message.slice(0, MAX_ELICITATION_MESSAGE_CHARS,)
+          : "";
+
+        if (message === "") {
+          fail(id, ACP_ERRORS.invalidParams, "elicitation/create requires a message",);
+          return;
+        }
+
+        // ponytail: stdio has no composed human-decision channel. The optional
+        // hook lets a caller supply one; without it the agent fails closed
+        // with "decline" instead of inventing a user answer. Upgrade path:
+        // compose the Studio elicitation UI into `elicit`.
+        const answer: AcpElicitationAnswer = deps.elicit
+          ? await deps.elicit({
+            sessionId,
+            message,
+            ...(typeof params.mode === "string" ? { mode: params.mode, } : {}),
+          },)
+          : { action: "decline", };
+
+        respond(id, answer,);
         return;
       }
 

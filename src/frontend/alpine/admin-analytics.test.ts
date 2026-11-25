@@ -31,6 +31,7 @@ function makeState() {
     ...adminAnalytics,
     dailyStats: [] as { count: number; active_users: number; date: string }[],
     errorEvents: [] as typeof adminAnalytics.errorEvents,
+    analyticsModelEvents: [] as typeof adminAnalytics.analyticsModelEvents,
     analyticsCharacters: [] as {
       id: string;
       name: string;
@@ -71,6 +72,13 @@ function routeResponses(): void {
         created_at: "2026-10-03T00:00:00.000Z",
         occurrences: 2,
       },],);
+    }
+
+    if (url.startsWith("/api/v1/telemetry/analytics/models",)) {
+      return Response.json([
+        { event_type: "generation.started", count: 7, },
+        { event_type: "generation.failed", count: 2, },
+      ],);
     }
 
     if (url.startsWith("/api/v1/telemetry/analytics/purge",)) { return Response.json({ ok: true, },); }
@@ -199,6 +207,17 @@ describe("adminAnalytics.loadAnalytics", () => {
     expect(toasts[0]!.type,).toBe("error",);
     expect(state.loadingAnalytics,).toBe(false,);
     expect(state.analyticsCharacters,).toHaveLength(0,);
+  });
+
+  test("loads per-model generation event counts", async () => {
+    const state = makeState();
+    routeResponses();
+    await state.loadAnalytics();
+
+    expect(state.analyticsModelEvents,).toEqual([
+      { event_type: "generation.started", count: 7, },
+      { event_type: "generation.failed", count: 2, },
+    ],);
   });
 
   test("projects quality metrics into chart-ready bars", async () => {

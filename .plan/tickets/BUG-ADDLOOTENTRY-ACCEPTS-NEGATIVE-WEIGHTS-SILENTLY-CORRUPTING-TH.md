@@ -3,7 +3,7 @@
 
 # BUG: addLootEntry accepts negative weights, silently corrupting the loot distribution
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

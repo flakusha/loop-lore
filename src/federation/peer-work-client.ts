@@ -24,6 +24,7 @@
  */
 import { type FederationPeerTrustConfig, } from "../config/schema";
 import { type ChunkEvent, type GenerateResponse, } from "../generation/providers/types";
+import { MAX_JSONRPC_LINE_BYTES, } from "../integrations/harness/jsonrpc-process";
 import { safeFetch, } from "../utils/safe-fetch";
 import {
   assemblePeerWorkChunks,
@@ -37,6 +38,14 @@ import {
 
 /** Default per-attempt budget when the caller supplies none. */
 export const PEER_WORK_DEFAULT_TIMEOUT_MS = 30_000;
+
+/** Cap on chunks in one peer answer; a runaway peer must be cut off. */
+export const MAX_PEER_WORK_CHUNKS = 20_000;
+
+/** Actionable protocol errors for the two response-size ceilings. */
+const LINE_TOO_LARGE = `peer workload line exceeds ${MAX_JSONRPC_LINE_BYTES} bytes; ask the peer to split lines`;
+const TOO_MANY_CHUNKS =
+  `peer workload stream exceeds ${MAX_PEER_WORK_CHUNKS} chunks; ask the peer to emit fewer chunks`;
 
 /** Why an attempt failed, in terms a caller can branch on. */
 export type PeerWorkFailureCode = PeerWorkErrorCode | "transport" | "protocol" | "aborted";
@@ -210,6 +219,11 @@ export async function runPeerWorkload(options: {
       for (let index = buffer.indexOf("\n",); index >= 0;) {
         const line = buffer.slice(0, index,);
         buffer = buffer.slice(index + 1,);
+        if (Buffer.byteLength(line, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+          await reader.cancel();
+          return protocolFailure(LINE_TOO_LARGE,);
+        }
+
         const chunk = parsePeerWorkChunkLine(line,);
         if (chunk === null) {
           await reader.cancel();
@@ -225,9 +239,19 @@ export async function runPeerWorkload(options: {
           };
         }
 
+        if (chunks.length >= MAX_PEER_WORK_CHUNKS) {
+          await reader.cancel();
+          return protocolFailure(TOO_MANY_CHUNKS,);
+        }
+
         chunks.push(chunk,);
         onChunk?.(chunk,);
         index = buffer.indexOf("\n",);
+      }
+
+      if (Buffer.byteLength(buffer, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+        await reader.cancel();
+        return protocolFailure(LINE_TOO_LARGE,);
       }
     }
 

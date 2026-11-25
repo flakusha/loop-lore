@@ -13,6 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
+import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { calculateAge, parseExpiryMs, toDate, } from "../utils/date";
 
@@ -72,6 +73,21 @@ export interface AcceptAgeGateOpts {
 }
 
 // ── Service ──────────────────────────────────────────────────
+
+/**
+ * Modes with a real implementation. The config schema still lists
+ * `verification`, but no distinct verification path exists — accepting it
+ * would silently self-declare, so config boundaries reject it instead.
+ */
+export const SUPPORTED_AGE_GATE_MODES: readonly AgeGateConfig["mode"][] = [
+  AgeGateMode.None,
+  AgeGateMode.SelfDeclaration,
+];
+
+/** True when the mode has a real implementation. */
+export function isSupportedAgeGateMode(mode: AgeGateConfig["mode"],): boolean {
+  return SUPPORTED_AGE_GATE_MODES.includes(mode,);
+}
 
 /**
  * Check the age gate status for a given user.

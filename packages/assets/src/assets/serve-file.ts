@@ -5,6 +5,7 @@
  * Asset file serving helper (extracted from ./controller.ts).
  */
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../../../../src/config/constants";
+import { AssetVisibility, } from "../../../../src/db/enums";
 import { notFoundResponse, } from "../../../../src/routes/http-utils";
 
 /**
@@ -13,14 +14,15 @@ import { notFoundResponse, } from "../../../../src/routes/http-utils";
  * @param filePath
  * @param contentType
  * @param opts
- * @param opts.cacheControl
+ * @param opts.visibility - asset visibility; non-public assets must not be
+ * cached by shared caches (private/shared rows are access-controlled).
  * @param opts.extraHeaders
  * @returns file response
  */
 export async function serveFile(
   filePath: string,
   contentType: string,
-  opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
+  opts?: { visibility?: AssetVisibility; extraHeaders?: Record<string, string> },
 ): Promise<Response> {
   const file = Bun.file(filePath,);
   if (!(await file.exists())) {
@@ -32,7 +34,9 @@ export async function serveFile(
       "Content-Type": contentType,
       // MIME-sniff defense: assets may be attacker-controlled (e.g. SVG).
       "X-Content-Type-Options": "nosniff",
-      "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+      "Cache-Control": opts?.visibility && opts.visibility !== AssetVisibility.Public
+        ? "private, no-store"
+        : `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
       ...opts?.extraHeaders,
     },
   },);

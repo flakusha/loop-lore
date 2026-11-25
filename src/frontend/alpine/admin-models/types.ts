@@ -133,7 +133,7 @@ export interface ModelsState {
   togglePlugin(name: string, enable: boolean,): Promise<void>;
   loadDiscover(): Promise<void>;
   installPlugin(name: string,): Promise<void>;
-  unloadPlugin(name: string,): Promise<void>;
+  uninstallPlugin(name: string,): Promise<void>;
   loadSdConfig(): Promise<void>;
   saveSdConfig(): Promise<void>;
   loadModelCapabilities(): Promise<void>;

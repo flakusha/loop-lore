@@ -119,6 +119,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
     return await serveFile(
       getAssetFilePath(opts.uploadDir, asset.storage_path,),
       asset.mime_type,
+      { visibility: asset.visibility, },
     );
   }
 
@@ -134,6 +135,7 @@ async function handleServeMatted(opts: ServeMattedOpts,): Promise<Response> {
   return await serveFile(
     getAssetFilePath(opts.uploadDir, derivative.storage_path,),
     derivative.mime_type,
+    { visibility: asset.visibility, },
   );
 }
 

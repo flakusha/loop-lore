@@ -16,6 +16,7 @@ import {
   HarnessQueueResponse,
 } from "../../frontend/alpine/admin-harness-schema";
 import { getHarnessTurnQueue, HarnessQueueError, } from "../../integrations/harness/queue";
+import { MAX_QUEUE_LIMIT, } from "../../integrations/harness/queue-store";
 import { getChildLogger, } from "../../logger";
 import { requirePermission, } from "../../middleware/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -117,7 +118,9 @@ export function harnessQueueRoutes(prefix = "/api/v1",) {
           const limit = Number.parseInt(q.limit ?? "", 10,);
           const items = await queue.listTurns({
             batchId: q.batchId,
-            limit: Number.isFinite(limit,) && limit > 0 ? limit : undefined,
+            limit: Number.isFinite(limit,) && limit > 0
+              ? Math.min(Math.trunc(limit,), MAX_QUEUE_LIMIT,)
+              : undefined,
           },);
 
           return jsonResponse({ items, },);
@@ -143,7 +146,7 @@ export function harnessQueueRoutes(prefix = "/api/v1",) {
               code: ErrorCode.NotFound,
             },)
             : jsonError({
-              message: "only a queued turn can be cancelled — a running turn has a live harness process behind it",
+              message: result.reason,
               status: HttpStatus.Conflict,
               code: ErrorCode.Conflict,
             },);

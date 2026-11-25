@@ -3,7 +3,7 @@
 
 # BUG: setup state TLS check uses unreanchored cert paths
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-first-run-auto-setup

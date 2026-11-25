@@ -42,6 +42,8 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
 
         const denied = await resolveActorAccess(opts.database, body.buyerActorId, userId,);
         if (denied) { return denied; }
+        const sellerDenied = await resolveActorAccess(opts.database, body.sellerActorId, userId,);
+        if (sellerDenied) { return sellerDenied; }
         const id = await opts.svc().createOffer({
           worldId: ctx.params.worldId,
           buyerActorId: body.buyerActorId,

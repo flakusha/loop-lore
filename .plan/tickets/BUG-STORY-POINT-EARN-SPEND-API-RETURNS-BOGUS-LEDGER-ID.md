@@ -7,7 +7,7 @@
 **Acceptance Criteria:** (none captured)
 **Effort:** (none captured)
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
 

@@ -3,7 +3,7 @@
 
 # BUG: Reduced-motion global floor must become per-rule handling
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-frontend

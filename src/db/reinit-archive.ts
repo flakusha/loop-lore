@@ -12,10 +12,35 @@ import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync, } from "node:
 import path from "node:path";
 import { resolveInstanceDir, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import type { Logger, } from "../logger";
+import { safeJsonStringify, } from "../utils";
 import { toDate, } from "../utils/date";
 
-export const MAX_ARCHIVES = Number(process.env.LOOP_LORE_REINIT_MAX_ARCHIVES ?? 10,);
-export const MAX_AGE_DAYS = Number(process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS ?? 90,);
+/**
+ * Parse an env-overridable retention limit. Bare `Number()` mapped empty env
+ * to 0 (delete every archive) and typos to NaN (disable retention entirely).
+ * @throws Error when the override is not a finite positive integer
+ */
+export function parseRetentionLimit(name: string, raw: string | undefined, fallback: number,): number {
+  if (raw === undefined) { return fallback; }
+  const parsed = Number(raw.trim(),);
+  if (!Number.isSafeInteger(parsed,) || parsed <= 0) {
+    const quoted = safeJsonStringify(raw,);
+    throw new Error(`${name} must be a positive integer, got ${quoted.ok ? quoted.value : raw}`,);
+  }
+
+  return parsed;
+}
+
+export const MAX_ARCHIVES = parseRetentionLimit(
+  "LOOP_LORE_REINIT_MAX_ARCHIVES",
+  process.env.LOOP_LORE_REINIT_MAX_ARCHIVES,
+  10,
+);
+export const MAX_AGE_DAYS = parseRetentionLimit(
+  "LOOP_LORE_REINIT_MAX_AGE_DAYS",
+  process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS,
+  90,
+);
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /** Options for {@link archiveDir} and {@link archiveFile}. */

@@ -10,7 +10,6 @@
  * Extracted from serve-handlers.ts to keep that file under the per-module
  * size-strict gate (345 lines).
  */
-import { IMMUTABLE_CACHE_MAX_AGE, } from "../../../../src/config/constants";
 import { deriveChatKeyForChat, getSmk, } from "../../../../src/crypto";
 import { getChildLogger, } from "../../../../src/logger";
 import { notFoundResponse, } from "../../../../src/routes/http-utils";
@@ -79,7 +78,7 @@ export async function handleServeRaw({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
-          "Cache-Control": `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+          "Cache-Control": "private, no-store",
           "X-Content-Type-Options": "nosniff",
         },
       },);
@@ -93,7 +92,9 @@ export async function handleServeRaw({
     }
   }
 
-  return await serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
+  return await serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
+    visibility: asset.visibility,
+  },);
 }
 
 /**
@@ -157,6 +158,7 @@ export async function handleDownload({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
+          "Cache-Control": "private, no-store",
           "Content-Disposition": `attachment; filename="${safeName}"`,
         },
       },);
@@ -171,6 +173,7 @@ export async function handleDownload({
   }
 
   return await serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
+    visibility: asset.visibility,
     extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
   },);
 }

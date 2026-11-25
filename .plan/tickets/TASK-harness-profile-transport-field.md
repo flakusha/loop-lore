@@ -3,7 +3,7 @@
 
 # TASK: harness profile transport field
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-harness-integration

@@ -254,7 +254,7 @@ describe("generateComfyUI", () => {
     expect(loraNodes[0]?.inputs.lora_name,).toBe("char",);
   });
 
-  it("warns and skips LoRA injection when the LoRA is unknown", async () => {
+  it("fails closed when the LoRA is unknown instead of submitting a LoRA-free image", async () => {
     clearDiscoveryCache("comfyui",);
     let submitted = "";
     globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
@@ -290,10 +290,11 @@ describe("generateComfyUI", () => {
       lora: [{ name: "missing", strength: 0.7, backend: "comfyui", },],
     },);
 
-    expect(outcome.ok,).toBe(true,);
-    const parsed = JSON.parse(submitted,) as { prompt: Record<string, { class_type: string }> };
-    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
-    expect(loraNodes,).toHaveLength(0,);
+    expect(outcome.ok,).toBe(false,);
+    if (outcome.ok) { return; }
+    expect(outcome.error,).toContain("Unknown LoRA",);
+    expect(outcome.status,).toBe(400,);
+    expect(submitted,).toBe("",);
   });
 
   it("forwards the resolved BYO key as a Bearer auth header", async () => {

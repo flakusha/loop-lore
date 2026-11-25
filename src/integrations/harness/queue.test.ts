@@ -45,7 +45,13 @@ import {
   resetHarnessTurnQueue,
 } from "./queue";
 import { insertQueuedTurns, } from "./queue-store";
-import { getHarnessRuntime, type HarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "./runtime";
+import {
+  createHarnessRuntime,
+  getHarnessRuntime,
+  type HarnessRuntime,
+  initHarnessRuntime,
+  resetHarnessRuntime,
+} from "./runtime";
 
 let fixture: TestDb;
 let userId: string;
@@ -339,13 +345,27 @@ describe("cancel", () => {
 
     await flush();
 
-    // "head" is running (a live harness process — no interrupt seam), so its
-    // cancel reads not_cancellable; the still-queued "tail" cancels cleanly.
+    // "head" is running on a fake runtime with no registry session, so its
+    // cancel reads not_cancellable with a reason; the queued "tail" cancels.
     const [headId, tailId,] = batch.turnIds;
-    await expect(single.cancel("no-such-id",),).resolves.toEqual({ ok: false, code: "unknown_turn", },);
-    await expect(single.cancel(headId!,),).resolves.toEqual({ ok: false, code: "not_cancellable", },);
+    await expect(single.cancel("no-such-id",),).resolves.toEqual({
+      ok: false,
+      code: "unknown_turn",
+      reason: `queue turn "no-such-id" is unknown`,
+    },);
+
+    await expect(single.cancel(headId!,),).resolves.toEqual({
+      ok: false,
+      code: "not_cancellable",
+      reason: "the running turn has no live harness session on this instance",
+    },);
+
     await expect(single.cancel(tailId!,),).resolves.toEqual({ ok: true, },);
-    await expect(single.cancel(tailId!,),).resolves.toEqual({ ok: false, code: "not_cancellable", },);
+    await expect(single.cancel(tailId!,),).resolves.toEqual({
+      ok: false,
+      code: "not_cancellable",
+      reason: "the turn is already cancelled",
+    },);
 
     stub.settle("head", "msg-head",);
     await single.idle();
@@ -353,6 +373,39 @@ describe("cancel", () => {
     const rows = await rowsByPrompt();
     expect(rows.get("head",)?.status,).toBe("completed",);
     expect(rows.get("tail",)?.status,).toBe("cancelled",);
+  });
+
+  it("interrupts a running turn through the live harness session", async () => {
+    const acp = acpConfig();
+    acp.profiles[0]!.name = "p1";
+    const { factory, logs, } = fakeFactory({ p1: { models: ["zai/flash",], }, },);
+    const runtime = createHarnessRuntime({ acp, factory, },);
+    await runtime.registry.ensureProbed("p1",);
+
+    const single = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: () => runtime,
+      dispatch: stub.dispatch,
+      maxConcurrent: 1,
+    },);
+
+    const batch = await single.enqueue({
+      requestedBy: userId,
+      requestedRole: "admin",
+      turns: [spec("p1", "head",),],
+    },);
+
+    await flush();
+
+    await expect(single.cancel(batch.turnIds[0]!,),).resolves.toEqual({ ok: true, },);
+    expect(logs.get("p1",)?.cancels,).toBe(1,);
+    expect((await rowsByPrompt()).get("head",)?.status,).toBe("cancelled",);
+
+    // The real dispatch may still settle after the cancel: its late completion
+    // must not overwrite the cancelled row.
+    stub.settle("head", "msg-head",);
+    await single.idle();
+    expect((await rowsByPrompt()).get("head",)?.status,).toBe("cancelled",);
   });
 });
 

@@ -141,38 +141,54 @@ export async function createInboundReservation(
 
 /**
  * Advance a reservation one forward step (reserved → pushed → confirmed).
- * @param database
- * @param id
- * @param next
- * @throws {Error}
- * @throws {Error}
- * @returns {Promise<void>}
+ * When `bound` is supplied the reservation's origin/hash/size must match the
+ * delivered envelope; the check and the state bump share one transaction.
+ * @throws On unknown id, illegal transition, invalid or mismatched binding.
  */
 export async function advanceReservation(
   database: Kysely<DB>,
-  id: string,
-  next: ReservationState,
+  opts: {
+    id: string;
+    next: ReservationState;
+    bound?: { origin: string; hash: string; size: number };
+  },
 ): Promise<void> {
-  const row = await database
-    .selectFrom("mesh_reservations",)
-    .select(["state",],)
-    .where("id", "=", id,)
-    .executeTakeFirst();
-
-  if (!row) { throw new Error(`unknown reservation: ${id}`,); }
-  const current = row.state as ReservationState;
-  const legal = (current === "reserved" || current === "pushed") &&
-    NEXT_RESERVATION[current] === next;
-
-  if (!legal) {
-    throw new Error(`illegal reservation transition: ${current} -> ${next}`,);
+  const { id, next, bound, } = opts;
+  const origin = bound === undefined ? null : canonicalOrigin(bound.origin,);
+  if (bound !== undefined && origin === null) {
+    throw new Error(`invalid bound origin: ${bound.origin}`,);
   }
 
-  await database
-    .updateTable("mesh_reservations",)
-    .set({ state: next, },)
-    .where("id", "=", id,)
-    .execute();
+  await database.transaction().execute(async (trx,) => {
+    const row = await trx
+      .selectFrom("mesh_reservations",)
+      .select(["state", "peer_origin", "content_hash", "size_bytes",],)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+
+    if (!row) { throw new Error(`unknown reservation: ${id}`,); }
+    const current = row.state as ReservationState;
+    const legal = (current === "reserved" || current === "pushed") &&
+      NEXT_RESERVATION[current] === next;
+
+    if (!legal) {
+      throw new Error(`illegal reservation transition: ${current} -> ${next}`,);
+    }
+
+    if (
+      bound !== undefined &&
+      (row.peer_origin !== origin || row.content_hash !== bound.hash ||
+        row.size_bytes !== bound.size)
+    ) {
+      throw new Error(`reservation mismatch: ${id}`,);
+    }
+
+    await trx
+      .updateTable("mesh_reservations",)
+      .set({ state: next, },)
+      .where("id", "=", id,)
+      .execute();
+  },);
 }
 
 /**

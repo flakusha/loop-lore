@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // One linear request pipeline; phase extraction would scatter the flow.
-// size-allow: 343
+// size-allow: 370
 
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
@@ -16,6 +16,7 @@ import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { resolveActorAccess, } from "../routes/actor-access";
+import { resolveStoredComfyUIModelPins, } from "../routes/comfyui-models";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
 import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
@@ -79,6 +80,8 @@ interface ImageGenBody {
   lora?: LoRAConfig | LoRAConfig[];
   /** Picked ComfyUI model roles; each substitutes one graph placeholder. */
   model?: string;
+  /** Diffusion/UNET pick (request-side role matching the persisted pin). */
+  diffusion?: string;
   clip?: string;
   vae?: string;
   clip_vision?: string;
@@ -158,6 +161,7 @@ function invalidModelPick(req: ImageGenBody,): string | null {
   for (
     const [role, name,] of [
       ["checkpoint", req.model,],
+      ["diffusion", req.diffusion,],
       ["clip", req.clip,],
       ["vae", req.vae,],
       ["clip_vision", req.clip_vision,],
@@ -354,6 +358,14 @@ export async function handleImageGeneration(
     );
   }
 
+  // Persisted picks are per provider instance: resolving by name keeps a
+  // failover candidate from inheriting another instance's model selection.
+  const modelPins = await resolveStoredComfyUIModelPins(
+    db,
+    userId,
+    [...new Set(editCandidates.filter((p,) => p.apiFamily === "comfyui").map((p,) => p.name),),],
+  );
+
   const n = Math.min(req.n ?? 1, 4,);
   const outputFormat = req.output_format ?? "png";
 
@@ -417,9 +429,11 @@ export async function handleImageGeneration(
       initImage,
       lora: lora.configs,
       model: req.model,
+      diffusion: req.diffusion,
       clip: req.clip,
       vae: req.vae,
       clipVision: req.clip_vision,
+      modelPins,
     },
     userApiKeyResolver({ userId, config, db, },),
   );

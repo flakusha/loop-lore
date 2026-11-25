@@ -1,9 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema";
 import { createLogger, } from "../logger";
-import { createTestDb, } from "../test-utils/create-test-db";
+import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
 import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
+
+const soloConfig = { auth: { required: false, }, } as Config;
 
 describe("seedDefaultActors", () => {
   let db: Kysely<DB>;
@@ -18,7 +21,7 @@ describe("seedDefaultActors", () => {
   },);
 
   test("creates Assistant actor and demo user on fresh DB", async () => {
-    await seedDefaultActors(db,);
+    await seedDefaultActors(db, soloConfig,);
 
     const actor = await db
       .selectFrom("actors",)
@@ -35,7 +38,7 @@ describe("seedDefaultActors", () => {
   });
 
   test("is idempotent on second run", async () => {
-    await seedDefaultActors(db,);
+    await seedDefaultActors(db, soloConfig,);
 
     const actorCount = await db
       .selectFrom("actors",)
@@ -50,5 +53,22 @@ describe("seedDefaultActors", () => {
       .executeTakeFirst();
 
     expect(userCount?.n,).toBe(1,);
+  });
+
+  test("required auth seeds a real admin and never a Solo user", async () => {
+    const fixture = await createTestDb();
+    try {
+      const requiredConfig = {
+        auth: { required: true, adminUsername: "root", adminPassword: "sup3rsecret", },
+      } as Config;
+
+      await seedDefaultActors(fixture.db, requiredConfig,);
+
+      const users = await fixture.db.selectFrom("users",).select(["username", "role",],).execute();
+      expect(users.map((u,) => u.role),).not.toContain("solo",);
+      expect(users.some((u,) => u.username === "root" && u.role === "admin"),).toBe(true,);
+    } finally {
+      await destroyTestDb(fixture,);
+    }
   });
 });

@@ -20,7 +20,6 @@ import type { Kysely, } from "kysely";
 import { getConfigValue, setConfig, } from "../admin/config";
 import type { AgeGateConfig, } from "../config/schema";
 import { AgeGateSection, } from "../config/sections/age-gate";
-import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
@@ -78,11 +77,6 @@ export function initAgeGate(config: AgeGateConfig,): void {
 const AGE_GATE_ENABLED_KEY = "ageGate.enabled";
 const AGE_GATE_MIN_AGE_KEY = "ageGate.minimumAge";
 const AGE_GATE_MODE_KEY = "ageGate.mode";
-const AGE_GATE_MODES: readonly AgeGateMode[] = [
-  AgeGateMode.None,
-  AgeGateMode.SelfDeclaration,
-  AgeGateMode.Verification,
-];
 
 /**
  * Overlay persisted admin overrides onto the runtime store. Mirrors
@@ -105,8 +99,15 @@ export async function applyStoredAgeGateConfig(db: Kysely<DB>,): Promise<void> {
   }
 
   const modeRaw = await getConfigValue(db, AGE_GATE_MODE_KEY,);
-  if (modeRaw !== undefined && AGE_GATE_MODES.includes(modeRaw as AgeGateMode,)) {
-    patch.mode = modeRaw as AgeGateConfig["mode"];
+  if (modeRaw !== undefined) {
+    if (AgeGateService.isSupportedAgeGateMode(modeRaw as AgeGateConfig["mode"],)) {
+      patch.mode = modeRaw as AgeGateConfig["mode"];
+    } else {
+      // Verification has no distinct path; never silently self-declare.
+      getLogger().warn(
+        `Ignoring unsupported ageGate.mode=${modeRaw} from system_config: verification is not implemented`,
+      );
+    }
   }
 
   if (Object.keys(patch,).length > 0) { ageGateConfig.update(patch,); }
@@ -272,9 +273,12 @@ export async function handleAdminUpdateConfig(
   }
 
   if (typeof input.mode === "string") {
-    const validModes = [AgeGateMode.None, AgeGateMode.SelfDeclaration, AgeGateMode.Verification,] as const;
-    if (!validModes.includes(input.mode as (typeof validModes)[number],)) {
-      return jsonError(`mode must be one of: ${validModes.join(", ",)}`, 400,);
+    const supportedModes: readonly string[] = AgeGateService.SUPPORTED_AGE_GATE_MODES;
+    if (!supportedModes.includes(input.mode,)) {
+      return jsonError(
+        `mode must be one of: ${supportedModes.join(", ",)}; verification mode is not supported`,
+        400,
+      );
     }
 
     updated.mode = input.mode as AgeGateConfig["mode"];
