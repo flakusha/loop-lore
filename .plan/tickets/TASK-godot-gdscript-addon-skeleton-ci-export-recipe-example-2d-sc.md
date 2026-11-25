@@ -21,3 +21,8 @@ Recommended lazy slice from game-engine review: loop-lore-godot/ with WebSocketP
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Sequence after the frozen `StoryEvent` contract; add reconnect, gap and auth acceptance plus browser transport constraints.
+- An explicit polling fallback uses the chosen resume shape; persist the cursor only after upstream acknowledgement.

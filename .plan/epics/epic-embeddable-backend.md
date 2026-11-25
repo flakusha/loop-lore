@@ -81,3 +81,8 @@ Realtime channel selection (WS vs WT) is wired against
 ## Linked Tasks
 
 - TASK-embeddable-engine-game-frontend.md
+
+## Engine research addendum (2026-11-25)
+
+- Link `TASK-freeze-storyevent-as-versioned-src-type-engine-sdk-prerequis` as the source of truth for event shape and replay; remove duplicate event schema prose.
+- No runtime Editor MCP or honkbox dependency in embedded clients.

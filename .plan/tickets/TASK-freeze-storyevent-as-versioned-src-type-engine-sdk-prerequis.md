@@ -32,3 +32,8 @@ This is the shared source-identity prerequisite for every runtime/engine consume
 - [ ] Scoped auth rejects unauthorized branch subscriptions and forged producer identity; reconnect/backoff and duplicate-event handling are tested.
 - [ ] Runtime SDK contract check consumes the frozen type; no Editor MCP or honkbox dependency in the runtime client.
 - [ ] Tests passing and documentation updated with the contract versioning note.
+
+## Engine research addendum (2026-11-25)
+
+- Amend the contract with `branch_id`, `story_turn_id`, schema version, producer identity, deterministic ordering, auth, cursor/replay/gap and reconnect semantics.
+- Runtime SDKs depend on this frozen type; no Editor MCP or honkbox dependency in runtime clients.

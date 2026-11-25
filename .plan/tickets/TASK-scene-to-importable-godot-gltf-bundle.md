@@ -22,3 +22,8 @@ Owner epic: epic-game-asset-pipeline-export.md. Smallest ticket: one scene (back
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Define which entity fields survive export and add material, animation and texture loss checks.
+- Reuse the bundle/version contract; no second manifest format.

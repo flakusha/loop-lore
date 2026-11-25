@@ -64,3 +64,9 @@ Loop-lore outcome: `{ok:true,meshAssetId,thumbAssetId?,polyCount,manifest}` | `{
 **Context:**
 
 Follows `.tmp/research/blender-fullcycle-production-editing-2026-11-18.md` §3. Resolves the ownership/job-shape question left open by the 11-17 review; no implementation here. Honkbox's reserved `blender`/`3d` queue rows are capacity labels, not callable jobs.
+
+## Engine research addendum (2026-11-25)
+
+- Preserve the ownership split: loop-lore owns intent, asset identity and UI; honkbox owns execution and bundle publication.
+- Correct stale examples before reuse: current honkbox DTO is snake_case with tagged stages, manifest-last bundle status, explicit cancel, no `polyCount` promise and no guaranteed turntable.
+- Evidence: `.tmp/research/engine-integration-research-2026-11-24/plan-promotion-map.md` and `.tmp/research/full-cycle-app-integrations-2026-11-25/plan-promotion-map.md`.

@@ -23,3 +23,8 @@ Godot target tier: project scaffolding plus a capability-probed godot headless i
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Pin Godot version, preset and templates; use explicit GLB interchange with negative import fixtures and deterministic re-import.
+- Offline import evidence stays offline: no live run or asset-version claim until the shared identity gates land.

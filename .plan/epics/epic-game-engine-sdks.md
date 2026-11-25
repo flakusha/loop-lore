@@ -120,3 +120,9 @@ func _on_ws_data():
 
 - `loop-lore-unity/` — Unity SDK
 - `loop-lore-godot/` — Godot addon
+
+## Engine research addendum (2026-11-25)
+
+- Separate Unity/Unreal Editor automation from runtime SDKs; runtime Players consume the frozen `StoryEvent` contract with pinned transport/package choices.
+- No Editor MCP or honkbox dependency in Players; Godot uses `WebSocketPeer`.
+- Honkbox-side contract hardening stays in honkbox `.tmp/research`; that repo promotes its own records.

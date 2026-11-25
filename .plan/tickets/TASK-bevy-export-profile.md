@@ -23,3 +23,8 @@ Bevy-safe export profile honoring bevy_gltf extension gaps (no Draco/meshopt/KHR
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Use the current 0.20.1 extension table; separate KTX2/WebP image support from glTF extension syntax.
+- Feature-flag material extensions; no implicit backend or engine build.

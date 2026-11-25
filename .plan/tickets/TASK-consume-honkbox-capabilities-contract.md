@@ -28,3 +28,8 @@ Honkbox now serves GET /v1/capabilities (FEAT-capabilities-api, honkbox f44b3fc)
 - [ ] Documentation updated
 
 **Resolved:** 2026-11-19 registry-driven close: git issue 48bc41a (registry tip: de02c8016 Konstantin Fedotov Close issue)
+
+## Engine research addendum (2026-11-25)
+
+- No new ticket: Blender, artifact, events and external-tools keys are already parsed.
+- Advertise only probed capabilities; recipe byte digest is additive only if strict pre-pinning is approved, and honkbox owns contract truth.

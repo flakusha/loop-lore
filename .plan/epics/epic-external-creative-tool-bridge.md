@@ -169,3 +169,8 @@ and sandboxed and the file round-trip stays the default integration.
 
 
 git issue: bd11716
+
+## Engine research addendum (2026-11-25)
+
+- Record the actual inbound MCP servers versus the absent production outbound client: production uses typed CLI/API jobs.
+- Interactive editor MCP remains optional dev authoring, never a production control plane or generic DCC framework.

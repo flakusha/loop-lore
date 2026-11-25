@@ -29,3 +29,8 @@ Watch-folder ingest is optional: direct upload and explicit ingest paths stay su
 - [ ] Watcher restart re-syncs from directory state without duplicate versions.
 - [ ] Each accepted re-ingest creates an append-only version with editor/timestamp provenance under `TASK-asset-versioning`; no version is overwritten.
 - [ ] Tests passing and documentation updated, including the optional-watching rule.
+
+## Engine research addendum (2026-11-25)
+
+- Add write-quiescence and atomic-rename rules, expected base hash, idempotent ingest identity, symlink confinement and restart reconciliation.
+- Watching remains optional; an editor save-grant with ownership and conflict receipts is a separate gated candidate.

@@ -47,3 +47,8 @@ git issue: 9368a8d
 - [x] A dropped frame is reconcilable from the snapshot/replay; reconcile failure stays a named error. (unlanded consumer `23f309e75`: `artifacts[]` + legacy rows.)
 - [x] Targeted honkbox integration tests pass against enriched and legacy frames. (57 pass / 0 fail in consumer worktree.)
 - [ ] Land consumer worktree `23f309e75` to dev — deferred (no finalize/land in this lane); ticket stays In Progress. Snapshot is bounded liveness (64), not a full replay log.
+
+## Engine research addendum (2026-11-25)
+
+- Current code already selects and reconciles metadata from enriched frames; do not file a duplicate single-artifact consumer.
+- Bounded snapshot replay is telemetry, not publication proof; all-manifest multi-artifact ingest is a separate gated candidate (P6).

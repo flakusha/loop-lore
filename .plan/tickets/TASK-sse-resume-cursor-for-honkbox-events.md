@@ -22,3 +22,8 @@ Scope: readHonkboxFrames sends Last-Event-ID or since; snapshot fallback stays f
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Server bounded replay exists; re-evaluate the blocker around client cursor, reconnect and snapshot fallback for older servers.
+- SSE stays telemetry only; durable publication proof is the manifest and artifact bytes.

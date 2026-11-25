@@ -55,3 +55,8 @@ Implement asset versioning to track changes, enable rollbacks, and maintain hist
 - Reference `epic-items.md` for asset system design
 - Consider storage costs vs. version retention
 - Balance version history vs. cleanup
+
+## Engine research addendum (2026-11-25)
+
+- Define logical asset versus immutable content object: append-only versions, provenance, idempotent same-content behavior, conditional current pointer and restore-as-new-version.
+- Delta/compression stays outside the correctness slice.

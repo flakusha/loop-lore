@@ -30,3 +30,8 @@ directory holds inbound servers only.
 - [x] No MCP client added under `src/integrations/mcp/`
 
 **Resolved:** 2026-11-19 registry-driven close: git issue ec74d7a (registry tip: 02d2275b9 Konstantin Fedotov Close issue)
+
+## Engine research addendum (2026-11-25)
+
+- Current-state note: landed work is a probe plus one-stage library with admin wiring; the first production caller belongs to mesh QA.
+- Do not reopen this ticket to claim delivered library work; extend `TASK-mesh-qa-and-repair-chain` for real mesh acceptance instead.
