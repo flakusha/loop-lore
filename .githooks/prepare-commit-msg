@@ -24,8 +24,10 @@ fi
 
 # Run commitlint. git builds the merge, squash and template messages itself and
 # none of them carry a subject the type(scope): subject rule can read, so they
-# are exempt here — but not from the trailer audit above.
-if [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "template" ] ||
+# are exempt here — but not from the trailer audit above. An editor-written
+# message (empty COMMIT_SOURCE) is NOT exempt: it is the hand-written case this
+# check exists for.
+if [ "$COMMIT_SOURCE" = "template" ] ||
   [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
   exit 0
 fi

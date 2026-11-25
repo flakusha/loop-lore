@@ -82,10 +82,16 @@ export function cmdReportLs() {
     else if (report === null) { status = "no-report"; }
     else if (report.gitHead && !wt.head.startsWith(report.gitHead,)) { status = "STALE"; }
     else if (report.passed === true) {
-      // A skipped gate was not evaluated (see GIWT_ISSUE_CLI_UNAVAILABLE) -
-      // surface it instead of letting the row read as a clean pass.
+      // A skipped gate was not evaluated (see GIWT_ISSUE_CLI_UNAVAILABLE),
+      // and a red advisory gate leaves the run blocking-clean but NOT green.
+      // Surface both instead of letting the row read as a clean pass.
       const skipped = report.summary?.skipped ?? 0;
-      status = skipped > 0 ? `pass (${skipped} skipped)` : "pass";
+      const advisory = report.summary?.advisory ?? 0;
+      const notes = [
+        skipped > 0 ? `${skipped} skipped` : "",
+        advisory > 0 ? `${advisory} advisory failed` : "",
+      ].filter(Boolean,);
+      status = notes.length > 0 ? `pass (${notes.join(", ",)})` : "pass";
     } else { status = "FAIL"; }
 
     const reportHead = report?.gitHead ?? "-";

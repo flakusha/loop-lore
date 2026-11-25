@@ -23,6 +23,7 @@ import { aggregateModules, } from "./coverage/lcov.mjs";
 
 const SCRIPT_PATH = resolve(import.meta.dir, "coverage.mjs",);
 const tempDirs: string[] = [];
+const SCRATCH_ROOT = join(tmpdir(), "loop-lore",);
 
 afterEach(() => {
   for (const dir of tempDirs.splice(0,)) {
@@ -34,7 +35,8 @@ function runCoverage(
   lcov: string,
   args: string[] = ["--floor=80",],
 ): { status: number | null; stdout: string; stderr: string } {
-  const root = mkdtempSync(join(tmpdir(), "coverage-script-",),);
+  mkdirSync(SCRATCH_ROOT, { recursive: true, },);
+  const root = mkdtempSync(join(SCRATCH_ROOT, "coverage-script-",),);
   tempDirs.push(root,);
   const coverageDir = join(root, ".tmp", "coverage",);
   mkdirSync(coverageDir, { recursive: true, },);
@@ -60,7 +62,7 @@ describe("coverage.mjs", () => {
       "TN:\n" +
         "SF:src/elysia-app.ts\n" +
         "LF:1\n" +
-        "LH:0\n" +
+        "LH:1\n" +
         "end_of_record\n" +
         "TN:\n" +
         "SF:src/server/handler.ts\n" +
@@ -85,6 +87,18 @@ describe("coverage.mjs", () => {
     const row = JSON.parse(result.stdout,).files[0];
     expect(row.mod,).toBe("native",);
     expect(row.floor,).toBe(77,);
+  });
+
+  test("waived modules still fail below their own floor in module mode", () => {
+    // services has a 78% waiver floor: 0% must fail even though the global
+    // floor is 80, matching what --files mode already does.
+    const result = runCoverage(
+      "TN:\nSF:src/services/x.ts\nLF:2\nLH:0\nend_of_record\n",
+    );
+    expect(result.status,).toBe(1,);
+    const report = JSON.parse(result.stdout,);
+    expect(report.fail,).toBe(1,);
+    expect(result.stderr,).toContain("| services | 0.0% | 0/2 | 78% | FAIL |",);
   });
 
   test("--files buckets a top-level core file under (root)", () => {

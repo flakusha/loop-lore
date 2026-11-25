@@ -10,7 +10,7 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import { randomUUID, } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import type { UiWorkflow, } from "../src/generation/comfyui-converter/index";
 import { collectPlaceholders, } from "../src/generation/workflow-substitutor";
@@ -28,6 +28,8 @@ const scratchDirs: string[] = [];
 
 /** Own one fresh scratch dir per test; teardown never depends on assertions. */
 function scratch(): string {
+  // A fresh worktree has no .tmp/ yet; mkdtempSync does not create its parent.
+  mkdirSync(".tmp", { recursive: true, },);
   const dir = mkdtempSync(join(".tmp", `workflow-api-${randomUUID()}-`,),);
   scratchDirs.push(dir,);
   return dir;
