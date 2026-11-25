@@ -3,7 +3,7 @@
 
 // src/integrations/loop-lore-facade/ops/shared.test.ts — the building blocks
 // the per-domain facade ops share: the calling principal's identity, the
-// per-actor ownership guard and the two typed rejections.
+// per-actor ownership guard, the two typed rejections and the 404 normalizer.
 //
 // Resource contract (parallel-safe): one :memory: SQLite per test via
 // createTestDb, no ports, no env, no sleeps.
@@ -17,13 +17,14 @@ import { principalKind, } from "../../../middleware/principal-kind";
 import { createRequestContext, } from "../../../middleware/types";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../../test-utils/insert-helpers";
-import type { FacadeContext, } from "../types";
+import type { FacadeContext, FacadeResult, } from "../types";
 import { facadeContextFromRequestContext, } from "../types";
 import {
   badBodyResult,
   callerIdentity,
   callerOwnsActor,
   notFoundResult,
+  notFoundWhenForbidden,
   READ_ONLY_ANNOTATIONS,
 } from "./shared";
 
@@ -92,6 +93,39 @@ describe("facade op shared building blocks", () => {
       status: 404,
       json: { error: "not_found", message: "asset not found", },
     },);
+  });
+
+  test("notFoundWhenForbidden masks a delegated 403 as the facade 404", () => {
+    const forbidden: FacadeResult = {
+      ok: false,
+      status: 403,
+      json: { error: "forbidden", message: "character is not yours", },
+    };
+
+    expect(notFoundWhenForbidden(forbidden, "character not found",),).toEqual({
+      ok: false,
+      status: 404,
+      json: { error: "not_found", message: "character not found", },
+    },);
+
+    const badBody: FacadeResult = {
+      ok: false,
+      status: 400,
+      json: { error: "bad_request", message: "body does not match the characters.update schema", },
+    };
+
+    expect(notFoundWhenForbidden(badBody, "character not found",),).toBe(badBody,);
+
+    const missing: FacadeResult = {
+      ok: false,
+      status: 404,
+      json: { error: "not_found", message: "character not found", },
+    };
+
+    expect(notFoundWhenForbidden(missing, "character not found",),).toBe(missing,);
+
+    const ok: FacadeResult = { ok: true, status: 200, json: { id: "character-1", }, };
+    expect(notFoundWhenForbidden(ok, "character not found",),).toBe(ok,);
   });
 
   test("the shared annotations are honest - read-only, never idempotent", () => {
