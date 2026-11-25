@@ -63,10 +63,13 @@ import {
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 
-// Type-only imports: erased at runtime, so this suite never pulls the
-// terminal engine into the process (see `src/tui/import-purity.test.ts`).
+// Read-only view modules stay type-only; the group/moderation dispatchers
+// are static imports below so their commands and request shapes pin here
+// (both stay inert at import time — see `src/tui/import-purity.test.ts`).
 import type { LinkedAsset, } from "./asset-view";
-import type { ChatMessage, } from "./chat/types";
+import { dispatchGroupCommand, GROUP_COMMANDS, } from "./chat/group-commands";
+import { dispatchModerationCommand, MODERATION_COMMANDS, } from "./chat/moderation-commands";
+import type { ChatHost, ChatMessage, } from "./chat/types";
 import type { HarnessRunDetail, HarnessRunSummary, } from "./harness/types";
 
 /** Shared parent for the harness fixtures; each test owns its own child dir. */
@@ -577,6 +580,12 @@ const TUI_ENDPOINTS: TuiEndpoint[] = [
   { method: "POST", path: "/api/v1/chats/:id/split", caller: "chat/branch-api.ts splitChat", },
   { method: "POST", path: "/api/v1/chats/:id/reunite", caller: "chat/branch-api.ts reuniteChats", },
   { method: "GET", path: "/api/v1/actors", caller: "chat/characters-api.ts listCharacters", },
+  { method: "GET", path: "/api/v1/chats/:id/participants", caller: "chat/group-commands.ts listParticipants", },
+  { method: "GET", path: "/api/v1/chats/:id/turn-order", caller: "chat/group-commands.ts loadTurnOrder", },
+  { method: "PUT", path: "/api/v1/chats/:id/impersonate", caller: "chat/group-commands.ts setImpersonation", },
+  { method: "PUT", path: "/api/v1/messages/:id/visibility", caller: "chat/moderation-commands.ts hideMessage", },
+  { method: "DELETE", path: "/api/v1/messages/:id", caller: "chat/moderation-commands.ts deleteMessage", },
+  { method: "GET", path: "/api/v1/nsfw/moderation/flags", caller: "chat/moderation-commands.ts loadModerationQueue", },
 ];
 
 describe("TUI endpoint inventory — real createApp() route registry", () => {
@@ -590,7 +599,7 @@ describe("TUI endpoint inventory — real createApp() route registry", () => {
   });
 
   test("the pin list is the full inventory, not a five-endpoint sample", () => {
-    expect(TUI_ENDPOINTS.length,).toBe(31,);
+    expect(TUI_ENDPOINTS.length,).toBe(37,);
   });
 });
 
@@ -620,5 +629,203 @@ describe("new TUI endpoints — payload fields the callers read", () => {
     const body = (await res.json()) as { data?: { branches?: unknown; nextCursor?: unknown } };
     expect(Array.isArray(body.data?.branches,),).toBe(true,);
     expect(body.data?.nextCursor === null || typeof body.data?.nextCursor === "string",).toBe(true,);
+  });
+});
+
+// ── Group-chat + moderation TUI commands ──────────────────────────────────────
+// The dispatchers are thin HTTP callers: stub `fetch` here (the live contracts
+// above hit `app.handle` directly and never touch it). The same exported
+// descriptor lists feed the widget's slash-command completion/help strip.
+describe("group-chat and moderation TUI commands", () => {
+  const realFetch = globalThis.fetch;
+  let calls: Array<{ url: string; method: string | undefined; body: unknown }>;
+  let replies: unknown[];
+
+  beforeEach(() => {
+    calls = [];
+    replies = [];
+    globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit,) => {
+      calls.push({
+        url: String(input,),
+        method: init?.method,
+        body: typeof init?.body === "string" ? JSON.parse(init.body,) : init?.body,
+      },);
+
+      const payload = replies.shift() ?? { data: {}, };
+      return new Response(JSON.stringify(payload,), {
+        status: 200,
+        headers: { "Content-Type": "application/json", },
+      },);
+    }) as typeof fetch;
+  },);
+
+  afterEach(() => {
+    globalThis.fetch = realFetch;
+  },);
+
+  /** Bare ChatHost surface the dispatchers touch, with assertion sinks. */
+  function commandHost(chatId: string | null = "chat-1",) {
+    const state = { errors: [] as string[], messages: [] as { content: string }[], };
+    const host = {
+      chatId,
+      sessionToken: "tok" as string | undefined,
+      showError(message: string,) {
+        state.errors.push(message,);
+      },
+      addMessage(message: { content: string },) {
+        state.messages.push(message,);
+      },
+    } as unknown as ChatHost;
+
+    return { host, state, };
+  }
+
+  const roster = [
+    { actor_id: "a-1", display_name: "Alice", role_in_chat: "owner", },
+    { actor_id: "a-2", display_name: "Bob", role_in_chat: "member", },
+  ];
+
+  test("new commands are advertised in the completion/help descriptor lists", () => {
+    expect(GROUP_COMMANDS.map((c,) => c.name),).toEqual([
+      "group",
+      "participants",
+      "impersonate",
+      "mention",
+    ],);
+
+    expect(MODERATION_COMMANDS.map((c,) => c.name),).toEqual(["hide", "delete", "queue",],);
+  });
+
+  test("group view reads turn order and renders the current/next speaker", async () => {
+    const { host, state, } = commandHost();
+    replies = [
+      { data: roster, },
+      {
+        data: {
+          turnOrder: {
+            strategy: "round_robin",
+            currentActorId: "a-1",
+            nextActorId: "a-2",
+            order: [
+              { actor_id: "a-1", display_name: "Alice", isCurrent: true, isNext: false, },
+              { actor_id: "a-2", display_name: "Bob", isCurrent: false, isNext: true, },
+            ],
+          },
+        },
+      },
+    ];
+
+    expect(await dispatchGroupCommand(host, "/group",),).toBe(true,);
+    expect(calls.map((c,) => c.url),).toEqual([
+      "http://localhost:3000/api/v1/chats/chat-1/participants",
+      "http://localhost:3000/api/v1/chats/chat-1/turn-order",
+    ],);
+
+    expect(state.messages[0]?.content,).toContain("now: Alice",);
+    expect(state.messages[0]?.content,).toContain("next: Bob",);
+    expect(state.errors,).toEqual([],);
+  });
+
+  test("participants lists mentionable names and mention resolves via the shipped parser", async () => {
+    const { host, state, } = commandHost();
+    replies = [{ data: roster, }, { data: roster, },];
+
+    expect(await dispatchGroupCommand(host, "/participants",),).toBe(true,);
+    expect(state.messages[0]?.content,).toContain("1. Alice (a-1)",);
+    expect(state.messages[0]?.content,).toContain("@name to mention",);
+
+    expect(await dispatchGroupCommand(host, "/mention Bob",),).toBe(true,);
+    expect(state.messages[1]?.content,).toContain("@Bob → a-2",);
+    expect(state.errors,).toEqual([],);
+  });
+
+  test("impersonate switches by roster index and clears with off", async () => {
+    const { host, state, } = commandHost();
+    replies = [{ data: roster, }, { data: { ok: true, }, }, { data: { ok: true, }, },];
+
+    expect(await dispatchGroupCommand(host, "/impersonate 2",),).toBe(true,);
+    expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/chats/chat-1/participants",);
+    expect(calls[1],).toEqual({
+      url: "http://localhost:3000/api/v1/chats/chat-1/impersonate",
+      method: "PUT",
+      body: { impersonateActorId: "a-2", },
+    },);
+
+    expect(await dispatchGroupCommand(host, "/impersonate off",),).toBe(true,);
+    expect(calls[2]?.body,).toEqual({ impersonateActorId: null, },);
+    expect(state.messages.map((m,) => m.content),).toContain("Impersonation cleared.",);
+  });
+
+  test("hide and delete hit the shipped message routes with the right bodies", async () => {
+    const { host, state, } = commandHost();
+    replies = [{ data: { ok: true, }, }, { data: "", },];
+
+    expect(await dispatchModerationCommand(host, "/hide msg-1 spam",),).toBe(true,);
+    expect(calls[0],).toEqual({
+      url: "http://localhost:3000/api/v1/messages/msg-1/visibility",
+      method: "PUT",
+      body: { visibility: "hidden_by_moderator", reason: "spam", },
+    },);
+
+    expect(await dispatchModerationCommand(host, "/delete msg-2",),).toBe(true,);
+    expect(calls[1]?.url,).toBe("http://localhost:3000/api/v1/messages/msg-2",);
+    expect(calls[1]?.method,).toBe("DELETE",);
+    expect(state.messages.length,).toBe(2,);
+    expect(state.errors,).toEqual([],);
+  });
+
+  test("queue reads the moderation flag queue and leaves usage errors inline", async () => {
+    const { host, state, } = commandHost();
+    replies = [{
+      data: {
+        total: 1,
+        flags: [
+          { id: "f-1", contentType: "message", flagReason: "nsfw", status: "pending", createdAt: "2026-01-01", },
+        ],
+      },
+    },];
+
+    expect(await dispatchModerationCommand(host, "/queue pending",),).toBe(true,);
+    expect(calls[0]?.url,).toBe("http://localhost:3000/api/v1/nsfw/moderation/flags?status=pending&limit=20",);
+    expect(state.messages[0]?.content,).toContain("f-1",);
+
+    expect(await dispatchModerationCommand(host, "/delete",),).toBe(true,);
+    expect(state.errors,).toEqual(["Usage: /delete <messageId> — delete a message.",],);
+  });
+
+  test("unrelated commands are left to the other dispatchers / send path", async () => {
+    const { host, state, } = commandHost();
+
+    expect(await dispatchGroupCommand(host, "/help",),).toBe(false,);
+    expect(await dispatchModerationCommand(host, "/help",),).toBe(false,);
+    expect(calls,).toEqual([],);
+    expect(state.errors,).toEqual([],);
+  });
+});
+
+// Live pins for the two group surfaces the TUI now calls.
+describe("group-chat routes the TUI calls", () => {
+  test("participants and turn-order answer the shapes the group command reads", async () => {
+    const people = await call(`/api/v1/chats/${chatId}/participants`,);
+    expect(people.status,).toBe(200,);
+    const peopleBody = (await people.json()) as { data?: unknown };
+    expect(Array.isArray(peopleBody.data,),).toBe(true,);
+    for (const row of peopleBody.data as { actor_id?: unknown; display_name?: unknown }[]) {
+      expect(typeof row.actor_id,).toBe("string",);
+      expect(typeof row.display_name,).toBe("string",);
+    }
+
+    const order = await call(`/api/v1/chats/${chatId}/turn-order`,);
+    expect(order.status,).toBe(200,);
+    const orderBody = (await order.json()) as { data?: { turnOrder?: unknown } };
+    expect("turnOrder" in (orderBody.data ?? {}),).toBe(true,);
+  });
+
+  test("the moderation queue answers the redacted flag envelope", async () => {
+    const res = await call("/api/v1/nsfw/moderation/flags?status=pending&limit=20",);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data?: { flags?: unknown; total?: unknown } };
+    expect(Array.isArray(body.data?.flags,),).toBe(true,);
+    expect(typeof body.data?.total,).toBe("number",);
   });
 });

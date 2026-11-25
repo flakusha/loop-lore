@@ -27,11 +27,13 @@ import {
   loadMessages as loadMessagesDispatch,
   uploadAsset as uploadAssetDispatch,
 } from "./api";
-import type { ImageGenResult, MessageAttachment, UploadResult, } from "./api";
+import type { CommandDescriptor, ImageGenResult, MessageAttachment, UploadResult, } from "./api";
 import { routeClientCommand, } from "./client-commands";
 import { CommandCompleter, } from "./commands";
 import { formatMessageLine, } from "./display";
+import { dispatchGroupCommand, GROUP_COMMANDS, } from "./group-commands";
 import { ChatInputField, } from "./input-field";
+import { dispatchModerationCommand, MODERATION_COMMANDS, } from "./moderation-commands";
 import { applyStreamRow, } from "./stream-row";
 import { TranscriptPane, } from "./transcript";
 import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
@@ -41,6 +43,9 @@ export type { ChatMessage, ChatWidgetOptions, } from "./types";
 
 /** Typing placeholder row, in blessed-tag form like every other row. */
 const TYPING_ROW = "{italic}{yellow}... typing{/yellow}{/italic}";
+
+/** Client-only commands advertised next to the live server registry. */
+const CLIENT_COMMANDS: CommandDescriptor[] = [...GROUP_COMMANDS, ...MODERATION_COMMANDS,];
 
 /** */
 export class ChatWidget implements Component, ChatHost {
@@ -95,7 +100,10 @@ export class ChatWidget implements Component, ChatHost {
     this.linkAsset = options.linkAsset;
 
     this.completer = new CommandCompleter({
-      loadRegistry: () => loadCommands(this.sessionToken, this.chatId,),
+      loadRegistry: async () => {
+        const registry = await loadCommands(this.sessionToken, this.chatId,);
+        return registry.ok ? { ok: true, data: [...registry.data, ...CLIENT_COMMANDS,], } : registry;
+      },
       onChange: () => {
         this.completionHint = this.completer.hint() ?? "";
         this.requestRender();
@@ -314,6 +322,12 @@ export class ChatWidget implements Component, ChatHost {
       return;
     }
 
+    if (/^\/(group|participants|impersonate|mention|hide|delete|queue)(\s|$)/.test(trimmed,)) {
+      this.input.setValue("",);
+      void this.routeGroupModeration(trimmed,);
+      return;
+    }
+
     if (trimmed.startsWith("/image ",)) {
       this.input.setValue("",);
       void this.generateImageFlow(trimmed.slice("/image ".length,),);
@@ -336,6 +350,17 @@ export class ChatWidget implements Component, ChatHost {
     }
 
     this.requestRender();
+  }
+
+  /**
+   * Group-chat and moderation commands are thin HTTP commands; each
+   * dispatcher returns `false` for anything it does not own.
+   * @param text - trimmed input starting with `/`
+   */
+  private async routeGroupModeration(text: string,): Promise<void> {
+    if (!(await dispatchGroupCommand(this, text,))) {
+      await dispatchModerationCommand(this, text,);
+    }
   }
 
   // ── API wiring ─────────────────────────────────────────────────
