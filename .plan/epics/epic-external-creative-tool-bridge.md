@@ -19,6 +19,41 @@ Bring external creative applications into loop-lore as first-class **tool server
 
 Why MCP and not per-app SDKs: llama-swap supervises the OpenAI-compatible model family only. Blender, Krita, LibreOffice, GIMP and Inkscape are not OpenAI-compatible, so a per-app adapter is required for each. MCP is a published protocol with a TS SDK and a stable spec revision, so the adapter is written once and consumed by every app that ships an MCP server.
 
+## Current-state correction and DCC promotion (2026-11-25)
+
+The historical notes below predate the inbound MCP server now present under
+`src/integrations/mcp/`. Inbound server support is not a production outbound MCP
+client. No production outbound client was verified in the 2026-11-25 integration
+research; typed CLI/API jobs with an explicitly selected backend remain the
+production default. MCP stays optional, local, disposable authoring UX.
+
+Expand external-tool coverage by **proven execution capability and a named
+consumer**, not by application name. Native project documents remain human
+masters; normalized artifacts, previews, and reports are exchange objects. Every
+new consumer waits for the shared run/version/publication/save-grant contracts
+and must not create a per-application loop-lore job ledger or a generic raw
+command/script proxy.
+
+| Candidate | Disposition | Promotion home / gate |
+| --- | --- | --- |
+| FreeCAD | First conditional FOSS CAD candidate | Honkbox H-ADD1; P0–P7, named CAD/prop consumer, installed pin, real FCStd/STEP fixture |
+| MuseScore | Small conditional score/render candidate | Honkbox H-ADD2; P0–P7, named music consumer, soundfont/plugin policy, layout fixture |
+| REAPER | Optional operator-licensed audio tier | Honkbox H-ADD3; entitlement, approved RPP template/plugins, alternate profile |
+| Natron | Later compositing tier | Honkbox H-ADD4; real frame/EXR/video bundle and color/alpha contract |
+| QGIS | Conditional GIS consumer | Honkbox H-ADD5; named map workflow, CRS/units/data/license policy |
+| Scribus | Conditional document consumer | Honkbox H-ADD6; named printable-document workflow, confined SLA template |
+| Assimp / MeshLab | Validator/processor options, not a new platform | Honkbox H-ADD7 inside existing engine-bundle verification |
+
+Application-specific heavy lifting is honkbox-owned. loop-lore owns intent,
+approval, branch/source identity, `DevelopmentRun`, immutable asset versions,
+save grants, capability selection, and UI. Honkbox owns discovery, typed recipes,
+leases, supervision, cancellation, staged artifacts, manifest-last publication,
+and artifact identity. The candidate queue and proof checklist are published at
+`../honkbox/.tmp/research/dcc-additional-applications-honkbox-2026-11-25.md`;
+the source research is
+`.tmp/research/dcc-additional-applications-and-responsibility-2026-11-25.md`.
+No candidate above is an approved implementation ticket.
+
 ## Current State (verified 2026-10-15)
 
 - **No MCP client in the source tree.** Confirmed three independent ways: `docs/research/harness-mcp-wiring.md:301` ("no MCP-related code in the source tree"), `docs/research/roadmap-tracker.md:75`, and `docs/research/doc-00-index.md:40`.

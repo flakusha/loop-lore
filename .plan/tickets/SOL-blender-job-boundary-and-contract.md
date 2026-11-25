@@ -18,6 +18,35 @@ Record the cross-repo Blender job boundary so loop-lore and honkbox implement on
 - honkbox owns the process when configured as the backend: supervisor, typed job kind, route and events, artifact bundle. MCP is explicitly rejected there; no MCP client belongs under loop-lore `src/integrations/mcp/` (inbound servers, sibling-owned).
 - Capabilities are probed at runtime; no capability means local implementation or a feature-gated-off UI, never an implicit remote call. `FeatureFlags` gate features, not honkbox's reserved `blender`/`3d` queue rows.
 
+**General DCC boundary (2026-11-25):**
+
+The ownership rule above generalizes to FreeCAD, MuseScore, REAPER, Natron, QGIS,
+Scribus, and future external creative tools. The Blender DTO below remains a
+Blender-specific historical shape; it is not a generic DCC API to copy.
+
+- loop-lore owns intent, approval, branch/source identity, `DevelopmentRun`,
+  immutable asset versions, save grants, capability selection, UI, and retry
+  policy.
+- honkbox owns discovery/version/capability, typed recipes, admission/leases,
+  process supervision, timeout/cancel, logs, staged artifacts, manifest-last
+  publication, hashes/sizes/roles, and artifact ids.
+- Native templates, trusted plug-in bytes, disposable profiles, and semantic
+  fixtures live with the application fixture; operators own installs, licenses,
+  credentials, and native project masters.
+- Each adapter exposes one closed, versioned operation profile with bounded typed
+  parameters, independently verified immutable inputs, consumer-scoped
+  idempotency, explicit resource limits, deterministic reconciliation, expected
+  artifact roles/validators, and a durable terminal manifest. No raw caller paths,
+  argv, inline Python, shell strings, arbitrary plug-in loading, silent backend
+  failover, or automatic source-project overwrite.
+- MCP remains optional local authoring UX, never the production transport or
+  durable job ledger.
+
+The candidate queue and proof checklist are in
+`../honkbox/.tmp/research/dcc-additional-applications-honkbox-2026-11-25.md`.
+No per-application loop-lore run ledger, artifact protocol, or job registry is
+created by this decision.
+
 **Contract (shared with honkbox `FEAT-blender-job-route`):**
 `POST /v1/jobs/blender { input: {assetId|objectKey, format: glb|obj|ply, sha256}, stages: [...], params: {...}, engine: {blenderVersion:"4.5.15", scriptVersion:<sha>}, output: {format:"glb", maxBytes}, manifest: 1 }` → `{jobId, status:"queued"}`; lifecycle via `/v1/jobs` + `/v1/events`; artifacts = output.glb + manifest.json + turntable.webp.
 Loop-lore outcome: `{ok:true,meshAssetId,thumbAssetId?,polyCount,manifest}` | `{ok:false,status:"queued"|"unsupported"|"failed",message}`.
