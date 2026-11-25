@@ -92,6 +92,14 @@
         </button>
         <button
           class="world-edit-tab"
+          :class="{ active: activeTab === 'agentActions' }"
+          @click="showTab('agentActions')"
+          data-testid="admin-tab-agent-actions"
+        >
+          Agent actions
+        </button>
+        <button
+          class="world-edit-tab"
           :class="{ active: activeTab === 'harness' }"
           @click="showTab('harness')"
           data-testid="admin-tab-harness"
@@ -146,7 +154,7 @@
       admin/plugins-panel.html }} {{> admin/system-panel.html }} {{> admin/analytics-panel.html }} {{>
       admin/health-panel.html }} {{> admin/templates-panel.html }} {{> admin/lora-panel.html }} {{>
       admin/workflows-panel.html }} {{> admin/builder-panel.html }} {{> admin/harness-queue-panel.html }} {{>
-      admin/watchdog-panel.html }}
+      admin/watchdog-panel.html }} {{> admin/agent-actions-panel.html }}
     </div>
 
     <!-- Harness Tab (TASK-harness-frontend-consolidation) -->

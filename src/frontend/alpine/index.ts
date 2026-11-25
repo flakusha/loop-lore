@@ -13,6 +13,7 @@ import "./actor-systems";
 import "./actor-traits";
 import "./actor-wardrobe";
 import "./admin";
+import "./admin-agent-actions";
 import "./admin-db-backup";
 import "./admin-harness-queue";
 import "./admin-honkbox";

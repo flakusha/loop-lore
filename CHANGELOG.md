@@ -13,6 +13,7 @@ All notable changes to loop-lore. Format: [Keep a Changelog](https://keepachange
 
 ### Added
 
+- **Agent actions audit trail is readable in the admin dashboard** — a new Agent actions tab lists the shipped `GET /api/v1/admin/agent-actions` rows (newest first, token/action filters, 50 default / 200 cap) and renders 401/403 as explicit read-only states; the trail stays append-only from the agent API.
 - **Per-user generation busy count on the video panel** — `GET /api/v1/generation/active/me` returns `{ count }` for the authenticated caller's own in-flight generations (401 without a session), while `GET /api/v1/generation/active` stays admin-only. The Web video panel refreshes the per-user count on each poll and surfaces real read errors; job cancel remains the shipped owner-scoped `POST /api/v1/generation/jobs/:id/cancel`.
 - **Harness turn queue is controllable from the admin UI** — the queue tab lists turns, enqueues a single profile/prompt/chat/actor turn and cancels only `queued` turns through the existing admin-gated routes; running turns stay uncancellable and 401/403 render as messages.
 - **Admin-editable model and prompt config keys** — `autoroute_scenario`, `model_roles`, `lore_token_budget` and `memory_token_budget` are editable from the admin config menu; the budget fields render as number inputs and PATCH rejects non-integers or values outside 128–8192 with a 400 before any write, while real secrets stay redacted.
