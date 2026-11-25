@@ -68,6 +68,7 @@ import {
   linkAsset,
   listAssets,
   mimeFromBytes,
+  mimeFromExtension,
   resolveAssetTransform,
   shareAsset,
   unshareAsset,
@@ -551,9 +552,10 @@ export async function handleUpload({
   const sizeError = validateFileSize(buffer.length, maxFileSize,);
   if (sizeError) { return badRequestResponse(sizeError,); }
 
-  // Browsers often leave `File.type` empty for .glb; sniff the container so
-  // the shared MIME gate and asset-type detection see the real format.
-  const mimeType = mimeFromBytes(buffer,) ?? (file.type || "application/octet-stream");
+  // Magic bytes win; a declared type is second; the name is the last resort.
+  // A spoofed declaration or name cannot beat the bytes (SVG stays blocked).
+  const mimeType = mimeFromBytes(buffer,) ??
+    (file.type && file.type !== "application/octet-stream" ? file.type : mimeFromExtension(file.name,));
   const mimeError = validateMimeType(mimeType,);
   if (mimeError) { return badRequestResponse(mimeError,); }
 

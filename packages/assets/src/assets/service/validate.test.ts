@@ -49,6 +49,26 @@ describe("validateMimeType", () => {
     expect(validateMimeType("model/gltf+json",),).toBeNull();
   });
 
+  test("accepts honkbox-compatible model and raster MIME families", () => {
+    const allowed = [
+      "model/gltf-binary",
+      "model/gltf+json",
+      "model/ply",
+      "model/splat",
+      "model/spz",
+      "model/obj",
+      "model/fbx",
+      "model/usd",
+      "model/stl",
+      "model/3mf",
+      "image/x-exr",
+      "image/openraster",
+    ];
+    for (const mime of allowed) {
+      expect(validateMimeType(mime,),).toBeNull();
+    }
+  });
+
   test("acceptance is case-insensitive", () => {
     expect(validateMimeType("IMAGE/PNG",),).toBeNull();
     expect(validateMimeType("Application/PDF",),).toBeNull();

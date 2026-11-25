@@ -59,6 +59,13 @@ function pngFile(name: string, width: number, height: number,) {
   return new File([bytes.buffer,], name, { type: "image/png", },);
 }
 
+/** Build a File from raw bytes; `declaredType` may deliberately lie. */
+function bytesFile(name: string, source: Uint8Array, declaredType = "",) {
+  const bytes = new Uint8Array(source.length,);
+  bytes.set(source,);
+  return new File([bytes.buffer,], name, { type: declaredType, },);
+}
+
 async function seed(): Promise<Fixture> {
   const { db, } = await createTestDb();
   const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-controller-test-",),);
@@ -719,6 +726,57 @@ describe("handleUpload", () => {
       const secondJson = (await second.json()) as { id: string; duplicate: boolean };
       expect(secondJson.duplicate,).toBe(true,);
       expect(secondJson.id,).toBe(firstJson.id,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("sniffs an .ora with no declared type into an image asset", async () => {
+    const fx = await seed();
+    try {
+      const config = createConfigSchema().defaults as Config;
+      const encoder = new TextEncoder();
+      const bytes = new Uint8Array([
+        ...encoder.encode("PK\x03\x04",),
+        ...encoder.encode("mimetype",),
+        ...encoder.encode("image/openraster",),
+      ],);
+      const form = new FormData();
+      form.append("file", bytesFile("scene.ora", bytes,),);
+      const res = await handleUpload({
+        request: new Request("http://localhost/api/assets", { method: "POST", body: form, },),
+        userId: fx.ownerId,
+        database: fx.db,
+        uploadDir: fx.uploadDir,
+        maxFileSize: config.assets.maxFileSize,
+      },);
+
+      expect(res.status,).toBe(201,);
+      const body = (await res.json()) as { mime_type: string; asset_type: string };
+      expect(body.mime_type,).toBe("image/openraster",);
+      expect(body.asset_type,).toBe(AssetType.Image,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("rejects SVG bytes despite a png filename and declared png type", async () => {
+    const fx = await seed();
+    try {
+      const config = createConfigSchema().defaults as Config;
+      const svg = new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"></svg>',);
+      const form = new FormData();
+      form.append("file", bytesFile("spoof.png", svg, "image/png",),);
+      const res = await handleUpload({
+        request: new Request("http://localhost/api/assets", { method: "POST", body: form, },),
+        userId: fx.ownerId,
+        database: fx.db,
+        uploadDir: fx.uploadDir,
+        maxFileSize: config.assets.maxFileSize,
+      },);
+
+      expect(res.status,).toBe(400,);
+      expect(await res.text(),).toContain("Unsupported file type",);
     } finally {
       await cleanup(fx,);
     }

@@ -81,6 +81,27 @@ describe("mimeFromExtension", () => {
     expect(mimeFromExtension("MODEL.GLB",),).toBe("model/gltf-binary",);
   });
 
+  test("maps honkbox-compatible image and model extensions", () => {
+    const cases: ReadonlyArray<[string, string,]> = [
+      ["a.exr", "image/x-exr",],
+      ["a.ora", "image/openraster",],
+      ["a.ply", "model/ply",],
+      ["a.splat", "model/splat",],
+      ["a.spz", "model/spz",],
+      ["a.obj", "model/obj",],
+      ["a.fbx", "model/fbx",],
+      ["a.usda", "model/usd",],
+      ["a.usdc", "model/usd",],
+      ["a.usdz", "model/usd",],
+      ["a.usd", "model/usd",],
+      ["a.stl", "model/stl",],
+      ["a.3mf", "model/3mf",],
+    ];
+    for (const [name, mime,] of cases) {
+      expect(mimeFromExtension(name,),).toBe(mime,);
+    }
+  });
+
   test("is case-insensitive", () => {
     expect(mimeFromExtension("photo.PNG",),).toBe("image/png",);
     expect(mimeFromExtension("CLIP.WEBM",),).toBe("video/webm",);
@@ -127,6 +148,24 @@ describe("extensionForMime", () => {
     expect(extensionForMime("model/gltf+json",),).toBe("gltf",);
   });
 
+  test("maps honkbox-compatible MIMEs to canonical extensions", () => {
+    const cases: ReadonlyArray<[string, string,]> = [
+      ["image/x-exr", "exr",],
+      ["image/openraster", "ora",],
+      ["model/ply", "ply",],
+      ["model/splat", "splat",],
+      ["model/spz", "spz",],
+      ["model/obj", "obj",],
+      ["model/fbx", "fbx",],
+      ["model/usd", "usd",],
+      ["model/stl", "stl",],
+      ["model/3mf", "3mf",],
+    ];
+    for (const [mime, ext,] of cases) {
+      expect(extensionForMime(mime,),).toBe(ext,);
+    }
+  });
+
   test("falls back to bin for unknown MIME types", () => {
     expect(extensionForMime("application/octet-stream",),).toBe("bin",);
     expect(extensionForMime("image/tiff",),).toBe("bin",);
@@ -135,14 +174,35 @@ describe("extensionForMime", () => {
 });
 
 describe("mimeFromBytes", () => {
-  test("sniffs the GLB container magic", () => {
-    const glb = new Uint8Array([0x67, 0x6c, 0x54, 0x46, 0x02, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00,],);
-    expect(mimeFromBytes(glb,),).toBe("model/gltf-binary",);
+  const ascii = (text: string,) => new TextEncoder().encode(text,);
+  const concat = (...parts: Uint8Array[]) => new Uint8Array(parts.flatMap((part,) => [...part,]),);
+  const ora = concat(ascii("PK\x03\x04",), ascii("mimetype",), ascii("image/openraster",),);
+  const cases: ReadonlyArray<[Uint8Array, string,]> = [
+    [ascii("glTF",), "model/gltf-binary",],
+    [concat(ascii("v/1",), new Uint8Array([0x01,],),), "image/x-exr",],
+    [ascii("ply\n",), "model/ply",],
+    [ascii("NGSP",), "model/spz",],
+    [ascii("Kaydara FBX Binary  \x00\x1a\x00",), "model/fbx",],
+    [new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,],), "image/png",],
+    [new Uint8Array([0xff, 0xd8, 0xff,],), "image/jpeg",],
+    [ascii("GIF89a",), "image/gif",],
+    [concat(ascii("RIFF",), new Uint8Array(4,), ascii("WEBP",),), "image/webp",],
+    [ascii("<svg",), "image/svg+xml",],
+    [ascii("<?xml",), "image/svg+xml",],
+    [concat(new Uint8Array([0xef, 0xbb, 0xbf,],), ascii("<svg",),), "image/svg+xml",],
+    [ora, "image/openraster",],
+  ];
+
+  test("identifies containers by magic bytes, never by name or declaration", () => {
+    for (const [bytes, mime,] of cases) {
+      expect(mimeFromBytes(bytes,),).toBe(mime,);
+    }
   });
 
-  test("returns null for non-GLB bytes and short buffers", () => {
-    expect(mimeFromBytes(new Uint8Array([0x7b, 0x22, 0x61, 0x22,],),),).toBeNull();
-    expect(mimeFromBytes(new Uint8Array([0x67, 0x6c, 0x54,],),),).toBeNull();
+  test("returns null for unknown, truncated and plain zip bytes", () => {
+    expect(mimeFromBytes(ascii("{}",),),).toBeNull();
+    expect(mimeFromBytes(ascii("gl",),),).toBeNull();
+    expect(mimeFromBytes(ascii("PK\x03\x04some.zip",),),).toBeNull();
     expect(mimeFromBytes(new Uint8Array(0,),),).toBeNull();
   });
 });
