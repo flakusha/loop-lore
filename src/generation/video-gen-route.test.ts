@@ -69,6 +69,9 @@ const workflowResolverCalls: Array<Record<string, unknown>> = [];
 /** Provider snapshots handed to the engine, captured at dispatch time. */
 const videoEngineCalls: Array<Array<Record<string, unknown>>> = [];
 
+/** Request snapshots handed to the engine, captured at dispatch time. */
+const videoEngineRequests: Array<Record<string, unknown>> = [];
+
 // ── Register mocks BEFORE importing the module under test ──────────────────────
 //
 // Bun's mock.module is process-global for a whole `bun test` invocation and
@@ -92,8 +95,10 @@ if (ISOLATED) {
 
   mock.module("./video-engine", () => ({
     ...realVideoEngine,
-    generateVideoWithFailover: async (providers: Array<Record<string, unknown>>,) => {
+    generateVideoWithFailover: async (providers: Array<Record<string, unknown>>, request: Record<string, unknown>,) => {
       videoEngineCalls.push(providers.map((provider,) => ({ ...provider, })),);
+
+      videoEngineRequests.push({ ...request, },);
       engineCancel?.();
       engineCalls += 1;
       if (!engineOutcome.ok) { return engineOutcome; }
@@ -763,6 +768,8 @@ describeOrSkip("handleVideoGeneration — workflow selection", () => {
     resolvedWorkflowForTests = undefined;
     workflowResolverCalls.length = 0;
     videoEngineCalls.length = 0;
+
+    videoEngineRequests.length = 0;
   },);
 
   afterEach(() => {
@@ -800,6 +807,28 @@ describeOrSkip("handleVideoGeneration — workflow selection", () => {
     expect(workflowResolverCalls,).toHaveLength(0,);
     expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("explicit-video-wf",);
     expect(videoProviders?.[0]?.workflow,).toBe("txt2video",);
+  });
+
+  test("sampling pins reach the engine request", async () => {
+    const { terminal, } = await submitAndPoll(
+      {
+        prompt: "a clip",
+        steps: 31,
+        cfgScale: 6.5,
+        sampler_name: "euler_a",
+        scheduler: "karras",
+      },
+      selectionDbHandle,
+      "video-route-user",
+    );
+
+    expect(terminal["status"],).toBe("done",);
+    expect(videoEngineRequests[0],).toMatchObject({
+      steps: 31,
+      cfgScale: 6.5,
+      sampler: "euler_a",
+      scheduler: "karras",
+    },);
   });
 
   test("overrides every configured provider on the per-request copy only", async () => {

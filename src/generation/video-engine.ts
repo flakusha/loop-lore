@@ -44,6 +44,12 @@ export interface VideoGenRequest {
   frames?: number;
   width?: number;
   height?: number;
+
+  /** ComfyUI sampling controls; fall back to workflow defaults when absent. */
+  steps?: number;
+  cfgScale?: number;
+  sampler?: string;
+  scheduler?: string;
   /** Picked model roles; fall back to persisted pins then config pins. */
   model?: string;
   diffusion?: string;
@@ -133,6 +139,11 @@ async function runCandidate(
       frames: request.frames,
       width: request.width,
       height: request.height,
+
+      steps: request.steps,
+      cfgScale: request.cfgScale,
+      sampler: request.sampler,
+      scheduler: request.scheduler,
       model: request.model ?? pins?.checkpoint ?? models?.checkpoint,
       diffusion: request.diffusion ?? pins?.diffusion ?? models?.diffusion,
       clip: request.clip ?? pins?.clip ?? models?.clip,

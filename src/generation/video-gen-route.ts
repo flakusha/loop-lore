@@ -114,6 +114,12 @@ interface VideoGenBody {
   frames?: number;
   width?: number;
   height?: number;
+
+  /** ComfyUI sampling controls; fall back to workflow defaults when absent. */
+  steps?: number;
+  cfgScale?: number;
+  sampler_name?: string;
+  scheduler?: string;
   /** Picked ComfyUI model roles (checkpoint alias `model`, plus diffusion). */
   model?: string;
   diffusion?: string;
@@ -378,6 +384,11 @@ export async function handleVideoGeneration(
     frames: req.frames,
     width: req.width,
     height: req.height,
+
+    steps: req.steps,
+    cfgScale: req.cfgScale,
+    sampler: req.sampler_name,
+    scheduler: req.scheduler,
     model: req.model,
     diffusion: req.diffusion,
     clip: req.clip,

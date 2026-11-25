@@ -123,6 +123,32 @@ describe("generateVideoWithFailover — run outcomes (injected loader)", () => {
     },);
   });
 
+  test("passes video sampling pins to the workflow loader", async () => {
+    let loadedParams: Record<string, unknown> | undefined;
+    const capturingLoader = async (_name: string, params: Record<string, unknown>,) => {
+      loadedParams = params;
+      return LOADED_WORKFLOW;
+    };
+
+    await withMockFetch(happyFetch("p2", "out.mp4",), async () => {
+      const outcome = await generateVideoWithFailover(
+        [provider("v1",),],
+        { ...REQUEST, steps: 31, cfgScale: 6.5, sampler: "euler_a", scheduler: "karras", },
+        undefined,
+        capturingLoader,
+      );
+
+      expect(outcome.ok,).toBe(true,);
+    },);
+
+    expect(loadedParams,).toMatchObject({
+      steps: 31,
+      cfgScale: 6.5,
+      sampler: "euler_a",
+      scheduler: "karras",
+    },);
+  });
+
   test("maps a video-less output to 503", async () => {
     await withMockFetch(async (url,) => {
       const target = String(url,);
