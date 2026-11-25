@@ -163,6 +163,32 @@ test("job rejects non-recipes and unknown stages before spawning", async () => {
   if (!badStage.ok) { expect(badStage.status,).toBe("invalid",); }
 });
 
+test("provenance digest tracks recipe bytes at the same path", async () => {
+  const recipe = join(dir, "recipe.py",);
+  const stub = writeStub("noop.sh", "exit 0",);
+  writeFileSync(recipe, "# recipe A\n",);
+  const first = await runBlenderJob({ binary: stub, scriptPath: recipe, stage: "bake", timeoutMs: 2_000, },);
+  const repeated = await runBlenderJob({ binary: stub, scriptPath: recipe, stage: "bake", timeoutMs: 2_000, },);
+  writeFileSync(recipe, "# recipe B\n",);
+  const changed = await runBlenderJob({ binary: stub, scriptPath: recipe, stage: "bake", timeoutMs: 2_000, },);
+
+  expect(first.ok,).toBe(true,);
+  expect(repeated.ok,).toBe(true,);
+  expect(changed.ok,).toBe(true,);
+  if (!first.ok || !repeated.ok || !changed.ok) { return; }
+  expect(repeated.provenance.scriptDigest,).toBe(first.provenance.scriptDigest,);
+  expect(changed.provenance.scriptDigest,).not.toBe(first.provenance.scriptDigest,);
+});
+
+test("job rejects an unreadable recipe without spawning", async () => {
+  const result = await runBlenderJob({ scriptPath: join(dir, "missing.py",), stage: "bake", },);
+  expect(result.ok,).toBe(false,);
+  if (result.ok) { return; }
+  expect(result.status,).toBe("invalid",);
+  expect(result.message,).toContain("Cannot read recipe",);
+  expect(result.provenance,).toBeUndefined();
+});
+
 test("jobs on one instance run FIFO without overlap", async () => {
   const logPath = join(dir, "events",);
   const recipe = join(dir, "recipe.py",);

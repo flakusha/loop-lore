@@ -11,6 +11,7 @@
 
 import { spawn, } from "bun";
 import { createHash, } from "node:crypto";
+import { readFileSync, } from "node:fs";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
 
 export const REQUIRED_BLENDER_VERSION = "4.5.15";
@@ -84,8 +85,8 @@ export const PROBE_EXPR =
 const DEFAULT_TIMEOUT_MS = 30_000;
 const tails = new Map<string, Promise<void>>();
 
-/** @returns a JSON digest that pins the exact recipe invoked. */
-function digest(value: string,): string {
+/** @returns a SHA-256 digest of the exact bytes invoked. */
+function digest(value: string | Buffer,): string {
   return createHash("sha256",).update(value,).digest("hex",);
 }
 
@@ -254,6 +255,17 @@ export async function runBlenderJob(spec: BlenderJobSpec,): Promise<BlenderJobRe
     const serialized = safeJsonStringify({ stage: spec.stage, params: spec.params ?? {}, },);
     if (!serialized.ok) { return { ok: false, status: "invalid", message: serialized.error.message, }; }
 
+    let recipe: Buffer;
+    try {
+      recipe = readFileSync(spec.scriptPath,);
+    } catch (error) {
+      return {
+        ok: false,
+        status: "invalid",
+        message: `Cannot read recipe: ${error instanceof Error ? error.message : String(error,)}`,
+      };
+    }
+
     const out = await runProcess(
       [
         binary,
@@ -268,7 +280,7 @@ export async function runBlenderJob(spec: BlenderJobSpec,): Promise<BlenderJobRe
         serialized.value,
       ],
       timeoutMs,
-      digest(spec.scriptPath,),
+      digest(recipe,),
     );
 
     if (out.timedOut) {
