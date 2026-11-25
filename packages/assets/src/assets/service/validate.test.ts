@@ -46,6 +46,7 @@ describe("validateMimeType", () => {
     expect(validateMimeType("text/plain",),).toBeNull();
     expect(validateMimeType("application/json",),).toBeNull();
     expect(validateMimeType("model/gltf-binary",),).toBeNull();
+    expect(validateMimeType("model/gltf+json",),).toBeNull();
   });
 
   test("acceptance is case-insensitive", () => {

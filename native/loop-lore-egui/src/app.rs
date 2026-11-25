@@ -22,6 +22,10 @@ use crate::gallery::{self, GalleryState};
 use crate::storage;
 use crate::stream::{self, StreamEvent, StreamState};
 
+// ponytail: one server grid page (200) of decoded thumbnails; add LRU with
+// visible-cell pinning if long-scroll galleries re-fetch noticeably.
+const GALLERY_TEXTURE_CAP: usize = api::GALLERY_PAGE_SIZE as usize;
+
 /// Convert a byte offset into a char offset (egui's caret unit).
 fn char_index(text: &str, byte: usize) -> usize {
   text[..byte.min(text.len())].chars().count()
@@ -725,6 +729,23 @@ impl EguiApp {
     }
   }
 
+  /// Keep the decoded-thumbnail cache bounded, dropping an offscreen cell first.
+  fn evict_gallery_texture(&mut self) {
+    if self.gallery_textures.len() < GALLERY_TEXTURE_CAP { return; }
+    let victim = self.gallery_textures.keys()
+      .find(|id| !self.gallery.cells.iter().any(|c| &c.asset.id == *id))
+      .or_else(|| self.gallery_textures.keys().next())
+      .cloned();
+    if let Some(id) = victim {
+      self.gallery_textures.remove(&id);
+      // Let the cell request its thumbnail again if it is still visible.
+      if let Some(cell) = self.gallery.cells.iter_mut().find(|c| c.asset.id == id) {
+        cell.has_thumb = false;
+        cell.thumb_requested = false;
+      }
+    }
+  }
+
   /// Drain thumbnail requests to the bridge and ready/failed uploads back.
   fn drain_gallery_bridge(&mut self, ctx: &egui::Context) {
     // Pending thumbnails -> bridge. `drain_pending_thumbs` marks each cell
@@ -741,6 +762,7 @@ impl EguiApp {
       if pixels.width > 0 && pixels.height > 0 && pixels.rgba.len() == expected {
         let image =
           egui::ColorImage::from_rgba_unmultiplied([pixels.width as usize, pixels.height as usize], &pixels.rgba);
+        self.evict_gallery_texture();
         let handle = ctx.load_texture(
           &format!("gallery:{}", pixels.asset_id),
           image,

@@ -67,6 +67,7 @@ import {
   getOwnedAsset,
   linkAsset,
   listAssets,
+  mimeFromBytes,
   resolveAssetTransform,
   shareAsset,
   unshareAsset,
@@ -550,7 +551,9 @@ export async function handleUpload({
   const sizeError = validateFileSize(buffer.length, maxFileSize,);
   if (sizeError) { return badRequestResponse(sizeError,); }
 
-  const mimeType = file.type || "application/octet-stream";
+  // Browsers often leave `File.type` empty for .glb; sniff the container so
+  // the shared MIME gate and asset-type detection see the real format.
+  const mimeType = mimeFromBytes(buffer,) ?? (file.type || "application/octet-stream");
   const mimeError = validateMimeType(mimeType,);
   if (mimeError) { return badRequestResponse(mimeError,); }
 

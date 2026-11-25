@@ -8,7 +8,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { AssetType, } from "../../../../../src/db/enums";
-import { detectAssetType, extensionForMime, mimeFromExtension, } from "./detect";
+import { detectAssetType, extensionForMime, mimeFromBytes, mimeFromExtension, } from "./detect";
 
 describe("detectAssetType", () => {
   test("maps image/* to Image", () => {
@@ -36,6 +36,11 @@ describe("detectAssetType", () => {
   test("prefix match only — similar-but-different prefixes stay Other", () => {
     expect(detectAssetType("imaginary/png",),).toBe(AssetType.Other,);
     expect(detectAssetType("audiofile/mp3",),).toBe(AssetType.Other,);
+  });
+
+  test("maps model/* to Model", () => {
+    expect(detectAssetType("model/gltf-binary",),).toBe(AssetType.Model,);
+    expect(detectAssetType("model/gltf+json",),).toBe(AssetType.Model,);
   });
 });
 
@@ -68,6 +73,12 @@ describe("mimeFromExtension", () => {
     expect(mimeFromExtension("a.pdf",),).toBe("application/pdf",);
     expect(mimeFromExtension("a.json",),).toBe("application/json",);
     expect(mimeFromExtension("a.txt",),).toBe("text/plain",);
+  });
+
+  test("maps model extensions", () => {
+    expect(mimeFromExtension("a.glb",),).toBe("model/gltf-binary",);
+    expect(mimeFromExtension("a.gltf",),).toBe("model/gltf+json",);
+    expect(mimeFromExtension("MODEL.GLB",),).toBe("model/gltf-binary",);
   });
 
   test("is case-insensitive", () => {
@@ -112,11 +123,26 @@ describe("extensionForMime", () => {
     expect(extensionForMime("application/pdf",),).toBe("pdf",);
     expect(extensionForMime("application/json",),).toBe("json",);
     expect(extensionForMime("text/plain",),).toBe("txt",);
+    expect(extensionForMime("model/gltf-binary",),).toBe("glb",);
+    expect(extensionForMime("model/gltf+json",),).toBe("gltf",);
   });
 
   test("falls back to bin for unknown MIME types", () => {
     expect(extensionForMime("application/octet-stream",),).toBe("bin",);
     expect(extensionForMime("image/tiff",),).toBe("bin",);
     expect(extensionForMime("",),).toBe("bin",);
+  });
+});
+
+describe("mimeFromBytes", () => {
+  test("sniffs the GLB container magic", () => {
+    const glb = new Uint8Array([0x67, 0x6c, 0x54, 0x46, 0x02, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00,],);
+    expect(mimeFromBytes(glb,),).toBe("model/gltf-binary",);
+  });
+
+  test("returns null for non-GLB bytes and short buffers", () => {
+    expect(mimeFromBytes(new Uint8Array([0x7b, 0x22, 0x61, 0x22,],),),).toBeNull();
+    expect(mimeFromBytes(new Uint8Array([0x67, 0x6c, 0x54,],),),).toBeNull();
+    expect(mimeFromBytes(new Uint8Array(0,),),).toBeNull();
   });
 });

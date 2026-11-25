@@ -16,6 +16,7 @@ export function detectAssetType(mime: string,): AssetTypeT {
   if (mime.startsWith("image/",)) { return AssetType.Image; }
   if (mime.startsWith("audio/",)) { return AssetType.Audio; }
   if (mime.startsWith("video/",)) { return AssetType.Video; }
+  if (mime.startsWith("model/",)) { return AssetType.Model; }
   return AssetType.Other;
 }
 
@@ -39,6 +40,8 @@ const MIME_MAP: Record<string, string> = {
   pdf: "application/pdf",
   json: "application/json",
   txt: "text/plain",
+  glb: "model/gltf-binary",
+  gltf: "model/gltf+json",
 };
 
 /** MIME type → preferred extension: the inverse of MIME_MAP. */
@@ -63,4 +66,12 @@ export function mimeFromExtension(filename: string,): string {
  */
 export function extensionForMime(mime: string,): string {
   return EXT_BY_MIME[mime] ?? "bin";
+}
+
+/** Minimal byte sniff for the GLB container header ("glTF" magic). */
+export function mimeFromBytes(bytes: Uint8Array,): string | null {
+  if (bytes.length >= 4 && bytes[0] === 0x67 && bytes[1] === 0x6c && bytes[2] === 0x54 && bytes[3] === 0x46) {
+    return "model/gltf-binary";
+  }
+  return null;
 }

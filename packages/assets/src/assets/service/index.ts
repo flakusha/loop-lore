@@ -18,6 +18,7 @@ export {
 } from "./delete";
 export {
   detectAssetType,
+  mimeFromBytes,
   mimeFromExtension,
 } from "./detect";
 export {

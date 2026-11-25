@@ -341,10 +341,9 @@ mod tests {
       filename: format!("{id}.png"),
       asset_type: asset_type.to_string(),
       size_bytes: 1024,
-      size_label: "1.0 KB".to_string(),
       thumb_url: thumb.map(String::from),
       tags: vec![],
-      visibility: "public".to_string(),
+      nsfw: false,
       created_at: "2026-10-01".to_string(),
     }
   }

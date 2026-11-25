@@ -67,7 +67,7 @@ export async function requestThumbnail(assetId: string, url: string,): Promise<v
 export function uploadAsset(): void {
   const input = document.createElement("input",);
   input.type = "file";
-  input.accept = "image/*, audio/*, video/*";
+  input.accept = "image/*, audio/*, video/*, model/gltf-binary, model/gltf+json";
   input.style.display = "none";
   input.addEventListener("change", () => {
     const file = input.files?.[0];

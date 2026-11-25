@@ -24,6 +24,7 @@ const ALLOWED_MIME_PREFIXES = [
   "text/plain",
   "application/json",
   "model/gltf-binary",
+  "model/gltf+json",
 ];
 
 const BLOCKED_MIME_TYPES = new Set(["image/svg+xml",],);
