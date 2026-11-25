@@ -13,7 +13,7 @@
  * `BYOK_E2E_API_KEY` (OpenRouter key), `BYOK_E2E_BASE_URL`,
  * `E2E_TTS_MODEL`.
  */
-import { safeJsonParse, safeJsonStringify, } from "../../../utils";
+import { safeFetch, safeJsonStringify, } from "../../../utils";
 import { safeFromUint8Array, } from "../../../utils/safe-buffer";
 import type { AudioGenOutcome, AudioGenRequest, AudioProvider, } from "../types";
 
@@ -49,23 +49,6 @@ export interface OpenRouterTtsOptions {
 /** The JSON error envelope OpenRouter returns for a failed request. */
 interface SpeechErrorBody {
   error?: { code?: number; message?: string };
-}
-
-/**
- * Read the JSON error envelope from a failed response.
- * @param response
- * @returns The parsed envelope, or undefined when the body is not JSON.
- */
-async function readErrorBody(response: Response,): Promise<SpeechErrorBody | undefined> {
-  let text: string;
-  try {
-    text = await response.text();
-  } catch {
-    return undefined;
-  }
-
-  const parsed = safeJsonParse<SpeechErrorBody>(text,);
-  return parsed.ok ? parsed.value : undefined;
 }
 
 /**
@@ -106,27 +89,33 @@ export function createOpenRouterTtsProvider(opts: OpenRouterTtsOptions = {},): A
         return { ok: false, error: `TTS request could not be serialized: ${body.error.message}`, status: 500, };
       }
 
-      let response: Response;
-      try {
-        // eslint-disable-next-line no-restricted-syntax -- raw bytes: safeFetch buffers text/JSON and cannot return an mp3 body or the JSON error envelope.
-        response = await fetch(`${baseUrl}/audio/speech`, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: body.value,
-          signal: AbortSignal.timeout(timeoutMs,),
-        },);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error,);
-        return { ok: false, error: `TTS request failed: ${message}`, status: 502, };
-      }
+      const result = await safeFetch<Response>(`${baseUrl}/audio/speech`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: body.value,
+        signal: AbortSignal.timeout(timeoutMs,),
+        stream: true,
+        includeErrorBody: true,
+        handle401: false,
+      },);
 
-      if (!response.ok) {
-        const errorBody = await readErrorBody(response,);
+      if (!result.ok) {
+        if (result.status === undefined) {
+          return { ok: false, error: `TTS request failed: ${result.error.message}`, status: 502, };
+        }
+
+        const bodyValue: unknown = "body" in result.error ? result.error.body : undefined;
+        // ponytail: envelope already JSON-parsed by safeFetch; same trust as
+        // the old safeJsonParse cast, one named const.
+        const errorBody: SpeechErrorBody | undefined = typeof bodyValue === "object" && bodyValue !== null
+          ? bodyValue as SpeechErrorBody
+          : undefined;
+
         const code = errorBody?.error?.code;
-        const status = typeof code === "number" ? code : response.status;
+        const status = typeof code === "number" ? code : result.status;
 
         if (status === 402) {
           return {
@@ -136,17 +125,17 @@ export function createOpenRouterTtsProvider(opts: OpenRouterTtsOptions = {},): A
           };
         }
 
-        const detail = errorBody?.error?.message ?? response.statusText;
+        const detail = errorBody?.error?.message ?? result.error.message;
         return { ok: false, error: `TTS request failed: ${detail}`, status, };
       }
 
       // Success body is a raw audio byte stream — never JSON.
-      const bytes = safeFromUint8Array(new Uint8Array(await response.arrayBuffer(),),);
+      const bytes = safeFromUint8Array(new Uint8Array(await result.data.arrayBuffer(),),);
       if (!bytes.ok) {
         return { ok: false, error: `TTS audio too large: ${bytes.error.message}`, status: 502, };
       }
 
-      const mimeType = response.headers.get("content-type",) ?? "audio/mpeg";
+      const mimeType = result.data.headers.get("content-type",) ?? "audio/mpeg";
       return { ok: true, buffer: bytes.buffer, mimeType, };
     },
   };

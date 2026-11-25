@@ -7,7 +7,7 @@
 // `GET /language/translate/v2/languages`). Auth is the `key` query parameter
 // (API-key model). Mirrors the anthropic/ http module.
 
-import { safeJsonStringify, } from "../../../utils";
+import { safeFetch, safeJsonStringify, } from "../../../utils";
 import { withProviderRetry, } from "../retry";
 import { ProviderError, } from "../types";
 import type { GoogleTranslateState, } from "./types";
@@ -86,12 +86,46 @@ export async function fetchRaw(
 
   try {
     const serializedBody = body ? safeJsonStringify(body,) : undefined;
-    return await fetch(url, {
+    const result = await safeFetch<Response>(url.href, {
       method: serializedBody ? "POST" : "GET",
       headers,
       body: serializedBody?.ok ? serializedBody.value : undefined,
       signal: combinedSignal,
+      stream: true,
+      includeErrorBody: true,
+      handle401: false,
     },);
+
+    if (result.ok) { return result.data; }
+    if (result.status === undefined) {
+      // Network failure or abort: fetch used to reject here. Preserve the
+      // throw (and the AbortError shape the retry policy classifies on).
+      // Restore the AbortError shape the retry policy classifies on: an
+      // aborted signal, safeFetch's own timeout, or an impl-thrown
+      // AbortError (surfaced as "Request aborted"). Anything else is a raw
+      // network failure and stays retryable.
+      const aborted = combinedSignal?.aborted ||
+        result.error.message === "Request aborted" ||
+        result.error.message.startsWith("Request timed out",);
+
+      if (aborted) { throw new DOMException("Aborted", "AbortError",); }
+      throw result.error;
+    }
+
+    // HTTP error status: rebuild the Response the callers map, with the
+    // provider's own error body round-tripped through safeFetch.
+    const bodyValue: unknown = "body" in result.error ? result.error.body : undefined;
+    const encoded = typeof bodyValue === "string" || bodyValue === undefined
+      ? undefined
+      : safeJsonStringify(bodyValue,);
+
+    const bodyText = typeof bodyValue === "string"
+      ? bodyValue
+      : encoded?.ok
+      ? encoded.value
+      : result.error.message;
+
+    return new Response(bodyText, { status: result.status, headers: result.headers, },);
   } finally {
     clearTimeout(timeoutId,);
   }

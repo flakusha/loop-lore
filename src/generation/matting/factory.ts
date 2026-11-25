@@ -22,7 +22,7 @@ import {
 } from "../../integrations/honkbox/capabilities";
 import { honkboxChatBaseUrl, } from "../../integrations/honkbox/provider-config";
 import { getLogger, } from "../../logger";
-import { safeFetch, safeJsonStringify, } from "../../utils";
+import { proxyForUrl, safeFetch, safeJsonStringify, } from "../../utils";
 import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { ComfyUIClient, } from "../providers/comfyui";
 import { createComfyMattingProvider, } from "./comfy-provider";
@@ -97,6 +97,7 @@ function createHonkboxMattingProvider(opts: {
         // Base64 PNG payloads exceed safeFetch's default 10MB response cap.
         maxSize: Number.MAX_SAFE_INTEGER,
         handle401: false,
+        proxy: proxyForUrl(url,),
       },);
 
       if (!result.ok) {

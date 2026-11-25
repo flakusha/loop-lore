@@ -7,7 +7,7 @@
  * stored filename for LoadImage nodes.
  */
 import { safeJsonStringify, } from "../../utils";
-import { safeFetch, } from "../../utils/safe-fetch";
+import { proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 
 /**
  * Upload an input image for LoadImage nodes to reference.
@@ -36,6 +36,7 @@ export async function uploadImageToComfy(
     headers: apiKey ? { authorization: `Bearer ${apiKey}`, } : undefined,
     body: form,
     timeout: timeoutMs,
+    proxy: proxyForUrl(baseUrl,),
   },);
 
   if (!result.ok) {
@@ -91,6 +92,7 @@ export async function uploadMaskToComfy(
     headers: apiKey ? { authorization: `Bearer ${apiKey}`, } : undefined,
     body: form,
     timeout: timeoutMs,
+    proxy: proxyForUrl(baseUrl,),
   },);
 
   if (!result.ok) {

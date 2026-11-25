@@ -24,7 +24,7 @@ export {
 // ── Safe Fetch ──────────────────────────────────────────────
 
 export type { FetchAuth, FetchFailure, FetchResult, SafeFetchOptions, } from "./utils/safe-fetch";
-export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
+export { proxyForUrl, safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 
 // ── Numeric Clamping ──────────────────────────────────────────
 //

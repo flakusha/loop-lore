@@ -443,3 +443,59 @@ describe("safeFetch — defaults", () => {
     expect(DEFAULT_MAX_SIZE,).toBe(10_485_760,);
   });
 });
+
+describe("safeFetch — fetchImpl seam", () => {
+  test("routes through the injected impl instead of the global fetch", async () => {
+    let globalCalls = 0;
+    let capturedUrl: FetchUrl | undefined;
+    const stub = (async (url: string | URL | Request, init?: RequestInit,) => {
+      capturedUrl = url as FetchUrl;
+      expect("fetchImpl" in (init ?? {}),).toBe(false,);
+      return Response.json({ hello: "seam", },);
+    }) as typeof fetch;
+    await withMockFetch(
+      mock(() => {
+        globalCalls++;
+        return Response.json({},);
+      },),
+      async () => {
+        const result = await safeFetch<{ hello: string }>("https://example.com/seam", {
+          fetchImpl: stub,
+        },);
+        expect(result.ok,).toBe(true,);
+        if (result.ok) { expect(result.data,).toEqual({ hello: "seam", },); }
+      },
+    );
+    expect(globalCalls,).toBe(0,);
+    expect(capturedUrl,).toBe("https://example.com/seam",);
+  });
+
+  test("maps impl rejections to error results", async () => {
+    const failing = (async (_url: string | URL | Request, _init?: RequestInit,): Promise<Response> => {
+      throw new Error("pool down",);
+    }) as typeof fetch;
+    const result = await safeFetch("https://example.com/seam", {
+      fetchImpl: failing,
+    },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) { expect(result.error.message,).toBe("pool down",); }
+  });
+
+  test("captures error bodies in stream mode when asked", async () => {
+    await withMockFetch(
+      mock(() => Response.json({ error: "busy", }, { status: 503, },)),
+      async () => {
+        const result = await safeFetch<Response>("https://example.com/stream", {
+          stream: true,
+          includeErrorBody: true,
+        },);
+        expect(result.ok,).toBe(false,);
+        if (!result.ok) {
+          expect(result.status,).toBe(503,);
+          const body: unknown = "body" in result.error ? result.error.body : undefined;
+          expect(body,).toEqual({ error: "busy", },);
+        }
+      },
+    );
+  });
+});

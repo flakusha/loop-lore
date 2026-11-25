@@ -85,6 +85,18 @@ export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal" | 
    * unchanged.
    */
   stream?: boolean;
+  /**
+   * Override the fetch implementation (test seam).
+   * Defaults to the global fetch. Stripped before RequestInit is built.
+   */
+  fetchImpl?: typeof fetch;
+  /**
+   * Bun-only proxy override, passed through to the underlying fetch via the
+   * RequestInit spread (browsers ignore the unknown key). Pass
+   * proxyForUrl(url) so loopback legs bypass proxy env while remote legs
+   * keep the default. Never set for remote providers.
+   */
+  proxy?: string | false;
   /** Authentication/CSRF configuration (replaces feFetch's browser-only logic) */
   auth?: FetchAuth;
   /**

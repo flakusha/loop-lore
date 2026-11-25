@@ -72,12 +72,14 @@ function ok<T,>(data: T,): Promise<FetchResult<T>> {
 
 /** Route every harness endpoint from the fixtures above. */
 function route(runs: HarnessRunSummary[] = RUNS,): void {
-  setFetch(<T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-    if (url.includes("/runs?",)) { return ok({ items: runs, } as T,); }
-    if (url.endsWith("/stats",)) { return ok(STATS as T,); }
-    if (url.includes("/runs/",)) { return ok(DETAIL as T,); }
-    return ok({} as T,);
-  },);
+  setFetch(
+    <T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      if (url.includes("/runs?",)) { return ok({ items: runs, } as T,); }
+      if (url.endsWith("/stats",)) { return ok(STATS as T,); }
+      if (url.includes("/runs/",)) { return ok(DETAIL as T,); }
+      return ok({} as T,);
+    },
+  );
 }
 
 afterEach(() => {
@@ -136,8 +138,14 @@ describe("HarnessView", () => {
   });
 
   it("a failed load renders the error and keeps the view usable", async () => {
-    setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-      Promise.resolve({ ok: false, error: new Error("HTTP 500",), status: 500, headers: new Headers(), },)
+    setFetch(
+      <T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+        Promise.resolve({
+          ok: false,
+          error: new Error("HTTP 500",),
+          status: 500,
+          headers: new Headers(),
+        },),
     );
 
     const view = build();

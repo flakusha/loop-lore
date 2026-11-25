@@ -44,10 +44,12 @@ function fail<T,>(status: number,): Promise<FetchResult<T>> {
 }
 
 function stub<T,>(result: () => Promise<FetchResult<T>>,): void {
-  setFetch(<U,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<U>> => {
-    calls.push({ url, options: options ?? {}, },);
-    return result() as Promise<FetchResult<U>>;
-  },);
+  setFetch(
+    <U,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<U>> => {
+      calls.push({ url, options: options ?? {}, },);
+      return result() as Promise<FetchResult<U>>;
+    },
+  );
 }
 
 afterEach(() => {

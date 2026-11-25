@@ -10,6 +10,7 @@
  */
 import { getLogger, } from "../../logger";
 import { safeFromUint8Array, } from "../../utils/safe-buffer";
+import { errorDetail, proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 import type { MattingProvider, MattingProviderConfig, } from "./types";
 
 /**
@@ -32,28 +33,35 @@ export function createHttpMattingProvider(config: MattingProviderConfig,): Matti
      */
     async removeBackground(buffer: Buffer,): Promise<Buffer> {
       const timeoutMs = config.timeoutMs ?? 120_000;
-      const response = await fetch(config.endpoint, {
+      const timeout = AbortSignal.timeout(timeoutMs,);
+      const result = await safeFetch<Response>(config.endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/octet-stream",
           ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}`, } : {}),
         },
         body: new Uint8Array(buffer,),
-        signal: AbortSignal.timeout(timeoutMs,),
+        signal: timeout,
+        stream: true,
+        includeErrorBody: true,
+        handle401: false,
+        proxy: proxyForUrl(config.endpoint,),
       },);
 
-      if (!response.ok) {
-        const detail = await response.text().catch(() => "");
+      if (!result.ok) {
+        if (timeout.aborted) { throw new DOMException("Aborted", "AbortError",); }
+        if (result.status === undefined) { throw result.error; }
+        const detail = errorDetail(result.error, "",);
         getLogger().warn({
           event: "matting.provider_http_error",
-          status: response.status,
+          status: result.status,
           detail: detail.slice(0, 200,),
         },);
 
-        throw new Error(`Matting provider returned HTTP ${response.status}`,);
+        throw new Error(`Matting provider returned HTTP ${result.status}`,);
       }
 
-      const raw = new Uint8Array(await response.arrayBuffer(),);
+      const raw = new Uint8Array(await result.data.arrayBuffer(),);
       const sized = safeFromUint8Array(raw,);
       if (!sized.ok) { throw sized.error; }
       const payload = sized.buffer;
@@ -128,24 +136,31 @@ export function createRembgMattingProvider(config: RembgMattingProviderConfig,):
       form.append("model", model,);
       form.append("dc", decontaminate ? "true" : "false",);
 
-      const response = await fetch(new URL("/api/remove", config.baseUrl,), {
+      const timeout = AbortSignal.timeout(timeoutMs,);
+      const result = await safeFetch<Response>(new URL("/api/remove", config.baseUrl,).href, {
         method: "POST",
         body: form,
-        signal: AbortSignal.timeout(timeoutMs,),
+        signal: timeout,
+        stream: true,
+        includeErrorBody: true,
+        handle401: false,
+        proxy: proxyForUrl(config.baseUrl,),
       },);
 
-      if (!response.ok) {
-        const detail = await response.text().catch(() => "");
+      if (!result.ok) {
+        if (timeout.aborted) { throw new DOMException("Aborted", "AbortError",); }
+        if (result.status === undefined) { throw result.error; }
+        const detail = errorDetail(result.error, "",);
         getLogger().warn({
           event: "matting.rembg_http_error",
-          status: response.status,
+          status: result.status,
           detail: detail.slice(0, 200,),
         },);
 
-        throw new Error(`rembg returned HTTP ${response.status}`,);
+        throw new Error(`rembg returned HTTP ${result.status}`,);
       }
 
-      const raw = new Uint8Array(await response.arrayBuffer(),);
+      const raw = new Uint8Array(await result.data.arrayBuffer(),);
       const sized = safeFromUint8Array(raw,);
       if (!sized.ok) { throw sized.error; }
       if (!looksLikePng(sized.buffer,)) {

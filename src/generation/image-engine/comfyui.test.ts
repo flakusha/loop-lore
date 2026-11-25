@@ -330,7 +330,7 @@ describe("generateComfyUI", () => {
     const outcome = await generateComfyUI(CONFIG, { ...OPTS, apiKey: "byo-key", },);
 
     expect(outcome.ok,).toBe(true,);
-    expect(authHeaders,).toEqual({ authorization: "Bearer byo-key", },);
+    expect(new Headers(authHeaders as HeadersInit,).get("authorization",),).toBe("Bearer byo-key",);
   });
 
   it("falls back to the provider-configured apiKey when no BYO key resolves", async () => {
@@ -369,7 +369,7 @@ describe("generateComfyUI", () => {
     );
 
     expect(outcome.ok,).toBe(true,);
-    expect(authHeaders,).toEqual({ authorization: "Bearer config-key", },);
+    expect(new Headers(authHeaders as HeadersInit,).get("authorization",),).toBe("Bearer config-key",);
   });
 
   it("uploads the init image and substitutes input_image + denoise_strength", async () => {

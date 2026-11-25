@@ -8,7 +8,8 @@
  * Reference: docs/spec/integrations/image-generation.md §ComfyUI
  */
 
-import { jsonStringifyOr, } from "../../utils";
+import { proxyForUrl, safeFetch, } from "../../utils";
+import { errorDetail, } from "../../utils/safe-fetch";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { downloadComfyFile, } from "./comfyui-download";
 import {
@@ -157,25 +158,22 @@ export class ComfyUIClient {
    */
   async submitWorkflow(workflow: ComfyUIWorkflow,): Promise<ComfyUIPromptResult> {
     const url = `${this.baseUrl}/prompt`;
-    const resp = await fetch(url, {
+    const result = await safeFetch<ComfyUIPromptResult>(url, {
       method: "POST",
       headers: this.authHeaders(),
-      body: jsonStringifyOr({ prompt: workflow, ...(this.clientId ? { client_id: this.clientId, } : {}), },),
-      signal: AbortSignal.timeout(this.timeout,),
+      body: { prompt: workflow, ...(this.clientId ? { client_id: this.clientId, } : {}), },
+      timeout: this.timeout,
+      includeErrorBody: true,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
 
-    if (!resp.ok) {
-      let body = "unknown";
-      try {
-        body = await resp.text();
-      } catch {
-        // Error body read failed — keep "unknown" fallback
-      }
-
-      throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI prompt submission failed [${result.status}]: ${errorDetail(result.error, "unknown",)}`,);
     }
 
-    return (await resp.json()) as ComfyUIPromptResult;
+    return result.data;
   }
 
   /**
@@ -241,10 +239,13 @@ export class ComfyUIClient {
    */
   async cancelExecution(_promptId?: string,): Promise<void> {
     const url = `${this.baseUrl}/interrupt`;
-    await fetch(url, {
+    await safeFetch<string>(url, {
       method: "POST",
       headers: this.authHeaders(),
-      signal: AbortSignal.timeout(10_000,),
+      timeout: 10_000,
+      parseJson: false,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
   }
 
@@ -255,15 +256,18 @@ export class ComfyUIClient {
    */
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
-    const resp = await fetch(url, {
-      signal: AbortSignal.timeout(10_000,),
+    const result = await safeFetch<Record<string, ComfyUINodeInfo>>(url, {
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
 
-    if (!resp.ok) {
-      throw new Error(`ComfyUI object_info failed [${resp.status}]`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI object_info failed [${result.status}]`,);
     }
 
-    return (await resp.json()) as Record<string, ComfyUINodeInfo>;
+    return result.data;
   }
 
   /**
@@ -272,16 +276,19 @@ export class ComfyUIClient {
    * @throws {Error} When the models endpoint returns a non-OK status.
    */
   async listModelFolders(): Promise<string[]> {
-    const resp = await fetch(`${this.baseUrl}/models`, {
+    const result = await safeFetch<string[]>(`${this.baseUrl}/models`, {
       headers: this.authHeaders(),
-      signal: AbortSignal.timeout(10_000,),
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(this.baseUrl,),
     },);
 
-    if (!resp.ok) {
-      throw new Error(`ComfyUI models failed [${resp.status}]`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI models failed [${result.status}]`,);
     }
 
-    return (await resp.json()) as string[];
+    return result.data;
   }
 
   /**
@@ -293,16 +300,19 @@ export class ComfyUIClient {
    */
   async listModelFolder(folder: string,): Promise<string[]> {
     const url = `${this.baseUrl}/models/${encodeURIComponent(folder,)}`;
-    const resp = await fetch(url, {
+    const result = await safeFetch<string[]>(url, {
       headers: this.authHeaders(),
-      signal: AbortSignal.timeout(10_000,),
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
 
-    if (!resp.ok) {
-      throw new Error(`ComfyUI model folder ${folder} failed [${resp.status}]`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI model folder ${folder} failed [${result.status}]`,);
     }
 
-    return (await resp.json()) as string[];
+    return result.data;
   }
 
   /**

@@ -385,27 +385,10 @@ export default [
       "no-restricted-globals": "off",
     },
   },
-  // Deliberate bare fetch: these layers need the raw Response (SSE/retry
-  // stream handling, error-body introspection, arrayBuffer downloads) which
-  // safeFetch's Result union cannot express.
-  {
-    files: [
-      "src/generation/providers/anthropic/http.ts",
-      "src/generation/providers/deepl/http.ts",
-      "src/generation/providers/google-translate/http.ts",
-      "src/generation/providers/libretranslate/http.ts",
-      "src/generation/providers/ollama-native/http.ts",
-      "src/generation/providers/openai-compatible/http.ts",
-      "src/generation/lora/discovery-http.ts",
-      "src/generation/matting/providers.ts",
-      "src/generation/providers/comfyui.ts",
-      "src/generation/providers/comfyui-download.ts",
-      "src/generation/providers/comfyui-poll.ts",
-    ],
-    rules: {
-      "no-restricted-syntax": "off",
-    },
-  },
+  // Generation + audio providers all route through safeFetch (stream mode hands
+  // back the live Response for SSE/downloads). The global bare-fetch ban above
+  // now applies here too: no exemption. Tests stay exempt via the
+  // src/**/*.test.ts block; safeFetch internals via the utils/safe-fetch block.
   // Specific source files with JSON.parse/stringify or fetch
   {
     files: [

@@ -53,8 +53,8 @@ describe("createOpenRouterTtsProvider", () => {
         expect(calls[0]!.url,).toBe(`${BASE_URL}/audio/speech`,);
         expect(calls[0]!.init.method,).toBe("POST",);
 
-        const headers = calls[0]!.init.headers as Record<string, string>;
-        expect(headers.Authorization,).toBe("Bearer sk-test",);
+        const headers = new Headers(calls[0]!.init.headers,);
+        expect(headers.get("Authorization",),).toBe("Bearer sk-test",);
 
         const body = JSON.parse(String(calls[0]!.init.body,),) as Record<string, unknown>;
         expect(body.input,).toBe("hello",);

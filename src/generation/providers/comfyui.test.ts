@@ -523,12 +523,12 @@ describe("ComfyUIClient", () => {
 
   describe("model folders", () => {
     test("lists model folders and folder contents with auth headers", async () => {
-      const calls: Array<{ url: string; auth?: string }> = [];
+      const calls: Array<{ url: string; auth?: string | null }> = [];
       await withMockFetch(
         async (url, init,) => {
           calls.push({
             url,
-            auth: (init.headers as Record<string, string> | undefined)?.authorization,
+            auth: new Headers(init.headers,).get("authorization",),
           },);
 
           if (url.endsWith("/models",)) {

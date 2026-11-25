@@ -34,15 +34,16 @@ const TEMPLATES: ChatPickerTemplate[] = [
 ];
 
 function stubFetch(chats: ChatSummary[], templates: ChatPickerTemplate[] | null,): void {
-  setFetch(<T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-    Promise.resolve({
-      ok: true,
-      data: (url.endsWith("/api/v1/chat-setup-templates",)
-        ? templates ?? []
-        : { data: chats, }) as T,
-      status: 200,
-      headers: new Headers(),
-    },)
+  setFetch(
+    <T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+      Promise.resolve({
+        ok: true,
+        data: (url.endsWith("/api/v1/chat-setup-templates",)
+          ? templates ?? []
+          : { data: chats, }) as T,
+        status: 200,
+        headers: new Headers(),
+      },),
   );
 }
 
@@ -118,13 +119,14 @@ describe("ChatPicker", () => {
   });
 
   it("renders the load failure in place of the list", async () => {
-    setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-      Promise.resolve({
-        ok: false,
-        error: new Error("boom",),
-        status: 500,
-        headers: new Headers(),
-      },)
+    setFetch(
+      <T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+        Promise.resolve({
+          ok: false,
+          error: new Error("boom",),
+          status: 500,
+          headers: new Headers(),
+        },),
     );
 
     const picker = build();
@@ -321,23 +323,25 @@ describe("ChatPicker", () => {
   });
 
   it("template fetch failure still creates by name", async () => {
-    setFetch(<T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-      if (url.endsWith("/api/v1/chat-setup-templates",)) {
+    setFetch(
+      <T,>(url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+        if (url.endsWith("/api/v1/chat-setup-templates",)) {
+          return Promise.resolve({
+            ok: false,
+            error: new Error("boom",),
+            status: 500,
+            headers: new Headers(),
+          },);
+        }
+
         return Promise.resolve({
-          ok: false,
-          error: new Error("boom",),
-          status: 500,
+          ok: true,
+          data: { data: CHATS, } as T,
+          status: 200,
           headers: new Headers(),
         },);
-      }
-
-      return Promise.resolve({
-        ok: true,
-        data: { data: CHATS, } as T,
-        status: 200,
-        headers: new Headers(),
-      },);
-    },);
+      },
+    );
 
     const seen: { name: string; templateId?: string }[] = [];
     const picked: string[] = [];

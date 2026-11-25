@@ -6,6 +6,7 @@
  * GETs `/history/<prompt_id>` and resolves the terminal state, plus the
  * deadline-bounded wait loop on top of it.
  */
+import { proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 import type {
   ComfyUIExecutionStatus,
   ComfyUINodeOutput,
@@ -155,16 +156,19 @@ export async function pollComfyResult(
 ): Promise<ComfyUIPollResult> {
   const url = `${baseUrl}/history/${promptId}`;
 
-  const resp = await fetch(url, {
+  const result = await safeFetch<Record<string, ComfyUIExecutionStatus>>(url, {
     headers: authHeaders(apiKey,),
-    signal: AbortSignal.timeout(10_000,),
+    timeout: 10_000,
+    handle401: false,
+    proxy: proxyForUrl(url,),
   },);
 
-  if (!resp.ok) {
-    throw new Error(`ComfyUI history fetch failed [${resp.status}]`,);
+  if (!result.ok) {
+    if (result.status === undefined) { throw result.error; }
+    throw new Error(`ComfyUI history fetch failed [${result.status}]`,);
   }
 
-  const data = (await resp.json()) as Record<string, ComfyUIExecutionStatus>;
+  const data = result.data;
   const entry = data[promptId];
 
   if (!entry) {
