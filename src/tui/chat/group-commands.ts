@@ -55,14 +55,21 @@ export function setFetch(fn: typeof _realFetch,): void {
   _fetch = fn;
 }
 
-/** One authenticated JSON call; every group route answers `{ data }`. */
+/** @returns the payload from either `{ data }` or a bare response body. */
+function unwrap<T,>(body: unknown,): T {
+  return body !== null && typeof body === "object" && !Array.isArray(body,) && "data" in body
+    ? (body as { data: T }).data
+    : body as T;
+}
+
+/** One authenticated JSON call; some routes wrap the payload in `{ data }`. */
 async function call<T,>(
   path: string,
   sessionToken: string | undefined,
   init: { method?: string; body?: unknown } = {},
 ): Promise<GroupResult<T>> {
   try {
-    const result = await _fetch<{ data: T }>(`${API_BASE}${path}`, {
+    const result = await _fetch<unknown>(`${API_BASE}${path}`, {
       method: init.method ?? "GET",
       auth: sessionToken ? { sessionToken, } : undefined,
       body: init.body,
@@ -73,7 +80,7 @@ async function call<T,>(
       return { ok: false, error: result.status !== undefined ? `HTTP ${result.status}` : result.error.message, };
     }
 
-    return { ok: true, data: result.data.data, };
+    return { ok: true, data: unwrap<T>(result.data,), };
   } catch (error: unknown) {
     return { ok: false, error: error instanceof Error ? error.message : String(error,), };
   }

@@ -808,17 +808,17 @@ describe("group-chat routes the TUI calls", () => {
   test("participants and turn-order answer the shapes the group command reads", async () => {
     const people = await call(`/api/v1/chats/${chatId}/participants`,);
     expect(people.status,).toBe(200,);
-    const peopleBody = (await people.json()) as { data?: unknown };
-    expect(Array.isArray(peopleBody.data,),).toBe(true,);
-    for (const row of peopleBody.data as { actor_id?: unknown; display_name?: unknown }[]) {
+    const peopleBody: unknown = await people.json();
+    expect(Array.isArray(peopleBody,),).toBe(true,);
+    for (const row of peopleBody as { actor_id?: unknown; display_name?: unknown }[]) {
       expect(typeof row.actor_id,).toBe("string",);
       expect(typeof row.display_name,).toBe("string",);
     }
 
     const order = await call(`/api/v1/chats/${chatId}/turn-order`,);
     expect(order.status,).toBe(200,);
-    const orderBody = (await order.json()) as { data?: { turnOrder?: unknown } };
-    expect("turnOrder" in (orderBody.data ?? {}),).toBe(true,);
+    const orderBody = (await order.json()) as { turnOrder?: unknown };
+    expect("turnOrder" in orderBody,).toBe(true,);
   });
 
   test("the moderation queue answers the redacted flag envelope", async () => {
