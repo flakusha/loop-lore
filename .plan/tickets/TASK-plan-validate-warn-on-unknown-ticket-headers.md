@@ -3,7 +3,8 @@
 
 # TASK: plan validate: warn on unknown ticket headers
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-unified-spec-framework

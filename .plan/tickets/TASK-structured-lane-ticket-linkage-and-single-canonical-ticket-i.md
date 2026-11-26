@@ -3,7 +3,8 @@
 
 # TASK: structured lane-ticket linkage and single canonical ticket id
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-unified-spec-framework

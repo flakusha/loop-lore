@@ -3,7 +3,8 @@
 
 # TASK: single declarative artifact spec plus regenerate-and-diff guard
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-unified-spec-framework

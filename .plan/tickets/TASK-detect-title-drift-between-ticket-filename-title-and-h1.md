@@ -3,7 +3,8 @@
 
 # TASK: detect title drift between ticket filename title and H1
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-unified-spec-framework

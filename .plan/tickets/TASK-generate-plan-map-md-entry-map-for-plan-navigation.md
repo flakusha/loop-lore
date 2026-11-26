@@ -3,7 +3,8 @@
 
 # TASK: generate plan-map.md entry map for plan navigation
 
-**Status:** Not Started
+**Status:** In Progress
+**Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-unified-spec-framework
