@@ -6,7 +6,8 @@
  * ever executed; each test writes a shell stub that prints a fixed document.
  */
 import { afterEach, beforeEach, expect, test, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync, } from "node:fs";
+import { createHash, } from "node:crypto";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import {
   __resetPythonLocks,
@@ -143,6 +144,37 @@ test("run refuses a workdir without a root", async () => {
   },);
 
   expect(result,).toEqual({ ok: false, status: "invalid", message: "workdir requires an operator-configured root", },);
+});
+
+test("run stamps the digest of recipe bytes, not the path", async () => {
+  const argvPath = join(dir, "argv",);
+  const stub = writeStub("digest.sh", `printf '%s\\n' "$@" > ${argvPath}\necho done`,);
+  const recipe = writeRecipe();
+  const first = await runPythonJob({ scriptPath: recipe, binary: stub, },);
+  expect(first.ok,).toBe(true,);
+  if (!first.ok || !first.provenance) { return; }
+
+  const expected = createHash("sha256",).update(readFileSync(recipe,),).digest("hex",);
+  expect(first.provenance.scriptDigest,).toBe(expected,);
+
+  writeFileSync(recipe, "# changed recipe\n",);
+  const second = await runPythonJob({ scriptPath: recipe, binary: stub, },);
+  expect(second.ok,).toBe(true,);
+  if (!second.ok || !second.provenance) { return; }
+  expect(second.provenance.scriptDigest,).not.toBe(first.provenance.scriptDigest,);
+});
+
+test("run refuses an unreadable recipe without spawning", async () => {
+  const argvPath = join(dir, "never-spawned",);
+  const stub = writeStub("never.sh", `printf '%s\\n' "$@" > ${argvPath}`,);
+  const recipe = join(dir, "missing.py",);
+
+  const result = await runPythonJob({ scriptPath: recipe, binary: stub, },);
+  expect(result.ok,).toBe(false,);
+  if (result.ok) { return; }
+  expect(result.status,).toBe("invalid",);
+  expect(result.message,).toContain("Cannot read recipe:",);
+  expect(existsSync(argvPath,),).toBe(false,);
 });
 
 test("run reports the stderr tail on failure", async () => {

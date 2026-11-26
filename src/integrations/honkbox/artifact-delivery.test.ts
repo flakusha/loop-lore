@@ -55,10 +55,13 @@ function deliveryProbe(): HonkboxProbeSuccess {
 
 /** Swap globalThis.fetch for the duration of `fn`. */
 async function withMockFetch(
-  handler: (url: string,) => Response | Promise<Response>,
+  handler: (url: string, init?: RequestInit,) => Response | Promise<Response>,
   fn: () => Promise<void>,
 ): Promise<void> {
-  globalThis.fetch = (async (url: string | URL | Request,) => handler(String(url,),)) as typeof fetch;
+  globalThis.fetch =
+    (async (url: string | URL | Request, init?: RequestInit,) =>
+      handler(String(url,), init as RequestInit | undefined,)) as typeof fetch;
+
   try {
     await fn();
   } finally {
@@ -304,6 +307,34 @@ describe("artifact store client", () => {
       expect(stored.sha256,).toBe(GLB_SHA256,);
       expect(stored.sizeBytes,).toBe(GLB_BYTES.length,);
     },);
+  });
+
+  test("putHonkboxArtifact sends the bare artifact media type in both headers", async () => {
+    let headers: Headers | undefined;
+    const fetchFor = (_url: string, init?: RequestInit,) => {
+      headers = new Headers(init?.headers,);
+      return new Response(
+        JSON.stringify({ artifact_id: "a1", sha256: GLB_SHA256, size_bytes: GLB_BYTES.length, },),
+        { headers: { "content-type": "application/json", }, },
+      );
+    };
+
+    await withMockFetch(fetchFor, async () => {
+      await putHonkboxArtifact(
+        { baseUrl: "http://127.0.0.1:9010/v1", maxBytes: 1024, },
+        GLB_BYTES,
+        "image/png; charset=binary",
+      );
+
+      await expect(putHonkboxArtifact(
+        { baseUrl: "http://127.0.0.1:9010/v1", maxBytes: 1024, },
+        GLB_BYTES,
+        "image/png, text/plain",
+      ),).rejects.toBeInstanceOf(HonkboxArtifactValidationError,);
+    },);
+
+    expect(headers?.get("content-type",),).toBe("application/octet-stream",);
+    expect(headers?.get("x-artifact-content-type",),).toBe("image/png",);
   });
 
   test("download stages bytes to a temp file and cleanup removes the dir", async () => {

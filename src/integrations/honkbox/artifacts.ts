@@ -104,7 +104,7 @@ export interface HonkboxStoredArtifact {
 /** Upload raw bytes in one shot (no chunk protocol on the client side).
  * @param client - connection settings
  * @param bytes - raw artifact body
- * @param contentType - MIME type sent verbatim as Content-Type
+ * @param contentType - artifact MIME type; parameters are stripped before upload
  * @returns the server-assigned artifact descriptor
  */
 export async function putHonkboxArtifact(
@@ -121,9 +121,18 @@ export async function putHonkboxArtifact(
   const base = normalizeHonkboxBaseUrl(client.baseUrl,);
   if (!base) { throw new Error("honkbox artifact client needs a non-blank baseUrl",); }
 
+  const artifactContentType = contentType.split(";", 1,)[0]!.trim().toLowerCase();
+  if (!/^[a-z0-9][a-z0-9!#$&^_.+-]*\/[a-z0-9][a-z0-9!#$&^_.+-]*$/.test(artifactContentType,)) {
+    throw new HonkboxArtifactValidationError(`invalid artifact content type: ${contentType}`,);
+  }
+
   const result = await safeFetch<unknown>(`${base}${HONKBOX_ARTIFACTS_PATH}`, {
     method: "POST",
-    headers: { "Content-Type": contentType, ...authHeader(client,), },
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "x-artifact-content-type": artifactContentType,
+      ...authHeader(client,),
+    },
     body: bytes,
     maxSize: client.maxBytes,
     timeout: client.timeoutMs ?? DEFAULT_ARTIFACT_TIMEOUT_MS,

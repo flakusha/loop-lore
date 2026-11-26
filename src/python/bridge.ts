@@ -87,7 +87,7 @@ const DEFAULT_TIMEOUT_MS = 10_000;
 const tails = new Map<string, Promise<void>>();
 
 /** @returns a JSON digest that pins the exact recipe invoked. */
-function digest(value: string,): string {
+function digest(value: string | Uint8Array,): string {
   return createHash("sha256",).update(value,).digest("hex",);
 }
 
@@ -267,10 +267,21 @@ export async function runPythonJob(spec: PythonJobSpec,): Promise<PythonJobResul
     const serialized = safeJsonStringify(spec.params ?? {},);
     if (!serialized.ok) { return { ok: false, status: "invalid", message: serialized.error.message, }; }
 
+    let recipe: Buffer;
+    try {
+      recipe = fs.readFileSync(spec.scriptPath,);
+    } catch (err) {
+      return {
+        ok: false,
+        status: "invalid",
+        message: `Cannot read recipe: ${err instanceof Error ? err.message : String(err,)}`,
+      };
+    }
+
     const out = await runProcess(
       [binary, spec.scriptPath, "--", serialized.value,],
       timeoutMs,
-      digest(spec.scriptPath,),
+      digest(recipe,),
       spec.workdir,
     );
 

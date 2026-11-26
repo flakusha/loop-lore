@@ -3,7 +3,7 @@
 
 # TASK: Python bridge core: generic python3 subprocess bridge
 
-**Status:** Done
+**Status:** In Progress
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -15,10 +15,11 @@ Mirror src/blender/bridge.ts for plain python3: probe (PY_CAP marker, version + 
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+Provenance bug found during DCC research: `runPythonJob` hashes `spec.scriptPath` instead of recipe bytes, so same-path edits keep the old `scriptDigest`, and unreadable recipes spawn before failing. Blender bridge already hashes exact bytes and returns `invalid` for unreadable recipes.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
+- [x] Hash recipe bytes read immediately before spawn
+- [x] Return `invalid` with `Cannot read recipe:` when unreadable, without spawning
 - [ ] Tests passing
 - [ ] Documentation updated
