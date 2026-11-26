@@ -33443,7 +33443,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-caveats-coverage-metric-for-the-ticket-corpus.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS": {
     "epic": "epic-certificate-and-tls-management",
@@ -40083,7 +40083,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-detect-title-drift-between-ticket-filename-title-and-h1.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
@@ -45261,7 +45261,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-generate-plan-map-md-entry-map-for-plan-navigation.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
     "hash": "db7edfa",
@@ -45617,7 +45617,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-giwt-object-to-md-serializer-for-lossless-ticket-regeneratio.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-GIWT-SHOW-STATE-RESOLVE-PLAN-TICKETS-FILENAME-SLUGS": {
     "epic": "(none — hygiene/self-contained)",
@@ -56243,7 +56243,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-plan-validate-warn-on-unknown-ticket-headers.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA": {
     "epic": "epic-platform-integrations",
@@ -62759,7 +62759,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-single-declarative-artifact-spec-plus-regenerate-and-diff-gu.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS": {
     "epic": "",
@@ -63708,7 +63708,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-structured-lane-ticket-linkage-and-single-canonical-ticket-i.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
     "epic": "epic-hidden-carriage-context",
