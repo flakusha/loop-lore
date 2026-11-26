@@ -31743,7 +31743,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-backup-consistency-vacuum-into-snapshots-plus-archive-dbs.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "database",
       "backup"
