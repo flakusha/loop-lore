@@ -177,6 +177,22 @@ export const checks = {
   // Priority matrix freshness (.plan/priority-matrix.md vs a fresh rebuild)
   "plan - priority": "bun run plan:priority:check",
 
+  // Entry-map freshness (.plan/entry-map.md vs a fresh rebuild) — the
+  // lanes → tickets → epics navigation view. Same merge-drift profile as
+  // the matrix gates, so advisory too.
+  "plan - entry map": "bun run plan:entry-map:check",
+
+  // Lane-ticket linkage: canonical-id drift (filename slug vs H1 vs index
+  // extid) fails; unresolvable historical lane claims only warn. BLOCKING:
+  // a pure function of tracked files, so no merge-drift profile — drift is
+  // a defect in the committed tree, like a type error.
+  "plan - linkage": "bun run plan:linkage",
+
+  // Generated plan-artifact guard: runs every artifact's own regenerate-and-
+  // diff --check (see .plan/artifact-spec.md). Advisory: it aggregates the
+  // freshness gates above, which are advisory for the same reason.
+  "plan - artifacts": "bun run plan:artifacts:check",
+
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
   // size - strict: re-enabled — files over 250L need splitting (recent additions)
@@ -283,6 +299,11 @@ export const ADVISORY_GATES = new Set([
   // Priority matrix freshness: .plan/priority-matrix.md vs a fresh rebuild —
   // same ticket-index drift profile as the feature matrix.
   "plan - priority",
+  // Entry-map freshness: .plan/entry-map.md vs a fresh rebuild — derives
+  // from concurrently-edited ticket files, same drift profile as above.
+  "plan - entry map",
+  // Generated plan-artifact guard: aggregates the freshness gates above.
+  "plan - artifacts",
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
