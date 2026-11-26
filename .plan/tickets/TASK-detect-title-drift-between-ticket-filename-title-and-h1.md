@@ -3,7 +3,7 @@
 
 # TASK: detect title drift between ticket filename title and H1
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** low
 **Effort:** Small
@@ -23,3 +23,5 @@ Nothing repairs drift between the ticket filename slug, the title line, and the 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue 6e93118 (registry tip: db2d884a2 Konstantin Fedotov Close issue)

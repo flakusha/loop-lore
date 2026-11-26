@@ -3,7 +3,7 @@
 
 # TASK: plan validate: warn on unknown ticket headers
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** medium
 **Effort:** Small
@@ -23,3 +23,5 @@ Unknown **Header:** lines are silently accepted and the object form drops them, 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue d67ebb8 (registry tip: 567764d05 Konstantin Fedotov Close issue)

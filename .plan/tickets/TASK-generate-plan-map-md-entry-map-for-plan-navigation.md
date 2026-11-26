@@ -3,7 +3,7 @@
 
 # TASK: generate plan-map.md entry map for plan navigation
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** medium
 **Effort:** Medium
@@ -23,3 +23,5 @@ Proposal .tmp/research/lolo-harness-doc-schema-proposal-2026-11-26.md section 3:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue aca24ab (registry tip: a975bd439 Konstantin Fedotov Close issue)

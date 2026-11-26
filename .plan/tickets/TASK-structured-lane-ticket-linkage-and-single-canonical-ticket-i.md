@@ -3,7 +3,7 @@
 
 # TASK: structured lane-ticket linkage and single canonical ticket id
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** high
 **Effort:** Medium
@@ -23,3 +23,5 @@ Proposal section 4 and addendum ordering: intercom LANE files link to tickets by
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue 23ab3c9 (registry tip: ebbbfaa73 Konstantin Fedotov Close issue)

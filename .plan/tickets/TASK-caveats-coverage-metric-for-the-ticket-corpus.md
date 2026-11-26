@@ -3,7 +3,7 @@
 
 # TASK: caveats coverage metric for the ticket corpus
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** medium
 **Effort:** Small
@@ -23,3 +23,5 @@ checkTicketCaveats is inert without --diff-base, so most of the corpus has no ma
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue 87ceebb (registry tip: fa7ca8679 Konstantin Fedotov Close issue)

@@ -3,7 +3,7 @@
 
 # TASK: giwt object-to-md serializer for lossless ticket regeneration
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** high
 **Effort:** Large
@@ -23,3 +23,5 @@ Hard blocker from the addendum: the md-to-object direction exists (parse to inde
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue 90759e6 (registry tip: 0ef87a1ed Konstantin Fedotov Close issue)

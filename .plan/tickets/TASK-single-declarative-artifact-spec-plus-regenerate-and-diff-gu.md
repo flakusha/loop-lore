@@ -3,7 +3,7 @@
 
 # TASK: single declarative artifact spec plus regenerate-and-diff guard
 
-**Status:** In Progress
+**Status:** Done
 **Scope:** Implement doc-schema and md-roundtrip tickets; verify installed giwt fixes
 **Priority:** high
 **Effort:** Medium
@@ -23,3 +23,5 @@ Proposal .tmp/research/lolo-harness-doc-schema-proposal-2026-11-26.md section 3:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue ce42084 (registry tip: 044787d5a Konstantin Fedotov Close issue)
