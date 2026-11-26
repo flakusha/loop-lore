@@ -12,7 +12,7 @@ import type { ConfigEntry, } from "./config";
 
 /** Keys whose values must never leave the server in cleartext. */
 export const SECRET_KEY_PATTERN =
-  /secret|password|token|api.?key|private.?key|mesh.?psk|encryption.?key|signed.?url|db\.url|database.?url/iu;
+  /secret|password|pass\b|token|api.?key|private.?key|mesh.?psk|encryption.?key|signed.?url|db\.url|database.?url/iu;
 
 /** Flat keys and field names whose "token" is a budget unit, not a credential. */
 const NON_SECRET_CONFIG_KEYS: ReadonlySet<string> = new Set([

@@ -56,8 +56,14 @@ describe("isSecretConfigKeyName", () => {
   });
 
   test("still classifies credential keys as secret", () => {
-    for (const key of ["api_token", "password", "openai_api_key", "db.url",]) {
+    for (const key of ["api_token", "password", "openai_api_key", "db.url", "imapPass", "smtpPass", "pass",]) {
       expect(isSecretConfigKeyName(key,),).toBe(true,);
+    }
+  });
+
+  test("does not mistake a bypass flag for a credential", () => {
+    for (const key of ["bypassHeader", "IDEMPOTENCY_BYPASS_HEADER",]) {
+      expect(isSecretConfigKeyName(key,),).toBe(false,);
     }
   });
 });

@@ -105,6 +105,25 @@ describe("admin effective-config export", () => {
     expect(raw,).not.toContain("SENTINEL-NESTED-PIISECRET-1",);
   });
 
+  test("omits imapPass/smtpPass but keeps non-secret bypass flags", async () => {
+    const app = makeApp(db, "admin", {
+      integrations: {
+        email: { imapPass: "SENTINEL-IMAP-PASS-1", smtpPass: "SENTINEL-SMTP-PASS-1", provider: "smtp", },
+      },
+      idempotency: { bypassHeader: true, },
+    },);
+
+    const res = await app.handle(new Request("http://localhost/api/admin/effective-config/export",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as ExportBody;
+    expect(body.omitted,).toContain("integrations.email.imapPass",);
+    expect(body.omitted,).toContain("integrations.email.smtpPass",);
+    expect((body.values["idempotency"] as Record<string, unknown>)["bypassHeader"],).toBe(true,);
+    const raw = JSON.stringify(body,);
+    expect(raw,).not.toContain("SENTINEL-IMAP-PASS-1",);
+    expect(raw,).not.toContain("SENTINEL-SMTP-PASS-1",);
+  });
+
   test("omits unopenable envelopes without leaking the value", async () => {
     await db
       .insertInto("system_config",)
