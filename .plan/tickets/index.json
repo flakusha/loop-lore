@@ -8425,6 +8425,20 @@
     "title": "plan:sync --fix mass-creates orphan git issues for placeholder hashes",
     "type": "BUG"
   },
+  "BUG-PLAN-TICKET-STATUS-PARSES-INSIDE-FENCED-CODE-BLOCKS": {
+    "hash": "b45712e",
+    "git_issue": "b45712e",
+    "extid": "BUG-PLAN-TICKET-STATUS-PARSES-INSIDE-FENCED-CODE-BLOCKS",
+    "type": "BUG",
+    "title": "plan ticket Status parses inside fenced code blocks",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plan-ticket-status-parses-inside-fenced-code-blocks.md",
+    "status": "open"
+  },
   "BUG-PLUGIN-APPROVAL-IS-KEYED-BY-NAME-ONLY-WITH-NO-ORIGIN-COLUMN-": {
     "hash": "5d27599",
     "git_issue": "5d27599",
@@ -33403,6 +33417,20 @@
     "title": "Caption variants: create/recreate/pick-best scenario",
     "type": "TASK"
   },
+  "TASK-CAVEATS-COVERAGE-METRIC-FOR-THE-TICKET-CORPUS": {
+    "hash": "87ceebb",
+    "git_issue": "87ceebb",
+    "extid": "TASK-CAVEATS-COVERAGE-METRIC-FOR-THE-TICKET-CORPUS",
+    "type": "TASK",
+    "title": "caveats coverage metric for the ticket corpus",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-caveats-coverage-metric-for-the-ticket-corpus.md",
+    "status": "open"
+  },
   "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS": {
     "epic": "epic-certificate-and-tls-management",
     "extid": "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS",
@@ -40029,6 +40057,20 @@
     "source": ".plan/tickets/TASK-desired-context-window-and-promote-pruned-messages-to-memory.md",
     "status": "open"
   },
+  "TASK-DETECT-TITLE-DRIFT-BETWEEN-TICKET-FILENAME-TITLE-AND-H1": {
+    "hash": "6e93118",
+    "git_issue": "6e93118",
+    "extid": "TASK-DETECT-TITLE-DRIFT-BETWEEN-TICKET-FILENAME-TITLE-AND-H1",
+    "type": "TASK",
+    "title": "detect title drift between ticket filename title and H1",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-detect-title-drift-between-ticket-filename-title-and-h1.md",
+    "status": "open"
+  },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
     "extid": "TASK-DEV-TOOLING-UPDATES",
@@ -45179,6 +45221,20 @@
     "title": "Generalized pre/post-generation hook registry",
     "type": "TASK"
   },
+  "TASK-GENERATE-PLAN-MAP-MD-ENTRY-MAP-FOR-PLAN-NAVIGATION": {
+    "hash": "aca24ab",
+    "git_issue": "aca24ab",
+    "extid": "TASK-GENERATE-PLAN-MAP-MD-ENTRY-MAP-FOR-PLAN-NAVIGATION",
+    "type": "TASK",
+    "title": "generate plan-map.md entry map for plan navigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generate-plan-map-md-entry-map-for-plan-navigation.md",
+    "status": "open"
+  },
   "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
     "hash": "db7edfa",
     "extid": "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO",
@@ -45520,6 +45576,20 @@
     ],
     "title": "giwt migration open items (docs/giwt-scripts-map.md)",
     "type": "TASK"
+  },
+  "TASK-GIWT-OBJECT-TO-MD-SERIALIZER-FOR-LOSSLESS-TICKET-REGENERATIO": {
+    "hash": "90759e6",
+    "git_issue": "90759e6",
+    "extid": "TASK-GIWT-OBJECT-TO-MD-SERIALIZER-FOR-LOSSLESS-TICKET-REGENERATIO",
+    "type": "TASK",
+    "title": "giwt object-to-md serializer for lossless ticket regeneration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-object-to-md-serializer-for-lossless-ticket-regeneratio.md",
+    "status": "open"
   },
   "TASK-GIWT-SHOW-STATE-RESOLVE-PLAN-TICKETS-FILENAME-SLUGS": {
     "epic": "(none — hygiene/self-contained)",
@@ -53558,6 +53628,20 @@
     "title": "Non-Standard Browser Crypto Research",
     "type": "TASK"
   },
+  "TASK-NORMALIZE-EPIC-FIELD-SPELLING-VARIANTS-IN-LINKAGE": {
+    "hash": "ee15807",
+    "git_issue": "ee15807",
+    "extid": "TASK-NORMALIZE-EPIC-FIELD-SPELLING-VARIANTS-IN-LINKAGE",
+    "type": "TASK",
+    "title": "normalize Epic field spelling variants in linkage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-normalize-epic-field-spelling-variants-in-linkage.md",
+    "status": "open"
+  },
   "TASK-NOTIFICATION-AND-TELEMETRY-SERVICE-NITS": {
     "hash": "2942731",
     "git_issue": "2942731",
@@ -56104,6 +56188,20 @@
     "tags": [],
     "title": "Plan Validate Debt Cleanup",
     "type": "TASK"
+  },
+  "TASK-PLAN-VALIDATE-WARN-ON-UNKNOWN-TICKET-HEADERS": {
+    "hash": "d67ebb8",
+    "git_issue": "d67ebb8",
+    "extid": "TASK-PLAN-VALIDATE-WARN-ON-UNKNOWN-TICKET-HEADERS",
+    "type": "TASK",
+    "title": "plan validate: warn on unknown ticket headers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plan-validate-warn-on-unknown-ticket-headers.md",
+    "status": "open"
   },
   "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA": {
     "epic": "epic-platform-integrations",
@@ -62593,6 +62691,20 @@
     "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md",
     "status": "Not Started"
   },
+  "TASK-SINGLE-DECLARATIVE-ARTIFACT-SPEC-PLUS-REGENERATE-AND-DIFF-GU": {
+    "hash": "ce42084",
+    "git_issue": "ce42084",
+    "extid": "TASK-SINGLE-DECLARATIVE-ARTIFACT-SPEC-PLUS-REGENERATE-AND-DIFF-GU",
+    "type": "TASK",
+    "title": "single declarative artifact spec plus regenerate-and-diff guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-single-declarative-artifact-spec-plus-regenerate-and-diff-gu.md",
+    "status": "open"
+  },
   "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS": {
     "epic": "",
     "extid": "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS",
@@ -63527,6 +63639,20 @@
     ],
     "source": ".plan/tickets/TASK-streamable-http-mcp-transport-behind-central-guard.md",
     "status": "done"
+  },
+  "TASK-STRUCTURED-LANE-TICKET-LINKAGE-AND-SINGLE-CANONICAL-TICKET-I": {
+    "hash": "23ab3c9",
+    "git_issue": "23ab3c9",
+    "extid": "TASK-STRUCTURED-LANE-TICKET-LINKAGE-AND-SINGLE-CANONICAL-TICKET-I",
+    "type": "TASK",
+    "title": "structured lane-ticket linkage and single canonical ticket id",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-structured-lane-ticket-linkage-and-single-canonical-ticket-i.md",
+    "status": "open"
   },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
     "epic": "epic-hidden-carriage-context",
