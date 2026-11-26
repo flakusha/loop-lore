@@ -14,7 +14,7 @@ import {
   NSFW_RATING_HIERARCHY,
   NSFW_RATING_SEVERITY,
 } from "./nsfw-rating";
-import { ContentIntensity, } from "@/db/enums-character/nsfw";
+import { ContentIntensity, } from "../../../../src/db/enums-character/nsfw";
 
 const {
   SFW,

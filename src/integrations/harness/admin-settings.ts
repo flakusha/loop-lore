@@ -26,7 +26,7 @@
 
 import type { Kysely, } from "kysely";
 import { getConfigValue, setConfig, } from "../../admin/config";
-import type { AcpProfileConfig, HarnessAcpConfig, } from "../../config/schema/harness";
+import type { AcpProfileConfig, HarnessAcpConfig, HarnessTransport, } from "../../config/schema/harness";
 import { validateAcpProfiles, } from "../../config/sections/harness";
 import type { DB, } from "../../db/schema";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
@@ -46,6 +46,8 @@ export interface HarnessProfileSettingsView {
   name: string;
   /** The profile's `harness` flavor, defaulted to `"omp"` when omitted. */
   flavor: string;
+  /** Transport driving the profile; defaults to acp when omitted in file config. */
+  transport: HarnessTransport;
   tosGrayzoneAcknowledged: boolean;
 }
 
@@ -116,6 +118,7 @@ class HarnessAdminSettingsStore {
     return {
       name: p.name,
       flavor: p.harness ?? "omp",
+      transport: p.transport ?? "acp",
       tosGrayzoneAcknowledged: p.tosGrayzoneAcknowledged === true || this.state.acks[p.name] === true,
     };
   }

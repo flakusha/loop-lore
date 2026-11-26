@@ -13,8 +13,11 @@
  * sets exactly when `--parallel` was passed).
  */
 
-import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "@/test-utils/isolate-only";
 import { expect, mock, test, } from "bun:test";
+import {
+  describeOrSkip as describeOrSkipIsolated,
+  ISOLATED as ISOLATED_RUN,
+} from "../../../../src/test-utils/isolate-only";
 import { blake3Hash as fallbackBlake3, } from "./fallback/blake3";
 
 const stub = { status: 0, };

@@ -8,7 +8,7 @@
 
 // size-allow: 288
 
-import { safeJsonStringify, } from "../../../utils";
+import { safeFetch, safeJsonStringify, } from "../../../utils";
 import type { GenerationMessage, } from "../../gen-types-options";
 import { withProviderRetry, } from "../retry";
 import type { GenerateRequest, } from "../types";
@@ -181,7 +181,7 @@ export async function fetchRaw(
 
   try {
     const serializedBody = body ? safeJsonStringify(body,) : undefined;
-    return await fetch(url, {
+    const result = await safeFetch<Response>(url, {
       method: serializedBody ? "POST" : "GET",
       headers: {
         "Content-Type": "application/json",
@@ -190,7 +190,41 @@ export async function fetchRaw(
       },
       body: serializedBody?.ok ? serializedBody.value : undefined,
       signal: combinedSignal,
+      stream: true,
+      includeErrorBody: true,
+      handle401: false,
     },);
+
+    if (result.ok) { return result.data; }
+    if (result.status === undefined) {
+      // Network failure or abort: fetch used to reject here. Preserve the
+      // throw (and the AbortError shape the retry policy classifies on).
+      // Restore the AbortError shape the retry policy classifies on: an
+      // aborted signal, safeFetch's own timeout, or an impl-thrown
+      // AbortError (surfaced as "Request aborted"). Anything else is a raw
+      // network failure and stays retryable.
+      const aborted = combinedSignal?.aborted ||
+        result.error.message === "Request aborted" ||
+        result.error.message.startsWith("Request timed out",);
+
+      if (aborted) { throw new DOMException("Aborted", "AbortError",); }
+      throw result.error;
+    }
+
+    // HTTP error status: rebuild the Response the callers map, with the
+    // provider's own error body round-tripped through safeFetch.
+    const bodyValue: unknown = "body" in result.error ? result.error.body : undefined;
+    const encoded = typeof bodyValue === "string" || bodyValue === undefined
+      ? undefined
+      : safeJsonStringify(bodyValue,);
+
+    const bodyText = typeof bodyValue === "string"
+      ? bodyValue
+      : encoded?.ok
+      ? encoded.value
+      : result.error.message;
+
+    return new Response(bodyText, { status: result.status, headers: result.headers, },);
   } finally {
     clearTimeout(timeoutId,);
   }
@@ -260,6 +294,14 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
 
     case 422: {
       throw new ProviderError(message, undefined, 422, false,);
+    }
+
+    case 501: {
+      // Unsupported capability (e.g. decision model without an image
+      // projector, non-decision GGUF) — permanent for this provider+model,
+      // never worth a retry. Failover across providers stays in
+      // callWithFailover, which sees a terminal error, not a backoff.
+      throw new ProviderError(message, undefined, 501, false,);
     }
 
     case 500:

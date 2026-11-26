@@ -4,6 +4,7 @@
 import type { ImageProviderConfig, } from "../../config/schema";
 import { listSdProviders, } from "../../config/schema";
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { preflightRequest, } from "../preflight";
 import { generateComfyUI, } from "./comfyui";
 import { probeComfyUI, } from "./comfyui-discovery";
 import { failure, } from "./helpers";
@@ -20,6 +21,7 @@ export type {
   ImageGenOptions,
   ImageGenOutcome,
   ImageGenSuccess,
+  InitImage,
 } from "./types";
 
 /**
@@ -203,6 +205,19 @@ export async function generateImagesWithFailover(
   opts: ImageGenOptions,
   resolveApiKey?: SdApiKeyResolver,
 ): Promise<ImageGenOutcome> {
+  // One request-time gate before any candidate is probed or executed. Only a
+  // graph object carries structure for validateGraph — a workflow NAME
+  // resolves downstream (same guard as the image-edit/video routes). LoRA
+  // configs are already normalized + validated by the route caller, so they
+  // are deliberately not re-gated here: no double-preflight, and no false
+  // 400 on a valid multi-LoRA array.
+  const workflow: unknown = opts.workflow;
+  const preflight = preflightRequest({
+    workflow: typeof workflow === "object" && workflow !== null ? workflow : undefined,
+  },);
+
+  if (!preflight.ok) { return failure(preflight.error, 400,); }
+
   const candidates = listSdProviders(providers, purpose,);
   if (candidates.length === 0) {
     return failure(

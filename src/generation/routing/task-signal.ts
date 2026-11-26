@@ -13,16 +13,16 @@
  * generation routes, the AUX pipeline jobs (which reuse `AuxTaskName`
  * verbatim so a new AUX job is a compile error until it is classified), the
  * outbound ACP harness dispatch, and the background transports (embeddings,
- * rerank).
+ * rerank) — each with its own signal so a per-task routing rule can fire.
  */
 import type { AuxTaskName, } from "../../aux-pipeline/types";
 import type { HarnessTaskType, } from "../../harness/types";
 
 /** Closed set of classified work classes. */
-export type TaskType = "interactive-turn" | "auto-gen" | "harness" | AuxTaskName | "background";
+export type TaskType = "interactive-turn" | "auto-gen" | "harness" | AuxTaskName | "background" | "reranking";
 
 /** Capability names a signal can require of a candidate model. */
-export type TaskCapability = "text" | "image" | "embeddings" | "streaming" | "tools" | "thinking";
+export type TaskCapability = "text" | "image" | "embeddings" | "rerank" | "streaming" | "tools" | "thinking";
 
 /** What the dispatcher knows about the request before it reaches a provider. */
 export interface TaskSignal {
@@ -47,8 +47,14 @@ export const INTERACTIVE_TURN: TaskSignal = Object.freeze({ taskType: "interacti
 /** Proactive / continuation generation (auto-gen). */
 export const AUTO_GEN: TaskSignal = Object.freeze({ taskType: "auto-gen", },);
 
-/** Off the chat hot path: embeddings + rerank. */
+/** Off the chat hot path: embeddings. */
 export const BACKGROUND: TaskSignal = Object.freeze({ taskType: "background", },);
+
+/** Dedicated cross-encoder rerank: off the chat hot path, own routing rule. */
+export const RERANKING: TaskSignal = Object.freeze({
+  taskType: "reranking",
+  requiresCapabilities: ["rerank",] as TaskCapability[],
+},);
 
 /**
  * Map an AUX pipeline job to its signal. Each `AuxTaskName` doubles as a task
@@ -69,9 +75,9 @@ export function toTaskSignal(task: AuxTaskName,): TaskSignal {
  * dispatch surface (so a new AUX job is classified individually), while the log
  * groups the AUX family into one rollup bucket. The final fall-through IS the
  * AUX family: `TaskType` is `interactive-turn | auto-gen | harness |
- * AuxTaskName | background`, so once the four named members are excluded,
- * TypeScript has narrowed the rest to `AuxTaskName`. No hand-maintained name
- * list to drift.
+ * AuxTaskName | background | reranking`, so once the named members below
+ * are excluded, TypeScript has narrowed the rest to `AuxTaskName`. No
+ * hand-maintained name list to drift.
  * @param taskType - routing class
  * @returns The exec-log task type.
  */
@@ -81,7 +87,8 @@ export function toHarnessTaskType(taskType: TaskType,): HarnessTaskType {
   // An outbound ACP dispatch: its own bucket, distinct from the local
   // provider calls the other classes record.
   if (taskType === "harness") { return "harness"; }
-  // embeddings + rerank both go through the shared background transport.
-  if (taskType === "background") { return "memory"; }
+  // embeddings uses the shared background transport; rerank has its own
+  // signal but is still a memory-side operation in the exec log.
+  if (taskType === "background" || taskType === "reranking") { return "memory"; }
   return "aux";
 }

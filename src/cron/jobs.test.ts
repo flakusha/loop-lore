@@ -26,7 +26,10 @@ describe("cron default jobs", () => {
   test("catalog names and schedules are valid", () => {
     const jobs = defaultJobs();
     expect(jobs.map((j,) => j.name),).toEqual([
+      "integrity.check",
       "telemetry.retention",
+      "chat.unread-reconcile",
+      "logs.retention",
       "chat.archive-expiration",
       "async.offload",
       "crypto.key-rotation-check",
@@ -45,11 +48,19 @@ describe("cron default jobs", () => {
       "models.news-poll",
       "models.reaction-grade",
       "models.global-import",
+      "rsi.failure-cluster-mining",
     ],);
 
     for (const job of jobs) {
       expect(Bun.cron.parse(job.schedule,),).not.toBeNull();
     }
+  });
+
+  test("rsi failure-cluster mining runs weekly", () => {
+    const job = defaultJobs().find((j,) => j.name === "rsi.failure-cluster-mining");
+    expect(job,).toBeDefined();
+    expect(job?.schedule,).toBe("0 4 * * 0",);
+    expect(job?.enabled,).toBe(true,);
   });
 
   // Two network-backed jobs (news-poll, global-import) hit live feeds;

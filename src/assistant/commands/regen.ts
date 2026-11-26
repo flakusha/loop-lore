@@ -4,9 +4,10 @@
 // src/assistant/commands/regen.ts
 //
 // /regen — guided-regen menu for assistant messages (Try Again / Add Details /
-// More Concise). First consumer of registry-declared message actions: each
-// action maps to an existing rewrite/improve style, executed against the last
-// assistant message.
+// More Concise / free-text Custom). First consumer of registry-declared message
+// actions: each action maps to an existing rewrite/improve style — or, for
+// Custom, a user-authored instruction — executed against the last assistant
+// message.
 
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
@@ -16,7 +17,11 @@ import { decideRegenRoute, } from "./regen-gate";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 import { runRewrite, } from "./rewrite";
 
-const USAGE = "Usage: /regen <try-again|add-details|more-concise> — regenerate the last assistant message.";
+const USAGE =
+  "Usage: /regen <try-again|add-details|more-concise> | /regen custom <instruction> — regenerate the last assistant message.";
+
+/** Max characters for a free-text custom regen instruction. */
+const MAX_CUSTOM_INSTRUCTION_CHARS = 500;
 
 /** A declared message action: stable id plus display metadata. */
 export interface MessageActionDef {
@@ -35,6 +40,7 @@ const actions: MessageActionDef[] = [
   { id: "try-again", label: "Try Again", description: "Rewrite the last reply for clarity.", },
   { id: "add-details", label: "Add Details", description: "Expand the last reply with more detail.", },
   { id: "more-concise", label: "More Concise", description: "Shorten the last reply.", },
+  { id: "custom", label: "Custom", description: "Rewrite the last reply with your own free-text instruction.", },
 ];
 
 /**
@@ -111,6 +117,29 @@ export async function runRegenAction(args: string[], ctx: CommandContext, deps: 
 
       if (decision.action === "add-details") {
         return runImprove([target.content, "--level", "expand",], ctx,);
+      }
+
+      if (decision.action === "custom") {
+        const instruction = args.slice(1,).join(" ",).trim();
+        if (!instruction) {
+          return { systemMessage: `${USAGE}\nProvide an instruction after 'custom'.`, handled: true, };
+        }
+
+        if (instruction.length > MAX_CUSTOM_INSTRUCTION_CHARS) {
+          return {
+            systemMessage:
+              `**Instruction too long.** /regen custom accepts at most ${MAX_CUSTOM_INSTRUCTION_CHARS} characters.`,
+            handled: true,
+          };
+        }
+
+        // Free-text direction flows through runRewrite's prompt assembly. No
+        // --apply here: the result is a preview for the caller to confirm.
+        return runRewrite(
+          [target.content,],
+          { ...ctx, namedArgs: { instruction, }, positionalArgs: [target.content,], },
+          deps,
+        );
       }
 
       const style = decision.action === "more-concise" ? "concise" : "clear";

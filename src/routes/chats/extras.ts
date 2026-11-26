@@ -229,16 +229,25 @@ export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const message = await database
             .selectFrom("messages",)
-            .select(["id",],)
+            .select(["id", "created_at",],)
             .where("id", "=", body.messageId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
 
           if (!message) { return notFound("Message not found in this chat",); }
 
+          // O(1) counter reset: last_read_created_at is the denormalized
+          // read watermark the unread triggers compare against; the trigger
+          // arms on messages keep incrementing only participants whose
+          // watermark is older, so zeroing here plus the watermark is the
+          // whole reset (migration 122).
           await database
             .updateTable("chat_participants",)
-            .set({ last_read_message_id: body.messageId, },)
+            .set({
+              last_read_message_id: body.messageId,
+              last_read_created_at: message.created_at,
+              unread_count: 0,
+            },)
             .where("chat_id", "=", id,)
             .where("actor_id", "=", userId,)
             .execute();

@@ -4,6 +4,7 @@
  * contract the memory-selection UI's pin control depends on.
  */
 import { describe, expect, test, } from "bun:test";
+import type { SemanticMatch, } from "../embeddings";
 import type { MemoryEntry, } from "../types";
 import { shouldInjectMemory, } from "./decide";
 import {
@@ -182,5 +183,47 @@ describe("shouldInjectMemory — semantic floor gate", () => {
 
     expect(decision.inject,).toBe(true,);
     expect(decision.reason,).toBe("pinned",);
+  });
+});
+
+describe("shouldInjectMemory — gate reads cosine, not rerank score", () => {
+  // semanticRecall keeps rerank relevance in `score` and the cosine value in
+  // `cosineScore`; memories.ts maps the latter into semanticScores. Build that
+  // map here so a regression in the field choice fails these tests.
+  const asInjectionScores = (matches: SemanticMatch[],): Map<string, number> =>
+    new Map(matches.map((m,) => [m.memoryId, m.cosineScore,]),);
+
+  test("low numeric rerank score with cosine >= floor still passes", () => {
+    const matches: SemanticMatch[] = [
+      { memoryId: "mem-1", score: -2.5, cosineScore: 0.6, },
+    ];
+
+    const decision = shouldInjectMemory(
+      makeMemory({},),
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0, semanticScores: asInjectionScores(matches,), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+
+    expect(decision.inject,).toBe(true,);
+    expect(decision.reason,).not.toBe("semantic_floor",);
+  });
+
+  test("cosine below floor still fails even when the rerank score is high", () => {
+    const matches: SemanticMatch[] = [
+      { memoryId: "mem-1", score: 0.99, cosineScore: 0.02, },
+    ];
+
+    const decision = shouldInjectMemory(
+      makeMemory({},),
+      DEFAULT_INJECTION_CONFIG,
+      { ...ctx, randomFn: () => 0.99, semanticScores: asInjectionScores(matches,), },
+      DEFAULT_COMFORT,
+      -1,
+    );
+
+    expect(decision.inject,).toBe(false,);
+    expect(decision.reason,).toBe("semantic_floor",);
   });
 });

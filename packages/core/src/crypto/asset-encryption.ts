@@ -17,8 +17,8 @@
  * encrypted directly with the chat key). v2 payloads include `a_id` and
  * use the per-asset subkey. Decryption auto-detects the version.
  */
-import { safeJsonParse, } from "@/utils";
-import { safeFromBase64, safeFromString, } from "@/utils/safe-buffer";
+import { safeFromBase64, safeFromString, } from "../utils/safe-buffer";
+import { safeJsonParse, } from "../utils/safe-json";
 import type { ChatKey, } from "./chat-keys";
 import {
   compressThenEncrypt,

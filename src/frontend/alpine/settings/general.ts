@@ -23,7 +23,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
      * @returns {Promise<void>}
      */
     async init() {
-      const savedTheme = storageGet("local", "theme-reference",);
+      const savedTheme = storageGet("local", "theme-preference",);
       if (savedTheme) { this.theme = savedTheme; }
       const savedLocale = storageGet("local", "locale",);
       if (savedLocale) { this.locale = savedLocale; }
@@ -211,8 +211,10 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       try {
         const res = await apiFetch("/api/v1/users/me", { method: "DELETE", },);
         if (!res.ok) { throw new Error("Delete failed",); }
+        globalThis.location.href = "/views/login";
       } catch (error) {
         log.warn("deleteAllData failed", { error: String(error,), },);
+        showToast("error", t("toasts.failedDelete",),);
       }
     },
   };

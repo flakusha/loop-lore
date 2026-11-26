@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 261
+// size-allow: 285
 
 /**
  * Tree Integrity Service — Fractal Locations (TASK-locations-tree-integrity-service).
@@ -18,7 +18,8 @@
  *
  * Cycle rejection and the depth ceiling (LOCATION_DEPTH_LIMIT) are NOT trigger-
  * enforced: SQLite triggers cannot express the recursive walk, so both live in
- * this service — `insertLocation` for depth, `moveSubtree` for cycles.
+ * this service — `insertLocation` and `moveSubtree` enforce depth, and
+ * `moveSubtree` rejects cycles.
  *
  * This service exists for: (1) the tests that should pass without DB triggers
  * (e.g. in-memory repos, unit tests), (2) operations that need batched repair
@@ -29,7 +30,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
-import { LOCATION_DEPTH_LIMIT, } from "../db/enums-story/world";
+import { LOCATION_DEPTH_LIMIT, type LocationKind, type MobilityMode, } from "../db/enums-story/world";
 
 export interface LocationTreeNode {
   id: string;
@@ -38,9 +39,13 @@ export interface LocationTreeNode {
   depth: number;
 }
 
-/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits `name` for display. */
+/** A `LocationTreeNode` plus its immediate children, recursively. `tree()` also emits the display name and the materialized fractal-location fields. */
 export type LocationTreeBranch = LocationTreeNode & {
   name: string;
+  kind: LocationKind;
+  mobility_mode: MobilityMode;
+  current_route_id: string | null;
+  travel_progress: number;
   children: LocationTreeBranch[];
 };
 
@@ -57,7 +62,7 @@ export interface InsertLocationInput {
  * Why `moveSubtree` refused a move. `code` lets callers map to HTTP statuses
  * without string-matching messages.
  */
-export type LocationMoveReason = "self-parent" | "not-found" | "cross-world" | "cycle";
+export type LocationMoveReason = "self-parent" | "not-found" | "cross-world" | "cycle" | "depth";
 
 /** Typed rejection from `LocationTreeService.moveSubtree`. */
 export class LocationMoveError extends Error {
@@ -230,11 +235,20 @@ export class LocationTreeService {
     const all = await this.db
       .selectFrom("locations",)
       .where("world_id", "=", worldId,)
-      .select(["id", "name", "parent_location_id",],)
+      .select([
+        "id",
+        "name",
+        "parent_location_id",
+        "path",
+        "kind",
+        "mobility_mode",
+        "current_route_id",
+        "travel_progress",
+      ],)
       .orderBy("name", "asc",)
       .execute();
 
-    type Flat = { id: string; name: string; parent_location_id: string | null };
+    type Flat = Omit<LocationTreeBranch, "children">;
     const byParent = new Map<string | null, Flat[]>();
     for (const row of all as Flat[]) {
       const key = row.parent_location_id;
@@ -246,11 +260,8 @@ export class LocationTreeService {
     const build = (parentId: string | null,): LocationTreeBranch[] => {
       const kids = byParent.get(parentId,) ?? [];
       return kids.map((k,) => ({
-        id: k.id,
-        name: k.name,
-        parent_location_id: k.parent_location_id,
-        depth: 0,
-        path: k.id,
+        ...k,
+        depth: k.path.split("/",).length - 2,
         children: build(k.id,),
       }));
     };
@@ -262,9 +273,10 @@ export class LocationTreeService {
    * Move a subtree under a new parent (cross-world and cycle rejected at the app layer).
    * @param locationId
    * @param newParentId
-   * @throws {LocationMoveError} self-parent, not-found, cross-world, or cycle rejection
+   * @throws {LocationMoveError} self-parent, not-found, cross-world, cycle, or depth rejection
    */
   async moveSubtree(locationId: string, newParentId: string | null,): Promise<void> {
+    let parentDepth = -1;
     if (newParentId === locationId) {
       throw new LocationMoveError("self-parent", "location cannot be its own parent",);
     }
@@ -288,6 +300,16 @@ export class LocationTreeService {
       if (ancestors.some((a,) => a.id === locationId)) {
         throw new LocationMoveError("cycle", "move would create a cycle",);
       }
+
+      parentDepth = ancestors.length;
+    }
+
+    // The INSERT/UPDATE depth triggers inspect only the new parent's path, so a
+    // deep subtree moved under a deep parent can slip past them.
+    const descendants = await this.getDescendants(locationId,);
+    const subtreeHeight = descendants.reduce((max, d,) => Math.max(max, d.depth,), 0,);
+    if (parentDepth + 1 + subtreeHeight > LOCATION_DEPTH_LIMIT) {
+      throw new LocationMoveError("depth", "move would exceed the location depth limit",);
     }
 
     await this.db.updateTable("locations",).where("id", "=", locationId,).set({

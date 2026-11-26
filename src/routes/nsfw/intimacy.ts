@@ -4,7 +4,7 @@
 import { Elysia, } from "elysia";
 import { IntimacyService, } from "../../rpg/intimacy/service";
 import { NsfwIntimacyActionBody, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   checkNsfwTargetAccess,
   log,
@@ -44,8 +44,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(pair,);
           } catch (error) {
-            log().error("Failed to get intimacy pair", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get intimacy pair", error,);
           }
         },
       )
@@ -67,8 +66,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(pairs,);
           } catch (error) {
-            log().error("Failed to get actor pairs", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get actor pairs", error,);
           }
         },
       )
@@ -118,8 +116,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to apply intimacy action", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to apply intimacy action", error,);
           }
         },
         { body: NsfwIntimacyActionBody, },

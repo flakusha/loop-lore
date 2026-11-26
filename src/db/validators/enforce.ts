@@ -18,7 +18,7 @@
  *   the *composite* state it is about to persist. A partial write must merge
  *   the persisted counterpart axis into `row`; a missing axis column is a
  *   programming error and throws rather than silently passing.
- * - `messages.status` carries a legacy DB default of `"visible"` (001_init.ts:1864)
+ * - `messages.status` carries a legacy DB default of `"visible"` (005_chat.ts:266)
  *   that predates `MessageStatus` and is not a member of it. Inserts that omit
  *   `status`, and rows written before the enum landed, persist that literal, and
  *   `updateMessageVisibility` merges the persisted status back in on them — so
@@ -91,7 +91,7 @@ function readFlag(row: Record<string, unknown>, table: string, column: string,):
   return value;
 }
 
-/** `001_init.ts:1864` — NOT NULL DEFAULT 'visible'; a MessageVisibility value, never a MessageStatus. */
+/** `005_chat.ts:266` — NOT NULL DEFAULT 'visible'; a MessageVisibility value, never a MessageStatus. */
 const LEGACY_MESSAGES_STATUS = "visible";
 
 const KNOWN_STATUSES: ReadonlySet<string> = new Set(Object.values(MessageStatus,),);

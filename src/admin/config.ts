@@ -15,7 +15,7 @@ import { applyConfigWrite, classifyConfigPath, } from "../config/hot-apply";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { SECRET_KEY_PATTERN, } from "./config-keys";
+import { isSecretConfigKeyName, validateEditableConfigValue, } from "./config-keys";
 import { openConfigValue, sealConfigValue, } from "./config-secrets";
 /** Child logger scoped to "system-config". */
 function log() {
@@ -32,6 +32,7 @@ export interface ConfigEntry {
 }
 export {
   decorateConfigEntry,
+  isSecretConfigKeyName,
   PER_CHAT_OVERRIDABLE_KEYS,
   REQUIRES_RESTART_KEYS,
   SECRET_KEY_PATTERN,
@@ -271,8 +272,14 @@ export async function importConfigFromText(
       continue;
     }
 
-    if (SECRET_KEY_PATTERN.test(key,)) {
+    if (isSecretConfigKeyName(key,)) {
       results.push({ key, action: "skipped", },);
+      continue;
+    }
+
+    const validationError = validateEditableConfigValue(key, raw,);
+    if (validationError !== null) {
+      results.push({ key, action: "skipped", error: validationError, },);
       continue;
     }
 

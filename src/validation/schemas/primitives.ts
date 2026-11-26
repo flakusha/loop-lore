@@ -111,6 +111,7 @@ export const GmConfigSchema = t.Object({
   renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   storyMode: t.Optional(t.Boolean(),),
   gmGuidance: t.Optional(GmGuidanceSchema,),
+  validation: t.Optional(t.Object({ harness: t.String({ maxLength: 2000, }), },),),
   type: t.Optional(t.UnionEnum(["llm", "human", "hybrid",],),),
   humanGM: t.Optional(t.Object({ actorId: t.String(), notifications: t.Boolean(), },),),
   escalationThreshold: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),

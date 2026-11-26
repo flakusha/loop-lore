@@ -12,6 +12,12 @@
  */
 
 export {
+  type BindingConfigLoad,
+  BINDINGS_FILE,
+  loadWorkflowBindings,
+  parametersForSpec,
+} from "./binding-config";
+export {
   ensureWorkflowRegistry,
   hydrateWorkflowRegistry,
   invalidateWorkflowRegistry,

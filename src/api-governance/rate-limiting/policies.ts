@@ -53,6 +53,9 @@ export const outboundFetchPolicy: RatePolicy = {
   burst: 10,
 };
 
+/** Advisory mesh intel push/pull — bounded peer traffic, not UI volume. */
+export const intelPolicy: RatePolicy = { name: "mesh-intel", windowMs: 60_000, max: 30, burst: 5, };
+
 /** Registry of all named policies. */
 export const policies: Record<string, RatePolicy> = {
   [defaultPolicy.name]: defaultPolicy,
@@ -60,6 +63,7 @@ export const policies: Record<string, RatePolicy> = {
   [generationPolicy.name]: generationPolicy,
   [chatPolicy.name]: chatPolicy,
   [outboundFetchPolicy.name]: outboundFetchPolicy,
+  [intelPolicy.name]: intelPolicy,
 };
 
 /**
@@ -84,6 +88,9 @@ export type RouteMatch = "prefix" | "suffix";
  * under an id-bearing path no prefix rule can reach.
  */
 export const routePolicies: Array<[pattern: string, policy: RatePolicy, match?: RouteMatch,]> = [
+  // R1: new mesh intel endpoints must be explicit — first-match-wins otherwise
+  // leaves them on the 300/min default policy.
+  ["/api/mesh/intel", intelPolicy,],
   // BUG-e2e-browser-authme-429: GET /api/v1/auth/me is a per-page identity
   // probe (sidebar user-info + chat lifecycle), not token minting — it must
   // not share the 10/min login budget. Prefix (not suffix): the path is a

@@ -13,8 +13,8 @@
  * rotation transaction has committed. A failed audit insert does NOT
  * roll back the rotation.
  */
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import { log, } from "./log";
 
 /**

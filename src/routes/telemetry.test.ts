@@ -77,6 +77,8 @@ interface EventBody {
   error?: string;
   purged?: boolean | number;
   total?: number;
+  distinct_sessions?: number;
+  distinct_users?: number;
 }
 
 describeReal("telemetry routes — enabled", () => {
@@ -204,6 +206,7 @@ describeReal("telemetry routes — enabled", () => {
   });
 
   test("GET analytics/summary returns counts for admin (server-only)", async () => {
+    await db.deleteFrom("telemetry_events",).execute();
     await db
       .insertInto("telemetry_events",)
       .values([
@@ -253,7 +256,9 @@ describeReal("telemetry routes — enabled", () => {
 
     expect(res.status,).toBe(200,);
     const body = await res.json() as EventBody;
-    expect(body.total,).toBeGreaterThanOrEqual(3,);
+    expect(body.total,).toBe(3,);
+    expect(body.distinct_sessions,).toBe(2,);
+    expect(body.distinct_users,).toBe(2,);
   });
 
   test("GET analytics/models requires admin", async () => {
@@ -345,6 +350,8 @@ describeReal("telemetry routes — enabled", () => {
       expect(row["user_id"],).toBeUndefined();
       expect(row["chat_id"],).toBeUndefined();
       expect(row["session_id"],).toBeUndefined();
+      expect(Object.keys(row,).sort(),).toEqual(["created_at", "event_type", "occurrences", "source",],);
+      expect(row["occurrences"],).toBe(1,);
       expect(row["source"],).toBe("server",);
       expect(String(row["event_type"] ?? "",),).toContain("failed",);
     }
@@ -355,25 +362,54 @@ describeReal("telemetry routes — enabled", () => {
     expect(bodyText.includes("chat-secret",),).toBe(false,);
   });
 
-  test("GET analytics/daily groups by date with limit", async () => {
+  test("GET analytics/daily groups events and distinct active users by date", async () => {
     await db.deleteFrom("telemetry_events",).execute();
-    await db.insertInto("telemetry_events",).values({
-      id: "d1",
-      event_type: "generation.started",
-      source: "server",
-      event_data: "{}",
-      created_at: new Date().toISOString(),
-    },).execute();
+    const createdAt = new Date().toISOString();
+    await db.insertInto("telemetry_events",).values([
+      {
+        id: "d1",
+        event_type: "generation.started",
+        source: "server",
+        user_id: "user1",
+        event_data: "{}",
+        created_at: createdAt,
+      },
+      {
+        id: "d2",
+        event_type: "generation.completed",
+        source: "server",
+        user_id: "user1",
+        event_data: "{}",
+        created_at: createdAt,
+      },
+      {
+        id: "d3",
+        event_type: "generation.completed",
+        source: "server",
+        user_id: "user2",
+        event_data: "{}",
+        created_at: createdAt,
+      },
+      {
+        id: "d4",
+        event_type: "generation.completed",
+        source: "frontend",
+        user_id: "user3",
+        event_data: "{}",
+        created_at: createdAt,
+      },
+    ],).execute();
 
     const res = await makeApp(db, "admin", "admin",).handle(
       new Request("http://localhost/api/telemetry/analytics/daily?limit=2",),
     );
 
     expect(res.status,).toBe(200,);
-    const rows = await res.json() as { date: string; count: number }[];
-    expect(rows.length,).toBeLessThanOrEqual(2,);
+    const rows = await res.json() as { date: string; count: number; active_users: number }[];
+    expect(rows,).toHaveLength(1,);
     expect(rows[0]?.date,).toBeDefined();
-    expect(rows[0]?.count,).toBeGreaterThanOrEqual(1,);
+    expect(rows[0]?.count,).toBe(3,);
+    expect(rows[0]?.active_users,).toBe(2,);
   });
 
   test("GET analytics/daily requires admin", async () => {

@@ -22,7 +22,7 @@
 import { Elysia, t, } from "elysia";
 import { ReplayabilityService, } from "../../rpg/replayability";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { forbiddenResponse, internalError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { replayabilityPlaythroughRoutes, } from "./replayability-playthroughs";
 import { newGamePlusBody, } from "./replayability-schemas";
@@ -62,8 +62,7 @@ export function replayabilityRoutes({ database, }: HandlerOpts, prefix = "/api",
         const playthrough = await svc().startNewGamePlus(ctx.body as never,);
         return jsonResponse(playthrough, 201,);
       } catch (error) {
-        log().error("Failed to start new game plus", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to start new game plus", error,);
       }
     }, {
       body: newGamePlusBody,
@@ -82,8 +81,7 @@ export function replayabilityRoutes({ database, }: HandlerOpts, prefix = "/api",
         const meta = await svc().getMetaProgression(ctx.params.playerId,);
         return jsonResponse(meta,);
       } catch (error) {
-        log().error("Failed to get meta progression", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get meta progression", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), },),

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, test, } from "bun:test";
 import type { ImageEditRequest, } from "../../image-edit/types";
 import type { ChainStep, } from "./chain-types";
 import { startChainRun, } from "./run-job";
-import { clearRunJobs, listRunJobs, } from "./run-job-store";
+import { clearRunJobs, createRunJob, getRunJob, listRunJobs, pruneRunJobs, } from "./run-job-store";
 
 const STEPS: ChainStep[] = [
   { id: "s1", templateId: "txt2img", params: { steps: 20, }, },
@@ -126,6 +126,18 @@ describe("startChainRun", () => {
     expect(done,).toBe(true,);
     expect(job.error,).toContain("provider exploded",);
     expect(job.completedAt,).not.toBeNull();
+  });
+
+  test("pruneRunJobs evicts finished runs past TTL but keeps pending ones", () => {
+    const finished = createRunJob({ ownerId: "user-1", chainId: "chain-1", totalSteps: 1, },);
+    finished.status = "completed";
+    finished.completedAt = new Date(Date.now() - 31 * 60_000,).toISOString();
+    const pending = createRunJob({ ownerId: "user-1", chainId: "chain-2", totalSteps: 1, },);
+
+    pruneRunJobs(new Date(),);
+
+    expect(getRunJob(finished.id,),).toBeUndefined();
+    expect(getRunJob(pending.id,),).toBeDefined();
   });
 
   test("jobs are listed per owner only", async () => {

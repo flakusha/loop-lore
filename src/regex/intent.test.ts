@@ -1,5 +1,11 @@
 import { describe, expect, test, } from "bun:test";
-import { type AssistantIntent, INTENT_PATTERNS, REGEX_SPECIAL_CHARS, SLASH_COMMAND, } from "./intent";
+import {
+  type AssistantIntent,
+  CHARACTER_PICTURE_INTENT,
+  INTENT_PATTERNS,
+  REGEX_SPECIAL_CHARS,
+  SLASH_COMMAND,
+} from "./intent";
 
 // ── Helper ────────────────────────────────────────────────
 
@@ -136,6 +142,34 @@ describe("generate: image", () => {
       expect(result?.target,).toBe("image",);
     });
   }
+});
+
+describe("generate: avatar (picture of <character>)", () => {
+  const cases = [
+    "picture of Elara",
+    "Image of the character Kael",
+    "a picture of Lyra in the moonlit library",
+  ];
+
+  for (const input of cases) {
+    test(`matches "${input}"`, () => {
+      const result = matchIntent(input,);
+      expect(result?.intent,).toBe("generate",);
+      expect(result?.target,).toBe("avatar",);
+    });
+  }
+
+  test("captures the character phrase as the identity anchor", () => {
+    expect(CHARACTER_PICTURE_INTENT.exec("picture of Elara in the library",)?.[1],).toBe("Elara",);
+  });
+
+  test("does not match roleplay prose with picture of mid-sentence", () => {
+    expect(matchIntent("I sketched a picture of Elara in my journal",),).toBeNull();
+  });
+
+  test("leaves make a character on the entity-spec path", () => {
+    expect(matchIntent("Make a character",)?.target,).toBe("character",);
+  });
 });
 
 describe("generate: quest", () => {
@@ -305,8 +339,8 @@ describe("REGEX_SPECIAL_CHARS", () => {
 // ── Structure ─────────────────────────────────────────────
 
 describe("INTENT_PATTERNS structure", () => {
-  test("has 12 pattern groups", () => {
-    expect(INTENT_PATTERNS.length,).toBe(12,);
+  test("has 13 pattern groups", () => {
+    expect(INTENT_PATTERNS.length,).toBe(13,);
   });
 
   test("every group has at least 1 pattern", () => {

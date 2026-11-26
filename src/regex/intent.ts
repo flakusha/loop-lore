@@ -16,6 +16,16 @@ export type AssistantIntent = "generate" | "tool_exec" | "api_call" | "chat";
  * Keyword patterns for intent classification.
  * Each pattern is matched case-insensitively against user input.
  */
+
+/**
+ * Start-anchored "picture/image of <character>" request. Group 1 is the
+ * character phrase, reused as the avatar identity anchor. The `^` anchor
+ * keeps in-story prose ("...a picture of Elara") out of command dispatch;
+ * "make a character" never matches because it lacks picture/image of.
+ */
+export const CHARACTER_PICTURE_INTENT =
+  /^\s*(?:(?:a|an|the)\s+)?(?:picture|image)\s+of\s+(?:the\s+)?([\p{L}\p{N}][\p{L}\p{N} .'-]*?)(?=\s*(?:[,;:!?]|$|\bin\b|\bat\b|\bfor\b|\bwith\b))/iu;
+
 export const INTENT_PATTERNS: readonly {
   readonly intent: AssistantIntent;
   readonly target: string;
@@ -79,6 +89,13 @@ export const INTENT_PATTERNS: readonly {
     confidence: 0.85,
     requires_approval: true,
     patterns: [/generate.*image/i, /create.*image/i, /draw.*for me/i, /make.*picture/i, /\/image/i,],
+  },
+  {
+    intent: "generate",
+    target: "avatar",
+    confidence: 0.9,
+    requires_approval: true,
+    patterns: [CHARACTER_PICTURE_INTENT,],
   },
   {
     intent: "generate",

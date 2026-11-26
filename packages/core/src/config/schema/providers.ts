@@ -3,9 +3,9 @@
 
 // src/config/schema/providers.ts — LLM / image generation provider config types
 //
-// Enum types sourced from @/db/enums.
+// Enum types sourced from the canonical app DB enums (src/db/enums).
 
-import type { AudioApiFamily, ImageApiFamily, VideoApiFamily, } from "@/db/enums";
+import type { AudioApiFamily, ImageApiFamily, VideoApiFamily, } from "../../../../../src/db/enums";
 
 /** */
 export interface ModelLimits {
@@ -97,6 +97,8 @@ export interface ImageProviderConfig {
   workflow?: string;
   /** Default generation parameters */
   defaults: ImageProviderDefaults;
+  /** Optional model folder pins; discovery fills any role left unset */
+  models?: ComfyUIModelSelection;
   /** Connection timeout in ms */
   timeout: number;
   /** Image generation timeout in ms */
@@ -125,6 +127,44 @@ export interface AudioProviderConfig {
  * running a video workflow (WAN/Hunyuan-style t2v/i2v graphs live in the
  * operator's `configs/workflows/` directory; none ship with the repo).
  */
+export interface ComfyUIModelSelection {
+  /** Text encoder file name in a ComfyUI model folder */
+  clip?: string;
+  /** Diffusion / UNET file name in a ComfyUI model folder */
+  diffusion?: string;
+  /** VAE file name in a ComfyUI model folder */
+  vae?: string;
+  /** Checkpoint file name (checkpoint loaders; distinct from a bare diffusion model) */
+  checkpoint?: string;
+  /** CLIP-vision file name (image-conditioned models) */
+  clip_vision?: string;
+  /** LoRA file name */
+  loras?: string;
+  /** Set for no-VAE models: skip VAE discovery and selection entirely */
+  noVae?: boolean;
+}
+
+/** File extensions ComfyUI accepts per model slot (`supported_pt_extensions`). */
+export const COMFYUI_MODEL_EXTENSIONS = {
+  clip: [".safetensors", ".gguf", ".sft",],
+  diffusion: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  vae: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  checkpoint: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  clip_vision: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+  loras: [".safetensors", ".gguf", ".sft", ".ckpt", ".pt", ".bin", ".pth",],
+} as const;
+
+/** @param role - model slot
+ * @param name - configured file name
+ * @returns whether the file extension fits the role */
+export function isComfyUIModelName(
+  role: keyof typeof COMFYUI_MODEL_EXTENSIONS,
+  name: string,
+): boolean {
+  const dot = name.lastIndexOf(".",);
+  return dot > 0 && (COMFYUI_MODEL_EXTENSIONS[role] as readonly string[]).includes(name.slice(dot,).toLowerCase(),);
+}
+
 export interface VideoProviderConfig {
   /** Unique provider instance name */
   name: string;
@@ -150,6 +190,8 @@ export interface VideoProviderConfig {
   timeout: number;
   /** Video generation timeout in ms */
   generationTimeout: number;
+  /** Optional model folder pins; discovery fills any role left unset */
+  models?: ComfyUIModelSelection;
 }
 
 /** */

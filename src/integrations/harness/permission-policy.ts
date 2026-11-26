@@ -30,7 +30,9 @@
  * @module harness-permission-policy
  */
 
+import { walkStringLeaves, } from "../../harness/string-leaves";
 import { isWithinScope, } from "../../harness/worktree-scope";
+import { isSecretBasename, } from "./env-scrub";
 
 /** ACP tool-call kinds classified as reading the filesystem, not writing it. */
 export const READ_ONLY_TOOL_KINDS = ["read", "search", "fetch",] as const;
@@ -69,55 +71,6 @@ export interface ClassifyPermissionInput {
 }
 
 /**
- * Shared depth-limited string walk underpinning both collectors below: one
- * recursion skeleton (array/object descent, truncation accounting) so the
- * two policies cannot drift apart.
- * @param value - raw JSON value
- * @param depth - remaining descent budget
- * @param underPathKey - whether a path-bearing key was seen above
- * @param pathKeyOnly - collect only leaves under a path-bearing key
- * @returns the collected string leaves plus whether any content was skipped.
- */
-function walkStrings(
-  value: unknown,
-  depth: number,
-  underPathKey: boolean,
-  pathKeyOnly: boolean,
-): { leaves: string[]; truncated: boolean } {
-  if (typeof value === "string") {
-    return { leaves: !pathKeyOnly || underPathKey ? [value,] : [], truncated: false, };
-  }
-
-  if (depth <= 0) { return { leaves: [], truncated: true, }; }
-  if (Array.isArray(value,) || (value !== null && typeof value === "object")) {
-    const entries = Array.isArray(value,)
-      ? value.map((v,) => [null, v,] as const)
-      : Object.entries(value,);
-
-    const leaves: string[] = [];
-    let truncated = false;
-    for (const [key, v,] of entries) {
-      const inner = walkStrings(
-        v,
-        depth - 1,
-        underPathKey || (key !== null && PATH_KEY_PATTERN.test(key,)),
-        pathKeyOnly,
-      );
-
-      leaves.push(...inner.leaves,);
-      truncated = truncated || inner.truncated;
-    }
-
-    return { leaves, truncated, };
-  }
-
-  return { leaves: [], truncated: false, };
-}
-
-/** Key names whose string value is treated as a filesystem target. */
-const PATH_KEY_PATTERN = /path|file|dir|glob|target/i;
-
-/**
  * Path candidates: string leaves reached under a path-bearing key (the ACP
  * `toolCall.rawInput` shape), at any depth. Protocol strings (sessionId,
  * option labels) are NOT candidates — they cannot vouch for where the tool
@@ -132,7 +85,7 @@ function collectPathCandidates(
   depth: number,
   underPathKey: boolean,
 ): { leaves: string[]; truncated: boolean } {
-  return walkStrings(value, depth, underPathKey, true,);
+  return walkStringLeaves(value, depth, underPathKey, true,);
 }
 
 /**
@@ -161,7 +114,7 @@ export async function classifyPermission(input: ClassifyPermissionInput,): Promi
     return { decision: "auto_allow", reason: `no-filesystem tool kind "${kind}"`, };
   }
 
-  const strings = walkStrings(params, 6, true, false,);
+  const strings = walkStringLeaves(params, 6, true, false,);
   if (strings.truncated) {
     return { decision: "require_approval", reason: "params nest deeper than the walk budget — unverifiable", };
   }
@@ -179,6 +132,14 @@ export async function classifyPermission(input: ClassifyPermissionInput,): Promi
   for (const candidate of [...strings.leaves, ...candidates.leaves,]) {
     if (!await isWithinScope(sandboxRoot, candidate,)) {
       return { decision: "require_approval", reason: `path outside sandbox cwd: ${candidate}`, };
+    }
+  }
+
+  // ponytail: the secret-basename deny sits immediately before auto-allow so
+  // an in-sandbox env.yaml / *.pem still needs a human decision.
+  for (const candidate of candidates.leaves) {
+    if (isSecretBasename(candidate,)) {
+      return { decision: "require_approval", reason: `read-only ask "${kind}" targets a secret file: ${candidate}`, };
     }
   }
 

@@ -14,8 +14,10 @@
  * switch, F1/F2/F3/F5/F6 — see `app-keys.ts`.
  */
 
+import path from "node:path";
 import { loadConfig, } from "../config/load";
 import { TUI_DEFAULTS, } from "../config/sections/tui";
+import { resolveInstanceDir, } from "../config/state-dir";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { tagsToAnsi, } from "./ansi";
 import { bindGlobalKeys, } from "./app-keys";
@@ -40,8 +42,14 @@ import {
 /** Status line painted when `[tui].enabled` is false; the shell exits right after. */
 export const TUI_DISABLED_STATUS = "TUI disabled by config — set [tui].enabled = true to start";
 
-/** Where the TUI's structured log is written; the renderer owns the terminal. */
-export const TUI_LOG_PATH = ".tmp/tui/tui.jsonl";
+/**
+ * Where this instance's TUI structured log is written; the renderer owns the
+ * terminal. Lazy so the effective server bind is honoured.
+ * @returns absolute path to this instance's TUI log.
+ */
+export function tuiLogPath(): string {
+  return path.join(resolveInstanceDir(), "logs", "tui.jsonl",);
+}
 
 /** Share of the body width the chat column keeps while the sidebar is open. */
 const CHAT_WIDTH_SHARE = 0.7;
@@ -339,14 +347,14 @@ export class TUIApp {
  *   calls `getLogger()`, which throws when no logger is initialized
  */
 export function createTUIApp(): TUIApp {
-  // `console: false` keeps records in `.tmp/tui/tui.jsonl` only — a console write
+  // `console: false` keeps records in this instance's TUI log only — a console write
   // lands between two rendered frames and corrupts the paint. `setGlobalLogger`
   // is load-bearing: `createLogger` adopts the global holder with `??=`
   // (src/logger/index.ts:31), so when a process bootstrapped a root before us the
   // returned instance would never become it and every `getLogger()` caller in the
   // TUI would keep the console transport. Replacing the root is what makes the
   // option the one in force.
-  setGlobalLogger(createLogger({ level: "warn", console: false, jsonlPath: TUI_LOG_PATH, },),);
+  setGlobalLogger(createLogger({ level: "warn", console: false, jsonlPath: tuiLogPath(), },),);
   return new TUIApp();
 }
 

@@ -6,8 +6,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** In Progress
+**Status Note:** In Progress — the ownership/key-rotation slice shipped; remaining product-feature items unbuilt.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic

@@ -3,7 +3,7 @@
 
 # TASK: ComfyUI /ws Progress Streaming to Frontend
 
-**Status:** Not Started
+**Status:** In Progress (backend landed `6334173d4`; frontend fan-out open)
 **Priority:** High
 **Effort:** Medium
 **Type:** Task
@@ -35,11 +35,11 @@ behind `POST /api/v1/image-edit/run` (`src/image-edit/routes.ts:69` `handleRun`)
 
 ## Acceptance Criteria
 
-- [ ] `ComfyUIClient.submitWorkflow` accepts optional `client_id` and sends it in the `/prompt` body; executions scope per client (multi-client disambiguation)
-- [ ] New `subscribeProgress(promptId, clientId, onEvent)` on the client opens `/ws?clientId=...`, routes execution events into the existing `ImageEditProgress` shape (`src/image-edit/types.ts:110`; `onProgress` opt field at `:120` on `ImageEditExecuteOpts`), closes on terminal state; poll remains as fallback when WS unavailable
-- [ ] `ComfyUIEditProvider.execute` and `generateComfyUI` surface progress (percentage / node / preview image) to their callers without changing result shapes
+- [x] `ComfyUIClient.submitWorkflow` accepts optional `client_id` and sends it in the `/prompt` body; executions scope per client (landed `6334173d4`: `comfyui.ts:163`).
+- [x] New `subscribeProgress(promptId, clientId, onEvent)` opens `/ws?clientId=...`, routes events into `ImageEditProgress`, closes on terminal state; poll remains fallback (landed `6334173d4`: `comfyui-progress.ts`, wired in `waitForFiles`).
+- [x] `ComfyUIEditProvider.execute` and `generateComfyUI` surface progress to callers without changing result shapes (landed `6334173d4`: `onProgress` fan-out, `waitForFiles` progress hook).
 - [ ] `POST /api/v1/image-edit/run` exposes progress to the frontend (SSE or WS fan-out); gallery/template UI shows live progress instead of spinner
-- [ ] Tests: `src/generation/providers/comfyui.test.ts` covers `client_id` body + WS event routing (mock socket); fallback-to-poll covered when WS fails
+- [x] Tests cover `client_id` body + WS event routing (mock socket); fallback-to-poll covered when WS fails (landed `6334173d4`: `comfyui-progress.test.ts`, 45 pass).
 
 ## Related
 

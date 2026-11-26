@@ -9,11 +9,14 @@
  * 1. the isolation gate decides — master switch, the caller's admin role, and
  *    the admin-configured profile allowlist (the spawn argv is never the
  *    caller's);
- * 2. the composed runtime's selector runs the turn, pinned to the gated
- *    profile, so the failover walk cannot drift onto another one;
- * 3. the exec log records the run under the `harness` task type with the
- *    profile, tier and ACP session id;
- * 4. the turn's transcript lands as chat rows and its frames reach the chat's
+ * 2. prior run summaries recalled from harness-scoped memory prefix the
+ *    prompt (same chat only — the harness scope isolation boundary);
+ * 3. the composed runtime's selector runs the turn: pinned to the gated
+ *    profile when one was named, otherwise walking its failover order;
+ * 4. the exec log records the run under the `harness` task type with the
+ *    profile, tier and ACP session id, and the run summary is embedded as a
+ *    harness-scoped memory for the next turn in this chat;
+ * 5. the turn's transcript lands as chat rows and its frames reach the chat's
  *    live buffer.
  *
  * Nothing here bypasses the ToS dispatch guard (the selector skips profiles
@@ -26,8 +29,15 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
 import { type TaskType, toHarnessTaskType, } from "../../generation/routing/task-signal";
-import { recordExecRun, } from "../../harness/exec-recorder";
+import { appendExecLog, } from "../../harness/exec-log";
+import { buildRunRecord, recordExecRun, } from "../../harness/exec-recorder";
 import { getChildLogger, type Logger, } from "../../logger";
+import {
+  buildHarnessMemoryPrefix,
+  recallHarnessMemories,
+  storeHarnessRunSummary,
+} from "../../memory/harness-recall";
+import { resolveUserRole, } from "../../users/roles";
 import { getHarnessAdminFileConfig, } from "./admin-settings";
 import { assertHarnessExecution, } from "./isolation-gate";
 import { type AttributedTurn, type TurnRequirement, } from "./profile-selector";
@@ -67,12 +77,19 @@ export class HarnessDispatchError extends Error {
 export interface DispatchHarnessTurnOptions {
   /** The composed runtime (`getHarnessRuntime()`), never a test-only build. */
   runtime: HarnessRuntime;
-  /** The caller's site role; the isolation gate denies anyone else. */
+  /**
+   * The caller's site role as seen by the caller (the enqueue-time snapshot
+   * on the queue path). Audit context only — the gate re-resolves the live
+   * role from the database immediately before admission and never trusts this.
+   */
   role: string | null;
   /** The authenticated user the execution is attributed to. */
   userId: string | null;
-  /** The admin-configured profile to run. */
-  profile: string;
+  /**
+   * Exact profile name to pin. Omit, pass empty, or pass `default` to let the
+   * selector's failover order pick a gated profile at run time.
+   */
+  profile?: string;
   /** The prompt the harness works on. */
   prompt: string;
   /** The database the turn's rows land in. */
@@ -104,11 +121,16 @@ export interface DispatchHarnessTurnOutcome {
 export async function dispatchHarnessTurn(
   options: DispatchHarnessTurnOptions,
 ): Promise<DispatchHarnessTurnOutcome> {
+  // The live role is resolved here, immediately before admission, the way the
+  // HTTP layer does — never from the caller-presented `role`. A demotion
+  // between enqueue (or any earlier check) and this line fails closed below
+  // instead of executing at the old role.
+  const liveRole = await resolveUserRole(options.database, options.userId,);
   const gate = assertHarnessExecution({
     // The gate reads the whole `harness` section; the admin store keeps the
     // `acp` sub-config.
     config: { acp: getHarnessAdminFileConfig(), },
-    role: options.role,
+    role: liveRole,
     userId: options.userId,
     profileName: options.profile,
   },);
@@ -122,29 +144,37 @@ export async function dispatchHarnessTurn(
   const requirement: TurnRequirement = {
     taskType: HARNESS_TASK_TYPE,
     needsCapabilities: [],
-    // Pinned: the profile the gate cleared is the profile that runs.
-    profile: options.profile,
+    // Pinned keeps the gate-cleared profile; unpinned omits the field so the
+    // selector runs its existing failover order.
+    ...(gate.unpinned ? {} : { profile: gate.profile.name, }),
     ...(options.tier ? { preferredTier: options.tier, } : {}),
   };
 
   const run = {
     taskType: toHarnessTaskType(HARNESS_TASK_TYPE,),
     task: options.prompt.replace(/\s+/g, " ",).trim().slice(0, 200,),
-    profile: options.profile,
     turnId: turnKey,
   };
+
+  // Turn-start recall: prior run summaries for this chat prefix the prompt.
+  // Chat binding is the isolation boundary (harness scope provision).
+  const recalled = await recallHarnessMemories(options.database, options.actorId, options.chatId,);
+  const prefix = buildHarnessMemoryPrefix(recalled,);
+  const prompt = prefix ? `${prefix}\n${options.prompt}` : options.prompt;
 
   const startedAt = Date.now();
   let attributed: AttributedTurn;
   try {
     attributed = await options.runtime.selector.runTurn(
       requirement,
-      options.prompt,
+      prompt,
       options.runtime.factory,
     );
   } catch (error) {
     recordExecRun({
       ...run,
+      // No selector resolution on failure: never stamp the caller's alias.
+      profile: "unresolved",
       model: "",
       runMs: Date.now() - startedAt,
       result: "error",
@@ -154,8 +184,10 @@ export async function dispatchHarnessTurn(
     throw new HarnessDispatchError("turn_failed", (error as Error).message,);
   }
 
+  // Exec-log attribution: the profile the selector resolved, never the
+  // caller's name (which may be the `default` alias).
   const { result, } = attributed;
-  recordExecRun({
+  const okRecord = buildRunRecord({
     ...run,
     model: attributed.model,
     runMs: Date.now() - startedAt,
@@ -169,6 +201,11 @@ export async function dispatchHarnessTurn(
     acpSessionId: result.acpSessionId,
     msg: result.stopReason,
   },);
+
+  appendExecLog(okRecord,);
+  // Embed the run summary for the next turn in this chat. Best-effort:
+  // a memory write never fails the turn it summarizes.
+  await storeHarnessRunSummary(options.database, options.actorId, options.chatId, okRecord,);
 
   const sink = createHarnessTurnSink({
     database: options.database,

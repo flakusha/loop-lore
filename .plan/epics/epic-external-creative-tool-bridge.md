@@ -15,13 +15,55 @@
 
 ## Summary
 
-Bring external creative applications into loop-lore as first-class **tool servers over the Model Context Protocol (MCP)**, so the assistant and the workflow engine can drive deterministic editing (crop, rotate, filter, export) and long-running jobs (render, batch export) without a bespoke adapter per application. Second half: adopt MCP's **Tasks** extension as the house state machine for every long-running external operation, which is also the crash-resumable primitive `ServerExternalManager` lacks today.
+Bring external creative applications into loop-lore as first-class **tool servers over the Model Context Protocol (MCP)**, so the assistant and the workflow engine can drive deterministic editing (crop, rotate, filter, export) and long-running jobs (render, batch export) without a bespoke adapter per application. Second half (2026-10-15 intent, superseded for production by the boundary note below): the **Tasks** extension was proposed as the house state machine for long-running external work; durable run state now belongs in the loop-lore run ledger, not MCP Tasks.
 
 Why MCP and not per-app SDKs: llama-swap supervises the OpenAI-compatible model family only. Blender, Krita, LibreOffice, GIMP and Inkscape are not OpenAI-compatible, so a per-app adapter is required for each. MCP is a published protocol with a TS SDK and a stable spec revision, so the adapter is written once and consumed by every app that ships an MCP server.
 
+## Current-state correction and DCC promotion (2026-11-25)
+
+The historical notes below predate the inbound MCP servers now present under
+`src/integrations/mcp/`: `stdio-server.ts` (`connectInboundMcpServer` over
+`StdioServerTransport`) and `http-server.ts` (`buildMcpServer` behind
+`http-allowlist.ts`), both built on the shared facade in
+`src/integrations/loop-lore-facade/mcp/server.ts` (`.tmp/research/full-cycle-app-integrations-2026-11-25/strict-review.md` C11). These are inbound servers loop-lore hosts, not a production outbound MCP client. No production outbound MCP client transport was verified in the 2026-11-25 integration research; the client objects found are in-memory test clients. Typed CLI/API jobs with an explicitly selected backend remain the production default. MCP stays optional, local, disposable authoring UX, and MCP Tasks is not a second durable job ledger.
+
+Observable boundary acceptance:
+
+- [ ] Any new adapter names a production CLI/API operation and selected backend; no production code path depends on an outbound MCP transport.
+- [ ] Inbound MCP servers reuse the shared facade and keep their authz/allowlist tiers; repo and asset authorization is never widened.
+- [ ] MCP Tasks state is never the authoritative loop-lore run or publication record.
+- [ ] Editor/engine automation stays gated on the shared run/version/save-grant contracts above; no app-specific loop-lore job ledger is added.
+
+Expand external-tool coverage by **proven execution capability and a named
+consumer**, not by application name. Native project documents remain human
+masters; normalized artifacts, previews, and reports are exchange objects. Every
+new consumer waits for the shared run/version/publication/save-grant contracts
+and must not create a per-application loop-lore job ledger or a generic raw
+command/script proxy.
+
+| Candidate | Disposition | Promotion home / gate |
+| --- | --- | --- |
+| FreeCAD | First conditional FOSS CAD candidate | Honkbox H-ADD1; P0–P7, named CAD/prop consumer, installed pin, real FCStd/STEP fixture |
+| MuseScore | Small conditional score/render candidate | Honkbox H-ADD2; P0–P7, named music consumer, soundfont/plugin policy, layout fixture |
+| REAPER | Optional operator-licensed audio tier | Honkbox H-ADD3; entitlement, approved RPP template/plugins, alternate profile |
+| Natron | Later compositing tier | Honkbox H-ADD4; real frame/EXR/video bundle and color/alpha contract |
+| QGIS | Conditional GIS consumer | Honkbox H-ADD5; named map workflow, CRS/units/data/license policy |
+| Scribus | Conditional document consumer | Honkbox H-ADD6; named printable-document workflow, confined SLA template |
+| Assimp / MeshLab | Validator/processor options, not a new platform | Honkbox H-ADD7 inside existing engine-bundle verification |
+
+Application-specific heavy lifting is honkbox-owned. loop-lore owns intent,
+approval, branch/source identity, `DevelopmentRun`, immutable asset versions,
+save grants, capability selection, and UI. Honkbox owns discovery, typed recipes,
+leases, supervision, cancellation, staged artifacts, manifest-last publication,
+and artifact identity. The candidate queue and proof checklist are published at
+`../honkbox/.tmp/research/dcc-additional-applications-honkbox-2026-11-25.md`;
+the source research is
+`.tmp/research/dcc-additional-applications-and-responsibility-2026-11-25.md`.
+No candidate above is an approved implementation ticket.
+
 ## Current State (verified 2026-10-15)
 
-- **No MCP client in the source tree.** Confirmed three independent ways: `docs/research/harness-mcp-wiring.md:301` ("no MCP-related code in the source tree"), `docs/research/roadmap-tracker.md:75`, and `docs/research/doc-00-index.md:40`.
+- **No outbound MCP client in the source tree (2026-10-15 finding, superseded above by inbound servers).** Confirmed three independent ways: `docs/research/harness-mcp-wiring.md:301` ("no MCP-related code in the source tree"), `docs/research/roadmap-tracker.md:75`, and `docs/research/doc-00-index.md:40`.
 - `docs/spec/integrations-architecture.md:86` **already reserves `src/integrations/mcp/`** as the bridge home; `code-map.json:31460` maps `src/plugins/mcp/client.ts` to a target ticket. The shot-caller passes for the target directory already exist.
 - MCP spec revision **2026-07-28**: JSON-RPC 2.0, stateless, per-request capability negotiation. Server features = Resources, Prompts, Tools; client feature = Elicitation. Extensions: **Tasks**, Skills-over-MCP, MCP Apps.
 - Spec security position, quoted: *"Tools represent arbitrary code execution and must be treated with appropriate caution"*, and tool annotations *"MUST be treated as untrusted unless the server is trusted".*
@@ -81,9 +123,9 @@ A `src/integrations/mcp/client.ts` that speaks the 2026-07-28 revision over both
 
 Map MCP tool descriptors (`name`, `inputSchema`, annotations) onto the existing `ToolDefinition` shape so an MCP server's tools appear in the existing plugin tool surface and flow through `executePluginTool`. This is where the dead `sandboxed` field becomes a policy tag (see `epic-security-sandboxing.md`).
 
-### B3 — Tasks extension as the long-operation state machine
+### B3 — Tasks extension (historical pattern, not the production ledger)
 
-Adopt `tasks/get`, `tasks/update`, `tasks/cancel`, the five statuses, `pollIntervalMs`/`ttlMs`, and durable `taskId` persistence as the house pattern for all long-running external work. Directly supplies the crash-resumable job spine that `epic-local-process-swarm.md` needs for external-process survivability.
+Historical 2026-10-15 proposal: map `tasks/get`, `tasks/update`, `tasks/cancel`, the five statuses and `pollIntervalMs`/`ttlMs` onto the loop-lore run ledger; durable `taskId` and crash-resumable state stay owned by loop-lore, not by MCP Tasks (2026-11-25 boundary).
 
 ### B4 — Per-app adapters (one ticket each, gated on B1+B2)
 
@@ -113,10 +155,12 @@ B1 -> B2 -> {B3, B4}. B3 is worth doing even if no creative-app adapter ever lan
 | `TASK-bridge-file-watch-roundtrip` | Watch-folder + versioned re-ingest (awaitWriteFinish stability, atomic temp-rename); re-ingest creates new asset versions with lineage + provenance; never overwrites |
 | `TASK-krita-shared-comfyui-tier` | Documented Krita AI Diffusion tier (GPL-3, ComfyUI-only backend) sharing the loop-lore ComfyUI instance; working-dir contract; no in-process Krita code. The shared ComfyUI instance is the single generation backend for loop-lore AND Krita — no sdcpp bridge exists or is needed (unified-backend decision, 2026-10-28) |
 | `TASK-blender-headless-node-bridge` | Blender background-mode python recipes (conversion/repair/bake/retopo) as a B-tool for the 3D post-process chain; capability probe + version report; timeout-bounded, provenance-stamped subprocess isolation |
+| `SOL-blender-job-boundary-and-contract` | Decision record (2026-11-18): the production path is a version-pinned subprocess / honkbox job, not MCP. MCP servers stay dev-time authoring aids only |
 | `TASK-substance-risk-assessment` | FOSS defaults documented (Material Maker MIT, ArmorPaint zlib, Materialize-CLI MIT); Substance enterprise-entitlement flagged — optional user-provided tier only, no bundling |
 | `TASK-bridge-mlt-melt-render-tier` | MLT XML EDL generation + `melt` subprocess render (LGPL-2.1, capability-probed, timeout-bounded, provenance-stamped) — the headless video-editing backend for scenario assembly (IVSS, filed 2026-10-28) |
 | `TASK-bridge-auto-editor-handoff` | auto-editor (Unlicense) subprocess tier: silence-cut generated clips + export NLE XML (Kdenlive/Shotcut/Resolve/FCP/Premiere) handoff (IVSS, filed 2026-10-28) |
 | `TASK-bridge-rawtherapee-ingestion` | photographic reference → 16-bit TIFF ingestion: rawtherapee-cli (GPL-3) AND darktable-cli (GPL-3) as supported co-tiers behind one capability-probed wrapper (decision 2026-10-29) (IVSS, filed 2026-10-28) |
+| `TASK-honkbox-media-editing-offload` | Low-priority revisit: honkbox as optional media-editing/data-extraction offload instead of direct ffmpeg; no hard dependency, overlap with melt/auto-editor checked first (filed 2026-11-19) |
 
 **MCP-servers table refresh (2026-10-28):** krita-mcp (CC0, active) is now
 verified — resolve its row above; an official Blender Lab MCP server exists
@@ -125,3 +169,8 @@ and sandboxed and the file round-trip stays the default integration.
 
 
 git issue: bd11716
+
+## Engine research addendum (2026-11-25)
+
+- Record the actual inbound MCP servers versus the absent production outbound client: production uses typed CLI/API jobs.
+- Interactive editor MCP remains optional dev authoring, never a production control plane or generic DCC framework.

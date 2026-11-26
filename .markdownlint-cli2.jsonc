@@ -10,6 +10,7 @@
     ".plan/interconnect.md",
     ".plan/feature-matrix.md",
     ".plan/epics-index.md",
+    ".plan/entry-map.md",
     "docs/plan-gen/**"
   ]
 }

@@ -24,7 +24,7 @@ import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 
 /** Where the effective translator assignment came from. */
-export type TranslatorRoleSource = "db" | "config" | "general-fallback";
+export type TranslatorRoleSource = "db" | "config" | "ranking" | "general-fallback";
 
 /** The effective translator assignment plus its provenance. */
 export interface TranslatorRoleResolution {

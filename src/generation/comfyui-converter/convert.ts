@@ -4,8 +4,10 @@
 /**
  * UI→API conversion orchestrator: flatten → prune → widgets → links.
  *
- * Muted (`mode` 2/4) and bypassed (`mode` 8) nodes are excluded and their
- * consumers' dangling inputs pruned, matching frontend export. Markdown/Note
+ * Upstream `LGraphEventMode`: 0/1/3 execute, 2 = muted (drop + prune), 4 =
+ * bypass (drop; graph-level passthrough rewiring is a separate decision).
+ * Any other value — including the legacy repo-local mode 8 — is rejected.
+ * Markdown/Note
  * nodes never execute and are skipped. Every surviving node becomes
  * `{ inputs, class_type, _meta }` with pack identity (`cnr_id`/`ver` from UI
  * properties) for `missingRequiredNodes` reuse.
@@ -30,9 +32,10 @@ import type {
 import { ConverterError, } from "./types";
 import { emptyWireState, type LiveSet, wireNode, wireReport, } from "./wire";
 
-/** UI node modes excluded from export. */
-const MUTED_MODES = new Set([2, 4,],);
-const BYPASS_MODE = 8;
+/** Upstream node modes; 0/1/3 execute, 2 mutes, 4 bypasses. */
+const LIVE_MODES = new Set([0, 1, 3,],);
+const MUTE_MODE = 2;
+const BYPASS_MODE = 4;
 
 /** Non-executing annotation nodes, skipped silently (reported, not errors). */
 const NOTE_TYPES = new Set(["Note", "MarkdownNote",],);
@@ -47,7 +50,7 @@ function looksLikeDefinitionId(type: string,): boolean {
 
 /**
  * Drop muted/bypassed/note nodes; validate surviving classes.
- * @throws {ConverterError} On unknown classes or missing subgraph defs.
+ * @throws {ConverterError} On unknown modes/classes or missing subgraph defs.
  */
 function selectLiveNodes(
   nodes: readonly FlatNode[],
@@ -62,7 +65,7 @@ function selectLiveNodes(
   const notesSkipped: string[] = [];
   for (const flat of nodes) {
     const mode = flat.node.mode ?? 0;
-    if (MUTED_MODES.has(mode,)) {
+    if (mode === MUTE_MODE) {
       mutedDropped.push(flat.flatId,);
       continue;
     }
@@ -70,6 +73,10 @@ function selectLiveNodes(
     if (mode === BYPASS_MODE) {
       bypassedDropped.push(flat.flatId,);
       continue;
+    }
+
+    if (!LIVE_MODES.has(mode,)) {
+      throw new ConverterError({ kind: "unknown-mode", node: flat.flatId, mode, },);
     }
 
     if (NOTE_TYPES.has(flat.node.type,)) {

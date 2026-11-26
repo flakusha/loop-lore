@@ -21,10 +21,12 @@ import { createAsyncStore, setStore, } from "./async";
 import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
+import { featuresForOpts, type FeatureSurface, } from "./features/surface";
 import type { TranslatorFn, } from "./i18n/types";
 import { getLogger, } from "./logger";
 import { authenticateRequest, } from "./middleware/auth";
 import {
+  configureCookieTls,
   CSRF_EXEMPT_ROUTES,
   CSRF_HEADER,
   readCookieSecureOverrideFromEnv,
@@ -39,6 +41,8 @@ import { requestIdMiddleware, } from "./middleware/request-id";
 import { requireAuthGuard, } from "./middleware/require-auth-guard";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
+import { registry, } from "./plugins";
+import { normalizePluginRoutePath, } from "./plugins/registry-policy";
 import { redirectTo, } from "./routes/http-utils";
 import { deprecationAfterHandle, } from "./routes/middleware/deprecation-headers";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
@@ -46,12 +50,16 @@ import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
 import { governanceAfterHook, governanceBeforeHook, } from "./routes/v1/governance";
 
+import { gitWorktreeRemove, } from "./agent/api/worktree";
+import { startWorktreeCleanup, } from "./agent/cleanup";
 import { onValidationError, } from "./validation";
 
 /** */
 export interface AppDeps {
   database: Db;
   config: Config;
+  /** Resolved capability surface; defaults to the config profile when absent. */
+  features?: FeatureSurface;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
   /** API catch-all dispatcher — server-internal, kept off the type to avoid
    *  elysia-app ↔ server cycle. Injected by `server/start.ts`. */
@@ -73,6 +81,7 @@ export interface AppDeps {
  */
 export function createApp(deps: AppDeps,) {
   const { database, config, handleNonApiRequest, handleApiRequest, } = deps;
+  const features = featuresForOpts(deps,);
 
   // Wire the async request-result store once at boot.
   // The status endpoint, idempotency replay, and `triggerAutoGeneration`
@@ -82,6 +91,10 @@ export function createApp(deps: AppDeps,) {
   setStore(asyncStore,);
 
   const scheduler = startAppScheduler({ database, config, },);
+  const stopWorktreeCleanup = startWorktreeCleanup({
+    database,
+    removeWorktree: gitWorktreeRemove,
+  },);
 
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Error boundary: mark tracked requests as failed ───────
@@ -199,6 +212,10 @@ export function createApp(deps: AppDeps,) {
     process.env["LL_COOKIE_SECURE"],
   );
 
+  // Effective TLS config drives the Secure default for BOTH cookies when
+  // no explicit LL_COOKIE_SECURE override is set.
+  configureCookieTls(Boolean(config.server.tls,),);
+
   const csrfOpts: CsrfMiddlewareOptions = {
     secret: effectiveCsrfSecret,
     enabled: csrfEnabled,
@@ -271,6 +288,7 @@ export function createApp(deps: AppDeps,) {
     },);
 
     scheduler.stop();
+    stopWorktreeCleanup();
   },);
 
   // ── API version resolver ───────────────────────────────────
@@ -278,9 +296,9 @@ export function createApp(deps: AppDeps,) {
   // Mounted before plugins so they can read apiVersion from context.
   app.use(versionResolver(),);
 
-  registerPlugins(app, { database, config, asyncStore, },);
+  registerPlugins(app, { database, config, asyncStore, features, },);
 
-  app.use(v1Routes({ database, config, asyncStore, },),);
+  app.use(v1Routes({ database, config, asyncStore, features, },),);
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
@@ -306,6 +324,11 @@ export function createApp(deps: AppDeps,) {
     if (!userId) {
       const { unauthorizedResponse, } = await import("./routes/http-utils");
       return unauthorizedResponse();
+    }
+
+    if (!features.generation) {
+      const { notFoundResponse, } = await import("./routes/http-utils");
+      return notFoundResponse();
     }
 
     if (!config.assets.enabled) {
@@ -349,21 +372,31 @@ export function createApp(deps: AppDeps,) {
     const url = new URL(request.url,);
 
     if (url.pathname.startsWith("/api/",)) {
+      // The auth derive above resolves identity without rejecting, so it has
+      // to be handed on explicitly — otherwise plugin routes can never enforce
+      // their own `requiresAuth` / `permissions`. `t` rides along so a denial
+      // body is localised the same way every other route's is.
+      const callApi = () => handleApiRequest({ request, database, config, caller: { userId, userRole, }, t, },);
+
       // Redirect unversioned /api/{resource} → /api/v1/{resource} (N-1 rule:
       // keep this shim one full release after v1 ships; see
       // docs/spec/api-versioning.md). Already-versioned /api/v1/* must NOT
       // be redirected (would double-prefix); they fall through to plugin
       // dispatch below, which 404s unless the v1 barrel serves the path.
       // /api/views/* stays unversioned (embedded HTML, not JSON API).
+      // An enabled plugin registered at an exact unversioned path is the one
+      // exception: it is dispatched at that path so the handler's own
+      // pathname guard sees the path it registered (renpy-export's @vN shape).
       if (!url.pathname.startsWith("/api/v1/",) && !url.pathname.startsWith("/api/views/",)) {
+        const normalized = normalizePluginRoutePath(url.pathname,);
+        const hasPluginRoute = registry.getRouteCandidates(request.method, normalized,)
+          .some(({ plugin, },) => registry.isEnabled(plugin,));
+
+        if (hasPluginRoute) { return callApi(); }
         return versionRedirect("v1",)({ request, },);
       }
 
-      // The auth derive above resolves identity without rejecting, so it has
-      // to be handed on explicitly — otherwise plugin routes can never enforce
-      // their own `requiresAuth` / `permissions`. `t` rides along so a denial
-      // body is localised the same way every other route's is.
-      return handleApiRequest({ request, database, config, caller: { userId, userRole, }, t, },);
+      return callApi();
     }
 
     return handleNonApiRequest(request,);

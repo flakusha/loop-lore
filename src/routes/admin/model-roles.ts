@@ -42,7 +42,12 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const resolved = await resolveAllModelRoles(opts.config, opts.database,);
         const overrides = await getModelRoleOverrides(opts.database,);
 
-        return jsonResponse({ roles: resolved, overrides, validRoles: VALID_ROLES, },);
+        return jsonResponse({
+          roles: resolved,
+          overrides,
+          validRoles: VALID_ROLES,
+          autorouteScenario: opts.config.generation?.autorouteScenario ?? null,
+        },);
       }, {
         response: {
           200: t.Object(
@@ -60,6 +65,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 ),
               ),
               validRoles: t.Array(t.String(),),
+              autorouteScenario: t.Union([t.String(), t.Null(),],),
             },
           ),
           403: ErrorResponse,

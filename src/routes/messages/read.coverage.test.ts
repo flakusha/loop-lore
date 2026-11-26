@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { MessageContentType, MessageRole, } from "../../db/enums";
+import { ChatVisibility, MessageContentType, MessageRole, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -310,6 +310,133 @@ describe("readRoutes coverage", () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(
       new Request(`http://localhost/api/messages/${uid()}/variant?variantIndex=0`,),
+    );
+
+    expect(res.status,).toBe(404,);
+  });
+});
+
+/**
+ * BUG-moderator-hidden-message: public-chat direct/variant reads must not
+ * surface moderator-hidden rows, while owner/admin/author keep direct access.
+ */
+describe("readRoutes hidden-message visibility", () => {
+  let db: Kysely<DB>;
+  const owner = uid();
+  const author = uid();
+  const stranger = uid();
+  let chatId: string;
+  let hiddenId: string;
+  let parentId: string;
+  let swipeA: string;
+  let swipeB: string;
+  let hiddenSwipe: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [id, name,] of [[owner, "Owner",], [author, "Author",], [stranger, "Stranger",],] as const) {
+      await seedUser(db, id, name,);
+    }
+
+    chatId = uid();
+    await insertChats(db, "Public Read Chat", owner, { id: chatId, visibility: ChatVisibility.Public, } as never,);
+
+    hiddenId = uid();
+    await insertMessages(db, chatId, author, MessageRole.Assistant, "moderator-hidden", {
+      id: hiddenId,
+      visibility: MessageVisibility.HiddenByModerator,
+    } as never,);
+
+    parentId = uid();
+    await insertMessages(db, chatId, author, MessageRole.User, "parent", {
+      id: parentId,
+      swipe_index: 0,
+    } as never,);
+
+    swipeA = uid();
+    swipeB = uid();
+    hiddenSwipe = uid();
+    await insertMessages(db, chatId, author, MessageRole.Assistant, "swipe one", {
+      id: swipeA,
+      parent_id: parentId,
+      swipe_index: 1,
+    } as never,);
+
+    await insertMessages(db, chatId, author, MessageRole.Assistant, "swipe two", {
+      id: swipeB,
+      parent_id: parentId,
+      swipe_index: 2,
+    } as never,);
+
+    await insertMessages(db, chatId, author, MessageRole.Assistant, "hidden swipe", {
+      id: hiddenSwipe,
+      parent_id: parentId,
+      swipe_index: 3,
+      visibility: MessageVisibility.HiddenByModerator,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("hidden message by id is 404 for a stranger but readable by owner/admin/author", async () => {
+    const denied = await makeApp(db, stranger, "user",).handle(
+      new Request(`http://localhost/api/messages/${hiddenId}`,),
+    );
+
+    expect(denied.status,).toBe(404,);
+    expect(await denied.text(),).not.toContain("moderator-hidden",);
+
+    for (const [id, role,] of [[owner, "user",], [author, "user",], [stranger, "admin",],] as const) {
+      const res = await makeApp(db, id, role,).handle(
+        new Request(`http://localhost/api/messages/${hiddenId}`,),
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as { id: string }).id,).toBe(hiddenId,);
+    }
+  });
+
+  test("visible messages stay readable by strangers in a public chat", async () => {
+    const res = await makeApp(db, stranger, "user",).handle(
+      new Request(`http://localhost/api/messages/${parentId}`,),
+    );
+
+    expect(res.status,).toBe(200,);
+  });
+
+  test("variants endpoint omits hidden siblings", async () => {
+    const res = await makeApp(db, stranger, "user",).handle(
+      new Request(`http://localhost/api/messages/${swipeA}/variants`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const ids = ((await res.json()) as { id: string }[]).map((m,) => m.id);
+    expect(ids,).toContain(swipeA,);
+    expect(ids,).toContain(swipeB,);
+    expect(ids,).not.toContain(hiddenSwipe,);
+  });
+
+  test("variant select cannot reach a hidden sibling", async () => {
+    const app = makeApp(db, stranger, "user",);
+    const hidden = await app.handle(
+      new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=2`,),
+    );
+
+    expect(hidden.status,).toBe(400,);
+    const visible = await app.handle(
+      new Request(`http://localhost/api/messages/${swipeA}/variant?variantIndex=0`,),
+    );
+
+    expect(visible.status,).toBe(200,);
+    expect(((await visible.json()) as { id: string }).id,).toBe(swipeA,);
+  });
+
+  test("direct read of a hidden variant id is 404 for a stranger", async () => {
+    const res = await makeApp(db, stranger, "user",).handle(
+      new Request(`http://localhost/api/messages/${hiddenSwipe}/variants`,),
     );
 
     expect(res.status,).toBe(404,);

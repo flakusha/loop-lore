@@ -23,3 +23,9 @@ Tier-1 QA report (watertight, degenerate faces, poly budget) plus repair/decimat
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- This is the first production caller for local or hosted Blender steps: owner-scoped run, external job/bundle ids, request/result digests, failure/cancel/restart and real mesh acceptance.
+- No silent backend failover, skipped required stage or success asset on a failed run; honkbox-side execution stays honkbox-owned.
+- Evidence: engine integration and full-cycle promotion maps, 2026-11-24/25.

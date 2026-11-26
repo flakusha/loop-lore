@@ -260,3 +260,21 @@ describe("absent provenance renders as a dash, never the word null", () => {
     expect(view.branch,).toBe("feat/x",);
   });
 });
+
+describe("instance attribution", () => {
+  /** A sentinel that can never equal a decoded row: `decoded === REJECTED` is
+   * proof the payload was refused. */
+  const REJECTED = Symbol("rejected",);
+
+  test("the summary schema accepts a null instance id", () => {
+    const decoded = parseOr(HarnessRunSummarySchema, { ...RUN, instanceId: null, }, REJECTED as never,);
+
+    expect(decoded,).not.toBe(REJECTED,);
+    expect(decoded,).toMatchObject({ instanceId: null, },);
+  });
+
+  test("the runs table shows the instance slug, and a dash when there is none", () => {
+    expect(buildRunRows([RUN,],)[0]?.instanceId,).toBe("alpha",);
+    expect(buildRunRows([{ ...RUN, instanceId: null, },],)[0]?.instanceId,).toBe("—",);
+  });
+});

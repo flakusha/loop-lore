@@ -12,8 +12,12 @@
  * Pure module — no DB access, no I/O.
  */
 
-import { PER_CHAT_OVERRIDABLE_KEYS, REQUIRES_RESTART_KEYS, SECRET_KEY_PATTERN, } from "@/admin/config-keys";
-import { SettingsUpdateAllowedKeys, } from "@/validation/schemas";
+import {
+  isSecretConfigKeyName,
+  PER_CHAT_OVERRIDABLE_KEYS,
+  REQUIRES_RESTART_KEYS,
+} from "../../../../../src/admin/config-keys";
+import { SettingsUpdateAllowedKeys, } from "../../../../../src/validation/schemas";
 import { jsonSchema, } from "../schema-class";
 import type { StandaloneKey, } from "./menu-data";
 import {
@@ -68,7 +72,7 @@ function standaloneField(sk: StandaloneKey,): ConfigMenuField {
     type: sk.type,
     description: sk.description,
     required: false,
-    secret: SECRET_KEY_PATTERN.test(sk.key,),
+    secret: isSecretConfigKeyName(sk.key,),
     restart: REQUIRES_RESTART_KEYS[sk.key] === true,
     perChat: PER_CHAT_OVERRIDABLE_KEYS[sk.key] === true,
     editable: true,
@@ -98,7 +102,7 @@ function buildAdminSections(): ConfigMenuSection[] {
     for (const [fieldName, fieldMeta,] of Object.entries(sectionMeta.properties,)) {
       const snakeKey = editableMap[fieldName];
       const editable = snakeKey !== undefined;
-      const secret = SECRET_KEY_PATTERN.test(fieldName,) || SECRET_KEY_PATTERN.test(snakeKey ?? "",);
+      const secret = isSecretConfigKeyName(fieldName,) || isSecretConfigKeyName(snakeKey ?? "",);
       const restart = REQUIRES_RESTART_KEYS[snakeKey ?? ""] === true;
       const perChat = PER_CHAT_OVERRIDABLE_KEYS[snakeKey ?? ""] === true;
 
@@ -106,7 +110,9 @@ function buildAdminSections(): ConfigMenuSection[] {
         key: snakeKey ?? `${sectionKey}.${fieldName}`,
         path: `${sectionKey}.${fieldName}`,
         label: humanize(fieldName,),
-        type: (fieldMeta.type as ConfigMenuField["type"]) ?? "string",
+        type: fieldMeta.type === "integer"
+          ? "number"
+          : ((fieldMeta.type as ConfigMenuField["type"]) ?? "string"),
         description: fieldMeta.description,
         default: fieldMeta.default,
         required: false,

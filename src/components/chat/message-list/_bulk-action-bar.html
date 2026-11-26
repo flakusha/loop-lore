@@ -1,0 +1,35 @@
+<!-- Message multi-select bulk action bar -->
+<div
+  class="bulk-action-bar"
+  x-show="selectedMessageIds.length > 0"
+  x-cloak
+  data-testid="message-bulk-bar"
+>
+  <span class="bulk-count" x-text="`${selectedMessageIds.length} ${t('chats.bulkSelected')}`"></span>
+  <button type="button" class="btn" @click="selectAllVisibleMessages()" x-text="t('chats.bulkSelectAll')"></button>
+  <button type="button" class="btn" @click="clearMessageSelection()" x-text="t('chats.bulkClear')"></button>
+  <select x-model="_bulkTargetSectionId" x-bind:aria-label="t('chats.bulkMove')">
+    <option value="">—</option>
+    <template x-for="s in _sections" :key="s.id">
+      <option :value="s.id" x-text="s.label"></option>
+    </template>
+  </select>
+  <button
+    type="button"
+    class="btn"
+    @click="bulkMoveSelectedMessages(_bulkTargetSectionId || null)"
+    :disabled="_bulkActionBusy"
+    x-text="t('chats.bulkMove')"
+  >
+  </button>
+  <button type="button" class="btn" @click="exportSelectedMessages('md')" :disabled="_bulkActionBusy">Markdown</button>
+  <button type="button" class="btn" @click="exportSelectedMessages('json')" :disabled="_bulkActionBusy">JSON</button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    @click="bulkDeleteSelectedMessages()"
+    :disabled="_bulkActionBusy"
+    x-text="t('chats.bulkDelete')"
+  >
+  </button>
+</div>

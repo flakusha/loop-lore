@@ -2,25 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 103 — UNIQUE index on
- * `message_reactions (message_id, user_id, emoji)`.
+ * Final-schema oracle for the `(message_id, user_id, emoji)` unique index on
+ * `message_reactions` (owned by 005_chat in the consolidated chain).
  *
- * The toggle route (`src/routes/message-reactions.ts`) was check-then-insert
- * with no constraint covering the triple, so two concurrent POSTs with the
- * same (message, user, emoji) both passed the lookup and both inserted —
- * TWO rows for one reaction, and the grouped GET reported `count: 2`. 103
- * makes the DATABASE the arbiter — and first collapses the duplicate
- * groups a raced database already accumulated, because CREATE UNIQUE INDEX
- * aborts on those and would leave the migration chain stuck half-applied.
- *
- * Mirrors src/db/079_actor_currencies_unique.test.ts and, like it, lives in
- * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
- * colocated test as a migration).
+ * The toggle route was check-then-insert with no constraint on the triple, so
+ * two concurrent POSTs both inserted and the grouped GET reported `count: 2`.
+ * The final schema makes the DATABASE the arbiter; the migration-time collapse
+ * of pre-existing duplicates is gone, so this file pins the constraint/scope.
  */
 import { describe, expect, test, } from "bun:test";
 import { type Kysely, sql, } from "kysely";
 
-import { captureWarnings, } from "../test-utils/capture-warnings";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
@@ -30,14 +22,9 @@ import {
   insertUsers,
 } from "../test-utils/insert-helpers";
 import { MessageRole, } from "./enums";
-import { down, up, } from "./migrations/103_message_reactions_unique";
 import type { DB, } from "./schema";
 
-const MIGRATION = "103_message_reactions_unique";
 const UNIQUE_INDEX = "uq_message_reactions_message_user_emoji";
-
-/** `up`/`down` are typed against the untyped handle the migrator passes them. */
-type UntypedDb = Kysely<unknown>;
 
 /**
  * @param db database handle
@@ -69,32 +56,21 @@ async function seedMessage(db: Kysely<DB>,): Promise<{ userId: string; messageId
   return { userId, messageId, };
 }
 
-describe(MIGRATION, () => {
-  test("collapses a duplicate reaction group to its oldest row, warns, then enforces the index", async () => {
+describe("message_reactions unique (final schema)", () => {
+  test("the unique index is present and rejects a racing duplicate reaction", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const { userId, messageId, } = await seedMessage(db,);
-
-      // The index exists already (103 ran in the chain) — drop it so the
-      // duplicate rows can be inserted again.
-      await down(db as unknown as UntypedDb,);
-      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(false,);
+      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(true,);
 
       const firstId = await insertMessageReactions(db, messageId, userId, "👍", {
         created_at: "2026-01-01T00:00:00.000Z",
       },);
 
-      await insertMessageReactions(db, messageId, userId, "👍", {
-        created_at: "2026-01-02T00:00:00.000Z",
-      },);
-
-      const warnings = await captureWarnings(async () => {
-        await up(db as unknown as UntypedDb,);
-      }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-      expect(warnings,).toHaveLength(1,);
-      expect(warnings[0],).toContain(MIGRATION,);
-      expect(warnings[0],).toContain("collapsing to oldest",);
+      // The racing second insert now aborts at the database.
+      await expect(
+        insertMessageReactions(db, messageId, userId, "👍",),
+      ).rejects.toThrow(/UNIQUE/i,);
 
       const rows = await db
         .selectFrom("message_reactions",)
@@ -106,12 +82,6 @@ describe(MIGRATION, () => {
 
       expect(rows,).toHaveLength(1,);
       expect(rows[0]?.id,).toBe(firstId,);
-      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(true,);
-
-      // Enforced: the racing second insert now aborts at the database.
-      await expect(
-        insertMessageReactions(db, messageId, userId, "👍",),
-      ).rejects.toThrow(/UNIQUE/i,);
     } finally {
       await db.destroy();
       sqlite.close();
@@ -122,18 +92,9 @@ describe(MIGRATION, () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const { userId, messageId, } = await seedMessage(db,);
+      await insertMessageReactions(db, messageId, userId, "👍",);
+      await insertMessageReactions(db, messageId, userId, "❤️",);
 
-      await down(db as unknown as UntypedDb,);
-      await Promise.all([
-        insertMessageReactions(db, messageId, userId, "👍",),
-        insertMessageReactions(db, messageId, userId, "❤️",),
-      ],);
-
-      const warnings = await captureWarnings(async () => {
-        await up(db as unknown as UntypedDb,);
-      }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-      expect(warnings,).toEqual([],);
       const rows = await db
         .selectFrom("message_reactions",)
         .selectAll()
@@ -147,4 +108,4 @@ describe(MIGRATION, () => {
       sqlite.close();
     }
   });
-},);
+});

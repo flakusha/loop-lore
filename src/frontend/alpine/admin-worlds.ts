@@ -10,6 +10,19 @@ const log = rootLog.child({ module: "admin-worlds", },);
 
 type WorldRow = AdminWorldRow;
 
+/** One ranked row from the per-world item power audit. */
+interface ItemPowerScoreRow {
+  worldItemId: string;
+  itemId: string;
+  name: string;
+  category: string;
+  rarity: string;
+  maxStatDelta: number;
+  drift: number;
+  maxDurability: number;
+  score: number;
+}
+
 const EMPTY_ADMIN_WORLDS = { data: [], total: 0, page: 1, pageSize: 50, };
 
 export const adminWorlds = {
@@ -19,6 +32,15 @@ export const adminWorlds = {
   loadingWorlds: false,
   confirmDeleteWorld: "",
   worldSearch: "",
+
+  // ── World detail (GET /api/v1/admin/worlds/:id) ──────
+  worldDetail: null as (WorldRow & { locationCount?: number }) | null,
+  loadingWorldDetail: false,
+
+  // ── Item power audit (GET /api/v1/admin/worlds/:id/items/power-audit) ──
+  powerAudit: [] as ItemPowerScoreRow[],
+  powerAuditWorldId: "",
+  loadingPowerAudit: false,
 
   /**
    * @returns {Promise<void>}
@@ -86,5 +108,66 @@ export const adminWorlds = {
     this.worldSearch = "";
     this.worldPage = 1;
     this.loadWorlds();
+  },
+
+  /**
+   * Load a single world (GET /api/v1/admin/worlds/:id) into `worldDetail`.
+   * @param {string} worldId
+   * @returns {Promise<void>}
+   */
+  async viewWorld(worldId: string,) {
+    this.loadingWorldDetail = true;
+    try {
+      const res = await apiFetch(`/api/v1/admin/worlds/${worldId}`, {
+        headers: { Accept: "application/json", },
+      },);
+
+      if (res.ok) {
+        this.worldDetail = await res.json();
+      } else {
+        const err = await res.json();
+        showToast("error", err.error || err.message || t("toasts.failed",),);
+      }
+    } catch {
+      showToast("error", t("toasts.networkError",),);
+    } finally {
+      this.loadingWorldDetail = false;
+    }
+  },
+  /**
+   * @returns {void}
+   */
+  closeWorldDetail() {
+    this.worldDetail = null;
+    this.powerAudit = [];
+    this.powerAuditWorldId = "";
+  },
+
+  /**
+   * Load the per-world item power audit (GET …/items/power-audit).
+   * @param {string} worldId
+   * @returns {Promise<void>}
+   */
+  async loadPowerAudit(worldId: string,) {
+    this.loadingPowerAudit = true;
+    this.powerAuditWorldId = worldId;
+    try {
+      const res = await apiFetch(
+        `/api/v1/admin/worlds/${worldId}/items/power-audit`,
+        { headers: { Accept: "application/json", }, },
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        this.powerAudit = Array.isArray(data?.items,) ? data.items : [];
+      } else {
+        const err = await res.json();
+        showToast("error", err.error || err.message || t("toasts.failed",),);
+      }
+    } catch {
+      showToast("error", t("toasts.networkError",),);
+    } finally {
+      this.loadingPowerAudit = false;
+    }
   },
 };

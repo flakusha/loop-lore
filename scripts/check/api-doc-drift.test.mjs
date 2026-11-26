@@ -7,18 +7,15 @@
 //
 // RESOURCE CONTRACT — this suite writes NOTHING and allocates NO fixture:
 // - `--nope` fails argument parsing, which happens before any gate logic, so
-//   the spec is never regenerated and the baseline is never touched.
+//   the spec and the generated api.md are never touched.
 // - `--help` exits inside the same parse, likewise before any I/O.
-// - `--update-baseline` is deliberately NEVER passed here, so no run can write
-//   `scripts/check/api-doc-drift-baseline.json`; that path belongs to a human
-//   running the gate on purpose.
 // - Deliberately NO zero-args spawn: the gate's first act is to regenerate
-//   `docs/reference/openapi.json`, a shared repo file the `api - doc drift`
-//   gate itself writes. Running it from a parallel test would race that gate
-//   for the same path. The zero-arg shape is covered by gates.mjs invoking the
-//   gate bare on every `bun run check`.
-// - Verified: md5 of api-doc-drift-baseline.json and docs/reference/openapi.json
-//   are unchanged across a full run of this file.
+//   `docs/reference/openapi.json` and then `docs/reference/api.md`, both shared
+//   repo files. Running it from a parallel test would race the `api - doc drift`
+//   gate for those paths. The zero-arg shape is covered by gates.mjs invoking
+//   the gate bare on every `bun run check`.
+// - Verified: docs/reference/openapi.json and docs/reference/api.md are
+//   unchanged across a full run of this file.
 
 import { expect, test, } from "bun:test";
 import { join, } from "node:path";
@@ -49,7 +46,7 @@ test("an undeclared flag is a parse error, not a silent run", () => {
   expect(err,).toContain("--nope",);
 });
 
-test("--help prints the brief and exits 0 without touching the baseline", () => {
+test("--help prints the brief and exits 0 without regenerating anything", () => {
   const { code, out, } = runDrift(["--help",],);
   expect(code,).toBe(0,);
   expect(out,).toContain("Fail when docs/reference/api.md",);

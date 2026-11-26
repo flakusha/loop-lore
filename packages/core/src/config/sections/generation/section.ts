@@ -17,6 +17,7 @@ export class GenerationSection implements GenerationConfig {
   };
   defaultProvider = GENERATION_DEFAULTS.defaultProvider;
   defaultModels: Record<string, string> = {};
+  autorouteScenario?: GenerationConfig["autorouteScenario"];
   modelRoles: Record<string, ModelRoleAssignment> = {};
   routing = GENERATION_DEFAULTS.routing;
   flowControl: GenerationFlowControl | undefined;

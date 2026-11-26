@@ -16,7 +16,7 @@
  */
 
 /** Cache name version — bump when PRECACHE_URLS or shell semantics change. */
-export const SW_CACHE_VERSION = "v1";
+export const SW_CACHE_VERSION = "v2";
 
 /** All SW-owned caches carry this prefix; activate purges other versions. */
 export const CACHE_NAME_PREFIX = "loop-lore-shell";
@@ -50,11 +50,8 @@ export const PRECACHE_URLS: readonly string[] = [
   "/css/xterm.css",
   "/css/mobile-keynav.css",
   "/css/responsive.css",
-  // Core JS bundles (server resolves each bare name to its hashed sibling)
-  "/alpine-init.js",
-  "/chat-vendor.js",
-  "/pages.js",
-  "/locale-init.js",
+  // Core JS bundles are fetched under their hashed names by the layout; they
+  // are cached on first fetch by isShellAssetPath, not under bare aliases.
   // Brand + PWA surface
   "/favicon.svg",
   "/manifest.webmanifest",
@@ -66,6 +63,9 @@ export const RUNTIME_CACHE_PREFIXES: readonly string[] = ["/css/", "/img/", "/lo
 
 /** File extensions eligible for cache-first shell treatment. */
 const SHELL_EXTENSIONS = new Set(["css", "js", "svg", "png", "jpg", "jpeg", "webp", "ico", "woff", "woff2", "json",],);
+
+/** Root-level bundle stems whose hashed siblings are part of the shell. */
+const SHELL_BUNDLE_STEMS = new Set(["alpine-init", "chat-vendor", "pages", "locale-init",],);
 
 /** Bare bundle names served from dist/public that are part of the shell. */
 const SHELL_BARE_NAMES = new Set([
@@ -80,13 +80,36 @@ const SHELL_BARE_NAMES = new Set([
 
 /**
  * @param pathname - request pathname (leading slash)
+ * @returns `true` for a root-level shell bundle, hashed or bare.
+ */
+function isRootShellBundle(pathname: string,): boolean {
+  if (pathname.lastIndexOf("/",) !== 0) { return false; }
+  const name = pathname.slice(1,);
+  const extensionLength = name.endsWith(".js",) ? 3 : name.endsWith(".css",) ? 4 : 0;
+  if (extensionLength === 0) { return false; }
+  const stemWithHash = name.slice(0, -extensionLength,);
+  const hashAt = stemWithHash.lastIndexOf("-",);
+  const stem = hashAt > 0 ? stemWithHash.slice(0, hashAt,) : stemWithHash;
+  return SHELL_BUNDLE_STEMS.has(stem,);
+}
+
+/**
+ * @param pathname - request pathname (leading slash)
  * @returns `true` when the path is public static shell surface eligible for caching.
  */
 export function isShellAssetPath(pathname: string,): boolean {
-  if (SHELL_BARE_NAMES.has(pathname,)) { return true; }
+  if (SHELL_BARE_NAMES.has(pathname,) || isRootShellBundle(pathname,)) { return true; }
   if (!RUNTIME_CACHE_PREFIXES.some((p,) => pathname.startsWith(p,))) { return false; }
   const extension = pathname.split(".",).pop()?.toLowerCase() ?? "";
   return SHELL_EXTENSIONS.has(extension,);
+}
+
+/**
+ * @param mode - Fetch request mode.
+ * @returns `true` only for top-level navigations; htmx fragments must get a plain 503.
+ */
+export function shouldServeOfflinePage(mode: string,): boolean {
+  return mode === "navigate";
 }
 
 /** Request classes the fetch handler distinguishes. */

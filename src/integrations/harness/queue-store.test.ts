@@ -7,10 +7,19 @@
  * complete/fail/cancel, boot recovery, and the read verbs.
  *
  * Resource contract (parallel-safe): one :memory: SQLite per test via
- * createTestDb/destroyTestDb; no ports, no env, no sleeps.
+ * createTestDb/destroyTestDb, plus a temp file with two connections for the
+ * cross-process cases; no ports, no env, no sleeps.
  */
+import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
 import { HarnessQueueErrorCode, HarnessQueueTurnStatus, } from "../../db/enums";
+import { createSqliteDialect, } from "../../db/index";
+import { runMigrations, } from "../../db/migrate";
+import { type DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
 import {
@@ -22,6 +31,7 @@ import {
   type InsertQueuedTurn,
   insertQueuedTurns,
   listQueuedTurns,
+  MAX_QUEUE_LIMIT,
   type QueuedTurnRow,
   recoverInterruptedTurns,
 } from "./queue-store";
@@ -110,6 +120,7 @@ function queuedRow(id: string, createdAt = T0,): QueuedTurnRow {
     requested_by: userId,
     requested_role: "admin",
     turn_key: null,
+    owner_slug: null,
     attempts: 0,
     result_message_id: null,
     error_code: null,
@@ -142,53 +153,66 @@ describe("insertQueuedTurns + getQueuedTurn", () => {
 });
 
 describe("claimNextQueuedTurn", () => {
-  it("claims the oldest queued row and marks it running with attempts bumped", async () => {
+  it("claims the oldest queued row, tagging it with the claiming instance", async () => {
     await insertQueuedTurns(db, [
       turn("t-old", { createdAt: T0, },),
       turn("t-new", { createdAt: T1, },),
     ],);
 
-    const claimed = await claimNextQueuedTurn(db, [], T2,);
+    const claimed = await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
     expect(claimed?.id,).toBe("t-old",);
     expect(claimed?.status,).toBe(HarnessQueueTurnStatus.Running,);
     expect(claimed?.started_at,).toBe(T2,);
     expect(claimed?.attempts,).toBe(1,);
+    expect(claimed?.owner_slug,).toBe("instance-a",);
 
     // The persisted row moved with the returned projection.
     const persisted = await getQueuedTurn(db, "t-old",);
     expect(persisted?.status,).toBe(HarnessQueueTurnStatus.Running,);
     expect(persisted?.started_at,).toBe(T2,);
     expect(persisted?.attempts,).toBe(1,);
+    expect(persisted?.owner_slug,).toBe("instance-a",);
   });
 
   it("breaks same-timestamp ties by id", async () => {
     await insertQueuedTurns(db, [turn("t-b",), turn("t-a",),],);
-    expect((await claimNextQueuedTurn(db, [], T2,))?.id,).toBe("t-a",);
+    expect((await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },))?.id,).toBe("t-a",);
   });
 
   it("returns null on an empty queue", async () => {
-    expect(await claimNextQueuedTurn(db, [], T2,),).toBeNull();
+    expect(await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },),).toBeNull();
   });
 
-  it("skips queued rows whose profile already has a turn in flight", async () => {
+  it("skips queued rows whose profile already has a running row in the DB", async () => {
     await insertQueuedTurns(db, [
       turn("t-busy", { createdAt: T0, },),
       turn("t-free", { profile: "opencode", createdAt: T1, },),
     ],);
 
-    expect((await claimNextQueuedTurn(db, ["omp",], T2,))?.id,).toBe("t-free",);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
+    expect((await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-b", },))?.id,).toBe("t-free",);
   });
 
-  it("returns null and mutates nothing when every queued profile is busy", async () => {
-    await insertQueuedTurns(db, [turn("t1",),],);
-    expect(await claimNextQueuedTurn(db, ["omp",], T2,),).toBeNull();
-    expect(await getQueuedTurn(db, "t1",),).toEqual(queuedRow("t1",),);
+  it("returns null and mutates nothing when the queued profile is busy", async () => {
+    await insertQueuedTurns(db, [turn("t1", { createdAt: T0, },), turn("t2", { createdAt: T1, },),],);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
+    expect(await claimNextQueuedTurn(db, { now: T3, instanceSlug: "instance-a", },),).toBeNull();
+    expect((await getQueuedTurn(db, "t1",))?.status,).toBe(HarnessQueueTurnStatus.Running,);
+    expect(await getQueuedTurn(db, "t2",),).toEqual(queuedRow("t2", T1,),);
   });
 
   it("cannot claim the same row twice", async () => {
     await insertQueuedTurns(db, [turn("t1",),],);
-    expect(await claimNextQueuedTurn(db, [], T2,),).not.toBeNull();
-    expect(await claimNextQueuedTurn(db, [], T3,),).toBeNull();
+    expect(await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },),).not.toBeNull();
+    expect(await claimNextQueuedTurn(db, { now: T3, instanceSlug: "instance-b", },),).toBeNull();
+  });
+
+  it("has a (profile, status) index for the DB-side exclusion", () => {
+    const cols = fixture.sqlite
+      .query("PRAGMA index_info(idx_harness_queue_turns_profile_status)",)
+      .all() as { name: string }[];
+
+    expect(cols.map((col,) => col.name),).toEqual(["profile", "status",],);
   });
 });
 
@@ -245,7 +269,7 @@ describe("cancelQueuedTurn", () => {
 
   it("refuses a running turn (no interrupt seam) and reports 0", async () => {
     await insertQueuedTurns(db, [turn("t1",),],);
-    await claimNextQueuedTurn(db, [], T2,);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
     expect(await cancelQueuedTurn(db, "t1", T3,),).toBe(0,);
     expect((await getQueuedTurn(db, "t1",))?.status,).toBe(HarnessQueueTurnStatus.Running,);
   });
@@ -260,17 +284,17 @@ describe("cancelQueuedTurn", () => {
 });
 
 describe("recoverInterruptedTurns", () => {
-  it("fails every running row interrupted and reports the count", async () => {
+  it("fails this instance's running rows and reports the count", async () => {
     await insertQueuedTurns(db, [
       turn("t1", { createdAt: T0, },),
-      turn("t2", { createdAt: T1, },),
+      turn("t2", { profile: "opencode", createdAt: T1, },),
     ],);
 
-    await claimNextQueuedTurn(db, [], T2,);
-    await claimNextQueuedTurn(db, [], T2,);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-a", },);
     await insertQueuedTurns(db, [turn("t3", { createdAt: T1, },),],);
 
-    expect(await recoverInterruptedTurns(db, T3,),).toBe(2,);
+    expect(await recoverInterruptedTurns(db, { now: T3, instanceSlug: "instance-a", },),).toBe(2,);
 
     const recovered = await getQueuedTurn(db, "t1",);
     expect(recovered?.status,).toBe(HarnessQueueTurnStatus.Failed,);
@@ -282,9 +306,17 @@ describe("recoverInterruptedTurns", () => {
     expect((await getQueuedTurn(db, "t3",))?.status,).toBe(HarnessQueueTurnStatus.Queued,);
   });
 
+  it("leaves another instance's running rows alone", async () => {
+    await insertQueuedTurns(db, [turn("t1",),],);
+    await claimNextQueuedTurn(db, { now: T2, instanceSlug: "instance-b", },);
+
+    expect(await recoverInterruptedTurns(db, { now: T3, instanceSlug: "instance-a", },),).toBe(0,);
+    expect((await getQueuedTurn(db, "t1",))?.status,).toBe(HarnessQueueTurnStatus.Running,);
+  });
+
   it("returns 0 when nothing was running", async () => {
     await insertQueuedTurns(db, [turn("t1",),],);
-    expect(await recoverInterruptedTurns(db, T3,),).toBe(0,);
+    expect(await recoverInterruptedTurns(db, { now: T3, instanceSlug: "instance-a", },),).toBe(0,);
     expect((await getQueuedTurn(db, "t1",))?.status,).toBe(HarnessQueueTurnStatus.Queued,);
   });
 });
@@ -318,7 +350,162 @@ describe("listQueuedTurns", () => {
     expect((await listQueuedTurns(db, { limit: 2, },)).map((row,) => row.id),).toEqual(["t3", "t2",],);
   });
 
+  it("caps an oversized page at the hard limit", async () => {
+    await insertQueuedTurns(db, Array.from({ length: MAX_QUEUE_LIMIT + 5, }, (_, i,) => turn(`cap-${i}`,),),);
+
+    const rows = await listQueuedTurns(db, { limit: 999_999, },);
+    expect(rows,).toHaveLength(MAX_QUEUE_LIMIT,);
+  });
+
   it("returns an empty list for an empty queue", async () => {
     expect(await listQueuedTurns(db,),).toEqual([],);
+  });
+});
+
+/** An independent connection to one file-backed DB — one per "instance". */
+async function openSharedConnection(file: string,): Promise<Kysely<DB>> {
+  const sqlite = new Database(file,);
+  const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+  await runMigrations(db,);
+  return db;
+}
+
+interface SharedFixture {
+  userId: string;
+  actorId: string;
+  chatId: string;
+}
+
+/** FK targets for queue rows in the file-backed DB. */
+async function seedSharedFixture(database: Kysely<DB>,): Promise<SharedFixture> {
+  const fixture: SharedFixture = {
+    userId: "user-shared-queue",
+    actorId: "actor-shared-queue",
+    chatId: "chat-shared-queue",
+  };
+
+  await database.insertInto("users",).values({
+    id: fixture.userId,
+    username: "shared-queue",
+    display_name: "Shared Queue",
+    role: "solo",
+    status: "active",
+    settings: "{}",
+  },).execute();
+
+  await insertActors(database, "Alice", {
+    id: fixture.actorId,
+    actor_type: "character",
+    owner_id: fixture.userId,
+    agent_type: "ai",
+    settings: "{}",
+    import_spec: "raw",
+    data_source_format: "json",
+    data_raw: null,
+  } as never,);
+
+  await database.insertInto("chats",).values({
+    id: fixture.chatId,
+    name: "Shared Queue",
+    type: "direct",
+    mode: "direct",
+    created_by: fixture.userId,
+    max_turns: null,
+  } as never,).execute();
+
+  return fixture;
+}
+
+/** A queued row pointed at the file-backed fixture. */
+function sharedTurn(
+  id: string,
+  fixture: SharedFixture,
+  opts: Partial<InsertQueuedTurn> = {},
+): InsertQueuedTurn {
+  return turn(id, {
+    chatId: fixture.chatId,
+    actorId: fixture.actorId,
+    requestedBy: fixture.userId,
+    ...opts,
+  },);
+}
+
+describe("multi-instance queue (two connections, one DB)", () => {
+  let dir: string;
+  let dbA: Kysely<DB>;
+  let dbB: Kysely<DB>;
+  let fixture: SharedFixture;
+
+  beforeEach(async () => {
+    dir = mkdtempSync(join(tmpdir(), "harness-queue-store-",),);
+    const file = join(dir, "loop-lore.db",);
+    dbA = await openSharedConnection(file,);
+    dbB = await openSharedConnection(file,);
+    fixture = await seedSharedFixture(dbA,);
+  },);
+
+  afterEach(async () => {
+    await dbA.destroy();
+    await dbB.destroy();
+    rmSync(dir, { recursive: true, force: true, },);
+  },);
+
+  it("H1: two racing claimers get one row between them; the loser gets null", async () => {
+    await insertQueuedTurns(dbA, [sharedTurn("shared-1", fixture,),],);
+
+    const [a, b,] = await Promise.all([
+      claimNextQueuedTurn(dbA, { now: T2, instanceSlug: "instance-a", },),
+      claimNextQueuedTurn(dbB, { now: T3, instanceSlug: "instance-b", },),
+    ],);
+
+    expect([a, b,].filter((row,) => row !== null),).toHaveLength(1,);
+    const persisted = await getQueuedTurn(dbA, "shared-1",);
+    expect(persisted?.status,).toBe(HarnessQueueTurnStatus.Running,);
+    expect(persisted?.attempts,).toBe(1,);
+    expect(persisted?.owner_slug,).toBe((a ?? b)!.owner_slug,);
+  });
+
+  it("H17: two instances cannot drive the same profile with separate queued rows", async () => {
+    await insertQueuedTurns(dbA, [
+      sharedTurn("p1", fixture, { createdAt: T0, },),
+      sharedTurn("p2", fixture, { createdAt: T1, },),
+    ],);
+
+    const [a, b,] = await Promise.all([
+      claimNextQueuedTurn(dbA, { now: T2, instanceSlug: "instance-a", },),
+      claimNextQueuedTurn(dbB, { now: T2, instanceSlug: "instance-b", },),
+    ],);
+
+    expect([a, b,].filter((row,) => row !== null),).toHaveLength(1,);
+    const rows = await Promise.all([getQueuedTurn(dbA, "p1",), getQueuedTurn(dbA, "p2",),],);
+    expect(rows.filter((row,) => row?.status === HarnessQueueTurnStatus.Running),).toHaveLength(1,);
+    expect(rows.filter((row,) => row?.status === HarnessQueueTurnStatus.Queued),).toHaveLength(1,);
+  });
+
+  it("H16: boot recovery fails only the booting instance's running rows", async () => {
+    await insertQueuedTurns(dbA, [sharedTurn("crash", fixture,),],);
+    await claimNextQueuedTurn(dbA, { now: T2, instanceSlug: "instance-a", },);
+
+    // Instance B booting against the shared DB must not kill A's live turn.
+    expect(await recoverInterruptedTurns(dbB, { now: T3, instanceSlug: "instance-b", },),).toBe(0,);
+    expect((await getQueuedTurn(dbA, "crash",))?.status,).toBe(HarnessQueueTurnStatus.Running,);
+
+    // A's own crashed turn is still failed at A's next boot.
+    expect(await recoverInterruptedTurns(dbA, { now: T3, instanceSlug: "instance-a", },),).toBe(1,);
+    const recovered = await getQueuedTurn(dbA, "crash",);
+    expect(recovered?.status,).toBe(HarnessQueueTurnStatus.Failed,);
+    expect(recovered?.error_code,).toBe(HarnessQueueErrorCode.Interrupted,);
+    expect(recovered?.finished_at,).toBe(T3,);
+  });
+
+  it("boot recovery leaves pre-migration rows with no owner alone", async () => {
+    await insertQueuedTurns(dbA, [sharedTurn("legacy", fixture,),],);
+    await dbA.updateTable("harness_queue_turns",)
+      .set({ status: HarnessQueueTurnStatus.Running, started_at: T2, },)
+      .where("id", "=", "legacy",)
+      .execute();
+
+    expect(await recoverInterruptedTurns(dbA, { now: T3, instanceSlug: "instance-a", },),).toBe(0,);
+    expect((await getQueuedTurn(dbA, "legacy",))?.status,).toBe(HarnessQueueTurnStatus.Running,);
   });
 });

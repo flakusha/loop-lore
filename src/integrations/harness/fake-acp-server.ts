@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 300
+// Test fake: one fixture server for the ACP suites; split would scatter the fixture.
+// size-allow: 355
 
 /**
  * Fake ACP server fixture (test-only; imported exclusively by *.test.ts).
  *
  * Writes a plain-JS NDJSON JSON-RPC script answering `initialize`,
  * `session/new` (canned MODEL_CONFIG_ID options), `session/set_config_option`,
- * `session/prompt` (chunk notification + stopReason/usage), `session/cancel`,
- * and — server-originated, mid-prompt — `session/request_permission` and
- * `fs/read_text_file` client requests; `_omp/usage` answers quota probes.
+ * `session/set_mode` (echoes `currentModeId`), `session/list`, `session/resume`
+ * and `session/load` (replays one chunk), `session/prompt` (chunk notification
+ * + stopReason/usage), `session/cancel`, and — server-originated, mid-prompt
+ * — `session/request_permission`, `elicitation/create`, `fs/read_text_file`
+ * and `fs/write_text_file` client requests; `_omp/usage` answers quota probes.
+ * `session/delete` answers the v2-only delete method.
  * Behavior is tuned through environment variables read at spawn time.
  *
  * The child appends one JSON line per observed client reaction (a cancel, a
@@ -26,8 +30,8 @@
 
 import { type ChildProcess, spawn, } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
-import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { appTmpRoot, } from "../../test-utils/tmp-root";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 
 /** Observation-log file name; the child writes it next to its own script. */
@@ -45,6 +49,7 @@ const logPath = pathmod.join(__dirname, "${LOG_FILENAME}");
 const logEvent = (o) => { try { fsmod.appendFileSync(logPath, JSON.stringify(o) + "\n"); } catch {} };
 let buf = "";
 let serverReqId = 1000;
+let activeSession = "fake-session-1";
 const clientResolvers = new Map();
 let cancelWaiter = null;
 const send = (o) => process.stdout.write(JSON.stringify(o) + "\n");
@@ -70,25 +75,36 @@ const runPromptFlow = async (promptId) => {
       { optionId: "allow", name: "Allow", kind: permKinds[0] ?? "allow_once" },
       { optionId: "reject", name: "Reject", kind: permKinds[1] ?? "reject_once" },
     ];
-    const askParams = (callId) => ({ sessionId: process.env.FAKE_ASK_SESSION_ID ?? "fake-session-1", toolCall: { toolCallId: callId, title: "Edit file", kind: "edit", status: "pending" }, options: options });
+    const askParams = (callId) => ({ sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, toolCall: { toolCallId: callId, title: "Edit file", kind: "edit", status: "pending" }, options: options });
     const entries = [{ method: "session/request_permission", params: askParams("call-1") }];
     if (process.env.FAKE_PERMISSION_TWICE) { entries.push({ method: "session/request_permission", params: askParams("call-2") }); }
     await Promise.all(askClientBurst(entries,));
   }
+  if (process.env.FAKE_ELICITATION) {
+    const elicMode = process.env.FAKE_ELICITATION;
+    const elicParams = elicMode === "form"
+      ? { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, mode: "form", message: "Pick a strategy", requestedSchema: { type: "object", properties: { strategy: { type: "string", enum: ["conservative", "balanced"] } }, required: ["strategy"] } }
+      : { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, mode: elicMode, elicitationId: "elic-1", url: "https://example.com/connect?elicitationId=elic-1", message: "Authorize access." };
+    await Promise.all(askClientBurst([{ method: "elicitation/create", params: elicParams },],),);
+  }
   if (process.env.FAKE_READ_FILE) {
-    const readParams = { sessionId: process.env.FAKE_ASK_SESSION_ID ?? "fake-session-1", path: process.env.FAKE_READ_FILE };
+    const readParams = { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, path: process.env.FAKE_READ_FILE };
     if (process.env.FAKE_READ_FILE_LINE) { readParams.line = Number(process.env.FAKE_READ_FILE_LINE); }
     if (process.env.FAKE_READ_FILE_LIMIT) { readParams.limit = Number(process.env.FAKE_READ_FILE_LIMIT); }
     await Promise.all(askClientBurst([{ method: "fs/read_text_file", params: readParams },],),);
   }
+  if (process.env.FAKE_WRITE_FILE) {
+    const writeParams = { sessionId: process.env.FAKE_ASK_SESSION_ID ?? activeSession, path: process.env.FAKE_WRITE_FILE, content: process.env.FAKE_WRITE_CONTENT ?? "" };
+    await Promise.all(askClientBurst([{ method: "fs/write_text_file", params: writeParams },],),);
+  }
   if (cancelPromise) { await cancelPromise; cancelWaiter = null; }
   if (process.env.FAKE_EVENTS) {
     for (const update of JSON.parse(process.env.FAKE_EVENTS)) {
-      send({ jsonrpc: "2.0", method: "session/update", params: { sessionId: "fake-session-1", update } });
+      send({ jsonrpc: "2.0", method: "session/update", params: { sessionId: activeSession, update } });
     }
   }
   send({ jsonrpc: "2.0", method: "session/update", params: {
-    sessionId: "fake-session-1",
+    sessionId: activeSession,
     update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text: process.env.FAKE_REPLY ?? "ok" } },
   } });
   const stop = process.env.FAKE_STOP ?? (process.env.FAKE_AWAIT_CANCEL ? "cancelled" : "end_turn");
@@ -97,7 +113,7 @@ const runPromptFlow = async (promptId) => {
   send({ jsonrpc: "2.0", id: promptId, result });
   if (process.env.FAKE_LATE_USAGE) {
     send({ jsonrpc: "2.0", method: "session/update", params: {
-      sessionId: "fake-session-1",
+      sessionId: activeSession,
       update: JSON.parse(process.env.FAKE_LATE_USAGE),
     } });
   }
@@ -118,6 +134,8 @@ process.stdin.on("data", (c) => {
       const payload = m.error ? { error: m.error } : m.result;
       if (entry.method === "fs/read_text_file") {
         logEvent({ event: "read_text", path: entry.params.path, content: payload });
+      } else if (entry.method === "fs/write_text_file") {
+        logEvent({ event: "write_text", path: entry.params.path, content: payload });
       } else {
         logEvent({ event: "permission_outcome", outcome: payload });
       }
@@ -128,7 +146,9 @@ process.stdin.on("data", (c) => {
       if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "initialize", params: m.params }); }
       if (process.env.FAKE_HANG) { continue; }
       if (process.env.FAKE_MALFORMED) { process.stdout.write("this is not json\n{broken\n"); continue; }
-      send({ jsonrpc: "2.0", id: m.id, result: { protocolVersion: 1, agentInfo: { name: "fake" } } });
+      const initResult = { protocolVersion: process.env.FAKE_PROTOCOL_VERSION ? Number(process.env.FAKE_PROTOCOL_VERSION) : 1, agentInfo: { name: "fake" } };
+      if (process.env.FAKE_CAPABILITIES) { initResult.capabilities = JSON.parse(process.env.FAKE_CAPABILITIES); }
+      send({ jsonrpc: "2.0", id: m.id, result: initResult });
     } else if (m.method === "session/new") {
       if (process.env.FAKE_LOG_PARAMS) { logEvent({ event: "session_new", params: m.params }); }
       if (process.env.FAKE_NO_SESSION) {
@@ -164,6 +184,32 @@ process.stdin.on("data", (c) => {
       } else {
         send({ jsonrpc: "2.0", id: m.id, result: { configOptions: [] } });
       }
+    } else if (m.method === "session/set_mode") {
+      logEvent({ event: "set_mode", modeId: typeof m.params?.modeId === "string" ? m.params.modeId : null });
+      send({ jsonrpc: "2.0", id: m.id, result: { currentModeId: m.params?.modeId ?? null } });
+    } else if (m.method === "session/list") {
+      send({ jsonrpc: "2.0", id: m.id, result: {
+        sessions: [{ sessionId: "fake-session-1", cwd: process.env.FAKE_LIST_CWD ?? null }],
+      } });
+    } else if (m.method === "session/resume") {
+      activeSession = typeof m.params?.sessionId === "string" && m.params.sessionId !== "" ? m.params.sessionId : activeSession;
+      send({ jsonrpc: "2.0", id: m.id, result: {
+        sessionId: activeSession,
+        configOptions: [{ id: configId, name: "Model", type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
+      } });
+    } else if (m.method === "session/load") {
+      activeSession = typeof m.params?.sessionId === "string" && m.params.sessionId !== "" ? m.params.sessionId : activeSession;
+      send({ jsonrpc: "2.0", method: "session/update", params: {
+        sessionId: activeSession,
+        update: { sessionUpdate: "agent_message_chunk", content: { type: "text", text: process.env.FAKE_REPLY ?? "ok" } },
+      } });
+      send({ jsonrpc: "2.0", id: m.id, result: {
+        sessionId: activeSession,
+        configOptions: [{ id: configId, name: "Model", type: "select", currentValue: models[0] ?? "", options: models.map((v) => ({ value: v })) }],
+      } });
+    } else if (m.method === "session/delete") {
+      logEvent({ event: "delete_session", sessionId: typeof m.params?.sessionId === "string" ? m.params.sessionId : null });
+      send({ jsonrpc: "2.0", id: m.id, result: {} });
     } else if (m.method === "session/prompt") {
       if (process.env.FAKE_EXIT_ON_PROMPT && m.params.prompt?.[0]?.text === process.env.FAKE_EXIT_ON_PROMPT) {
         process.exit(1);
@@ -206,6 +252,8 @@ export interface FakeAcpEnv {
   FAKE_MALFORMED?: string;
   /** Prompt TEXT that makes the child exit code=1 (matching prompts only). */
   FAKE_EXIT_ON_PROMPT?: string;
+  /** `elicitation/create` mode the prompt sends and awaits (`form` or `url`); unset sends none. */
+  FAKE_ELICITATION?: string;
   /** When set, session/prompt first sends `session/request_permission` and awaits the client's outcome. */
   FAKE_PERMISSION?: string;
   /** When set, the prompt response omits `usage` (the stable ACP v1 PromptResponse shape). */
@@ -232,6 +280,16 @@ export interface FakeAcpEnv {
   FAKE_AWAIT_CANCEL?: string;
   /** JSON array of ACP `session/update` payloads emitted before the reply chunk. */
   FAKE_EVENTS?: string;
+  /** When set, session/prompt first asks the client to write this path via `fs/write_text_file`. */
+  FAKE_WRITE_FILE?: string;
+  /** Content the `fs/write_text_file` ask carries. */
+  FAKE_WRITE_CONTENT?: string;
+  /** cwd `session/list` reports for the remembered session; absent = null. */
+  FAKE_LIST_CWD?: string;
+  /** protocolVersion the fake agent selects at initialize (default 1). */
+  FAKE_PROTOCOL_VERSION?: string;
+  /** JSON agent capabilities object included in the initialize result. */
+  FAKE_CAPABILITIES?: string;
 }
 
 /** One observed client reaction, as logged by the fixture child. */
@@ -239,11 +297,23 @@ export type FakeAcpLogEntry =
   | { event: "cancel"; sessionId: string | null }
   | { event: "permission_outcome"; outcome: unknown }
   | { event: "read_text"; path: string; content: unknown }
+  | { event: "write_text"; path: string; content: unknown }
+  | { event: "set_mode"; modeId: string | null }
+  | { event: "delete_session"; sessionId: string | null }
   | { event: "initialize"; params: Record<string, unknown> }
   | { event: "session_new"; params: Record<string, unknown> };
 
 /** Event discriminators `readLog` accepts. */
-const LOG_EVENTS = new Set(["cancel", "permission_outcome", "read_text", "initialize", "session_new",],);
+const LOG_EVENTS = new Set([
+  "cancel",
+  "permission_outcome",
+  "read_text",
+  "write_text",
+  "set_mode",
+  "delete_session",
+  "initialize",
+  "session_new",
+],);
 
 /** Narrow a parsed log line to a known event shape. */
 function isLogEntry(value: unknown,): value is FakeAcpLogEntry {
@@ -273,7 +343,7 @@ export interface FakeAcpServer {
  * @throws {Error} when the temp dir cannot be created.
  */
 export function startFakeAcp(env: FakeAcpEnv,): FakeAcpServer {
-  const dir = mkdtempSync(join(tmpdir(), "fake-acp-",),);
+  const dir = mkdtempSync(join(appTmpRoot("fake-acp",), "fake-acp-",),);
   const script = join(dir, "fake-acp.cjs",);
   const logPath = join(dir, LOG_FILENAME,);
   // Behavior rides the SCRIPT FILE, not the spawning process's env: the

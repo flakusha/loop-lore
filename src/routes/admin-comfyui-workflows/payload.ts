@@ -24,6 +24,7 @@ export interface WorkflowMetaInput {
   requiredNodes?: unknown;
   loraSlots?: unknown;
   expectedOutputKind?: unknown;
+  bindings?: unknown;
 }
 
 /** A saved UI-format workflow, as `ingestWorkflow` consumes it. */
@@ -35,6 +36,9 @@ export interface UiFormatUpload {
 
 /** Wrapper keys a graph may arrive under, in precedence order. */
 const GRAPH_KEYS = ["workflow", "body", "graph", "payload",] as const;
+
+/** Object-valued metadata keys that are not graph nodes in a bare upload. */
+const META_OBJECT_KEYS: ReadonlySet<string> = new Set(["bindings",],);
 
 function isRecord(value: unknown,): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value,);
@@ -57,7 +61,8 @@ export function uploadedGraph(body: unknown,): ComfyUIWorkflow | null {
   }
 
   const bare = Object.fromEntries(
-    Object.entries(body,).filter(([, value,],) =>
+    Object.entries(body,).filter(([key, value,],) =>
+      !META_OBJECT_KEYS.has(key,) &&
       typeof value === "object" && value !== null && !Array.isArray(value,)
     ),
   );
@@ -78,6 +83,7 @@ export function readMeta(body: unknown,): WorkflowMetaInput {
     requiredNodes: body.requiredNodes,
     loraSlots: body.loraSlots,
     expectedOutputKind: body.expectedOutputKind,
+    bindings: body.bindings,
   };
 }
 
@@ -129,6 +135,7 @@ export function buildWorkflowPayload(
   };
 
   if (Array.isArray(meta.loraSlots,)) { payload.loraSlots = meta.loraSlots; }
+  if (meta.bindings !== undefined) { payload.bindings = meta.bindings; }
   return payload;
 }
 

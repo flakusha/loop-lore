@@ -10,6 +10,7 @@ import type { Insertable, Kysely, } from "kysely";
 import {
   DifficultyReroll,
   DifficultyState,
+  LOCATION_DEPTH_LIMIT,
   LoreEntryStatus,
   LorePosition,
   PublicationStatus,
@@ -26,9 +27,9 @@ import { num, rowOf, rowsOf, str, strOrNull, } from "./rows";
 import type { ImportCounts, } from "./types";
 
 /**
- * Thrown when a bundle's location parent graph contains a cycle or self-parent.
- * A cycle would wedge the recursive-CTE path-rewrite trigger (same hazard as the
- * PUT reparent P0).
+ * Thrown when a bundle's location parent graph is invalid (cycle, self-parent,
+ * cross-world edge or depth above LOCATION_DEPTH_LIMIT). Each would wedge the
+ * recursive-CTE path-rewrite trigger, same hazard as the PUT reparent P0.
  */
 export class ImportCycleError extends Error {
   constructor(message: string,) {
@@ -38,44 +39,72 @@ export class ImportCycleError extends Error {
 }
 
 /**
- * Detect cycles in the location parent graph before applying updates.
- * A cycle would wedge the recursive-CTE path-rewrite trigger.
+ * Validate the location parent graph before any write and return the old ids
+ * that are safe to remap as parents. Rows without a `world_id` are treated as
+ * belonging to the bundle's world (hand-built bundles omit it).
  * @param locationRows
- * @throws {ImportCycleError} if a cycle or self-parent is detected
+ * @param bundleWorldId
+ * @throws {ImportCycleError} if the graph is invalid
  */
-function assertAcyclicParentGraph(locationRows: ReturnType<typeof rowsOf>,): void {
+function assertValidParentGraph(
+  locationRows: ReturnType<typeof rowsOf>,
+  bundleWorldId: string | undefined,
+): Set<string> {
   const parentOf = new Map<string, string>();
+  const worldOf = new Map<string, string | null>();
+  const ids = new Set<string>();
   for (const row of locationRows) {
     const oldId = str(row, "id",);
+    if (!oldId) { continue; }
+    ids.add(oldId,);
+    const worldId = str(row, "world_id",);
+    worldOf.set(oldId, worldId ?? null,);
+    if (bundleWorldId && worldId && worldId !== bundleWorldId) {
+      throw new ImportCycleError(`location ${oldId} belongs to a different world`,);
+    }
+
     const oldParent = str(row, "parent_location_id",);
-    if (oldId && oldParent) {
-      if (oldId === oldParent) {
-        throw new ImportCycleError(`location ${oldId} cannot be its own parent`,);
+    if (!oldParent) { continue; }
+    if (oldId === oldParent) {
+      throw new ImportCycleError(`location ${oldId} cannot be its own parent`,);
+    }
+
+    parentOf.set(oldId, oldParent,);
+  }
+
+  const validatedParents = new Set<string>();
+  for (const [id, parent,] of parentOf) {
+    const childWorld = worldOf.get(id,) ?? null;
+    const parentWorld = worldOf.get(parent,);
+    if (parentWorld !== undefined && parentWorld !== childWorld) {
+      throw new ImportCycleError(`location ${id} has a cross-world parent`,);
+    }
+
+    if (ids.has(parent,)) { validatedParents.add(parent,); }
+  }
+
+  // Each row walks its own chain: a shared visited cache would let a chain
+  // first seen from a short branch skip the depth check on a longer one.
+  for (const [id, parent,] of parentOf) {
+    let depth = 1;
+    let cursor: string | undefined = parent;
+    const chain = new Set<string>([id,],);
+    while (cursor) {
+      if (chain.has(cursor,)) {
+        throw new ImportCycleError(`location parent graph contains a cycle at ${cursor}`,);
       }
 
-      parentOf.set(oldId, oldParent,);
+      chain.add(cursor,);
+      depth++;
+      if (depth > LOCATION_DEPTH_LIMIT) {
+        throw new ImportCycleError(`location parent graph exceeds depth limit (${LOCATION_DEPTH_LIMIT})`,);
+      }
+
+      cursor = parentOf.get(cursor,);
     }
   }
 
-  const visited = new Set<string>();
-  const inStack = new Set<string>();
-
-  function visit(id: string,): void {
-    if (inStack.has(id,)) {
-      throw new ImportCycleError(`location parent graph contains a cycle at ${id}`,);
-    }
-
-    if (visited.has(id,)) { return; }
-    inStack.add(id,);
-    const parent = parentOf.get(id,);
-    if (parent) { visit(parent,); }
-    inStack.delete(id,);
-    visited.add(id,);
-  }
-
-  for (const id of parentOf.keys()) {
-    visit(id,);
-  }
+  return validatedParents;
 }
 
 /**
@@ -129,9 +158,9 @@ export async function importWorldBundle(
     // avoid FK ordering issues, then backfill parents in a second pass.
     const locationRows = rowsOf(bundle.locations,);
 
-    // Validate the parent graph BEFORE inserting anything — a cycle would wedge
-    // the recursive-CTE path-rewrite trigger (same hazard as the PUT reparent P0).
-    assertAcyclicParentGraph(locationRows,);
+    // Validate the parent graph BEFORE inserting anything — an invalid edge
+    // would wedge the recursive-CTE path-rewrite trigger.
+    const validatedParents = assertValidParentGraph(locationRows, str(world ?? {}, "id",),);
     const locationIdMap = new Map<string, string>();
     const locationValues: Insertable<Locations>[] = [];
     for (const row of locationRows) {
@@ -181,7 +210,7 @@ export async function importWorldBundle(
 
     for (const row of locationRows) {
       const oldParent = str(row, "parent_location_id",);
-      if (!oldParent) { continue; }
+      if (!oldParent || !validatedParents.has(oldParent,)) { continue; }
       const newParent = locationIdMap.get(oldParent,);
       const oldId = str(row, "id",);
       const newId = oldId ? locationIdMap.get(oldId,) : undefined;

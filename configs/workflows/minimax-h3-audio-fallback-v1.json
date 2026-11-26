@@ -1,0 +1,9 @@
+{
+  "1": {
+    "inputs": {
+      "text": "PLACEHOLDER — minimax-h3-audio-fallback-v1. Replace with the operator-supplied ComfyUI Export (API) graph for the MiniMax H3 audio-only fallback used when the video generation path is unavailable. Required workflow variables: video_slot, prompt, seed."
+    },
+    "class_type": "Note",
+    "_meta": { "title": "PLACEHOLDER — minimax-h3-audio-fallback-v1" }
+  }
+}

@@ -309,6 +309,24 @@ describe("comfyuiBuilderRoutes", () => {
     expect(((await valid.json()) as { ok: boolean }).ok,).toBe(true,);
   });
 
+  test("validate endpoint applies the shared generated-graph gate", async () => {
+    const app = makeApp(db, ownerId,);
+    const res = await app.handle(post("http://localhost/api/comfyui-builder/validate", {
+      // Schema-valid and statically linked; only the shared gate catches the
+      // unreplaced placeholder before a submit path could spend a queue slot.
+      workflow: {
+        "1": { class_type: "CheckpointLoaderSimple", inputs: {}, },
+        "2": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", clip: ["1", 1,], }, },
+        "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
+      },
+    },),);
+
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { ok: boolean; issues: { kind: string }[] };
+    expect(body.ok,).toBe(false,);
+    expect(body.issues.map((issue,) => issue.kind),).toContain("placeholder",);
+  });
+
   test("validate endpoint rejects a workflow over the node cap", async () => {
     const app = makeApp(db, ownerId,);
     function nodes(count: number, classType: string,): Record<string, unknown> {

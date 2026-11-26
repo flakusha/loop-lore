@@ -16,6 +16,15 @@ export async function fetchTurnParticipants(
   host: TurnManagerHost,
   mode: "story" | "group" = "story",
 ): Promise<TurnParticipant[]> {
+  // A user driving an impersonated character must not have the LLM speak
+  // for them. Scope to this chat: sibling chats in the same world may
+  // impersonate the same actor without affecting turn selection here.
+  const impersonated = host.db
+    .selectFrom("chat_participants",)
+    .select("impersonate_actor_id",)
+    .where("chat_id", "=", host.chatId,)
+    .where("impersonate_actor_id", "is not", null,);
+
   const query = host.db
     .selectFrom("chat_participants",)
     .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
@@ -26,7 +35,8 @@ export async function fetchTurnParticipants(
       "chat_participants.talkativity",
       "chat_participants.muted_until",
     ],)
-    .where("chat_participants.chat_id", "=", host.chatId,);
+    .where("chat_participants.chat_id", "=", host.chatId,)
+    .where("chat_participants.actor_id", "not in", impersonated,);
 
   const eligible = mode === "story"
     ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc",],).execute()

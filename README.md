@@ -78,6 +78,14 @@ bun test src/
 
 Full guide: [`docs/guide/getting-started.md`](docs/guide/getting-started.md).
 
+## State & instances
+
+Runtime data lives under the XDG state dir (`~/.local/state/loop-lore`),
+one subdir per instance — never in the repo. `bun run start --instance
+demo` (or `LOOP_LORE_INSTANCE=demo`) isolates a second copy; explicit
+paths (`LOOP_LORE_DB_PATH`, …) override everything. Details:
+[`docs/guide/state-and-instances.md`](docs/guide/state-and-instances.md).
+
 ---
 
 ## Documentation

@@ -50,18 +50,54 @@ export interface CreateAnnotationInput {
 /** Map of annotation id → in-memory annotation, scoped per process. */
 const memoryStore = new Map<string, Annotation>();
 
+/** Sweep threshold: expired entries are purged once the map grows past this. */
+const MAX_ANNOTATION_ENTRIES = 200;
+
 /**
- * Lookup annotations created in-process (kind=note|quest).
+ * Opportunistically purge expired entries once the map reaches the sweep
+ * threshold (the src/memory/keyphrase-recall.ts pattern), so the steady-state
+ * size is bounded by live annotations, not everything ever created.
+ * @param now - current time (injectable for tests)
+ */
+function sweepExpiredAnnotations(now: Date = new Date(),): void {
+  if (memoryStore.size < MAX_ANNOTATION_ENTRIES) { return; }
+  for (const [id, annotation,] of memoryStore) {
+    if (isAnnotationExpired(annotation, now,)) {
+      memoryStore.delete(id,);
+    }
+  }
+}
+
+/**
+ * Lookup annotations created in-process (kind=note|quest). Entries past
+ * their TTL window are hidden (and opportunistically swept at the
+ * threshold), never returned.
  * @param {string} chatId
  * @returns {Annotation[]}
  */
 export function listMemoryAnnotations(chatId: string,): Annotation[] {
+  const now = new Date();
+  sweepExpiredAnnotations(now,);
   const out: Annotation[] = [];
   for (const a of memoryStore.values()) {
-    if (a.chatId === chatId) { out.push(a,); }
+    if (a.chatId === chatId && !isAnnotationExpired(a, now,)) { out.push(a,); }
   }
 
   return out;
+}
+
+/**
+ * Purge every in-memory annotation for a chat. Durable shadow-kind rows are
+ * covered by the shadow_notes.chat_id ON DELETE CASCADE, so only the
+ * process-local store needs an explicit delete.
+ * @param chatId - deleted chat id
+ */
+export function removeMemoryAnnotationsForChat(chatId: string,): void {
+  for (const [id, annotation,] of memoryStore) {
+    if (annotation.chatId === chatId) {
+      memoryStore.delete(id,);
+    }
+  }
 }
 
 /**
@@ -89,7 +125,9 @@ export function isAnnotationExpired(
 /**
  * Create a new annotation. Shadow-kind annotations persist to
  * `shadow_notes`; the other kinds live in memory for the bounded
- * vertical slice (no schema exists for note/quest annotations yet).
+ * vertical slice (no schema exists for note/quest annotations yet):
+ * TTL-hidden on read, swept at the size threshold, and purged per chat
+ * by removeMemoryAnnotationsForChat on chat delete.
  * @param db
  * @param input
  * @returns The created annotation.
@@ -139,6 +177,7 @@ export async function createAnnotation(
     return annotation;
   }
 
+  sweepExpiredAnnotations();
   memoryStore.set(annotation.id, annotation,);
   return annotation;
 }

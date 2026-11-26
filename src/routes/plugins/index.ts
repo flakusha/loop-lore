@@ -135,7 +135,7 @@ export function pluginRoutes(
         // throws leaves the plugin disabled again — the same rollback the
         // loader does on a failed load.
         try {
-          await initializePlugin({ db: database, manifest: plugin.manifest, },);
+          await initializePlugin({ db: database, manifest: plugin.manifest, origin: plugin.origin, },);
         } catch (error) {
           registry.setEnabled(name, false,);
           resetPluginInit(name,);
@@ -146,10 +146,10 @@ export function pluginRoutes(
         try {
           await database
             .insertInto("plugin_state",)
-            .values({ name, status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
+            .values({ name, origin: plugin.origin, status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             .onConflict((oc,) =>
               oc
-                .column("name",)
+                .columns(["name", "origin",],)
                 .doUpdateSet({ status: "active", enabled_at: new Date().toISOString(), disabled_at: null, },)
             )
             .execute();
@@ -197,9 +197,9 @@ export function pluginRoutes(
         try {
           await database
             .insertInto("plugin_state",)
-            .values({ name, status: "disabled", disabled_at: new Date().toISOString(), },)
+            .values({ name, origin: plugin.origin, status: "disabled", disabled_at: new Date().toISOString(), },)
             .onConflict((oc,) =>
-              oc.column("name",).doUpdateSet({ status: "disabled", disabled_at: new Date().toISOString(), },)
+              oc.columns(["name", "origin",],).doUpdateSet({ status: "disabled", disabled_at: new Date().toISOString(), },)
             )
             .execute();
         } catch {

@@ -8,7 +8,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { resetHealthCache, scanAllProviders, } from "../../admin/provider-health";
+import { getWatchdogHealth, resetHealthCache, scanAllProviders, } from "../../admin/provider-health";
 import type { DB, } from "../../db/schema";
 import { registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import type { LLMProvider, } from "../../generation/providers/types";
@@ -176,6 +176,33 @@ describe("providers routes", () => {
 
       const withCaps = body.providers.filter((p,) => p.capabilities !== null && typeof p.capabilities === "object");
       expect(withCaps.length,).toBe(body.providers.length,);
+    });
+
+    test("includes an admin-only watchdog row with no reason text", async () => {
+      await db.insertInto("watchdog_events",).values({
+        event_kind: "probe",
+        decision_kind: "kill",
+        at_ms: Date.now(),
+        reason: "secret-upstream-detail",
+        misses: null,
+        crashes: null,
+      },).execute();
+
+      const direct = await getWatchdogHealth(db,);
+      expect(direct?.name,).toBe("watchdog",);
+      expect(direct?.lastDecision,).toBe("kill",);
+      expect(direct,).not.toHaveProperty("reason",);
+
+      const app = makeAppWithRole(db, "admin",);
+      const res = await app.handle(new Request("http://localhost/api/admin/providers",),);
+      expect(res.status,).toBe(200,);
+      const body = await res.json() as {
+        watchdog: { name: string; status: string; lastDecision: string | null } | null;
+      };
+
+      expect(body.watchdog?.name,).toBe("watchdog",);
+      expect(body.watchdog?.lastDecision,).toBe("kill",);
+      expect(body.watchdog,).not.toHaveProperty("reason",);
     });
   });
 

@@ -15,10 +15,23 @@
  * the pure response builder with a hand-built `RateLimitResult`, so sibling
  * files sharing the module registry see identical buckets.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import {
+  configureCookieTls,
+  readCookieSecureOverrideFromEnv,
+} from "../../middleware/csrf";
 import type { RateLimitResult, } from "../../middleware/rate-limit";
 import { rateLimitResponse as rateLimitResponseFromRequest, } from "./request";
-import { rateLimitResponse, } from "./shared";
+import {
+  createVerifyLimiter,
+  enrollLimiter,
+  rateLimitResponse,
+  resetEnrollRateLimiter,
+  resetVerifyRateLimiter,
+  setTokenCookie,
+  TOKEN_COOKIE,
+  verifyLimiter,
+} from "./shared";
 
 const BLOCKED: RateLimitResult = { allowed: false, limit: 10, remaining: 0, resetSec: 42, };
 const MESSAGE = "Too many login attempts";
@@ -26,6 +39,56 @@ const MESSAGE = "Too many login attempts";
 function req(headers: Record<string, string> = {},): Request {
   return new Request("http://localhost/api/auth/login", { headers, },);
 }
+
+describe("verify limiter", () => {
+  test("createVerifyLimiter enforces a 10-per-minute per-user budget with window refill", () => {
+    const limiter = createVerifyLimiter();
+    try {
+      const key = "verify:probe-factory";
+      for (let i = 0; i < 10; i++) {
+        expect(limiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+        limiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(limiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      expect(limiter.peek(key, 1_700_000_000_000 + 60_001,).allowed,).toBe(true,);
+    } finally {
+      limiter.destroy();
+    }
+  });
+
+  test("verifyLimiter singleton throttles and resetVerifyRateLimiter restores it", () => {
+    const key = "verify:probe-singleton";
+    try {
+      for (let i = 0; i < 10; i++) {
+        verifyLimiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(verifyLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      resetVerifyRateLimiter();
+      expect(verifyLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+    } finally {
+      resetVerifyRateLimiter();
+    }
+  });
+});
+
+describe("enroll limiter", () => {
+  test("enrollLimiter singleton throttles and resetEnrollRateLimiter restores it", () => {
+    const key = "enroll:probe-singleton";
+    try {
+      for (let i = 0; i < 5; i++) {
+        enrollLimiter.record(key, 1_700_000_000_000,);
+      }
+
+      expect(enrollLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(false,);
+      resetEnrollRateLimiter();
+      expect(enrollLimiter.peek(key, 1_700_000_000_000,).allowed,).toBe(true,);
+    } finally {
+      resetEnrollRateLimiter();
+    }
+  });
+});
 
 describe("rateLimitResponse", () => {
   test("is the same function re-exported by the request module", () => {
@@ -93,5 +156,74 @@ describe("rateLimitResponse", () => {
 
     const html = await rateLimitResponse({ request: req(), limit: BLOCKED, t, fallbackMessage: MESSAGE, },).text();
     expect(html,).toContain("Trop de tentatives",);
+  });
+});
+
+describe("setTokenCookie Secure decision", () => {
+  const savedEnv = {
+    llCookieSecure: process.env["LL_COOKIE_SECURE"],
+    nodeEnv: process.env["NODE_ENV"],
+  };
+
+  beforeEach(() => {
+    delete process.env["LL_COOKIE_SECURE"];
+    process.env["NODE_ENV"] = "development";
+    configureCookieTls(false,);
+  },);
+
+  afterEach(() => {
+    if (savedEnv.llCookieSecure === undefined) {
+      delete process.env["LL_COOKIE_SECURE"];
+    } else {
+      process.env["LL_COOKIE_SECURE"] = savedEnv.llCookieSecure;
+    }
+
+    if (savedEnv.nodeEnv === undefined) {
+      delete process.env["NODE_ENV"];
+    } else {
+      process.env["NODE_ENV"] = savedEnv.nodeEnv;
+    }
+
+    configureCookieTls(false,);
+  },);
+
+  test("TLS configured, no override → Secure with all other attributes intact", () => {
+    configureCookieTls(true,);
+    const cookie = setTokenCookie("tok-1", 60,);
+    expect(cookie,).toContain(`${TOKEN_COOKIE}=tok-1`,);
+    expect(cookie,).toContain("Secure",);
+    expect(cookie,).toContain("HttpOnly",);
+    expect(cookie,).toContain("SameSite=Lax",);
+    expect(cookie,).toContain("Path=/",);
+    expect(cookie,).toContain("Max-Age=60",);
+  });
+
+  test("TLS off, no override → usable cookie without Secure", () => {
+    const cookie = setTokenCookie("tok-2", 60,);
+    expect(cookie,).toContain(`${TOKEN_COOKIE}=tok-2`,);
+    expect(cookie,).not.toContain("Secure",);
+    expect(cookie,).toContain("HttpOnly",);
+  });
+
+  test("explicit LL_COOKIE_SECURE=true wins with TLS off", () => {
+    process.env["LL_COOKIE_SECURE"] = "true";
+    expect(setTokenCookie("tok-3", 60,),).toContain("Secure",);
+  });
+
+  test("explicit LL_COOKIE_SECURE=false wins with TLS configured", () => {
+    configureCookieTls(true,);
+    process.env["LL_COOKIE_SECURE"] = "false";
+    expect(setTokenCookie("tok-4", 60,),).not.toContain("Secure",);
+  });
+
+  test("NODE_ENV=production default unchanged with TLS off", () => {
+    process.env["NODE_ENV"] = "production";
+    expect(setTokenCookie("tok-5", 60,),).toContain("Secure",);
+  });
+
+  test("shared env parser maps true/false/unset", () => {
+    expect(readCookieSecureOverrideFromEnv("true",),).toBe(true,);
+    expect(readCookieSecureOverrideFromEnv("false",),).toBe(false,);
+    expect(readCookieSecureOverrideFromEnv(undefined,),).toBeUndefined();
   });
 });

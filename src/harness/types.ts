@@ -5,7 +5,7 @@
  * Harness exec log record types.
  *
  * The TS interface is camelCase; the persisted JSONL uses snake_case wire names
- * so `.harness/executions.jsonl` greps the same as the agent ledger's
+ * so `<instance-dir>/harness/executions.jsonl` greps the same as the agent ledger's
  * `.ledger.jsonl`. That wire half — `HarnessRunWire`, `serializeRun` and
  * `deserializeRun` — lives in ./types-wire, and is re-exported here so
  * existing `from "./types"` imports keep working.
@@ -21,7 +21,7 @@ export type { HarnessResult, HarnessTaskType, HarnessTier, } from "./types-wire"
 /** Tools the run touched (tool names, not payloads). */
 export type HarnessTool = string;
 
-/** One line of `.harness/executions.jsonl` in camelCase. */
+/** One line of `<instance-dir>/harness/executions.jsonl` in camelCase. */
 export interface HarnessRunRecord {
   runId: string;
   ts: string;
@@ -60,6 +60,11 @@ export interface HarnessRunRecord {
   tier?: HarnessTier | null;
   /** ACP session id reported by the harness, when any. */
   acpSessionId?: string | null;
+  /**
+   * Instance slug that recorded the run (H12 attribution). Null on lines
+   * written before per-instance attribution existed.
+   */
+  instanceId?: string | null;
 }
 
 // Read-model shapes (summaries, filters, stats rollups) live in ./read-models
@@ -79,7 +84,8 @@ export type {
 /**
  * Record → the summary row the list endpoint returns.
  * @param record
- * @returns Summary view (drops `tools`, `pattern`, `patternDetail`, `toolingGap`, `msg`).
+ * @returns Summary view (drops `tools`, `pattern`, `patternDetail`, `toolingGap`,
+ *   `msg`; keeps the attribution fields `profile` and `instanceId`).
  */
 export function toSummary(record: HarnessRunRecord,): HarnessRunSummary {
   return {
@@ -101,6 +107,8 @@ export function toSummary(record: HarnessRunRecord,): HarnessRunSummary {
     gitSha: record.gitSha,
     pid: record.pid,
     turnId: record.turnId,
+    profile: record.profile ?? null,
+    instanceId: record.instanceId ?? null,
   };
 }
 

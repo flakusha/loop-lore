@@ -22,7 +22,6 @@ import { resolveClassifierPrompt, } from "../aux-pipeline/class-template-resolve
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-import { recordRegexCall, } from "../regex/telemetry";
 import { clampUnit, jsonParseOr, } from "../utils";
 
 /** Verdict returned by the GM-tool keyword pre-gate. */
@@ -151,16 +150,6 @@ export async function detectGmTool(
   userId?: string,
   chatId?: string,
 ): Promise<GmToolDetection | null> {
-  // Keyword pre-gate (fail-open).
-  try {
-    if (isGmToolKeywordGateEnabled(config,)) {
-      const verdict = gmToolKeywordGate(content,);
-      recordRegexCall("gm-tool:keyword-gate", verdict === "candidate",);
-      if (verdict === "skip") { return null; }
-    }
-  } catch {
-    // fail-open: proceed to AUX
-  }
   // Pack template > systemPrompts.gmTool override > code default.
 
   const { prompt, params, } = await resolveClassifierPrompt({

@@ -59,12 +59,16 @@ const ROUTES: RouteCase[] = [
   // Unknown chat → access denied before the SSE stream is opened.
   { name: "stream", method: "GET", path: "/api/v1/generation/stream/missing-chat", expected: 403, },
   { name: "active", method: "GET", path: "/api/v1/generation/active", expected: 403, },
+  { name: "active-me", method: "GET", path: "/api/v1/generation/active/me", expected: 200, },
   { name: "retry", method: "POST", path: "/api/v1/generation/retry", body: {}, expected: 400, },
   { name: "continue", method: "POST", path: "/api/v1/generation/continue", body: {}, expected: 400, },
   { name: "regenerate", method: "POST", path: "/api/v1/generation/regenerate", body: {}, expected: 400, },
   { name: "image", method: "POST", path: "/api/v1/generation/image", body: {}, expected: 400, },
   // Unknown job id → 404 (foreign jobs are 404 too, so ids are not probeable).
   { name: "video-status", method: "GET", path: "/api/v1/generation/video/status/missing-job", expected: 404, },
+  { name: "job-cancel", method: "POST", path: "/api/v1/generation/jobs/missing-job/cancel", body: {}, expected: 404, },
+  { name: "job-retry", method: "POST", path: "/api/v1/generation/jobs/missing-job/retry", body: {}, expected: 404, },
+  { name: "job-defer", method: "POST", path: "/api/v1/generation/jobs/missing-job/defer", body: {}, expected: 404, },
   { name: "caption", method: "POST", path: "/api/v1/generation/caption", body: {}, expected: 400, },
   { name: "prompt", method: "POST", path: "/api/v1/generation/prompt", body: {}, expected: 400, },
   { name: "test-connection", method: "POST", path: "/api/v1/generation/test-connection", body: {}, expected: 400, },
@@ -151,4 +155,30 @@ describe("generationRoutes — plugin route mounting", () => {
       expect(res.status,).toBeGreaterThanOrEqual(400,);
     });
   }
+
+  test("active/me — authenticated caller gets a numeric count", async () => {
+    const app = createAuthApp(db, ownerId,);
+    const res = await fire(app, {
+      name: "active-me",
+      method: "GET",
+      path: "/api/v1/generation/active/me",
+      expected: 200,
+    }, chatId,);
+
+    expect(res.status,).toBe(200,);
+    const data = (await res.json()) as { count?: unknown };
+    expect(typeof data.count,).toBe("number",);
+  });
+
+  test("active/me — anonymous caller gets 401", async () => {
+    const app = createAnonApp(db,);
+    const res = await fire(app, {
+      name: "active-me",
+      method: "GET",
+      path: "/api/v1/generation/active/me",
+      expected: 200,
+    }, chatId,);
+
+    expect(res.status,).toBe(401,);
+  });
 });

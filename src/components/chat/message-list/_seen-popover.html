@@ -1,0 +1,27 @@
+<!-- Seen-state viewer popover: shows who has seen/processing the message -->
+<div
+  class="seen-popover"
+  x-show="_seenPopoverOpen"
+  x-cloak
+  @click.outside="_seenPopoverOpen = false"
+  data-testid="seen-popover"
+  :style="`left:${_seenPopoverX}px;top:${_seenPopoverY}px`"
+>
+  <div class="seen-popover-header">
+    <span class="seen-popover-title">{{{t("chats.seenBy")}}}</span>
+    <button class="btn-icon btn-xs" @click="_seenPopoverOpen = false">✕</button>
+  </div>
+  <div class="seen-popover-list">
+    <template x-for="v in _seenPopoverViewers" :key="v.actorId">
+      <div class="seen-viewer">
+        <span class="seen-viewer-name" x-text="v.actorId"></span>
+        <span
+          class="seen-viewer-state"
+          :class="`state-${v.state}`"
+          x-text="v.state"
+        ></span>
+        <span class="seen-viewer-time" x-show="v.seenAt" x-text="formatTimeShort(v.seenAt)"></span>
+      </div>
+    </template>
+  </div>
+</div>

@@ -7,11 +7,11 @@
  * baseline, so the advisory "N clones every run" warning becomes actionable.
  *
  * Usage:
- *   bun scripts/check/jscpd-ratchet.mjs --report <jscpd-report.json> [--baseline <path>] [--update]
+ *   bun scripts/check/jscpd-ratchet.mjs --report <report.json> [--baseline <path>] [--update] [--accept-new-debt]
  *
  * - Gate mode (default): exit 1 when `duplicates.length > baseline.clones`.
- * - `--update`: lower the baseline to the current count; refuses to raise.
- *   Only ever run this intentionally after removing duplication.
+ * - `--update`: lower the baseline to the current count; refuses to raise
+ *   unless `--accept-new-debt` is passed too (an explicit debt decision).
  *
  * The baseline number lives only in `scripts/check/jscpd-baseline.json` —
  * never quote it in docs (docs-no-volatile-metrics).
@@ -35,6 +35,7 @@ function parseArgs() {
     report: optional(option("--report", string(),),),
     baseline: withDefault(option("--baseline", string(),), DEFAULT_BASELINE,),
     update: withDefault(flag("--update",), false,),
+    acceptNewDebt: withDefault(flag("--accept-new-debt",), false,),
   },);
 
   return runScript(parser, {
@@ -72,9 +73,9 @@ function main() {
   const clones = readClones(path.resolve(args.report,),);
   if (args.update) {
     const baseline = readBaseline(baselinePath,);
-    if (clones >= baseline) {
+    if (clones >= baseline && !args.acceptNewDebt) {
       console.error(
-        `refusing to update baseline: current ${clones} clones >= baseline ${baseline} (update only lowers)`,
+        `refusing to update baseline: current ${clones} clones >= baseline ${baseline} (pass --accept-new-debt to raise intentionally)`,
       );
       process.exit(1,);
     }
@@ -83,7 +84,11 @@ function main() {
       `${JSON.stringify({ clones, }, null, 2,)}\n`,
       "utf8",
     );
-    console.log(`jscpd baseline lowered: ${baseline} → ${clones} (${baselinePath})`,);
+    console.log(
+      clones < baseline
+        ? `jscpd baseline lowered: ${baseline} → ${clones} (${baselinePath})`
+        : `jscpd baseline set: ${baseline} → ${clones} (accepted new debt)`,
+    );
     return;
   }
   const baseline = readBaseline(baselinePath,);
@@ -92,10 +97,10 @@ function main() {
       `FAIL: jscpd ratchet: ${clones} clones exceeds baseline ${baseline}`,
     );
     console.error(
-      `  Deduplicate the new clones, or lower the baseline intentionally:`,
+      `  Deduplicate the new clones, or raise the baseline deliberately:`,
     );
     console.error(
-      `  bun scripts/check/jscpd-ratchet.mjs --report <report.json> --update`,
+      `  bun scripts/check/jscpd-ratchet.mjs --report <report.json> --update --accept-new-debt`,
     );
     process.exit(1,);
   }

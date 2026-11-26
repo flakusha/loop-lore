@@ -3,7 +3,7 @@
 
 # TASK: RenPy export button in chat-list batch bar
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** medium
 **Effort:** S
 **Epic:** epic-renpy-export
@@ -20,6 +20,6 @@ Frontend: Ren'Py button in the batch bar (chat-list-panel.html) calling POST /ap
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

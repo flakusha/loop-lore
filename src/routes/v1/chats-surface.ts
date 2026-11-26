@@ -6,18 +6,18 @@
  */
 import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { featuresForOpts, } from "../../features/surface";
 import { chatBackgroundsRoutes, } from "../chat-backgrounds";
 import { chatContextRoutes, } from "../chat-context";
 import { chatExportRoutes, } from "../chat-export";
+import { chatMembershipRoutes, } from "../chat-membership";
 import { chatPinRoutes, } from "../chat-pins";
-import { chatSearchRoutes, } from "../chat-search";
 import { chatSectionsRoutes, } from "../chat-sections";
 import { chatsRoutes, } from "../chats";
 import { invitesRoutes, } from "../invites";
 import { linkPreviewRoutes, } from "../link-previews";
 import { messagePollRoutes, } from "../message-polls";
 import { messageReactionsRoutes, } from "../message-reactions";
-import { messageSearchRoutes, } from "../message-search";
 import { messageSeenRoutes, } from "../message-seen";
 import { messagesRoutes, } from "../messages";
 import { musicLinksRoutes, } from "../music-links";
@@ -34,25 +34,30 @@ export function chatsSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
-  return new Elysia({ name: "v1-chats", },)
-    // ── Chats & messages ─────────────────────────────────────
-    .use(chatsRoutes(handleOpts, prefix,),)
-    .use(messagesRoutes(handleOpts, prefix,),)
-    .use(scheduledRoutes(handleOpts, prefix,),)
-    .use(messageReactionsRoutes(handleOpts, prefix,),)
-    .use(messagePollRoutes({ database, }, prefix,),)
-    .use(linkPreviewRoutes({ database, }, prefix,),)
-    .use(messageSearchRoutes(handleOpts, prefix,),)
-    .use(messageSeenRoutes({ database, }, prefix,),)
-    .use(musicLinksRoutes(handleOpts, prefix,),)
-    .use(chatSearchRoutes(handleOpts, prefix,),)
-    .use(chatSectionsRoutes(handleOpts, prefix,),)
-    .use(chatBackgroundsRoutes(handleOpts, prefix,),)
-    .use(chatPinRoutes(handleOpts, prefix,),)
-    .use(chatExportRoutes(handleOpts, prefix,),)
-    .use(chatContextRoutes(handleOpts, prefix,),)
-    .use(invitesRoutes(handleOpts, prefix,),)
-    .use(worldInvitesRoutes(handleOpts, prefix,),)
-    .use(vnGenerateRoutes({ database, config, }, prefix,),)
-    .use(voiceNoteRoutes(handleOpts, prefix,),);
+  const app = new Elysia({ name: "v1-chats", },);
+  if (!featuresForOpts(opts,).chat) { return app; }
+  app.use(
+    new Elysia({ name: "v1-chats-routes", },)
+      // ── Chats & messages ─────────────────────────────────────
+      .use(chatsRoutes(handleOpts, prefix,),)
+      .use(messagesRoutes(handleOpts, prefix,),)
+      .use(scheduledRoutes(handleOpts, prefix,),)
+      .use(messageReactionsRoutes(handleOpts, prefix,),)
+      .use(messagePollRoutes({ database, }, prefix,),)
+      .use(linkPreviewRoutes({ database, }, prefix,),)
+      .use(messageSeenRoutes({ database, }, prefix,),)
+      .use(musicLinksRoutes(handleOpts, prefix,),)
+      .use(chatMembershipRoutes(handleOpts, prefix,),)
+      .use(chatSectionsRoutes(handleOpts, prefix,),)
+      .use(chatBackgroundsRoutes(handleOpts, prefix,),)
+      .use(chatPinRoutes(handleOpts, prefix,),)
+      .use(chatExportRoutes(handleOpts, prefix,),)
+      .use(chatContextRoutes(handleOpts, prefix,),)
+      .use(invitesRoutes(handleOpts, prefix,),)
+      .use(worldInvitesRoutes(handleOpts, prefix,),)
+      .use(vnGenerateRoutes({ database, config, }, prefix,),)
+      .use(voiceNoteRoutes(handleOpts, prefix,),),
+  );
+
+  return app;
 }

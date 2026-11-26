@@ -11,6 +11,20 @@ No source modified. No tests, linters, or builds run. Citations below are ranges
 
 ---
 
+## 2026-11-19 re-verification
+
+The claim table's line numbers are stale; re-checking against current `dev` (2026-11-19) shifts these verdicts:
+
+- **C2** — `sandboxed` removed, replaced by `policy` (`src/plugins/types.ts:111-123`).
+- **C5 / C7 / C9** — refuted by shipped fixes (`src/plugins/loader.ts:432-449,329`; `plugins/community/nsfw-cards/routes.ts:22-39`).
+- **R3** — refuted, MCP exists (`src/integrations/loop-lore-facade/mcp/server.ts:20,31`; `mcp/routes.ts:41-53`).
+- **R5** — consolidated (`src/chat/token-utils.ts:12,23-25`).
+- **R6** — refuted, TTS exists (`src/generation/audio/providers/openrouter-tts.ts:80-88`).
+- **G1** — now 51 keys (`node_modules/giwt/src/cli-commands.ts:65-280`).
+- **H2** — refuted, opencode git MCP servers removed (`~/.config/opencode/opencode.json:1-21`, 21 lines).
+
+All other verdicts were re-checked and stand.
+
 ## Claim table
 
 | # | Claim | Verdict | Evidence I opened | Note |

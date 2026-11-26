@@ -30,6 +30,17 @@
           "default": true,
           "description": "Compress uploaded assets"
         },
+        "downloadNaming": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "datetime",
+            "hash",
+            "datetime-hash"
+          ],
+          "default": "raw",
+          "description": "Download filename scheme (user asset_user_preferences.download_naming overrides it): raw app-storage name, datetime and/or content-hash prefix"
+        },
         "signedUrlSecret": {
           "type": "string",
           "default": "",

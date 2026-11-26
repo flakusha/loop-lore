@@ -47,6 +47,12 @@ function errorPort(shape: ListenErrorShape,): string | null {
   if (typeof shape.message === "string") {
     const match = /:(\d{1,5})\b/.exec(shape.message,);
     if (match?.[1]) { return match[1]; }
+    // TODO(env): bun-only message shape — Bun reports the clash without an
+    // address object ("Failed to start server. Is port 39882 in use?"), while
+    // Node carries the address (handled above). Drop this branch when the
+    // listener moves off Bun.
+    const bunMatch = /\bport (\d{1,5})\b/.exec(shape.message,);
+    if (bunMatch?.[1]) { return bunMatch[1]; }
   }
 
   return null;
@@ -64,12 +70,10 @@ export function portConflictMessage(error: unknown,): string | null {
   const host = errorHost(shape,);
   const where = port === null ? "the configured port" : `port ${port}${host === null ? "" : ` on ${host}`}`;
 
-  const hint = port === null
-    ? "via the PORT env var (server.port)"
-    : `via the PORT env var (server.port), e.g. PORT=${port}`;
-
   return (
     `[server] ${where} is already in use — another instance or process holds it. ` +
-    `Stop it, or use a different port ${hint}.`
+    `Stop it, or run a separate instance with --instance NAME (LOOP_LORE_INSTANCE=NAME); ` +
+    `each instance gets its own state dir; ` +
+    `changing PORT instead would silently switch databases.`
   );
 }

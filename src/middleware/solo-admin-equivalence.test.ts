@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { AuthConfig, } from "../config/schema";
+import type { AuthConfig, Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { seedDefaultActors, } from "../db/seed";
 import { authenticate, resetSoloUserCache, } from "../middleware/auth";
@@ -15,12 +15,14 @@ const soloAuthConfig = {
   demoAutoSetup: true,
 } as unknown as AuthConfig;
 
+const soloConfig = { auth: soloAuthConfig, } as Config;
+
 describe("verify seeding of admin (solo/demo mode)", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
     ({ db, } = await createTestDb());
-    await seedDefaultActors(db,);
+    await seedDefaultActors(db, soloConfig,);
   },);
 
   afterAll(async () => {

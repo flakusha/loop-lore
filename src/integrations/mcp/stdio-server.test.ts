@@ -25,8 +25,13 @@ import { Client, } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport, } from "@modelcontextprotocol/sdk/inMemory.js";
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, rmSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import { PassThrough, } from "node:stream";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { resetEffectiveServerBindForTests, setEffectiveServerBind, } from "../../config/state-dir";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -34,8 +39,10 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { initInboundSettings, resetInboundSettings, } from "../inbound/settings";
+import { ensureProxyToken, } from "../inbound/stdio-proxy";
+import { startStdioProxyListener, type StdioProxyListener, } from "../inbound/stdio-proxy-listener";
 import { resetFacadeRegistry, } from "../loop-lore-facade/instance";
-import { connectInboundMcpServer, main, } from "./stdio-server";
+import { connectInboundMcpServer, main, mainProxy, } from "./stdio-server";
 
 // ── main()'s module seams (ISOLATED-only: mock.module pins the process) ─────
 
@@ -151,20 +158,41 @@ describe("inbound MCP stdio server", () => {
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t0,),).toBeNull();
 
     // Seeded but disabled (schema defaults).
-    initInboundSettings({ mcpEnabled: false, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: false,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const [t1, ,] = InMemoryTransport.createLinkedPair();
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t1,),).toBeNull();
 
     // Enabled but no principal.
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: "", principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: "",
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     resetFacadeRegistry();
     const [t2, ,] = InMemoryTransport.createLinkedPair();
     expect(await connectInboundMcpServer({ database: db, config: baseConfig, }, t2,),).toBeNull();
   });
 
   test("tools/list generates from the facade manifest and carries the tool annotations", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -191,7 +219,14 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("tools/call chat.history runs the facade lifecycle with the inbound principal", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -209,7 +244,14 @@ describe("inbound MCP stdio server", () => {
   });
 
   test("a read-tier principal is refused chat.send with the 403-class tool error", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const client = await makeClient(configWith({ mcpEnabled: true, principalUserId: USER, },),);
     expect(client,).not.toBeNull();
 
@@ -227,6 +269,71 @@ describe("inbound MCP stdio server", () => {
     const rows = await db.selectFrom("messages",).selectAll().where("content", "=", "denied by stdio",).execute();
     expect(rows,).toHaveLength(0,);
     await client!.close();
+  });
+
+  test("--proxy relays stdio through a live listener; close ends only the shim", async () => {
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    const dir = mkdtempSync(join(tmpdir(), "mcp-proxy-main-",),);
+    const env = { LOOP_LORE_STATE_DIR: dir, };
+    let listener: StdioProxyListener | undefined;
+    const prevExitCode = process.exitCode ?? 0;
+    const prevMainConfig = mainConfig;
+    // mainProxy loads config through the ISOLATED mock; seed it and pin the
+    // same effective bind so listener and shim resolve one instance dir.
+    mainConfig = baseConfig;
+    setEffectiveServerBind(baseConfig.server,);
+    try {
+      ensureProxyToken(env,);
+      listener = await startStdioProxyListener({
+        database: db,
+        config: configWith({
+          mcpEnabled: true,
+          principalUserId: USER,
+          principalScope: "read",
+          proxyBind: "127.0.0.1",
+        },),
+      }, env,);
+
+      const input = new PassThrough();
+      const output = new PassThrough();
+      const lines: string[] = [];
+      let rest = "";
+      output.on("data", (chunk: Buffer,) => {
+        rest += chunk.toString("utf8",);
+        const parts = rest.split("\n",);
+        rest = parts.pop() ?? "";
+        for (const line of parts) {
+          if (line !== "") { lines.push(line,); }
+        }
+      },);
+
+      const relay = mainProxy(listener.addr, { input, output, env, config: baseConfig, },);
+      // A protocol ping proves bytes flow both ways through the shim.
+      input.write(`${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "ping", },)}\n`,);
+      const deadline = Date.now() + 4000;
+      for (;;) {
+        if (lines.some((line,) => line.includes('"id":1',))) { break; }
+        if (Date.now() > deadline) { throw new Error("no ping reply through the shim",); }
+        await new Promise((resolve,) => setTimeout(resolve, 10,));
+      }
+
+      input.end();
+      await relay;
+      expect(process.exitCode ?? 0,).toBe(prevExitCode,);
+    } finally {
+      await listener?.close();
+      mainConfig = prevMainConfig;
+      resetEffectiveServerBindForTests();
+      process.exitCode = prevExitCode;
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });
 
@@ -264,8 +371,21 @@ describeOrSkip("inbound MCP stdio server main()", () => {
   });
 
   test("an admitted boot attaches the facade server to StdioServerTransport", async () => {
-    initInboundSettings({ mcpEnabled: true, acpEnabled: false, principalUserId: USER, principalScope: "read", },);
-    mainConfig = configWith({ mcpEnabled: true, principalUserId: USER, principalScope: "read", },);
+    initInboundSettings({
+      mcpEnabled: true,
+      acpEnabled: false,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
+    mainConfig = configWith({
+      mcpEnabled: true,
+      principalUserId: USER,
+      principalScope: "read",
+      proxyBind: "127.0.0.1",
+    },);
+
     const prevExitCode = process.exitCode ?? 0;
     let exitCodeAfter: string | number | null | undefined;
     try {

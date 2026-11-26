@@ -75,6 +75,7 @@ configs/templates/*.yml
 .serena
 
 # Harness exec log (append-only run records, per-host)
+# legacy repo-scoped exec log; the live log is <state>/<instance>/harness/
 .harness/
 
 # Session harvest artifacts (HTML dumps in repo root break the dprint gate)
@@ -132,3 +133,9 @@ docs/plan-gen/
 .plan/interconnect.json
 .plan/interconnect.md
 .plan/priority-matrix.md
+.plan/entry-map.md
+
+# .github/ workflows are tracked — re-include for users whose global gitignore
+# excludes dot-directories (`.*/`), so workflow files stage with plain `git add`.
+!.github/
+!.github/**

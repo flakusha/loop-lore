@@ -182,6 +182,33 @@ describeOrSkip("dispatchCommandAction", () => {
     });
   },);
 
+  describeOrSkip("imgedit", () => {
+    test("posts the resolved template and params to the image-edit route", async () => {
+      mockFetch(200,);
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "imgedit",
+        {
+          template_id: "img2img",
+          backend: "comfyui",
+          params: { prompt: "dramatic sky", input_image: "asset-1", },
+          messageId: "msg-1",
+        },
+        "chat-1",
+      );
+
+      expect(fetchCalls.length,).toBe(1,);
+      expect(fetchCalls[0]?.url,).toBe("/api/v1/image-edit/run",);
+      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(body.template_id,).toBe("img2img",);
+      expect(body.backend,).toBe("comfyui",);
+      expect(body.params,).toEqual({ prompt: "dramatic sky", input_image: "asset-1", },);
+      expect(body.chatId,).toBe("chat-1",);
+      expect(body.messageId,).toBe("msg-1",);
+    });
+  },);
+
   describeOrSkip("generate-caption", () => {
     test("fires POST to /api/v1/generation/caption with assetIds + chatId", async () => {
       mockFetch(200,);

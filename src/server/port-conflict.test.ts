@@ -18,7 +18,8 @@ describe("portConflictMessage", () => {
     expect(message,).not.toBeNull();
     expect(message,).toContain("port 3000",);
     expect(message,).toContain("another instance or process",);
-    expect(message,).toContain("PORT",);
+    expect(message,).toContain("--instance",);
+    expect(message,).not.toContain("PORT=",);
   });
 
   test("includes the host when the error carries one", () => {
@@ -41,11 +42,36 @@ describe("portConflictMessage", () => {
     expect(portConflictMessage("EADDRINUSE",),).toBeNull();
   });
 
+  test("reads the port out of Bun's listen message (no port/address fields)", () => {
+    // The shape Bun actually throws: code + syscall + errno, and the port
+    // only in the message text.
+    const error = Object.assign(new Error("Failed to start server. Is port 39882 in use?",), {
+      code: "EADDRINUSE",
+    },);
+
+    const message = portConflictMessage(error,);
+    expect(message,).not.toBeNull();
+    expect(message,).toContain("port 39882",);
+    expect(message,).toContain("LOOP_LORE_INSTANCE",);
+  });
+
+  test("the message reads as balanced prose", () => {
+    const error = Object.assign(new Error("listen EADDRINUSE",), {
+      code: "EADDRINUSE",
+      port: 3000,
+    },);
+
+    const message = portConflictMessage(error,) ?? "";
+    const opens = message.split("(",).length - 1;
+    const closes = message.split(")",).length - 1;
+    expect(opens,).toBe(closes,);
+  });
+
   test("falls back to the configured port when no port is present", () => {
     const error = Object.assign(new Error("address already in use",), { code: "EADDRINUSE", },);
     const message = portConflictMessage(error,);
     expect(message,).not.toBeNull();
     expect(message,).toContain("the configured port",);
-    expect(message,).toContain("PORT",);
+    expect(message,).toContain("--instance",);
   });
 });

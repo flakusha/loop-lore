@@ -84,9 +84,6 @@ const STATEMENT_BOUNDARY = /[;{}]$/;
  * ratchet forces.
  */
 const BASELINE = [
-  "src/assets/serve-file.ts",
-  "src/assets/test-helpers.ts",
-  "src/assets/variant-path.ts",
   "src/build/compress.ts",
   "src/build/copy-icons.ts",
   "src/build/egui-artifact.ts",
@@ -94,6 +91,11 @@ const BASELINE = [
   "src/characters/seed/avatar.ts",
   "src/characters/seed/promote.ts",
   "src/content/hash-injection.ts",
+  // Boot-time legacy backup-pool warning only: `existsSync` checks a FIXED
+  // path derived from LEGACY_DATA_DIRS, never a command-handler-supplied path,
+  // and the warning fires from getDatabase() during startup. No tool can
+  // steer it, so the interception-proof named binding is harmless here.
+  "src/db/legacy-backup-pool.ts",
   "src/db/migrate.ts",
   "src/db/reinit-archive.ts",
   "src/db/reinit.ts",
@@ -123,13 +125,11 @@ const BASELINE = [
   // allowlist through the interceptor instead of resolving actual symlinks),
   // same deliberate interception-proof form as worktree-scope.ts above.
   "src/integrations/harness/repo-access/principal-scope.ts",
-  "src/plugins/loader.ts",
   // ACP fs-read bridge: its `open` must observe the REAL filesystem — the
   // bridge serves the agent's reads inside the profile's sandbox root, and
   // `open` sits in the interceptor's WRITE member list, so a policed call
   // would judge a legitimate read against the assistant's write allowlist.
   "src/integrations/harness/runtime.ts",
-  "src/routes/assets.ts",
   "src/routes/characters/export.ts",
   "src/routes/views/character-edit-form.ts",
   "src/routes/views/constants.ts",

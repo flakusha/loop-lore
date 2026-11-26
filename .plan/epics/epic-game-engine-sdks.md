@@ -69,29 +69,31 @@ public class StoryClient : MonoBehaviour {
 - **Architecture**: Godot client consuming REST + WebSocket API
 - **Realtime**: WebSocket for live events, HTTPRequest for REST
 - **Rendering**: Godot 2D engine with scenes/nodes
-- **Networking**: Built-in WebSocketClient
+- **Networking**: Built-in WebSocketPeer with per-frame `poll()`
 
 ```gdscript
 # Godot GDScript client example
 extends Node
 
-var ws := WebSocketClient.new()
+var ws := WebSocketPeer.new()
 
 func _ready():
-    ws.connect("connection_established", self, "_on_ws_connected")
-    ws.connect("data_received", self, "_on_ws_data")
     ws.connect_to_url("wss://api.loop-lore.app/ws")
 
-func _on_ws_data():
-    var pkt := ws.get_packet()
-    var evt := JSON.parse(pkt.get_string_from_utf8()).result
-    match evt.type:
-        "narrative":
-            display_narrative(evt.payload.text)
-        "state_change":
-            update_game_state(evt.payload)
-        "interaction":
-            show_interaction_prompt(evt.payload)
+func _process(_delta):
+    ws.poll()
+    if ws.get_ready_state() != WebSocketPeer.STATE_OPEN:
+        return
+    while ws.get_available_packet_count() > 0:
+        var pkt := ws.get_packet()
+        var evt := JSON.parse(pkt.get_string_from_utf8()).result
+        match evt.type:
+            "narrative":
+                display_narrative(evt.payload.text)
+            "state_change":
+                update_game_state(evt.payload)
+            "interaction":
+                show_interaction_prompt(evt.payload)
 ```
 
 ## Tasks
@@ -120,3 +122,9 @@ func _on_ws_data():
 
 - `loop-lore-unity/` — Unity SDK
 - `loop-lore-godot/` — Godot addon
+
+## Engine research addendum (2026-11-25)
+
+- Separate Unity/Unreal Editor automation from runtime SDKs; runtime Players consume the frozen `StoryEvent` contract with pinned transport/package choices.
+- No Editor MCP or honkbox dependency in Players; Godot uses `WebSocketPeer`.
+- Honkbox-side contract hardening stays in honkbox `.tmp/research`; that repo promotes its own records.

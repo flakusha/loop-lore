@@ -3,7 +3,7 @@
 
 // src/integrations/loop-lore-facade/ops/shared.ts — the building blocks the
 // per-domain facade ops share: the calling principal's identity, the
-// per-actor ownership guard, and the two typed rejections.
+// per-actor ownership guard, the two typed rejections and the 404 normalizer.
 //
 // ONE ownership rule, shared by every domain that reads a CHARACTER's data:
 // an actor belongs to the calling user when `actors.owner_id` or
@@ -94,4 +94,20 @@ export function badBodyResult(opName: string,): FacadeResult {
  */
 export function notFoundResult(message: string,): FacadeResult {
   return { ok: false, status: 404, json: { error: "not_found", message, }, };
+}
+
+/**
+ * Map a delegated ownership-guard 403 to the facade's 404 posture.
+ * Opt-in per op: use only where the route's 403 means "exists but not
+ * yours". Capability/tier denials (e.g. delegation_disabled) pass through.
+ * @param result - the delegated call's FacadeResult
+ * @param message - the 404 message when masked
+ * @returns the 404 rejection on 403, else the result untouched
+ */
+export function notFoundWhenForbidden(result: FacadeResult, message: string,): FacadeResult {
+  if (!result.ok && result.status === 403) {
+    return notFoundResult(message,);
+  }
+
+  return result;
 }

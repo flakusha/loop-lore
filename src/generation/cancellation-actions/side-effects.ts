@@ -19,8 +19,9 @@
  * fan-out is synchronous with the abort signal — no extra DB roundtrip
  * is needed to discover which jobs belong to which attempt.
  */
+import { randomUUID, } from "node:crypto";
 import { getLogger, } from "../../logger";
-import { activeGenerations, } from "../cancellation-tracker";
+import { activeGenerations, getActiveAttemptId, } from "../cancellation-tracker";
 import type { SideEffectJob, } from "../cancellation-tracker/types";
 
 /**
@@ -73,4 +74,48 @@ export function listSideEffectJobs(attemptId: string,): readonly SideEffectJob[]
   if (!active) { return []; }
   const map = (active.sideEffectJobs ??= new Map());
   return Array.from(map.values(),);
+}
+
+/** Handle for a discard-on-cancel registration. */
+export interface DiscardOnCancelHandle {
+  isDiscarded(): boolean;
+}
+
+const NEVER_DISCARDED: DiscardOnCancelHandle = { isDiscarded: () => false, };
+const ALWAYS_DISCARDED: DiscardOnCancelHandle = { isDiscarded: () => true, };
+
+/**
+ * Flag a media output for discard when the chat's active generation is
+ * cancelled. Registers on the existing side-effect registry so Stop fan-out
+ * sets the flag synchronously; no new registry and no unregister on success
+ * (every teardown path deletes the attempt record and its registry with it).
+ *
+ * No active attempt preserves the legacy uncancellable behavior. A chatId
+ * whose attempt settles between lookup and registration is a late arrival:
+ * the output must be discarded rather than persisted after Stop.
+ * @param chatId
+ * @param kind
+ * @param id
+ * @returns {DiscardOnCancelHandle}
+ */
+export function registerDiscardOnCancel(
+  chatId: string | undefined,
+  kind: SideEffectJob["kind"],
+  id?: string,
+): DiscardOnCancelHandle {
+  const attemptId = chatId ? getActiveAttemptId(chatId,) : undefined;
+  if (!attemptId) { return NEVER_DISCARDED; }
+
+  let discarded = false;
+  const registered = registerSideEffectJob(attemptId, {
+    id: id ?? randomUUID(),
+    kind,
+    cancel: () => {
+      discarded = true;
+    },
+  },);
+
+  if (!registered) { return ALWAYS_DISCARDED; }
+
+  return { isDiscarded: () => discarded, };
 }

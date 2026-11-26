@@ -14,7 +14,7 @@
  *      driven through the actual router with the matrix read back from the DB,
  *      not against a reimplementation of the router's precedence logic.
  */
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { beforeEach, describe, expect, setDefaultTimeout, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -25,12 +25,17 @@ import type { PeerProbeFetch, } from "../../federation/peer-health-probe";
 import { listWorkloadPeers, } from "../../federation/peer-registry";
 import type { PeerAssignmentMatrix, } from "../../federation/peer-router";
 import { PeerRouteReason, resolvePeerRoute, } from "../../federation/peer-router";
+import { performanceBudget, resetPerformanceQuota, } from "../../federation/performance-quota";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { federationAdminRoutes, } from "./federation";
 import { federationBudgetRoutes, } from "./federation-budgets";
 import { federationPeersRoutes, } from "./federation-peers";
 import { federationUsageRoutes, } from "./federation-usage";
+
+// Each case boots a real route against a fresh in-memory DB; a loaded
+// finalize run can exceed bun's 5s default without any assertion changing.
+setDefaultTimeout(15_000,);
 
 const SECRET = "admin-fed-encryption-key-0123456789";
 const REMOTE = "https://gpu.example";
@@ -450,6 +455,47 @@ describe("federation admin — health probe on save", () => {
     expect(stored[0]?.state,).not.toBe("trusted",);
     await db.destroy();
   });
+});
+
+test("a budget write reloads the live admission counters", async () => {
+  const origin = "https://quota-admin-reload.example";
+  const { db, } = await createTestDb();
+  await upsertPeer(db, { origin, state: "trusted", },);
+  const app = createApp(db, "admin",);
+
+  try {
+    const put = await app.handle(
+      new Request("http://localhost/api/admin/federation/budgets", {
+        method: "PUT",
+        body: JSON.stringify({
+          origin,
+          workloadClass: "chat",
+          mode: "hard",
+          maxConcurrency: 2,
+        },),
+        headers: { "Content-Type": "application/json", },
+      },),
+    );
+
+    expect(put.status,).toBe(200,);
+    expect(
+      performanceBudget({ origin, workloadClass: PeerWorkloadClass.Chat, },)?.maxConcurrency,
+    ).toBe(2,);
+
+    const del = await app.handle(
+      new Request(`http://localhost/api/admin/federation/budgets/${encodeURIComponent(origin,)}/chat`, {
+        method: "DELETE",
+      },),
+    );
+
+    expect(del.status,).toBe(200,);
+    expect(
+      performanceBudget({ origin, workloadClass: PeerWorkloadClass.Chat, },),
+    ).toBeNull();
+  } finally {
+    resetPerformanceQuota();
+    await db.destroy();
+  }
 });
 
 describe("federation admin — budgets", () => {

@@ -6,6 +6,7 @@
  * GETs `/view` with the file reference and enforces the safe buffer limit.
  */
 import { safeFromUint8Array, } from "../../utils/safe-buffer";
+import { proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 import type { ComfyUIOutputFile, } from "./comfyui";
 
 /** Auth headers for proxy-fronted engines; empty for stock ComfyUI. */
@@ -31,16 +32,22 @@ export async function downloadComfyFile(
   if (file.subfolder) { params.set("subfolder", file.subfolder,); }
 
   const url = `${baseUrl}/view?${params.toString()}`;
-  const resp = await fetch(url, {
+  const timeout = AbortSignal.timeout(30_000,);
+  const result = await safeFetch<Response>(url, {
     headers: authHeaders(apiKey,),
-    signal: AbortSignal.timeout(30_000,),
+    signal: timeout,
+    stream: true,
+    handle401: false,
+    proxy: proxyForUrl(url,),
   },);
 
-  if (!resp.ok) {
-    throw new Error(`ComfyUI view download failed [${resp.status}]: ${file.filename}`,);
+  if (!result.ok) {
+    if (timeout.aborted) { throw new DOMException("Aborted", "AbortError",); }
+    if (result.status === undefined) { throw result.error; }
+    throw new Error(`ComfyUI view download failed [${result.status}]: ${file.filename}`,);
   }
 
-  const result = safeFromUint8Array(new Uint8Array(await resp.arrayBuffer(),),);
-  if (!result.ok) { throw result.error; }
-  return result.buffer;
+  const sized = safeFromUint8Array(new Uint8Array(await result.data.arrayBuffer(),),);
+  if (!sized.ok) { throw sized.error; }
+  return sized.buffer;
 }

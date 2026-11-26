@@ -92,6 +92,42 @@ describe("chatUtils", () => {
     });
   });
 
+  describe("getMediaStyle — detailLevel sizing", () => {
+    const original = (chatUtils as any).detailLevel;
+    afterEach(() => {
+      (chatUtils as any).detailLevel = original;
+    },);
+
+    test("caps single wide image at 240px in Basic mode", () => {
+      (chatUtils as any).detailLevel = "Basic";
+      const result = (chatUtils as any).getMediaStyle({ type: "image", width: 1920, height: 800, }, 1,);
+      expect(result.maxHeight,).toBe("240px",);
+      expect(result.width,).toBe("100%",);
+    });
+
+    test("narrows floated images in Basic mode", () => {
+      (chatUtils as any).detailLevel = "Basic";
+      const tall = (chatUtils as any).getMediaStyle({ type: "image", width: 400, height: 1000, }, 1,);
+      expect(tall.width,).toBe("30%",);
+      expect(tall.float,).toBe("right",);
+      const mid = (chatUtils as any).getMediaStyle({ type: "image", width: 800, height: 600, }, 1,);
+      expect(mid.width,).toBe("35%",);
+      expect(mid.float,).toBe("left",);
+    });
+
+    test("keeps default sizing in Detailed mode", () => {
+      (chatUtils as any).detailLevel = "Detailed";
+      const result = (chatUtils as any).getMediaStyle({ type: "image", width: 1920, height: 800, }, 1,);
+      expect(result.maxHeight,).toBe("400px",);
+    });
+
+    test("keeps default sizing when detailLevel is unset", () => {
+      (chatUtils as any).detailLevel = undefined;
+      const result = (chatUtils as any).getMediaStyle({ type: "image", width: 400, height: 1000, }, 1,);
+      expect(result.width,).toBe("40%",);
+    });
+  });
+
   describe("uploadChatAssets", () => {
     const originalApiFetch = globalThis.apiFetch;
     const fileInput = (name: string,) => {

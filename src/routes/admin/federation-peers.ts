@@ -41,6 +41,7 @@ import { savePeer, } from "./federation-peer-save";
 import {
   auditFederationChange,
   badOriginResponse,
+  decodeOriginParam,
   federationOffResponse,
   isWorkloadClass,
   notInEnumResponse,
@@ -78,7 +79,7 @@ export function federationPeersRoutes(opts: AdminFederationRouteOpts, prefix = "
       return withPermissionAuth(ctx, "admin.system", async (actorId,) => {
         const off = federationOffResponse(opts.federationEnabled,);
         if (off !== null) { return off; }
-        const origin = canonicalOrigin(ctx.params.origin,);
+        const origin = canonicalOrigin(decodeOriginParam(ctx.params.origin,),);
         if (origin === null) { return badOriginResponse(); }
 
         if ((await listWorkloadPeers(db,)).every((peer,) => peer.origin !== origin)) {
@@ -155,7 +156,7 @@ export function federationPeersRoutes(opts: AdminFederationRouteOpts, prefix = "
       return withPermissionAuth(ctx, "admin.system", async (actorId,) => {
         const off = federationOffResponse(opts.federationEnabled,);
         if (off !== null) { return off; }
-        const origin = canonicalOrigin(ctx.params.origin,);
+        const origin = canonicalOrigin(decodeOriginParam(ctx.params.origin,),);
         if (origin === null) { return badOriginResponse(); }
 
         if ((await listWorkloadPeers(db,)).every((peer,) => peer.origin !== origin)) {

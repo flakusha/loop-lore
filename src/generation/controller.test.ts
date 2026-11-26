@@ -1,10 +1,15 @@
 /**
  * Tests for generation controller (input validation and non-DB paths).
  */
+import { GenerationStatus, } from "../db/enums";
+import { activeGenerations, } from "./cancellation-manager";
+import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import {
+  type ActiveMeCtx,
   handleCancelGeneration,
   handleGenerationStatus,
   handleListActiveGenerations,
+  handleOwnActiveCount,
   handleRegenerate,
   handleRetryGeneration,
 } from "./generation-routes";
@@ -158,6 +163,39 @@ describe("handleListActiveGenerations", () => {
     const data = (await res.json()) as { count: number; generations: unknown[] };
     expect(typeof data.count,).toBe("number",);
     expect(Array.isArray(data.generations,),).toBe(true,);
+  });
+});
+
+describe("handleOwnActiveCount", () => {
+  test("returns 401 when unauthenticated", () => {
+    const res = handleOwnActiveCount({ userId: null, userRole: null, } as unknown as ActiveMeCtx,);
+    expect(res.status,).toBe(401,);
+  });
+
+  test("counts only the caller's active generations", async () => {
+    const snapshot = new Map(activeGenerations,);
+    try {
+      activeGenerations.clear();
+      activeGenerations.set("own-active", {
+        attemptId: "own-active",
+        actorId: "user-1",
+        status: GenerationStatus.Streaming,
+      } as ActiveGeneration,);
+
+      activeGenerations.set("other-active", {
+        attemptId: "other-active",
+        actorId: "user-2",
+        status: GenerationStatus.Streaming,
+      } as ActiveGeneration,);
+
+      const res = handleOwnActiveCount({ userId: "user-1", userRole: "user", } as unknown as ActiveMeCtx,);
+      expect(res.status,).toBe(200,);
+      const data = (await res.json()) as { count?: unknown };
+      expect(data.count,).toBe(1,);
+    } finally {
+      activeGenerations.clear();
+      for (const [id, active,] of snapshot) { activeGenerations.set(id, active,); }
+    }
   });
 });
 

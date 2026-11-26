@@ -19,7 +19,7 @@ import { Elysia, t, } from "elysia";
 import { AnomalyTypeSchema, } from "../../validation/db-schemas";
 import { ErrorResponse, } from "../../validation/schemas";
 import { AnomalyError, discoverAnomaly, expireAnomalies, listAnomalies, placeAnomaly, } from "../../worlds/anomalies";
-import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -41,14 +41,6 @@ const PlaceBody = t.Object({
 
 /** Body of the discovery POST. */
 const DiscoverBody = t.Object({ seed: t.Number(), },);
-
-/** Response envelope shared by the list and the placement. */
-const AnomalyListResponse = {
-  200: t.Object({ data: t.Array(t.Any(),), },),
-  400: ErrorResponse,
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
 
 /**
  * Map an engine error onto the shared JSON error envelope.
@@ -75,7 +67,7 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds-anomalies", },)
     .get(
       `${prefix}/worlds/:worldId/anomalies`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -93,17 +85,17 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         query: t.Object({ locationId: t.String(), },),
-        response: AnomalyListResponse,
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Array(t.Any(),), },), 400: ErrorResponse, },
           summary: "List location anomalies",
           description: "Every anomaly currently attached to one location, newest last.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -137,17 +129,17 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: PlaceBody,
-        response: { 201: t.Object({ data: t.Any(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 201: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
           summary: "Place an anomaly",
           description: "Attach a new anomaly to a location. Starts undiscovered.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/sweep`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldOwner(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -157,17 +149,17 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
         },);
       },
       {
-        response: { 200: t.Object({ removed: t.Number(), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ removed: t.Number(), },), },
           summary: "Sweep expired anomalies",
           description: "Delete this world's anomalies whose lifetime has run out. Permanent ones are untouched.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds/:worldId/anomalies/:anomalyId/discover`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const worldErr = await requireWorldAccess(database, ctx.params.worldId, userId, userRole,);
         if (worldErr) { return worldErr; }
@@ -189,13 +181,13 @@ export function anomalyRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: DiscoverBody,
-        response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
           summary: "Roll for anomaly discovery",
           description:
             "Seeded roll against the anomaly's discovery chance. The same seed always resolves the same way.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

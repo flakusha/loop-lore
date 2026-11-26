@@ -28,7 +28,7 @@ export function selectMemoriesForInjection(
   config: MemoryInjectionConfig,
   ctx: InjectionContext,
   comfort: MemoryComfort = DEFAULT_COMFORT,
-  injectionHistory = new Map<string, number>(),
+  injectionHistory: ReadonlyMap<string, number> = new Map<string, number>(),
 ): { selected: MemoryEntry[]; rejected: { memory: MemoryEntry; reason: string; probability: number }[] } {
   const selected: MemoryEntry[] = [];
   const rejected: { memory: MemoryEntry; reason: string; probability: number }[] = [];

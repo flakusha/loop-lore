@@ -19,7 +19,7 @@ import {
   SecretEnvelopeError,
 } from "../integrations/secrets";
 import { getLogger, } from "../logger";
-import { SECRET_KEY_PATTERN, } from "./config-keys";
+import { isSecretConfigKeyName, } from "./config-keys";
 
 /**
  * Whether a `system_config` key holds secret material.
@@ -27,7 +27,7 @@ import { SECRET_KEY_PATTERN, } from "./config-keys";
  * @returns true when the key is secret-classified
  */
 export function isSecretConfigKey(key: string,): boolean {
-  return SECRET_KEY_PATTERN.test(key,);
+  return isSecretConfigKeyName(key,);
 }
 
 /**

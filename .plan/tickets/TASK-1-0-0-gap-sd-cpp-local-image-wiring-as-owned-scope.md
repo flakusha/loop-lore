@@ -3,8 +3,8 @@
 
 # TASK: 1.0.0 GAP: sd.cpp local image wiring as owned scope
 
-**Status:** In Progress
-**Status Note:** Discovery/setup/ownership slice implemented on `sdcpp-discovery` — see Implementation Note below. Remaining scope is tracked there.
+**Status:** Done
+**Status Note (2026-11-18):** Owned discovery/setup/failover slice landed (`sdcpp-discovery`, then ComfyUI family-generic setup + `/image` routing) — see Implementation Note below. Items in “Remaining scope” are explicitly out of this ticket and stay in their own tickets.
 **Priority:** medium
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -30,6 +30,7 @@ Prior audit corrected the ticket premise: the sd.cpp PROVIDER is already wired i
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (Implementation Note above records the shipped surface)
+**Resolved:** 2026-11-18T05:38:50.728Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.

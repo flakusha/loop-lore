@@ -5,6 +5,7 @@ import { t, } from "elysia";
 import type { Db, } from "../../db";
 import type { TradeService, } from "../../services/trade";
 import { Id, } from "../../validation/schemas";
+import { requireWorldAccess, } from "../worlds/access";
 
 /** One line of an item transfer within a trade. */
 export const tradeLineSchema = t.Object({
@@ -32,4 +33,20 @@ export const executeResponse = t.Object({
 export interface TradeRoutesOptions {
   database: Db;
   svc: () => TradeService;
+}
+
+/**
+ * Trade routes all live under a world; actor ownership alone is not access.
+ * @param opts - shared trade route options
+ * @param worldId - world from the route params
+ * @param userId - authenticated caller
+ * @param userRole - caller role from the derive chain
+ */
+export async function requireTradeWorldAccess(
+  opts: TradeRoutesOptions,
+  worldId: string,
+  userId: string,
+  userRole: string | null,
+): Promise<Response | null> {
+  return requireWorldAccess(opts.database, worldId, userId, userRole,);
 }

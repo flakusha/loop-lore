@@ -9,7 +9,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** P3
 **Epic:** epic-docs-reconciliation
 **Tags:** docs, spec, regex

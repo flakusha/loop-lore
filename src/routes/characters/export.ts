@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, t, } from "elysia";
+import { type Context, Elysia, t, } from "elysia";
 import { readFileSync, } from "node:fs";
 import { cardExtensions, cardTags, } from "../../characters/card-settings";
 import { createCharx, } from "../../characters/charx";
@@ -19,6 +19,7 @@ import {
 } from "../../characters/license-enforcement";
 import type { CanonicalCharacter, } from "../../characters/parser";
 import { getMinimalPng, insertCharacterDataIntoPng, } from "../../characters/steganography";
+import type { TranslatorFn, } from "../../i18n/types";
 import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import {
@@ -27,6 +28,14 @@ import {
 } from "../../validation/schemas";
 import { HttpStatus, jsonError, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+  t?: TranslatorFn;
+}
+type Ctx = Context & AuthContext;
 
 /**
  * @param opts
@@ -37,7 +46,9 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
   return new Elysia({ name: "characters-export", },)
-    .get(`${prefix}/actors/:actorId/export`, async (ctx: any,) => {
+    .get(`${prefix}/actors/:actorId/export`, async (ctx,) => {
+      const c = ctx as unknown as Ctx;
+      const { userId, userRole, } = c;
       const format = ctx.query.format ?? "json";
 
       const actor = await database
@@ -48,7 +59,7 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
 
       if (!actor) {
         return jsonError({
-          message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+          message: c.t?.("characters.actorNotFound",) ?? "Actor not found",
           status: HttpStatus.NotFound,
         },);
       }
@@ -57,17 +68,17 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
       // the cross-user branch requires `export.any` (tranche 2 makes the old
       // broad `admin.character` bypass expressible per role). Cross-user
       // denials keep the 404 shape so outsiders cannot probe for existence.
-      const isCrossUser = actor.user_id !== ctx.userId;
+      const isCrossUser = actor.user_id !== userId;
       if (isCrossUser) {
-        if (actor.visibility !== "public" && !can(ctx.userRole, "export.any",)) {
+        if (actor.visibility !== "public" && !can(userRole, "export.any",)) {
           return jsonError({
-            message: ctx.t?.("characters.actorNotFound",) ?? "Actor not found",
+            message: c.t?.("characters.actorNotFound",) ?? "Actor not found",
             status: HttpStatus.NotFound,
           },);
         }
-      } else if (!can(ctx.userRole, "export.own",)) {
+      } else if (!can(userRole, "export.own",)) {
         return jsonError({
-          message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+          message: c.t?.("errors.forbidden",) ?? "Forbidden",
           status: HttpStatus.Forbidden,
         },);
       }

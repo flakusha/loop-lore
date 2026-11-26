@@ -22,7 +22,6 @@ import { AutonomyScheduler, } from "../../autonomy/scheduler";
 import { NO_CHAT, } from "../../autonomy/scheduler/store";
 import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
 import type { DB, } from "../../db/schema";
-import { ErrorResponse, } from "../../validation/schemas";
 import { requireActorAccess, } from "../actor-auth";
 import { extractAuth, jsonError, jsonResponse, } from "../http-utils";
 import { requireWorldOwner, } from "./access";
@@ -149,9 +148,3 @@ export const controlSchema = { body: controlBody, };
 export const actorOverrideSchema = {
   body: t.Object({ autonomy: t.Optional(AutonomyOverrideBody,), },),
 };
-
-/** Response maps both write routes share. */
-export const controlResponse = { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, };
-
-/** The actor route also reports 404 for an unknown actor. */
-export const actorOverrideResponse = { 200: t.Any(), 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, };

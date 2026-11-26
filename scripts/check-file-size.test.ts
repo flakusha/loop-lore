@@ -206,6 +206,16 @@ describe("check-file-size CLI", () => {
     expect(result.stderr,).toMatch(/\[size\] \S+: \d+ lines \(\d+ code, \d+ comment\) — limit 1/,);
   });
 
+  test("scans the repo root when invoked from a subdirectory", () => {
+    // Regression: glob.scan() once followed process.cwd(), so running the gate
+    // from scripts/ scanned nothing and exited green. Read-only, no fixture.
+    const proc = Bun.spawnSync(["bun", CLI_SCRIPT, "--limit=1", "--strict",], {
+      cwd: import.meta.dir,
+    },);
+    expect(proc.exitCode,).toBe(1,);
+    expect(proc.stderr.toString(),).toMatch(/\[size\] src\//,);
+  });
+
   test("exempts *.test.*, /migrations/ and DO-NOT-EDIT-MANUALLY files", async () => {
     // --limit=1 puts every non-exempt file over, so any violation naming an
     // exempt path proves that filter let it through. Read-only over the live

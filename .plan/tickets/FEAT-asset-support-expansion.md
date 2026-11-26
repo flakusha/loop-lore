@@ -23,3 +23,9 @@ Asset support expansion: multi-format character import (PNG/YAML/TOML/CHARX), si
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Research addendum (2026-11-25)
+
+- Shader/material metadata activation is gated on a named gallery consumer; research found none, so no new ticket is filed.
+- Format expansion should reuse the shared `AssetType` and MIME-map corrections from the 3D tickets instead of adding a parallel validator.
+- Template/prompt pack sources remain prompt-text only; upstream NOTICE does not grant third-party character or content rights.

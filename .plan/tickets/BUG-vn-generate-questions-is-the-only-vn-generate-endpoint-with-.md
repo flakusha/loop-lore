@@ -3,7 +3,7 @@
 
 # BUG: vn generate-questions is the only vn/generate-* endpoint with no rate rule — falls to chatPolicy (300/min) while its LLM-bearing siblings generate-story/generate-choices are generationPolicy
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-review-20261025-api-governance-perimeter

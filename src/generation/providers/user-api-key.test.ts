@@ -13,7 +13,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { loadConfig, } from "../../config/load";
 import type { Config, ImageProviderConfig, } from "../../config/schema";
-import { encryptValue, } from "../../crypto";
+import { BYOK_KEY_VERSION, deriveUserKek, encryptValue, encryptVersioned, kekAad, } from "../../crypto";
 import type { DB, } from "../../db/schema";
 import { createTestDb, destroyTestDb, } from "../../test-utils/create-test-db";
 import { ByoKeyDecryptError, userApiKeyResolver, } from "./user-api-key";
@@ -22,6 +22,7 @@ const SECRET = "uak-encryption-key";
 const USER_ID = "uak-user";
 const ALLOWED = "uak-allowed";
 const BLOCKED = "uak-blocked";
+const KEK = "uak-kek";
 const UNSTORED = "uak-unstored";
 // Image providers (generation.providers.sd) — the BYOK image coverage.
 const SD_ALLOWED = "sd-remote";
@@ -59,7 +60,7 @@ function config(): Config {
     ...loadConfig(),
     generation: {
       providers: {
-        openaiCompatible: [instance(ALLOWED, true,), instance(BLOCKED, false,),],
+        openaiCompatible: [instance(ALLOWED, true,), instance(BLOCKED, false,), instance(KEK, true,),],
         anthropic: undefined,
         ollamaNative: undefined,
         sd: [sdInstance(SD_ALLOWED,), sdInstance(SD_BLOCKED, false,),],
@@ -188,5 +189,26 @@ describe("userApiKeyResolver", () => {
 
     const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
     await expect(resolve(SD_ABSENT,),).rejects.toThrow(ByoKeyDecryptError,);
+  });
+
+  // ── v3 KEK-sealed rows ──
+
+  test("opens a v3 KEK-sealed row for its owner", async () => {
+    const kek = await deriveUserKek(SECRET, USER_ID,);
+    await testDb.insertInto("user_api_keys",).values({
+      id: crypto.randomUUID(),
+      user_id: USER_ID,
+      provider_name: KEK,
+      api_key_encrypted: await encryptVersioned("sk-kek-owner", kek, kekAad(USER_ID, KEK,),),
+      key_version: BYOK_KEY_VERSION,
+    },).execute();
+
+    const resolve = userApiKeyResolver({ userId: USER_ID, config: config(), db: testDb, },);
+    expect(await resolve(KEK,),).toBe("sk-kek-owner",);
+  });
+
+  test("another user sees no row — undefined, not the owner's key", async () => {
+    const resolve = userApiKeyResolver({ userId: "uak-stranger", config: config(), db: testDb, },);
+    expect(await resolve(KEK,),).toBeUndefined();
   });
 });

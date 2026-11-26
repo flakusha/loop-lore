@@ -8,15 +8,17 @@ import {
   stopAll as stopAllDispatch,
 } from "./lifecycle";
 import {
-  startLivenessProbes as startLivenessProbesDispatch,
   stopLivenessProbes as stopLivenessProbesDispatch,
 } from "./probes";
+import { startHonkbox as startHonkboxDispatch, } from "./start-honkbox";
 import {
   startLlamaCpp as startLlamaCppDispatch,
   startLlamaSwap as startLlamaSwapDispatch,
 } from "./start-llama";
 import { startSdCpp as startSdCppDispatch, } from "./start-sd";
+import { startSupervisedProbes as startSupervisedProbesDispatch, } from "./supervise";
 import type {
+  HonkboxOptions,
   LlamaCppOptions,
   LlamaSwapOptions,
   SdCppOptions,
@@ -25,6 +27,7 @@ import type {
 } from "./types";
 
 export type {
+  HonkboxOptions,
   LlamaCppOptions,
   LlamaSwapOptions,
   SdCppOptions,
@@ -47,7 +50,7 @@ export type {
  * Servers are skipped (not failed) when binaries are missing or ports are busy.
  *
  * The method bodies live in sibling dispatcher modules (starts / lifecycle /
- * probes) threaded with an explicit `ServerExternalHost` handle. The class is
+ * probes / supervise) threaded with an explicit `ServerExternalHost` handle. The class is
  * kept so callers can `new ServerExternalManager(logger)`.
  */
 export class ServerExternalManager implements ServerExternalHost {
@@ -102,6 +105,15 @@ export class ServerExternalManager implements ServerExternalHost {
   }
 
   /**
+   * Start honkbox server (`honkbox serve`) on given port.
+   * @param opts
+   * @returns the started instance, or null when it could not be started.
+   */
+  async startHonkbox(opts: HonkboxOptions,): Promise<ServerInstance | null> {
+    return startHonkboxDispatch(this, opts,);
+  }
+
+  /**
    * Stop a specific instance by type + port
    * @param instance
    * @returns once the instance has been stopped.
@@ -130,12 +142,14 @@ export class ServerExternalManager implements ServerExternalHost {
   // ── Liveliness probing ───────────────────────────────────
 
   /**
-   * Start periodic health checks on all managed servers.
-   * Logs warning on first failure, error on repeated failures.
+   * Start periodic supervised health checks on all managed servers.
+   * Misses warn (with consecutive-miss counts); N consecutive misses restart
+   * the instance via its spawn path with backoff; budget exhaustion exits the
+   * process non-zero for the outer supervisor.
    * @returns nothing; probing runs on the manager's own interval.
    */
   startLivenessProbes(): void {
-    return startLivenessProbesDispatch(this,);
+    return startSupervisedProbesDispatch(this,);
   }
 
   /** Stop periodic health checks */

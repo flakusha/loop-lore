@@ -7,6 +7,7 @@ import { describe, expect, it, } from "bun:test";
 import {
   applyNodeOverrides,
   buildSubstitutionVars,
+  type SubstituteOptions,
   substituteWorkflow,
 } from "./workflow-substitutor.js";
 
@@ -67,12 +68,62 @@ describe("substituteWorkflow", () => {
   });
 });
 
+describe("substituteWorkflow variant expansion", () => {
+  it("passes variant braces through literally unless opted in", () => {
+    expect(substituteWorkflow("a {x|y} b", {},),).toBe("a {x|y} b",);
+    expect(substituteWorkflow("{{prompt}}", { prompt: "{x|y}", },),).toBe("{x|y}",);
+  });
+
+  it("picks one option per group, deterministically per seed", () => {
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 7, };
+    const first = substituteWorkflow("a {x|y} b", {}, opts,);
+    expect(["a x b", "a y b",],).toContain(String(first,),);
+    expect(substituteWorkflow("a {x|y} b", {}, opts,),).toBe(first,);
+  });
+
+  it("resolves nested groups innermost-first", () => {
+    const out = substituteWorkflow("{a|{b|c}}", {}, { expandVariants: true, variantSeed: 3, },);
+    expect(["a", "b", "c",],).toContain(String(out,),);
+    expect(out,).not.toContain("{",);
+  });
+
+  it("expands variants carried inside prompt vars", () => {
+    const out = substituteWorkflow("{{prompt}}", { prompt: "{red|blue} car", }, {
+      expandVariants: true,
+      variantSeed: 1,
+    },);
+
+    expect(["red car", "blue car",],).toContain(String(out,),);
+  });
+
+  it("shares one pick sequence across a whole workflow", () => {
+    const wf = { a: "{x|y}", b: "{p|q}", };
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 5, };
+    expect(substituteWorkflow(wf, {}, opts,),).toEqual(substituteWorkflow(wf, {}, opts,),);
+  });
+
+  it("leaves pipeless braces, unbalanced braces, and plain vars alone", () => {
+    const opts: SubstituteOptions = { expandVariants: true, variantSeed: 1, };
+    expect(substituteWorkflow("{foo}", {}, opts,),).toBe("{foo}",);
+    expect(substituteWorkflow("{a|b", {}, opts,),).toBe("{a|b",);
+    expect(substituteWorkflow("{{prompt}}", { prompt: "cat", }, opts,),).toBe("cat",);
+  });
+});
+
 describe("applyNodeOverrides", () => {
   const workflow = { "5": { class_type: "CLIPTextEncode", inputs: { text: "old", cfg: 1, }, }, };
   it("returns a new top-level workflow with merged inputs", () => {
     const out = applyNodeOverrides(workflow, new Map([["5", { text: "new", },],],),);
     expect(out,).not.toBe(workflow,);
     expect(out["5"]?.inputs,).toEqual({ text: "new", cfg: 1, },);
+  });
+
+  it("leaves the input graph node unchanged", () => {
+    const input = { "5": { class_type: "CLIPTextEncode", inputs: { text: "old", cfg: 1, }, }, };
+    const out = applyNodeOverrides(input, new Map([["5", { text: "new", },],],),);
+    expect(input["5"].inputs,).toEqual({ text: "old", cfg: 1, },);
+    expect(out["5"].inputs,).toEqual({ text: "new", cfg: 1, },);
+    expect(out["5"],).not.toBe(input["5"],);
   });
 
   it("ignores unknown nodes and empty override maps", () => {
@@ -88,6 +139,11 @@ describe("buildSubstitutionVars", () => {
     expect(vars.width,).toBe(512,);
     expect(vars.steps,).toBe(20,);
     expect(vars.sampler,).toBe("euler",);
+    expect(vars.scheduler,).toBe("simple",);
+  });
+
+  it("passes an explicit scheduler through", () => {
+    expect(buildSubstitutionVars({ prompt: "cat", scheduler: "karras", },).scheduler,).toBe("karras",);
   });
 
   it("passes explicit values and extras through", () => {
@@ -95,5 +151,43 @@ describe("buildSubstitutionVars", () => {
     expect(vars.width,).toBe(768,);
     expect(vars.seed,).toBe(42,);
     expect(vars.model,).toBe("m",);
+  });
+
+  it("falls back to a 53-bit safe random seed", () => {
+    for (let i = 0; i < 200; i++) {
+      const seed = buildSubstitutionVars({ prompt: "cat", },).seed as number;
+      expect(Number.isInteger(seed,),).toBe(true,);
+      expect(seed,).toBeGreaterThanOrEqual(0,);
+      expect(seed,).toBeLessThan(2 ** 53,);
+      expect(seed,).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER,);
+      // No exponent/precision artifacts when stringified (JSON round-trip).
+      const stringified = JSON.stringify(seed,);
+      expect(stringified,).not.toMatch(/e|E/,);
+      expect(JSON.parse(stringified,),).toBe(seed,);
+    }
+  });
+
+  it("binds picked model roles and LoRA name, keeping the stock default", () => {
+    const vars = buildSubstitutionVars({
+      prompt: "cat",
+      model: "base.ckpt",
+      clip: "clip.gguf",
+      vae: "vae.safetensors",
+      clip_vision: "vision.safetensors",
+      lora: "style.safetensors",
+    },);
+
+    expect(vars.model,).toBe("base.ckpt",);
+    expect(vars.clip,).toBe("clip.gguf",);
+    expect(vars.vae,).toBe("vae.safetensors",);
+    expect(vars.clip_vision,).toBe("vision.safetensors",);
+    expect(vars.lora,).toBe("style.safetensors",);
+    expect(buildSubstitutionVars({ prompt: "cat", },).model,).toBe("model.safetensors",);
+  });
+
+  it("rejects dimensions modern diffusion models cannot render", () => {
+    expect(() => buildSubstitutionVars({ prompt: "cat", width: 500, },)).toThrow(/multiple of 32/,);
+    expect(() => buildSubstitutionVars({ prompt: "cat", height: 768.5, },)).toThrow(RangeError,);
+    expect(() => buildSubstitutionVars({ prompt: "cat", width: 0, },)).toThrow(RangeError,);
   });
 });

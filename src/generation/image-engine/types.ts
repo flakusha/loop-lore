@@ -2,26 +2,58 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { LoRAConfig, } from "../../generation/lora/types";
+import type { ComfyUIModelOverrides, } from "../providers/comfyui-model-discovery";
+/**
+ * Reference image for the ComfyUI `img2img` workflow. ComfyUI-path-only —
+ * other providers ignore it. The caller resolves and authorizes the owning
+ * asset and supplies its bytes; the upload filename is derived from assetId
+ * so a caller can never steer the ComfyUI input path.
+ */
+export interface InitImage {
+  /** Owning asset id — source of the server-derived upload filename. */
+  assetId: string;
+  /** Authorized asset bytes to upload as the LoadImage source. */
+  buffer: Buffer;
+}
 /** */
 export interface ImageGenOptions {
   prompt: string;
   n: number;
   /** openai `size`, defaults to `widthxheight`. */
   size?: string;
+  /** Requested output size; each falls back to the provider config default. */
+  width?: number;
+  height?: number;
+  /** ComfyUI scheduler axis, independent of the sampler. */
+  scheduler?: string;
   /** "png" | "jpeg". */
   outputFormat: string;
   steps?: number;
   cfgScale?: number;
   samplerName?: string;
+  /** ComfyUI scheduler name; falls back to `simple`. */
+  schedulerName?: string;
   negativePrompt?: string;
   seed?: number;
   enableHr?: boolean;
   hrScale?: number;
-  denoisingStrength?: number;
+  /** ComfyUI denoise widget; the HTTP boundary's `denoising_strength` aliases this. */
+  denoise?: number;
   /** ComfyUI workflow name (defaults to "txt2img"). */
   workflow?: string;
-  /** Optional LoRA model to inject into the generation pipeline. */
-  lora?: LoRAConfig;
+  /** Optional LoRAs to inject into the generation pipeline. */
+  lora?: LoRAConfig[];
+  /** Picked model roles; fall back to persisted pins then config pins. */
+  model?: string;
+  /** Diffusion/UNET pick, distinct from the checkpoint `model` role. */
+  diffusion?: string;
+  clip?: string;
+  vae?: string;
+  clipVision?: string;
+  /** Persisted pins keyed by provider name; request fields win over these. */
+  modelPins?: Record<string, ComfyUIModelOverrides>;
+  /** Optional ComfyUI init/reference image for the img2img workflow. */
+  initImage?: InitImage;
   /** BYO API key for this request (resolved user key). When set it overrides
    * the server-configured key on transports that send auth (openai, sdapi,
    * sd.cpp, comfyui Bearer seam). */

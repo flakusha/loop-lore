@@ -10,12 +10,12 @@ concurrency:
 
 env:
   # Pinned to the local toolchain; `bun --check` (the `typecheck - bun` gate) needs Bun 1.4.3+.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 jobs:
   commit-lint:
     name: Commit Message Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Checkout

@@ -4,6 +4,7 @@
 import type { loadConfig, } from "../config/load";
 import type { getDatabase, } from "../db/index";
 import type { TranslatorFn, } from "../i18n/types";
+import { isWriteBlocked, safeModeResponse, } from "../integrity/safe-mode";
 import type { getLogger, } from "../logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "../middleware";
 import { generateNonce, } from "../middleware/csp-nonce";
@@ -13,6 +14,7 @@ import { applyRequestId, resolveRequestId, } from "../middleware/request-id";
 import { dispatchPluginRoute, type PluginCaller, } from "../plugins";
 import { applyDeprecationHeaders, } from "../routes/middleware/deprecation-headers";
 import { governanceAfterHook, governanceBeforeHook, } from "../routes/v1/governance";
+import { scoreRequestSignals, } from "./request-heuristics";
 
 /**
  * Wrap the Elysia app so EVERY outgoing response (routes, errors, static,
@@ -41,7 +43,10 @@ export function createRequestHandler(
   logger: ReturnType<typeof getLogger>,
   database?: ReturnType<typeof getDatabase>,
 ): (request: Request,) => Promise<Response> {
-  const headerPolicy = new ResponseHeaderPolicy(config.headers,);
+  const headerPolicy = new ResponseHeaderPolicy(config.headers, {
+    trustProxy: config.server.trustProxy === true,
+  },);
+
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
   const handleResolver = database ? createHandleResolver(database,) : null;
   return async (request: Request,): Promise<Response> => {
@@ -55,6 +60,12 @@ export function createRequestHandler(
 
     const taggedRequest = new Request(request, { headers, },);
     generateNonce(taggedRequest,);
+
+    // Safe mode blocks writes centrally (all routes + plugins); reads and
+    // health probes still serve. Verdict detail lives in the health endpoint.
+    if (isWriteBlocked(request.method,)) {
+      return safeModeResponse();
+    }
 
     let response = await app.fetch(taggedRequest,);
     response.headers.set("X-Request-Id", requestId,);
@@ -98,6 +109,8 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
   const durationMs = Math.round(performance.now() - startMs,);
   const severity = response.status >= 500 ? "error" : response.status >= 400 ? "warn" : "info";
 
+  const heuristic = scoreRequestSignals(url.pathname, request.headers,);
+
   const entry = {
     module: "http",
     requestId,
@@ -107,6 +120,9 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
     durationMs,
     userId,
     handle,
+    ...(heuristic.signals.length === 0
+      ? {}
+      : { heuristic: { score: heuristic.score, signals: heuristic.signals, }, }),
   };
 
   try {

@@ -8,6 +8,8 @@
  * enumerate → unload (parallel) → bounded drain poll → return. No-op when
  * nothing needs releasing; failure never aborts the caller.
  */
+import { type HonkboxProbeResult, isHonkboxFeatureEnabled, } from "../integrations/honkbox/capabilities";
+import { honkboxImageBaseUrl, } from "../integrations/honkbox/provider-config";
 import { getChildLogger, } from "../logger";
 import {
   baseHost,
@@ -36,6 +38,39 @@ export interface ReleaseModelsOptions {
   drainTimeoutMs?: number;
   drainPollMs?: number;
   requestTimeoutMs?: number;
+  /** Optional honkbox backend; used only when its probe advertises `residency_control`. */
+  honkbox?: { baseUrl: string; apiKey?: string; probe?: HonkboxProbeResult };
+}
+
+/**
+ * Choose the residency backend. honkbox is used only when configured and its
+ * probe advertises `residency_control`; otherwise the llama-swap path stands.
+ * @param opts - hook options
+ * @returns stripped base, credential and which backend was selected
+ * @throws {Error} When the selected base is blank (programmer error).
+ */
+function resolveReleaseTarget(
+  opts: ReleaseModelsOptions,
+): { base: string; apiKey?: string; useHonkbox: boolean } {
+  const honkbox = opts.honkbox;
+  const useHonkbox = honkbox !== undefined &&
+    isHonkboxFeatureEnabled(honkbox.probe, "residency_control",);
+
+  // honkboxImageBaseUrl drops `/v1`: its admin endpoints live at the origin.
+  const rawBase = useHonkbox && honkbox
+    ? honkboxImageBaseUrl(honkbox.baseUrl,)
+    : resolveLlamaSwapBase({ llamaSwapBase: opts.llamaSwapBase, listenPort: opts.listenPort, },);
+
+  const base = stripBase(rawBase,);
+  if (!base) {
+    throw new Error(
+      useHonkbox
+        ? "releaseModelsForRender: honkbox.baseUrl must not be blank"
+        : "releaseModelsForRender: llamaSwapBase must not be blank",
+    );
+  }
+
+  return { base, apiKey: useHonkbox ? honkbox?.apiKey : opts.apiKey, useHonkbox, };
 }
 
 /** What the hook released. `probeOk:false` = the proxy never answered (nothing was freed); `released` is empty either way. */
@@ -60,27 +95,23 @@ export interface ReleaseSummary {
 export async function releaseModelsForRender(
   opts: ReleaseModelsOptions & { throwOnProbeFailure?: boolean } = {},
 ): Promise<ReleaseSummary> {
-  const rawBase = resolveLlamaSwapBase({ llamaSwapBase: opts.llamaSwapBase, listenPort: opts.listenPort, },);
-  const base = stripBase(rawBase,);
-  if (!base) {
-    throw new Error("releaseModelsForRender: llamaSwapBase must not be blank",);
-  }
+  const { base, apiKey, } = resolveReleaseTarget(opts,);
 
-  if (!opts.apiKey && !isLoopbackHost(baseHost(base,),)) {
-    log?.warn("llama-swap release refused: non-loopback base without a credential", { base, },);
+  if (!apiKey && !isLoopbackHost(baseHost(base,),)) {
+    log?.warn("release refused: non-loopback base without a credential", { base, },);
     return { released: [], probeOk: false, };
   }
 
   const shared = {
     llamaSwapBase: base,
-    apiKey: opts.apiKey,
+    apiKey,
     fetchImpl: opts.fetchImpl,
     timeoutMs: opts.requestTimeoutMs ?? REQUEST_TIMEOUT_MS,
   };
 
   const probe = await readRunningModels({ ...shared, exclude: opts.exclude, },);
   if (!probe.ok) {
-    const message = `llama-swap probe failed before render (${probe.error ?? "unknown"}) — VRAM NOT released`;
+    const message = `release probe failed before render (${probe.error ?? "unknown"}) — VRAM NOT released`;
     log?.warn(message, { base, },);
     if (opts.throwOnProbeFailure) { throw new Error(message,); }
     return { released: [], probeOk: false, };
@@ -129,14 +160,14 @@ async function drainReleasedModels(
     // POSTs already landed, the render still proceeds).
     const poll = await readRunningModels({ ...shared, exclude: [], },);
     if (!poll.ok) {
-      log?.warn("llama-swap drain probe failed — pool state unknown", { error: poll.error, },);
+      log?.warn("residency drain probe failed — pool state unknown", { error: poll.error, },);
       return;
     }
 
     const stillWarm = poll.ids.filter((id,) => pending.has(id,));
     if (stillWarm.length === 0 || Date.now() >= deadline) {
       if (stillWarm.length > 0) {
-        log?.warn("llama-swap drain timed out", { models: stillWarm, },);
+        log?.warn("residency drain timed out", { models: stillWarm, },);
       }
 
       return;

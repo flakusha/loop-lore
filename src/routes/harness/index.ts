@@ -35,6 +35,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, type HttpStatusCode, jsonError, jsonResponse, } from "../http-utils";
 import { harnessRunFiles, type SandboxFilesError, } from "./files";
 import { resultSchema, runIdParams, taskTypeSchema, } from "./query-schema";
+import { reportRoutes, } from "./reports";
 import { settingsWithAvailability, unknownFlavor, } from "./settings-view";
 
 /**
@@ -95,13 +96,19 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
   // back into the server.
   const denied = { 403: ErrorResponse, } as const;
   return new Elysia({ name: "harness", },)
+    .use(reportRoutes({ database, }, prefix,),)
     .guard({ beforeHandle: guard, }, (app,) =>
       app
         .get(`${prefix}/harness/runs`, async (ctx,) => {
           const q = ctx.query as Record<string, string | undefined>;
           const limit = Number.parseInt(q.limit ?? "", 10,);
+          const turnId = q.turnId;
           const items = await listRuns(
-            { taskType: asTaskType(q.taskType,), result: asResult(q.result,), },
+            {
+              taskType: asTaskType(q.taskType,),
+              result: asResult(q.result,),
+              ...(turnId !== undefined && turnId !== "" ? { turnId, } : {}),
+            },
             Number.isFinite(limit,) ? limit : undefined,
           );
 
@@ -111,6 +118,7 @@ export function harnessRoutes({ database, }: { database: Kysely<DB> }, prefix = 
             limit: t.Optional(t.String({},),),
             taskType: t.Optional(taskTypeSchema,),
             result: t.Optional(resultSchema,),
+            turnId: t.Optional(t.String({ minLength: 1, },),),
           },),
           response: { 200: HarnessRunsResponse, ...denied, },
         },)

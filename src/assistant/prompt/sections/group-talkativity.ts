@@ -11,6 +11,7 @@
  * equal verbosity across characters (BUG-group-chat-talkativity-not-
  * surfaced-in-prompt).
  */
+import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
 export const groupTalkativitySection: SectionBuilder = {
@@ -46,7 +47,7 @@ export const groupTalkativitySection: SectionBuilder = {
       content: "[Group Talkativity]\n" +
         "Per-chat participation weight — higher score = more likely to speak, lower score = tends to stay quiet. " +
         "Keep response verbosity consistent with each character's talkativity when roleplaying their reply.\n" +
-        lines.join("\n",),
+        wrapSection("actor_talkativity", lines.join("\n",),),
     },];
   },
 };

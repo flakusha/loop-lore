@@ -36,26 +36,29 @@ const TWO_ASSETS: LinkedAsset[] = [
 
 /** Answer the assets list call with `body`. */
 function stubAssets(body: LinkedAsset[] | undefined,): void {
-  setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-    calls.push({ url, options: options ?? {}, },);
-    return Promise.resolve({
-      ok: true,
-      data: { data: body, } as T,
-      status: 200,
-      headers: new Headers(),
-    },);
-  },);
+  setFetch(
+    <T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      calls.push({ url, options: options ?? {}, },);
+      return Promise.resolve({
+        ok: true,
+        data: { data: body, } as T,
+        status: 200,
+        headers: new Headers(),
+      },);
+    },
+  );
 }
 
 /** Answer with an HTTP failure. */
 function stubFailure(status: number,): void {
-  setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-    Promise.resolve({
-      ok: false,
-      error: new Error("boom",),
-      status,
-      headers: new Headers(),
-    },)
+  setFetch(
+    <T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+      Promise.resolve({
+        ok: false,
+        error: new Error("boom",),
+        status,
+        headers: new Headers(),
+      },),
   );
 }
 
@@ -122,20 +125,22 @@ describe("AssetView", () => {
 
   it("Enter attaches the highlighted asset and reloads", async () => {
     let links = 0;
-    setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-      calls.push({ url, options: options ?? {}, },);
-      if (url.endsWith("/links",)) {
-        links++;
-        return Promise.resolve({ ok: true, data: {} as T, status: 201, headers: new Headers(), },);
-      }
+    setFetch(
+      <T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+        calls.push({ url, options: options ?? {}, },);
+        if (url.endsWith("/links",)) {
+          links++;
+          return Promise.resolve({ ok: true, data: {} as T, status: 201, headers: new Headers(), },);
+        }
 
-      return Promise.resolve({
-        ok: true,
-        data: { data: TWO_ASSETS, } as T,
-        status: 200,
-        headers: new Headers(),
-      },);
-    },);
+        return Promise.resolve({
+          ok: true,
+          data: { data: TWO_ASSETS, } as T,
+          status: 200,
+          headers: new Headers(),
+        },);
+      },
+    );
 
     const view = new AssetView({},);
     view.setChatId("chat-1",);

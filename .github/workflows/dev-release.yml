@@ -3,7 +3,7 @@ name: Dev Release
 on:
   pull_request:
     types: [closed]
-    branches: [master]
+    branches: [master, stg]
 
 concurrency:
   group: dev-release-${{ github.ref }}
@@ -11,16 +11,21 @@ concurrency:
 
 env:
   # Pinned to the local toolchain; `bun --check` (the `typecheck - bun` gate) needs Bun 1.4.3+.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 jobs:
   dev-release:
     name: Dev Release
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
-    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'master' || github.event.pull_request.base.ref == 'stg')
+    runs-on: ubuntu-24.04
     # See ci.yml: the browser gate inside `bun run check:ci` has a 45 min
     # budget of its own and runs last - the job timeout has to exceed it.
     timeout-minutes: 90
+    # Same check runner as ci.yml's gates job: no .credentials.env on the
+    # runner and no signing step, so skip the preflight only (signing config
+    # is untouched).
+    env:
+      CHECK_SKIP_GPG_PRECHECK: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

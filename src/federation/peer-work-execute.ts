@@ -53,9 +53,10 @@ export function createLocalPeerWorkExecutor(options: { config: Config },): PeerW
         );
       }
 
-      // Unique per attempt: the scheduler rejects live duplicate ids, and two
-      // peers may legitimately ask for the same class at the same moment.
-      const id = `peer-work:${request.assignmentKey}:${Date.now().toString(36,)}`;
+      // assignmentKey already identifies this attempt across both hops. A
+      // time suffix let two same-millisecond dispatches of one assignment take
+      // distinct ids, defeating the scheduler's live-duplicate rejection.
+      const id = `peer-work:${request.assignmentKey}`;
       return scheduledCallWithFailover({
         id,
         failoverList,

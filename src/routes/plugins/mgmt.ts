@@ -200,7 +200,11 @@ export function pluginMgmtRoutes(
         // default. This also drops stored config overrides — cleanup, not
         // preservation.
         try {
-          await database.deleteFrom("plugin_state",).where("name", "=", name,).execute();
+          await database
+            .deleteFrom("plugin_state",)
+            .where("name", "=", name,)
+            .where("origin", "=", plugin.origin,)
+            .execute();
         } catch (error) {
           log().error({
             message: "Failed to delete plugin state row",

@@ -6,9 +6,19 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  AnnotationTargetType,
   CancelReason,
   CancelSource,
+  CutType,
+  FragmentOperation,
+  FragmentStatus,
   GenerationStatus,
+  ReferenceLane,
+  ReferenceScope,
+  ScenarioDocKind,
+  ScenarioStatus,
+  SceneMode,
+  SceneStatus,
 } from "./enums";
 
 // ── generation_attempts ────────────────────────────────────────────
@@ -48,4 +58,139 @@ export interface GenerationAttempts {
   last_rendered_chunk_index: number | null;
   delivery_confirmed_at: string | null;
   side_effect_jobs_cancelled: number | null;
+}
+
+// ── scenarios ────────────────────────────────────────────
+export interface Scenarios {
+  id: string;
+  world_id: string;
+  owner_id: string;
+  title: string;
+  status: Generated<ScenarioStatus>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_scenes ────────────────────────────────────────────
+export interface ScenarioScenes {
+  id: string;
+  scenario_id: string;
+  sort_order: Generated<number>;
+  location_id: string | null;
+  mode: Generated<SceneMode>;
+  duration_frames: Generated<number>;
+  fps: Generated<number>;
+  seed: string | null;
+  status: Generated<SceneStatus>;
+  generated_asset_id: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_shots ────────────────────────────────────────────
+export interface ScenarioShots {
+  id: string;
+  scene_id: string;
+  sort_order: Generated<number>;
+  start_ms: Generated<number>;
+  end_ms: number;
+  description: string;
+  cut_type: Generated<CutType>;
+  camera_json: string | null;
+  narration: string | null;
+}
+
+// ── scenario_fragments ────────────────────────────────────────────
+export interface ScenarioFragments {
+  id: string;
+  scene_id: string;
+  shot_id: string | null;
+  sort_order: Generated<number>;
+  operation: FragmentOperation;
+  status: Generated<FragmentStatus>;
+  workflow_id: string;
+  workflow_hash: string;
+  workflow_version: string | null;
+  node_versions: string | null;
+  mode: SceneMode | null;
+  seed: string | null;
+  duration_frames: number | null;
+  transition: Generated<CutType>;
+  prompt_message_id: string | null;
+  prompt_snapshot: string | null;
+  gallery_asset_id: string | null;
+  caption: string | null;
+  input_assets: string | null;
+  output_asset_id: string | null;
+  latent_asset_id: string | null;
+  parent_fragment_id: string | null;
+  take: Generated<string>;
+  cut_in_ms: Generated<number>;
+  cut_out_ms: number | null;
+  error: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_references ────────────────────────────────────────────
+export interface ScenarioReferences {
+  id: string;
+  scenario_id: string;
+  scene_id: string | null;
+  shot_id: string | null;
+  scope: Generated<ReferenceScope>;
+  lane: ReferenceLane;
+  role: string | null;
+  asset_id: string;
+  sort_order: Generated<number>;
+  trim_in_ms: number | null;
+  trim_out_ms: number | null;
+  stream: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_docs ────────────────────────────────────────────
+export interface ScenarioDocs {
+  id: string;
+  scenario_id: string;
+  kind: ScenarioDocKind;
+  title: string | null;
+  body: string;
+  version: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── annotations ────────────────────────────────────────────
+export interface Annotations {
+  id: string;
+  target_type: AnnotationTargetType;
+  target_id: string;
+  author_id: string;
+  t0_ms: number;
+  t1_ms: number | null;
+  region: string | null;
+  body: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── scenario_assemblies ────────────────────────────────────────────
+export interface ScenarioAssemblies {
+  id: string;
+  scenario_id: string;
+  version: number;
+  status: string;
+  workflow_id: string | null;
+  workflow_hash: string | null;
+  workflow_version: string | null;
+  fragment_ids: string;
+  cut_points: string;
+  output_asset_id: string | null;
+  error: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }

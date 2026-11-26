@@ -24,7 +24,7 @@ import {
   spawnMonster,
 } from "../../rpg/bestiary";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireWorldOwner, } from "../worlds/access";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -79,8 +79,7 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
       try {
         return jsonResponse(await listMonsterTemplates({ db: database, worldId: ctx.params.worldId, },),);
       } catch (error) {
-        log().error("Failed to list monster templates", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list monster templates", error,);
       }
     }, {
       params: worldParams,
@@ -109,8 +108,7 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
 
         return jsonResponse(template,);
       } catch (error) {
-        log().error("Failed to register monster template", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to register monster template", error,);
       }
     }, {
       params: worldParams,
@@ -137,8 +135,7 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
           },),
         );
       } catch (error) {
-        log().error("Failed to list monsters at location", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list monsters at location", error,);
       }
     }, {
       params: t.Object({ worldId: t.String(), locationId: t.String(), },),
@@ -192,8 +189,7 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
 
         return jsonResponse({ spawn, loot, },);
       } catch (error) {
-        log().error("Failed to spawn monster", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to spawn monster", error,);
       }
     }, {
       params: worldParams,
@@ -214,8 +210,7 @@ export function bestiaryRoutes({ database, }: HandlerOpts, prefix = "/api",): El
       try {
         return jsonResponse({ despawned: await despawnExpired({ db: database, now: new Date(), },), },);
       } catch (error) {
-        log().error("Failed to despawn expired monsters", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to despawn expired monsters", error,);
       }
     }, {
       params: worldParams,

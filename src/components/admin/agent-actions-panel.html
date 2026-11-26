@@ -1,0 +1,89 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Agent Actions Tab (RSI #9 read-only audit log). State lives in frontend/alpine/admin-agent-actions.ts. -->
+<template x-if="activeTab === 'agentActions'">
+  <div
+    x-data="adminAgentActions()"
+    x-init="init()"
+    style="padding: var(--space-6)"
+    data-testid="agent-actions-panel"
+  >
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4)">
+      <div>
+        <h3>Agent actions</h3>
+        <p style="font-size: 12px; color: var(--text-secondary)">
+          Read-only audit trail of agent API calls, newest first.
+        </p>
+      </div>
+      <button class="btn btn-secondary btn-xs" @click="load()" :disabled="loading" data-testid="agent-actions-refresh">
+        Refresh
+      </button>
+    </div>
+
+    <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4); flex-wrap: wrap">
+      <label style="font-size: 12px; display: flex; gap: var(--space-2); align-items: center">
+        Token or digest prefix
+        <input type="text" x-model="token" @change="load()" data-testid="agent-actions-token" />
+      </label>
+      <label style="font-size: 12px; display: flex; gap: var(--space-2); align-items: center">
+        Action
+        <input type="text" x-model="action" @change="load()" data-testid="agent-actions-action" />
+      </label>
+    </div>
+
+    <div
+      x-show="error !== ''"
+      style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; margin-bottom: var(--space-3)"
+      x-text="error"
+      data-testid="agent-actions-error"
+    >
+    </div>
+
+    <div
+      x-show="loading"
+      style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)"
+      data-testid="agent-actions-loading"
+    >
+      Loading agent actions…
+    </div>
+
+    <div
+      x-show="!loading && error === '' && rows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-8)"
+      data-testid="agent-actions-empty"
+    >
+      No agent actions recorded yet.
+    </div>
+
+    <template x-if="!loading && error === '' && rows.length > 0">
+      <div style="display: grid; gap: var(--space-1); overflow-x: auto" data-testid="agent-actions-table">
+        <div
+          style="display: grid; grid-template-columns: 150px 90px 140px 120px 80px 80px; gap: var(--space-2); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; min-width: 660px"
+          data-testid="agent-actions-header"
+        >
+          <span>Time</span>
+          <span>Action</span>
+          <span>Token</span>
+          <span>Worktree</span>
+          <span>Result</span>
+          <span>Duration</span>
+        </div>
+        <template x-for="row in rows" :key="row.id">
+          <div
+            style="display: grid; grid-template-columns: 150px 90px 140px 120px 80px 80px; gap: var(--space-2); font-size: 12px; padding: var(--space-2) 0; border-top: 1px solid var(--border-default, #e9ecef); min-width: 660px"
+            data-testid="agent-actions-row"
+          >
+            <span x-text="timeLabel(row)"></span>
+            <span x-text="row.action"></span>
+            <span x-text="row.token_digest"></span>
+            <span x-text="row.worktree_id ?? ''"></span>
+            <span x-text="row.result"></span>
+            <span x-text="row.duration_ms === null ? '' : String(row.duration_ms) + ' ms'"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

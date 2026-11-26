@@ -1,0 +1,92 @@
+<div
+  class="stats-line"
+  x-show="detailLevel === 'Detailed' && (msg.model_id || msg.provider)"
+  x-text="statsLine(msg)"
+>
+</div>
+
+<!-- Inline stats for Basic mode (subtle text, brightens on hover) -->
+<div
+  class="stats-line stats-basic"
+  x-show="detailLevel === 'Basic' && (msg.generation_time_ms || msg.token_count_total)"
+  x-text="statsLine(msg)"
+>
+</div>
+
+<!-- Prompt Debug View -->
+<template x-if="_debugView && msg.model_id">
+  <div class="debug-panel" data-testid="debug-panel">
+    <div class="debug-row">
+      <span class="debug-label">{{{t("chats.model")}}}</span> <span x-text="msg.model_id"></span>
+    </div>
+    <div class="debug-row" x-show="msg.provider">
+      <span class="debug-label">{{{t("chats.provider")}}}</span> <span x-text="msg.provider"></span>
+    </div>
+    <div class="debug-row" x-show="msg.token_count_prompt != null">
+      <span class="debug-label">{{{t("chats.promptTokens")}}}</span> <span x-text="msg.token_count_prompt"></span>
+    </div>
+    <div class="debug-row" x-show="msg.token_count_completion != null">
+      <span class="debug-label">{{{t("chats.completionTokens")}}}</span>
+      <span x-text="msg.token_count_completion"></span>
+    </div>
+    <div class="debug-row" x-show="msg.token_count_total != null">
+      <span class="debug-label">{{{t("chats.totalTokens")}}}</span> <span x-text="msg.token_count_total"></span>
+    </div>
+    <div class="debug-row" x-show="msg.generation_time_ms != null">
+      <span class="debug-label">{{{t("chats.genTime")}}}</span>
+      <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
+    </div>
+    <div class="debug-row" x-show="msg.tokens_per_second != null">
+      <span class="debug-label">{{{t("chats.speed")}}}</span> <span x-text="formattedTokensPerSecond(msg)"></span>
+    </div>
+  </div>
+</template>
+
+<!--
+  Attach asset picker (component-buttons AC3/AC7): renders only
+  for the message it was opened for; kinds come from the
+  registered ASSET_PICKER_KINDS registry.
+-->
+<template x-if="_assetPickerFor === msg.id">
+  <div class="asset-picker" data-testid="asset-picker">
+    <div class="asset-picker-header">
+      <span x-text="t('chats.assetPickerTitle')"></span>
+      <button
+        class="asset-picker-close"
+        @click="closeAssetPicker()"
+        x-bind:title="t('common.cancel')"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+    <div
+      class="asset-picker-status"
+      x-show="_assetPickerLoading"
+      x-text="t('chats.assetPickerLoading')"
+    >
+    </div>
+    <div
+      class="asset-picker-status"
+      x-show="!_assetPickerLoading && _assetPickerAssets.length === 0"
+      x-text="t('chats.assetPickerEmpty')"
+    >
+    </div>
+    <div class="asset-picker-grid" x-show="!_assetPickerLoading">
+      <template x-for="asset in _assetPickerAssets" :key="asset.id">
+        <button
+          class="asset-picker-item"
+          @click="attachAssetToMessage(msg.id, asset.id)"
+          :title="asset.filename || asset.id"
+          :aria-label="asset.filename || asset.id"
+        >
+          <img
+            :src="'/api/v1/assets/' + asset.id + '/raw'"
+            :alt="asset.filename || ''"
+            loading="lazy"
+          />
+        </button>
+      </template>
+    </div>
+  </div>
+</template>

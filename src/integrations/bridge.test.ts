@@ -7,7 +7,7 @@
  * Clock is injected — no real timers; adapters are in-memory stubs.
  */
 import { describe, expect, test, } from "bun:test";
-import type { AdapterMessage, ProtocolAdapter, } from "./adapter";
+import type { AdapterCapability, AdapterMessage, ProtocolAdapter, } from "./adapter";
 import { createMessageBridge, } from "./bridge";
 import { createAdapterHealth, } from "./health";
 import { createBridgeRegistry, } from "./registry";
@@ -453,5 +453,74 @@ describe("MessageBridge inbound gate", () => {
     // After dispatch the id is deduped like any other delivery.
     expect(bridge.receive("matrix", inbound("evt-1",),),).toBe(false,);
     expect(received,).toHaveLength(1,);
+  });
+});
+
+describe("MessageBridge token binding + upstream 429", () => {
+  test("a rotated token rebinds through the resolver and reaches the adapter", async () => {
+    const registry = createBridgeRegistry();
+    const seenTokens: string[] = [];
+    const adapter = {
+      name: "telegram",
+      protocol: "telegram",
+      connect: async () => {},
+      disconnect: async () => {},
+      isConnected: () => true,
+      isEncrypted: () => false,
+      capabilities: (): AdapterCapability[] => ["auth-challenge",],
+      ownsTarget: (target: string,) => /^\d+$/.test(target,),
+      sendMessage: async () => "unused",
+      sendWithToken: async (token: string, target: string, message: AdapterMessage,) => {
+        seenTokens.push(token,);
+        return `${target}-${message.body}`;
+      },
+      onMessage: () => {},
+    };
+
+    registry.register(adapter,);
+    const bridge = createMessageBridge(registry, {
+      // The frozen map only knows the old token; the resolver is the live binding.
+      tokenBindings: { "old-token": "telegram", },
+      tokenBindingResolver: (token,) => token.trim() === "" ? undefined : "telegram",
+    },);
+
+    if (bridge.sendWithToken === undefined) { throw new Error("bridge has no sendWithToken",); }
+
+    const result = await bridge.sendWithToken("rotated-token", "12345", outbound({ target: "12345", },),);
+    expect(result.ok,).toBe(true,);
+    expect(seenTokens,).toEqual(["rotated-token",],);
+
+    const unbound = await bridge.sendWithToken("", "12345", outbound({ target: "12345", },),);
+    expect(!unbound.ok && unbound.code,).toBe("send_failed",);
+  });
+
+  test("an adapter 429 returns rate_limited with retry_after without flipping health", async () => {
+    const registry = createBridgeRegistry();
+    registry.register(makeSendingAdapter("telegram", [], {
+      failWith: Object.assign(new Error("telegram rate limited",), { retryAfterMs: 9_000, },),
+    },),);
+
+    const health = createAdapterHealth();
+    const observed: Array<[string, string, number,]> = [];
+    const rateLimiter = {
+      consume: () => ({ ok: true as const, }),
+      observeRetryAfter: (adapter: string, protocol: string, _target: string, ms: number,) => {
+        observed.push([adapter, protocol, ms,],);
+      },
+      reset: () => {},
+    };
+
+    const bridge = createMessageBridge(registry, { health, rateLimiter, },);
+    const result = await bridge.send("telegram:12345", outbound({ target: "telegram:12345", },),);
+
+    expect(result,).toEqual({
+      ok: false,
+      code: "rate_limited",
+      message: "adapter telegram is rate limited sending to telegram:12345",
+      retryAfterMs: 9_000,
+    },);
+
+    expect(health.get("telegram",)?.verdict,).toBe("ok",);
+    expect(observed,).toEqual([["telegram", "telegram", 9_000,],],);
   });
 });

@@ -1,0 +1,1106 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Plugin loader lifecycle — temp-dir fixtures with a stubbed plugin_state.
+ *
+ * loadSinglePlugin is driven directly against plugin dirs created under
+ * os.tmpdir() (never the repo tree). loadAllPlugins runs against the real
+ * shipped plugin directories with only the DB layer stubbed. The
+ * origin-scoped-approval block at the end is the exception: it runs against
+ * a real in-memory schema so the persisted `plugin_state` row is the thing
+ * under assertion, not a stub echo.
+ * @module plugin-loader-test
+ */
+
+import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { tmpdir, } from "node:os";
+import { join, } from "node:path";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import type { Logger, } from "../../../../src/logger";
+import { createLogger, getLogger, setGlobalLogger, } from "../../../../src/logger";
+import { jsonStringifyOr, } from "../../../../src/utils";
+import { writeMemoryNoteTool, } from "../../../../src/generation/tools/write-memory-note";
+import { createTestDb, } from "../../../../src/test-utils/create-test-db";
+import { templateRegistry, } from "../../../../src/image-edit/template-registry";
+import { writeStoredPluginConfig, } from "./config-store";
+import { dispatchPluginRoute, forgetLoadedPlugin, initializePlugin, isPluginInitialized, loadAllPlugins, loadSinglePlugin, registry, scanAvailablePlugins, unloadAllPlugins, } from "./loader";
+import { executePluginTool, } from "./tool-executor";
+import { STRICT_CODEGEN_FLAG, } from "./tool-policy";
+import type { PluginOrigin, } from "./types";
+
+// ── Fixture sources (written to temp dirs, imported by the loader) ──
+
+const STATIC_PLUGIN = `export const plugin = {
+  name: "fixture-static",
+  version: "1.0.0",
+  description: "static fixture",
+  author: "test",
+  apiRoutes: [{ method: "GET", path: "/fixture-static", handler: async () => new Response("static"), },],
+  tools: [{ name: "fixture-static-tool", description: "s", parameters: {}, handler: async () => ({ content: "static", }), },],
+  agentRoles: [{ id: "fixture-static-role", name: "Static", description: "s", systemPrompt: "p", tools: [], },],
+  uiComponents: [{ type: "web", name: "fixture-static-ui", location: "test.panel", },],
+  eventHandlers: [{ event: "fixture.static", handler: async () => {}, },],
+  migrations: [{ version: 1, name: "fixture-static-migration", up: async () => {}, },],
+};
+`;
+
+const FULL_PLUGIN = `export const plugin = {
+  name: "fixture-full",
+  version: "1.0.0",
+  description: "full fixture",
+  author: "test",
+  tools: [{ name: "fixture-full-static-tool", description: "s", parameters: {}, handler: async () => ({ content: "static", }), },],
+  config: { mode: "test" },
+  async onLoad(ctx) {
+    ctx.logger.info("loading", { step: 1, });
+    ctx.logger.warn("careful");
+    ctx.logger.error("bad");
+    ctx.logger.debug("detail");
+    ctx.registerTool({ name: "fixture-full-tool", description: "d", parameters: {}, handler: async () => ({ content: "dyn", }), });
+    ctx.registerAgentRole({ id: "fixture-full-role", name: "Dyn", description: "d", systemPrompt: "p", tools: [], });
+    ctx.registerApiRoute({ method: "GET", path: "/fixture-full", handler: async () => new Response("dyn"), });
+    ctx.registerUiComponent({ type: "web", name: "fixture-full-ui", location: "test.panel", });
+    ctx.registerEventHandler({ event: "fixture.full", handler: async () => {}, });
+    globalThis.__llFixtureCtx = ctx;
+  },
+};
+`;
+
+/**
+ * @param version
+ */
+function dupPlugin(version: string,): string {
+  return `export const plugin = {
+  name: "fixture-dup",
+  version: "${version}",
+  description: "duplicate fixture",
+  author: "test",
+};
+`;
+}
+
+/**
+ * @param name
+ * @param token
+ */
+function unloadPlugin(name: string, token: string,): string {
+  return `export const plugin = {
+  name: "${name}",
+  version: "1.0.0",
+  description: "unload fixture",
+  author: "test",
+  async onUnload() {
+    (globalThis.__llUnloadOrder ??= []).push("${token}");
+  },
+};
+`;
+}
+
+const THROWING_ONLOAD_PLUGIN = `export const plugin = {
+  name: "fixture-onload-boom",
+  version: "1.0.0",
+  description: "throwing onLoad fixture",
+  author: "test",
+  apiRoutes: [{ method: "GET", path: "/fixture-onload-boom", handler: async () => new Response("nope"), },],
+  tools: [{ name: "fixture-onload-boom-tool", description: "s", parameters: {}, handler: async () => ({ content: "x", }), },],
+  agentRoles: [{ id: "fixture-onload-boom-role", name: "Boom", description: "s", systemPrompt: "p", tools: [], },],
+  uiComponents: [{ type: "web", name: "fixture-onload-boom-ui", location: "test.panel", },],
+  eventHandlers: [{ event: "fixture.onload.boom", handler: async () => {}, },],
+  migrations: [{ version: 1, name: "fixture-onload-boom-migration", up: async () => {}, },],
+  async onLoad(ctx) {
+    ctx.registerTool({ name: "fixture-onload-boom-dyn-tool", description: "d", parameters: {}, handler: async () => ({ content: "x", }), });
+    ctx.registerEventHandler({ event: "fixture.onload.dyn", handler: async () => {}, });
+    throw new Error("hook failed");
+  },
+  async onUnload() {
+    globalThis.__llUnloadCount = (globalThis.__llUnloadCount ?? 0) + 1;
+  },
+};
+`;
+
+const THROWING_UNLOAD_PLUGIN = `export const plugin = {
+  name: "fixture-unload-boom",
+  version: "1.0.0",
+  description: "throwing onUnload fixture",
+  author: "test",
+  async onUnload() { throw new Error("shutdown boom"); },
+};
+`;
+
+// ── Helpers ────────────────────────────────────────────────────
+
+/** Temp dirs created this test — removed in afterEach. */
+let tempDirs: string[] = [];
+
+/**
+ * Create an isolated plugin dir under os.tmpdir() with the given files.
+ * @param files
+ */
+function makePluginDir(files: Record<string, string>,): string {
+  const dir = mkdtempSync(join(tmpdir(), "loop-lore-plugin-",),);
+  tempDirs.push(dir,);
+  for (const [name, content] of Object.entries(files,)) {
+    writeFileSync(join(dir, name,), content,);
+  }
+
+  return dir;
+}
+
+interface StubDbOptions {
+  states?: Array<{ name: string; status: string }>;
+  statesError?: unknown;
+  /** Pre-existing approval row returned by the per-plugin status read. */
+  stateRow?: { status: string } | undefined;
+  inserts?: Array<Record<string, unknown>>;
+  conflictCols?: string[];
+  insertThrows?: boolean;
+  configRow?: { config_json: string | null } | undefined;
+  configError?: unknown;
+}
+
+/**
+ * Minimal Kysely stand-in covering only the plugin_state queries the
+ * loader issues (select states, insert-or-ignore a state row).
+ * @param options
+ */
+function stubDb(options: StubDbOptions = {},): Kysely<DB> {
+  return {
+    selectFrom: () => ({
+      selectAll: () => ({
+        execute: async () => {
+          if (options.statesError !== undefined) { throw options.statesError; }
+          return options.states ?? [];
+        },
+      }),
+      select: (cols?: string[],) => ({
+        where: () => ({
+          // Approval and stored-config reads both scope by origin, so each
+          // single-row query has two WHERE clauses.
+          where: () => ({
+            executeTakeFirst: async () => {
+              if (cols?.includes("status",)) { return options.stateRow; }
+              if (options.configError !== undefined) { throw options.configError; }
+              return options.configRow;
+            },
+          }),
+        }),
+      }),
+    }),
+    insertInto: () => ({
+      values: (row: Record<string, unknown>,) => {
+        options.inserts?.push(row,);
+        return {
+          onConflict: (pick: (oc: unknown,) => unknown,) => {
+            pick({
+              column: (col: string,) => {
+                options.conflictCols?.push(col,);
+                return { doNothing: () => "do-nothing", };
+              },
+              columns: (cols: string[],) => {
+                options.conflictCols?.push(...cols,);
+                return { doNothing: () => "do-nothing", };
+              },
+            },);
+
+            return {
+              execute: async () => {
+                if (options.insertThrows) { throw new Error("db unavailable",); }
+              },
+            };
+          },
+        };
+      },
+    }),
+  } as unknown as Kysely<DB>;
+}
+
+/**
+ * Null logger — keeps loader chatter out of test output.
+ *
+ * Every `Logger` method must be present: `child()` hands this same object
+ * to any caller, so a missing method (`trace`, `fatal`) turns a partial
+ * stub into a landmine for every test file that runs later in the process
+ * and resolves `getLogger().child(...)`.
+ */
+const nullLogger: Logger = {
+  trace: () => {},
+  fatal: () => {},
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+  debug: () => {},
+  child: () => nullLogger,
+  addTransport: () => {},
+  setBindings: () => {},
+  setLevel: () => {},
+  flush: () => Promise.resolve(),
+};
+
+/**
+ */
+function globals(): Record<string, unknown> {
+  return globalThis as unknown as Record<string, unknown>;
+}
+
+/** The logger in place before this suite replaced it, if any. */
+let priorLogger: Logger | null = null;
+let capturedPrior = false;
+
+beforeEach(() => {
+  registry.unregisterAll();
+  if (!capturedPrior) {
+    capturedPrior = true;
+    // Throws when nothing initialized a logger yet — that is a valid state.
+    try {
+      priorLogger = getLogger();
+    } catch {
+      priorLogger = null;
+    }
+  }
+
+  setGlobalLogger(nullLogger,);
+});
+
+afterEach(async () => {
+  for (const dir of tempDirs) {
+    rmSync(dir, { recursive: true, force: true, },);
+  }
+
+  tempDirs = [];
+  for (const key of ["__llFixtureCtx", "__llUnloadOrder", "__llUnloadCount", "__llOnLoadRan",]) {
+    delete globals()[key];
+  }
+
+  // `unloadAllPlugins` runs the shipped plugins' `onUnload`, and
+  // image-editing's clears the shared `templateRegistry` singleton. Its
+  // built-ins are guarded by a one-shot flag that `clear()` does not reset,
+  // so a later file that mounts the routes re-registers nothing and sees an
+  // empty registry. Snapshot and restore, same as the logger below.
+  const priorTemplates = templateRegistry.listAll();
+  await unloadAllPlugins();
+  for (const template of priorTemplates) {
+    templateRegistry.register(template,);
+  }
+
+  // Restore a real logger: leaving `nullLogger` installed makes every later
+  // test file in this process inherit a stub instead of the real one.
+  setGlobalLogger(priorLogger ?? createLogger({ level: "error", },),);
+});
+
+// ── loadSinglePlugin ───────────────────────────────────────────
+
+describe("loadSinglePlugin", () => {
+  test("loads a static-manifest plugin and persists an origin-scoped state", async () => {
+    const inserts: Array<Record<string, unknown>> = [];
+    const dir = makePluginDir({ "plugin.ts": STATIC_PLUGIN, });
+
+    // `stateRow` stands in for an admin having already approved this name, so
+    // the definitions asserted below are the enabled ones.
+    await loadSinglePlugin(stubDb({ inserts, stateRow: { status: "active", }, }), "fixture-static", dir, "local",);
+
+    const loaded = registry.getPlugin("fixture-static");
+    expect(loaded?.origin,).toBe("local",);
+    expect(loaded?.directory,).toBe(dir,);
+    expect(registry.getAllTools().map((t,) => t.name,),).toContain("fixture-static-tool",);
+    expect(registry.getAllAgentRoles().map((r,) => r.id,),).toContain("fixture-static-role",);
+    expect(registry.getAllRoutes().map((r,) => r.path,),).toContain("/fixture-static",);
+    expect(registry.getAllUIComponents().map((c,) => c.name,),).toContain("fixture-static-ui",);
+    expect(registry.getAllEventHandlers(),).toHaveLength(1,);
+    expect(registry.getAllMigrations().map((m,) => m.name,),).toContain("fixture-static-migration",);
+    expect(inserts,).toHaveLength(1,);
+    // A `local` origin is never self-approved: the row lands disabled.
+    expect(inserts[0],).toMatchObject({ name: "fixture-static", status: "disabled", enabled_at: null, });
+  });
+
+  test("runs onLoad with a wired context and a namespaced logger", async () => {
+    const seen: Array<{ level: string; entry: unknown }> = [];
+    const capture = (level: string,) => (entry: unknown,) => {
+      seen.push({ level, entry, },);
+    };
+
+    setGlobalLogger({
+      ...nullLogger,
+      info: capture("info",),
+      warn: capture("warn",),
+      error: capture("error",),
+      debug: capture("debug",),
+    },);
+
+    const db = stubDb({ stateRow: { status: "active", }, });
+    const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
+
+    await loadSinglePlugin(db, "fixture-full", dir, "community",);
+
+    expect(registry.getAllTools().map((t,) => t.name,),).toContain("fixture-full-tool",);
+    expect(registry.getAllAgentRoles().map((r,) => r.id,),).toContain("fixture-full-role",);
+    expect(registry.getAllRoutes().map((r,) => r.path,),).toContain("/fixture-full",);
+    expect(registry.getAllUIComponents().map((c,) => c.name,),).toContain("fixture-full-ui",);
+    expect(registry.getAllEventHandlers(),).toHaveLength(1,);
+    // Each hook-emitted log is captured and namespaced to the manifest name.
+    const hookLogs = seen.filter((s,) =>
+      (s.entry as { message?: string })?.message === "loading"
+      || (s.entry as { message?: string })?.message === "careful"
+      || (s.entry as { message?: string })?.message === "bad"
+      || (s.entry as { message?: string })?.message === "detail"
+    );
+
+    expect(hookLogs.map((s,) => s.level,),).toEqual(["info", "warn", "error", "debug",]);
+    for (const { entry, } of hookLogs) {
+      expect(entry,).toMatchObject({ plugin: "fixture-full", });
+    }
+
+    expect(hookLogs[0]?.entry,).toMatchObject({ message: "loading", step: 1, });
+    // The hook received the live db handle (own fixture shape, so a named cast is enough).
+    const fixtureCtx = globals().__llFixtureCtx as { db: unknown; config: Record<string, unknown> };
+    expect(fixtureCtx.db,).toBe(db,);
+    expect(fixtureCtx.config,).toEqual({ mode: "test" });
+  });
+
+  test("rejects a manifest without a name", async () => {
+    const inserts: Array<Record<string, unknown>> = [];
+    const dir = makePluginDir({ "plugin.ts": `export const plugin = { version: "1.0.0", };\n`, });
+
+    await loadSinglePlugin(stubDb({ inserts, }), "nameless", dir, "local",);
+
+    expect(registry.getPlugin("nameless"),).toBeUndefined();
+    expect(registry.listPlugins(),).toEqual([],);
+    expect(inserts,).toEqual([],);
+  });
+
+  test("rejects a module without a plugin export", async () => {
+    const inserts: Array<Record<string, unknown>> = [];
+    const dir = makePluginDir({ "plugin.ts": `export const nothing = 1;\n`, });
+
+    await loadSinglePlugin(stubDb({ inserts, }), "exportless", dir, "local",);
+
+    expect(registry.getPlugin("exportless"),).toBeUndefined();
+    expect(registry.listPlugins(),).toEqual([],);
+    expect(inserts,).toEqual([],);
+  });
+
+  test("ignores directories without plugin.ts", async () => {
+    const dir = makePluginDir({});
+
+    await loadSinglePlugin(stubDb(), "ghost", dir, "local",);
+
+    expect(registry.listPlugins(),).toEqual([],);
+  });
+
+  test("swallows import failures without registering", async () => {
+    const dir = makePluginDir({ "plugin.ts": `throw new Error("boom");\n`, });
+
+    await loadSinglePlugin(stubDb(), "broken", dir, "local",);
+
+    expect(registry.listPlugins(),).toEqual([],);
+  });
+
+  test("rolls back every registration when onLoad throws", async () => {
+    const dir = makePluginDir({ "plugin.ts": THROWING_ONLOAD_PLUGIN, });
+
+    await loadSinglePlugin(stubDb({ stateRow: { status: "active", }, }), "fixture-onload-boom", dir, "local",);
+
+    // The plugin is gone from the registry and unreachable for shutdown.
+    expect(registry.getPlugin("fixture-onload-boom"),).toBeUndefined();
+    expect(registry.listPluginStates().map((s,) => s.name,),).not.toContain("fixture-onload-boom",);
+    expect(registry.isEnabled("fixture-onload-boom"),).toBe(false,);
+
+    // Manifest extensions AND anything registered from onLoad before the throw.
+    expect(registry.getAllRoutes(),).toEqual([],);
+    expect(registry.getAllTools(),).toEqual([],);
+    expect(registry.getAllAgentRoles(),).toEqual([],);
+    expect(registry.getAllUIComponents(),).toEqual([],);
+    expect(registry.getAllEventHandlers(),).toEqual([],);
+    expect(registry.getAllMigrations(),).toEqual([],);
+    expect(registry.getPluginRoutes("fixture-onload-boom"),).toEqual([],);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/fixture-onload-boom"), },),
+    ).toBeNull();
+
+    await unloadAllPlugins();
+    // onUnload is never called: the plugin never finished loading.
+    expect(globals().__llUnloadCount,).toBeUndefined();
+    expect(registry.listPlugins(),).toEqual([],);
+  });
+
+  test("reloading a name from the same origin overwrites the registration and persists idempotently", async () => {
+    const inserts: Array<Record<string, unknown>> = [];
+    const conflictCols: string[] = [];
+    const db = stubDb({ inserts, conflictCols, });
+    const dirA = makePluginDir({ "plugin.ts": dupPlugin("1.0.0",), });
+    const dirB = makePluginDir({ "plugin.ts": dupPlugin("2.0.0",), });
+
+    await loadSinglePlugin(db, "fixture-dup", dirA, "local",);
+    // Cross-origin reloads are rejected by the collision guard; same-origin
+    // reloads still overwrite, which is what this regression covers.
+    await loadSinglePlugin(db, "fixture-dup", dirB, "local",);
+
+    expect(
+      registry.listPlugins().filter((p,) => p.manifest.name === "fixture-dup",),
+    ).toHaveLength(1,);
+
+    expect(registry.getPlugin("fixture-dup")?.manifest.version,).toBe("2.0.0",);
+    expect(inserts,).toHaveLength(2,);
+    // Both persists target (name, origin) with do-nothing on conflict.
+    expect(conflictCols,).toEqual(["name", "origin", "name", "origin",]);
+  });
+
+  test("treats plugin_state persistence as best-effort", async () => {
+    const dir = makePluginDir({ "plugin.ts": STATIC_PLUGIN, });
+
+    await loadSinglePlugin(stubDb({ insertThrows: true, }), "fixture-static", dir, "local",);
+
+    expect(registry.getPlugin("fixture-static"),).toBeDefined();
+  });
+
+  test("merges a stored config override over manifest defaults into onLoad ctx.config", async () => {
+    // Approved, so `onLoad` (where ctx.config is observed) is reached at all.
+    const db = stubDb({ stateRow: { status: "active", }, configRow: { config_json: jsonStringifyOr({ mode: "stored", },), }, });
+    const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
+
+    await loadSinglePlugin(db, "fixture-full", dir, "community",);
+
+    const fixtureCtx = globals().__llFixtureCtx as { config: Record<string, unknown> };
+    expect(fixtureCtx.config,).toEqual({ mode: "stored" });
+  });
+
+  test("falls back to manifest defaults and warns when stored config_json is malformed", async () => {
+    const warns: unknown[] = [];
+    setGlobalLogger({
+      ...nullLogger,
+      warn: (entry: unknown,) => { warns.push(entry,); },
+    },);
+
+    const db = stubDb({ stateRow: { status: "active", }, configRow: { config_json: "{ not json", }, });
+    const dir = makePluginDir({ "plugin.ts": FULL_PLUGIN, });
+
+    await loadSinglePlugin(db, "fixture-full", dir, "community",);
+
+    const fixtureCtx = globals().__llFixtureCtx as { config: Record<string, unknown> };
+    expect(fixtureCtx.config,).toEqual({ mode: "test" });
+    expect(
+      warns.some((w,) => (w as { message?: string }).message?.includes("Failed to read stored plugin config",)),
+    ).toBe(true,);
+  });
+});
+
+// ── unloadAllPlugins ───────────────────────────────────────────
+
+describe("unloadAllPlugins via single loads", () => {
+  test("calls onUnload in reverse load order and clears the registry", async () => {
+    globals().__llUnloadOrder = [] as string[];
+    const dirA = makePluginDir({ "plugin.ts": unloadPlugin("order-a", "a",), });
+    const dirB = makePluginDir({ "plugin.ts": unloadPlugin("order-b", "b",), });
+
+    await loadSinglePlugin(stubDb(), "order-a", dirA, "core",);
+    await loadSinglePlugin(stubDb(), "order-b", dirB, "core",);
+    await unloadAllPlugins();
+
+    expect(globals().__llUnloadOrder,).toEqual(["b", "a",]);
+    expect(registry.listPlugins(),).toEqual([],);
+  });
+
+  test("swallows a throwing onUnload and still clears", async () => {
+    const dir = makePluginDir({ "plugin.ts": THROWING_UNLOAD_PLUGIN, });
+
+    await loadSinglePlugin(stubDb(), "fixture-unload-boom", dir, "core",);
+    expect(unloadAllPlugins(),).resolves.toBeUndefined();
+
+    expect(registry.listPlugins(),).toEqual([],);
+  });
+});
+
+// ── dispatchPluginRoute ────────────────────────────────────────
+
+describe("dispatchPluginRoute", () => {
+  test("matches a registered enabled route by path + method", async () => {
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+        name: "fixture-dispatch",
+        version: "1.0.0",
+        description: "d",
+        author: "t",
+        apiRoutes: [{
+          method: "GET",
+          path: "/fixture-dispatch/ping",
+          handler: async () => new Response("pong"),
+        },],
+      };\n`,
+    });
+
+    await loadSinglePlugin(stubDb({ stateRow: { status: "active", }, }), "fixture-dispatch", dir, "local");
+
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/fixture-dispatch/ping", { method: "GET" }),
+    });
+
+    expect(res).not.toBeNull();
+    expect(await res!.text()).toBe("pong");
+  });
+
+  test("returns null when path does not match", async () => {
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+        name: "fixture-dispatch-miss",
+        version: "1.0.0",
+        description: "d",
+        author: "t",
+        apiRoutes: [{
+          method: "GET",
+          path: "/a",
+          handler: async () => new Response("ok"),
+        },],
+      };\n`,
+    });
+
+    await loadSinglePlugin(stubDb({ stateRow: { status: "active", }, }), "fixture-dispatch-miss", dir, "local");
+
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/b", { method: "GET" }),
+    });
+
+    expect(res).toBeNull();
+  });
+
+  test("returns null when method does not match", async () => {
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+        name: "fixture-dispatch-method",
+        version: "1.0.0",
+        description: "d",
+        author: "t",
+        apiRoutes: [{
+          method: "GET",
+          path: "/a",
+          handler: async () => new Response("ok"),
+        },],
+      };\n`,
+    });
+
+    await loadSinglePlugin(stubDb({ stateRow: { status: "active", }, }), "fixture-dispatch-method", dir, "local");
+
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/a", { method: "POST" }),
+    });
+
+    expect(res).toBeNull();
+  });
+
+  test("skips disabled plugins", async () => {
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+        name: "fixture-dispatch-off",
+        version: "1.0.0",
+        description: "d",
+        author: "t",
+        apiRoutes: [{
+          method: "GET",
+          path: "/off",
+          handler: async () => new Response("ok"),
+        },],
+      };\n`,
+    });
+
+    await loadSinglePlugin(stubDb({ stateRow: { status: "active", }, }), "fixture-dispatch-off", dir, "local");
+    registry.setEnabled("fixture-dispatch-off", false);
+
+    const res = await dispatchPluginRoute({
+      request: new Request("http://x/off", { method: "GET" }),
+    });
+
+    expect(res).toBeNull();
+  });
+});
+
+// ── loadAllPlugins ─────────────────────────────────────────────
+
+describe("loadAllPlugins", () => {
+  test("registers shipped plugins plus builtin tools without blanket name-keyed preload", async () => {
+    const inserts: Array<Record<string, unknown>> = [];
+    const db = stubDb({
+      states: [
+        { name: "ghost-plugin", status: "disabled", },
+        { name: "ghost-active", status: "active", },
+      ],
+      inserts,
+    },);
+
+    await loadAllPlugins(db,);
+
+    // Preload is gone: a persisted row for an unloaded name enables nothing.
+    expect(registry.isEnabled("ghost-plugin"),).toBe(false,);
+    expect(registry.isEnabled("ghost-active"),).toBe(false,);
+    // Real directory scan: the shipped dice-roller sample loads from plugins/core.
+    expect(registry.getPlugin("dice-roller")?.origin,).toBe("core",);
+    // Builtin core tools register on every boot.
+    expect(registry.getAllTools(),).toContain(writeMemoryNoteTool,);
+    // Each loaded plugin persisted a row scoped to its origin.
+    expect(inserts.length,).toBeGreaterThan(0,);
+    for (const row of inserts) {
+      const origin = registry.getPlugin(String(row.name,))?.origin;
+      expect(row,).toMatchObject({ status: origin === "core" ? "active" : "disabled", });
+    }
+
+    // Real directory scan: the shipped community plugins are registered but
+    // not approved, so their definitions are filtered out.
+    expect(registry.isEnabled("trivia"),).toBe(false,);
+    // trivia registers its routes from `onLoad`, which an unapproved plugin
+    // never runs — so it has nothing registered at all, let alone served.
+    expect(registry.getPluginRoutes("trivia"),).toEqual([],);
+    expect(registry.getEnabledRoutes().map((r,) => r.path,),).not.toContain("/api/v1/trivia/start",);
+  });
+
+  test("boots when plugin_state is missing and skips absent plugin dirs", async () => {
+    const db = stubDb({ statesError: new Error("no such table: plugin_state",), });
+
+    await loadAllPlugins(db,);
+
+    // plugins/local does not ship, core/community do — boot still succeeds.
+    expect(registry.listPlugins().length,).toBeGreaterThan(0,);
+    expect(registry.getAllTools(),).toContain(writeMemoryNoteTool,);
+  });
+});
+
+// ── Origin-scoped approval (real plugin_state table) ────────────
+
+/**
+ * A plugin dir whose only extension point is a single answering route.
+ * @param name
+ * @param path
+ * @param body
+ */
+function routeOnlyPlugin(name: string, path: string, body: string,): string {
+  return `export const plugin = {
+  name: "${name}",
+  version: "1.0.0",
+  description: "approval fixture",
+  author: "test",
+  apiRoutes: [{ method: "GET", path: "${path}", handler: async () => new Response("${body}"), },],
+};
+`;
+}
+
+/**
+ * A plugin that declares one static route and registers another from `onLoad`,
+ * flipping a module-level flag so the hook's execution is observable.
+ * @param name
+ * @param token
+ */
+function deferredInitPlugin(name: string, token: string,): string {
+  return `export const plugin = {
+  name: "${name}",
+  version: "1.0.0",
+  description: "deferred init fixture",
+  author: "test",
+  apiRoutes: [{ method: "GET", path: "/${name}/static", handler: async () => new Response("static"), },],
+  async onLoad(ctx) {
+    globalThis.__llOnLoadRan = (globalThis.__llOnLoadRan ?? []).concat("${token}");
+    ctx.registerApiRoute({ method: "GET", path: "/${name}/dynamic", handler: async () => new Response("dynamic"), });
+  },
+};
+`;
+}
+
+describe("origin-scoped approval", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    db = (await createTestDb()).db;
+  });
+
+  /**
+   * @param name
+   */
+  async function persistedStatus(name: string,): Promise<string | undefined> {
+    const row = await db
+      .selectFrom("plugin_state",)
+      .select("status",)
+      .where("name", "=", name,)
+      .executeTakeFirst();
+
+    return row?.status;
+  }
+
+  /**
+   * @param name
+   * @param origin
+   */
+  async function persistedStatusAt(name: string, origin: PluginOrigin,): Promise<string | undefined> {
+    const row = await db
+      .selectFrom("plugin_state",)
+      .select("status",)
+      .where("name", "=", name,)
+      .where("origin", "=", origin,)
+      .executeTakeFirst();
+
+    return row?.status;
+  }
+
+  test("a community plugin with no plugin_state row lands non-active and does not dispatch", async () => {
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-approval-community", "/approval/community", "community",), });
+
+    await loadSinglePlugin(db, "fixture-approval-community", dir, "community",);
+
+    expect(await persistedStatus("fixture-approval-community",),).toBe("disabled",);
+    expect(registry.isEnabled("fixture-approval-community",),).toBe(false,);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/approval/community",), },),
+    ).toBeNull();
+
+    // Still registered, so the admin enable path is all it takes to serve it.
+    expect(registry.getPluginRoutes("fixture-approval-community"),).toHaveLength(1,);
+    registry.setEnabled("fixture-approval-community", true,);
+    const res = await dispatchPluginRoute({ request: new Request("http://x/approval/community",), },);
+    expect(await res?.text(),).toBe("community",);
+  });
+
+  test("a core plugin self-approves and dispatches", async () => {
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-approval-core", "/approval/core", "core",), });
+
+    await loadSinglePlugin(db, "fixture-approval-core", dir, "core",);
+
+    expect(await persistedStatus("fixture-approval-core",),).toBe("active",);
+    expect(registry.isEnabled("fixture-approval-core",),).toBe(true,);
+    const res = await dispatchPluginRoute({ request: new Request("http://x/approval/core",), },);
+    expect(await res?.text(),).toBe("core",);
+  });
+
+  test("a same-name non-core write cannot re-enable a disabled core plugin", async () => {
+    const name = "fixture-disabled-core-repoint";
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, "/approval/disabled-core", "core",), });
+
+    await loadSinglePlugin(db, name, coreDir, "core",);
+    expect(await persistedStatusAt(name, "core",),).toBe("active",);
+
+    await db
+      .updateTable("plugin_state",)
+      .set({ status: "disabled", disabled_at: new Date().toISOString(), },)
+      .where("name", "=", name,)
+      .where("origin", "=", "core",)
+      .execute();
+
+    registry.setEnabled(name, false,);
+    expect(await persistedStatusAt(name, "core",),).toBe("disabled",);
+
+    // The admin config route writes a row for a same-named community plugin.
+    await writeStoredPluginConfig(db, name, { mode: "community", }, "community",);
+
+    expect(await persistedStatusAt(name, "core",),).toBe("disabled",);
+    expect(await persistedStatusAt(name, "community",),).toBe("disabled",);
+
+    // A later core load re-reads its own row: still disabled, route not served.
+    registry.unregister(name,);
+    forgetLoadedPlugin(name,);
+    await loadSinglePlugin(db, name, coreDir, "core",);
+    expect(registry.isEnabled(name,),).toBe(false,);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/approval/disabled-core",), },),).toBeNull();
+  });
+
+  test("a community plugin cannot overwrite a same-name core registration", async () => {
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-core", "/collision/core", "core",), });
+    const communityDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-core", "/collision/community", "community",), });
+
+    await loadSinglePlugin(db, "fixture-collision-core", coreDir, "core",);
+    const warns: Array<{ message?: string; origin?: string; existingOrigin?: string }> = [];
+    setGlobalLogger({
+      ...nullLogger,
+      warn: (entry: unknown,) => { warns.push(entry as { message?: string; origin?: string; existingOrigin?: string },); },
+    },);
+
+    await loadSinglePlugin(db, "fixture-collision-core", communityDir, "community",);
+
+    expect(registry.getPlugin("fixture-collision-core",)?.origin,).toBe("core",);
+    expect(registry.getPlugin("fixture-collision-core",)?.directory,).toBe(coreDir,);
+    expect(registry.isEnabled("fixture-collision-core",),).toBe(true,);
+    expect(await persistedStatus("fixture-collision-core",),).toBe("active",);
+    const coreRes = await dispatchPluginRoute({ request: new Request("http://x/collision/core",), },);
+    expect(await coreRes?.text(),).toBe("core",);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/collision/community",), },),).toBeNull();
+    expect(warns.some((w,) =>
+      w.message?.includes("another origin")
+      && w.origin === "community"
+      && w.existingOrigin === "core",
+    ),).toBe(true,);
+  });
+
+  test("a community-first registration also wins over a later core claim", async () => {
+    // Precedence: first registration wins in either direction. Startup loads
+    // core first, so core normally owns a contested name; a caller that loads
+    // community first keeps that registration and the later core load is
+    // skipped, so no cross-origin replacement can inherit an approval row.
+    const communityDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-first", "/collision/first-community", "community",), });
+    const coreDir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-collision-first", "/collision/first-core", "core",), });
+
+    await loadSinglePlugin(db, "fixture-collision-first", communityDir, "community",);
+    await loadSinglePlugin(db, "fixture-collision-first", coreDir, "core",);
+
+    expect(registry.getPlugin("fixture-collision-first",)?.origin,).toBe("community",);
+    expect(registry.getPlugin("fixture-collision-first",)?.directory,).toBe(communityDir,);
+    expect(registry.isEnabled("fixture-collision-first",),).toBe(false,);
+    expect(await persistedStatus("fixture-collision-first",),).toBe("disabled",);
+    expect(await dispatchPluginRoute({ request: new Request("http://x/collision/first-core",), },),).toBeNull();
+  });
+
+  // BUG-fix-plugins-append-onload-registrations-to-manifest-registra:
+  // a plugin declaring manifest apiRoutes AND registering routes from onLoad
+  // must serve BOTH — the onLoad registration appends, never replaces.
+  test("manifest routes and onLoad-registered routes coexist after append semantics", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-append", "append",), });
+
+    await loadSinglePlugin(db, "fixture-append", dir, "core",);
+
+    const routes = registry.getPluginRoutes("fixture-append",);
+    expect(routes.map((r,) => r.path,),).toEqual(["/fixture-append/static", "/fixture-append/dynamic",],);
+
+    const staticRes = await dispatchPluginRoute({ request: new Request("http://x/fixture-append/static",), },);
+    expect(await staticRes?.text(),).toBe("static",);
+    const dynamicRes = await dispatchPluginRoute({ request: new Request("http://x/fixture-append/dynamic",), },);
+    expect(await dynamicRes?.text(),).toBe("dynamic",);
+  });
+
+  test("an unapproved community plugin never runs onLoad", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-unapproved", "unapproved",), });
+
+    await loadSinglePlugin(db, "fixture-unapproved", dir, "community",);
+
+    expect(await persistedStatus("fixture-unapproved",),).toBe("disabled",);
+    // The hook itself never ran: no execution, so no side state and no route.
+    expect(globals().__llOnLoadRan,).toBeUndefined();
+    expect(registry.getPluginRoutes("fixture-unapproved",).map((r,) => r.path,),).toEqual(["/fixture-unapproved/static",],);
+    // Nothing serves while it is disabled — not the statically declared route.
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/fixture-unapproved/static",), },),
+    ).toBeNull();
+
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/fixture-unapproved/dynamic",), },),
+    ).toBeNull();
+  });
+
+  test("a core plugin with no row stays active after a config write creates one", async () => {
+    // No prior row: this is what a failed persistPluginState leaves behind.
+    expect(await persistedStatus("fixture-cfg-first"),).toBeUndefined();
+    await writeStoredPluginConfig(db, "fixture-cfg-first", { mode: "stored", }, "core",);
+
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-cfg-first", "cfg-first",), });
+    await loadSinglePlugin(db, "fixture-cfg-first", dir, "core",);
+
+    expect(await persistedStatus("fixture-cfg-first",),).toBe("active",);
+    expect(registry.isEnabled("fixture-cfg-first",),).toBe(true,);
+    expect(globals().__llOnLoadRan,).toEqual(["cfg-first",],);
+    expect(registry.getPluginRoutes("fixture-cfg-first").map((r,) => r.path,),).toContain("/fixture-cfg-first/dynamic",);
+  });
+
+  test("initializePlugin is one-shot for a plugin that already ran onLoad", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-once", "once",), });
+    await loadSinglePlugin(db, "fixture-once", dir, "core",);
+    expect(globals().__llOnLoadRan,).toEqual(["once",],);
+
+    // A second call (e.g. disable → enable) must not re-run the hook.
+    await initializePlugin({ db, manifest: registry.getPlugin("fixture-once")!.manifest, origin: "core", },);
+
+    expect(globals().__llOnLoadRan,).toEqual(["once",],);
+  });
+
+  test("a community plugin carrying a policy tag stays disabled, and its tagged tool refuses to run", async () => {
+    // A disabled plugin cannot be invoked through the generation tool loop, so
+    // the tag has to hold on its own too: enabling it and calling the executor
+    // directly is the case an implicit pass would slip through.
+    const dir = makePluginDir({
+      "plugin.ts": `export const plugin = {
+  name: "fixture-tagged-community",
+  version: "1.0.0",
+  description: "community fixture carrying a policy tag",
+  author: "test",
+  tools: [{ name: "fixture-tagged-community-tool", description: "s", parameters: {}, policy: "requires-strict-codegen", handler: async () => ({ content: "ran", }), },],
+};
+`,
+    },);
+
+    await loadSinglePlugin(db, "fixture-tagged-community", dir, "community",);
+
+    expect(await persistedStatus("fixture-tagged-community",),).toBe("disabled",);
+    expect(registry.isEnabled("fixture-tagged-community",),).toBe(false,);
+    expect(registry.getAllTools().map((t,) => t.name,),).not.toContain("fixture-tagged-community-tool",);
+
+    registry.setEnabled("fixture-tagged-community", true,);
+    const tagged = registry.getAllTools().find((t,) => t.name === "fixture-tagged-community-tool");
+    // Asserted before use: dereferencing `tagged!` on a registration failure
+    // would surface a cryptic TypeError instead of the readable one.
+    expect(tagged,).toBeDefined();
+    expect(tagged?.policy,).toBe("requires-strict-codegen",);
+
+    const result = await executePluginTool(tagged!, {},);
+
+    expect(result.isError,).toBe(true,);
+    expect(result.content,).toContain(STRICT_CODEGEN_FLAG,);
+  });
+
+  test("an origin-matched row decides approval", async () => {
+    await db
+      .insertInto("plugin_state",)
+      .values({ name: "fixture-approval-vetoed", origin: "core", status: "disabled", },)
+      .execute();
+
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-approval-vetoed", "/approval/vetoed", "vetoed",), });
+
+    await loadSinglePlugin(db, "fixture-approval-vetoed", dir, "core",);
+
+    expect(await persistedStatus("fixture-approval-vetoed",),).toBe("disabled",);
+    expect(registry.isEnabled("fixture-approval-vetoed",),).toBe(false,);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/approval/vetoed",), },),
+    ).toBeNull();
+  });
+
+  test("an active core row does not authorize a same-name community plugin", async () => {
+    await db
+      .insertInto("plugin_state",)
+      .values({ name: "fixture-inherited-core", origin: "core", status: "active", },)
+      .execute();
+
+    // No core plugin is registered in memory: this is the persisted case a
+    // restart leaves behind, which the in-memory collision guard cannot see.
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-inherited-core", "/inherited/community", "community",), },);
+    await loadSinglePlugin(db, "fixture-inherited-core", dir, "community",);
+
+    expect(registry.getPlugin("fixture-inherited-core",)?.origin,).toBe("community",);
+    expect(registry.isEnabled("fixture-inherited-core",),).toBe(false,);
+    expect(
+      await dispatchPluginRoute({ request: new Request("http://x/inherited/community",), },),
+    ).toBeNull();
+
+    const rows = await db
+      .selectFrom("plugin_state",)
+      .select(["origin", "status",],)
+      .where("name", "=", "fixture-inherited-core",)
+      .execute();
+
+    expect(rows,).toHaveLength(2,);
+    expect(rows.find((r,) => r.origin === "core",),).toMatchObject({ status: "active", },);
+    expect(rows.find((r,) => r.origin === "community",),).toMatchObject({ status: "disabled", },);
+  });
+
+  test("a NULL-origin backfill row does not enable community or local", async () => {
+    const fixtures = [
+      { name: "fixture-null-community", origin: "community" as const, path: "/backfill/community", },
+      { name: "fixture-null-local", origin: "local" as const, path: "/backfill/local", },
+    ];
+
+    for (const { name, origin, path } of fixtures) {
+      await db
+        .insertInto("plugin_state",)
+        .values({ name, status: "active", },)
+        .execute();
+
+      const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, path, "backfill",), },);
+      await loadSinglePlugin(db, name, dir, origin,);
+
+      expect(registry.isEnabled(name,),).toBe(false,);
+      expect(
+        await dispatchPluginRoute({ request: new Request(`http://x${path}`,), },),
+      ).toBeNull();
+    }
+  });
+
+  test("a core plugin still boots with no row on a fresh table", async () => {
+    const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin("fixture-fresh-core", "/fresh/core", "fresh",), },);
+    await loadSinglePlugin(db, "fixture-fresh-core", dir, "core",);
+
+    expect(registry.isEnabled("fixture-fresh-core",),).toBe(true,);
+    expect(await persistedStatus("fixture-fresh-core",),).toBe("active",);
+  });
+
+  test("same-origin approval still enables community and local plugins", async () => {
+    const fixtures = [
+      { name: "fixture-approved-community", origin: "community" as const, path: "/approved/community", },
+      { name: "fixture-approved-local", origin: "local" as const, path: "/approved/local", },
+    ];
+
+    for (const { name, origin, path } of fixtures) {
+      await db
+        .insertInto("plugin_state",)
+        .values({ name, origin, status: "active", },)
+        .execute();
+
+      const dir = makePluginDir({ "plugin.ts": routeOnlyPlugin(name, path, "approved",), },);
+      await loadSinglePlugin(db, name, dir, origin,);
+
+      expect(registry.isEnabled(name,),).toBe(true,);
+      expect(
+        await dispatchPluginRoute({ request: new Request(`http://x${path}`,), },),
+      ).not.toBeNull();
+    }
+  });
+});
+
+describe("plugin init bookkeeping — isPluginInitialized / forgetLoadedPlugin", () => {
+  test("fresh name is uninitialized and forget is a no-op", () => {
+    expect(isPluginInitialized("never-seen-plugin",),).toBe(false,);
+    expect(() => forgetLoadedPlugin("never-seen-plugin",),).not.toThrow();
+    expect(isPluginInitialized("never-seen-plugin",),).toBe(false,);
+  });
+
+  test("loaded plugin is initialized until forgotten", async () => {
+    const dir = makePluginDir({ "plugin.ts": deferredInitPlugin("fixture-init-mark", "init-mark",), });
+
+    await loadSinglePlugin(stubDb(), "fixture-init-mark", dir, "core",);
+    expect(isPluginInitialized("fixture-init-mark",),).toBe(true,);
+
+    forgetLoadedPlugin("fixture-init-mark",);
+    expect(isPluginInitialized("fixture-init-mark",),).toBe(false,);
+  });
+});
+
+describe("plugin discovery scan — scanAvailablePlugins", () => {
+  test("returns one entry per distinct manifest name with origin", async () => {
+    const rootA = makePluginDir({});
+    const rootB = makePluginDir({});
+    mkdirSync(join(rootA, "fixture-scan-a",), { recursive: true, },);
+    writeFileSync(
+      join(rootA, "fixture-scan-a", "plugin.ts",),
+      `export const plugin = {\n  name: "fixture-scan-a",\n  version: "1.0.0",\n  description: "a",\n  author: "test",\n};\n`,
+    );
+
+    mkdirSync(join(rootB, "fixture-scan-b",), { recursive: true, },);
+    writeFileSync(
+      join(rootB, "fixture-scan-b", "plugin.ts",),
+      `export const plugin = {\n  name: "fixture-scan-b",\n  version: "1.0.0",\n  description: "b",\n  author: "test",\n};\n`,
+    );
+
+    const found = await scanAvailablePlugins({
+      roots: [{ origin: "community", dir: rootA, }, { origin: "core", dir: rootB, },],
+    });
+
+    const byName = new Map(found.map((p,) => [p.manifest.name, p,],));
+    expect(byName.get("fixture-scan-a")?.manifest.version,).toBe("1.0.0",);
+    expect(byName.get("fixture-scan-a")?.origin,).toBe("community",);
+    expect(byName.get("fixture-scan-b")?.manifest.version,).toBe("1.0.0",);
+    expect(byName.get("fixture-scan-b")?.origin,).toBe("core",);
+  });
+
+  test("skips missing plugin.ts without failing the scan", async () => {
+    const root = makePluginDir({ "README.md": "no entry point here", });
+
+    const found = await scanAvailablePlugins({ roots: [{ origin: "community", dir: root, },], });
+
+    expect(found,).toEqual([],);
+  });
+
+  test("orders directories by code point, not the active locale", async () => {
+    const root = makePluginDir({});
+    for (const [dir, name,] of [["a", "fixture-order-a"], ["B", "fixture-order-B"],] as const) {
+      mkdirSync(join(root, dir,), { recursive: true, },);
+      writeFileSync(
+        join(root, dir, "plugin.ts",),
+        `export const plugin = { name: "${name}", version: "1.0.0", description: "o", author: "test" };\n`,
+      );
+    }
+
+    const found = await scanAvailablePlugins({ roots: [{ origin: "local", dir: root, },], },);
+    // Code point puts "B" (0x42) before "a" (0x61); localeCompare does not.
+    expect(found.map((p,) => p.manifest.name,),).toEqual(["fixture-order-B", "fixture-order-a",],);
+  });
+});

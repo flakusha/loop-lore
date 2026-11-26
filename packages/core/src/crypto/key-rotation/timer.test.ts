@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Tests for the key auto-rotation timer lifecycle. */
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
-import { createTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, } from "../../../../../src/test-utils/create-test-db";
+import { createLogger, } from "../../logger";
 import { startAutoRotationTimer, } from "./timer";
 
 createLogger({ level: "error", },);

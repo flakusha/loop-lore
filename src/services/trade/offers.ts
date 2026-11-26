@@ -142,12 +142,14 @@ export async function createOffer(
  * @param db
  * @param offerId
  * @param acceptorActorId
+ * @param worldId - optional route world; rejects offers from another world
  * @returns {Promise<TradeResult | { offer: { world_id: string; requester_actor_id: string; crafter_actor_id: string | null; offered_payment: number; offered_materials: string; requested_materials: string; }; buyerItems: TradeLine[]; sellerItems: TradeLine[]; }>}
  */
 export async function loadOfferForAccept(
   db: Kysely<DB>,
   offerId: string,
   acceptorActorId: string,
+  worldId?: string,
 ): Promise<
   | TradeResult
   | {
@@ -169,6 +171,10 @@ export async function loadOfferForAccept(
     .executeTakeFirst();
 
   if (!offer) { return { success: false, reason: "offer not found", }; }
+  if (worldId && offer.world_id !== worldId) {
+    return { success: false, reason: "offer not found", };
+  }
+
   if (offer.status === "pending" || offer.status === "countered") {
     if (isExpired(offer.deadline,)) {
       await markOfferExpired(db, offerId,);
@@ -229,19 +235,25 @@ export async function markOfferStatus(
  * @param db
  * @param offerId
  * @param cancellerActorId
+ * @param worldId - optional route world; rejects offers from another world
  * @returns {Promise<{ success: boolean; reason?: string | undefined; }>}
  */
 export async function cancelOffer(
   db: Kysely<DB>,
   offerId: string,
   cancellerActorId: string,
+  worldId?: string,
 ): Promise<{ success: boolean; reason?: string }> {
   const offer = await db.selectFrom("crafting_orders",)
-    .select(["id", "status", "requester_actor_id",],)
+    .select(["id", "status", "requester_actor_id", "world_id",],)
     .where("id", "=", offerId,)
     .executeTakeFirst();
 
   if (!offer) { return { success: false, reason: "offer not found", }; }
+  if (worldId && offer.world_id !== worldId) {
+    return { success: false, reason: "offer not found", };
+  }
+
   if (offer.status !== "pending" && offer.status !== "countered") {
     return { success: false, reason: `offer is ${offer.status}`, };
   }

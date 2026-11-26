@@ -24,6 +24,7 @@ No MCP at runtime: no `@modelcontextprotocol` dependency, no client, no `ctx_*` 
 - [ ] Registration through `registerTool()`; role-gating + timeout semantics identical to native tools (no second tool-execution path)
 - [ ] `onUnload()` closes every transport; unit tests cover the mapping surface
 - [ ] SDK choice pinned per the doc's open question 1 (`@modelcontextprotocol/sdk@1.x` vs v2 split) — one dependency added, decision recorded in the ticket before code lands
+- [ ] E2E: a fake lean-ctx stdio MCP server is bridged through the wrapper into `ToolDefinition`; `isError` stays a tool error (never a thrown exception), role-gating matches native tools, and `onUnload()` closes the transport before the test ends.
 - [ ] `bun run check` green
 
 ## Technical Notes

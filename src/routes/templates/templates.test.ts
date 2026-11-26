@@ -377,6 +377,96 @@ describe("promptTemplateRoutes", () => {
     const packed = exported.templates.find((t,) => t.name === "Pack A");
     expect(packed?.payload.templateBody,).toBe(IMAGE_BODY.payload.templateBody,);
   });
+
+  /**
+   * @param name - unique workflow name for the fixture
+   * @param fence - optional license/review fields on the request
+   * @returns POST request against the generic template surface
+   */
+  function workflowPost(name: string, fence: Record<string, unknown> = {},): Request {
+    return new Request("http://localhost/api/templates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ ...WORKFLOW_BODY, name, ...fence, },),
+    },);
+  }
+
+  test("generic workflow create records the license fence", async () => {
+    const res = await makeApp(db, userId,).handle(
+      workflowPost("Fenced generic workflow", { license: "  Apache-2.0  ", params_reviewed: true, },),
+    );
+
+    expect(res.status,).toBe(200,);
+    const { template, } = (await res.json()) as { template: { id: string } };
+    const row = await db.selectFrom("prompt_templates",).selectAll()
+      .where("id", "=", template.id,).executeTakeFirstOrThrow();
+
+    expect(row.license,).toBe("Apache-2.0",);
+    expect(row.params_reviewed,).toBe(1,);
+  });
+
+  test("generic workflow create keeps the defaults when the fence is omitted", async () => {
+    const res = await makeApp(db, userId,).handle(workflowPost("Unfenced generic workflow",),);
+
+    expect(res.status,).toBe(200,);
+    const { template, } = (await res.json()) as { template: { id: string } };
+    const row = await db.selectFrom("prompt_templates",).selectAll()
+      .where("id", "=", template.id,).executeTakeFirstOrThrow();
+
+    expect(row.license,).toBeNull();
+    expect(row.params_reviewed,).toBe(0,);
+  });
+
+  test("generic workflow create rejects wrong-typed fence fields", async () => {
+    const app = makeApp(db, userId,);
+    for (const fence of [{ license: 42, }, { params_reviewed: "yes", },]) {
+      const res = await app.handle(workflowPost("Bad fence", fence,),);
+      expect(res.status,).toBeGreaterThanOrEqual(400,);
+      expect(res.status,).toBeLessThan(500,);
+    }
+
+    const rows = await db.selectFrom("prompt_templates",).select("id",)
+      .where("name", "=", "Bad fence",).execute();
+
+    expect(rows,).toEqual([],);
+  });
+
+  test("generic workflow patch writes and preserves fence fields", async () => {
+    const app = makeApp(db, userId,);
+    const created = await app.handle(workflowPost("Fenced patch",),);
+    const { id, } = ((await created.json()) as { template: { id: string } }).template;
+
+    const patched = await app.handle(
+      new Request(`http://localhost/api/templates/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ license: "  MIT  ", params_reviewed: true, },),
+      },),
+    );
+
+    expect(patched.status,).toBe(200,);
+    const readRow = async () =>
+      await db.selectFrom("prompt_templates",).selectAll()
+        .where("id", "=", id,).executeTakeFirstOrThrow();
+
+    let row = await readRow();
+    expect(row.license,).toBe("MIT",);
+    expect(row.params_reviewed,).toBe(1,);
+
+    // An omitted license keeps the stored value while the review flag clears.
+    const partial = await app.handle(
+      new Request(`http://localhost/api/templates/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ params_reviewed: false, },),
+      },),
+    );
+
+    expect(partial.status,).toBe(200,);
+    row = await readRow();
+    expect(row.license,).toBe("MIT",);
+    expect(row.params_reviewed,).toBe(0,);
+  });
 });
 
 /**

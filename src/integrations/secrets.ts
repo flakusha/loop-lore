@@ -34,6 +34,8 @@ const ENVELOPE_VERSION = "v1";
 /** Credential-bearing config keys, matched case-insensitively. */
 const SENSITIVE_KEYS: Record<string, true> = {
   accesstoken: true,
+  // BYO provider keys are stored as plaintext in users.settings (RA-09).
+  apikey: true,
   bottoken: true,
   imappass: true,
   password: true,

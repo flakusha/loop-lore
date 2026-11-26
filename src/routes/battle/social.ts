@@ -12,7 +12,7 @@ import {
   type MoraleState,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { internalError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -43,8 +43,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate intimidation", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate intimidation", error,);
         }
       },
       {
@@ -74,8 +73,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate taunt", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate taunt", error,);
         }
       },
       {
@@ -105,8 +103,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate surrender", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate surrender", error,);
         }
       },
       {
@@ -136,8 +133,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate rally", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate rally", error,);
         }
       },
       {
@@ -167,8 +163,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate inspire", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate inspire", error,);
         }
       },
       {
@@ -198,8 +193,7 @@ export function socialRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate demoralize", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate demoralize", error,);
         }
       },
       {

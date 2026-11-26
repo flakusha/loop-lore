@@ -7,7 +7,7 @@
  * Batches entries → dispatches to transports on 100ms interval / 50 entry batch.
  */
 
-import { formatTime, unixSec, } from "@/utils/date";
+import { formatTime, unixSec, } from "../utils/date";
 import type { LogEntry, Transport, } from "./types";
 
 export const DEFAULT_FLUSH_INTERVAL = 100;

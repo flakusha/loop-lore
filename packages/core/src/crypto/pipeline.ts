@@ -10,10 +10,10 @@
  * Matches spec at docs/frontend/encryption.md §Compress-Encrypt Pipeline
  */
 
-import { decodeContent, encodeContent, } from "@/content";
-import type { ContentEncoding, } from "@/content/types";
-import { getChildLogger, } from "@/logger";
-import { safeJsonParse, safeJsonStringify, } from "@/utils";
+import { decodeContent, encodeContent, } from "../../../../src/content";
+import type { ContentEncoding, } from "../../../../src/content/types";
+import { getChildLogger, } from "../logger";
+import { safeJsonParse, safeJsonStringify, } from "../utils/safe-json";
 import type { CompressThenEncryptOpts, EncryptedPayload, PipelineConfig, } from "./pipeline-types";
 
 const IV_LENGTH = 12;

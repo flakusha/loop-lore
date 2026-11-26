@@ -151,6 +151,8 @@ function evaluateMemory(
  * - `assistant`: visible to all users
  * - `party`: must originate in the consuming chat's party lineage
  * - `timeline`: must be bound to the consuming chat's timeline
+ * - `harness`: must be bound to the consuming chat (`source_chat_id` ===
+ *   `chatId`); never leaks into unrelated chats
  * @param memory
  * @param ctx
  * @param privacy
@@ -188,6 +190,11 @@ function checkScope(
     case "timeline": {
       if (ctx.timelineId !== undefined && memory.timelineId === ctx.timelineId) { return null; }
       return "scope:timeline_mismatch";
+    }
+
+    case "harness": {
+      if (memory.sourceChatId && memory.sourceChatId === ctx.chatId) { return null; }
+      return "scope:harness_mismatch";
     }
 
     default: {

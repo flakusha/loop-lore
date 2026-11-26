@@ -6,12 +6,18 @@
  * computed in-test; no network, no real secrets.
  */
 
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
 import { createHmac, } from "node:crypto";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { flushActiveStore, } from "../../async/store-registry";
+import { loadConfig, } from "../../config/load";
+import type { DB, } from "../../db/schema";
+import { createApp, } from "../../elysia-app";
 import type { AdapterMessage, MessageBridge, } from "../../integrations";
 import { createRateLimiter, } from "../../middleware/rate-limit";
+import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   ingestWebhook,
   integrationsSurface,
@@ -264,5 +270,79 @@ describe("integrations webhook surface", () => {
       expect(result.ok,).toBe(false,);
       if (!result.ok) { expect(result.code,).toBe("unknown_adapter",); }
     }
+  });
+
+  // The HMAC must be computed over the EXACT bytes that arrived, including
+  // the degenerate and non-ASCII cases — the raw read is the whole point of
+  // parse: "none" on this route.
+  test("empty body: signature over the zero-byte payload verifies", async () => {
+    const calls: ReceivedCall[] = [];
+    const res = await post(buildApp(calls,), ADAPTER, "", sign("",),);
+    // Empty body fails payload validation (422), NOT signature validation
+    // (401): the signature matched the exact bytes that were sent.
+    expect(res.status,).toBe(422,);
+    expect(calls,).toHaveLength(0,);
+  });
+
+  test("unicode body: signature over the raw utf8 bytes verifies", async () => {
+    const calls: ReceivedCall[] = [];
+    const body = JSON.stringify({ id: "u1", author: "ünïcødé 🌍 你好", target: "r", body: "héllo 🚀", timestamp: 1, },);
+    const res = await post(buildApp(calls,), ADAPTER, body, sign(body,),);
+    expect(res.status,).toBe(202,);
+    expect(calls,).toHaveLength(1,);
+    expect(calls[0]!.message.body,).toBe("héllo 🚀",);
+  });
+});
+
+/**
+ * Regression tests for BUG-webhook-adapter-endpoint-500s-body-already-used-
+ * under-compos. The surface is mounted through the REAL app composition
+ * (createApp — the same barrel the ticket blames), where sibling JSON routes
+ * force Elysia's body inference across the composed app. Without
+ * parse: "none" on the webhook route, the handler's request.text() throws
+ * "Body is already used" and the delivery 500s.
+ */
+describe("integrations webhook surface under the composed app", () => {
+  let db: Kysely<DB>;
+  let app: ReturnType<typeof createApp>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    const config = loadConfig();
+    config.auth.required = false;
+    app = createApp({
+      database: db,
+      config,
+      handleNonApiRequest: async () => new Response("nf", { status: 404, },),
+      handleApiRequest: async () => new Response("nf", { status: 404, },),
+    },);
+  },);
+
+  afterAll(async () => {
+    // Same teardown contract as error-boundary-ordering.test.ts: quiesce the
+    // async-store queue BEFORE closing the DB handle; never app.stop().
+    await flushActiveStore();
+    await db.destroy();
+  },);
+
+  test("a POST with a pre-parsed body never 500s on 'Body is already used'", async () => {
+    const res = await app.handle(
+      new Request("http://localhost/api/v1/integrations/webhooks/slack", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          [WEBHOOK_SIGNATURE_HEADER]: sign(VALID_BODY,),
+        },
+        body: VALID_BODY,
+      },),
+    );
+
+    // The composed app has no bridge/secrets wired (production bootstrap has
+    // not yet), so the ingest result is unknown_adapter → 404. The regression
+    // is the 500: before parse: "none", the raw read threw before the adapter
+    // lookup and every composed delivery died with "Body is already used".
+    expect(res.status,).toBe(404,);
+    const json = (await res.json()) as { code: string };
+    expect(json.code,).toBe("NOT_FOUND",);
   });
 });

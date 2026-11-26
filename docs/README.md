@@ -255,7 +255,10 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | [`guide/worlds.md`](./guide/worlds.md)                   | Worlds and locations                     |
 | [`guide/gallery.md`](./guide/gallery.md)                 | Gallery assets and linking               |
 | [`guide/settings.md`](./guide/settings.md)               | Settings tabs                            |
-| [`guide/local-models.md`](./guide/local-models.md)       | Browser models, download policy, GGUF splits |
+| [`guide/mfa.md`](./guide/mfa.md)                         | MFA enrollment, challenges and step-up   |
+| [`guide/state-and-instances.md`](./guide/state-and-instances.md) | Runtime state, backup and restore  |
+| [`guide/local-models.md`](./guide/local-models.md)           | Browser models, download policy, GGUF splits |
+| [`guide/editor-lsp.md`](./guide/editor-lsp.md)             | Harness completions in helix, mitos, nvim via `loop-lore-lsp` |
 
 ---
 
@@ -269,6 +272,9 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 | [`ops/bare-metal/network.md`](./ops/bare-metal/network.md)             | Firewall, TLS, port allocation, ACME, federation                        |
 | [`ops/bare-metal/requirements.txt`](./ops/bare-metal/requirements.txt) | Pinned Ubuntu 22.04 LTS system/runtime packages                         |
 | [`ops/bare-metal/systemd/`](./ops/bare-metal/systemd/)                 | Service unit files for app, worker, llama-swap, exporters, backup timers |
+| [`ops/secure-startup.md`](./ops/secure-startup.md)                       | Secure-startup pre-flight checklist: TLS, secrets, cookies, HSTS, firewall |
+| [`ops/agent-api.md`](./ops/agent-api.md)                             | Shipped RSI agent API: scoped `llra_` tokens, whoami/worktree/check SSE, admin mint/revoke |
+| [`ops/ci-cd-loop.md`](./ops/ci-cd-loop.md)                           | Gate matrix, workflow triggers, check report, scoped runs, failure handling               |
 
 ---
 
@@ -276,8 +282,8 @@ Operator runbooks for on-prem / dedicated-server deployment. Pair with `spec/bui
 
 | Document                                 | Topics             |
 | ---------------------------------------- | ------------------ |
-| [`reference/api.md`](./reference/api.md) | REST API reference (hand-written overview) |
-| `reference/openapi.json` (gitignored, regenerate via `bun run openapi`) | Generated OpenAPI contract (600 paths / 807 operations) |
+| [`reference/api.md`](./reference/api.md) | REST API reference (generated from the spec; hand-written prose in a delimited region) |
+| `reference/openapi.json` (gitignored, regenerate via `bun run openapi`) | Generated OpenAPI contract |
 
 ---
 

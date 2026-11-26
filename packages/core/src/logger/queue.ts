@@ -13,7 +13,7 @@
  * Queue overflow: drops oldest entries, logs a warning entry.
  */
 
-import { formatTime, unixSec, } from "@/utils/date";
+import { formatTime, unixSec, } from "../utils/date";
 import { formatJSONL, } from "./formatters";
 import { AsyncLogQueueBase, } from "./queue-base";
 import type { LogEntry, } from "./types";

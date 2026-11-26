@@ -29,8 +29,8 @@
  * 2. `rustup` - the PATH rustc is the rustup proxy: `rustup target add`.
  * 3. `provisioned` - provision.ts downloads the version-matched official
  *    rust-std component from static.rust-lang.org, sha256-verifies it, and
- *    installs it with its OWN install.sh into a repo-local prefix under
- *    `.tmp/`. The prefix references the host install by symlink (host rustlib
+ *    installs it with its OWN install.sh into a prefix under the shared
+ *    build scratch (`BUILD_SCRATCH_ROOT`). The prefix references the host install by symlink (host rustlib
  *    + bin), and cargo is pointed at it via a one-line RUSTC wrapper adding
  *    `--sysroot` - the same mechanism rustup uses. No sudo, no copying.
  *

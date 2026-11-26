@@ -35,7 +35,13 @@
   <!-- Member list -->
   <div class="participant-count"><span x-text="_participants.length"></span> {{{ t("participants.members") }}}</div>
 
-  <template x-for="p in _participants" :key="p.actor_id">
+  <select class="form-input participant-kind" x-model="_memberKind" data-testid="participant-member-kind-select">
+    <option value="all">{{{ t("chats.participantKindAll") }}}</option>
+    <option value="assistant">{{{ t("chats.participantKindAssistant") }}}</option>
+    <option value="plain">{{{ t("chats.participantKindPlain") }}}</option>
+  </select>
+
+  <template x-for="p in filteredParticipants" :key="p.actor_id">
     <div class="participant-card" data-testid="participant-card">
       <div class="participant-card-top">
         <span class="participant-name" x-text="p.display_name"></span>
@@ -88,6 +94,11 @@
       x-model="_participantQuery"
       data-testid="participant-search"
     />
+    <select class="form-input participant-kind" x-model="_participantKind" data-testid="participant-kind-select">
+      <option value="all">{{{ t("chats.participantKindAll") }}}</option>
+      <option value="assistant">{{{ t("chats.participantKindAssistant") }}}</option>
+      <option value="plain">{{{ t("chats.participantKindPlain") }}}</option>
+    </select>
     <select class="form-input" x-model="_selectedAddRole" data-testid="participant-role-select">
       <option value="member">member</option>
       <option value="owner">owner</option>

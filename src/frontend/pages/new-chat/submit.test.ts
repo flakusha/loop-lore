@@ -67,11 +67,13 @@ beforeEach(() => {
   els.set("#chat-mode", makeEl("direct",),);
   els.set("#gm-guided-toggle", makeEl("", false,),);
   els.set("#chat-variant", makeEl("standard",),);
+  els.set("#chat-validation-harness", makeEl(),);
   els.set("#chat-turn-strategy", makeEl(),);
   els.set("#chat-world", makeEl(),);
   els.set("#chat-visibility", makeEl(),);
   els.set("#chat-visual-novel", makeEl("", false,),);
   els.set("#chat-template", makeEl(),);
+  els.set("#greeting-select", makeEl(),);
   els.set('input[name="memory_carry"]:checked', makeEl("full",),);
 
   host.document = {
@@ -158,5 +160,54 @@ describeOrSkip("new-chat create payload", () => {
 
     expect(body.variant,).toBe("rpg",);
     expect(body.worldId,).toBe("world-9",);
+  });
+
+  test("llm_only variants carry a trimmed validation harness", async () => {
+    els.get("#chat-variant",)!.value = "llm_only";
+    els.get("#chat-validation-harness",)!.value = "  stay in character  ";
+
+    const body = await submitForm("direct",);
+    const gmConfig = body.gmConfig as { validation?: { harness?: string } };
+    expect(gmConfig.validation?.harness,).toBe("stay in character",);
+  });
+
+  test("other variants do not send a validation harness", async () => {
+    els.get("#chat-variant",)!.value = "rpg";
+    els.get("#chat-validation-harness",)!.value = "ignored";
+
+    const body = await submitForm("direct",);
+    expect(body.gmConfig,).toBeUndefined();
+  });
+
+  test("the guided llm_only variant keeps its gm_profile seed", async () => {
+    els.get("#chat-variant",)!.value = "llm_only_group_gm";
+    els.get("#chat-validation-harness",)!.value = "ignored";
+
+    const body = await submitForm("group",);
+    expect(body.gmConfig,).toBeUndefined();
+  });
+
+  test("no greeting picker omits greetingIndex", async () => {
+    els.delete("#greeting-select",);
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
+  });
+
+  test("the default greeting option omits greetingIndex", async () => {
+    els.get("#greeting-select",)!.value = "";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
+  });
+
+  test("a selected alternate greeting posts its zero-based index", async () => {
+    els.get("#greeting-select",)!.value = "2";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBe(2,);
+  });
+
+  test("a malformed greeting value omits greetingIndex", async () => {
+    els.get("#greeting-select",)!.value = "not-a-number";
+    const body = await submitForm("direct",);
+    expect(body.greetingIndex,).toBeUndefined();
   });
 },);

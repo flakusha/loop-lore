@@ -40,9 +40,9 @@ LLM provider configuration. Requires explicit save (`Save` top-right) to avoid
 persisting partial/invalid keys.
 
 - Provider (select): "OpenAI", "Anthropic", "OpenRouter", "Custom"
-- API key (password input; **Clear** button resets it)
+- API key (password input; **Clear** button resets it) — sealed server-side on save, never echoed back (API responses carry `hasApiKey` only)
 - API endpoint URL (shown only for **Custom** provider)
-- Model (text input)
+- Model (text input) — any vendor/model id flows through verbatim; on OpenRouter, `:free`-suffixed ids (e.g. `meta-llama/llama-3.3-70b-instruct:free`) try the free tier with no other change
 - Max tokens (number, step 256, default 128000, min 1024, max 128000)
 - Temperature (range slider 0.0–2.0, step 0.1)
 - **Test Connection** button — sends a minimal request to verify the provider
@@ -58,8 +58,10 @@ persisting partial/invalid keys.
 - **Import Chats** — opens a file picker for a JSON archive
 - **NSFW consent** — shows current NSFW status, max rating, and restrictions
 - **Danger zone** (red-bordered): **Delete All Data** — requires typing
-  `DELETE` into the confirmation input to activate; on confirm, wipes data and
-  redirects to login
+  `DELETE` into the confirmation input to activate; on confirm, `DELETE
+  /api/v1/users/me` wipes the caller's chats, messages, participants, asset
+  links, memories and factors/sessions in one transaction, then redirects to
+  login. Other users' rows are untouched; a failed request shows an error toast.
 
 ### Keys
 
@@ -80,7 +82,8 @@ change sends a request to the settings API. API settings require the explicit
 | Saving (Notifications) | "Saving…" muted text                                             |
 | Testing API connection | Button shows spinner                                             |
 | Danger zone — delete   | Confirmation input appears; button activates once `DELETE` typed |
-| Delete complete        | Redirect to /login, data wiped                                   |
+| Delete complete        | Redirect to /views/login, own data wiped                         |
+| Delete failed          | Error toast; stays on the settings page                          |
 
 ## See Also
 

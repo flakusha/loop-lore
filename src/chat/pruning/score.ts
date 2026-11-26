@@ -3,12 +3,14 @@
 
 import {
   DECISION_KEYWORDS,
+  DEFAULT_PRUNING_CONFIG,
   EMOTION_KEYWORDS,
   LORE_CONTENT_KEYWORDS,
   LORE_KEYWORDS,
   SCORING_WEIGHTS,
+  STRATEGY_CONFIGS,
 } from "./constants";
-import type { MessageScore, ScorableMessage, } from "./types";
+import type { MessageScore, PruningConfig, ScorableMessage, } from "./types";
 
 /**
  * Count how many of the given keywords appear in lowercased content.
@@ -27,8 +29,21 @@ function countKeywordMatches(lowerContent: string, keywords: readonly string[],)
  * @param msg - Message to score
  * @returns Message score with reasons
  */
-export function scoreMessage(msg: ScorableMessage,): MessageScore {
+export function scoreMessage(
+  msg: ScorableMessage,
+  config: PruningConfig = DEFAULT_PRUNING_CONFIG,
+): MessageScore {
   const reasons: string[] = [];
+  const strategy = STRATEGY_CONFIGS[config.strategy];
+  // Callers pass a full config spread from DEFAULT_PRUNING_CONFIG; treat
+  // default-valued thresholds as unset so the strategy override still wins.
+  const keepThreshold = config.keepThreshold === DEFAULT_PRUNING_CONFIG.keepThreshold
+    ? strategy?.keepThreshold ?? config.keepThreshold
+    : config.keepThreshold;
+
+  const promoteThreshold = config.promoteThreshold === DEFAULT_PRUNING_CONFIG.promoteThreshold
+    ? strategy?.promoteThreshold ?? config.promoteThreshold
+    : config.promoteThreshold;
 
   // Recency: recent messages score higher (0.3 weight)
   const recencyScore = msg.total > 0 ? msg.index / msg.total : 0.5;
@@ -75,12 +90,15 @@ export function scoreMessage(msg: ScorableMessage,): MessageScore {
     attachmentScore * 0.2 +
     (msg.role === "user" || msg.role === "character" ? 0.1 : 0);
 
+  const combinedScore = relevanceScore;
+
   return {
     messageId: msg.id,
     relevanceScore,
     importanceScore,
-    combinedScore: relevanceScore,
-    shouldPromote: importanceScore >= 0.6,
+    combinedScore,
+    shouldKeep: combinedScore >= keepThreshold,
+    shouldPromote: importanceScore >= promoteThreshold,
     shouldPrune: false, // Set by pruneMessages
     reasons,
   };

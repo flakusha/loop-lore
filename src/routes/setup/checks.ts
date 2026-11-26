@@ -16,6 +16,7 @@ import type { Kysely, } from "kysely";
 import fs from "node:fs";
 import { resolveModelRole, } from "../../admin/model-roles";
 import { getHealthCache, } from "../../admin/provider-health";
+import { resolveInstancePath, } from "../../config/instance-path";
 import {
   isDevEnv,
   MIN_PII_SECRET_LENGTH,
@@ -24,6 +25,7 @@ import {
   resolveTelemetryPiiSecret,
 } from "../../config/load/pii-safety";
 import type { Config, } from "../../config/schema";
+import { resolveInstanceDir, } from "../../config/state-dir";
 import { isEncryptionEnabled, } from "../../crypto/smk";
 import type { DB, } from "../../db/schema";
 import { getNativeStatus, } from "../../native/loader";
@@ -117,7 +119,16 @@ function nativeCheck(): SetupCheck {
 /** TLS key + certificate files exist. Never generates them — this is a read. */
 function tlsCheck(config: Config,): SetupCheck {
   const tls = config.server?.tls;
-  const ok = !!tls && fs.existsSync(tls.key,) && fs.existsSync(tls.cert,);
+  let ok = false;
+  if (tls) {
+    // Match boot provisioning: re-anchor relative / `${DATA_DIR}` paths onto
+    // the runtime instance dir; absolute operator paths are used verbatim.
+    const instanceDir = resolveInstanceDir(process.env, config.server,);
+    const key = resolveInstancePath(tls.key, { instanceDir, },);
+    const cert = resolveInstancePath(tls.cert, { instanceDir, },);
+    ok = fs.existsSync(key,) && fs.existsSync(cert,);
+  }
+
   return ok
     ? { id: "tls", ok: true, }
     : { id: "tls", ok: false, hint: "TLS certificate files are missing.", };

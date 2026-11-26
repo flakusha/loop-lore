@@ -94,3 +94,4 @@ epics); image/video context shape is unchanged for existing consumers.
 | ------ | ----- |
 | `TASK-ivss-video-metadata-extractor` | duration/fps/resolution facts on video assets (cross-listed with `epic-image-video-scenario-studio.md`); consumed by `GET /api/assets/:id/generation-context` |
 | `TASK-from-asset-i2v-flow` | Gallery image → i2v continuation via the video-generation workflows (from-asset API + i2v templates) |
+| `TASK-dedicated-media-scorer-pack-evaluation` | Low-priority revisit: dedicated image/video scorer packs only after QwenVL-as-judge baseline proves too noisy/slow (filed 2026-11-19) |

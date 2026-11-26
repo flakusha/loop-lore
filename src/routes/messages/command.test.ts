@@ -151,6 +151,130 @@ describe("dispatchCommand", () => {
     expect(body.action,).toBeNull();
     expect(body.actionPayload,).toBeNull();
   });
+
+  it("routes a natural-language picture request to /avatar with the character bound", async () => {
+    const { db, chatId, userId, } = await setup();
+    const charId = await insertActors(db, "Elara", { actor_type: "character", owner_id: userId, },);
+    await insertChatParticipants(db, chatId, userId, { impersonate_actor_id: charId, },);
+
+    const outcome = await dispatchCommand(db, config, userId, chatId, "picture of Elara in the moonlit library",);
+    expect(outcome.handled,).toBe(true,);
+    if (!outcome.handled) { throw new Error("the picture request must be handled",); }
+    const body = await outcome.response.json() as Record<string, unknown>;
+    expect(body.command,).toBe("avatar",);
+    expect(body.action,).toBe("generate-image",);
+    const payload = body.actionPayload as { prompt: string; bindActorAvatar: string };
+    expect(payload.bindActorAvatar,).toBe(charId,);
+    expect(payload.prompt,).toContain("Elara",);
+  });
+
+  it("fills the next step of an active workflow run and persists it", async () => {
+    const { db, userId, } = await setup();
+    const chatId = "chat-cmd-workflow-session";
+    await insertChats(db, "Workflow Chat", userId, { id: chatId, },);
+    const workflowConfig = {
+      ...config,
+      templates: {
+        workflows: {
+          workflows: {
+            "story-steps": {
+              id: "story-steps",
+              name: "Story steps",
+              intent: { type: "generate", target: "character", },
+              entityType: "character",
+              steps: [
+                { id: "premise", name: "Premise", type: "text", formatTemplate: "{value}", },
+              ],
+              dispatch: { backend: "assistant-create", target: "/create character", payloadTemplate: {}, },
+            },
+          },
+        },
+      },
+    } as unknown as Config;
+
+    // The trigger opens the run; the next plain message fills its first step.
+    const started = await dispatchCommand(db, workflowConfig, userId, chatId, "make a character",);
+    expect(started.handled,).toBe(true,);
+
+    const filled = await dispatchCommand(
+      db,
+      workflowConfig,
+      userId,
+      chatId,
+      "A lighthouse keeper who cannot leave the sea.",
+    );
+
+    expect(filled.handled,).toBe(true,);
+
+    if (!filled.handled) { throw new Error("the step fill must be handled",); }
+    const body = await filled.response.json() as Record<string, unknown>;
+    expect(body.command,).toBe("workflow",);
+    expect(body.action,).toBe("workflow-progress",);
+
+    const row = await db
+      .selectFrom("workflow_sessions",)
+      .select(["workflow_id", "step_values",],)
+      .where("chat_id", "=", chatId,)
+      .executeTakeFirst();
+
+    expect(row?.workflow_id,).toBe("story-steps",);
+    expect(row?.step_values,).toContain("lighthouse keeper",);
+  });
+
+  it("reports a macro expansion that no longer resolves to a command", async () => {
+    let handlerRan = false;
+    // The command name carries a macro: after expansion the name matches no
+    // registration, so the dispatcher must report the failure.
+    registerCommand("probe{{user}}", async () => {
+      handlerRan = true;
+      return { handled: true, systemMessage: "probe-ran", };
+    }, { capabilities: ["read-chat",], available: false, },);
+
+    try {
+      const { db, chatId, userId, } = await setup();
+      const outcome = await dispatchCommand(db, config, userId, chatId, "/probe{{user}} hello",);
+
+      expect(outcome.handled,).toBe(true,);
+      expect(handlerRan,).toBe(false,);
+      if (!outcome.handled) { throw new Error("the invalid expansion must be handled",); }
+      const body = await outcome.response.json() as Record<string, unknown>;
+      expect(String(body.systemMessage,),).toContain("no longer resolves to a command",);
+    } finally {
+      __unregisterCommandForTests("probe{{user}}",);
+    }
+  });
+
+  it("keeps make a character on the entity-spec workflow path", async () => {
+    const { db, userId, } = await setup();
+    const chatId = "chat-cmd-entity-workflow";
+    await insertChats(db, "Entity Chat", userId, { id: chatId, },);
+    const workflowConfig = {
+      ...config,
+      templates: {
+        workflows: {
+          workflows: {
+            "entity-character": {
+              id: "entity-character",
+              name: "Entity character",
+              intent: { type: "generate", target: "character", },
+              entityType: "character",
+              steps: [],
+              dispatch: { backend: "assistant-create", target: "/create character", payloadTemplate: {}, },
+            },
+          },
+        },
+      },
+    } as unknown as Config;
+
+    const outcome = await dispatchCommand(db, workflowConfig, userId, chatId, "make a character",);
+    expect(outcome.handled,).toBe(true,);
+    if (!outcome.handled) { throw new Error("the entity request must be handled",); }
+    const body = await outcome.response.json() as Record<string, unknown>;
+    expect(body.command,).toBe("workflow",);
+    expect(body.action,).toBe("workflow-preview",);
+    const payload = body.actionPayload as { workflowId: string };
+    expect(payload.workflowId,).toBe("entity-character",);
+  });
 });
 
 describe("invocation audit", () => {

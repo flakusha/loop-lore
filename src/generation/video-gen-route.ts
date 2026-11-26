@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+// size-allow: 450
 /**
  * POST /api/v1/generation/video — generate one video clip via a configured
  * ComfyUI video workflow (epic-video-generation Phase A / TASK-video-gen-route).
@@ -10,26 +10,45 @@
  * `checkChatAccess` (IDOR write guard), BYO keys resolved per provider name
  * with fail-closed decrypt (epic-byok-api-keys.md).
  */
-
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { persistGeneratedImages, } from "../assets/service";
 import { extensionForMime, } from "../assets/service/detect";
+import { getStore, } from "../async/store-registry";
+import { callAux, } from "../aux-pipeline/runner";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { getHonkboxCapabilities, isHonkboxFeatureEnabled, } from "../integrations/honkbox/capabilities";
+import { readEffectiveLlamaSwapConfig, } from "../llm/llama-swap-effective-config";
 import { releaseModelsForRender, } from "../llm/llama-swap-release";
 import { getChildLogger, } from "../logger";
+import { resolveStoredComfyUIModelPins, } from "../routes/comfyui-models";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
+import { type DiscardOnCancelHandle, registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
+import { parseDeferTarget, } from "./job-control";
+import { formatMinimaxPrompt, minimaxModeForWorkflow, } from "./minimax/prompt-format";
+import { preflightRequest, } from "./preflight";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import { getOwnedTemplate, } from "./template-service";
 import { parseTemplatePayload, type SimpleTemplatePayload, } from "./template-types";
 import { dispatchThroughVideoGate, setVideoPreDispatchHook, VIDEO_QUEUE_WAIT_MS, } from "./video-dispatch-gate";
 import { generateVideoWithFailover, type VideoApiKeyResolver, type VideoGenRequest, } from "./video-engine";
-import { completeVideoJob, failVideoJob, getVideoJob, storeVideoJob, } from "./video-jobs";
+import {
+  cancelVideoJob,
+  completeVideoJob,
+  deferVideoJob,
+  failVideoJob,
+  getVideoJob,
+  pumpDueVideoJobs,
+  storeVideoJob,
+  type VideoJob,
+} from "./video-jobs";
+import { getWorkflowDefaults, resolveWorkflowForUseCase, } from "./workflow-selection";
+
 export { handleVideoGenerationStatus, } from "./video-gen-status";
 
 /**
@@ -38,6 +57,13 @@ export { handleVideoGenerationStatus, } from "./video-gen-status";
  * here avoids paying for a render this instance cannot store.
  */
 const ESTIMATED_VIDEO_BYTES = 50_000_000;
+/** Max prompt length accepted per request. */
+const MAX_PROMPT = 2_000;
+
+/** 409 response when the chat was cancelled before the job was stored. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 /**
  * B1 composition: the gate owns the box slot, the sibling unload owns the
@@ -45,17 +71,38 @@ const ESTIMATED_VIDEO_BYTES = 50_000_000;
  * intentionally unused (the base resolves from app config — explicit base or
  * `generation.autoStart.llamaSwap.listenPort` from the spawned proxy — never
  * request input). A dead proxy is reported loud (`probeOk:false` + warn) but
- * never aborts the render (runVideoPreDispatchHook logs).
+ * never aborts the render (runVideoPreDispatchHook logs). With HONKBOX_* set
+ * and residency_control advertised, honkbox owns the single GPU slot.
  */
 setVideoPreDispatchHook(async () => {
   let listenPort: number | undefined;
   try {
-    listenPort = loadConfig().generation.autoStart?.llamaSwap?.listenPort;
+    const effective = await readEffectiveLlamaSwapConfig(
+      getDatabase(),
+      loadConfig().generation.autoStart?.llamaSwap,
+    );
+
+    listenPort = effective?.listenPort;
   } catch {
     listenPort = undefined;
   }
 
-  await releaseModelsForRender({ listenPort, },);
+  const honkboxBaseUrl = process.env.HONKBOX_BASE_URL;
+  if (!honkboxBaseUrl) {
+    await releaseModelsForRender({ listenPort, },);
+    return;
+  }
+
+  const apiKey = process.env.HONKBOX_API_KEY;
+  const honkboxProbe = await getHonkboxCapabilities({ baseUrl: honkboxBaseUrl, apiKey, },);
+  if (!isHonkboxFeatureEnabled(honkboxProbe, "residency_control",)) {
+    await releaseModelsForRender({ listenPort, },);
+    return;
+  }
+
+  await releaseModelsForRender({
+    honkbox: { baseUrl: honkboxBaseUrl, apiKey, probe: honkboxProbe, },
+  },);
 },);
 
 /** Request body — prompt is required unless a template renders it. */
@@ -67,6 +114,18 @@ interface VideoGenBody {
   frames?: number;
   width?: number;
   height?: number;
+
+  /** ComfyUI sampling controls; fall back to workflow defaults when absent. */
+  steps?: number;
+  cfgScale?: number;
+  sampler_name?: string;
+  scheduler?: string;
+  /** Picked ComfyUI model roles (checkpoint alias `model`, plus diffusion). */
+  model?: string;
+  diffusion?: string;
+  clip?: string;
+  vae?: string;
+  clip_vision?: string;
   /** User template whose rendered body becomes the prompt. */
   templateId?: string;
   /** {{variable}} values for the template body. */
@@ -75,6 +134,16 @@ interface VideoGenBody {
   chatId?: string;
   /** Message the clip belongs to; linkage requires access. */
   messageId?: string;
+  /** Explicit per-request workflow; overrides the stored/config selection. */
+  workflow?: string;
+  /** LoRA config; validated then refused — the video path cannot apply LoRA. */
+  lora?: unknown;
+  /** Plain per-cut scenario for MiniMax FL/REF prompt conversion. */
+  details?: string;
+  shots?: string[];
+  references?: string[];
+  /** Epoch ms to park the job until (wait-vs-delay submit-time control). */
+  scheduledFor?: number;
 }
 
 /**
@@ -108,6 +177,31 @@ export async function handleVideoGeneration(
   }
 
   const req = body as VideoGenBody;
+
+  // Reject malformed structured input before any job is stored or a provider
+  // is submitted. Failure follows this route's existing 4xx envelope.
+  // req.workflow is a library name (string), not a graph: only a graph
+  // object has structure worth validating; names resolve downstream.
+  const preflight = preflightRequest({
+    workflow: typeof req.workflow === "object" && req.workflow !== null ? req.workflow : undefined,
+    lora: req.lora,
+  },);
+
+  if (!preflight.ok) {
+    return Response.json({ error: preflight.error, status: 400, }, { status: 400, },);
+  }
+
+  // A dropped LoRA request must never return a LoRA-free clip as success.
+  // Video workflows have no LoRA application seam; refuse before any job is
+  // stored rather than silently ignoring the pick.
+  if (req.lora !== undefined) {
+    return Response.json({
+      error:
+        "LoRA was requested but the video generation path cannot apply it. Use image generation with a LoRA-capable ComfyUI workflow, or omit lora; no video job was submitted.",
+      status: 400,
+    }, { status: 400, },);
+  }
+
   const db = database ?? getDatabase();
 
   let resolvedChatId = req.chatId;
@@ -128,11 +222,39 @@ export async function handleVideoGeneration(
     if (!access.ok) { return forbiddenResponse(); }
   }
 
+  const discard = registerDiscardOnCancel(resolvedChatId, "other",);
+
   const config = loadConfig();
+  const providers = config.generation.providers.video;
+
+  // Workflow precedence: explicit body field > stored user selection > config
+  // default. Config is process-global: copy every provider before overriding
+  // its workflow so one user's selection cannot leak into another request.
+  // An inline graph object bypasses selection like an explicit name, but it
+  // carries no name downstream — only strings override providers and select
+  // the MiniMax converter (its startsWith assumes a name).
+  const workflowName = typeof req.workflow === "string" ? req.workflow : undefined;
+  const workflow = workflowName ?? (req.workflow === undefined
+    ? await resolveWorkflowForUseCase({
+      database: db,
+      userId,
+      useCase: "video.generate",
+      fallback: providers?.[0]?.workflow,
+    },)
+    : undefined);
+
+  const minimaxMode = minimaxModeForWorkflow(workflow,);
+  // MiniMax accepts a plain per-cut scenario in `details` without a display
+  // prompt; other paths still require the prompt field.
+  const hasMinimaxDetails = minimaxMode !== null && (
+    (typeof req.details === "string" && req.details.trim().length > 0) ||
+    (req.shots?.length ?? 0) > 0 ||
+    (req.references?.length ?? 0) > 0
+  );
 
   // FEAT-065: a user template renders the final prompt from {{variables}}
   // when provided; the raw `prompt` field is then optional.
-  let prompt = req.prompt;
+  let prompt = req.prompt ?? "";
   if (req.templateId) {
     const row = await getOwnedTemplate(db, req.templateId, userId,);
     if (!row) {
@@ -147,11 +269,29 @@ export async function handleVideoGeneration(
     prompt = renderVideoPrompt(payload as SimpleTemplatePayload, req.context ?? {},);
   }
 
-  if (!prompt || prompt.trim().length === 0) {
-    return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
+  // Concatenation (not a template literal): the size gate scans with
+  // ts.createScanner, which mis-lexes an interpolated template tail and
+  // recounts following comment lines as code.
+  if (!hasMinimaxDetails && (!prompt || prompt.trim().length === 0 || prompt.length > MAX_PROMPT)) {
+    return Response.json(
+      { error: "prompt must be 1.." + MAX_PROMPT + " characters", status: 400, },
+      { status: 400, },
+    );
   }
 
-  const providers = config.generation.providers.video;
+  if (workflowName !== undefined) {
+    const allowed = new Set([
+      ...getWorkflowDefaults()["video.generate"].supported,
+      ...(providers ?? []).map((provider,) => provider.workflow).filter(
+        (id,): id is string => typeof id === "string" && id.length > 0,
+      ),
+    ],);
+
+    if (!allowed.has(workflowName,)) {
+      return Response.json({ error: "unsupported workflow: " + workflowName, status: 400, }, { status: 400, },);
+    }
+  }
+
   if (!providers || providers.length === 0) {
     return Response.json(
       {
@@ -184,6 +324,54 @@ export async function handleVideoGeneration(
     throw error;
   }
 
+  const requestProviders = workflow === undefined
+    ? providers
+    : providers.map((provider,) => ({ ...provider, workflow, }));
+
+  // Persisted picks are per instance; resolving by name keeps failover
+  // candidates from borrowing another provider's model selection.
+  const modelPins = await resolveStoredComfyUIModelPins(
+    db,
+    userId,
+    [...new Set(requestProviders.map((provider,) => provider.name),),],
+  );
+
+  // MiniMax H3 FL/REF exports need the Director heading/shot grammar: a plain
+  // scenario would otherwise substitute into an unformatted prompt. Convert
+  // through the shared AUX seam (one retry inside) and fail closed on failure.
+  if (minimaxMode) {
+    const converted = await formatMinimaxPrompt({
+      mode: minimaxMode,
+      details: req.details ?? prompt,
+      shots: req.shots,
+      references: req.references,
+      durationSeconds: req.seconds,
+    }, {
+      call: callAux,
+      config,
+      db,
+      userId,
+    },);
+
+    if (!converted.ok) {
+      return Response.json({
+        error: "minimax_prompt_format_unavailable",
+        status: 422,
+        reason: converted.reason,
+        ...(converted.missing ? { missing: converted.missing, } : {}),
+      }, { status: 422, },);
+    }
+
+    if (converted.prompt.length > MAX_PROMPT) {
+      return Response.json(
+        { error: "minimax_prompt_too_long", status: 422, },
+        { status: 422, },
+      );
+    }
+
+    prompt = converted.prompt;
+  }
+
   // Async submit: the render runs as a floating promise so one HTTP
   // request is not held through a multi-minute ComfyUI render. The
   // background continuation does the same settle flow (failover engine
@@ -196,49 +384,126 @@ export async function handleVideoGeneration(
     frames: req.frames,
     width: req.width,
     height: req.height,
+
+    steps: req.steps,
+    cfgScale: req.cfgScale,
+    sampler: req.sampler_name,
+    scheduler: req.scheduler,
+    model: req.model,
+    diffusion: req.diffusion,
+    clip: req.clip,
+    vae: req.vae,
+    clipVision: req.clip_vision,
+    modelPins,
   };
 
   // Deadline: the slowest candidate's generationTimeout. The quota gate
   // above already rejected providers-less config, so max() never sees [].
-  const generationTimeoutMs = Math.max(...providers.map((provider,) => provider.generationTimeout ?? 0),);
+  const generationTimeoutMs = Math.max(...requestProviders.map((provider,) => provider.generationTimeout ?? 0),);
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
+  const scheduledFor = parseDeferTarget(req.scheduledFor, Date.now(),);
+  if (scheduledFor === undefined) {
+    return Response.json(
+      { error: "scheduledFor must be a timestamp between 1s and 7 days from now", status: 400, },
+      { status: 400, },
+    );
+  }
+
   const jobId = randomUUID();
-  storeVideoJob({
+  const job: VideoJob = {
     id: jobId,
     ownerId: userId,
     status: "pending",
     request,
     chatId: resolvedChatId,
     messageId: req.messageId,
-    providers: [...providers,],
+    providers: [...requestProviders,],
     deadline: Date.now() + generationTimeoutMs,
     createdAt: Date.now(),
+  };
+
+  storeVideoJob(job,);
+  getStore()?.track({
+    id: jobId,
+    method: "POST",
+    routePattern: "/api/v1/generation/video",
+    userId,
   },);
 
-  runVideoRender({
-    jobId,
-    prompt,
-    providers,
+  if (scheduledFor !== null) {
+    deferVideoJob(jobId, userId, scheduledFor,);
+    getStore()?.defer?.(jobId, { userId, }, scheduledFor,);
+  }
+
+  // Registers the resume closure even for deferred jobs; the closure starts
+  // nothing while the job is parked, but the lazy pump can re-enter it later.
+  startVideoRender(job, {
     generationTimeout: generationTimeoutMs,
-    request,
     resolveApiKey: userApiKeyResolver({ userId, config, db, },),
     database: db,
     uploadDir: config.assets.uploadDir,
-    ownerId: userId,
-    chatId: resolvedChatId,
-    messageId: req.messageId,
-  },).catch((error: unknown,) => {
-    // Unreachable in practice (the continuation settles every path), but
-    // an unhandled rejection would crash the process — mark failed instead.
-    getChildLogger("video-gen",)?.error(
-      "video render continuation threw",
-      error instanceof Error ? error : new Error(String(error,),),
-      { jobId, },
-    );
-
-    failVideoJob(jobId, error instanceof Error ? error.message : String(error,), 500,);
+    discard,
   },);
 
-  return Response.json({ data: { jobId, status: "pending", }, }, { status: 202, },);
+  // A new submit is one of the two lazy-pump points for due deferred jobs.
+  pumpDueVideoJobs();
+
+  return Response.json(
+    { data: { jobId, status: scheduledFor === null ? "pending" : "deferred", scheduledFor, }, },
+    { status: 202, },
+  );
+}
+
+/**
+ * Kick a stored video job through the existing dispatch gate. The stored
+ * resume closure lets the lazy deferred pump re-enter the same path.
+ * @param job - stored pending job
+ * @param deps - render seams captured at submit time
+ * @returns {void}
+ */
+export function startVideoRender(job: VideoJob, deps: {
+  generationTimeout: number;
+  resolveApiKey: VideoApiKeyResolver;
+  database: Kysely<DB>;
+  uploadDir: string;
+  discard: DiscardOnCancelHandle;
+},): void {
+  if (job.started) { return; }
+  const current = getVideoJob(job.id,);
+  if (!current || current.status !== "pending") { return; }
+
+  const run = (): void => {
+    runVideoRender({
+      jobId: job.id,
+      prompt: job.request.prompt,
+      providers: job.providers,
+      generationTimeout: deps.generationTimeout,
+      request: job.request,
+      resolveApiKey: deps.resolveApiKey,
+      database: deps.database,
+      uploadDir: deps.uploadDir,
+      ownerId: job.ownerId,
+      chatId: job.chatId,
+      messageId: job.messageId,
+      discard: deps.discard,
+    },).catch((error: unknown,) => {
+      // Unreachable in practice (the continuation settles every path), but
+      // an unhandled rejection would crash the process — mark failed instead.
+      getChildLogger("video-gen",)?.error(
+        "video render continuation threw",
+        error instanceof Error ? error : new Error(String(error,),),
+        { jobId: job.id, },
+      );
+
+      failVideoJob(job.id, error instanceof Error ? error.message : String(error,), 500,);
+    },);
+  };
+
+  current.resume = run;
+  if (current.deferred) { return; }
+  job.started = true;
+  run();
 }
 
 /**
@@ -268,6 +533,7 @@ async function runVideoRender(job: {
   ownerId: string;
   chatId?: string;
   messageId?: string;
+  discard: DiscardOnCancelHandle;
 },): Promise<void> {
   const log = getChildLogger("video-gen",);
   let outcome: Awaited<ReturnType<typeof generateVideoWithFailover>> | undefined;
@@ -295,6 +561,11 @@ async function runVideoRender(job: {
 
   if (!outcome) {
     failVideoJob(job.jobId, "video render settled without an outcome", 500,);
+    return;
+  }
+
+  if (job.discard.isDiscarded()) {
+    cancelVideoJob(job.jobId, job.ownerId, "Generation cancelled",);
     return;
   }
 
@@ -337,6 +608,11 @@ async function runVideoRender(job: {
   if (!asset) {
     log?.error("video asset persistence failed", undefined, { jobId: job.jobId, },);
     failVideoJob(job.jobId, "video asset persistence failed", 500,);
+    return;
+  }
+
+  if (job.discard.isDiscarded()) {
+    cancelVideoJob(job.jobId, job.ownerId, "Generation cancelled",);
     return;
   }
 

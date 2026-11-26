@@ -5,7 +5,7 @@
  * defaults sanity checks.
  */
 
-import { createConfigSchema, envMap, jsonSchema, validate, } from "@/config/schema-class";
+import { createConfigSchema, envMap, jsonSchema, validate, } from "./schema-class";
 
 import { describe, expect, test, } from "bun:test";
 
@@ -91,13 +91,40 @@ describe("ConfigSchema", () => {
     },).toThrow("db.type",);
   });
 
-  test("validate throws for missing postgres url", () => {
+  test("validate accepts a known autoroute scenario and rejects an unknown one", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.generation.autorouteScenario = "chat";
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+
+    (cfg.generation as unknown as Record<string, unknown>).autorouteScenario = "poetry";
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("autorouteScenario",);
+  });
+
+  test("validate rejects a short BYOK master secret but allows an unset one", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.byoKey.enabled = true;
+    cfg.byoKey.encryptionKey = "short";
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("byoKey.encryptionKey",);
+
+    cfg.byoKey.encryptionKey = undefined;
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+  });
+
+  test("validate accepts postgres without a url (the runtime is always SQLite)", () => {
     const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.db.type = "postgres";
     cfg.db.url = undefined;
     expect(() => {
       validate(cfg,);
-    },).toThrow("db.url",);
+    },).not.toThrow();
   });
 
   test("validate throws for invalid port", () => {

@@ -11,6 +11,7 @@
 
 import { readFileSync } from "node:fs";
 
+import { moduleName, } from "../source-paths.mjs";
 import { perFileStats } from "./lcov.mjs";
 
 /**
@@ -41,8 +42,7 @@ export function runDiffFileMode({ diffFiles, records, floor, floorFor },) {
   const perFile = perFileStats(records,);
 
   const fileRows = diffFiles.map((f,) => {
-    const seg = f.startsWith("src/",) ? f.slice(4,).split("/",)[0] : f.split("/",)[0];
-    const mod = seg.includes(".",) ? "(root)" : seg;
+    const mod = moduleName(f,);
     const hit = perFile[f];
     const generated = isGenerated(f,);
     return {

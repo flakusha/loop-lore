@@ -30,3 +30,7 @@ Filed 2026-11-11 from the operator-approved 1.0.0 scope; implemented the same da
 - [x] Tests: schema/service/route validation (empty, both-channels, over-cap, control characters, markup verbatim, zero-option), custom-choice happy + error paths, frontend affordance render + submission (`*.test.ts` colocated beside every touched module)
 
 **Caveats:** Security: typed text is stored verbatim by design — every renderer must keep `textContent` (the innerHTML XSS gate enforces the render side); the control-character strip is not an HTML escape. Authorization: both custom endpoints sit behind the same `checkChatAccess` guard as their siblings; the gate is chat-scoped. Parallelism: none — one decision row per submit. Partial failure: custom-choice creation and selection are separate calls; a creation without selection leaves an available card the player can pick or skip. Observability: none added (service errors return typed 400s; no new logging surface).
+
+
+git issue: 6f48dd7
+**Resolved:** 2026-11-18T00:28:28.895Z Ticket .md is Done; closing the issue created by sync import.

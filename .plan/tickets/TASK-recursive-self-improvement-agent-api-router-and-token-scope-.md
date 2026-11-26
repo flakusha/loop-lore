@@ -7,7 +7,9 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** Done
+**Landed:** dev `6b1d94fec` (feature) via finalize/split-path landing 2026-11-20; follow-ups `73493af9f` (typed whoami schema), `ebfd45f72`, `458b8bdfe`.
+**Caveats:** Scope = ticket #5 only — router shell + token auth + admin mint/revoke + migration 114; the #6/#7/#8 business sub-routes are intentionally absent (no stubs); `GET /api/v1/agent/whoami` is the sole #5-owned agent route; the `migrations - ordering` gate is red in this worktree until the sibling branches holding 112/113 land (gapless-prefix check).
 **Priority:** High
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure
@@ -26,10 +28,10 @@ Elysia router for `/api/v1/agent/*` with scoped token auth. Mounts in `src/elysi
 ## Acceptance Criteria
 
 - [ ] Router mounted; sub-routes (#6, #7, #8) hang off it
-- [ ] `requireAgentScope('agent:worktree')` rejects requests without valid scope with 403
-- [ ] Tokens are SHA-256 hashed at rest; plaintext never persisted
-- [ ] Admin route `POST /api/admin/agent-tokens` mints a new token with chosen scope; rotated via `DELETE /api/admin/agent-tokens/:id` + re-mint
-- [ ] Rate limit: 60 req/min per token; 600 req/min global
+- [x] `requireAgentScope('agent:worktree')` rejects requests without valid scope with 403
+- [x] Tokens are SHA-256 hashed at rest; plaintext never persisted
+- [x] Admin route `POST /api/admin/agent-tokens` mints a new token with chosen scope; rotated via `DELETE /api/admin/agent-tokens/:id` + re-mint
+- [x] Rate limit: 60 req/min per token; 600 req/min global
 
 ## Files
 

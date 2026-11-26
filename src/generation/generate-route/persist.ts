@@ -93,6 +93,9 @@ async function storeGeneratedMessage({
       .set({
         content: storedContent,
         key_id: storedKeyId,
+        // The FTS5 trigger indexes this shadow, not `content` (ciphertext
+        // when at-rest encryption is on). Refresh it on regen fills too.
+        content_plaintext: result.content,
         model_id: modelId,
         provider,
         token_count_prompt: result.tokenUsage.promptTokens,
@@ -118,12 +121,13 @@ async function storeGeneratedMessage({
       .execute();
 
     // Regen replaces the placeholder's content in place: re-index its tokens
-    // (no-op unless ENABLE_TOKEN_INDEXING=1).
+    // (no-op unless ENABLE_TOKEN_INDEXING=1; the mirror makes it FTS-covered).
     await indexMessageSearchTokens(database, {
       messageId: targetMessageId,
       chatId,
       plaintext: result.content,
       keyId: storedKeyId,
+      plaintextMirror: result.content,
     },);
 
     return targetMessageId;
@@ -139,6 +143,7 @@ async function storeGeneratedMessage({
       role: MessageRole.Assistant,
       content: storedContent,
       key_id: storedKeyId,
+      content_plaintext: result.content,
       content_type: MessageContentType.Text,
       content_format: MessageContentFormat.Markdown,
       content_encoding: ContentEncoding.Identity,
@@ -159,13 +164,14 @@ async function storeGeneratedMessage({
     },)
     .execute();
 
-  // The generated row carries no plaintext mirror: index blind tokens for the
-  // token tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+  // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
   await indexMessageSearchTokens(database, {
     messageId,
     chatId,
     plaintext: result.content,
     keyId: storedKeyId,
+    plaintextMirror: result.content,
   },);
 
   return messageId;

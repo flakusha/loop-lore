@@ -4,9 +4,10 @@
 import type { ImageProviderConfig, } from "../../config/schema";
 import { getLogger, type Logger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
+import { findLoraModel, } from "../lora/apply-slots";
 import { discoverLoras, } from "../lora/discovery";
 import { injectSdCppLora, } from "../lora/discovery-sdserver";
-import type { LoRAModel, } from "../lora/types";
+import type { LoRAConfig, } from "../lora/types";
 import { decodeImages, failure, } from "./helpers";
 import { runSdServerJob, sdServerAuthHeaders, SdServerJobError, } from "./sd-server-jobs";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
@@ -24,6 +25,40 @@ function log(): Logger | null {
 }
 
 /**
+ * Emit one sd.cpp prompt prefix per discovered LoRA. Unknown names are
+ * warned-and-skipped so the rest of the generation still runs.
+ */
+async function applySdCppLoras(
+  prompt: string,
+  loras: readonly LoRAConfig[],
+  baseUrl: string,
+): Promise<string> {
+  const discovered = await discoverLoras("sd-server", baseUrl,);
+  let effective = prompt;
+
+  // injectSdCppLora prepends, so walk backwards to keep caller order.
+  for (let i = loras.length - 1; i >= 0; i--) {
+    const lora = loras[i]!;
+    const model = findLoraModel(lora.name, discovered.models,);
+    if (!model) {
+      log()?.warn(
+        "LoRA not found on backend, skipping injection",
+        { loraName: lora.name, backendUrl: baseUrl, },
+      );
+
+      continue;
+    }
+
+    // Keep the caller's token shape: a full filename stays a filename, a
+    // stripped name stays a name.
+    const token = model.filename === lora.name ? model.filename : model.name;
+    effective = injectSdCppLora(effective, token, lora.strength,);
+  }
+
+  return effective;
+}
+
+/**
  * Generate images via sd.cpp — async job submission + polling.
  * @param sdConfig
  * @param opts
@@ -37,34 +72,17 @@ export async function generateSDCPP(
   const n = opts.n;
   const sdcppUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/img_gen`;
 
-  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
-  let effectivePrompt = opts.prompt;
-  if (opts.lora) {
-    const discovered = await discoverLoras("sd-server", sdcppUrl,);
-    const found = discovered.models.some(
-      (m: LoRAModel,) => m.name === opts.lora!.name,
-    );
-
-    if (found) {
-      effectivePrompt = injectSdCppLora(
-        opts.prompt,
-        opts.lora.name,
-        opts.lora.strength,
-      );
-    } else {
-      // Unknown LoRA — warn and continue without injection (graceful degradation).
-      log()?.warn(
-        "LoRA not found on backend, skipping injection",
-        { loraName: opts.lora.name, backendUrl: sdcppUrl, },
-      );
-    }
-  }
+  // LoRA opt-in: one prefix per requested LoRA; unknown names degrade
+  // gracefully to a warn-and-skip.
+  const effectivePrompt = opts.lora && opts.lora.length > 0
+    ? await applySdCppLoras(opts.prompt, opts.lora, sdcppUrl,)
+    : opts.prompt;
 
   const sdcppPayload = safeJsonStringify({
     prompt: effectivePrompt,
     negative_prompt: opts.negativePrompt ?? sdConfig.defaults.negativePrompt,
-    width: sdConfig.defaults.width,
-    height: sdConfig.defaults.height,
+    width: opts.width ?? sdConfig.defaults.width,
+    height: opts.height ?? sdConfig.defaults.height,
     steps: opts.steps ?? sdConfig.defaults.steps,
     cfg_scale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
@@ -73,7 +91,7 @@ export async function generateSDCPP(
     output_format: outputFormat,
     enable_hr: opts.enableHr ?? false,
     hr_scale: opts.hrScale,
-    denoising_strength: opts.denoisingStrength,
+    denoising_strength: opts.denoise,
   },);
 
   // Job status carries base64 images — can exceed safeFetch's default size cap.

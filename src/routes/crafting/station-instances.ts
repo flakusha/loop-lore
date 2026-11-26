@@ -15,8 +15,8 @@ import { Elysia, t, } from "elysia";
 import type { Db, } from "../../db";
 import { StationsService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, } from "../../validation/schemas";
-import { badRequestResponse, jsonResponse, notFoundResponse, } from "../http-utils";
-import { requireUserId, } from "../http-utils/responses";
+import { badRequestResponse, jsonResponse, notFoundResponse, withUserAuth, } from "../http-utils";
+
 import { resolveWorldOwner, } from "./station-defs";
 
 // ── Schemas ────────────────────────────────────────────────
@@ -60,116 +60,131 @@ const updateStationInstanceBody = t.Partial(stationInstanceBody,);
 export function craftingStationInstancesRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new StationsService(database,);
   return new Elysia({ name: "crafting-station-instances", },)
-    .post(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const body = ctx.body as Record<string, unknown>;
-      const durability = body.currentDurability as number;
-      if (!Number.isFinite(durability,) || durability < 0) {
-        return badRequestResponse("currentDurability must be a non-negative number",);
-      }
+    .post(
+      `${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
+          if (denied) { return denied; }
+          const body = ctx.body as Record<string, unknown>;
+          const durability = body.currentDurability as number;
+          if (!Number.isFinite(durability,) || durability < 0) {
+            return badRequestResponse("currentDurability must be a non-negative number",);
+          }
 
-      const id = await svc().createInstance({
-        stationDefId: ctx.params.stationDefId,
-        worldId: ctx.params.worldId,
-        locationId: body.locationId as string | undefined,
-        ownerActorId: body.ownerActorId as string | undefined,
-        currentDurability: durability,
-        isActive: body.isActive as boolean | undefined,
-      },);
+          const id = await svc().createInstance({
+            stationDefId: ctx.params.stationDefId,
+            worldId: ctx.params.worldId,
+            locationId: body.locationId as string | undefined,
+            ownerActorId: body.ownerActorId as string | undefined,
+            currentDurability: durability,
+            isActive: body.isActive as boolean | undefined,
+          },);
 
-      return jsonResponse({ id, }, 201,);
-    }, {
-      params: t.Object({ worldId: Id, stationDefId: Id, },),
-      body: stationInstanceBody,
-      response: {
-        201: createdIdResponse,
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        404: ErrorResponse,
+          return jsonResponse({ id, }, 201,);
+        },),
+      {
+        params: t.Object({ worldId: Id, stationDefId: Id, },),
+        body: stationInstanceBody,
+        response: {
+          201: createdIdResponse,
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Place crafting station instance",
+          description: "Place a physical station instance in the world.",
+          tags: ["Crafting",],
+        },
       },
-      detail: {
-        summary: "Place crafting station instance",
-        description: "Place a physical station instance in the world.",
-        tags: ["Crafting",],
+    )
+    .get(
+      `${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
+          if (denied) { return denied; }
+          const insts = await svc().listInstances(ctx.params.worldId,);
+          return jsonResponse({ instances: insts, },);
+        },),
+      {
+        params: t.Object({ worldId: Id, stationDefId: Id, },),
+        response: { 200: listInstancesResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "List crafting station instances",
+          description: "List placed station instances for a world.",
+          tags: ["Crafting",],
+        },
       },
-    },)
-    .get(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const insts = await svc().listInstances(ctx.params.worldId,);
-      return jsonResponse({ instances: insts, },);
-    }, {
-      params: t.Object({ worldId: Id, stationDefId: Id, },),
-      response: { 200: listInstancesResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-      detail: {
-        summary: "List crafting station instances",
-        description: "List placed station instances for a world.",
-        tags: ["Crafting",],
+    )
+    .get(
+      `${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
+          if (denied) { return denied; }
+          const inst = await svc().getInstance(ctx.params.worldId, ctx.params.instanceId,);
+          if (!inst) { return notFoundResponse("Station instance",); }
+          return jsonResponse(inst,);
+        },),
+      {
+        params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
+        response: { 200: stationInstanceSchema, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "Get crafting station instance",
+          description: "Get a single placed station instance by ID.",
+          tags: ["Crafting",],
+        },
       },
-    },)
-    .get(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const inst = await svc().getInstance(ctx.params.worldId, ctx.params.instanceId,);
-      if (!inst) { return notFoundResponse("Station instance",); }
-      return jsonResponse(inst,);
-    }, {
-      params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
-      response: { 200: stationInstanceSchema, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-      detail: {
-        summary: "Get crafting station instance",
-        description: "Get a single placed station instance by ID.",
-        tags: ["Crafting",],
-      },
-    },)
-    .put(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const body = ctx.body as Record<string, unknown>;
-      const ok = await svc().updateInstance(ctx.params.worldId, ctx.params.instanceId, {
-        locationId: body.locationId as string | undefined,
-        ownerActorId: body.ownerActorId as string | undefined,
-        currentDurability: body.currentDurability as number | undefined,
-        isActive: body.isActive as boolean | undefined,
-      },);
+    )
+    .put(
+      `${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
+          if (denied) { return denied; }
+          const body = ctx.body as Record<string, unknown>;
+          const ok = await svc().updateInstance(ctx.params.worldId, ctx.params.instanceId, {
+            locationId: body.locationId as string | undefined,
+            ownerActorId: body.ownerActorId as string | undefined,
+            currentDurability: body.currentDurability as number | undefined,
+            isActive: body.isActive as boolean | undefined,
+          },);
 
-      if (!ok) { return notFoundResponse("Station instance",); }
-      return jsonResponse({ ok: true, },);
-    }, {
-      params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
-      body: updateStationInstanceBody,
-      response: { 200: okResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-      detail: {
-        summary: "Update crafting station instance",
-        description: "Update a placed station instance.",
-        tags: ["Crafting",],
+          if (!ok) { return notFoundResponse("Station instance",); }
+          return jsonResponse({ ok: true, },);
+        },),
+      {
+        params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
+        body: updateStationInstanceBody,
+        response: { 200: okResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "Update crafting station instance",
+          description: "Update a placed station instance.",
+          tags: ["Crafting",],
+        },
       },
-    },)
-    .delete(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const ok = await svc().deleteInstance(ctx.params.worldId, ctx.params.instanceId,);
-      if (!ok) { return notFoundResponse("Station instance",); }
-      return jsonResponse({ ok: true, },);
-    }, {
-      params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
-      response: { 200: okResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-      detail: {
-        summary: "Delete crafting station instance",
-        description: "Delete a placed station instance.",
-        tags: ["Crafting",],
+    )
+    .delete(
+      `${prefix}/worlds/:worldId/crafting-stations/:stationDefId/instances/:instanceId`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
+          if (denied) { return denied; }
+          const ok = await svc().deleteInstance(ctx.params.worldId, ctx.params.instanceId,);
+          if (!ok) { return notFoundResponse("Station instance",); }
+          return jsonResponse({ ok: true, },);
+        },),
+      {
+        params: t.Object({ worldId: Id, stationDefId: Id, instanceId: Id, },),
+        response: { 200: okResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
+        detail: {
+          summary: "Delete crafting station instance",
+          description: "Delete a placed station instance.",
+          tags: ["Crafting",],
+        },
       },
-    },);
+    );
 }

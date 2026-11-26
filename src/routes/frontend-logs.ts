@@ -17,99 +17,123 @@
  * Elysia plugin — public route (no auth).
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
+import type { Config, } from "../config/schema";
 import { getLogger, } from "../logger";
-import { SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { createRateLimiter, type RateLimiter, rateLimitHeaders, } from "../middleware/rate-limit";
+import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+import { getClientIp, } from "./auth/shared";
+import { HttpStatus, jsonResponse, } from "./http-utils";
 
-interface FrontendLogEntry {
-  level: string;
-  module: string;
-  message: string;
-  meta?: Record<string, unknown>;
-  timestamp: string;
-}
+/** Bounded batch: one browser flush cannot flood the log pipeline. */
+export const MAX_FRONTEND_LOG_ENTRIES = 20;
+/** Per-IP budget, identical to the telemetry event sink. */
+const LOG_RATE_LIMIT = { windowMs: 60_000, maxRequests: 30, } as const;
 
-interface LogBatch {
-  entries: FrontendLogEntry[];
+const LogBatchSchema = t.Object({
+  entries: t.Array(
+    t.Object({
+      level: t.String({ maxLength: 32, },),
+      module: t.String({ maxLength: 200, },),
+      message: t.String({ maxLength: 4000, },),
+      meta: t.Optional(t.Record(t.String(), t.Unknown(),),),
+      timestamp: t.Optional(t.String({ maxLength: 64, },),),
+    },),
+    { minItems: 1, maxItems: MAX_FRONTEND_LOG_ENTRIES, },
+  ),
+},);
+
+interface FrontendLogsOpts {
+  /** Server config for trusted-proxy IP resolution (tests omit it). */
+  config?: Config;
+  /** Per-mount limiter seam so test files never share a bucket. */
+  logRateLimiter?: RateLimiter;
 }
 
 /**
  * @param prefix
- * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, { [x: string]: { frontend: { logs: { ...; }; }; }; }, { ...; }, { ...; }>}
+ * @param opts - rate-limiter / trusted-proxy seams (per-mount in tests)
+ * @returns the frontend-log ingestion plugin
  */
-export function frontendLogsRoutes(prefix = "/api",) {
-  return new Elysia({ name: "frontend-logs", },).post(`${prefix}/frontend/logs`, async ({ request, ...rest },) => {
-    let body: LogBatch;
-    try {
-      body = (await request.json()) as LogBatch;
-    } catch {
-      return jsonError({
-        message: (rest as any).t?.("errors.badRequest",) ?? "Invalid JSON body",
-        status: HttpStatus.BadRequest,
-      },);
-    }
+export function frontendLogsRoutes(prefix = "/api", opts: FrontendLogsOpts = {},) {
+  // Per-mount limiter (same seam as telemetryRoutes) so parallel tests never
+  // share a bucket; production mounts this plugin exactly once.
+  const limiter = opts.logRateLimiter ?? createRateLimiter(LOG_RATE_LIMIT,);
+  const trustConfig = opts.config ?? ({ server: {}, } as Config);
 
-    if (!Array.isArray(body.entries,) || body.entries.length === 0) {
-      return jsonError({
-        message: (rest as any).t?.("frontendLogs.entriesRequired",) ?? "entries must be a non-empty array",
-        status: HttpStatus.BadRequest,
-      },);
-    }
+  return new Elysia({ name: "frontend-logs", },)
+    // Keep the sink original 400 contract for malformed batches (Elysia defaults to 422).
+    .onError(({ code, set, },) => {
+      if (code === "VALIDATION" || code === "PARSE") {
+        set.status = HttpStatus.BadRequest;
+        return { error: "Invalid frontend log batch", code: "BAD_REQUEST", };
+      }
+    },)
+    .post(`${prefix}/frontend/logs`, async ({ body, request, server, },) => {
+      const ip = getClientIp(request, trustConfig, server?.requestIP(request,)?.address ?? null,);
+      const limit = limiter.consume(ip,);
+      if (!limit.allowed) {
+        return new Response(null, {
+          status: HttpStatus.TooManyRequests,
+          headers: rateLimitHeaders(limit, limit.resetSec,),
+        },);
+      }
 
-    const log = getLogger();
+      const log = getLogger();
+      for (const entry of body.entries) {
+        const meta: Record<string, unknown> = { ...entry.meta, _source: "browser", _module: entry.module, };
+        const msg = `[FE] ${entry.message}`;
 
-    for (const entry of body.entries) {
-      const meta: Record<string, unknown> = { ...entry.meta, _source: "browser", _module: entry.module, };
-      const msg = `[FE] ${entry.message}`;
+        switch (entry.level) {
+          case "trace": {
+            log.trace(msg, meta,);
+            break;
+          }
 
-      switch (entry.level) {
-        case "trace": {
-          log.trace(msg, meta,);
-          break;
-        }
+          case "debug": {
+            log.debug(msg, meta,);
+            break;
+          }
 
-        case "debug": {
-          log.debug(msg, meta,);
-          break;
-        }
+          case "info": {
+            log.info(msg, meta,);
+            break;
+          }
 
-        case "info": {
-          log.info(msg, meta,);
-          break;
-        }
+          case "warn": {
+            log.warn(msg, meta,);
+            break;
+          }
 
-        case "warn": {
-          log.warn(msg, meta,);
-          break;
-        }
+          case "error": {
+            log.error(msg, undefined, meta,);
+            break;
+          }
 
-        case "error": {
-          log.error(msg, undefined, meta,);
-          break;
-        }
+          case "fatal": {
+            log.fatal(msg, undefined, meta,);
+            break;
+          }
 
-        case "fatal": {
-          log.fatal(msg, undefined, meta,);
-          break;
-        }
-
-        default: {
-          log.info(msg, meta,);
+          default: {
+            log.info(msg, meta,);
+          }
         }
       }
-    }
 
-    return jsonResponse({ ok: true, ingested: body.entries.length, },);
-  }, {
-    response: {
-      200: SuccessResponse,
-    },
-    detail: {
-      summary: "Ingest frontend logs",
-      description:
-        "Accept a batch of browser-side log entries and write them through the server-side logger for production visibility.",
-      tags: ["Logs",],
-    },
-  },);
+      return jsonResponse({ ok: true, ingested: body.entries.length, },);
+    }, {
+      body: LogBatchSchema,
+      response: {
+        200: SuccessResponse,
+        400: ErrorResponse,
+        429: ErrorResponse,
+      },
+      detail: {
+        summary: "Ingest frontend logs",
+        description:
+          "Accept a bounded batch of browser-side log entries and write them through the server-side logger for production visibility.",
+        tags: ["Logs",],
+      },
+    },);
 }

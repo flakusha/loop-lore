@@ -3,7 +3,7 @@
 
 # BUG: Context window reorders messages sharing an identical createdAt
 
-**Status:** Not Started
+**Status:** Wontfix
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability

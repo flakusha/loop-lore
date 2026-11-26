@@ -8,11 +8,11 @@
 // fires synchronously when the test simulates a "change" event. Stub ./load
 // so the watcher's reload path resolves with a trivial config object.
 
-import { describeOrSkip, ISOLATED, } from "@/test-utils/isolate-only";
 import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
 import type { FSWatcher, watch as NodeWatch, } from "node:fs";
 import { mkdirSync, rmSync, } from "node:fs";
 import path from "node:path";
+import { describeOrSkip, ISOLATED, } from "../../../../src/test-utils/isolate-only";
 import { createConfigSchema, } from "./schema-class";
 
 // ── Stubs ────────────────────────────────────────────────────

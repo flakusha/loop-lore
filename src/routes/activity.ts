@@ -15,7 +15,7 @@
  */
 
 import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
+import { type Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonResponse, requireUserId, } from "./http-utils";
@@ -39,20 +39,20 @@ export async function computeActivity(
   database: Kysely<DB>,
   userId: string,
 ): Promise<Record<string, ActivityEntry>> {
+  // One indexed participants read (migration 122): the trigger-maintained
+  // unread_count replaces the grouped messages aggregation. The NULL
+  // watermark / deleted-last-read count-all fallback lives inside the
+  // triggers now, so the semantics are unchanged.
   const participants = await database
     .selectFrom("chat_participants",)
-    .select(["chat_id", "last_read_message_id",],)
+    .select(["chat_id", "unread_count",],)
     .where("actor_id", "=", userId,)
     .execute();
 
   if (participants.length === 0) { return {}; }
 
-  const lastReadByChat = new Map<string, string | null>();
-  const chatIds: string[] = [];
-  for (const p of participants) {
-    lastReadByChat.set(p.chat_id, p.last_read_message_id,);
-    chatIds.push(p.chat_id,);
-  }
+  const chatIds = participants.map((p,) => p.chat_id);
+  const unseenByChat = new Map(participants.map((p,) => [p.chat_id, p.unread_count,] as const),);
 
   const chats = await database
     .selectFrom("chats",)
@@ -72,45 +72,10 @@ export async function computeActivity(
 
   const latestByChat = new Map(Array.from(latestMessages, (m,) => [m.chat_id, m.latest_created as string | null,],),);
 
-  const lastReadIds: string[] = [];
-  for (const v of lastReadByChat.values()) {
-    if (v) { lastReadIds.push(v,); }
-  }
-
-  const lastReadMap = new Map<string, string>();
-  if (lastReadIds.length > 0) {
-    const lastReadMsgs = await database
-      .selectFrom("messages",)
-      .select(["id", "created_at",],)
-      .where("id", "in", lastReadIds,)
-      .execute();
-
-    for (const msg of lastReadMsgs) {
-      lastReadMap.set(msg.id, msg.created_at,);
-    }
-  }
-
   const result: Record<string, ActivityEntry> = {};
-
   for (const chatId of chatIds) {
-    const lastReadId = lastReadByChat.get(chatId,);
-    const lastReadCreatedAt = lastReadId ? lastReadMap.get(lastReadId,) : undefined;
-
-    let query = database
-      .selectFrom("messages",)
-      .select(database.fn.countAll<number>().as("count",),)
-      .where("chat_id", "=", chatId,)
-      .where("visibility", "=", "visible",);
-
-    if (lastReadCreatedAt) {
-      query = query.where("created_at", ">", lastReadCreatedAt,);
-    }
-
-    const countResult = await query.executeTakeFirst();
-    const unseenCount = countResult?.count ?? 0;
-
     result[chatId] = {
-      unseenCount,
+      unseenCount: unseenByChat.get(chatId,) ?? 0,
       lastMessageCreatedAt: latestByChat.get(chatId,) ?? null,
       chatName: chatNames.get(chatId,) ?? "Unknown",
     };

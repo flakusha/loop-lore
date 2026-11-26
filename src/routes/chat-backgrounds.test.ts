@@ -6,16 +6,19 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { AssetType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
+  insertAssets,
   insertChats,
   insertLocations,
   insertWorlds,
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
 import { autoSyncChatBackground, chatBackgroundsRoutes, } from "./chat-backgrounds";
+import { setAssetAsChatBackground, } from "./chat-backgrounds/service";
 import { chatsRoutes, } from "./chats";
 
 /**
@@ -249,5 +252,49 @@ describe("chatBackgroundsRoutes", () => {
     const bgRes = await bgApp(db, userId,).handle(new Request(`http://localhost/api/chats/${chatId}/background`,),);
     const bgBody = await bgRes.json();
     expect(bgBody.data?.name,).toBe("Meadow Breeze",);
+  });
+
+  test("setAssetAsChatBackground assigns a static catalog row and preserves ownership", async () => {
+    const assetId = await insertAssets(
+      db,
+      userId,
+      "generated.png",
+      "image/png",
+      AssetType.Image,
+      10,
+      "/tmp/generated.png",
+    );
+
+    const genChatId = uid();
+    await insertChats(db, "BG Gen Chat", userId, { id: genChatId, world_id: worldId, },);
+
+    const bgId = await setAssetAsChatBackground({
+      database: db,
+      chatId: genChatId,
+      assetId,
+    },);
+
+    const bg = await db.selectFrom("chat_backgrounds",).selectAll().where("id", "=", bgId,)
+      .executeTakeFirst();
+
+    expect(bg,).toMatchObject({
+      id: bgId,
+      name: `Generated image ${assetId}`,
+      type: "static",
+      asset_id: assetId,
+    },);
+
+    const assignment = await db
+      .selectFrom("chat_background_assignments",)
+      .selectAll()
+      .where("chat_id", "=", genChatId,)
+      .executeTakeFirst();
+
+    expect(assignment?.background_id,).toBe(bgId,);
+
+    const asset = await db.selectFrom("assets",).select("owner_id",).where("id", "=", assetId,)
+      .executeTakeFirst();
+
+    expect(asset?.owner_id,).toBe(userId,);
   });
 });

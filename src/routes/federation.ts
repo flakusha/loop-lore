@@ -18,6 +18,7 @@
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
 import { Elysia, } from "elysia";
+import { hasUnhealthyProviders, } from "../admin/provider-health";
 import { computeBuildIdentity, } from "../build/identity";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
@@ -28,6 +29,7 @@ import { createLocalPeerWorkExecutor, } from "../federation/peer-work-execute";
 import { buildHostMetaXrd, HOST_META_PATH, WEBFINGER_PATH, } from "../federation/webfinger";
 import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
 import { mountPeerWorkApi, } from "./federation-peer-work";
+import { meshIntelEnabled, mountMeshIntelApi, } from "./honeypot-intel";
 import { HttpStatus, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -44,7 +46,7 @@ function instanceId(config: Config,): string {
 /** Coarse health verdict from provider health — ok | degraded. */
 type CoarseState = "ok" | "degraded";
 function coarseState(): CoarseState {
-  return "ok";
+  return hasUnhealthyProviders() ? "degraded" : "ok";
 }
 
 /**
@@ -181,6 +183,7 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
   );
 
   mountMeshApi(app, opts,);
+  if (meshIntelEnabled()) { mountMeshIntelApi(app, opts,); }
   mountPeerWorkApi(app, {
     ...opts,
     encryptionKey: config.byoKey?.encryptionKey ?? "",

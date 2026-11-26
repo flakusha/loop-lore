@@ -7,7 +7,7 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** Done (landed on dev: `8a3a48cd3` + `440f016e1` changelog fix; 388 pass / 0 fail, 4 piecemeal gates green)
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure
@@ -42,11 +42,11 @@ Kysely migration for `agent_actions` table; record every agent API call. Admin s
 
 ## Acceptance Criteria
 
-- [ ] Migration applies + reverses cleanly
-- [ ] Every agent API call lands a row (success or fail)
-- [ ] Token hash stored as SHA-256 prefix only (first 16 chars); no plaintext
-- [ ] Admin route paginates and filters correctly
-- [ ] Schema regen picks up the new table
+- [x] Migration applies + reverses cleanly (`116_rsi_agent_actions.ts`; migration + roundtrip suites green)
+- [x] Every agent API call lands a row (success or fail) (choke-point writes + `onAfterHandle`/`onError` finalizers in `src/agent/api/router.ts`)
+- [x] Token hash stored as SHA-256 prefix only (first 16 chars); no plaintext (column named `token_digest` — `token_hash` breaks the migration-rename-upgrade gate per empirical probe; asserted in `agent-actions.test.ts:88-97`)
+- [x] Admin route paginates and filters correctly (`GET /api/v1/admin/agent-actions`, token/action filters, 50 default / 200 cap; 401/403 asserted)
+- [x] Schema regen picks up the new table (generated schema/manifest/insert-helper/db-schema/fuzz artifacts in the landing commit)
 
 ## Files
 

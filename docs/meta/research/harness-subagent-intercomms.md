@@ -25,7 +25,7 @@ what already exists rather than building a new bus?
 `types.ts:31`), `error`, `toolingGap`, `costUsd`, `tokensIn/out`, `branch`, `pid`,
 `gitSha`, `msg`, and `turnId` (the user turn's correlation id, shared by every
 tool round of that turn). It is written one JSON line per run to
-`.harness/executions.jsonl` (`src/harness/exec-log.ts:23-26`), gitignored
+`<instance-dir>/harness/executions.jsonl` (`src/harness/exec-log.ts:23-26`), gitignored
 (`.gitignore:76`), best-effort and never blocking (`exec-log.ts:72-99`).
 
 Two facts constrain reuse:

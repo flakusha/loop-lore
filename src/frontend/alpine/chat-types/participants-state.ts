@@ -16,6 +16,8 @@ export interface ChatParticipant {
   persona_id: string | null;
   display_name: string;
   actor_type: string;
+  /** "ai" marks the LLM-driven cast (assistant_group / llm_only_group* chats). */
+  agent_type?: string;
 }
 
 /** An actor the current user can add to a group chat. */
@@ -23,6 +25,8 @@ export interface AvailableActor {
   id: string;
   display_name: string;
   actor_type: string;
+  /** "ai" marks the LLM-driven cast (assistant_group / llm_only_group* chats). */
+  agent_type?: string;
 }
 
 /** One ordered slot in the group-chat turn-order indicator (GET /turn-order). */
@@ -59,6 +63,10 @@ export interface ChatParticipantsState extends AlpineMagicThis {
   _availableActors: AvailableActor[];
   /** Filter text for the "add participant" actor picker. */
   _participantQuery: string;
+  /** Actor-kind facet for the picker: "all" | "assistant" | "plain". */
+  _participantKind: string;
+  /** Actor-kind facet for the member grid: "all" | "assistant" | "plain". */
+  _memberKind: string;
   /** True while an add/remove/update request is in flight. */
   _participantsBusy: boolean;
   /** Actor id selected in the add-participant picker. */
@@ -70,8 +78,10 @@ export interface ChatParticipantsState extends AlpineMagicThis {
 
   /** True when the active chat is a group chat. */
   readonly isGroupChat: boolean;
-  /** Available actors filtered by `_participantQuery`, excluding current members. */
+  /** Available actors filtered by `_participantKind` and `_participantQuery`, excluding current members. */
   readonly filteredAvailableActors: AvailableActor[];
+  /** Members filtered by `_memberKind` for the member grid. */
+  readonly filteredParticipants: ChatParticipant[];
 
   /** Load participants for the active chat; also refreshes `_chatParticipants`. */
   loadParticipants(): Promise<void>;

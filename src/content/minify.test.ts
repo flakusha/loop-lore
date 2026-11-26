@@ -1,5 +1,5 @@
 import { describe, expect, test, } from "bun:test";
-import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
+import { defaultHTMLOptions, minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
 
 describe("minifyText", () => {
   test("passes normal text through unchanged", () => {
@@ -60,6 +60,31 @@ describe("minifyHTMLContent", () => {
   test("removes redundant attributes", async () => {
     const result = await minifyHTMLContent('<script type="text/javascript">const x=1;</script>',);
     expect(result,).not.toContain('type="text/javascript"',);
+  });
+
+  test("preserves the runtime HTML attribute contract", async () => {
+    const input =
+      `<div data-testid="chat" hx-get="/api/chat" hx-swap-oob="true" x-data="app()" @click="go()" :href="'/w/' + id" role="region" aria-live="polite" nonce="{{cspNonce}}">
+  {{{t('chat.title')}}}
+</div>`;
+
+    const result = await minifyHTMLContent(input,);
+    for (
+      const kept of [
+        'data-testid="chat"',
+        'hx-get="/api/chat"',
+        'hx-swap-oob="true"',
+        'x-data="app()"',
+        '@click="go()"',
+        ":href=\"'/w/' + id\"",
+        'role="region"',
+        'aria-live="polite"',
+        'nonce="{{cspNonce}}"',
+        "{{{t('chat.title')}}}",
+      ]
+    ) {
+      expect(result,).toContain(kept,);
+    }
   });
 
   test("handles empty input", async () => {
@@ -190,5 +215,23 @@ describe("minifyJS", () => {
 
   test("throws on syntax error", async () => {
     await expect(minifyJS("const x = ;",),).rejects.toThrow();
+  });
+});
+
+describe("defaultHTMLOptions", () => {
+  test("pins the shared minifier contract used by build, runtime and parity gate", () => {
+    expect(defaultHTMLOptions,).toEqual({
+      collapseWhitespace: true,
+      collapseInlineTagWhitespace: true,
+      caseSensitive: true,
+      removeComments: true,
+      removeRedundantAttributes: true,
+      removeEmptyAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true,
+      minifyCSS: true,
+      minifyJS: true,
+    },);
   });
 });

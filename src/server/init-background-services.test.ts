@@ -11,12 +11,18 @@ import type { Kysely, } from "kysely";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { setConfig, } from "../admin/config";
 import type { Config, } from "../config/schema";
 import { createConfigSchema, } from "../config/schema-class";
 import type { Db, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getProvider, listProviders, } from "../generation";
 import { unregisterProvider, } from "../generation/providers/registry";
+import {
+  LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY,
+  LLAMA_SWAP_AUTOSTART_ENABLED_KEY,
+  LLAMA_SWAP_AUTOSTART_LISTEN_PORT_KEY,
+} from "../llm/llama-swap-effective-config";
 import type { Logger, } from "../logger/types";
 import {
   getRegexTelemetrySnapshot,
@@ -68,15 +74,17 @@ interface ManagerCalls {
   llamaCpp: unknown[];
   llamaSwap: unknown[];
   sdCpp: unknown[];
+  honkbox: unknown[];
 }
 
 function makeManager(behavior: {
   llamaCpp?: { port: number; pid: number } | null;
   llamaSwap?: { port: number; pid: number } | null;
   sdCpp?: { port: number; pid: number } | null;
+  honkbox?: { port: number; pid: number } | null;
   llamaCppError?: Error;
 },): { manager: ServerExternalManager; calls: ManagerCalls } {
-  const calls: ManagerCalls = { llamaCpp: [], llamaSwap: [], sdCpp: [], };
+  const calls: ManagerCalls = { llamaCpp: [], llamaSwap: [], sdCpp: [], honkbox: [], };
   const manager = {
     startLlamaCpp: async (cfg: unknown,) => {
       calls.llamaCpp.push(cfg,);
@@ -90,6 +98,10 @@ function makeManager(behavior: {
     startSdCpp: async (cfg: unknown,) => {
       calls.sdCpp.push(cfg,);
       return behavior.sdCpp ?? null;
+    },
+    startHonkbox: async (cfg: unknown,) => {
+      calls.honkbox.push(cfg,);
+      return behavior.honkbox ?? null;
     },
   };
 
@@ -369,6 +381,52 @@ describe("initBackgroundServices", () => {
     ).toBe(true,);
   });
 
+  test("registers an openaiCompatible provider for the auto-started llama-swap proxy", async () => {
+    const { logger, } = makeLogger();
+    const swapPort = 20_000 + Math.floor(Math.random() * 20_000,);
+    const { manager, calls: managerCalls, } = makeManager({
+      llamaSwap: { port: swapPort, pid: 101, },
+    },);
+
+    const config = makeConfig({
+      charactersEnabled: false,
+      autoStart: {
+        llamaSwap: { enabled: true, configPath: join(uploadDir, "llama-swap.yaml",), },
+      },
+    },);
+
+    await initBackgroundServices(db, config, logger, manager,);
+
+    expect(managerCalls.llamaSwap,).toHaveLength(1,);
+    const provider = getProvider("llama-swap",);
+    expect(provider,).toBeDefined();
+    expect(provider?.capabilities.type,).toBe("openai-compatible",);
+    const registered = provider as unknown as { state: { baseUrl: string } };
+    expect(registered.state.baseUrl,).toBe(`http://127.0.0.1:${swapPort}/v1`,);
+    expect(config.generation.defaultProvider,).toBe("llama-swap",);
+    expect(config.generation.defaultModels["llama-swap"],).toBe("llama-swap",);
+  });
+
+  test("applies admin system_config overrides to llama-swap auto-start", async () => {
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_ENABLED_KEY, "true", "test",);
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_CONFIG_PATH_KEY, "/srv/llama-swap.yml", "test",);
+    await setConfig(db, LLAMA_SWAP_AUTOSTART_LISTEN_PORT_KEY, "9090", "test",);
+    const manager = makeManager({ llamaSwap: { port: 9090, pid: 9, }, },);
+    await initBackgroundServices(
+      db,
+      makeConfig({
+        charactersEnabled: false,
+        autoStart: { llamaSwap: { enabled: false, configPath: "/etc/ignored.yaml", }, },
+      },),
+      makeLogger().logger,
+      manager.manager,
+    );
+
+    expect(manager.calls.llamaSwap,).toEqual([
+      { configPath: "/srv/llama-swap.yml", listenPort: 9090, },
+    ],);
+  });
+
   test("warns when sd-cpp fails to start and stays silent on success", async () => {
     const bad = makeLogger();
     const badManager = makeManager({ sdCpp: null, },);
@@ -507,5 +565,51 @@ describe("initBackgroundServices", () => {
     expect(managerCalls.llamaCpp,).toHaveLength(1,);
     expect(managerCalls.llamaSwap,).toHaveLength(1,);
     expect(managerCalls.sdCpp,).toHaveLength(1,);
+  });
+
+  test("auto-starts honkbox and registers its /v1 provider without hijacking defaultProvider", async () => {
+    const { logger, calls, } = makeLogger();
+    const { manager, calls: managerCalls, } = makeManager({ honkbox: { port: 9051, pid: 11, }, },);
+    const config = makeConfig({
+      charactersEnabled: false,
+      autoStart: { honkbox: { enabled: true, }, },
+    },);
+
+    await initBackgroundServices(db, config, logger, manager,);
+
+    // Default port (9010) fills in when the config omits it.
+    expect(managerCalls.honkbox,).toHaveLength(1,);
+    expect(managerCalls.honkbox[0],).toMatchObject({ port: 9010, },);
+
+    const provider = getProvider("honkbox",);
+    expect(provider,).toBeDefined();
+    // The provider points at the auto-started server's OpenAI-compatible /v1 root.
+    const state = (provider as unknown as { state?: { baseUrl?: string } }).state;
+    expect(state?.baseUrl,).toBe("http://127.0.0.1:9051/v1",);
+
+    // Supplemental provider: generation routing stays untouched.
+    expect(config.generation.defaultProvider,).toBe("",);
+
+    // The capabilities probe runs at setup against the dead stub port and
+    // fails — a failed probe logs a warn but keeps the provider registered.
+    const warn = calls.find((c,) => c.level === "warn" && String(c.message,).includes("capabilities probe failed",));
+    expect(warn,).toBeDefined();
+    expect(getProvider("honkbox",),).toBeDefined();
+  });
+
+  test("honkbox auto-start failure registers no provider", async () => {
+    const { logger, calls, } = makeLogger();
+    const { manager, calls: managerCalls, } = makeManager({ honkbox: null, },);
+    const config = makeConfig({
+      charactersEnabled: false,
+      autoStart: { honkbox: { enabled: true, }, },
+    },);
+
+    await initBackgroundServices(db, config, logger, manager,);
+    expect(managerCalls.honkbox,).toHaveLength(1,);
+    expect(getProvider("honkbox",),).toBeUndefined();
+    expect(calls.some((c,) => c.level === "warn" && String(c.message,).includes("honkbox auto-start failed",)),).toBe(
+      true,
+    );
   });
 });

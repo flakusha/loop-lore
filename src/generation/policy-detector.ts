@@ -54,6 +54,27 @@ export function clearDetectors(): void {
   registeredDetectors.length = 0;
 }
 
+/**
+ * Swap in a private detector set and return a restore closure. `bun test`
+ * shares module state across files unless `--isolate`; tests that register
+ * straight into the process-global registry leaked stubs into sibling suites.
+ * Call the returned closure in `afterEach`.
+ * @param detectors - detectors scoped to one test
+ * @returns restore closure for the previous registry
+ */
+export function isolateDetectors(
+  detectors: readonly PolicyDetector[],
+): () => void {
+  const previous = registeredDetectors.slice();
+  registeredDetectors.length = 0;
+  registeredDetectors.push(...detectors,);
+
+  return () => {
+    registeredDetectors.length = 0;
+    registeredDetectors.push(...previous,);
+  };
+}
+
 // ── Null detector (no-op fallback) ────────────────────────
 
 /** */

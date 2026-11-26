@@ -39,6 +39,39 @@ export const AdminChatRow = Type.Object({
  *
  */
 export type AdminChatRow = Static<typeof AdminChatRow>;
+
+/**
+ * Body of GET /api/admin/chats/:id — the full chat row plus roll-up fields.
+ * Declares the stable admin-relevant subset; the handler spreads the raw
+ * row, so undeclared columns (story_state, gm_config, ...) remain additive.
+ * is_pinned is the stored text flag ("0"/"1"), not a boolean.
+ */
+export const AdminChatDetail = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  type: Type.String(),
+  mode: Type.String(),
+  created_by: Type.String(),
+  world_id: Type.Union([Type.String(), Type.Null(),],),
+  is_pinned: Type.String(),
+  visibility: Type.String(),
+  encryption_level: Type.String(),
+  thinking_visibility: Type.String(),
+  created_at: Type.String(),
+  updated_at: Type.String(),
+  messageCount: Type.Number(),
+  participants: Type.Array(
+    Type.Object({
+      actor_id: Type.String(),
+      role_in_chat: Type.String(),
+      joined_at: Type.String(),
+    },),
+  ),
+},);
+/**
+ *
+ */
+export type AdminChatDetail = Static<typeof AdminChatDetail>;
 export const AdminUserRow = Type.Object({
   id: Type.String(),
   username: Type.String(),
@@ -64,6 +97,31 @@ export const AdminWorldRow = Type.Object({
  *
  */
 export type AdminWorldRow = Static<typeof AdminWorldRow>;
+
+/**
+ * Body of GET /api/admin/worlds/:id — the full world row plus a location
+ * roll-up. Declares the stable admin-relevant subset; the handler spreads
+ * the raw row, so undeclared columns (lore, rules, rpg_* knobs, ...)
+ * remain additive. rpg_enabled is the stored numeric flag, not a boolean.
+ */
+export const AdminWorldDetail = Type.Object({
+  id: Type.String(),
+  name: Type.String(),
+  description: Type.Union([Type.String(), Type.Null(),]),
+  owner_id: Type.String(),
+  publication_status: Type.String(),
+  kind: Type.String(),
+  visibility: Type.String(),
+  nsfw_override: Type.Union([Type.String(), Type.Null(),]),
+  rpg_enabled: Type.Number(),
+  created_at: Type.String(),
+  updated_at: Type.String(),
+  locationCount: Type.Number(),
+},);
+/**
+ *
+ */
+export type AdminWorldDetail = Static<typeof AdminWorldDetail>;
 
 /**
  * One `world_event_log` row (admin/world-events.ts). `payload` stays a
@@ -148,3 +206,96 @@ export type AdminTemplateListResponse = Static<typeof AdminTemplateListResponse>
  *
  */
 export type ProfileSummary = AdminTemplateProfile;
+
+// ── Provisioned resources (admin/resources.ts) ─────────────────────────
+// Public views mirror the service-layer InferenceResource, StorageResource
+// and BackupRecord shapes: no credential material. jsonResponse merges an
+// additive `meta` field into object bodies, as it does for every schema here.
+
+/** Quota ceiling on a provisioned inference endpoint. */
+export const AdminResourceQuota = Type.Object({
+  requestsPerMinute: Type.Number(),
+  tokensPerMinute: Type.Optional(Type.Number(),),
+},);
+/** The quota ceiling as returned on a public resource view. */
+export type AdminResourceQuota = Static<typeof AdminResourceQuota>;
+
+/** One provisioned inference endpoint (no credential material). */
+export const AdminInferenceResource = Type.Object({
+  id: Type.String(),
+  ownerId: Type.String(),
+  kind: Type.Union([Type.Literal("llm",), Type.Literal("sd",), Type.Literal("comfyui",),],),
+  provider: Type.String(),
+  endpoint: Type.String(),
+  quota: AdminResourceQuota,
+  status: Type.String(),
+},);
+/** One provisioned inference endpoint as returned by the admin API. */
+export type AdminInferenceResource = Static<typeof AdminInferenceResource>;
+
+/** One provisioned storage endpoint (no credential material). */
+export const AdminStorageResource = Type.Object({
+  id: Type.String(),
+  ownerId: Type.String(),
+  kind: Type.Union([Type.Literal("s3",), Type.Literal("webdav",),],),
+  endpoint: Type.String(),
+  storageQuotaBytes: Type.Number(),
+  status: Type.String(),
+},);
+/** One provisioned storage endpoint as returned by the admin API. */
+export type AdminStorageResource = Static<typeof AdminStorageResource>;
+
+/** One stored backup row (payload included; callers decide what to expose). */
+export const AdminBackupRecord = Type.Object({
+  id: Type.String(),
+  resourceType: Type.String(),
+  ownerId: Type.String(),
+  contentHash: Type.String(),
+  serverHash: Type.Union([Type.String(), Type.Null(),],),
+  payload: Type.String(),
+  version: Type.Number(),
+  storageQuotaBytes: Type.Number(),
+},);
+/** One stored backup row as returned by the admin API. */
+export type AdminBackupRecord = Static<typeof AdminBackupRecord>;
+
+/** Why a provisioned resource cannot serve (the probe's failure reason). */
+const UnavailableReason = Type.Union([
+  Type.Literal("unknown",),
+  Type.Literal("paused",),
+  Type.Literal("revoked",),
+  Type.Literal("exhausted",),
+],);
+
+/**
+ * Dry-run probe bodies are polymorphic: a live resource returns its public
+ * view, an unavailable one returns a reason plus a built-in fallback note.
+ * Discriminated on `ok` so neither branch is silently narrowed.
+ */
+export const AdminInferenceProbeResponse = Type.Union([
+  Type.Object({ ok: Type.Literal(true,), resource: AdminInferenceResource, },),
+  Type.Object({ ok: Type.Literal(false,), reason: UnavailableReason, fallback: Type.String(), },),
+],);
+/** Inference dry-run probe result as returned by the admin API. */
+export type AdminInferenceProbeResponse = Static<typeof AdminInferenceProbeResponse>;
+
+/** Storage dry-run probe result — same discriminator, storage resource view. */
+export const AdminStorageProbeResponse = Type.Union([
+  Type.Object({ ok: Type.Literal(true,), resource: AdminStorageResource, },),
+  Type.Object({ ok: Type.Literal(false,), reason: UnavailableReason, fallback: Type.String(), },),
+],);
+/** Storage dry-run probe result as returned by the admin API. */
+export type AdminStorageProbeResponse = Static<typeof AdminStorageProbeResponse>;
+
+/** Envelope of GET /api/admin/resources/inference. */
+export const AdminInferenceListResponse = Type.Object({ resources: Type.Array(AdminInferenceResource,), },);
+/** Envelope of POST /api/admin/resources/inference. */
+export const AdminInferenceAddResponse = Type.Object({ resource: AdminInferenceResource, },);
+/** Envelope of GET /api/admin/resources/storage. */
+export const AdminStorageListResponse = Type.Object({ resources: Type.Array(AdminStorageResource,), },);
+/** Envelope of POST /api/admin/resources/storage. */
+export const AdminStorageAddResponse = Type.Object({ resource: AdminStorageResource, },);
+/** Envelope of POST /api/admin/resources/backups. */
+export const AdminBackupWriteResponse = Type.Object({ backup: AdminBackupRecord, },);
+/** Success body of POST /api/admin/resources/backups/:id/verify. */
+export const AdminBackupVerifyResponse = Type.Object({ ok: Type.Literal(true,), backup: AdminBackupRecord, },);

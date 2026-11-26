@@ -1,5 +1,13 @@
 import { describe, expect, test, } from "bun:test";
-import { formFromRow, parseGraphField, pretty, readJsonArrayField, requestBody, } from "./form";
+import {
+  formFromRow,
+  parseGraphField,
+  parseWorkflowFile,
+  pretty,
+  readJsonArrayField,
+  requestBody,
+  workflowFormState,
+} from "./form";
 import { emptyWorkflowForm, } from "./types";
 import type { WorkflowDetail, } from "./types";
 
@@ -14,6 +22,9 @@ function detailRow(over: Partial<NonNullable<WorkflowDetail>> = {},): NonNullabl
     enabled: "enabled",
     min_vram: 12,
     lora_slots: [],
+    probe_status: "passing",
+    license: "MIT",
+    params_reviewed: 1,
     node_count: 1,
     category: "txt2img",
     missing_nodes: [],
@@ -68,6 +79,8 @@ describe("formFromRow", () => {
     expect(form.model_family,).toBe("sdxl",);
     expect(form.min_vram,).toBe("12",);
     expect(form.category,).toBe("img2img",);
+    expect(form.license,).toBe("MIT",);
+    expect(form.params_reviewed,).toBe(true,);
     expect(form.requiredNodes,).toBe("KSampler, VAEDecode",);
     expect(form.graph,).toBe(pretty({ "1": { class_type: "KSampler", }, },),);
     expect(form.parametersJson,).toBe(pretty([{ name: "steps", },],),);
@@ -75,11 +88,21 @@ describe("formFromRow", () => {
   });
 
   test("fills defaults for a row with no payload", () => {
-    const form = formFromRow(detailRow({ payload: null, description: null, model_family: null, min_vram: null, },),);
+    const form = formFromRow(detailRow({
+      payload: null,
+      description: null,
+      model_family: null,
+      min_vram: null,
+      license: null,
+      params_reviewed: 0,
+    },),);
+
     expect(form.description,).toBe("",);
     expect(form.model_family,).toBe("",);
     expect(form.min_vram,).toBe("",);
     expect(form.category,).toBe("txt2img",);
+    expect(form.license,).toBe("",);
+    expect(form.params_reviewed,).toBe(false,);
     expect(form.requiredNodes,).toBe("",);
     expect(form.graph,).toBe("",);
     expect(form.parametersJson,).toBe("",);
@@ -106,6 +129,8 @@ describe("requestBody", () => {
       category: "img2img",
       requiredNodes: "KSampler, , VAEDecode ,",
       min_vram: "12",
+      license: "  Apache-2.0  ",
+      params_reviewed: true,
     }, { graph: { "1": {}, }, parameters: undefined, loraSlots: undefined, },);
 
     expect(body.name,).toBe("Basic",);
@@ -115,6 +140,8 @@ describe("requestBody", () => {
     expect(body.requiredNodes,).toEqual(["KSampler", "VAEDecode",],);
     expect(body.body,).toEqual({ "1": {}, },);
     expect(body.min_vram,).toBe(12,);
+    expect(body.license,).toBe("Apache-2.0",);
+    expect(body.params_reviewed,).toBe(true,);
     expect(body,).not.toHaveProperty("parameters",);
     expect(body,).not.toHaveProperty("loraSlots",);
   });
@@ -136,6 +163,17 @@ describe("requestBody", () => {
     expect(bad,).not.toHaveProperty("min_vram",);
   });
 
+  test("sends a blank license as null so an edit can clear the fence", () => {
+    const body = requestBody({ ...emptyWorkflowForm(), license: "   ", }, {
+      graph: {},
+      parameters: undefined,
+      loraSlots: undefined,
+    },);
+
+    expect(body.license,).toBeNull();
+    expect(body.params_reviewed,).toBe(false,);
+  });
+
   test("includes parameters and lora slots when set", () => {
     const body = requestBody(emptyWorkflowForm(), {
       graph: { a: 1, },
@@ -146,5 +184,77 @@ describe("requestBody", () => {
     expect(body.parameters,).toEqual([{ name: "steps", },],);
     expect(body.loraSlots,).toEqual([{ name: "lora1", },],);
     expect(body.body,).toEqual({ a: 1, },);
+  });
+});
+
+describe("loadWorkflowFile", () => {
+  test("a picked UI-format export becomes the uploadedUiWorkflow request body", async () => {
+    const graph = { nodes: [{ id: 1, type: "KSampler", },], links: [], };
+    const file = new File([JSON.stringify(graph,),], "workflow.json", { type: "application/json", },);
+    const state = {
+      ...workflowFormState,
+      workflowForm: emptyWorkflowForm(),
+      workflowFormErrors: [] as string[],
+    };
+
+    const target = { files: [file,], value: "workflow.json", };
+
+    await workflowFormState.loadWorkflowFile!.call(state, {
+      target,
+    } as unknown as Event,);
+
+    expect(state.workflowFormErrors,).toEqual([],);
+    // The picker is cleared so picking the same file again fires a change.
+    expect(target.value,).toBe("",);
+    expect(state.workflowForm.graph,).toBe(pretty(graph,),);
+
+    const parsed = parseGraphField(state.workflowForm.graph, [],);
+    expect(parsed,).not.toBeNull();
+    const body = requestBody(state.workflowForm, {
+      graph: parsed as object,
+      parameters: undefined,
+      loraSlots: undefined,
+    },);
+
+    // Backend `uploadedUiWorkflow` matches `body.nodes` with shaped nodes.
+    expect(body.body,).toEqual(graph,);
+    expect((body.body as { nodes: unknown[] }).nodes,).toEqual([{ id: 1, type: "KSampler", },],);
+  });
+});
+
+describe("parseWorkflowFile", () => {
+  test("accepts a UI-format export with a nodes array", () => {
+    const graph = { nodes: [{ id: 1, type: "KSampler", },], links: [], };
+    const errors: string[] = [];
+    expect(parseWorkflowFile(JSON.stringify(graph,), errors,),).toEqual(graph,);
+    expect(errors,).toEqual([],);
+  });
+
+  test("accepts an API-format graph whose nodes carry class_type", () => {
+    const graph = { "3": { class_type: "KSampler", inputs: {}, }, };
+    const errors: string[] = [];
+    expect(parseWorkflowFile(JSON.stringify(graph,), errors,),).toEqual(graph,);
+    expect(errors,).toEqual([],);
+  });
+
+  test("records a JSON parse failure and returns null", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile("{not json", errors,),).toBeNull();
+    expect(errors,).toHaveLength(1,);
+    expect(errors[0],).toContain("Workflow file: not valid JSON",);
+  });
+
+  test("rejects a JSON array, which is not a graph object", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile("[]", errors,),).toBeNull();
+    expect(errors,).toEqual(["Workflow file must be a JSON object",],);
+  });
+
+  test("rejects an object that is neither a UI nor an API export", () => {
+    const errors: string[] = [];
+    expect(parseWorkflowFile('{"foo":1}', errors,),).toBeNull();
+    expect(errors,).toEqual([
+      "Workflow file is not a UI export (nodes array) or an API-format graph",
+    ],);
   });
 });

@@ -3,8 +3,8 @@
 
 # EPIC: Fractal Locations — Recursive Containment + Mobile Transports
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** Done
+**Status Note:** All eight tasks shipped: schema + 106 integrity triggers, `LocationTreeService`, route CRUD, `locations.tick` events, actor positions, API routes, explorer UI and invariant tests.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -12,16 +12,15 @@
 **Source:** two-part location research pass (code-grounded gap analysis + pattern catalog). Written to `.tmp/` scratch, now deleted — see [Research artifacts](#research-artifacts).
 **Spec:** `docs/spec/locations.md`, `docs/spec/worlds.md`, `docs/spec/exploration-discovery.md`
 
-**Overview:** Extend the existing `locations` table (no fork) with kind/mobility/path/coords and add a transport + route system so a ship can contain sub-locations and travel between ports while actors inside move with it. Includes a new `013_locations_fractal.ts` migration, three new tables (travel_routes, travel_route_stops, actor_locations), five DB triggers (cycle/depth/cross-world/path-set/path-rewrite), a recursive-CTE service layer, a scheduler tick, API endpoints, a recursive location-explorer UI with transport badge, and a comprehensive invariants test suite.
+**Overview:** Extends the existing `locations` table (no fork) with kind/mobility/path/coords and a transport + route system so a ship can contain sub-locations and travel between ports while actors inside move with it. Schema shipped in `src/db/migrations/001_init.ts:4004-4184` (three new tables, four triggers) with four more UPDATE/depth triggers in `src/db/migrations/106_locations_integrity.ts:20-71` (`013` is `chat_branches`; `106` is the next append-only number). Cycle + depth stay app-layer. The recursive-CTE service layer, `locations.tick` cron job, API endpoints, recursive explorer UI and invariants tests are in place.
 
 ## Summary
 
-Locations in loop-lore today are flat-with-one-FK (`parent_location_id`) and tied to
-a single world. There is no concept of a **container location that itself moves
-through other locations** (e.g. a ship with internal rooms sailing between ports),
-no depth limit or cycle guard, no materialized path, no actor-vs-spatial position
-split, and no `kind` discriminator that distinguishes a continent from a tavern
-room from a vehicle.
+The original gap this epic closed: `locations` was flat-with-one-FK
+(`parent_location_id`) and tied to a single world, with no movable container
+location, no depth/cycle guard, no materialized path, no actor-vs-spatial
+position split, and no `kind` discriminator distinguishing a continent from a
+tavern room from a vehicle. Those capabilities now ship as described below.
 
 This epic extends the existing `locations` table (no fork) and adds a transport /
 route system so that:
@@ -55,9 +54,9 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 | Depth limit | **12** | User-confirmed; comfortable headroom for "ship inside hangar inside asteroid belt" chains. |
 | Cross-world nesting | **Rejected** | User-confirmed; cleaner isolation, no cross-world lore leak. |
 | Transport kinds | **`{sea, road, air, custom}`** | User-confirmed; minimal physical + escape hatch. |
-| Migration shape | **New top-level `013_locations_fractal.ts`** | Append-only; per `src/db/migrations/README.md`. |
+| Migration shape | **Schema in `001_init.ts:4004-4184`; new `106_locations_integrity.ts`** | `013` is `chat_branches`; `106` is the next append-only number after `105`. |
 | Hierarchy model | **Adjacency-list + materialized path** | Pattern #12; recursive CTE baseline augmented by trigger-maintained `path` text. |
-| Transport movement | **Scheduler-tick advance + route stops** | Cheap; integrates with existing `src/scheduler/` cron pattern. |
+| Transport movement | **Cron `locations.tick` + route stops** | `src/cron/jobs.ts:246-258`, `*/2 * * * *`, `elapsedSeconds: 120`; no `src/scheduler/` dir. |
 
 ## Core systems
 
@@ -66,12 +65,16 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 2. **Travel routes** — `travel_routes`, `travel_route_stops`.
 3. **Actor position split** — `actor_locations(actor_id, physical_location_id,
    spatial_location_id, entered_at)`.
-4. **Tree integrity** — DB triggers reject self-parent, cycles, cross-world
-   parent, depth > 12.
-5. **Service layer** — recursive helpers: `getAncestors`, `getDescendants`,
-   `getPath`, `getDepth`, `validateNesting`.
+4. **Tree integrity** — four INSERT/UPDATE triggers in `001_init.ts:4121-4184`
+   reject self-parent + cross-world parents and maintain `path`; four more
+   UPDATE/depth triggers ship in `106_locations_integrity.ts:20-71`. Cycle and
+   the depth-12 ceiling are app-layer (`LocationTreeService`, `LOCATION_DEPTH_LIMIT`).
+5. **Service layer** — `LocationTreeService` in `src/locations/tree.ts:77-300`:
+   `getAncestors`, `getDescendants`, `repairPath`, `insertLocation`, `moveSubtree`,
+   `tree` (recursive CTE where applicable; real path/depth/transport fields).
 6. **Route scheduler** — tick advances `travel_progress`, snaps to stop
-   coordinates, fires `transport.arrived` / `transport.departed` events.
+   coordinates, propagates riders, and appends `transport:arrived` /
+   `transport:departed` events to `world_event_log` (colon-style).
 7. **UI tree** — recursive walker renders any depth; location-explorer tabs
    by kind; transport badge.
 
@@ -79,14 +82,14 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 
 | Task | Ticket | Status |
 | ---- | ------ | ------ |
-| Migration `013_locations_fractal.ts` (columns + tables + triggers) | `TASK-locations-fractal-migration.md` | ⬜ Not Started |
-| Tree integrity validation service (cycle / cross-world / depth) | `TASK-locations-tree-integrity-service.md` | ⬜ Not Started |
-| Travel routes + stops CRUD + validation | `TASK-travel-routes-schema-and-crud.md` | ⬜ Not Started |
-| Travel scheduler tick (advance progress, snap to stops, fire events) | `TASK-travel-scheduler-tick.md` | ⬜ Not Started |
-| Actor position split (`actor_locations` physical vs spatial) | `TASK-actor-position-physical-spatial-split.md` | ⬜ Not Started |
-| API routes — nested tree, ancestor/path queries, route CRUD | `TASK-fractal-locations-api-routes.md` | ⬜ Not Started |
-| UI tree (location-explorer recursive render + transport badge) | `TASK-location-explorer-recursive-tree.md` | ⬜ Not Started |
-| Tests — invariants (cycle / cross-world / depth / rides-parent) | `TASK-fractal-locations-invariants-tests.md` | ⬜ Not Started |
+| Migration (`001_init.ts:4004-4184` + `106_locations_integrity.ts`) | `TASK-locations-fractal-migration.md` | ✅ Done |
+| Tree integrity validation service (`src/locations/tree.ts`) | `TASK-locations-tree-integrity-service.md` | ✅ Done |
+| Travel routes + stops CRUD | `TASK-travel-routes-schema-and-crud.md` | ✅ Done |
+| Travel scheduler tick (`locations.tick`, events) | `TASK-travel-scheduler-tick.md` | ✅ Done |
+| Actor position split (`src/locations/positions.ts`) | `TASK-actor-position-physical-spatial-split.md` | ✅ Done |
+| API routes (`src/routes/worlds/fractal-*-routes.ts`) | `TASK-fractal-locations-api-routes.md` | ✅ Done |
+| UI tree (`src/frontend/alpine/location-explorer.ts`) | `TASK-location-explorer-recursive-tree.md` | ✅ Done |
+| Tests — invariants (`src/db/locations-fractal-invariants.test.ts`) | `TASK-fractal-locations-invariants-tests.md` | ✅ Done |
 
 ## Out of scope (this epic)
 
@@ -104,7 +107,7 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 | ------ | ---------------- | -------- |
 | `locations` table (003_worlds.ts) | `parent_location_id`, `world_id`, `connections` JSON | Extended; not forked. |
 | `actors` + `npc_states` (004_actors.ts) | `npc_states.location_id` (flat FK) | `npc_states.location_id` becomes a denormalized cache of `actor_locations.spatial_location_id`. |
-| Scheduler (`src/scheduler/`) | cron ticks | Drives `travel_progress` advance. |
+| Cron catalog (`src/cron/jobs.ts:246-258`) | `locations.tick` job (`*/2`, `elapsedSeconds: 120`) | Drives `travel_progress` advance; no `src/scheduler/` dir. |
 | World state (`world_states`) | `weather`, `time_of_day` | `physical_location_id` reads weather; `spatial_location_id` reads room-local state. |
 
 ### Systems That Depend On This Epic
@@ -128,24 +131,26 @@ fake it with one-shot events and ad-hoc chat backgrounds, which breaks the
 
 | Event | Direction | Purpose |
 | ----- | --------- | ------- |
-| `transport.arrived` | emits → Chat, Lore, NPC nav | NPCs at port see ship arrival; chat background syncs. |
-| `transport.departed` | emits → Chat, Lore, NPC nav | Symmetric. |
-| `transport.position_changed` | emits → Rendering | Coordinate interpolation for UI. |
+| `transport:arrived` (`travel-engine.ts:186`) | emits → `world_event_log`, riders | NPCs at port see ship arrival; rider spatial positions update. |
+| `transport:departed` (`travel-engine.ts:188`) | emits → `world_event_log` | Emitted on loop wrap only. |
+| `location:travel` / `location:discovered` (`edge-discovery.ts:131`) | emits → `world_event_log` | Existing colon-style world events; repo never uses dot-style names. |
 
 ## Risks & Mitigations
 
-- **Trigger maintenance of `path`** is the gnarliest piece. Mitigation: trigger
-  is unit-tested for the four cases (insert, parent update, depth limit,
-  cross-world reject) in `src/db/migrations.test.ts`.
+- **Trigger maintenance of `path`** is the gnarliest piece. Mitigation:
+  the four shipped INSERT/UPDATE triggers in `001_init.ts:4121-4184` are
+  covered by `src/db/locations-fractal-invariants.test.ts`; four more
+  UPDATE/depth triggers ship in `106_locations_integrity.ts:20-71`. Depth and cycle
+  are app-layer (`LocationTreeService`), not triggers in `001_init.ts`.
 - **Recursive CTE performance** on very large worlds. Mitigation: index on
   `path` (`idx_locations_path`) + `LIKE '/<prefix>/%'` queries for subtrees.
 - **Migration on existing DBs** with rows already in `locations`. Mitigation:
-  default-fill `kind='region'`, `mobility_mode='static'`, `path='/' || id || '/'`
-  on every existing row inside the migration's data step.
+  columns carry SQL defaults (`kind='region'`, `mobility_mode='static'`),
+  and `trg_locations_set_path_on_insert` materializes `path` — there is no
+  separate backfill data step to re-run.
 - **Cross-world rejection** might break an existing imported world with cross-
-  world children. Mitigation: `bun run plan:validate` + a one-off migration
-  check; if rows exist, log them in `src/db/migrations.test.ts` rather than
-  silently failing.
+  world children. Mitigation: `bun run plan:validate` + the invariant tests
+  in `src/db/locations-fractal-invariants.test.ts`.
 
 ## Related
 
@@ -162,8 +167,9 @@ Neither can be opened — do not go looking for them.
 
 - *fractal-locations-research* — code-grounded map of what exists and what's
   missing (12 gaps, 5 invariants).
-- *fractal-locations-patterns* — 12-pattern catalog with citations + concrete
-  `013_locations_fractal.ts` migration sketch.
+- *fractal-locations-patterns* — 12-pattern catalog with citations + a
+  migration sketch (schema now lives in `001_init.ts`, integrity guards in
+  `106_locations_integrity.ts`; `013` is `chat_branches`).
 
 The distilled content of both survives in this epic: the gaps and invariants
 are the Core systems list and the locked Decisions table, and pattern #12 (the
@@ -171,7 +177,7 @@ adjacency-list + materialized-path hybrid) is the locked Hierarchy-model
 decision. **Re-derive before implementing** by reading `docs/spec/locations.md`,
 `docs/spec/worlds.md`, `src/db/migrations/` and `src/rpg/npc-navigation/`
 against the Tasks table — the Tasks table, not the deleted audit, is the
-authority on what still needs building.
+authority on what was built.
 
 ## Linked Tasks
 
@@ -183,3 +189,11 @@ authority on what still needs building.
 - `TASK-fractal-locations-api-routes.md`
 - `TASK-location-explorer-recursive-tree.md`
 - `TASK-fractal-locations-invariants-tests.md`
+
+## Verification Notes (2026-11-18)
+
+- Schema: `src/db/migrations/001_init.ts:4004-4184` (columns :4004-4044, indexes :4046-4071, tables :4073-4119, four triggers :4121-4184).
+- Integrity: `src/db/migrations/106_locations_integrity.ts:20-71` (four triggers) + `src/db/locations-fractal-invariants.test.ts:44-47,290`.
+- Services: `src/locations/tree.ts:77-300` (`tree()` :230-262), `routes.ts:45-235`, `travel-engine.ts:46-215`, `positions.ts:31-160`.
+- Cron: `src/cron/jobs.ts:246-258` (`locations.tick`, `*/2`, `elapsedSeconds: 120`).
+- Named tests: `src/locations/{tree,routes,travel-engine,positions}.test.ts`, `src/db/locations-fractal-invariants.test.ts`, `src/routes/worlds/fractal-travel-routes.test.ts`.

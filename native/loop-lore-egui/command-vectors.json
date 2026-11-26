@@ -150,6 +150,10 @@
       "name": "improve"
     },
     {
+      "name": "imgedit",
+      "requiredRole": "member"
+    },
+    {
       "name": "forage"
     },
     {
@@ -383,6 +387,7 @@
         "import",
         "add",
         "improve",
+        "imgedit",
         "forage",
         "evaluate",
         "persuade",

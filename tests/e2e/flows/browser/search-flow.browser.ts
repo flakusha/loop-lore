@@ -207,7 +207,7 @@ describe("Search & filtering E2E", () => {
         .execute();
     }, 90_000,);
 
-    test("FTS5 /api/v1/messages/search scopes results to the active chat", async () => {
+    test("FTS5 /api/v1/search scopes message results to the active chat", async () => {
       const page = await ctx.openPage();
       const errors = trackPageErrors(page, {
         allowlist: [/Failed to load resource.*403/, /Failed to load resource.*404/,],

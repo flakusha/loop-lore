@@ -226,8 +226,8 @@ describe("handleErrorResponse", () => {
     }
   });
 
-  test("maps 400 and 422 to non-retryable errors", async () => {
-    for (const status of [400, 422,]) {
+  test("maps 400, 422 and 501 to non-retryable errors", async () => {
+    for (const status of [400, 422, 501,]) {
       const resp = Response.json({ error: { message: "nope", }, }, { status, },);
       try {
         await handleErrorResponse(resp,);
@@ -327,18 +327,18 @@ describe("fetchRaw", () => {
 
     expect(captured?.url,).toBe("https://provider.example/chat/completions",);
     expect(captured?.init.method,).toBe("POST",);
-    const headers = captured?.init.headers as Record<string, string>;
-    expect(headers["Content-Type"],).toBe("application/json",);
-    expect(headers.Authorization,).toBe("Bearer sk-test",);
-    expect(headers["X-Custom"],).toBe("yes",);
+    const headers = new Headers(captured?.init.headers,);
+    expect(headers.get("Content-Type",),).toBe("application/json",);
+    expect(headers.get("Authorization",),).toBe("Bearer sk-test",);
+    expect(headers.get("X-Custom",),).toBe("yes",);
     expect(JSON.parse(captured?.init.body as string,),).toEqual({ a: 1, },);
   });
 
   test("uses the api key override instead of the state key", async () => {
-    let capturedHeaders: Record<string, string> | undefined;
+    let capturedHeaders: Headers | undefined;
     await withMockFetch(
       async (_url: string, init: RequestInit,) => {
-        capturedHeaders = init.headers as Record<string, string>;
+        capturedHeaders = new Headers(init.headers,);
         return new Response("{}", { status: 200, },);
       },
       async () => {
@@ -346,15 +346,15 @@ describe("fetchRaw", () => {
       },
     );
 
-    expect(capturedHeaders?.Authorization,).toBe("Bearer byo-key",);
+    expect(capturedHeaders?.get("Authorization",),).toBe("Bearer byo-key",);
   });
 
   test("omits the Authorization header when no key is configured", async () => {
-    let capturedHeaders: Record<string, string> | undefined;
+    let capturedHeaders: Headers | undefined;
     const noKeyState: OpenAiCompatibleState = { ...state, apiKey: undefined, };
     await withMockFetch(
       async (_url: string, init: RequestInit,) => {
-        capturedHeaders = init.headers as Record<string, string>;
+        capturedHeaders = new Headers(init.headers,);
         return new Response("{}", { status: 200, },);
       },
       async () => {
@@ -362,7 +362,7 @@ describe("fetchRaw", () => {
       },
     );
 
-    expect(capturedHeaders?.Authorization,).toBeUndefined();
+    expect(capturedHeaders?.get("Authorization",),).toBeNull();
   });
 
   test("sends GET when there is no body", async () => {

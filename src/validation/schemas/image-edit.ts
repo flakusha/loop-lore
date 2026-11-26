@@ -107,7 +107,10 @@ export function missingRequiredParams(
 ): string[] {
   const missing: string[] = [];
   for (const parameter of template.parameters) {
-    if (parameter.required && params[parameter.name] === undefined) { missing.push(parameter.name,); }
+    // Falsy is not absent: 0 and false are valid widget inputs; only an
+    // unset (undefined/null) required parameter is missing.
+    const value = params[parameter.name];
+    if (parameter.required && (value === undefined || value === null)) { missing.push(parameter.name,); }
   }
 
   return missing;

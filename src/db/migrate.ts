@@ -6,6 +6,8 @@ import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { loadConfig, } from "../config/load";
+import { resolveDbPath, } from "../config/state-dir";
 import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
@@ -15,11 +17,11 @@ export { runDataMigrations, } from "./data-migrations/runner";
 
 /**
  * Migration filename regex — three-digit numeric prefix then `_` then name.
- * Stray files (README.md, dotfiles, helpers) are filtered out so they
- * cannot accidentally register as a migration. BUG-migration-ordering-
- * ambiguous-via-localecompare-duplicate-num.
+ * Stray files (README.md, dotfiles, helpers, colocated `*.test.ts`) are
+ * filtered out so they cannot accidentally register as a migration.
+ * BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
  */
-const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
+export const MIGRATION_FILENAME = /^(\d{3})_(?!.*\.test\.ts$).+\.ts$/;
 
 /**
  * Extract the leading numeric prefix from a migration filename, or NaN
@@ -87,9 +89,9 @@ export async function getMigrationFiles(): Promise<Record<string, Migration>> {
  * Fail-fast guard: reject databases whose applied migrations no longer exist
  * in src/db/migrations/.
  *
- * Applied migrations are append-only — deleting or renumbering a shipped
- * migration orphans its `kysely_migration` row and breaks every existing DB
- * (Kysely throws an opaque "missing migration" error with no recovery hint).
+ * After the 14-file S2 baseline, applied migrations are append-only — deleting
+ * or renumbering a shipped migration orphans its `kysely_migration` row. Local
+ * DBs are disposable, so the recovery is export → db:reinit → import.
  * @param database
  * @param migrations
  * @throws {Error} When applied migrations are missing from the provider
@@ -135,12 +137,36 @@ export async function assertMigrationsNotStale<DB,>(
   throw new Error(
     `Database has ${missing.length} applied migration(s) missing from src/db/migrations/:\n${
       Array.from(missing, (name,) => `  - ${name}`,).join("\n",)
-    }\n\nApplied migrations are append-only: never delete or renumber a shipped migration.` +
-      `\nRecovery options:` +
-      `\n  1. Restore the deleted migrations from git (git show <commit>:<path>).` +
-      `\n  2. If this database is disposable, recreate it (e.g. db:reinit).` +
-      `\n  3. If you know the rows are truly orphaned, delete them from kysely_migration manually.`,
+    }\n\nThis local database predates the 14-file consolidated baseline; its applied\nmigration names no longer exist.` +
+      `\nRecovery: export any data you need, recreate the DB (db:reinit), then import.`,
   );
+}
+
+/**
+ * Bounded time a boot waits for another process's migration run before
+ * failing loud. Matches the per-connection default in createSqliteDialect —
+ * set explicitly here so runMigrations never inherits an unbounded (or
+ * foreign) busy timeout from a caller-built handle.
+ */
+const MIGRATION_BUSY_TIMEOUT_MS = 5000;
+
+/**
+ * Best-effort filesystem path of the database behind this handle, for
+ * contention errors. `PRAGMA database_list` is connection-local and takes no
+ * locks, so it stays readable while another process holds the write lock.
+ * @param database
+ * @returns the `main` database file, or "(unknown)" when it cannot be read
+ */
+async function describeDatabaseFile<DB,>(database: Kysely<DB>,): Promise<string> {
+  try {
+    const { rows, } = await sql<{ name: string; file: string }>`PRAGMA database_list`.execute(database,);
+    const main = rows.find((row,) => row.name === "main");
+    if (main?.file) { return main.file; }
+  } catch {
+    // Fall through — the path is diagnostic, never load-bearing.
+  }
+
+  return "(unknown)";
 }
 
 /**
@@ -154,38 +180,88 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   const migrations = await getMigrationFiles();
   await assertMigrationsNotStale(database, migrations,);
 
-  const migrator = new Migrator({
-    db: database,
-    provider: {
-      getMigrations: async (): Promise<Record<string, Migration>> => migrations,
-    },
-  },);
-
-  const { error, results, } = await migrator.migrateToLatest();
-
-  if (results) {
-    for (const result of results) {
-      log.info(`Migration ${result.migrationName}: ${result.status}`,);
-    }
+  // Cross-process guard (BUG-concurrent-migrations-race-on-a-shared-sqlite-file):
+  // the Kysely Migrator takes no SQLite lock of its own (SqliteAdapter's
+  // acquireMigrationLock is a no-op and it runs migration DDL without a
+  // transaction), so two processes sharing one file would both read the same
+  // kysely_migration state and apply the same DDL. BEGIN IMMEDIATE takes the
+  // RESERVED lock up front: a second process either waits for the first
+  // (bounded by the busy timeout, then sees the first's rows and applies
+  // nothing) or fails loud below. No shipped migration opens its own
+  // transaction (only trigger bodies contain BEGIN), so nothing inside can
+  // prematurely close this transaction.
+  await sql.raw(`PRAGMA busy_timeout = ${MIGRATION_BUSY_TIMEOUT_MS}`,).execute(database,);
+  const dbPath = await describeDatabaseFile(database,);
+  try {
+    await sql.raw("BEGIN IMMEDIATE",).execute(database,);
+  } catch (error) {
+    if (!(error instanceof Error) || !/database is locked|SQLITE_BUSY/i.test(error.message,)) { throw error; }
+    throw new Error(
+      `Migration lock contention on ${dbPath}: another process is migrating this database. ` +
+        `Wait for it to finish, then retry (BEGIN IMMEDIATE timed out after ${MIGRATION_BUSY_TIMEOUT_MS}ms).`,
+      { cause: error, },
+    );
   }
 
-  if (error) {
-    log.error("Migration failed", error instanceof Error ? error : undefined,);
-    throw new Error("Migration failed — see above", { cause: error, },);
+  try {
+    const migrator = new Migrator({
+      db: database,
+      provider: {
+        getMigrations: async (): Promise<Record<string, Migration>> => migrations,
+      },
+    },);
+
+    const { error, results, } = await migrator.migrateToLatest();
+
+    if (results) {
+      for (const result of results) {
+        log.info(`Migration ${result.migrationName}: ${result.status}`,);
+      }
+    }
+
+    if (error) {
+      log.error("Migration failed", error instanceof Error ? error : undefined,);
+      throw new Error("Migration failed — see above", { cause: error, },);
+    }
+
+    await sql.raw("COMMIT",).execute(database,);
+  } catch (error) {
+    try {
+      await sql.raw("ROLLBACK",).execute(database,);
+    } catch {
+      // Best-effort release: the connection may already be out of the
+      // transaction (e.g. COMMIT itself failed). Never mask the original error.
+    }
+
+    throw error;
   }
 
   log.info("Database migrations completed successfully",);
 }
 
-/** */
-async function migrate(): Promise<void> {
+/**
+ * CLI entrypoint. The DB factory is injectable so the failure path can
+ * assert the handle is released when migrations throw.
+ * @param options - optional DB factory for tests
+ */
+export async function migrate(options: {
+  openDatabase?: () => ReturnType<typeof getDatabase>;
+} = {},): Promise<void> {
   createLogger();
-  const database = getDatabase();
-  await runMigrations(database,);
-  await database.destroy();
+  const config = loadConfig();
+  const database = options.openDatabase?.() ?? getDatabase(resolveDbPath(process.env, config.server,),);
+  try {
+    await runMigrations(database,);
+  } finally {
+    await database.destroy();
+  }
 }
 
-// Run only when executed directly (bun run src/db/migrate.ts)
+// Run only when executed directly (bun run src/db/migrate.ts).
+// No top-level await here: CommonJS bytecode output (--bytecode) forbids TLA.
 if (import.meta.main) {
-  await migrate();
+  migrate().catch((error: unknown,) => {
+    getLogger().fatal("migration failed", error instanceof Error ? error : new Error(String(error,),),);
+    process.exit(1,);
+  },);
 }

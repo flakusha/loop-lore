@@ -1,0 +1,29 @@
+{
+  "1": {
+    "inputs": {
+      "audio": "{{video_slot}}"
+    },
+    "class_type": "LoadAudio"
+  },
+  "2": {
+    "inputs": {
+      "audio": [
+        "1",
+        0
+      ],
+      "start_index": 0,
+      "duration": "{{duration_seconds}}"
+    },
+    "class_type": "TrimAudioDuration"
+  },
+  "3": {
+    "inputs": {
+      "audio": [
+        "2",
+        0
+      ],
+      "filename_prefix": "loop-lore-minimax-h3-audio"
+    },
+    "class_type": "SaveAudio"
+  }
+}

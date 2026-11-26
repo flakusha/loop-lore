@@ -6,9 +6,11 @@
  * best-effort contract (a write failure must never escape to the caller).
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { join, } from "node:path";
+import { basename, dirname, isAbsolute, join, } from "node:path";
+import { resolveDbPath, resolveInstanceDir, resolveInstanceSlug, } from "../config/state-dir";
+import { getLogger, type Logger, setGlobalLogger, } from "../logger";
 import {
   appendExecLog,
   getExecLogCounters,
@@ -19,6 +21,7 @@ import {
   resetExecLogPath,
   setExecLogPath,
 } from "./exec-log";
+import { buildRunRecord, } from "./exec-recorder";
 import { deserializeRun, HARNESS_RESULTS, type HarnessRunRecord, serializeRun, } from "./types";
 
 /** A fully-populated record — every field non-default so round-trips are visible. */
@@ -48,6 +51,7 @@ function sample(overrides: Partial<HarnessRunRecord> = {},): HarnessRunRecord {
     profile: null,
     tier: null,
     acpSessionId: null,
+    instanceId: null,
     ...overrides,
   };
 }
@@ -67,6 +71,7 @@ describe("harness types", () => {
       "cost_usd",
       "error",
       "git_sha",
+      "instance_id",
       "model",
       "msg",
       "pattern",
@@ -109,6 +114,8 @@ describe("harness types", () => {
     expect(record?.taskType,).toBe("other",);
     // An absent cost_usd means "unknown", not "free" — it must NOT coerce to 0.
     expect(record?.costUsd,).toBeNull();
+    // A line written before per-instance attribution has no instance_id key.
+    expect(record?.instanceId,).toBeNull();
   });
 
   it("reads a non-union result back as a known member, never a number", () => {
@@ -202,17 +209,18 @@ describe("appendExecLog", () => {
   });
 
   describe("path resolution", () => {
-    it("resolves to <repo-root>/.harness/executions.jsonl and memoizes it", () => {
+    it("resolves to <instance-dir>/harness/executions.jsonl and memoizes it", () => {
       resetExecLogPath();
       const resolved = getExecLogPath();
-      // Inside a git checkout this is a real path under .harness/; outside a
-      // checkout it is null. Both are valid — assert the shape, not the env.
+      // The log lives in the instance state dir, so two instances never share
+      // one file. Assert the shape, not the absolute path.
       if (resolved !== null) {
-        expect(resolved.endsWith(`${HARNESS_DIR}/${HARNESS_LOG_FILENAME}`,),).toBe(true,);
-        expect(resolved.startsWith("/",),).toBe(true,);
+        expect(resolved.endsWith(join(HARNESS_DIR, HARNESS_LOG_FILENAME,),),).toBe(true,);
+        expect(isAbsolute(resolved,),).toBe(true,);
+        expect(resolved.startsWith(resolveInstanceDir(process.env,),),).toBe(true,);
       }
 
-      // Memoized: a second call returns the identical value without re-running git.
+      // Memoized: a second call returns the identical value without re-resolving.
       expect(getExecLogPath(),).toBe(resolved,);
     });
 
@@ -307,5 +315,154 @@ describe("appendExecLog", () => {
       expect(counters.byTaskType,).toEqual({ chat: 2, aux: 1, },);
       expect(counters.byProfile,).toEqual({ p: 2, },);
     });
+  });
+});
+
+describe("instance-scoped exec log (F13/H6/H12)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  const ENV_DB = "LOOP_LORE_DB_PATH";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let savedDb: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    savedDb = process.env[ENV_DB];
+    delete process.env[ENV_DB];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-harness-",),);
+    process.env[ENV_STATE] = stateRoot;
+    process.env[ENV_INSTANCE] = "alpha";
+    resetExecLogPath();
+  },);
+
+  afterEach(() => {
+    resetExecLogPath();
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+
+    if (savedDb === undefined) { delete process.env[ENV_DB]; }
+    else { process.env[ENV_DB] = savedDb; }
+
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  it("writes each instance's records into its own log under its state dir", () => {
+    appendExecLog(sample({ runId: "alpha-1", },),);
+    const alphaPath = getExecLogPath();
+    expect(alphaPath,).toBe(join(stateRoot, "alpha", HARNESS_DIR, HARNESS_LOG_FILENAME,),);
+
+    process.env[ENV_INSTANCE] = "beta";
+    resetExecLogPath();
+    appendExecLog(sample({ runId: "beta-1", },),);
+    const betaPath = getExecLogPath();
+    expect(betaPath,).toBe(join(stateRoot, "beta", HARNESS_DIR, HARNESS_LOG_FILENAME,),);
+    expect(betaPath,).not.toBe(alphaPath,);
+
+    // Each file holds only its own instance's records.
+    const alphaLines = readFileSync(alphaPath!, "utf8",).trim().split("\n",);
+    expect(alphaLines,).toHaveLength(1,);
+    expect(alphaLines[0],).toContain("alpha-1",);
+    expect(alphaLines[0],).not.toContain("beta-1",);
+  });
+
+  it("stamps the instance slug on every record", () => {
+    appendExecLog(sample({ runId: "alpha-1", },),);
+    const line = readFileSync(getExecLogPath()!, "utf8",).trim();
+    expect(deserializeRun(line,)?.instanceId,).toBe("alpha",);
+  });
+
+  it("uses the same slug the DB path resolver picks (one source of truth)", () => {
+    appendExecLog(sample({ runId: "alpha-1", },),);
+    const line = readFileSync(getExecLogPath()!, "utf8",).trim();
+    const slug = resolveInstanceSlug(process.env,);
+    expect(deserializeRun(line,)?.instanceId,).toBe(slug,);
+    // The DB path resolver picks the same slug for the same env.
+    expect(basename(dirname(resolveDbPath(process.env,),),),).toBe(slug,);
+  });
+
+  it("the recorder's bind-aware stamp matches the bind-aware DB path", () => {
+    const savedPort = process.env["PORT"];
+    delete process.env[ENV_INSTANCE];
+    delete process.env["PORT"];
+    try {
+      const record = buildRunRecord({ taskType: "chat", model: "m", runMs: 1, result: "ok", }, { port: 7169, },);
+      expect(record.instanceId,).toBe("port-7169",);
+      expect(basename(dirname(resolveDbPath(process.env, { port: 7169, },),),),).toBe("port-7169",);
+    } finally {
+      if (savedPort === undefined) { delete process.env["PORT"]; }
+      else { process.env["PORT"] = savedPort; }
+    }
+  });
+});
+
+/** The repo-root log left by pre-instance runs; its presence is the trigger. */
+const LEGACY_EXEC_LOG = join(import.meta.dir, "..", "..", ".harness", HARNESS_LOG_FILENAME,);
+
+/**
+ * Capture the structured warnings emitted by `run`.
+ * @param run - code under test
+ * @returns rendered warning lines
+ */
+function captureWarns(run: () => void,): string[] {
+  const lines: string[] = [];
+  let previous: Logger | null = null;
+  try {
+    previous = getLogger();
+  } catch {
+    // No root logger installed — nothing to restore.
+  }
+
+  setGlobalLogger({
+    child: () => ({
+      warn: (message: string, meta?: unknown,) => {
+        lines.push(`${message} ${JSON.stringify(meta,)}`,);
+      },
+    }),
+  } as unknown as Logger,);
+
+  try {
+    run();
+  } finally {
+    if (previous !== null) { setGlobalLogger(previous,); }
+  }
+
+  return lines;
+}
+
+describe("legacy exec-log notice (M3)", () => {
+  it("warns once per process and re-arms after resetExecLogPath", () => {
+    const existed = existsSync(LEGACY_EXEC_LOG,);
+    if (!existed) {
+      mkdirSync(dirname(LEGACY_EXEC_LOG,), { recursive: true, },);
+      writeFileSync(LEGACY_EXEC_LOG, "",);
+    }
+
+    try {
+      const first = captureWarns(() => {
+        resetExecLogPath();
+        getExecLogPath();
+        getExecLogPath();
+      },);
+
+      expect(first,).toHaveLength(1,);
+      expect(first[0],).toContain(LEGACY_EXEC_LOG,);
+
+      const second = captureWarns(() => {
+        resetExecLogPath();
+        getExecLogPath();
+      },);
+
+      expect(second,).toHaveLength(1,);
+    } finally {
+      if (!existed) { rmSync(LEGACY_EXEC_LOG,); }
+
+      resetExecLogPath();
+    }
   });
 });

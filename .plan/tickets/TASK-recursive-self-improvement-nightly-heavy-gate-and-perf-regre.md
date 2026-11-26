@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** `.github/workflows/nightly.yml` on dev: cron `0 2 * * *`, `workflow_dispatch`, PR `nightly` label, `bun run check:ci`, uploads `.tmp/check-report.json` + `test-results/` + `playwright-report/`. Residual AC: no `tests/benchmarks/results/` artifact, no perf-regression threshold enforcement, no PR summary comment and no `nightly` gate in `scripts/check-parallel.mjs`.
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

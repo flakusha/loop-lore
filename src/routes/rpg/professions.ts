@@ -30,7 +30,7 @@ import { Elysia, } from "elysia";
 import { ProfessionsService, } from "../../rpg/crafting/professions";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
@@ -79,8 +79,7 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       } catch (error) {
         const status = errorStatus(error,);
         if (status === 500) {
-          log().error("Failed to create profession", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to create profession", error,);
         }
 
         return jsonError(error instanceof Error ? error.message : "Invalid request", status,);
@@ -103,8 +102,7 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
         const professions = await svc().getActorProfessions(ctx.params.actorId, worldId,);
         return jsonResponse({ professions, },);
       } catch (error) {
-        log().error("Failed to list professions", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list professions", error,);
       }
     }, {
       params: actorIdParams,
@@ -131,8 +129,7 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
 
         return jsonResponse(profession,);
       } catch (error) {
-        log().error("Failed to get profession", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get profession", error,);
       }
     }, {
       params: professionIdParams,
@@ -162,8 +159,7 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       } catch (error) {
         const status = errorStatus(error,);
         if (status === 500) {
-          log().error("Failed to add profession XP", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to add profession XP", error,);
         }
 
         return status === 404
@@ -198,8 +194,7 @@ export function professionsRoutes({ database, }: HandlerOpts, prefix = "/api",):
       } catch (error) {
         const status = errorStatus(error,);
         if (status === 500) {
-          log().error("Failed to specialize profession", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to specialize profession", error,);
         }
 
         return status === 404

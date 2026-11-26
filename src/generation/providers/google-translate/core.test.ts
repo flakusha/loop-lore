@@ -38,11 +38,11 @@ function req(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
   };
 }
 
-type FetchHandler = (url: URL, init: RequestInit,) => Response | Promise<Response>;
+type FetchHandler = (url: string, init: RequestInit,) => Response | Promise<Response>;
 
 /** */
 interface CapturedRequest {
-  url: URL;
+  url: string;
   init: RequestInit;
 }
 
@@ -92,8 +92,9 @@ describe("completeDispatch (google-translate)", () => {
 
     expect(captured,).toHaveLength(1,);
     const { url, init, } = captured[0]!;
-    expect(`${url.origin}${url.pathname}`,).toBe("https://translation.googleapis.com/language/translate/v2",);
-    expect(url.searchParams.get("key",),).toBe("g-key",);
+    const parsed = new URL(url,);
+    expect(`${parsed.origin}${parsed.pathname}`,).toBe("https://translation.googleapis.com/language/translate/v2",);
+    expect(parsed.searchParams.get("key",),).toBe("g-key",);
     expect(init.method,).toBe("POST",);
     expect(JSON.parse(init.body as string,),).toEqual({ q: "hola", target: "en", format: "text", },);
   });

@@ -51,6 +51,22 @@ export function badOriginResponse(): Response {
   },);
 }
 
+/**
+ * Decode an origin supplied as a path parameter. Elysia decodes `%3A` but
+ * leaves `%2F` reserved, so an `encodeURIComponent`-ed origin arrives as
+ * `https:%2F%2Fhost`; a 400 is owed on malformed escapes, never a 500.
+ * @param raw - the route path parameter
+ * @returns the decoded origin, or null when it is not a decodable string
+ */
+export function decodeOriginParam(raw: unknown,): string | null {
+  if (typeof raw !== "string") { return null; }
+  try {
+    return decodeURIComponent(raw,);
+  } catch {
+    return null;
+  }
+}
+
 /** Narrow a submitted workload class against the closed enum. */
 export function isWorkloadClass(value: unknown,): value is PeerWorkloadClass {
   return typeof value === "string" && (PEER_WORKLOAD_CLASSES as readonly string[]).includes(value,);

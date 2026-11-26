@@ -63,10 +63,10 @@ When creating new git issues for orphan files:
 
 ```bash
 # Format:
-git issue create -m "See: .plan/tickets/<filename>.md" "<extid>: <title>"
+giwt gi create -m "See: .plan/tickets/<filename>.md" "<extid>: <title>"
 
 # Example:
-git issue create -m "See: .plan/tickets/TASK-AUTH-COOKIES.md" "TASK-AUTH-COOKIES: Session cookies"
+giwt gi create -m "See: .plan/tickets/TASK-AUTH-COOKIES.md" "TASK-AUTH-COOKIES: Session cookies"
 ```
 
 **Benefits:**
@@ -101,20 +101,28 @@ overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 ```json
 {
   "TASK-EXAMPLE": {
-    "file": "TASK-EXAMPLE.md",
-    "title": "Example task",
-    "status": "open",
+    "epic": "epic-example",
+    "extid": "TASK-EXAMPLE",
     "git_issue": "a1b2c3d",
-    "hash": "a1b2c3d"
+    "hash": "a1b2c3d",
+    "label": "task",
+    "priority": "medium",
+    "source": ".plan/tickets/TASK-EXAMPLE.md",
+    "status": "Not Started",
+    "tags": ["example"],
+    "title": "# TASK-EXAMPLE: Example task",
+    "type": "TASK"
   }
 }
 ```
 
 **Rules:**
 
-- Keys are UPPERCASE (consistent lookup)
+- Keys are UPPERCASE extids (consistent lookup)
+- `source` holds the ticket path — there is no `file` key
 - `git_issue` is the 7-char short hash
 - `hash` matches `git_issue` (for quick comparison)
+- `status` uses the canonical ticket vocabulary (Not Started, In Progress, Blocked, Done, Wontfix, Postponed)
 
 ---
 
@@ -162,7 +170,7 @@ bun run plan:sync:fix
 giwt sync
 
 # Create single git issue for orphan
-git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
+giwt gi create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
 ```
 
 ---

@@ -3,7 +3,8 @@
 
 # TASK: Alternate greeting picker at chat creation
 
-**Status:** Not Started
+**Status:** Done
+**Scope:** Alternate greeting picker at chat creation
 **Priority:** high
 **Effort:** Medium
 
@@ -26,3 +27,5 @@ Candidate-for-1.0.0 (feature-research #1, .tmp/intercom/FEATURE-RESEARCH-2026-11
 
 - Read-only lane evidence; verify against dev HEAD at implementation time.
 - Distinct from card-import parity (theme-2 lane): this only consumes the already-stored column.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue ba938f2 (registry tip: 28f952cc3 Konstantin Fedotov Close issue)

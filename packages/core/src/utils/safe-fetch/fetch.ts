@@ -8,7 +8,7 @@
  * also working on the backend (Node.js/Bun server-side).
  */
 import type { JsonResult, } from "../safe-json";
-import { safeJsonParse, safeJsonStringify, } from "../safe-json";
+import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../safe-json";
 import { DEFAULT_MAX_SIZE, DEFAULT_TIMEOUT, } from "./constants";
 import { buildAuthHeaders, } from "./headers";
 import type { FetchAuth, FetchFailure, FetchResult, SafeFetchOptions, } from "./types";
@@ -129,6 +129,18 @@ async function readErrorBody(response: Response, maxSize: number,): Promise<unkn
     return undefined;
   }
 }
+/**
+ * Render a safeFetch error body the way the old `await response.text()` did.
+ * @param error - safeFetch rejection carrying the server's error body
+ * @param fallback - returned when the body could not be read
+ * @returns the body text, or `fallback` when it could not be read
+ */
+export function errorDetail(error: Error, fallback: string,): string {
+  const bodyValue: unknown = "body" in error ? error.body : undefined;
+  if (typeof bodyValue === "string") { return bodyValue; }
+  if (bodyValue !== undefined) { return jsonStringifyOr(bodyValue, fallback,); }
+  return fallback;
+}
 
 /**
  * @param url - URL to fetch
@@ -151,6 +163,7 @@ export async function safeFetch<T = unknown,>(
     handle401 = true,
     onAuthError,
     redirect,
+    fetchImpl,
     ...fetchOptions
   } = options;
 
@@ -178,7 +191,8 @@ export async function safeFetch<T = unknown,>(
 
     const headers = buildRequestHeaders(fetchOptions.headers, auth, serializedBody,);
 
-    const response = await fetch(url, {
+    const impl = fetchImpl ?? fetch;
+    const response = await impl(url, {
       ...fetchOptions,
       body: serializedBody,
       signal: combinedSignal,
@@ -200,7 +214,8 @@ export async function safeFetch<T = unknown,>(
     // Check response size before reading body (bounded requests only). Stream
     // mode hands the body back unconsumed, so the caller — not the wrapper —
     // owns size limits; maxSize is a buffering guard and has no meaning there.
-    const contentLength = response.headers.get("content-length",);
+    // ponytail: tolerate headerless Response fakes in unit stubs.
+    const contentLength = response.headers?.get?.("content-length",);
     if (!stream && contentLength) {
       const size = Number(contentLength,);
       if (!Number.isNaN(size,) && size > maxSize) {
@@ -218,8 +233,10 @@ export async function safeFetch<T = unknown,>(
       // The caller's own reason for the refusal lives in the body, so a
       // caller that asked for it gets it on the error. Opt-in: reading a
       // failed response's body costs memory, and only a caller that shows the
-      // server's reason needs it.
-      if (includeErrorBody && !stream) {
+      // server's reason needs it. Error bodies are buffered even in stream
+      // mode: the error path never hands back the live Response, so nothing
+      // the caller owns is consumed.
+      if (includeErrorBody) {
         const body = await readErrorBody(response, maxSize,);
         if (body !== undefined) { (error as FetchFailure).body = body; }
       }
@@ -291,4 +308,23 @@ export async function safeFetch<T = unknown,>(
   } finally {
     clearTimeout(timeoutId,);
   }
+}
+/**
+ * Per-request proxy bypass for a URL: false for loopback hosts
+ * (127.0.0.1, localhost, ::1) so local legs never leave the machine via a
+ * proxy, undefined otherwise (remote legs keep the default). Unparseable
+ * input yields undefined. Pure: safe to call at every loopback call site.
+ */
+export function proxyForUrl(url: string,): false | undefined {
+  let hostname: string;
+  try {
+    hostname = new URL(url,).hostname.toLowerCase();
+  } catch {
+    return undefined;
+  }
+  const host = hostname.endsWith(".",) ? hostname.slice(0, -1,) : hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]") {
+    return false;
+  }
+  return undefined;
 }

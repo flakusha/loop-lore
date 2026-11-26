@@ -3,7 +3,7 @@
 
 # TASK: Node-driven template auto-filtering — wire the unwired path
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-reference-conditioned-generation

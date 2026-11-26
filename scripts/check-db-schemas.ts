@@ -18,10 +18,10 @@
  * Usage: bun run scripts/check-db-schemas.ts [--smoke]
  */
 import { execFileSync, } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
-import { tmpdir, } from "node:os";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { dirname, join, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { appTmpRoot, } from "../src/test-utils/tmp-root";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const ROOT = resolve(__dirname, "..",);
@@ -89,77 +89,75 @@ function runGenerator(script: string, outDir: string,): void {
 let stale = false;
 
 // ── Run generators into temp dir ─────────────────────────────
-const tmp = join(tmpdir(), `db-schema-check-${process.pid}`,);
-rmSync(tmp, { recursive: true, force: true, },);
-mkdirSync(tmp,);
-mkdirSync(join(tmp, "test-utils",), { recursive: true, },);
-mkdirSync(join(tmp, "validation",), { recursive: true, },);
+const tmp = mkdtempSync(join(appTmpRoot("db-schema",), "db-schema-check-",),);
+try {
+  mkdirSync(join(tmp, "test-utils",), { recursive: true, },);
+  mkdirSync(join(tmp, "validation",), { recursive: true, },);
 
-try {
-  runGenerator("scripts/generate-db-types.ts", tmp,);
-} catch (err) {
-  const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
-  console.error("[TOOLING ERROR] generate-db-types.ts crashed:\n", detail,);
-  process.exit(1,);
-}
-try {
-  runGenerator("scripts/generate-schema-manifest.ts", tmp,);
-} catch (err) {
-  const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
-  console.error("[TOOLING ERROR] generate-schema-manifest.ts crashed:\n", detail,);
-  process.exit(1,);
-}
-
-// ── Normalize formatting ─────────────────────────────────────
-// Committed artifacts are dprint-formatted (lineWidth 120). The generators emit
-// raw single-line output and their internal fmt step can't reach files outside
-// the repo (dprint config discovery is root-scoped), so the temp outputs are
-// reformatted here with the repo config before diffing.
-try {
-  writeFileSync(join(tmp, "dprint.json",), readFileSync(join(ROOT, "dprint.json",), "utf8",),);
-  const _fmt = execFileSync("bunx", ["dprint", "fmt", ...ARTIFACTS.map((a,) => a.generated),], {
-    cwd: tmp,
-    stdio: ["ignore", "ignore", "pipe",],
-  },);
-} catch (err) {
-  // dprint exit 20 = files were reformatted in place (benign); the temp file
-  // is now dprint-clean and ready to diff. Anything else (crash, missing
-  // binary, signal) is a real tooling failure.
-  if (classifyDprintExit(err,) !== "benign") {
+  try {
+    runGenerator("scripts/generate-db-types.ts", tmp,);
+  } catch (err) {
     const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
-    console.error("[TOOLING ERROR] dprint fmt on generated output failed:\n", detail,);
-    process.exit(1,);
+    console.error("[TOOLING ERROR] generate-db-types.ts crashed:\n", detail,);
+    throw err;
   }
+  try {
+    runGenerator("scripts/generate-schema-manifest.ts", tmp,);
+  } catch (err) {
+    const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
+    console.error("[TOOLING ERROR] generate-schema-manifest.ts crashed:\n", detail,);
+    throw err;
+  }
+
+  // Normalize formatting: committed artifacts are dprint-formatted (lineWidth 120).
+  // The generators emit raw single-line output and their internal fmt step cannot
+  // reach files outside the repo (dprint config discovery is root-scoped), so the
+  // temp outputs are reformatted here with the repo config before diffing.
+  try {
+    writeFileSync(join(tmp, "dprint.json",), readFileSync(join(ROOT, "dprint.json",), "utf8",),);
+    const _fmt = execFileSync("bunx", ["dprint", "fmt", ...ARTIFACTS.map((a,) => a.generated),], {
+      cwd: tmp,
+      stdio: ["ignore", "ignore", "pipe",],
+    },);
+  } catch (err) {
+    // dprint exit 20 = files were reformatted in place (benign); the temp file
+    // is now dprint-clean and ready to diff. Anything else (crash, missing
+    // binary, signal) is a real tooling failure.
+    if (classifyDprintExit(err,) !== "benign") {
+      const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
+      console.error("[TOOLING ERROR] dprint fmt on generated output failed:\n", detail,);
+      throw err;
+    }
+  }
+
+  for (const artifact of ARTIFACTS) {
+    const generatedPath = join(tmp, artifact.generated,);
+    const committedPath = join(ROOT, artifact.committed,);
+
+    if (!existsSync(generatedPath,)) {
+      console.error(`[MIGRATION LOGIC] generator produced NO output for ${artifact.label} (${artifact.generated},)`,);
+      stale = true;
+      continue;
+    }
+
+    const generated = readFileSync(generatedPath, "utf8",).trimEnd();
+    if (!existsSync(committedPath,)) {
+      console.error(`[MIGRATION LOGIC] ${artifact.label} missing from repo - run generators to create it`,);
+      stale = true;
+      continue;
+    }
+
+    const committed = readFileSync(committedPath, "utf8",).trimEnd();
+    if (generated !== committed) {
+      console.error(`FAIL: ${artifact.label} is STALE - migrations changed but schemas not regenerated`,);
+      stale = true;
+    } else {
+      console.log(`OK: ${artifact.label} up-to-date`,);
+    }
+  }
+} finally {
+  rmSync(tmp, { recursive: true, force: true, },);
 }
-
-// ── Diff generated vs committed ──────────────────────────────
-for (const artifact of ARTIFACTS) {
-  const generatedPath = join(tmp, artifact.generated,);
-  const committedPath = join(ROOT, artifact.committed,);
-
-  if (!existsSync(generatedPath,)) {
-    console.error(`[MIGRATION LOGIC] generator produced NO output for ${artifact.label} (${artifact.generated},)`,);
-    stale = true;
-    continue;
-  }
-
-  const generated = readFileSync(generatedPath, "utf8",).trimEnd();
-  if (!existsSync(committedPath,)) {
-    console.error(`[MIGRATION LOGIC] ${artifact.label} missing from repo - run generators to create it`,);
-    stale = true;
-    continue;
-  }
-
-  const committed = readFileSync(committedPath, "utf8",).trimEnd();
-  if (generated !== committed) {
-    console.error(`FAIL: ${artifact.label} is STALE - migrations changed but schemas not regenerated`,);
-    stale = true;
-  } else {
-    console.log(`OK: ${artifact.label} up-to-date`,);
-  }
-}
-
-rmSync(tmp, { recursive: true, force: true, },);
 
 if (stale) {
   console.error("\nRegenerate with: bun run db:sync-types && bun run db:sync-manifest",);

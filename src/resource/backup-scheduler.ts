@@ -15,10 +15,14 @@
 // touching the others.
 
 import type { Kysely, } from "kysely";
+import { createDbBackup, dbBackupDir, pruneDbSnapshots, } from "../db/backup-restore";
+import { getSqliteDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getChildLogger, } from "../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import {
+  BACKUP_PRUNE_KEEP_DEFAULT,
+  type BackupHook,
   backupHooks,
   type BackupTrigger,
   listStorageResources,
@@ -33,6 +37,8 @@ interface BackupSchedulerConfig {
   onChatEnd: boolean;
   onAssetUpload: boolean;
   onWorldSave: boolean;
+  onDbSnapshot: boolean;
+  keepSnapshots: number;
 }
 
 let config: BackupSchedulerConfig = {
@@ -40,25 +46,53 @@ let config: BackupSchedulerConfig = {
   onChatEnd: true,
   onAssetUpload: true,
   onWorldSave: true,
+  onDbSnapshot: true,
+  keepSnapshots: BACKUP_PRUNE_KEEP_DEFAULT,
+};
+
+/** Process-local DB snapshot hook: VACUUM INTO the server-derived dir, then prune. */
+const persistDbSnapshotHook: BackupHook = async () => {
+  const sqlite = getSqliteDatabase();
+  if (!sqlite) { return; }
+  const dir = dbBackupDir();
+  await createDbBackup({ sqlite, dir, },);
+  pruneDbSnapshots(dir, config.keepSnapshots,);
 };
 
 /** Flip scheduling toggles; enabling wires the persisting hook into all seams. */
 export function configureBackupScheduling(partial: Partial<BackupSchedulerConfig>,): void {
-  config = { ...config, ...partial, };
+  const keep = partial.keepSnapshots ?? config.keepSnapshots;
+  config = {
+    ...config,
+    ...partial,
+    // ponytail: one snapshot is always retained; a bad config never prunes all.
+    keepSnapshots: Number.isFinite(keep,) ? Math.max(1, Math.floor(keep,),) : BACKUP_PRUNE_KEEP_DEFAULT,
+  };
+
   if (config.enabled) {
     registerBackupHook("onChatEnd", persistBackupHook,);
     registerBackupHook("onAssetUpload", persistBackupHook,);
     registerBackupHook("onWorldSave", persistBackupHook,);
+    registerBackupHook("onDbSnapshot", persistDbSnapshotHook,);
   }
 }
 
 /** Test/isolation reset: inert flags plus no-op hooks. */
 export function resetBackupScheduling(): void {
-  config = { enabled: false, onChatEnd: true, onAssetUpload: true, onWorldSave: true, };
+  config = {
+    enabled: false,
+    onChatEnd: true,
+    onAssetUpload: true,
+    onWorldSave: true,
+    onDbSnapshot: true,
+    keepSnapshots: BACKUP_PRUNE_KEEP_DEFAULT,
+  };
+
   const noop = async (): Promise<void> => {/* reset: hooks persist nothing */};
   registerBackupHook("onChatEnd", noop,);
   registerBackupHook("onAssetUpload", noop,);
   registerBackupHook("onWorldSave", noop,);
+  registerBackupHook("onDbSnapshot", noop,);
 }
 
 /** Master enablement flag (provisioning is checked per schedule call). */
@@ -88,6 +122,9 @@ async function schedule(
   hook: keyof typeof backupHooks,
   triggerEnabled: boolean,
   trigger: BackupTrigger,
+  // Process-local DB snapshots need no external storage endpoint; the three
+  // resource triggers keep the provisioning gate.
+  requireStorage = true,
 ): Promise<ScheduleResult> {
   try {
     if (!config.enabled) { return { scheduled: false, reason: "disabled", }; }
@@ -117,21 +154,23 @@ async function schedule(
       },);
     }
 
-    let provisioned = false;
-    try {
-      const stores = await listStorageResources(db, trigger.ownerId,);
-      provisioned = stores.some((s,) => s.status === "active");
-    } catch (error: unknown) {
-      logWarn("backup schedule skipped: storage lookup failed", {
-        ownerId: trigger.ownerId,
-        resourceType: trigger.resourceType,
-        error: error instanceof Error ? error.message : String(error,),
-      },);
+    if (requireStorage) {
+      let provisioned = false;
+      try {
+        const stores = await listStorageResources(db, trigger.ownerId,);
+        provisioned = stores.some((s,) => s.status === "active");
+      } catch (error: unknown) {
+        logWarn("backup schedule skipped: storage lookup failed", {
+          ownerId: trigger.ownerId,
+          resourceType: trigger.resourceType,
+          error: error instanceof Error ? error.message : String(error,),
+        },);
 
-      return { scheduled: false, reason: "no-storage", };
+        return { scheduled: false, reason: "no-storage", };
+      }
+
+      if (!provisioned) { return { scheduled: false, reason: "no-storage", }; }
     }
-
-    if (!provisioned) { return { scheduled: false, reason: "no-storage", }; }
 
     await backupHooks[hook](db, trigger,);
     try {
@@ -252,4 +291,27 @@ export async function scheduleWorldSaveBackup(
     payload: input.payload,
     ...(input.storageQuotaBytes !== undefined ? { storageQuotaBytes: input.storageQuotaBytes, } : {}),
   },);
+}
+
+/**
+ * DB-snapshot trigger: one call in, one VACUUM INTO snapshot out, then the
+ * shared retention prune (10 newest kept). Uses the same failure-safe
+ * `schedule` path and the SAME scheduler as the three resource triggers — no
+ * timer, no second loop, no external-storage requirement.
+ *
+ * Trust boundary: process-local only. There is NO HTTP trigger for this seam.
+ * // ponytail: a future remote trigger must add its own server-side
+ * // permission check (admin.system) before calling this function; endpoint
+ * // obscurity is not a control.
+ */
+export async function scheduleDbSnapshotBackup(
+  db: Kysely<DB>,
+  input: ScheduleInput,
+): Promise<ScheduleResult> {
+  return schedule(db, "onDbSnapshot", config.onDbSnapshot, {
+    ownerId: input.ownerId,
+    resourceType: "db",
+    payload: jsonStringifyOr({ kind: "db-snapshot", },),
+    ...(input.storageQuotaBytes !== undefined ? { storageQuotaBytes: input.storageQuotaBytes, } : {}),
+  }, false,);
 }

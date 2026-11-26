@@ -4,7 +4,7 @@
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { join, normalize, } from "node:path";
 import { HASHED_ASSET_PATTERN, } from "../content/hash-injection";
-import { findCompressedVariant, getContentType, } from "./static-mime";
+import { findCompressedVariant, getContentType, isCompressible, } from "./static-mime";
 
 export const DOCS_PATH = join(import.meta.dir, "..", "..", "docs", ".vitepress", "dist",);
 
@@ -85,9 +85,10 @@ function respondWithFile(
     "Content-Type": getContentType(fullPath,),
   };
 
-  // Only set Vary when a compressed variant may be served (RFC 7231).
+  // Vary is required for every compressible representation, not just this
+  // request's match: a cached identity response must not hide a variant.
+  if (isCompressible(fullPath,)) { headers["Vary"] = "Accept-Encoding"; }
   const variant = findCompressedVariant(fullPath, acceptEncoding,);
-  if (variant) { headers["Vary"] = "Accept-Encoding"; }
   headers["Cache-Control"] = buildCacheControl(fullPath, cacheMaxAge,);
 
   // Determine the actual serving path (compressed variant takes precedence)
@@ -229,6 +230,11 @@ function resolveHashedVariant(publicPath: string,): string | null {
 
   const ext = name.slice(dot,);
   const stem = name.slice(0, dot,);
+  // Repeated builds leave several hashed siblings. Choose the newest by mtime
+  // so a bare name resolves to the current build; equal mtimes break by
+  // filename so the result never depends on readdirSync order.
+  let bestEntry: string | null = null;
+  let bestMtime = -Infinity;
   for (const entry of entries) {
     if (
       entry !== name &&
@@ -236,11 +242,25 @@ function resolveHashedVariant(publicPath: string,): string | null {
       entry.endsWith(ext,) &&
       HASHED_ASSET_PATTERN.test(entry,)
     ) {
-      return `${dir}/${entry}`;
+      let mtimeMs: number;
+      try {
+        mtimeMs = statSync(`${dir}/${entry}`,).mtimeMs;
+      } catch {
+        continue; // best-effort: a file that vanished is not a candidate
+      }
+
+      if (
+        bestEntry === null ||
+        mtimeMs > bestMtime ||
+        (mtimeMs === bestMtime && entry < bestEntry)
+      ) {
+        bestEntry = entry;
+        bestMtime = mtimeMs;
+      }
     }
   }
 
-  return null;
+  return bestEntry === null ? null : `${dir}/${bestEntry}`;
 }
 
 /**

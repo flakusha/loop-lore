@@ -57,14 +57,23 @@ function acpConfig(): HarnessAcpConfig {
   };
 }
 
+/** One parsed exec-log line. */
+type ExecLine = {
+  task_type: string;
+  profile?: string;
+  result: string;
+  turn_id?: string | null;
+  error?: string | null;
+};
+
 /** The exec-log lines the dispatch wrote; none when the file was never created. */
-function execLines(): { task_type: string; profile?: string; result: string }[] {
+function execLines(): ExecLine[] {
   if (!existsSync(execLog,)) { return []; }
 
   return readFileSync(execLog, "utf8",)
     .split("\n",)
     .filter((line,) => line.trim().length > 0)
-    .map((line,) => JSON.parse(line,) as { task_type: string; profile?: string; result: string });
+    .map((line,) => JSON.parse(line,) as ExecLine);
 }
 
 beforeEach(async () => {
@@ -173,12 +182,40 @@ describe("dispatchHarnessTurn", () => {
     const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
     const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
 
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
     const refusal = await dispatchHarnessTurn({
       runtime,
       role: "user",
       userId,
       profile: "omp",
       prompt: "nope",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },).catch((error: unknown,) => error);
+
+    expect(refusal,).toBeInstanceOf(HarnessDispatchError,);
+    expect((refusal as HarnessDispatchError).code,).toBe("role_denied",);
+    const rows = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(rows,).toHaveLength(0,);
+    expect(execLines(),).toHaveLength(0,);
+  });
+
+  it("ignores a stale caller-presented admin role after demotion", async () => {
+    // The queue passes the enqueue-time snapshot as `role`; a demotion that
+    // lands before admission must still fail closed at the NEW role.
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    const refusal = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "stale",
       database: fixture.db,
       chatId,
       actorId,
@@ -210,6 +247,45 @@ describe("dispatchHarnessTurn", () => {
     expect((refusal as HarnessDispatchError).code,).toBe("profile_unknown",);
   });
 
+  it("injects recalled run summaries at turn start and stores the new run", async () => {
+    const { factory, logs, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "the answer", }, },);
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "do the thing",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "omp",
+      prompt: "do more",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    const prompts = logs.get("omp",)?.prompts ?? [];
+    expect(prompts,).toHaveLength(2,);
+    expect(prompts[0],).toBe("do the thing",);
+    expect(prompts[1]?.startsWith("<prior-harness-runs>\n",),).toBe(true,);
+    expect(prompts[1]?.endsWith("do more",),).toBe(true,);
+    expect(prompts[1],).toContain("harness omp run ok",);
+
+    const memories = await fixture.db.selectFrom("actor_memories",).selectAll()
+      .where("actor_id", "=", actorId,).where("scope", "=", "harness",).execute();
+
+    expect(memories,).toHaveLength(2,);
+  });
+
   it("surfaces a failed turn and records it in the exec log", async () => {
     const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], failPrompt: "prompt", }, },);
     const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
@@ -234,5 +310,110 @@ describe("dispatchHarnessTurn", () => {
     expect(lines,).toHaveLength(1,);
     expect(lines[0]?.result,).toBe("error",);
     expect(lines[0]?.task_type,).toBe("harness",);
+    // Pinned runs still resolve nothing on failure: no alias is stamped.
+    expect(lines[0]?.profile,).toBe("unresolved",);
+    expect(typeof lines[0]?.turn_id,).toBe("string",);
+    expect(typeof lines[0]?.error,).toBe("string",);
+  });
+
+  it("uses failover for the default alias and logs the resolved profile", async () => {
+    const { factory, logs, } = fakeFactory({
+      omp: { models: ["zai/flash",], failPrompt: "prompt", },
+      other: { models: ["zai/flash",], reply: "failover answer", },
+    },);
+
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    const outcome = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "default",
+      prompt: "aliased",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    expect(outcome.turn.profile,).toBe("other",);
+    expect(logs.get("omp",)?.setModels,).toEqual(["zai/flash",],);
+    expect(logs.get("omp",)?.prompts,).toEqual([],);
+    expect(logs.get("other",)?.prompts,).toEqual(["aliased",],);
+    const lines = execLines();
+    expect(lines,).toHaveLength(1,);
+    expect(lines[0]?.profile,).toBe("other",);
+    expect(lines[0]?.result,).toBe("ok",);
+  });
+
+  it("uses failover when the profile is omitted", async () => {
+    const { factory, logs, } = fakeFactory({ omp: { models: ["zai/flash",], }, },);
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    const outcome = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      prompt: "unpinned",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },);
+
+    expect(outcome.turn.profile,).toBe("omp",);
+    expect(logs.get("omp",)?.prompts,).toEqual(["unpinned",],);
+    expect(execLines()[0]?.profile,).toBe("omp",);
+  });
+
+  it("denies the alias when no profile is configured", async () => {
+    const acp: HarnessAcpConfig = { enabled: true, profiles: [], };
+    initHarnessAdminSettings(acp,);
+    const { factory, } = fakeFactory({},);
+    const runtime = createHarnessRuntime({ acp, factory, },);
+
+    const refusal = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "default",
+      prompt: "nope",
+      database: fixture.db,
+      chatId,
+      actorId,
+    },).catch((error: unknown,) => error);
+
+    expect(refusal,).toBeInstanceOf(HarnessDispatchError,);
+    expect((refusal as HarnessDispatchError).code,).toBe("profile_unknown",);
+    expect(execLines(),).toHaveLength(0,);
+  });
+
+  it("records a failed aliased turn without writing the alias", async () => {
+    const { factory, } = fakeFactory({
+      omp: { models: ["zai/flash",], failPrompt: "prompt", },
+      other: { models: ["zai/flash",], failPrompt: "prompt", },
+    },);
+
+    const runtime = createHarnessRuntime({ acp: acpConfig(), factory, },);
+
+    const refusal = await dispatchHarnessTurn({
+      runtime,
+      role: "solo",
+      userId,
+      profile: "default",
+      prompt: "boom",
+      database: fixture.db,
+      chatId,
+      actorId,
+      turnKey: "alias-failure-turn",
+    },).catch((error: unknown,) => error);
+
+    expect(refusal,).toBeInstanceOf(HarnessDispatchError,);
+    expect((refusal as HarnessDispatchError).code,).toBe("turn_failed",);
+    const lines = execLines();
+    expect(lines,).toHaveLength(1,);
+    expect(lines[0]?.result,).toBe("error",);
+    expect(lines[0]?.profile,).toBe("unresolved",);
+    expect(lines[0]?.profile,).not.toBe("default",);
+    expect(lines[0]?.turn_id,).toBe("alias-failure-turn",);
+    expect(typeof lines[0]?.error,).toBe("string",);
   });
 });

@@ -1,10 +1,10 @@
 // src/config/domain-configs.test.ts — Tests for domain-specific config file loading
 
-import { createLogger, } from "@/logger";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { createLogger, } from "../logger";
 import { loadConfig, } from "./load";
 
 const TEST_DIR = mkdtempSync(path.join(tmpdir(), "domain-configs-test-",),);

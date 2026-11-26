@@ -106,6 +106,29 @@ function writeCommit(dir: string, tree: string, parent: string, message: string,
   return sha;
 }
 
+/**
+ * Run the checker over a one-commit repo whose subject is `subject`.
+ * @param subject - first line of the commit message
+ * @returns the checker's stdout and exit code
+ */
+function checkSubject(subject: string,) {
+  const dir = mkdtempSync(join(tmpdir(), "loop-lore-revert-",),);
+  try {
+    const tree = initRepo(dir,);
+    writeCommit(dir, tree, "", subject,);
+    const proc = Bun.spawnSync(["bun", SCRIPT, "--all",], {
+      cwd: dir,
+      env: GIT_ENV,
+      stdout: "pipe",
+      stderr: "pipe",
+    },);
+
+    return { out: proc.stdout.toString(), exitCode: proc.exitCode, };
+  } finally {
+    rmSync(dir, { recursive: true, force: true, },);
+  }
+}
+
 describe("commit-check commit collection", () => {
   test("a tagless repo still validates every commit", () => {
     const dir = mkdtempSync(join(tmpdir(), "loop-lore-nolasttag-",),);
@@ -162,5 +185,32 @@ describe("commit-check commit collection", () => {
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
     }
+  }, 30_000,);
+});
+
+describe("commit-check revert subjects", () => {
+  test('git-generated Revert "feat: add x" is accepted', () => {
+    const result = checkSubject(`Revert "feat: add x"`,);
+    expect(result.out,).toContain("1 commits valid",);
+    expect(result.exitCode,).toBe(0,);
+  }, 30_000,);
+
+  test('hand-written revert("feat: add x") is accepted', () => {
+    const result = checkSubject(`revert("feat: add x")`,);
+    expect(result.out,).toContain("1 commits valid",);
+    expect(result.exitCode,).toBe(0,);
+  }, 30_000,);
+
+  test("an unbalanced quote is still rejected", () => {
+    const result = checkSubject(`Revert "feat: add x`,);
+    expect(result.out,).toContain("Invalid commits found",);
+    expect(result.out,).toContain(`Revert "feat: add x`,);
+    expect(result.exitCode,).toBe(1,);
+  }, 30_000,);
+
+  test("the revert wrapper still rejects a malformed inner subject", () => {
+    const result = checkSubject(`Revert "not a conventional subject"`,);
+    expect(result.out,).toContain('expected "type(scope): subject"',);
+    expect(result.exitCode,).toBe(1,);
   }, 30_000,);
 });

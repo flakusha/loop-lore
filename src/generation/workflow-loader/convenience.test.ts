@@ -24,7 +24,7 @@ describe("loadComfyUIWorkflow", () => {
   },);
 
   it("loads the bundled txt2img workflow and substitutes the prompt", async () => {
-    const workflow = await loadComfyUIWorkflow("txt2img", {
+    const workflow = await loadComfyUIWorkflow("txt2img-v1", {
       prompt: "a tiny castle at dusk",
       negativePrompt: "blurry",
       width: 128,
@@ -41,7 +41,7 @@ describe("loadComfyUIWorkflow", () => {
   });
 
   it("applies default params when optional fields are omitted", async () => {
-    const workflow = await loadComfyUIWorkflow("txt2img", {
+    const workflow = await loadComfyUIWorkflow("txt2img-v1", {
       prompt: "prompt-only",
     },);
 

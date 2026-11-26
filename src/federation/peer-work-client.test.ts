@@ -11,7 +11,13 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { ChunkEvent, } from "../generation/providers/types";
-import { PEER_WORK_DEFAULT_TIMEOUT_MS, runPeerWorkload, } from "./peer-work-client";
+import { MAX_JSONRPC_LINE_BYTES, } from "../integrations/harness/jsonrpc-process";
+import {
+  MAX_PEER_WORK_CHUNKS,
+  parsePeerRetryAfterMs,
+  PEER_WORK_DEFAULT_TIMEOUT_MS,
+  runPeerWorkload,
+} from "./peer-work-client";
 import type { PeerWorkTransport, } from "./peer-work-client";
 import { PEER_ORIGIN_HEADER, } from "./peer-work-wire";
 import type { PeerWorkRunRequest, } from "./peer-work-wire";
@@ -37,9 +43,16 @@ const REQUEST: PeerWorkRunRequest = {
  * @param status
  * @returns {Response}
  */
-function sseResponse(lines: unknown[], status = 200,): Response {
+function sseResponse(
+  lines: unknown[],
+  status = 200,
+  headers: Record<string, string> = {},
+): Response {
   const body = lines.map((line,) => JSON.stringify(line,)).join("\n",) + "\n";
-  return new Response(body, { status, headers: { "content-type": "application/x-ndjson", }, },);
+  return new Response(body, {
+    status,
+    headers: { "content-type": "application/x-ndjson", ...headers, },
+  },);
 }
 
 /**
@@ -179,6 +192,50 @@ describe("runPeerWorkload", () => {
     expect(chunks,).toHaveLength(1,);
   });
 
+  test("an oversized line or too many chunks is a protocol failure", async () => {
+    const huge = sseResponse([
+      { type: "content", content: "x".repeat(MAX_JSONRPC_LINE_BYTES + 16,), },
+    ],);
+
+    const hugeAttempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(huge,),
+    },);
+
+    expect(hugeAttempt.ok,).toBe(false,);
+    if (!hugeAttempt.ok) {
+      expect(hugeAttempt.failure.code,).toBe("protocol",);
+      expect(hugeAttempt.failure.message,).toContain(
+        `exceeds ${MAX_JSONRPC_LINE_BYTES} bytes`,
+      );
+    }
+
+    const many = sseResponse(
+      Array.from({ length: MAX_PEER_WORK_CHUNKS + 1, }, () => ({ type: "content", content: "x", }),),
+    );
+
+    const manyAttempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(many,),
+    },);
+
+    expect(manyAttempt.ok,).toBe(false,);
+    if (!manyAttempt.ok) {
+      expect(manyAttempt.failure.code,).toBe("protocol",);
+      expect(manyAttempt.failure.message,).toContain(
+        `exceeds ${MAX_PEER_WORK_CHUNKS} chunks`,
+      );
+
+      expect(manyAttempt.emitted,).toBe(MAX_PEER_WORK_CHUNKS,);
+    }
+  });
+
   test("a malformed chunk line is a protocol failure", async () => {
     const attempt = await runPeerWorkload({
       callerOrigin: CALLER_ORIGIN,
@@ -300,5 +357,81 @@ describe("runPeerWorkload", () => {
     if (attempt.ok) { return; }
     expect(attempt.failure.code,).toBe("aborted",);
     expect(sink.signal?.aborted,).toBe(true,);
+  });
+});
+
+describe("Retry-After parsing", () => {
+  test("a seconds-integer Retry-After rides on the rejection failure", async () => {
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(sseResponse([{ error: "slow down", },], 429, { "retry-after": "30", },),),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.retryAfterMs,).toBe(30_000,);
+  });
+
+  test("an HTTP-date, garbage or absent Retry-After leaves no window", () => {
+    expect(parsePeerRetryAfterMs("30",),).toBe(30_000,);
+    expect(parsePeerRetryAfterMs("Wed, 21 Oct 2026 07:28:00 GMT",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("soon",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("0",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs("-5",),).toBeUndefined();
+    expect(parsePeerRetryAfterMs(null,),).toBeUndefined();
+    expect(parsePeerRetryAfterMs(undefined,),).toBeUndefined();
+  });
+});
+
+describe("runPeerWorkload — quota 429", () => {
+  test("a namespaced 429 carries the routable code and advertised Retry-After", async () => {
+    const response = new Response(
+      JSON.stringify({
+        error: "budget exceeded",
+        data: { error_code: "federation.quota_exceeded", retry_after_sec: 7, },
+      },),
+      {
+        status: 429,
+        headers: { "retry-after": "7", },
+      },
+    );
+
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: PEER,
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(response,),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.code,).toBe("federation.quota_exceeded",);
+    expect(attempt.failure.status,).toBe(429,);
+    expect(attempt.failure.retryAfterSec,).toBe(7,);
+    expect(attempt.emitted,).toBe(0,);
+  });
+
+  test("a 429 without an envelope still routes as quota exceeded", async () => {
+    const attempt = await runPeerWorkload({
+      callerOrigin: CALLER_ORIGIN,
+      peer: { origin: "https://quota-client.example", },
+      request: REQUEST,
+      bearer: null,
+      transport: fakeTransport(
+        new Response("busy", {
+          status: 429,
+          headers: { "retry-after": "2.4", },
+        },),
+      ),
+    },);
+
+    expect(attempt.ok,).toBe(false,);
+    if (attempt.ok) { return; }
+    expect(attempt.failure.code,).toBe("federation.quota_exceeded",);
+    expect(attempt.failure.retryAfterSec,).toBe(3,);
   });
 });

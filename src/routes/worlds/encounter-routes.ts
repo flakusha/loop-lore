@@ -28,7 +28,7 @@ import {
 import { ErrorResponse, } from "../../validation/schemas";
 import { buildEncounterContext, } from "../../worlds/encounter-context";
 import { EncounterError, recordEncounterOutcome, rollEncounter, } from "../../worlds/random-encounters";
-import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonCreated, jsonError, jsonResponse, routeSpec, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -107,14 +107,12 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
 
         return jsonResponse({ data: templates, },);
       },
-      {
-        response: { 200: t.Object({ data: t.Array(t.Any(),), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
-          summary: "List encounter templates",
-          description: "This world's templates plus the global (world-less) ones it may roll.",
-          tags: ["Worlds",],
-        },
-      },
+      routeSpec({
+        response: { 200: t.Object({ data: t.Array(t.Any(),), },), },
+        summary: "List encounter templates",
+        description: "This world's templates plus the global (world-less) ones it may roll.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/encounter-templates`,
@@ -151,12 +149,12 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: CreateTemplateBody,
-        response: { 201: t.Object({ data: t.Any(), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 201: t.Object({ data: t.Any(), },), },
           summary: "Create an encounter template",
           description: "Add a world-scoped template to this world's roll pool.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -187,12 +185,12 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: RollBody,
-        response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
           summary: "Roll for a random encounter",
           description: "Seeded, cooldown-aware draw from this world's template pool. Same seed, same pick.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -245,12 +243,12 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: OutcomeBody,
-        response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Any(), },), 400: ErrorResponse, },
           summary: "Record an encounter outcome",
           description: "Attach the resolved result to a recorded roll.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -280,12 +278,12 @@ export function encounterRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         query: ContextQuery,
-        response: { 200: t.Object({ data: t.Any(), },), 401: ErrorResponse, 404: ErrorResponse, },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Object({ data: t.Any(), },), },
           summary: "Build encounter context",
           description: "Story notes, rewards and recent world events for one template, ready for the GM.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

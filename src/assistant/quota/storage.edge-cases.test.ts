@@ -55,13 +55,15 @@ describe("consumeQuota (memory backend)", () => {
     expect(consumeQuota("u-config", 1, T0 + 1,),).toBeNull();
   });
 
-  // PRODUCT BUG (edge-case sweep 2026-11-01): consumeQuota accepts negative
-  // costs. `active.used + cost > limitPerWindow` passes for negative cost, so
-  // `used` drops below its prior value and the returned remaining exceeds the
-  // configured limit (observed: consumeQuota("u", -5, T0) → 15 with limit 10).
-  // Repeated negative charges grant unlimited quota. Correct behavior: reject
-  // or clamp cost < 0. Skipped so the suite stays green; see the report.
-  test.skip("negative costs never raise remaining above the limit", () => {
+  test("negative costs never raise remaining above the limit", () => {
     expect(consumeQuota("u-negative", -5, T0,),).toBeNull();
+    // The rejected call left the window untouched — the full limit is still available.
+    expect(consumeQuota("u-negative", 10, T0,),).toBe(0,);
+  });
+
+  test("non-finite costs are rejected without touching the window", () => {
+    expect(consumeQuota("u-nonfinite", Number.NaN, T0,),).toBeNull();
+    expect(consumeQuota("u-nonfinite", Number.POSITIVE_INFINITY, T0,),).toBeNull();
+    expect(consumeQuota("u-nonfinite", 1, T0,),).toBe(9,);
   });
 });

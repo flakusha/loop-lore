@@ -90,6 +90,8 @@ describe("groupTalkativitySection", () => {
     expect(content,).toContain("Alpha: 8/10",);
     expect(content,).toContain("Beta: 3/10",);
     expect(content,).toContain("Group Talkativity",);
+    expect(content,).toContain("<actor_talkativity>",);
+    expect(content,).toContain("</actor_talkativity>",);
     // Deterministic line order (ORDER BY display_name).
     expect(content.indexOf("Alpha: 8/10",),).toBeLessThan(content.indexOf("Beta: 3/10",),);
   });

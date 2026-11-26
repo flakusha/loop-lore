@@ -16,6 +16,7 @@ import { verifyJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
 import { ChallengePurpose, FactorKind, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { createRateLimiter, } from "../../middleware/rate-limit";
 import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertAuthFactors, insertUsers, } from "../../test-utils/insert-helpers";
 import { handleVerifyFactor, } from "./verify";
@@ -53,9 +54,14 @@ afterEach(async () => {
 },);
 
 /** A user owning one e-mail factor, with a named session. */
-async function seedSession(): Promise<{ userId: string; factorId: string; sessionId: string }> {
+async function seedSession(
+  verified = true,
+): Promise<{ userId: string; factorId: string; sessionId: string }> {
   const userId = await insertUsers(db, "mfa-user", "MFA User",);
-  const factorId = await insertAuthFactors(db, userId, FactorKind.Email, clock,);
+  const factorId = await insertAuthFactors(db, userId, FactorKind.Email, clock, {
+    verified_at: verified ? clock : null,
+  },);
+
   const sessionId = `sess-${userId}`;
   await db.insertInto("sessions",).values({
     id: sessionId,
@@ -237,5 +243,111 @@ describe("POST /api/v1/auth/factors/verify", () => {
     },);
 
     expect(res.status,).toBe(401,);
+  });
+
+  test("rate-limited verify — exhausted per-user budget is 429 and the challenge stays open", async () => {
+    const { userId, factorId, sessionId, } = await seedSession();
+    const issued = await issueLoginChallenge(userId, factorId,);
+    const limiter = createRateLimiter({ windowMs: 60_000, maxRequests: 1, },);
+
+    const first = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.id,
+      code: "000000",
+      purpose: ChallengePurpose.Login,
+      limiter,
+      now,
+    },);
+
+    expect(first.status,).toBe(401,);
+
+    const second = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.id,
+      code: issued.code,
+      purpose: ChallengePurpose.Login,
+      limiter,
+      now,
+    },);
+
+    expect(second.status,).toBe(429,);
+
+    const row = await db.selectFrom("auth_challenges",).select("consumed",).where("id", "=", issued.id,)
+      .executeTakeFirst();
+
+    expect(row?.consumed,).toBe(0,);
+  });
+
+  test("unverified factor cannot verify a login challenge - 404 and challenge stays open", async () => {
+    const { userId, factorId, sessionId, } = await seedSession(false,);
+    const issued = await issueChallenge({
+      database: db,
+      userId,
+      factorId,
+      purpose: ChallengePurpose.Login,
+      now,
+    },);
+
+    if (!issued.ok) { throw new Error(`issue failed: ${issued.error.code}`,); }
+
+    const res = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.value.id,
+      code: issued.value.code,
+      purpose: ChallengePurpose.Login,
+      now,
+    },);
+
+    expect(res.status,).toBe(404,);
+
+    const row = await db.selectFrom("auth_challenges",).select("consumed",).where("id", "=", issued.value.id,)
+      .executeTakeFirst();
+
+    expect(row?.consumed,).toBe(0,);
+  });
+
+  test("enroll challenge activates a factor without issuing a JWT", async () => {
+    const { userId, factorId, sessionId, } = await seedSession(false,);
+    const issued = await issueChallenge({
+      database: db,
+      userId,
+      factorId,
+      purpose: ChallengePurpose.Enroll,
+      now,
+    },);
+
+    if (!issued.ok) { throw new Error(`issue failed: ${issued.error.code}`,); }
+
+    const res = await handleVerifyFactor({
+      database: db,
+      config: makeConfig(),
+      userId,
+      sessionId,
+      userRole: "user",
+      challengeId: issued.value.id,
+      code: issued.value.code,
+      purpose: ChallengePurpose.Enroll,
+      now,
+    },);
+
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("set-cookie",),).toBeNull();
+
+    const factor = await db.selectFrom("auth_factors",).select("verified_at",).where("id", "=", factorId,)
+      .executeTakeFirst();
+
+    expect(factor?.verified_at,).toBe(T0,);
   });
 });

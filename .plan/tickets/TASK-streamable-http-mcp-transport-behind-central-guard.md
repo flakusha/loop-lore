@@ -3,7 +3,8 @@
 
 # TASK: Streamable HTTP MCP transport behind central guard
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the Streamable HTTP MCP transport shipped behind the central guard — `WebStandardStreamableHTTPServerTransport` (`src/integrations/mcp/http-server.ts:52`), DNS-rebinding allowlist resolution via `allowlistFor` (`:64,282-294`), transport construction (`:441`). The filed premise (no HTTP transport) was stale.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-agentic-integration-mcp-acp

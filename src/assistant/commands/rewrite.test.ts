@@ -138,6 +138,49 @@ describe("rewrite command", () => {
       expect(result.systemMessage,).toContain("rewritten reply",);
     });
 
+    it("uses the free-text instruction as the rewrite direction in the system prompt", async () => {
+      let captured: GenerateRequest | undefined;
+      const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
+        captured = req;
+        return { content: "as directed", };
+      };
+
+      const result = await runRewrite(
+        ["target text",],
+        { chatId: "c1", namedArgs: { instruction: "keep her sarcastic", }, positionalArgs: ["target text",], },
+        { complete, },
+      );
+
+      expect(captured?.messages[0]?.content,).toContain("keep her sarcastic",);
+      expect(result.systemMessage,).toContain("as directed",);
+      expect(result.systemMessage,).toContain("**Rewritten (custom instruction):**",);
+      expect(result.systemMessage,).not.toContain("(clear)",);
+      expect(result.actionPayload,).toEqual(
+        expect.objectContaining({
+          instruction: "keep her sarcastic",
+          style: "custom instruction",
+        },),
+      );
+
+      expect((result.actionPayload as Record<string, unknown>).applied,).toBeUndefined();
+    });
+
+    it("reports failure instead of applying a heuristic for a free-text instruction", async () => {
+      const complete = async (): Promise<{ content: string }> => {
+        throw new Error("provider down",);
+      };
+
+      const result = await runRewrite(
+        ["target text",],
+        { chatId: "c1", namedArgs: { instruction: "keep her sarcastic", }, positionalArgs: ["target text",], },
+        { complete, },
+      );
+
+      expect(result.systemMessage,).toContain("could not be applied",);
+      expect(result.systemMessage,).not.toContain("LLM unavailable",);
+      expect(result.actionPayload,).toBeUndefined();
+    });
+
     it("returns the no-text message when no input and no history", async () => {
       const result = await runRewrite([], { chatId: "c1", }, { complete: async () => ({ content: "x", }), },);
       expect(result.systemMessage,).toContain("No text to rewrite",);

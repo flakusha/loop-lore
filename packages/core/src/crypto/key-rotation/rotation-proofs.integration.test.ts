@@ -12,16 +12,16 @@
  * 3. Encrypted asset linked to the chat: member leaves, blob decrypts
  *    under the NEW chat key.
  */
-import type { EncryptionLevel, MessageVisibility, } from "@/db/enums";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
-import { createTestDb, resetTestDb, type TestDb, } from "@/test-utils/create-test-db";
-import { insertAssets, insertUsers, } from "@/test-utils/insert-helpers";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import type { EncryptionLevel, MessageVisibility, } from "../../../../../src/db/enums";
+import type { DB, } from "../../../../../src/db/schema";
+import { createTestDb, resetTestDb, type TestDb, } from "../../../../../src/test-utils/create-test-db";
+import { insertAssets, insertUsers, } from "../../../../../src/test-utils/insert-helpers";
+import { createLogger, } from "../../logger";
 import { generateActorKey, } from "../actor-keys";
 import { decryptAssetBlob, encryptAssetBlob, } from "../asset-encryption";
 import { getChatKeyById, } from "../chat-keys";

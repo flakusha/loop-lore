@@ -38,6 +38,7 @@ import { type PeerWorkMessage, type PeerWorkRunRequest, } from "../../federation
 import { readPeerWorkloadToken, } from "../../federation/peer-workload-token";
 import { getChildLogger, } from "../../logger";
 import type { ChunkEvent, GenerateResponse, } from "../providers/types";
+import { getSchedulerManager, } from "../scheduler";
 import type { GenerationMessage, } from "../types";
 
 /** The one sticky workload class, and the affinity scope of every pin. */
@@ -70,11 +71,11 @@ export interface ChatPeerOffloadOptions {
 /**
  * Dispatch one chat turn to a peer, or to the caller's unchanged local path.
  *
- * Never throws for a peer-side reason: a peer that fails before emitting
- * anything is retried locally exactly once inside `dispatchPeerWorkload`, and a
- * peer that fails after emitting throws `PeerWorkPartialOutputError` so the
- * caller reports the turn failed rather than silently re-generating a reply the
- * client is already holding half of.
+ * A peer transport failure before any output is retried locally exactly once
+ * inside `dispatchPeerWorkload`; a failure after emitting throws
+ * `PeerWorkPartialOutputError`, and a quota 429 throws `PeerWorkQuotaError`
+ * without a local retry, so the caller never silently re-generates a reply the
+ * client is already holding (or adds load to a saturated swarm).
  *
  * @param options
  * @returns {Promise<GenerateResponse>}
@@ -93,6 +94,7 @@ export async function dispatchChatGeneration(options: ChatPeerOffloadOptions,): 
 
   const log = getChildLogger("generation/chat-peer-offload",);
   const assignment = await readWorkAssignment(database, { affinityKey: chatId, workloadClass: CLASS, },);
+  const scheduler = getSchedulerManager();
   const decision = resolvePeerRoute({
     federationEnabled: true,
     workloadClass: CLASS,
@@ -100,6 +102,10 @@ export async function dispatchChatGeneration(options: ChatPeerOffloadOptions,): 
     peers: await listWorkloadPeers(database,),
     matrix: await readAssignmentMatrix(database,),
     assignment,
+    localLoad: {
+      inFlight: scheduler.inFlight,
+      maxConcurrency: scheduler.capacityFor(options.providerName,),
+    },
   },);
 
   let localRan = false;

@@ -3,7 +3,7 @@
 
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { extractAuth, } from "../http-utils";
+import { extractAuth, routeSpec, } from "../http-utils";
 import {
   handleCreateLocation,
   handleGetLocation,
@@ -25,7 +25,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds-locations", },)
     .get(
       `${prefix}/worlds/:worldId/locations`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
         const pageSize = Number(ctx.query?.pageSize,) || 20;
@@ -33,29 +33,27 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole, q,);
       },
       {
-        response: {
-          200: t.Object({
-            data: t.Array(t.Any(),),
-            pagination: t.Object({
-              page: t.Number(),
-              pageSize: t.Number(),
-              total: t.Number(),
-              totalPages: t.Number(),
+        ...routeSpec({
+          response: {
+            200: t.Object({
+              data: t.Array(t.Any(),),
+              pagination: t.Object({
+                page: t.Number(),
+                pageSize: t.Number(),
+                total: t.Number(),
+                totalPages: t.Number(),
+              },),
             },),
-          },),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+          },
           summary: "List locations",
           description: "List locations in a world. Optional q filters by name substring (case-insensitive).",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds/:worldId/locations`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleCreateLocation(
           database,
@@ -66,22 +64,17 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         );
       },
       {
-        response: {
-          201: t.Object({ id: t.String(), },),
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, },
           summary: "Create location",
           description: "Create a new location in a world.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetLocation(
           database,
@@ -92,21 +85,17 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         );
       },
       {
-        response: {
-          200: t.Any(),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: { 200: t.Any(), },
           summary: "Get location",
           description: "Get a location by ID.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .put(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateLocation(
           database,
@@ -118,22 +107,17 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         );
       },
       {
-        response: {
-          200: SuccessResponse,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: { 200: SuccessResponse, 400: ErrorResponse, },
           summary: "Update location",
           description: "Update a location's properties.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds/:worldId/locations/:locId/move`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleMoveLocation(
           database,
@@ -146,23 +130,18 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: t.Object({ newParentId: t.Union([t.String(), t.Null(),],), },),
-        response: {
-          200: SuccessResponse,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: { 200: SuccessResponse, 400: ErrorResponse, },
           summary: "Move location",
           description:
             "Move a location (and its subtree) under a new parent. Rejects self-parents, cycles and cross-world parents with 400.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .delete(
       `${prefix}/worlds/:worldId/locations/:locId`,
-      async (ctx: any,) => {
+      async (ctx,) => {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteLocation(
           database,
@@ -173,16 +152,12 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         );
       },
       {
-        response: {
-          204: t.Void(),
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: { 204: t.Void(), },
           summary: "Delete location",
           description: "Delete a location from a world.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }

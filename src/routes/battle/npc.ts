@@ -10,7 +10,7 @@ import {
   wouldNPCSurrender,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { internalError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -45,8 +45,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(decision,);
         } catch (error) {
-          log().error("Failed to make NPC decision", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to make NPC decision", error,);
         }
       },
       {
@@ -80,8 +79,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(memory,);
         } catch (error) {
-          log().error("Failed to create battle memory", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to create battle memory", error,);
         }
       },
       {
@@ -113,8 +111,7 @@ export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to check NPC surrender", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to check NPC surrender", error,);
         }
       },
       {

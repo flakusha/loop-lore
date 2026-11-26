@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 320
+// size-allow: 340
 // One API client surface for the TUI chat widgets: request shaping, envelope
 // parsing and the stale-chat guards all read the same page/pagination contract.
 import type { CommandValveSpec, } from "../../assistant/commands/valves";
-import { safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
+import { jsonParseOr, safeFetch as _realFetch, safeJsonStringify, } from "../../utils";
+import { openSendStream, } from "./stream";
 import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
@@ -44,6 +45,29 @@ export interface MessageAttachment {
   assetId: string;
 }
 
+/** Pull the stable reason out of an error envelope (any carrier). */
+export function failureReason(
+  payload: { code?: string; error?: string; data?: { reason?: string } },
+): string | undefined {
+  return payload.code ?? payload.data?.reason ??
+    (payload.error?.startsWith("NSFW access denied: ",) ? payload.error.slice(20,) : undefined);
+}
+
+/** Surface the server stable reason code from a captured 403 body. */
+function sendFailureMessage(error: Error,): string {
+  const body = (error as Error & { body?: unknown }).body;
+  let reason: string | undefined;
+  if (typeof body === "string") {
+    const parsed = jsonParseOr<{ code?: string; error?: string; data?: { reason?: string } }>(body, {},);
+    reason = failureReason(parsed,);
+    if (!reason && body.startsWith("NSFW access denied: ",)) { reason = body.slice(20,); }
+  } else if (body && typeof body === "object") {
+    reason = failureReason(body as never,);
+  }
+
+  return reason ? error.message + ": " + reason : error.message;
+}
+
 /**
  * Send message via POST /api/chats/:id/messages.
  * Shows typing indicator, adds user message + assistant auto-reply.
@@ -67,6 +91,10 @@ export async function handleSend(
   host.isSending = true;
   host.showTyping();
 
+  // The POST blocks until generation finishes, so subscribe first: the server
+  // replays its buffer plus live tokens over this same channel.
+  const stream = openSendStream(host,);
+
   try {
     const payload = attachments?.length
       ? { content: text, role: "user", attachments, }
@@ -81,15 +109,20 @@ export async function handleSend(
       auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
       handle401: false,
+      // Consent/age 403s carry a stable reason in the body; safeFetch only
+      // attaches it to the error when the caller opts in.
+      includeErrorBody: true,
       // This POST blocks on a whole assistant generation server-side, so the
       // shared 30s safeFetch default would abort turns the server completes.
       timeout: host.sendTimeoutMs,
     },);
 
     host.hideTyping();
+    stream.close();
+    host.setStreamContent?.(null,);
 
     if (!result.ok) {
-      host.showError(result.error.message,);
+      host.showError(sendFailureMessage(result.error,),);
       return;
     }
 
@@ -98,9 +131,8 @@ export async function handleSend(
     // Add user message
     host.addMessage({ id: data.id, role: "user", content: text, },);
 
-    // Add assistant auto-reply if present. With an LLM configured the server
-    // returns 201 without it (reply arrives over SSE, which the TUI lacks) —
-    // refresh the transcript so the reply appears without a manual F5.
+    // Add assistant auto-reply if present. Live tokens already arrived over
+    // SSE; without one, the transcript reload below is the polling fallback.
     if (data.assistantMessage) {
       host.addMessage({
         id: data.assistantMessage.id,
@@ -111,6 +143,8 @@ export async function handleSend(
       await loadMessages(host,);
     }
   } catch (error) {
+    stream.close();
+    host.setStreamContent?.(null,);
     host.hideTyping();
     host.showError(`Network error: ${(error as Error).message}`,);
   } finally {

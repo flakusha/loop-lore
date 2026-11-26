@@ -145,11 +145,19 @@ export function telemetryRoutes(
 
       const row = await database
         .selectFrom("telemetry_events",)
-        .select((eb,) => eb.fn.count<number>("id",).as("total",))
+        .select((eb,) => [
+          eb.fn.count<number>("id",).as("total",),
+          eb.fn.count<number>("session_id",).distinct().as("distinct_sessions",),
+          eb.fn.count<number>("user_id",).distinct().as("distinct_users",),
+        ])
         .where("source", "=", "server",)
         .executeTakeFirst();
 
-      return jsonResponse({ total: row?.total ?? 0, },);
+      return jsonResponse({
+        total: row?.total ?? 0,
+        distinct_sessions: row?.distinct_sessions ?? 0,
+        distinct_users: row?.distinct_users ?? 0,
+      },);
     }, {
       response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
       detail: {
@@ -255,6 +263,7 @@ export function telemetryRoutes(
           sql<string>`substr(${eb.ref("telemetry_events.created_at",)}, 1, 10)`.as("date",),
         ])
         .select((eb,) => eb.fn.count<number>("id",).as("count",))
+        .select((eb,) => eb.fn.count<number>("user_id",).distinct().as("active_users",))
         .where("source", "=", "server",)
         .groupBy("date",)
         .orderBy("date", "desc",)

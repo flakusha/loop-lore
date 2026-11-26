@@ -3,8 +3,8 @@
 import { type Kysely, sql, } from "kysely";
 import { ActorType, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { escapeLike, } from "../../search/query";
 import { can, } from "../../users/permissions";
-import { escapeLike, } from "../message-search/helpers";
 import { type ViewsViewer, visibleCharactersTo, visibleWorldsTo, } from "./access";
 import { applyGalleryAssetFilters, galleryMediaContext, GRID_PAGE_SIZE, inheritedHiddenAssetIds, } from "./gallery";
 import { renderGalleryCards, renderGalleryEmptyState, } from "./gallery-cards";

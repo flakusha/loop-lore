@@ -5,7 +5,7 @@
  * Peer dispatch composed with provider failover: the single-retry rule, the
  * discard-partial-output rule, and an unchanged local path.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import {
   CancelReason,
   CancelSource,
@@ -20,10 +20,19 @@ import {
   dispatchPeerWorkload,
   PeerWorkExhaustedError,
   PeerWorkPartialOutputError,
+  PeerWorkQuotaError,
 } from "./peer-dispatch";
-import { type PeerRouteDecision, PeerRouteReason, } from "./peer-router";
+import { peerCircuitOpen, recordPeerHealthMiss, resetPeerHealth, } from "./peer-health";
+import { type PeerRouteDecision, PeerRouteReason, resolvePeerRoute, } from "./peer-router";
 import { type PeerWorkAttempt, } from "./peer-work-client";
 import { type PeerWorkRunRequest, } from "./peer-work-wire";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/**
+ * Peer dispatch composed with provider failover: the single-retry rule, the
+ * discard-partial-output rule, and an unchanged local path.
+ */
 
 type RunPeerSeam = NonNullable<Parameters<typeof dispatchPeerWorkload>[0]["runPeer"]>;
 
@@ -379,5 +388,127 @@ describe("dispatchPeerWorkload - composed with provider failover", () => {
 
     expect(second,).toBe(RESPONSE,);
     expect(scheduled,).toEqual(["scheduled", "scheduled-after-peer",],);
+  });
+});
+
+describe("dispatchPeerWorkload - Retry-After propagation", () => {
+  const realNow = Date.now;
+  let now = 2_000_000;
+
+  beforeEach(() => {
+    resetPeerHealth();
+    now = 2_000_000;
+    Date.now = () => now;
+  },);
+
+  afterEach(() => {
+    Date.now = realNow;
+    resetPeerHealth();
+  },);
+
+  test("a peer-advertised window becomes the NEXT trip's cooldown", async () => {
+    await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(),
+      request: wireRequest(),
+      local: () => Promise.resolve(RESPONSE,),
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: { code: "transport", status: 429, message: "rate limited", retryAfterMs: 60_000, },
+      })) as RunPeerSeam,
+    },).catch(() => undefined);
+
+    // The note alone must not trip anything.
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 10_000;
+    // The fixed 10s default would have half-opened; the advertised 60s holds.
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    now += 50_000;
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+
+  test("a failure without an advertised window leaves the default untouched", async () => {
+    await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(),
+      request: wireRequest(),
+      local: () => Promise.resolve(RESPONSE,),
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: { code: "transport", status: 502, message: "peer down", },
+      })) as RunPeerSeam,
+    },).catch(() => undefined);
+
+    // The dispatch failure above already counts as consecutive failure #1,
+    // so two misses reach the trip threshold of 3 with the base 10s backoff.
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    recordPeerHealthMiss(ORIGIN_A, [PeerWorkloadClass.Chat,],);
+    now += 10_000;
+    expect(peerCircuitOpen({ origin: ORIGIN_A, workloadClass: PeerWorkloadClass.Chat, },),).toBe(false,);
+  });
+});
+
+describe("dispatchPeerWorkload — quota 429", () => {
+  const QUOTA_PEER = "https://quota-dispatch.example";
+
+  beforeEach(() => {
+    resetPeerHealth();
+  },);
+
+  afterEach(() => {
+    resetPeerHealth();
+  },);
+
+  test("a 429 peer is excluded and never retried locally", async () => {
+    let localCalls = 0;
+    const thrown = await dispatchPeerWorkload({
+      callerOrigin: CALLER,
+      decision: peerDecision(QUOTA_PEER,),
+      request: wireRequest(),
+      local: () => {
+        localCalls += 1;
+        return Promise.resolve(RESPONSE,);
+      },
+      runPeer: (async () => ({
+        ok: false,
+        emitted: 0,
+        failure: {
+          code: "federation.quota_exceeded",
+          status: 429,
+          message: "budget exceeded",
+          retryAfterSec: 30,
+        },
+      })) as RunPeerSeam,
+    },).catch((error: unknown,) => error);
+
+    expect(thrown,).toBeInstanceOf(PeerWorkQuotaError,);
+    expect((thrown as PeerWorkQuotaError).retryAfterSec,).toBe(30,);
+    expect(localCalls,).toBe(0,);
+    expect(peerCircuitOpen({ origin: QUOTA_PEER, workloadClass: PeerWorkloadClass.Chat, },),).toBe(true,);
+
+    const target = peerDecision(QUOTA_PEER,);
+    if (target.target !== "peer") { throw new Error("expected a peer decision",); }
+
+    const decision = resolvePeerRoute({
+      federationEnabled: true,
+      workloadClass: PeerWorkloadClass.Chat,
+      peers: [target.peer,],
+      matrix: { preferences: { [PeerWorkloadClass.Chat]: [QUOTA_PEER,], }, },
+      localLoad: { inFlight: 0, maxConcurrency: 32, },
+    },);
+
+    expect(decision.target,).toBe("local",);
+    expect(decision.excluded,).toEqual([
+      { origin: QUOTA_PEER, reason: "circuit-open", },
+    ],);
   });
 });

@@ -1,6 +1,8 @@
-# TEMPLATE — provisioning required before installing.
-# The repo ships no scripts/run-app.sh; point ExecStart at a start wrapper you
-# provision (the repo's start entry is `bun run src/server/index.ts`).
+# Start wrapper: scripts/run-app.sh (shipped in-repo, first-boot S2 slice).
+# Installs with the checkout at /opt/loop-lore/scripts/run-app.sh; no extra
+# provisioning needed. The wrapper execs `bun run src/server/index.ts` (or
+# the dist bundle when built), forwarding args, so supervisor signals and
+# exit codes (75 contention retry / 0 clean / 1 crash) propagate unchanged.
 [Unit]
 Description=Loop-Lore (Bun + Elysia) app
 Documentation=https://loop-lore.example.org/docs/spec/build-deploy.md

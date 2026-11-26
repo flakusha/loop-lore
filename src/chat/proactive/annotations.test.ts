@@ -17,6 +17,7 @@ import {
   createAnnotation,
   isAnnotationExpired,
   listMemoryAnnotations,
+  removeMemoryAnnotationsForChat,
 } from "./annotations";
 
 let db: Kysely<DB>;
@@ -180,5 +181,65 @@ describe("createAnnotation — TTL semantics", () => {
     },);
 
     expect(annotation.ttlUntil,).toBeNull();
+  });
+});
+
+describe("annotation TTL listing, sweep, and chat purge", () => {
+  test("expired annotations are hidden from listings", async () => {
+    clearMemoryAnnotations();
+    await createAnnotation(db, { chatId: "chat-ttl", actorId: "owner", kind: "note", body: "ephemeral", ttlMs: 1, },);
+    await Bun.sleep(5,);
+    const live = await createAnnotation(db, {
+      chatId: "chat-ttl",
+      actorId: "owner",
+      kind: "note",
+      body: "sticky",
+      ttlMs: 60_000,
+    },);
+
+    const listed = listMemoryAnnotations("chat-ttl",);
+    expect(listed.map((a,) => a.id),).toEqual([live.id,],);
+  });
+
+  test("sweep frees memory once the store crosses the threshold", async () => {
+    clearMemoryAnnotations();
+    // Cross the sweep threshold with short-TTL entries, wait them out,
+    // then force a sweep via another create.
+    for (let i = 0; i < 205; i++) {
+      await createAnnotation(db, { chatId: "chat-sweep", actorId: "owner", kind: "note", body: `e${i}`, ttlMs: 1, },);
+    }
+
+    await Bun.sleep(5,);
+    await createAnnotation(db, {
+      chatId: "chat-sweep",
+      actorId: "owner",
+      kind: "note",
+      body: "trigger",
+      ttlMs: 60_000,
+    },);
+
+    const listed = listMemoryAnnotations("chat-sweep",);
+    expect(listed.length,).toBe(1,);
+    expect(listed[0]?.body,).toBe("trigger",);
+    clearMemoryAnnotations();
+  });
+
+  test("removeMemoryAnnotationsForChat purges the chat's in-memory entries", async () => {
+    clearMemoryAnnotations();
+    await createAnnotation(db, {
+      chatId: "chat-purge",
+      actorId: "owner",
+      kind: "note",
+      body: "doomed",
+      ttlMs: 60_000,
+    },);
+
+    await createAnnotation(db, { chatId: "chat-keep", actorId: "owner", kind: "note", body: "safe", ttlMs: 60_000, },);
+
+    removeMemoryAnnotationsForChat("chat-purge",);
+
+    expect(listMemoryAnnotations("chat-purge",),).toEqual([],);
+    expect(listMemoryAnnotations("chat-keep",).length,).toBe(1,);
+    clearMemoryAnnotations();
   });
 });

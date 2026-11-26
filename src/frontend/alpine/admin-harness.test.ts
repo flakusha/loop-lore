@@ -120,6 +120,8 @@ describe("adminHarness.loadHarness", () => {
     expect(state.harnessRunsEmpty(),).toBe(false,);
     expect(calls.sort(),).toEqual([
       "/api/v1/harness/escalations",
+      "/api/v1/harness/ledger",
+      "/api/v1/harness/metrics",
       "/api/v1/harness/models",
       "/api/v1/harness/permissions",
       "/api/v1/harness/runs?limit=50",
@@ -276,5 +278,45 @@ describe("adminHarness.openHarnessRun", () => {
 
     expect(state.harnessDetail,).toBeNull();
     expect(state.harnessError,).not.toBe("",);
+  });
+});
+
+describe("adminHarness.loadHarnessUsage", () => {
+  test("decodes ledger rows and the admin-only metric families", async () => {
+    handler = async (url,) => {
+      if (url === "/api/v1/harness/ledger") {
+        return Response.json({
+          items: [
+            { profile: "omp", dispatchesInWindow: 3, tokensInDay: 1200, quotaResetAt: 1_800_000_000_000, },
+            { profile: "codex", dispatchesInWindow: 0, tokensInDay: 0, quotaResetAt: null, },
+          ],
+        },);
+      }
+
+      if (url === "/api/v1/harness/metrics") {
+        return new Response([
+          "# HELP loop_lore_harness_dispatch_total dispatches",
+          "# TYPE loop_lore_harness_dispatch_total counter",
+          'loop_lore_harness_dispatch_total{task_type="harnessCode"} 4',
+          'loop_lore_harness_profile_available{profile="omp"} 1',
+          "loop_lore_harness_process_cpu_seconds_total 12",
+        ].join("\n",),);
+      }
+
+      return new Response("", { status: 404, },);
+    };
+
+    const state = freshState();
+    await state.loadHarnessUsage();
+
+    expect(state.harnessLedgerRows,).toEqual([
+      { profile: "omp", dispatchesInWindow: 3, tokensInDay: 1200, quotaResetAt: 1_800_000_000_000, },
+      { profile: "codex", dispatchesInWindow: 0, tokensInDay: 0, quotaResetAt: null, },
+    ],);
+
+    expect(state.harnessAdminSignals,).toEqual([
+      'loop_lore_harness_dispatch_total{task_type="harnessCode"} 4',
+      'loop_lore_harness_profile_available{profile="omp"} 1',
+    ],);
   });
 });

@@ -82,6 +82,47 @@ describe("validateWorkflowPayload", () => {
     expect(result.ok,).toBe(true,);
   });
 
+  it("rejects a declared binding target that still holds a literal", () => {
+    const graph = {
+      "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+      "2": {
+        class_type: "ModelAttentionBackend",
+        inputs: { attention: "comfy kitchen attention", model: ["1", 0,], },
+      },
+      "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
+    };
+
+    const result = validateWorkflowPayload({
+      ...BASE,
+      body: graph,
+      parameters: [{ name: "attention", type: "string", label: "Attention", default: "", },],
+    },);
+
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain("parameter attention has no matching {{placeholder}}",);
+    }
+  });
+
+  it("accepts a declared binding target that holds the exact placeholder", () => {
+    const graph = {
+      "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+      "2": {
+        class_type: "ModelAttentionBackend",
+        inputs: { attention: "{{attention}}", model: ["1", 0,], },
+      },
+      "3": { class_type: "SaveImage", inputs: { images: ["2", 0,], }, },
+    };
+
+    const result = validateWorkflowPayload({
+      ...BASE,
+      body: graph,
+      parameters: [{ name: "attention", type: "string", label: "Attention", default: "", },],
+    },);
+
+    expect(result.ok,).toBe(true,);
+  });
+
   it("rejects a duplicate parameter name", () => {
     const result = validateWorkflowPayload({
       ...BASE,
@@ -121,6 +162,38 @@ describe("validateWorkflowPayload", () => {
       loraSlots: [{ nodeId: "2", classType: "KSampler", label: "Sampler", },],
     },);
 
+    expect(result.ok,).toBe(true,);
+  });
+
+  it("rejects a half-bound LoRA placeholder slot", () => {
+    const body = {
+      ...GOOD_GRAPH,
+      "2": { ...GOOD_GRAPH["2"], inputs: { ...GOOD_GRAPH["2"].inputs, lora_1: "{{lora_1}}", }, },
+    };
+
+    const result = validateWorkflowPayload({ ...BASE, body, },);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.errors.join(" ",),).toContain("lora_1_weight",);
+      expect(result.errors.join(" ",),).toContain("lora_1_enabled",);
+    }
+  });
+
+  it("accepts a complete LoRA placeholder slot", () => {
+    const body = {
+      ...GOOD_GRAPH,
+      "2": {
+        ...GOOD_GRAPH["2"],
+        inputs: {
+          ...GOOD_GRAPH["2"].inputs,
+          lora_1: "{{lora_1}}",
+          lora_1_weight: "{{lora_1_weight}}",
+          lora_1_enabled: "{{lora_1_enabled}}",
+        },
+      },
+    };
+
+    const result = validateWorkflowPayload({ ...BASE, body, },);
     expect(result.ok,).toBe(true,);
   });
 
@@ -176,7 +249,7 @@ describe("validateWorkflowPayload converted mode", () => {
     }
   });
 
-  it("accepts a converted graph whose dead set equals the report set", () => {
+  it("accepts a graph with converter-live control nodes, report or not", () => {
     const payload = {
       ...BASE,
       body: {
@@ -185,7 +258,10 @@ describe("validateWorkflowPayload converted mode", () => {
       },
     };
 
-    expect(validateWorkflowPayload(payload,).ok,).toBe(false,);
+    // ResolutionSelector is in UNREFERENCED_LIVE_CLASSES, which the sink
+    // registry treats as globally live — strict mode accepts it and the
+    // converter report is harmless but vacuous for such classes.
+    expect(validateWorkflowPayload(payload,).ok,).toBe(true,);
     expect(validateWorkflowPayload(payload, { unreferencedLive: ["9",], },).ok,).toBe(true,);
   });
 

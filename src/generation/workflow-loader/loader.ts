@@ -4,6 +4,7 @@
 import { readdir, readFile, stat, } from "node:fs/promises";
 import { extname, join, } from "node:path";
 import { getLogger, } from "../../logger";
+import { NotFoundError, } from "../../routes/http-utils/status";
 import { jsonParseOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import {
@@ -55,16 +56,14 @@ class WorkflowLoader {
    * Load a workflow by name with optional template substitution.
    * @param options - Workflow name and substitution parameters
    * @returns ComfyUI-ready workflow with placeholders replaced
-   * @throws If workflow not found
+   * @throws NotFoundError when the named workflow is not loaded
    */
   async loadWorkflow(options: LoadWorkflowOptions,): Promise<ComfyUIWorkflow> {
     await this.ensureLoaded();
 
     const entry = this.cache.get(options.name,);
     if (!entry) {
-      throw new Error(
-        `Workflow "${options.name}" not found. Available: ${[...this.cache.keys(),].join(", ",)}`,
-      );
+      throw new NotFoundError("Workflow", options.name,);
     }
 
     let workflow = entry.workflow;
@@ -116,8 +115,13 @@ class WorkflowLoader {
       const fileStat = await stat(dirPath,);
       const currentMtime = fileStat.mtimeMs;
 
-      // Skip reload if directory hasn't changed
-      if (currentMtime <= this.dirMtime && this.cache.size > 0) {
+      // Skip reload if the directory and every cached file are unchanged.
+      // A directory stat alone misses in-place overwrites of a workflow file.
+      if (
+        currentMtime <= this.dirMtime &&
+        this.cache.size > 0 &&
+        !(await this.invalidateStaleEntries())
+      ) {
         return;
       }
 
@@ -197,6 +201,28 @@ class WorkflowLoader {
     }
 
     getLogger().info({ message: "Workflows loaded", count: this.cache.size, dir: dirPath, },);
+  }
+
+  /**
+   * Drop cached workflows whose file was edited since it was read.
+   * Directory mtime does not change on an in-place overwrite.
+   * @returns Whether any entry was invalidated
+   */
+  private async invalidateStaleEntries(): Promise<boolean> {
+    let invalidated = false;
+    for (const [name, entry,] of this.cache) {
+      try {
+        const fileStat = await stat(entry.meta.path,);
+        if (fileStat.mtimeMs > entry.meta.mtime) {
+          this.cache.delete(name,);
+          invalidated = true;
+        }
+      } catch {
+        // Missing/unreadable file: leave cache alone (existing semantics).
+      }
+    }
+
+    return invalidated;
   }
 
   /** */

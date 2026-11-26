@@ -4,6 +4,6 @@
 
 assets:
   enabled: true
-  uploadDir: "../loop-lore-data/uploads"
+  # uploadDir: "${DATA_DIR}/uploads" # resolves inside THIS instance's state dir
   maxFileSize: 10485760 # 10 MB
   compression: true

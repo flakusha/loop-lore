@@ -194,6 +194,41 @@ export const SCHEMA = new SchemaManifest()
     hour_bucket: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("agent_actions", {
+    id: col("integer", { primaryKey: true, },),
+    token_digest: col("text", { notNull: true, },),
+    user_id: col("text",),
+    action: col("text", { notNull: true, },),
+    worktree_id: col("text",),
+    commit_hash: col("text",),
+    result: col("text", { notNull: true, },),
+    duration_ms: col("integer",),
+    metadata: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("agent_tokens", {
+    id: col("text", { primaryKey: true, },),
+    token_hash: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    revoked_at: col("text",),
+    last_used_at: col("text",),
+    expires_at: col("text",),
+  },)
+  .table("annotations", {
+    id: col("text", { primaryKey: true, },),
+    target_type: col("text", { notNull: true, },),
+    target_id: col("text", { notNull: true, },),
+    author_id: col("text", { notNull: true, },),
+    t0_ms: col("integer", { notNull: true, },),
+    t1_ms: col("integer",),
+    region: col("text",),
+    body: col("text", { notNull: true, },),
+    resolved_at: col("text",),
+    resolved_by: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("assistant_quota_usage", {
     user_id: col("text", { primaryKey: true, },),
     window_start: col("text", { notNull: true, },),
@@ -215,6 +250,8 @@ export const SCHEMA = new SchemaManifest()
     user_id: col("text", { notNull: true, },),
     kind: col("text", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
+    target: col("text",),
+    verified_at: col("integer",),
   },)
   .table("autonomy_budget", {
     scope_kind: col("text", { notNull: true, },),
@@ -657,6 +694,26 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text",),
     updated_at: col("text",),
   },)
+  .table("harness_calls", {
+    id: col("text", { primaryKey: true, },),
+    run_id: col("text", { notNull: true, },),
+    principal_id: col("text",),
+    principal_kind: col("text",),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    command: col("text",),
+    model: col("text",),
+    git_sha: col("text",),
+    turn_id: col("text",),
+    error: col("text",),
+    error_category: col("text",),
+    tokens_in: col("integer",),
+    tokens_out: col("integer",),
+    cost_usd: col("real",),
+    latency_ms: col("integer",),
+    started_at: col("text", { notNull: true, },),
+    ended_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("harness_queue_turns", {
     id: col("text", { primaryKey: true, },),
     batch_id: col("text", { notNull: true, },),
@@ -675,6 +732,41 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     started_at: col("text",),
     finished_at: col("text",),
+    owner_slug: col("text",),
+  },)
+  .table("harness_runs", {
+    id: col("text", { primaryKey: true, },),
+    principal_id: col("text",),
+    principal_kind: col("text",),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    task: col("text", { notNull: true, },),
+    task_type: col("text", { notNull: true, },),
+    command: col("text",),
+    model: col("text",),
+    git_sha: col("text",),
+    branch: col("text",),
+    turn_id: col("text",),
+    instance_id: col("text",),
+    error: col("text",),
+    error_category: col("text",),
+    tools: col("text",),
+    tool_count: col("integer",),
+    tokens_in: col("integer",),
+    tokens_out: col("integer",),
+    cost_usd: col("real",),
+    latency_ms: col("integer",),
+    started_at: col("text", { notNull: true, },),
+    ended_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("honeypot_indicators", {
+    id: col("text", { primaryKey: true, },),
+    indicator: col("text", { notNull: true, },),
+    label: col("text", { notNull: true, },),
+    confidence: col("real", { notNull: true, },),
+    source: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    expires_at: col("text", { notNull: true, },),
   },)
   .table("immersion_decision_log", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
@@ -865,6 +957,18 @@ export const SCHEMA = new SchemaManifest()
     previous_encrypted_key: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("mesh_intel_reports", {
+    id: col("text", { primaryKey: true, },),
+    indicator: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    confidence: col("real", { notNull: true, },),
+    source_peer: col("text", { notNull: true, },),
+    action: col("text", { notNull: true, },),
+    nonce: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    expires_at: col("text", { notNull: true, },),
+    received_at: col("text", { notNull: true, },),
   },)
   .table("mesh_negotiations", {
     id: col("text", { primaryKey: true, },),
@@ -1184,13 +1288,13 @@ export const SCHEMA = new SchemaManifest()
   .table("professions", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
-    world_id: col("text",),
     discipline: col("text", { notNull: true, },),
     level: col("integer", { notNull: true, hasDefault: true, },),
     experience: col("integer", { notNull: true, hasDefault: true, },),
     title: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    world_id: col("text",),
   },)
   .table("ranking_snapshots", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
@@ -1282,6 +1386,121 @@ export const SCHEMA = new SchemaManifest()
     min_value: col("integer",),
     max_value: col("integer",),
     effect: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("rsi_agent_worktrees", {
+    id: col("text", { primaryKey: true, },),
+    token_id: col("text", { notNull: true, },),
+    branch: col("text", { notNull: true, },),
+    path: col("text", { notNull: true, },),
+    disk_bytes: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    last_active_at: col("text", { notNull: true, hasDefault: true, },),
+    removed_at: col("text",),
+  },)
+  .table("scenario_assemblies", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    version: col("integer", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    workflow_id: col("text",),
+    workflow_hash: col("text",),
+    workflow_version: col("text",),
+    fragment_ids: col("text", { notNull: true, },),
+    cut_points: col("text", { notNull: true, },),
+    output_asset_id: col("text",),
+    error: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_docs", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    kind: col("text", { notNull: true, },),
+    title: col("text",),
+    body: col("text", { notNull: true, },),
+    version: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_fragments", {
+    id: col("text", { primaryKey: true, },),
+    scene_id: col("text", { notNull: true, },),
+    shot_id: col("text",),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    operation: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    workflow_id: col("text", { notNull: true, },),
+    workflow_hash: col("text", { notNull: true, },),
+    workflow_version: col("text",),
+    node_versions: col("text",),
+    mode: col("text",),
+    seed: col("text",),
+    duration_frames: col("integer",),
+    transition: col("text", { notNull: true, hasDefault: true, },),
+    prompt_message_id: col("text",),
+    prompt_snapshot: col("text",),
+    gallery_asset_id: col("text",),
+    caption: col("text",),
+    input_assets: col("text",),
+    output_asset_id: col("text",),
+    latent_asset_id: col("text",),
+    parent_fragment_id: col("text",),
+    take: col("text", { notNull: true, hasDefault: true, },),
+    cut_in_ms: col("integer", { notNull: true, hasDefault: true, },),
+    cut_out_ms: col("integer",),
+    error: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_references", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    scene_id: col("text",),
+    shot_id: col("text",),
+    scope: col("text", { notNull: true, hasDefault: true, },),
+    lane: col("text", { notNull: true, },),
+    role: col("text",),
+    asset_id: col("text", { notNull: true, },),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    trim_in_ms: col("integer",),
+    trim_out_ms: col("integer",),
+    stream: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_scenes", {
+    id: col("text", { primaryKey: true, },),
+    scenario_id: col("text", { notNull: true, },),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    location_id: col("text",),
+    mode: col("text", { notNull: true, hasDefault: true, },),
+    duration_frames: col("integer", { notNull: true, hasDefault: true, },),
+    fps: col("integer", { notNull: true, hasDefault: true, },),
+    seed: col("text",),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    generated_asset_id: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("scenario_shots", {
+    id: col("text", { primaryKey: true, },),
+    scene_id: col("text", { notNull: true, },),
+    sort_order: col("integer", { notNull: true, hasDefault: true, },),
+    start_ms: col("integer", { notNull: true, hasDefault: true, },),
+    end_ms: col("integer", { notNull: true, },),
+    description: col("text", { notNull: true, },),
+    cut_type: col("text", { notNull: true, hasDefault: true, },),
+    camera_json: col("text",),
+    narration: col("text",),
+  },)
+  .table("scenarios", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    owner_id: col("text", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("scheduled_messages", {
     id: col("text", { primaryKey: true, },),
@@ -1378,6 +1597,24 @@ export const SCHEMA = new SchemaManifest()
     tags: col("text", { notNull: true, hasDefault: true, },),
     duration_ms: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("tooling_reports", {
+    id: col("text", { primaryKey: true, hasDefault: true, },),
+    ts: col("text", { notNull: true, hasDefault: true, },),
+    source: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    tool: col("text", { notNull: true, hasDefault: true, },),
+    attempt: col("integer",),
+    max_attempts: col("integer",),
+    detail: col("text", { notNull: true, hasDefault: true, },),
+    duration_ms: col("integer",),
+    profile: col("text",),
+    branch: col("text",),
+    git_sha: col("text",),
+    instance_id: col("text", { notNull: true, hasDefault: true, },),
+    dedupe_key: col("text",),
+    count: col("integer", { notNull: true, hasDefault: true, },),
+    last_seen: col("text",),
   },)
   .table("trade_history", {
     id: col("text", { primaryKey: true, },),
@@ -1484,6 +1721,16 @@ export const SCHEMA = new SchemaManifest()
     sort_order: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("watchdog_events", {
+    id: col("integer", { primaryKey: true, },),
+    event_kind: col("text", { notNull: true, },),
+    decision_kind: col("text", { notNull: true, },),
+    at_ms: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    reason: col("text",),
+    misses: col("integer",),
+    crashes: col("integer",),
   },)
   .table("whitenotes", {
     id: col("text", { primaryKey: true, },),
@@ -2180,6 +2427,12 @@ export const SCHEMA = new SchemaManifest()
     focal_point_y: col("real",),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("asset_user_preferences", {
+    user_id: col("text", { primaryKey: true, },),
+    download_naming: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("assets", {
     id: col("text", { primaryKey: true, },),
     owner_id: col("text", { notNull: true, },),
@@ -2346,6 +2599,8 @@ export const SCHEMA = new SchemaManifest()
     initiative: col("integer", { notNull: true, hasDefault: true, },),
     muted_until: col("text",),
     banned_until: col("text",),
+    unread_count: col("integer", { notNull: true, hasDefault: true, },),
+    last_read_created_at: col("text",),
   },)
   .table("chat_pins", {
     id: col("text", { primaryKey: true, },),
@@ -2442,6 +2697,7 @@ export const SCHEMA = new SchemaManifest()
     federation_consented_at: col("text",),
     purpose: col("text",),
     timeline_id: col("text", { notNull: true, hasDefault: true, },),
+    visible_message_count: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -3135,6 +3391,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     config_json: col("text",),
+    origin: col("text",),
   },)
   // ── Turn & Story ──────────────────────────────────────────────
   .table("story_turns", {

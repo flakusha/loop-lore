@@ -1,12 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, t, } from "elysia";
+import { type Context, Elysia, t, } from "elysia";
+import type { TranslatorFn, } from "../../i18n/types";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, SuccessResponse, WorldCreateBody, WorldUpdateBody, } from "../../validation/schemas";
 import { buildWorldBundle, } from "../export-shared";
 import { prettyJson, } from "../export-shared/helpers";
-import { extractAuth, HttpStatus, jsonError, parsePaginationParams, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  parsePaginationParams,
+  routeAuthError,
+  routeDetail,
+  routeSpec,
+} from "../http-utils";
 import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
@@ -17,6 +26,14 @@ import {
   handleUpdateWorld,
 } from "./worlds";
 import { handleDeleteWorld, } from "./worlds-delete";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+  t?: TranslatorFn;
+}
+type Ctx = Context & AuthContext;
 
 /**
  * @param opts
@@ -53,26 +70,27 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
             },),
           },),
           400: ErrorResponse,
-          401: ErrorResponse,
+          ...routeAuthError(),
         },
-        detail: {
+        ...routeDetail({
           summary: "List worlds",
           description:
             "List all worlds visible to the authenticated user. Optional q filters by name substring (case-insensitive).",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
       `${prefix}/worlds`,
-      async (ctx: any,) => {
-        const { userId, userRole, } = extractAuth(ctx,);
+      async (ctx,) => {
+        const c = ctx as unknown as Ctx;
+        const { userId, userRole, } = extractAuth(c,);
         // Unauthenticated callers fall through to handleCreateWorld, which
         // returns the pinned 401 — the capability gate only judges callers
         // with an identity (deny-closed via can() for null/unknown roles).
         if (userId && !can(userRole, "world.create",)) {
           return jsonError({
-            message: ctx.t?.("errors.forbidden",) ?? "Forbidden",
+            message: c.t?.("errors.forbidden",) ?? "Forbidden",
             status: HttpStatus.Forbidden,
           },);
         }
@@ -83,14 +101,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         body: WorldCreateBody,
         response: {
           201: t.Object({ id: t.String(), },),
-          401: ErrorResponse,
+          ...routeAuthError(),
           403: ErrorResponse,
         },
-        detail: {
+        ...routeDetail({
           summary: "Create world",
           description: "Create a new world. Requires authentication.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -99,18 +117,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           200: t.Any(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Get world",
-          description: "Get a world by ID with its locations.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Get world",
+        description: "Get a world by ID with its locations.",
+        tags: ["Worlds",],
+      },),
     )
     .get(
       `${prefix}/worlds/:worldId/export`,
@@ -132,19 +146,15 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
           },
         },);
       },
-      {
+      routeSpec({
         response: {
           200: t.Any(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Export world",
-          description:
-            "Download a world (locations, lore, quests, states) as a round-trippable WorldBundle JSON, importable via POST /api/import/world. Owner only.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Export world",
+        description:
+          "Download a world (locations, lore, quests, states) as a round-trippable WorldBundle JSON, importable via POST /api/import/world. Owner only.",
+        tags: ["Worlds",],
+      },),
     )
     .put(
       `${prefix}/worlds/:worldId`,
@@ -160,16 +170,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         body: WorldUpdateBody,
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: {
+            200: SuccessResponse,
+          },
           summary: "Update world",
           description: "Update a world's properties. Owner or admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .delete(
@@ -178,18 +186,14 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           204: t.Void(),
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Delete world",
-          description: "Delete a world and all its locations. Owner or admin only.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Delete world",
+        description: "Delete a world and all its locations. Owner or admin only.",
+        tags: ["Worlds",],
+      },),
     )
     .post(
       `${prefix}/worlds/:worldId/initialize-states`,
@@ -197,17 +201,13 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
       },
-      {
+      routeSpec({
         response: {
           200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
         },
-        detail: {
-          summary: "Initialize world states",
-          description: "Initialize default state machines for a world's locations and NPCs.",
-          tags: ["Worlds",],
-        },
-      },
+        summary: "Initialize world states",
+        description: "Initialize default state machines for a world's locations and NPCs.",
+        tags: ["Worlds",],
+      },),
     );
 }

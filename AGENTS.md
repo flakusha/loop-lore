@@ -51,7 +51,7 @@ bun run check && bun run test:unit
 #      via scripts/check/coverage-merge.mjs, then floors every module at
 #      80% — the same artifact the old single `bun test` produced;
 #      scoped mode: the diff's own test run), `lint - eslint` (19.4 GB
-#      cold peak), `e2e - browser (baseline)` (Playwright surface; specs
+#      cold peak), browser baseline (CI/extended only; Playwright surface; specs
 #      run through its own BROWSER_JOBS pool, default 3 — each spec is
 #      parallel-safe: ephemeral port, per-file in-memory DB, locked
 #      hash-named frontend build; default BROWSER_JOBS=2 — at 3, a loaded
@@ -97,6 +97,16 @@ bun run check && bun run test:unit
 #   still visible in the report as ADVISORY, so the signal is not lost —
 #   it just does not block finalization.
 ```
+
+### Feature profiles
+
+`[features].profile` in `configs/config.example.toml`, `FEATURES_PROFILE`, and
+`--feature <name>` (CLI wins, last flag wins) select `full`, `business-only`,
+`rpg-chat-only`, `local-only`, or `relay-only`. `src/features/resolve.ts` maps
+the profile to a `FeatureSurface`; route barrels and boot services gate
+composition on it. Auth, rate limiting, and input validation stay ungated.
+`bun run check --profile <name>` labels the report but never skips a gate; CI
+requires `profile=full`.
 
 ### Weave-damage scan (post-rebase)
 
@@ -241,6 +251,7 @@ src/
 ├── server/              # HTTP entry (handler, index, start, static-files)
 ├── db/                  # Kysely + schema (migrations are source of truth)
 ├── config/              # Config loading
+├── features/            # Feature-profile resolver + composition surface
 ├── routes/              # REST handlers
 ├── generation/          # LLM generation + hooks
 ├── story/               # Multi-LLM story
@@ -288,6 +299,10 @@ src/
 ├── validation/          # Elysia t (TypeBox) schemas + middleware
 └── utils/               # Shared utilities
 
+packages/
+├── core/                # @loop-lore/core: canonical config/schema; src/ roots are shims
+└── i18n/                # Shared locale resources
+
 docs/spec/               # Core specs
 docs/frontend/           # UX specs
 .plan/                   # Task tracking (source of truth)
@@ -319,7 +334,7 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     # names are matched verbatim by --gates/--skip-gates.
 #                     # Blocking gates (failure fails the run):
 #                     #   typecheck - backend / - bun / - frontend / - coverage /
-#                     #     - coverage - frontend / - coverage - scripts / - scripts
+#                     #     - scripts  (coverage runs all three 95% floors)
 #                     #   lint - eslint, lint - native (clippy),
 #                     #     lint - egui (clippy)        (NOOP placeholder: SKIPPED
 #                     #                                  when cargo is absent)
@@ -329,8 +344,8 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   md - lint, mermaid - lint (mmdlint)
 #                     #   dead - code (knip), dead - code (src files)
 #                     #   wiring - check, fe-be - harmony, api - doc drift,
-#                     #   changelog - gate, db - schema gate, migrations - ordering,
-#                     #   conflict - markers, size - check,
+#                     #   changelog - gate, db - schema gate, schemas - check,
+#                     #   migrations - ordering, conflict - markers, size - check,
 #                     #   size - strict, context - weight, no - shell - refs,
 #                     #   fuzz - generated tests, i18n - reconcile,
 #                     #   i18n - static keys, tests - coverage gaps (see below),
@@ -342,6 +357,9 @@ bun run check        # parallel gate runner. The authoritative gate list is
 #                     #   coverage - per-module line % (see Coverage gate below),
 #                     #   frontend - template preflight, frontend - innerHTML xss,
 #                     #   e2e - browser (baseline)
+#                     #     (default check skips only this ~9-minute gate;
+#                     #      check:ci and check:extended run it, giwt finalize
+#                     #      uses the extended full path)
 #                     # Advisory gates (ADVISORY_GATES in
 #                     # scripts/check/parallel/gate-table.mjs) run and report like
 #                     # any other gate but a failure does NOT fail the run:
@@ -419,16 +437,14 @@ Top-level `NNN_name.ts` files under `src/db/migrations/`, each exporting `up(db)
 
 **Append-only policy** — applied migrations are never deleted, renamed, or renumbered (the filename is the identity stored in `kysely_migration`). To change schema behavior, add a **new forward migration** that alters the schema to the desired state. Full policy: `src/db/migrations/README.md`.
 
-**Two paths for new schema changes:** (1) append a new top-level `NNN_*.ts` migration (default — numbering is sequential from `001_init`, so the next file is `002_*`; old pre-collapse numbers are dead, do not skip ahead); (2) extend the current HEAD migration if it is not yet shipped. There is no `parts/` subdirectory, no folding into a frozen base migration.
+**Two paths for new schema changes:** (1) append a new top-level `NNN_*.ts` migration (default — numbering is sequential from the `001_core` baseline; `015_*` and `016_*` are shipped, so the next free number is `017_*`; old pre-collapse numbers are dead, do not skip ahead); (2) extend the current HEAD migration if it is not yet shipped. There is no `parts/` subdirectory, no folding into a frozen base migration.
 Generated (never hand-edit): `src/db/schema-*.ts`, `src/db/schema.ts`,
 `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
 `src/validation/db-schemas.ts`. e2e provisioning and unit tests build the
 schema directly from migrations, so they pick changes up automatically.
 
-Migration helper utilities:
+Migration helper utility:
 
-- `src/db/migration-helpers.ts` — `boolToEnum`/`batchBoolToEnum` for
-  boolean → text-enum column conversions (transactional; logs non-0/1 values).
 - `src/db/column-types.ts` — maps `table.column` → TS enum type for generated
   schemas; update here when adding a text-enum column that needs a typed type.
 - One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement (SQLite

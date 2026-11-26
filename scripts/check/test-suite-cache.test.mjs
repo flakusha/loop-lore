@@ -11,15 +11,17 @@
  * exactly as the case requires.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
 const SCRIPT = new URL("./test-suite-cache.mjs", import.meta.url,).pathname;
+const SCRATCH_ROOT = join(tmpdir(), "loop-lore",);
 
 const dirs = [];
 function scratch() {
-  const dir = mkdtempSync(join(tmpdir(), "suitescache-",),);
+  mkdirSync(SCRATCH_ROOT, { recursive: true, },);
+  const dir = mkdtempSync(join(SCRATCH_ROOT, "suitescache-",),);
   dirs.push(dir,);
   return dir;
 }
@@ -51,6 +53,14 @@ function greenPassthrough(sentinel, covDir,) {
     "-c",
     `echo run >> ${sentinel}; mkdir -p ${covDir}; printf '${GREEN_LCOV.replace(/\n/g, "\\n",)}' > ${covDir}/lcov.info`,
   ];
+}
+
+/** Green passthrough whose only varying argv item is the coverage-dir flag. */
+function coverageDirPassthrough(sentinel, covDir,) {
+  const body = "echo run >> " + sentinel +
+    '; d=${1#--coverage-dir=}; mkdir -p "$d"; printf \'' +
+    GREEN_LCOV.replace(/\n/g, "\\n",) + '\' > "$d/lcov.info"';
+  return ["bash", "-c", body, "bash", `--coverage-dir=${covDir}`,];
 }
 
 /** Passthrough that exits 1 without writing any lcov. */
@@ -89,6 +99,27 @@ describe("test-suite-cache", () => {
     expect(r2.stdout.toString(),).toContain("cache hit",);
     expect(readFileSync(sentinel, "utf8",).trim(),).toBe("run",); // unchanged
     expect(readFileSync(join(cov, "lcov.info",), "utf8",),).toBe(GREEN_LCOV,);
+  });
+
+  test("a different per-run coverage dir still hits the same key", () => {
+    const dir = scratch();
+    const sentinel = join(dir, "sentinel.log",);
+    const cache = join(dir, "cache",);
+    const firstCov = join(dir, "cov-first",);
+    const secondCov = join(dir, "cov-second",);
+    expect(
+      runWrapper({ cacheDir: cache, covDir: firstCov, passthrough: coverageDirPassthrough(sentinel, firstCov,), },)
+        .exitCode,
+    ).toBe(0,);
+    const r = runWrapper({
+      cacheDir: cache,
+      covDir: secondCov,
+      passthrough: coverageDirPassthrough(sentinel, secondCov,),
+    },);
+    expect(r.exitCode,).toBe(0,);
+    expect(r.stdout.toString(),).toContain("cache hit",);
+    expect(readFileSync(sentinel, "utf8",).trim(),).toBe("run",); // passthrough skipped
+    expect(readFileSync(join(secondCov, "lcov.info",), "utf8",),).toBe(GREEN_LCOV,);
   });
 
   test("a red run propagates the exit code and caches nothing", () => {

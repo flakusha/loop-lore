@@ -2,22 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 070 — nullable `messages.outfit_id` column.
- *
- * Column exists, is nullable, and a message inserted without it stores null.
- * Lives in `src/db/` beside 045, NOT in `src/db/migrations/`: the loader
- * scans that directory and would register a colocated test as a migration.
+ * Final-schema oracle for `messages.outfit_id`: the column exists, is nullable,
+ * and a message inserted without it stores null. The column is declared inline
+ * by 005_chat in the consolidated migration chain.
  */
 import { describe, expect, test, } from "bun:test";
 import { type Kysely, sql, } from "kysely";
 
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/070_messages_outfit_id";
 import type { DB, } from "./schema";
-
-/** `up`/`down` are typed against the untyped handle the migrator passes them. */
-type UntypedDb = Kysely<unknown>;
 
 interface PragmaCol {
   name: string;
@@ -34,7 +28,7 @@ async function outfitColumn(db: Kysely<DB>,): Promise<PragmaCol | undefined> {
 }
 
 describe("070_messages_outfit_id", () => {
-  test("column exists and is nullable after up", async () => {
+  test("column exists and is nullable in the final schema", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const col = await outfitColumn(db,);
@@ -55,19 +49,6 @@ describe("070_messages_outfit_id", () => {
       const id = await insertMessages(db, chatId, actorId, "user", "hello",);
       const row = await db.selectFrom("messages",).select("outfit_id",).where("id", "=", id,).executeTakeFirstOrThrow();
       expect(row.outfit_id,).toBeNull();
-    } finally {
-      await db.destroy();
-      sqlite.close();
-    }
-  });
-
-  test("down drops the column, up restores it", async () => {
-    const { db, sqlite, } = await createTestDb();
-    try {
-      await down(db as unknown as UntypedDb,);
-      expect(await outfitColumn(db,),).toBeUndefined();
-      await up(db as unknown as UntypedDb,);
-      expect(await outfitColumn(db,),).toBeDefined();
     } finally {
       await db.destroy();
       sqlite.close();

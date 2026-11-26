@@ -11,6 +11,7 @@
  * module state.
  */
 import { describe, expect, it, } from "bun:test";
+import { type PermissionOutcome, } from "./adapter-types";
 import {
   advertisedPermissionOptions,
   answerCarriesDecision,
@@ -24,6 +25,11 @@ describe("normalizePermissionOutcome", () => {
     expect(normalizePermissionOutcome("ALLOW_ALWAYS",),).toBe("allow_always",);
     expect(normalizePermissionOutcome(" reject-once ",),).toBe("reject_once",);
     expect(normalizePermissionOutcome("cancelled",),).toBe("cancelled",);
+  });
+
+  it("folds inner whitespace into the spec union", () => {
+    expect(normalizePermissionOutcome("allow once",),).toBe("allow_once",);
+    expect(normalizePermissionOutcome("ALLOW  ONCE",),).toBe("allow_once",);
   });
 
   it("refuses a spelling it does not know", () => {
@@ -90,6 +96,26 @@ describe("answerCarriesDecision", () => {
 });
 
 describe("wirePermissionOutcome", () => {
+  it("fails closed when the decision is not a spec outcome", () => {
+    const options = advertisedPermissionOptions({
+      options: [
+        { optionId: "allow", kind: "allow_once", },
+        { optionId: "reject", kind: "reject_once", },
+      ],
+    },);
+
+    const malformed = [
+      null as unknown as PermissionOutcome,
+      undefined as unknown as PermissionOutcome,
+      {} as PermissionOutcome,
+      { outcome: "allow-once", } as unknown as PermissionOutcome,
+    ];
+
+    for (const outcome of malformed) {
+      expect(wirePermissionOutcome(outcome, options,),).toEqual({ outcome: "cancelled", },);
+    }
+  });
+
   it("answers with one of the two spec variants, naming the advertised option id", () => {
     const options = advertisedPermissionOptions({
       options: [

@@ -22,12 +22,13 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { adminSurface, } from "../v1/admin-surface";
 import { adminComfyuiWorkflowRoutes, } from "./index";
+import { licenseValue, paramsReviewedValue, } from "./shared";
 
 const PREFIX = "/api/v1";
 const BASE = `${PREFIX}/admin/comfyui-workflows`;
 
-/** The real operator export that shipped with the epic, kept as a fixture. */
-const ANIMA_PATH = "./configs/workflows/uploads/i-anima-0001.json";
+/** The shipped Anima API export, read verbatim so ingest and catalog cannot drift. */
+const ANIMA_PATH = "./configs/workflows/anima-v1.json";
 
 /** Minimal valid graph: a loader feeding a terminal SaveImage sink. */
 const GRAPH = {
@@ -62,6 +63,19 @@ async function postAsAdmin(
 
   const text = await res.text();
   return { status: res.status, json: text ? JSON.parse(text,) : {}, };
+}
+
+/** PUT a body as an admin and return the status. */
+async function putAsAdmin(path: string, body: unknown,): Promise<number> {
+  const res = await appFor("admin",).handle(
+    new Request(`http://localhost${path}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json", },
+      body: JSON.stringify(body,),
+    },),
+  );
+
+  return res.status;
 }
 
 /** A stored row, for direct assertion on what a handler wrote. */
@@ -113,16 +127,9 @@ describe("admin ComfyUI workflow routes — create", () => {
     expect(payload.requiredNodes,).toEqual([],);
   });
 
-  it("lands the real Anima export — the reference fixture, unmodified on disk", async () => {
+  it("lands the shipped Anima API export unmodified", async () => {
     // Resource contract: owns nothing but the one row it inserts, which the
-    // file-level `beforeEach` clears. `ANIMA_PATH` is a version-controlled file
-    // that no test writes, so reading it is not a shared-resource race.
-    //
-    // Reads the shipped file rather than an inline copy, so cleaning the graph
-    // and landing it here cannot drift apart. This export is what strict
-    // dead-node rejection originally refused (stale `60:45` CLIPLoader); the
-    // node was removed because nothing referenced it — both CLIPTextEncode
-    // nodes take their clip from 60:61 (CLIPLoaderGGUF).
+    // file-level `beforeEach` clears. The shipped file is read-only here.
     const raw = await readFile(ANIMA_PATH, "utf8",);
     const source: unknown = JSON.parse(raw,);
     const { status, json, } = await postAsAdmin(BASE, { name: "Anima", ...source as object, },);
@@ -131,16 +138,13 @@ describe("admin ComfyUI workflow routes — create", () => {
     const row = await rowById(String(json.id,),);
     expect(row?.modality,).toBe("workflow",);
     const payload = JSON.parse(String(row?.payload,),) as { body: unknown };
-    // The invariant is that ingest stores the graph intact — asserted against
-    // the source, not against a hardcoded node count, so adding a legitimate
-    // node to the reference export does not break this.
+    // Ingest stores the graph intact, and strict validation accepts its
+    // SaveImageAdvanced sink and generation placeholders.
     expect(payload.body,).toEqual(source,);
-    // The decision this file encodes: the unreferenced loader is gone, and the
-    // CLIP both text encoders actually use is still wired in.
-    expect(Object.hasOwn(payload.body as object, "60:45",),).toBe(false,);
     expect(payload.body,).toMatchObject({
-      "60:11": { inputs: { clip: ["60:61", 0,], }, },
-      "60:12": { inputs: { clip: ["60:61", 0,], }, },
+      "1": { class_type: "SaveImageAdvanced", },
+      "10": { inputs: { text: "{{prompt}}", }, },
+      "11": { inputs: { text: "{{negative_prompt}}", }, },
     },);
   });
 
@@ -189,6 +193,60 @@ describe("admin ComfyUI workflow routes — create", () => {
     const { status, json, } = await postAsAdmin(BASE, { ...GRAPH, },);
     expect(status,).toBe(400,);
     expect(String(json.error,),).toContain("name is required",);
+  });
+});
+
+describe("admin ComfyUI workflow routes — license fence", () => {
+  it("records a trimmed license and the params-review flag on create", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Fenced",
+      ...GRAPH,
+      license: "  Apache-2.0  ",
+      params_reviewed: true,
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    expect(row?.license,).toBe("Apache-2.0",);
+    expect(row?.params_reviewed,).toBe(1,);
+  });
+
+  it("stores a blank license as null and an omitted review as 0", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Unfenced",
+      ...GRAPH,
+      license: "   ",
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    expect(row?.license,).toBeNull();
+    expect(row?.params_reviewed,).toBe(0,);
+  });
+
+  it("refuses wrong-typed fence fields at the boundary", async () => {
+    const badLicense = await postAsAdmin(BASE, {
+      name: "Bad license",
+      ...GRAPH,
+      license: 42,
+    },);
+
+    expect(badLicense.status,).toBeGreaterThanOrEqual(400,);
+    expect(badLicense.status,).toBeLessThan(500,);
+
+    const badReview = await postAsAdmin(BASE, {
+      name: "Bad review",
+      ...GRAPH,
+      params_reviewed: "yes",
+    },);
+
+    expect(badReview.status,).toBeGreaterThanOrEqual(400,);
+    expect(badReview.status,).toBeLessThan(500,);
+
+    const rows = await db.selectFrom("prompt_templates",).select("id",).execute();
+    expect(rows,).toEqual([],);
   });
 });
 
@@ -335,6 +393,69 @@ describe("admin ComfyUI workflow routes — read one / update", () => {
     expect(res.status,).toBe(200,);
     expect((await rowById("converted-1",))?.name,).toBe("Renamed",);
   });
+
+  it("keeps the other fence field on a partial update", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Fenced",
+      ...GRAPH,
+      license: "MIT",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    expect(await putAsAdmin(`${BASE}/${id}`, { params_reviewed: false, },),).toBe(200,);
+    let row = await rowById(id,);
+    expect(row?.license,).toBe("MIT",);
+    expect(row?.params_reviewed,).toBe(0,);
+
+    expect(await putAsAdmin(`${BASE}/${id}`, { license: "  GPL-3.0-only  ", },),).toBe(200,);
+    row = await rowById(id,);
+    expect(row?.license,).toBe("GPL-3.0-only",);
+    expect(row?.params_reviewed,).toBe(0,);
+
+    // An explicit null clears only the license; the review flag stays put.
+    expect(await putAsAdmin(`${BASE}/${id}`, { license: null, params_reviewed: true, },),).toBe(200,);
+    row = await rowById(id,);
+    expect(row?.license,).toBeNull();
+    expect(row?.params_reviewed,).toBe(1,);
+  });
+
+  it("serves the recorded fence on the detail read", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Read fence",
+      ...GRAPH,
+      license: "BSD-3-Clause",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    const res = await appFor("admin",).handle(new Request(`http://localhost${BASE}/${id}`,),);
+    const json = await res.json() as { license: string; params_reviewed: number; probe_status: string };
+    expect(json.license,).toBe("BSD-3-Clause",);
+    expect(json.params_reviewed,).toBe(1,);
+    expect(json.probe_status,).toBe("unprobed",);
+  });
+
+  it("refuses an invalid fence update without changing the row", async () => {
+    const created = await postAsAdmin(BASE, {
+      name: "Untouched",
+      ...GRAPH,
+      license: "MIT",
+      params_reviewed: true,
+    },);
+
+    const id = String(created.json.id,);
+
+    const status = await putAsAdmin(`${BASE}/${id}`, { params_reviewed: 1, },);
+    expect(status,).toBeGreaterThanOrEqual(400,);
+    expect(status,).toBeLessThan(500,);
+
+    const row = await rowById(id,);
+    expect(row?.license,).toBe("MIT",);
+    expect(row?.params_reviewed,).toBe(1,);
+  });
 });
 
 describe("admin ComfyUI workflow routes — registration", () => {
@@ -377,5 +498,65 @@ describe("admin ComfyUI workflow routes — modality scoping", () => {
 
     expect(del.status,).toBe(404,);
     expect((await rowById("llm-1",))?.name,).toBe("Chat",);
+  });
+});
+
+describe("admin ComfyUI workflow routes — optional bindings", () => {
+  const BINDINGS = {
+    bindings: [{
+      kind: "scalar",
+      parameter: "prompt",
+      target: { node: "1", input: "text", },
+    },],
+  };
+
+  it("round-trips bindings through an upload without treating them as a node", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Bound",
+      ...GRAPH,
+      bindings: BINDINGS,
+    },);
+
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    const payload = JSON.parse(String(row?.payload,),) as Record<string, unknown>;
+    expect(payload.bindings,).toEqual(BINDINGS,);
+    expect(payload.body,).not.toHaveProperty("bindings",);
+  });
+
+  it("rejects malformed bindings through the existing validator", async () => {
+    const { status, json, } = await postAsAdmin(BASE, {
+      name: "Bad",
+      ...GRAPH,
+      bindings: { bindings: "not-an-array", },
+    },);
+
+    expect(status,).toBe(400,);
+    expect(String(json.error,),).toContain("bindings",);
+  });
+
+  it("still accepts an upload with no bindings", async () => {
+    const { status, json, } = await postAsAdmin(BASE, { name: "Plain", ...GRAPH, },);
+    expect(status,).toBe(201,);
+
+    const row = await rowById(String(json.id,),);
+    const payload = JSON.parse(String(row?.payload,),) as Record<string, unknown>;
+    expect(payload.bindings,).toBeUndefined();
+  });
+});
+
+describe("write fences", () => {
+  it("trims the license and nulls blanks", () => {
+    expect(licenseValue("  MIT  ",),).toBe("MIT",);
+    expect(licenseValue("   ",),).toBeNull();
+    expect(licenseValue(undefined,),).toBeNull();
+    expect(licenseValue(42,),).toBeNull();
+  });
+
+  it("keeps the row value when params_reviewed is omitted", () => {
+    expect(paramsReviewedValue(undefined, 1,),).toBe(1,);
+    expect(paramsReviewedValue(true, 0,),).toBe(1,);
+    expect(paramsReviewedValue(false, 1,),).toBe(0,);
   });
 });

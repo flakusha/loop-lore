@@ -245,3 +245,73 @@ describe("callAux graceful failure", () => {
     await db.destroy();
   });
 });
+
+describe("callAux BYO decrypt failure", () => {
+  const AUX_USER = "fks-aux-user";
+
+  /** BYO enabled with one opt-in provider, so a stored key is attempted. */
+  function makeByoAuxConfig(): Parameters<typeof callAux>[1] {
+    return {
+      ...makeAuxConfig(),
+      generation: {
+        defaultProvider: "mock",
+        defaultModels: {},
+        providers: {
+          openaiCompatible: [{
+            name: "mock",
+            label: "mock",
+            baseUrl: "http://mock.invalid/v1",
+            model: "m",
+            timeout: 1000,
+            retries: 0,
+            allowUserApiKey: true,
+            models: {},
+          },],
+        },
+      },
+      byoKey: { enabled: true, encryptionKey: "fks-aux-secret", },
+    } as unknown as Parameters<typeof callAux>[1];
+  }
+
+  test("an undecryptable stored key aborts before any vendor call", async () => {
+    const testDb = await createTestDb();
+    const requested: string[] = [];
+    unregisterProvider("mock",);
+    registerProvider("mock", makeCapturingProvider(requested,),);
+    try {
+      await testDb.db.insertInto("users",).values({
+        id: AUX_USER,
+        username: AUX_USER,
+        display_name: "Aux User",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },).execute();
+
+      await testDb.db.insertInto("user_api_keys",).values({
+        id: crypto.randomUUID(),
+        user_id: AUX_USER,
+        provider_name: "mock",
+        api_key_encrypted: "not-a-ciphertext",
+      },).execute();
+
+      await insertModelRoleOverrides(testDb.db, "mock", "mock-aux-model", {
+        role: ModelRole.Auxiliary,
+      },);
+
+      const result = await callAux(
+        "intent",
+        makeByoAuxConfig(),
+        testDb.db,
+        [{ role: "user", content: "ping", },],
+        { userId: AUX_USER, },
+      );
+
+      expect(result,).toBeNull();
+      expect(requested,).toEqual([],);
+    } finally {
+      unregisterProvider("mock",);
+      await testDb.db.destroy();
+    }
+  });
+});

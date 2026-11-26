@@ -54,6 +54,19 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "POST", prefix: "/api/v1/battle/weather", },
   // HMAC trust (not session): verified per-request inside the handler.
   { method: "POST", prefix: "/api/v1/integrations/webhooks/", },
+  // RSI agent tokens (agent-api-router ticket): authority IS the presented
+  // bearer token, verified per-request by requireAgentScope inside the agent
+  // surface (401 unknown/revoked, 403 wrong scope) — never the session chain.
+  { method: "GET", prefix: "/api/agent/", },
+  { method: "GET", prefix: "/api/v1/agent/", },
+  { method: "POST", prefix: "/api/agent/", },
+  { method: "POST", prefix: "/api/v1/agent/", },
+  { method: "PUT", prefix: "/api/agent/", },
+  { method: "PUT", prefix: "/api/v1/agent/", },
+  { method: "PATCH", prefix: "/api/agent/", },
+  { method: "PATCH", prefix: "/api/v1/agent/", },
+  { method: "DELETE", prefix: "/api/agent/", },
+  { method: "DELETE", prefix: "/api/v1/agent/", },
   // Peer-credential trust: PSK proof / peer credential checked in-handler.
   { method: "POST", prefix: "/api/mesh-reserve", },
   { method: "POST", prefix: "/api/mesh-deliver", },
@@ -65,6 +78,11 @@ const PUBLIC_ENTRIES: readonly AllowEntry[] = [
   { method: "GET", prefix: "/api/v1/emoji", },
   { method: "GET", prefix: "/api/i18n/locales", },
   { method: "GET", prefix: "/api/v1/i18n/locales", },
+  // RSI agent surface: bearer-token trust, verified in the route's own
+  // requireAgentScope guard. The session guard must not reject these first.
+  { method: "GET", prefix: "/api/v1/agent/whoami", },
+  { method: "POST", prefix: "/api/v1/agent/worktrees", },
+  { method: "POST", prefix: "/api/v1/agent/check", },
   { method: "GET", prefix: "/api/local-inference/manifest", },
   { method: "GET", prefix: "/api/v1/local-inference/manifest", },
   { method: "GET", prefix: "/api/local-inference/capability", },

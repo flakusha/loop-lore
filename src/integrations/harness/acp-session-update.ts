@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
  * acp-session-update.ts — the ACP `session/update` stream narrowed to the
@@ -16,6 +17,11 @@
  *   `{ update: { sessionUpdate: "tool_call_update", toolCallId, status?, content?, rawOutput? } }`
  * - `usage_update`:
  *   `{ update: { sessionUpdate: "usage_update", used, size, cost?: { amount, currency } } }`
+ * - `current_mode_update`:
+ *   `{ update: { sessionUpdate: "current_mode_update", currentModeId } }`
+ * - `plan` (v1) / `plan_update` (v2):
+ *   `{ update: { sessionUpdate: "plan", entries: [{ content, priority }] } }`
+ *   `{ update: { sessionUpdate: "plan_update", plan: { planId, entries: [{ content, priority }] } } }`
  */
 
 import { jsonStringifyOr, } from "../../utils";
@@ -24,6 +30,7 @@ import { jsonStringifyOr, } from "../../utils";
 export type HarnessTurnEvent =
   | { type: "text"; text: string }
   | { type: "thinking"; text: string }
+  | { type: "mode"; modeId: string }
   | {
     type: "tool-call";
     toolCallId: string;
@@ -45,7 +52,22 @@ export type HarnessTurnEvent =
     size: number | null;
     costUsd: number | null;
     currency: string | null;
+  }
+  | {
+    type: "plan";
+    /** v2 `planId`; null for the v1 `plan` variant, which carries none. */
+    planId: string | null;
+    /** Entries in the order the harness sent them. */
+    entries: HarnessPlanEntry[];
   };
+
+/** One step of an agent-reported plan: what to do and how urgent it is. */
+export interface HarnessPlanEntry {
+  /** Human-readable step description (plain text or Markdown). */
+  content: string;
+  /** Relative importance (`high`/`medium`/`low`); null when unreported. */
+  priority: string | null;
+}
 
 /**
  * The events the transcript collector folds. `usage` is telemetry about the
@@ -84,10 +106,16 @@ function asNumber(value: unknown,): number | null {
   return typeof value === "number" && Number.isFinite(value,) ? value : null;
 }
 
+/** Narrow a cost amount to a finite non-negative number; wire strings are accepted. */
+function asCostAmount(value: unknown,): number | null {
+  const amount = typeof value === "string" && value.trim() !== "" ? Number(value,) : value;
+  return typeof amount === "number" && Number.isFinite(amount,) && amount >= 0 ? amount : null;
+}
+
 /** Narrow a `usage_update` payload to its usage event (cost in USD). */
 function usageEvent(update: Record<string, unknown>,): HarnessTurnEvent[] {
   const cost = asRecord(update.cost,);
-  const amount = cost ? asNumber(cost.amount,) : null;
+  const amount = cost ? asCostAmount(cost.amount,) : null;
   const currency = cost ? asString(cost.currency,) : null;
   return [{
     type: "usage",
@@ -96,6 +124,32 @@ function usageEvent(update: Record<string, unknown>,): HarnessTurnEvent[] {
     costUsd: amount !== null && currency?.toLowerCase() === "usd" ? amount : null,
     currency,
   },];
+}
+
+/**
+ * Narrow a `plan` (v1) or `plan_update` (v2) payload to its plan event,
+ * preserving entry order and priority. Entries without readable content are
+ * dropped; a payload with no readable entry yields no event.
+ * @param update - the raw `update` object
+ */
+function planEvent(update: Record<string, unknown>,): HarnessTurnEvent[] {
+  const plan = asRecord(update.plan,);
+  const rawEntries = updateEntries(plan ? plan["entries"] : update["entries"],);
+  const entries: HarnessPlanEntry[] = [];
+  for (const item of rawEntries) {
+    const entry = asRecord(item,);
+    const content = entry ? asString(entry["content"],) : null;
+    if (!content) { continue; }
+    entries.push({ content, priority: entry ? asString(entry["priority"],) : null, },);
+  }
+
+  if (entries.length === 0) { return []; }
+  return [{ type: "plan", planId: plan ? asString(plan["planId"],) : null, entries, },];
+}
+
+/** Narrow an unknown value to an entry list, or empty. */
+function updateEntries(value: unknown,): unknown[] {
+  return Array.isArray(value,) ? value : [];
 }
 
 /** Readable text of a tool-call content list (text blocks and diffs). */
@@ -123,9 +177,10 @@ function toolContentText(content: unknown,): string {
 
 /**
  * Narrow a raw ACP `session/update` notification payload to the events
- * loop-lore persists. Unknown variants (plan, current_mode_update, ...) and
- * malformed payloads yield no events — they are telemetry-only for now;
- * `usage_update` is kept as a usage event (the reported cost is USD).
+ * loop-lore persists. Unknown variants and malformed payloads yield no
+ * events — they are telemetry-only for now; `usage_update` is kept as a usage
+ * event (the reported cost is USD), `current_mode_update` as a mode event,
+ * and plans as plan events.
  * @param params - the notification params, untrusted
  * @returns the narrowed events; empty when the payload carries none
  */
@@ -197,6 +252,15 @@ export function narrowSessionUpdate(params: unknown,): HarnessTurnEvent[] {
     },);
 
     return events;
+  }
+
+  if (variant === "current_mode_update") {
+    const modeId = asString(update.currentModeId,);
+    return modeId ? [{ type: "mode", modeId, },] : [];
+  }
+
+  if (variant === "plan" || variant === "plan_update") {
+    return planEvent(update,);
   }
 
   if (variant === "usage_update") {

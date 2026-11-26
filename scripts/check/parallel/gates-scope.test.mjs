@@ -10,12 +10,20 @@
  */
 
 import { expect, test, } from "bun:test";
-import { browserSpecPaths, pickScopedFiles, } from "./gates-scope.mjs";
+import { noopReason, noopSkip, } from "./context.mjs";
+import { applyDiffScopedStaticGates, browserSpecPaths, pickScopedFiles, } from "./gates-scope.mjs";
 
 const TS = /\.(ts|tsx|js|jsx|mjs|cjs|md)$/;
 const MD = /\.md$/;
 const all = () => true;
 const none = () => false;
+const PLAN_GATES = ["plan - validate", "plan - ticket index (sync)",];
+const baseChecks = () => ({
+  "lint - eslint": "bun run lint:eslint",
+  "md - lint": "bun run md:lint",
+  "plan - validate": "bun run plan:validate",
+  "plan - ticket index (sync)": "giwt sync --check",
+});
 
 test("keeps only diff-touched files the gate can consume", () => {
   const picked = pickScopedFiles(
@@ -82,4 +90,34 @@ test("browser spec paths carry the ./ prefix so bun runs them as files", () => {
     "./tests/e2e/flows/browser/chat-send.browser.ts",
   ],);
   expect(browserSpecPaths([],),).toEqual([],);
+});
+
+test("scoped code-only diff noop-marks both plan gates", () => {
+  const checks = baseChecks();
+  const before = { ...checks, };
+  applyDiffScopedStaticGates(checks, ["src/a.ts", "docs/b.md",], true,);
+  // Only the two advisory plan gates move; the static commands stay real.
+  const skipped = noopSkip("no .plan/ files in diff",);
+  expect(checks,).toEqual({
+    ...before,
+    "plan - validate": skipped,
+    "plan - ticket index (sync)": skipped,
+  },);
+});
+
+test("scoped .plan diff keeps both plan gates real", () => {
+  const checks = baseChecks();
+  const before = { ...checks, };
+  applyDiffScopedStaticGates(checks, [".plan/tickets/x.md", "src/a.ts",], true,);
+  for (const name of PLAN_GATES) {
+    expect(checks[name], name,).toBe(before[name],);
+    expect(noopReason(checks[name],), name,).toBe("",);
+  }
+});
+
+test("plain mode leaves plan and static gates byte-identical", () => {
+  const checks = baseChecks();
+  const before = { ...checks, };
+  applyDiffScopedStaticGates(checks, [], false,);
+  expect(checks,).toEqual(before,);
 });

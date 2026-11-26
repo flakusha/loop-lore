@@ -8,8 +8,10 @@ import type { Kysely, } from "kysely";
 import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { createTestDb, } from "../test-utils/create-test-db";
 import {
   ageGateRoutes,
+  applyStoredAgeGateConfig,
   getRuntimeConfig,
   handleAccept,
   handleAdminGetConfig,
@@ -88,9 +90,13 @@ function createUpdateTable(): {
  * Create a mock insertInto function.
  * @returns Mock insertInto chain.
  */
-function createInsertInto(): { values: () => { execute: () => Promise<void> } } {
+function createInsertInto(): {
+  values: () => { onConflict: () => { execute: () => Promise<void> }; execute: () => Promise<void> };
+} {
   return {
     values: () => ({
+      // setConfig upserts; the mock must model onConflict for admin writes.
+      onConflict: () => ({ execute: () => Promise.resolve(), }),
       execute: () => Promise.resolve(),
     }),
   };
@@ -342,8 +348,8 @@ describe("age-gate controller", () => {
     test.each<[string, string, Record<string, unknown>, number,]>([
       ["returns 403 for non-admin", "user", { enabled: true, }, 403,],
       ["allows update for solo user (admin-equivalent)", "solo", { enabled: true, }, 200,],
-    ],)("%s", (_name, role, body, expectedStatus,) => {
-      const res = handleAdminUpdateConfig(role, body,);
+    ],)("%s", async (_name, role, body, expectedStatus,) => {
+      const res = await handleAdminUpdateConfig(mockDb, role, body,);
       expect(res.status,).toBe(expectedStatus,);
     },);
 
@@ -352,34 +358,43 @@ describe("age-gate controller", () => {
       ["returns 400 for minimumAge = 0", { minimumAge: 0, },],
       ["returns 400 for minimumAge = 151", { minimumAge: 151, },],
       ["returns 400 for invalid mode", { mode: "invalid-mode", },],
-    ],)("%s", (_name, body,) => {
-      const res = handleAdminUpdateConfig("admin", body,);
+    ],)("%s", async (_name, body,) => {
+      const res = await handleAdminUpdateConfig(mockDb, "admin", body,);
       expect(res.status,).toBe(400,);
     },);
 
     test.each<[string, Record<string, unknown>, string, unknown,]>([
       ["updates enabled flag", { enabled: true, }, "enabled", true,],
       ["updates minimumAge", { minimumAge: 21, }, "minimumAge", 21,],
-      ["updates mode", { mode: AgeGateMode.Verification, }, "mode", AgeGateMode.Verification,],
+      ["updates mode", { mode: AgeGateMode.None, }, "mode", AgeGateMode.None,],
     ],)("%s", async (_name, body, key, value,) => {
-      const res = handleAdminUpdateConfig("admin", body,);
+      const res = await handleAdminUpdateConfig(mockDb, "admin", body,);
       expect(res.status,).toBe(200,);
       const data = (await res.json()) as Record<string, unknown>;
       expect(data[key],).toBe(value,);
     },);
 
     test("returns updated config", async () => {
-      const res = handleAdminUpdateConfig("admin", {
+      const res = await handleAdminUpdateConfig(mockDb, "admin", {
         enabled: true,
         minimumAge: 21,
-        mode: AgeGateMode.Verification,
+        mode: AgeGateMode.SelfDeclaration,
       },);
 
       expect(res.status,).toBe(200,);
       const data = (await res.json()) as { enabled: boolean; minimumAge: number; mode: AgeGateMode };
       expect(data.enabled,).toBe(true,);
       expect(data.minimumAge,).toBe(21,);
-      expect(data.mode,).toBe(AgeGateMode.Verification,);
+      expect(data.mode,).toBe(AgeGateMode.SelfDeclaration,);
+    });
+
+    test("rejects verification mode with a clear error", async () => {
+      const res = await handleAdminUpdateConfig(mockDb, "admin", {
+        mode: AgeGateMode.Verification,
+      },);
+
+      expect(res.status,).toBe(400,);
+      expect(await res.text(),).toContain("verification mode is not supported",);
     });
   });
 
@@ -401,6 +416,18 @@ describe("age-gate controller", () => {
 
       const res = await app.handle(req,);
       expect(res,).toBeInstanceOf(Response,);
+    });
+
+    test("POST /api/age-gate/accept rejects a non-YYYY-MM-DD birthDate", async () => {
+      const app = createAgeGateApp();
+      const req = new Request("http://localhost/api/age-gate/accept", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ birthDate: "05/20/1990", },),
+      },);
+
+      const res = await app.handle(req,);
+      expect(res.status,).toBe(422,);
     });
 
     test("GET /api/admin/age-gate returns 200 for admin", async () => {
@@ -435,5 +462,62 @@ describe("age-gate controller", () => {
       const res = await app.handle(req,);
       expect(res.status,).toBe(404,);
     });
+  });
+});
+
+describe("admin age-gate config persistence (RA-13)", () => {
+  afterEach(() => {
+    initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None, },);
+  },);
+
+  test("admin overrides persist to system_config and re-apply after a restart", async () => {
+    const tdb = await createTestDb();
+    try {
+      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+      const res = await handleAdminUpdateConfig(tdb.db, "admin", {
+        enabled: true,
+        minimumAge: 21,
+        mode: AgeGateMode.None,
+      },);
+
+      expect(res.status,).toBe(200,);
+
+      const stored = await tdb.db.selectFrom("system_config",).select("value",)
+        .where("key", "=", "ageGate.minimumAge",).executeTakeFirst();
+
+      expect(stored?.value,).toBe("21",);
+
+      // Simulate a restart: the file config re-seeds the singleton.
+      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+      expect(getRuntimeConfig().minimumAge,).toBe(18,);
+
+      await applyStoredAgeGateConfig(tdb.db,);
+      const applied = getRuntimeConfig();
+      expect(applied.enabled,).toBe(true,);
+      expect(applied.minimumAge,).toBe(21,);
+      expect(applied.mode,).toBe(AgeGateMode.None,);
+    } finally {
+      await tdb.db.destroy();
+    }
+  });
+
+  test("ignores a persisted verification mode instead of self-declaring", async () => {
+    createLogger({ level: "error", },);
+    const tdb = await createTestDb();
+    try {
+      await tdb.db.insertInto("system_config",).values({
+        key: "ageGate.mode",
+        value: AgeGateMode.Verification,
+        description: "unsupported",
+      },).execute();
+
+      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration, },);
+
+      await applyStoredAgeGateConfig(tdb.db,);
+
+      expect(getRuntimeConfig().mode,).toBe(AgeGateMode.SelfDeclaration,);
+    } finally {
+      await tdb.db.destroy();
+    }
   });
 });

@@ -61,15 +61,17 @@ function makeHost(overrides: Partial<ChatHost> = {},): ChatHost {
  * the double's return; the recorded call is what the tests assert on.
  */
 function stubClient(): void {
-  setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-    calls.push({ url, options: options ?? {}, },);
-    return Promise.resolve({
-      ok: true,
-      data: { id: "msg-1", assistantMessage: { id: "msg-2", content: "reply", }, } as T,
-      status: 200,
-      headers: new Headers(),
-    },);
-  },);
+  setFetch(
+    <T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      calls.push({ url, options: options ?? {}, },);
+      return Promise.resolve({
+        ok: true,
+        data: { id: "msg-1", assistantMessage: { id: "msg-2", content: "reply", }, } as T,
+        status: 200,
+        headers: new Headers(),
+      },);
+    },
+  );
 }
 
 afterEach(() => {

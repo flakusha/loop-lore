@@ -152,6 +152,26 @@ describe("acceptAgeGate", () => {
     expect(Number.isNaN(Date.parse(user!.age_gate_accepted_at!,),),).toBe(false,);
   });
 
+  test("stores a canonical YYYY-MM-DD date, not the client's offset string", async () => {
+    const database = await createTestDatabase();
+    const config = gateConfig();
+
+    await acceptAgeGate({
+      database,
+      config,
+      userId: "test-user-1",
+      input: { birthDate: "1990-05-20T00:00:00-11:00", },
+    },);
+
+    const user = await database
+      .selectFrom("users",)
+      .select(["birth_date",],)
+      .where("id", "=", "test-user-1",)
+      .executeTakeFirst();
+
+    expect(user?.birth_date,).toBe("1990-05-20",);
+  });
+
   test("throws UnderageError when user is too young", async () => {
     const database = await createTestDatabase();
     const config = gateConfig();

@@ -3,7 +3,11 @@
 
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, PaginationQuery, WorldIdParams, } from "../../validation/schemas";
-import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas/responses";
+import {
+  AdminPaginatedEnvelope,
+  AdminWorldDetail,
+  AdminWorldRow,
+} from "../../validation/schemas/responses";
 import {
   ErrorCode,
   HttpStatus,
@@ -96,7 +100,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           },);
         },
-        { params: WorldIdParams, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
+        { params: WorldIdParams, response: { 200: AdminWorldDetail, 403: ErrorResponse, 404: ErrorResponse, }, },
       )
       .delete(
         `${prefix}/admin/worlds/:id`,

@@ -123,6 +123,32 @@ describe("generateVideoWithFailover — run outcomes (injected loader)", () => {
     },);
   });
 
+  test("passes video sampling pins to the workflow loader", async () => {
+    let loadedParams: Record<string, unknown> | undefined;
+    const capturingLoader = async (_name: string, params: Record<string, unknown>,) => {
+      loadedParams = params;
+      return LOADED_WORKFLOW;
+    };
+
+    await withMockFetch(happyFetch("p2", "out.mp4",), async () => {
+      const outcome = await generateVideoWithFailover(
+        [provider("v1",),],
+        { ...REQUEST, steps: 31, cfgScale: 6.5, sampler: "euler_a", scheduler: "karras", },
+        undefined,
+        capturingLoader,
+      );
+
+      expect(outcome.ok,).toBe(true,);
+    },);
+
+    expect(loadedParams,).toMatchObject({
+      steps: 31,
+      cfgScale: 6.5,
+      sampler: "euler_a",
+      scheduler: "karras",
+    },);
+  });
+
   test("maps a video-less output to 503", async () => {
     await withMockFetch(async (url,) => {
       const target = String(url,);
@@ -189,6 +215,47 @@ describe("generateVideoWithFailover — run outcomes (injected loader)", () => {
       expect(outcome.error,).toContain("timed out",);
     },);
   });
+
+  test("threads persisted model pins into workflow variables", async () => {
+    let captured: { prompt: string; [key: string]: unknown } | undefined;
+    const pinLoader = async (
+      _name: string,
+      vars: { prompt: string; [key: string]: unknown },
+    ): Promise<typeof LOADED_WORKFLOW> => {
+      captured = vars;
+      return LOADED_WORKFLOW;
+    };
+
+    await withMockFetch(happyFetch("p1", "out.mp4",), async () => {
+      const outcome = await generateVideoWithFailover(
+        [provider("v1", "txt2video", { models: { clip: "config-clip.safetensors", }, },),],
+        {
+          ...REQUEST,
+          modelPins: {
+            v1: {
+              checkpoint: "pinned.ckpt",
+              diffusion: "h3.gguf",
+              clip: "user-clip.safetensors",
+              vae: "user-vae.safetensors",
+              clip_vision: "vision.safetensors",
+            },
+          },
+        },
+        undefined,
+        pinLoader,
+      );
+
+      expect(outcome.ok,).toBe(true,);
+    },);
+
+    expect(captured,).toMatchObject({
+      model: "pinned.ckpt",
+      diffusion: "h3.gguf",
+      clip: "user-clip.safetensors",
+      vae: "user-vae.safetensors",
+      clip_vision: "vision.safetensors",
+    },);
+  });
 });
 
 describe("generateVideoWithFailover — BYO keys", () => {
@@ -242,8 +309,8 @@ describe("generateVideoWithFailover — BYO keys", () => {
         const outcome = await generateVideoWithFailover([provider("v2",),], REQUEST, resolve, stubLoader,);
 
         expect(outcome.ok,).toBe(true,);
-        const headers = (inits[0]?.headers ?? {}) as Record<string, string>;
-        expect(headers.authorization,).toBe("Bearer sk-video-byo",);
+        const sentHeaders = new Headers(inits[0]?.headers,);
+        expect(sentHeaders.get("authorization",),).toBe("Bearer sk-video-byo",);
       },
     );
   });

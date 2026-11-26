@@ -4,7 +4,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { MessageRole, } from "../../db/enums";
+import { ChatVisibility, MessageRole, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -15,6 +15,7 @@ import {
   insertMessages,
   insertUsers,
 } from "../../test-utils/insert-helpers";
+import { getMessageWithAccess, } from "./read";
 import { hardDeleteChat, updateMessageVisibility, } from "./visibility";
 
 describe("updateMessageVisibility", () => {
@@ -165,5 +166,70 @@ describe("hardDeleteChat", () => {
 
     expect(stillThere?.id,).toBe(otherChat,);
     await isolated.db.destroy();
+  });
+});
+
+/**
+ * BUG-moderator-hidden-message: a moderator-hidden row must not be readable by
+ * direct id through the public-chat branch; privileged readers keep access.
+ */
+describe("getMessageWithAccess hidden-message visibility", () => {
+  let db: Kysely<DB>;
+  const ownerId = crypto.randomUUID();
+  const authorId = crypto.randomUUID();
+  const strangerId = crypto.randomUUID();
+  const chatId = crypto.randomUUID();
+  const hiddenId = crypto.randomUUID();
+  const visibleId = crypto.randomUUID();
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+    for (const [id, name,] of [[ownerId, "Owner",], [authorId, "Author",], [strangerId, "Stranger",],] as const) {
+      await insertUsers(db, `user-${id}`, name, { id, } as never,);
+      await insertActors(db, name, { id, user_id: id, owner_id: id, } as never,);
+    }
+
+    await insertChats(db, "Public Chat", ownerId, { id: chatId, visibility: ChatVisibility.Public, } as never,);
+    await insertMessages(db, chatId, authorId, MessageRole.Assistant, "moderator-hidden", {
+      id: hiddenId,
+      visibility: MessageVisibility.HiddenByModerator,
+    },);
+
+    await insertMessages(db, chatId, authorId, MessageRole.Assistant, "public-content", {
+      id: visibleId,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("authenticated stranger gets not_found for a hidden message", async () => {
+    expect(await getMessageWithAccess(db, hiddenId, strangerId, "user",),).toEqual({
+      code: "not_found",
+      message: "Message not found",
+    },);
+  });
+
+  test("guest gets not_found for a hidden message", async () => {
+    expect(await getMessageWithAccess(db, hiddenId, null, "guest",),).toEqual({
+      code: "not_found",
+      message: "Message not found",
+    },);
+  });
+
+  test("owner, author and admin still read the hidden message", async () => {
+    for (const [id, role,] of [[ownerId, "user",], [authorId, "user",], [strangerId, "admin",],] as const) {
+      const result = await getMessageWithAccess(db, hiddenId, id, role,);
+      expect((result as { id?: string }).id,).toBe(hiddenId,);
+    }
+  });
+
+  test("visible messages remain readable by strangers and guests", async () => {
+    for (const [id, role,] of [[strangerId, "user",], [null, "guest",],] as const) {
+      const result = await getMessageWithAccess(db, visibleId, id, role,);
+      expect((result as { id?: string }).id,).toBe(visibleId,);
+    }
   });
 });

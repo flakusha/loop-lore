@@ -8,6 +8,7 @@ import { adminApprovals, } from "./admin-approvals";
 import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
 import { adminClassifierVocab, } from "./admin-classifier-vocab";
+import { adminCron, } from "./admin-cron";
 import { adminFederation, } from "./admin-federation";
 import { adminHarness, } from "./admin-harness";
 import { adminKnowledgeGraph, } from "./admin-knowledge-graph";
@@ -77,6 +78,7 @@ adminGlobals.adminPage = function() {
     ...adminReview,
     ...adminApprovals,
     ...adminSystem,
+    ...adminCron,
     ...adminClassifierVocab,
     ...adminTemplates,
     ...adminWorkflows,
@@ -156,6 +158,12 @@ adminGlobals.adminPage = function() {
           break;
         }
 
+        case "localModels": {
+          this.loadSdCppDiscovery();
+          this.loadComfyDiscovery();
+          break;
+        }
+
         case "lora": {
           this.loadLora();
           break;
@@ -179,6 +187,7 @@ adminGlobals.adminPage = function() {
 
         case "plugins": {
           this.loadPlugins();
+          this.loadDiscover();
           break;
         }
 
@@ -186,6 +195,7 @@ adminGlobals.adminPage = function() {
           this.loadSystemConfig();
           this.loadNsfwConfig();
           this.loadClassifierVocab();
+          this.loadCronJobs();
           break;
         }
 

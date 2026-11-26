@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import { checkUnreleasedSubheadings, } from "./check-changelog.js";
+import { checkUnreleasedSubheadings, compareVersions, parseSections, } from "./check-changelog.js";
 
 /**
  * CLI contract for scripts/check-changelog.ts.
@@ -100,5 +100,31 @@ describe("check-changelog CLI", () => {
       "- three",
     ].join("\n",);
     expect(checkUnreleasedSubheadings(fixture.split("\n",),),).toEqual([],);
+  });
+});
+
+describe("release-candidate versions", () => {
+  test("rc sections parse with base + suffix intact", () => {
+    const { sections, errors, } = parseSections(
+      ["## [0.1.0-rc.1] - 2026-11-22", "", "- staged",].join("\n",).split("\n",),
+    );
+    expect(errors,).toEqual([],);
+    expect(sections,).toHaveLength(1,);
+    expect(sections[0]!.version,).toBe("0.1.0-rc.1",);
+  });
+
+  test("stable sorts above its own candidates, candidates by N", () => {
+    expect(compareVersions("0.1.0", "0.1.0-rc.1",),).toBeGreaterThan(0,);
+    expect(compareVersions("0.1.0-rc.1", "0.1.0",),).toBeLessThan(0,);
+    expect(compareVersions("0.1.0-rc.2", "0.1.0-rc.1",),).toBeGreaterThan(0,);
+    expect(compareVersions("0.1.0-rc.1", "0.1.0-rc.1",),).toBe(0,);
+    expect(compareVersions("0.2.0-rc.1", "0.1.0",),).toBeGreaterThan(0,);
+  });
+
+  test("stable and rc sections both parse side by side", () => {
+    const { errors, } = parseSections(
+      ["## [0.1.0] - 2026-11-23", "", "## [0.1.0-rc.1] - 2026-11-22", "",].join("\n",).split("\n",),
+    );
+    expect(errors,).toEqual([],);
   });
 });

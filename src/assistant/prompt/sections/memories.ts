@@ -12,6 +12,7 @@
  * re-ranked by cosine similarity against recent conversation context after
  * privacy/provision filtering but before injection filtering.
  */
+import { estimateTokens, } from "../../../chat/token-utils";
 import { getLogger, } from "../../../logger";
 import { recordAuditLog, } from "../../../memory/audit";
 import { selectWithinBudget, } from "../../../memory/budget";
@@ -21,6 +22,8 @@ import {
   DEFAULT_INJECTION_CONFIG,
   extractMessageKeywords,
   type InjectionContext,
+  loadInjectionHistory,
+  resolveChatTurnNumber,
   selectMemoriesForInjection,
 } from "../../../memory/injection";
 import { provisionMemories, } from "../../../memory/provision";
@@ -35,7 +38,11 @@ import {
   fetchActorMemories,
   resolveChatScopeContext,
 } from "./memories-helpers";
-import { applyKeyphraseRecalls, collectKeyphraseHits, } from "./memories-keyphrase";
+import {
+  applyKeyphraseRecalls,
+  collectKeyphraseHits,
+  fitKeyphraseHitsToBudget,
+} from "./memories-keyphrase";
 
 export const memorySection: SectionBuilder = {
   name: "memories",
@@ -95,6 +102,17 @@ export const memorySection: SectionBuilder = {
     // allAccepted). Cooldown lives in the keyphrase-recall module.
     const keyphraseHits = await collectKeyphraseHits(ctx, allAccepted,);
 
+    // Forced recalls share the section budget: charge them BEFORE selection
+    // so up to 20 keyphrase hits cannot overflow the section afterward.
+    const memoryBudget = await resolveSectionBudget(ctx, "memory",);
+    const pinnedTokens = allAccepted.reduce(
+      (sum, m,) => sum + (m.pinned ? estimateTokens(m.content,) : 0),
+      0,
+    );
+
+    const fittedForced = fitKeyphraseHitsToBudget(keyphraseHits, pinnedTokens, memoryBudget,);
+    const forcedIds = new Set(fittedForced.map((m,) => m.id),);
+
     // ── Phase 1b: Semantic re-ranking ─────────────────────────────────────
     // If Ollama is reachable, use cosine similarity to re-rank non-pinned
     // memories against the last 5 messages.  Pinned memories are excluded
@@ -102,6 +120,7 @@ export const memorySection: SectionBuilder = {
     const pinned = allAccepted.filter((m,) => m.pinned);
     const mutable = allAccepted.filter((m,) => !m.pinned);
     const scoreMap = new Map<string, number>();
+    const cosineScoreMap = new Map<string, number>();
     if (mutable.length > 0) {
       try {
         const recent = await ctx.db
@@ -123,7 +142,11 @@ export const memorySection: SectionBuilder = {
           );
 
           if (matched.length > 0) {
-            for (const m of matched) { scoreMap.set(m.memoryId, m.score,); }
+            for (const m of matched) {
+              scoreMap.set(m.memoryId, m.score,);
+              cosineScoreMap.set(m.memoryId, m.cosineScore,);
+            }
+
             mutable.sort((a, b,) => {
               const sa = scoreMap.get(a.id,) ?? 0;
               const sb = scoreMap.get(b.id,) ?? 0;
@@ -153,9 +176,12 @@ export const memorySection: SectionBuilder = {
     // world's context-share ratio (`worlds.prompt_budget_ratio`, theme-4
     // AC5; scale-then-clamp keeps the global ceiling) replaces the
     // historical hardcoded cap. Pinned memories are never dropped here.
+    // Forced entries lead the budget selection (pinned-like) but were capped
+    // above; the rest are admitted by importance under the same ceiling.
+    const budgetCandidates = ranked.map((m,) => forcedIds.has(m.id,) ? { ...m, pinned: true, } : m);
     const budgeted = selectWithinBudget(
-      ranked,
-      { maxTokens: await resolveSectionBudget(ctx, "memory",), respectPins: true, },
+      budgetCandidates,
+      { maxTokens: memoryBudget, respectPins: true, },
     );
 
     if (budgeted.length === 0) { return []; }
@@ -185,30 +211,42 @@ export const memorySection: SectionBuilder = {
       );
     }
 
+    // ponytail: message count stands in for a turn; use the assembler's
+    // canonical turn counter when it supplies one.
+    const turnNumber = ctx.turnNumber ?? await resolveChatTurnNumber(ctx.db, ctx.chat.id,);
+    const injectionHistory = ctx.injectionHistory ?? await loadInjectionHistory(ctx.db, ctx.chat.id,);
+
     const injectionCtx: InjectionContext = {
       chatId: ctx.chat.id,
       worldId: ctx.chat.world_id,
       locationId: ctx.chat.current_location_id,
       isPrivateChat: participantIds.length <= 2,
       participantCount: participantIds.length,
-      turnNumber: 0,
+      turnNumber,
       currentKeywords,
       averageIntimacy: 50,
       moodModifier: 0,
       // Test seam: `decide.ts` falls back to `Math.random()` when this is
       // absent, which makes any `memorySection` end-to-end test probabilistic.
       randomFn: ctx.randomFn,
-      semanticScores: scoreMap,
+      semanticScores: cosineScoreMap,
     };
 
     const injectionResult = selectMemoriesForInjection(
-      budgeted,
+      budgeted.filter((m,) => !forcedIds.has(m.id,)),
       DEFAULT_INJECTION_CONFIG,
       injectionCtx,
       DEFAULT_COMFORT,
+      injectionHistory,
     );
 
-    const injected = await applyKeyphraseRecalls(ctx, injectionResult.selected, keyphraseHits,);
+    const keyphraseCtx = { ...ctx, turnNumber, };
+    const injected = await applyKeyphraseRecalls(
+      keyphraseCtx,
+      injectionResult.selected,
+      budgeted.filter((m,) => forcedIds.has(m.id,)),
+    );
+
     if (injected.length === 0) { return []; }
 
     // Single-assembly gate (epic-hidden-carriage-context): submit candidate
@@ -272,6 +310,7 @@ export const memorySection: SectionBuilder = {
         action: "inject",
         details: {
           chatId: ctx.chat.id,
+          turnNumber,
           memoryIds,
           actorCount: auditByActor.size,
         },

@@ -3,11 +3,13 @@
 
 import { spawnSync, } from "bun";
 import { Database, } from "bun:sqlite";
-import { copyFileSync, existsSync, readdirSync, statSync, unlinkSync, writeFileSync, } from "node:fs";
-import { tmpdir, } from "node:os";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync, } from "node:fs";
 import { basename, join, } from "node:path";
 
-const BACKUP_DIR = process.env.BACKUP_DIR ?? tmpdir();
+// ponytail: repo-local scratch, resolved from the script dir because cron/systemd
+// run these with an arbitrary cwd. Set BACKUP_DIR for durable/operator storage.
+const REPO_TMP = join(import.meta.dir, "..", ".tmp",);
+export const BACKUP_DIR = process.env.BACKUP_DIR ?? join(REPO_TMP, "backups",);
 const DB_PATH = process.env.DB_PATH ?? "/data/loop-lore.db";
 const NETWORK_MOUNT = process.env.NETWORK_MOUNT ?? "/mnt/backups/db";
 const RETENTION_DAYS = parseInt(process.env.RETENTION_DAYS ?? "7", 10,);
@@ -65,6 +67,8 @@ export async function createSnapshot(sourcePath: string, destPath: string,): Pro
 async function runBackup(): Promise<void> {
   try {
     log(`Starting backup: ${TIMESTAMP}`,);
+
+    mkdirSync(BACKUP_DIR, { recursive: true, },);
 
     // Step 1: Snapshot the database
     if (!existsSync(DB_PATH,)) {

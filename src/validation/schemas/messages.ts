@@ -95,60 +95,66 @@ export const MessagesQuery = t.Object({
   translateLocale: t.Optional(t.String({ minLength: 1, maxLength: 35, },),),
 },);
 
-export const MessageSearchQuery = t.Object({
-  /** Scope to a single chat (optional; otherwise searches across all accessible chats). */
-  chatId: t.Optional(t.String({ format: "uuid", },),),
-  /** Full-text MATCH query against message content (optional — omit for filter-only searches). */
-  q: t.Optional(t.String({ maxLength: 500, },),),
-  /** Restrict to a sender role. */
-  role: t.Optional(t.String({ enum: ["user", "assistant", "character", "system",], },),),
-  /** "true" to return only messages that carry at least one attachment. */
-  hasAttachment: t.Optional(t.String({ enum: ["true", "false",], },),),
-  /**
-   * Only messages carrying an attachment asset of this type
-   * (asset_links → assets.asset_type). Accepted values are the AssetType enum
-   * members; deliberately a plain string — Elysia 1.4 defaults an absent
-   * t.UnionEnum/t.Enum query param to its FIRST member, which would silently
-   * filter every unqualified search to `image`. Validated at runtime instead.
-   */
-  attachmentType: t.Optional(t.String(),),
-  /** Substring matched (LIKE, %/_ escaped) against message plaintext — e.g. "youtube". */
-  linkPattern: t.Optional(t.String({ minLength: 1, maxLength: 100, },),),
-  /** Inclusive lower bound (ISO date) on message created_at. */
-  dateFrom: t.Optional(t.String(),),
-  /** Inclusive upper bound (ISO date) on message created_at. */
-  dateTo: t.Optional(t.String(),),
-  limit: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 50, },),),
-  offset: t.Optional(t.Numeric({ minimum: 0, default: 0, },),),
-},);
-
+/**
+ * One enriched attachment on a message item — mirrors the object
+ * enrichAttachments() builds in src/routes/messages/helpers.ts. All fields
+ * are always present; absence of attachments is expressed as a list-level
+ * null, never as an undefined field.
+ */
 export const MessageAttachmentSchema = t.Object({
   assetId: t.String(),
-  order: t.Optional(t.Numeric(),),
-  caption: t.Optional(t.String(),),
-  label: t.Optional(t.String(),),
+  order: t.Number(),
+  caption: t.String(),
+  label: t.String(),
+  url: t.String(),
+  thumbUrl: t.String(),
+  filename: t.String(),
+  mimeType: t.String(),
+  type: t.String(),
+  sizeBytes: t.Number(),
+  durationSecs: t.Number(),
+  width: t.Number(),
+  height: t.Number(),
+  nsfw: t.Boolean(),
 },);
 
-export const MessageSearchResult = t.Object({
-  messageId: t.String(),
-  chatId: t.String(),
-  chatName: t.Nullable(t.String(),),
-  chatCharacterName: t.Nullable(t.String(),),
+/**
+ * Enriched message item in the GET /chats/:id/messages list. Declares the
+ * fields the route guarantees; per-row extras (variant info, avatar bundle,
+ * read-time translations) are additive and intentionally not closed.
+ * attachments/tool_calls are null when absent — never undefined.
+ */
+export const MessageListItemSchema = t.Object({
+  id: Id,
+  chat_id: Id,
   role: MessageRoleSchema,
-  content: t.String(),
-  /** Snippet around the match; spans the match with <mark> markers when q is given. */
-  matchContext: t.String(),
-  createdAt: t.String(),
-  attachments: t.Optional(t.Array(MessageAttachmentSchema,),),
-  /** FTS relevance score (bm25 — lower is more relevant); 0 for filter-only searches. */
-  matchScore: t.Number(),
+  content: t.String({ description: "Render-time plaintext content (transformed, or the decrypt-failure placeholder).", },),
+  attachments: t.Union([t.Array(MessageAttachmentSchema,), t.Null(),], { description: "Resolved attachment assets, or null when the message carries none.", },),
+  tool_calls: t.Union([t.Array(t.Any(),), t.Null(),], { description: "Persisted assistant tool calls, or null when none.", },),
+  tool_name: t.Union([t.String(), t.Null(),],),
+  tool_error: t.Boolean(),
+  created_at: t.String(),
 },);
 
-export const MessageSearchResponse = t.Object({
-  results: t.Array(MessageSearchResult,),
-  total: t.Number(),
-  hasMore: t.Boolean(),
-  query: t.String(),
+/**
+ * Variant sibling in the GET /messages/:id/variants array: the RAW message
+ * row plus render-time plaintext content. Unlike the list/single-message
+ * contract, attachments and tool_calls here are the STORED JSON strings
+ * (no enrichment runs on this path).
+ */
+export const MessageVariantItemSchema = t.Object({
+  id: Id,
+  chat_id: Id,
+  parent_id: t.Union([Id, t.Null(),],),
+  role: MessageRoleSchema,
+  content: t.String({ description: "Message content text: render-transformed on /variants, stored content on /variant select.", },),
+  content_type: MessageContentTypeSchema,
+  status: MessageStatusSchema,
+  visibility: MessageVisibilitySchema,
+  attachments: t.Union([t.String(), t.Null(),], { description: "Stored attachment JSON string (raw, unenriched on this route), or null.", },),
+  tool_calls: t.Union([t.String(), t.Null(),], { description: "Stored tool-call JSON string (raw), or null.", },),
+  swipe_index: t.Union([t.Number(), t.Null(),],),
+  created_at: t.String(),
 },);
 
 export const MusicLinkMessageSchema = t.Object({

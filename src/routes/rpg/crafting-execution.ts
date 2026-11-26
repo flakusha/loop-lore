@@ -10,7 +10,7 @@ import { Elysia, t, } from "elysia";
 import { CraftingProcessService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, SuccessResponse, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 import { HttpStatus, } from "../http-utils/status";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -36,48 +36,46 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
 
   return (
     new Elysia({ name: "rpg-crafting-execution", },)
-      .post(R, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .post(R, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as {
+            actorId: string;
+            recipeId: string;
+            stationInstanceId?: string;
+            experiment?: boolean;
+          };
 
-        const body = ctx.body as {
-          actorId: string;
-          recipeId: string;
-          stationInstanceId?: string;
-          experiment?: boolean;
-        };
+          // Actor ownership check — shared trust-boundary guard.
+          const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
+          if (denied) { return denied; }
 
-        // Actor ownership check — shared trust-boundary guard.
-        const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
-        if (denied) { return denied; }
+          // Get worldId from recipe
+          const recipe = await opts.database.selectFrom("crafting_recipes",)
+            .select("world_id",).where("id", "=", body.recipeId,).executeTakeFirst();
 
-        // Get worldId from recipe
-        const recipe = await opts.database.selectFrom("crafting_recipes",)
-          .select("world_id",).where("id", "=", body.recipeId,).executeTakeFirst();
+          if (!recipe) { return jsonError("Recipe not found", HttpStatus.NotFound,); }
 
-        if (!recipe) { return jsonError("Recipe not found", HttpStatus.NotFound,); }
+          const svc = new CraftingProcessService(opts.database,);
+          try {
+            const result = await svc.attemptCraft({
+              actorId: body.actorId,
+              recipeId: body.recipeId,
+              stationInstanceId: body.stationInstanceId,
+              worldId: recipe.world_id,
+              experiment: body.experiment,
+            },);
 
-        const svc = new CraftingProcessService(opts.database,);
-        try {
-          const result = await svc.attemptCraft({
-            actorId: body.actorId,
-            recipeId: body.recipeId,
-            stationInstanceId: body.stationInstanceId,
-            worldId: recipe.world_id,
-            experiment: body.experiment,
-          },);
+            return jsonResponse(result,);
+          } catch (error) {
+            const msg = error instanceof Error ? error.message : "Craft failed";
+            log().error("Craft attempt failed", error instanceof Error ? error : undefined,);
+            if (msg.includes("not found",) || msg.includes("Insufficient",) || msg.includes("required",)) {
+              return jsonError(msg, HttpStatus.BadRequest,);
+            }
 
-          return jsonResponse(result,);
-        } catch (error) {
-          const msg = error instanceof Error ? error.message : "Craft failed";
-          log().error("Craft attempt failed", error instanceof Error ? error : undefined,);
-          if (msg.includes("not found",) || msg.includes("Insufficient",) || msg.includes("required",)) {
-            return jsonError(msg, HttpStatus.BadRequest,);
+            return jsonError("Internal server error", HttpStatus.InternalServerError,);
           }
-
-          return jsonError("Internal server error", HttpStatus.InternalServerError,);
-        }
-      }, {
+        },), {
         body: CraftBody,
         response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         detail: {

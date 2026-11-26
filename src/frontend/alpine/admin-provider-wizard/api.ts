@@ -24,6 +24,8 @@ export interface ProviderPayload {
   label: string;
   baseUrl: string;
   model: string;
+  /** Which provider family to materialize — omitted means openai-compatible. */
+  kind?: string;
   apiKey?: string;
   setDefault?: boolean;
 }

@@ -42,7 +42,12 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
-import { changedFiles, } from "./check/parallel/context.mjs";
+import {
+  changedFiles,
+  changedModules,
+  isScopedDiffSrcFile,
+  scopedCoveragePaths,
+} from "./check/parallel/context.mjs";
 
 let workDir;
 
@@ -293,5 +298,28 @@ describe("changedFiles — --diff-base scoping", () => {
     } finally {
       rmSync(orphan, { recursive: true, force: true, },);
     }
+  });
+});
+
+describe("core-only diff scoping", () => {
+  const CORE_FILE = "packages/core/src/config/schema.ts";
+
+  test("maps a core file to its real module dir, not `packages`", () => {
+    expect(changedModules([CORE_FILE,],),).toEqual(["packages/core/src/config",],);
+    expect(changedModules(["src/chat/service.ts",],),).toEqual(["chat",],);
+  });
+
+  test("scoped coverage targets an existing core dir that has tests", () => {
+    // `config` exists in both trees; the old `src/packages` path did not.
+    const paths = scopedCoveragePaths([CORE_FILE,],);
+    expect(paths,).toContain("packages/core/src/config",);
+    expect(paths,).not.toContain("src/packages",);
+  });
+
+  test("a core implementation file enters the scoped file list", () => {
+    expect(isScopedDiffSrcFile(CORE_FILE,),).toBe(true,);
+    expect(isScopedDiffSrcFile("packages/core/src/config/schema.test.ts",),).toBe(false,);
+    expect(isScopedDiffSrcFile("packages/core/package.json",),).toBe(false,);
+    expect(isScopedDiffSrcFile("src/chat/service.ts",),).toBe(true,);
   });
 });

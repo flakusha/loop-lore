@@ -26,7 +26,7 @@ import {
   resetTurnActions,
 } from "../../rpg/combat";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, requireUserId, } from "../http-utils";
 import { ActionBody, CombatantSchema, InitCombatantBody, InitiativeBody, StatusBody, } from "./combat-schemas";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -57,8 +57,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
             }),),
           },);
         } catch (error) {
-          log().error("Failed to evaluate combat status", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to evaluate combat status", error,);
         }
       }, {
         body: StatusBody,
@@ -84,8 +83,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
           const updated = body.consume ? consumeAction(body.combatant, body.type,) : body.combatant;
           return jsonResponse({ allowed, updated, },);
         } catch (error) {
-          log().error("Failed to resolve action", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to resolve action", error,);
         }
       }, {
         body: ActionBody,
@@ -123,8 +121,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
 
           return jsonResponse({ combatant, },);
         } catch (error) {
-          log().error("Failed to init combatant", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to init combatant", error,);
         }
       }, {
         body: InitCombatantBody,
@@ -143,8 +140,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
           const body = ctx.body as { combatant: Combatant };
           return jsonResponse({ updated: resetTurnActions(body.combatant,), },);
         } catch (error) {
-          log().error("Failed to reset turn", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to reset turn", error,);
         }
       }, {
         body: t.Object({ combatant: CombatantSchema, },),
@@ -162,8 +158,7 @@ export function combatStatusRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia
           const body = ctx.body as { combatants: Combatant[] };
           return jsonResponse({ updated: resetRoundReactions(body.combatants,), },);
         } catch (error) {
-          log().error("Failed to reset round", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to reset round", error,);
         }
       }, {
         body: InitiativeBody,

@@ -228,6 +228,10 @@ export interface AssembleContext {
    * `memorySection` end-to-end run is deterministic instead of ~25-35% flaky.
    */
   randomFn?: () => number;
+  /** Current turn number for injection cooldowns. Derived from the chat when omitted. */
+  turnNumber?: number;
+  /** memoryId → last injected turn. Derived from the audit log when omitted. */
+  injectionHistory?: ReadonlyMap<string, number>;
   /**
    * Single-assembly injection gate (epic-hidden-carriage-context). Present
    * only when the chat opted into the hidden carriage or an explicit
@@ -251,6 +255,8 @@ export interface SectionBuilder {
 // Lower rank = kept longer when trimming
 export const PRIORITY = {
   system: 0,
+  /** Validation-subject instruction — empty unless a harness is configured. */
+  validationHarness: 0,
   taskClarification: 0,
   actorHeader: 0,
   authorNote: 0,
@@ -263,6 +269,8 @@ export const PRIORITY = {
   /** Behavior-critical for both static and dynamic characters. */
   actorGrowth: 1,
   pluginAgentRole: 0,
+  /** Opt-in rtk/lean-ctx catalog — behavior-critical when enabled. */
+  externalTools: 0,
   /** Assistant personality voice block — behavior-critical when set. */
   assistantPersonality: 0,
   chatHistory: 0,
@@ -306,6 +314,7 @@ export type Losslessness = "lossless" | "lossy";
  */
 export const SECTION_LOSSLESSNESS = {
   system: "lossless",
+  validationHarness: "lossless",
   taskClarification: "lossless",
   actorHeader: "lossless",
   authorNote: "lossless",
@@ -335,4 +344,5 @@ export const SECTION_LOSSLESSNESS = {
   nsfwContext: "lossless",
   "output-style": "lossless",
   customInstructions: "lossless",
+  externalTools: "lossless",
 } as const satisfies Record<keyof typeof PRIORITY, Losslessness>;

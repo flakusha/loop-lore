@@ -11,6 +11,7 @@
 import { readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { jsonParseOr, } from "../utils";
+import { isLocale, } from "./locale-registry";
 import { flattenTranslations, } from "./translator";
 import type { FlatTranslationMap, Locale, TranslationMap, } from "./types";
 
@@ -21,6 +22,7 @@ const localeCache = new Map<Locale, FlatTranslationMap>();
 const rawCache = new Map<Locale, TranslationMap>();
 
 /** Path to locales directory */
+// TODO(env): bun-only — import.meta.dir; add node shim when node target lands.
 const LOCALES_DIR = join(import.meta.dir, "../public/locales",);
 
 /**
@@ -29,6 +31,10 @@ const LOCALES_DIR = join(import.meta.dir, "../public/locales",);
  * @returns flattened translations for the locale (cached after first call). Returns empty map on read failure.
  */
 export function loadLocale(locale: Locale,): FlatTranslationMap {
+  // Defense in depth: every live caller validates, but a cast string must
+  // never become a path segment.
+  if (!isLocale(locale,)) { return new Map(); }
+
   const cached = localeCache.get(locale,);
   if (cached) { return cached; }
 

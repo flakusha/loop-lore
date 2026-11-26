@@ -1,0 +1,93 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+<div class="settings-section">
+  <div class="form-group">
+    <label class="form-label" for="displayName">{{{t("settings.displayName")}}}</label>
+    <input
+      type="text"
+      class="form-input"
+      id="displayName"
+      name="displayName"
+      x-model="displayName"
+      x-bind:placeholder="t('settings.displayNamePlaceholder')"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="birthDate">{{{t("settings.birthDate")}}}</label>
+    <input type="date" class="form-input" id="birthDate" name="birthDate" x-model="birthDate" />
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="theme-select">{{{t("settings.theme")}}}<span
+        class="info-bubble-host"
+        x-data="infoBubble({ helpKey: 'help.settings.theme' })"
+      >{{> info-bubble.html }}</span></label>
+    <select
+      class="form-select"
+      id="theme-select"
+      data-testid="theme-select"
+      x-model="theme"
+      @change="saveGeneral()"
+      x-bind:aria-label="t('settings.theme')"
+    >
+      <option value="default">{{{t("settings.themeDefault")}}}</option>
+      <option value="light">{{{t("settings.themeLight")}}}</option>
+      <option value="bright">{{{t("settings.themeBright")}}}</option>
+      <option value="colorful">{{{t("settings.themeColorful")}}}</option>
+      <option value="monochrome">{{{t("settings.themeMonochrome")}}}</option>
+      <option value="no-icons">{{{t("settings.themeNoIcons")}}}</option>
+      <option value="dracula">{{{t("settings.themeDracula")}}}</option>
+      <option value="nord">{{{t("settings.themeNord")}}}</option>
+      <option value="github-dark">{{{t("settings.themeGithubDark")}}}</option>
+      <option value="material">{{{t("settings.themeMaterial")}}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="locale-select">{{{t("settings.language")}}}<span
+        class="info-bubble-host"
+        x-data="infoBubble({ helpKey: 'help.settings.language' })"
+      >{{> info-bubble.html }}</span></label>
+    <select
+      class="form-select"
+      id="locale-select"
+      data-testid="locale-select"
+      x-model="locale"
+      @change="onLocaleChange()"
+      x-bind:aria-label="t('settings.language')"
+    >
+      <template x-for="loc in locales" :key="loc.id">
+        <option :value="loc.id" :data-lang="loc.direction" :selected="loc.id === locale">
+          <span x-text="loc.name"></span> (<span x-text="loc.nativeName"></span>)
+        </option>
+      </template>
+    </select>
+    <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+      Interface language (UI strings only).
+    </small>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" for="content-locale-select">{{{t("settings.contentLanguage")}}}</label>
+    <select
+      class="form-select"
+      id="content-locale-select"
+      data-testid="content-locale-select"
+      x-model="contentLocale"
+      @change="onContentLocaleChange()"
+      x-bind:aria-label="t('settings.contentLanguage')"
+    >
+      <option value="">—</option>
+      <template x-for="loc in locales" :key="loc.id">
+        <option :value="loc.id" :data-lang="loc.direction" :selected="loc.id === contentLocale">
+          <span x-text="loc.name"></span> (<span x-text="loc.nativeName"></span>)
+        </option>
+      </template>
+    </select>
+    <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+      Preferred language for chat/message content and translations. Separate from the interface language above.
+    </small>
+  </div>
+</div>

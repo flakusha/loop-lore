@@ -9,7 +9,7 @@
 
 **Summary:**
 
-Rationale: No embedded-backend app: Bun ships no iOS/Android target, so ship a thin client over /api/v1+SSE. The layout tier already ships (767/768/479px + 44px targets); remaining work is the PWA shell/outbox ticket plus replacing the hardcoded 1024-token memory cap with a context-share budget wired to per-world token_budget.
+Rationale: No embedded-backend app: Bun ships no iOS/Android target, so ship a thin client over /api/v1+SSE. The layout tier ships (767/768/479px + 44px targets); the PWA shell/outbox and the context-share memory budget also shipped. Remaining work is verification and polish on the shipped surfaces, not new builds.
 
 Feeds: mobile-packaged-feasibility-2026-11-03 (SKIP packaged app; ADOPT shipped CSS tiers; FOLLOW-UP PWA ticket TASK-pwa-cached-shell-plus-send-queue + getMaxMemoryRatio gap §4)
 
@@ -19,6 +19,8 @@ AC5 Memory budget: hardcoded 1024-token cap replaced by a context-share ratio ho
 
 Related: .tmp/research/release-1.0.0-roadmap.md
 Scope note: serves Required mobile/PWA + solo-run items (thin client over /api/v1+SSE).
+
+**Operator confirmation (2026-11-19):** the shipped `/api/v1` + SSE thin client is the 1.0.0 mobile answer; no native package. Theme 4 stays verification-only and the tracker open question is resolved.
 
 **Caveats:** TOCTOU: outbox drain is FIFO with idempotency keys; concurrent drain single-flighted. Security: Bearer auth on every write; PWA shell caches no secrets. Authorization: outbox replays as the originating user. Parallelism: service-worker tests are isolated; no shared fixtures. Partial failure: failed send stays queued with backoff, never dropped. Rollback: PWA shell is additive; removal restores online-only. Observability: outbox depth + drain failures surfaced in UI.
 
@@ -45,7 +47,7 @@ Still open (not started, do not half-build):
 **Implementation note (2026-11-12, phone-viewport spec — this worktree):**
 
 `tests/e2e/flows/browser/mobile-outbox.browser.ts` LANDED covering AC4's
-phone-viewport leg, with two tests `test.skip`-ed carrying inline diagnoses:
+phone-viewport leg; the skips described below were re-enabled 2026-11-18 and the file now has three active tests:
 - Horizontal overflow at 375px + 360px: the ~1200px chat-header `.actions`
   row forced a ~900px page overflow — FIXED here (app.css ≤768px block:
   `flex-wrap` + row-gap + flex-end on `.main-header .actions`). A residual
@@ -65,7 +67,7 @@ phone-viewport leg, with two tests `test.skip`-ed carrying inline diagnoses:
 Acceptance note: AC4's "queued sends survive offline→online" is verified at
 the unit level (outbox-store + chat-send-offline suites) and the 44px
 tap-target rule is applied on the new badge surface; the end-to-end browser
-demonstration stays skipped until the enqueue-classification fix lands.
+demonstration now runs: `tests/e2e/flows/browser/mobile-outbox.browser.ts` has three active tests (re-enabled 2026-11-18); the enqueue-classification bug behind the skip is fixed.
 
 Landed since (2026-11-12, worktree theme4-pwa-caps):
 - AC4 offline send outbox — the dedicated slice ticket

@@ -3,8 +3,8 @@
 
 // size-allow: 40
 
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import type { GroupWrapRow, } from "./wrap-sender-key";
 
 /**

@@ -239,6 +239,8 @@ export interface ModelInfo {
   thinking?: boolean;
   /** Modalities supported (e.g. "text", "image", "audio") */
   modalities?: string[];
+  /** Input/output content kinds reported by honkbox-style model entries */
+  modality?: { input?: string[]; output?: string[] };
   /** Whether tool/function calling is supported */
   toolCalling?: boolean;
   /** Parameter size if reported or parseable from id (e.g. "8B", "70B") */

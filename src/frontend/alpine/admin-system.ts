@@ -134,6 +134,39 @@ export const adminSystem = {
     }
   },
 
+  /**
+   * Download the merged file-plane + DB-plane effective config
+   * (GET /api/v1/admin/effective-config/export) as JSON. The server
+   * redacts secret-adjacent keys into `omitted`.
+   * @returns {Promise<void>}
+   */
+  async exportEffectiveConfig() {
+    try {
+      const res = await apiFetch("/api/v1/admin/effective-config/export", {
+        headers: { Accept: "application/json", },
+      },);
+
+      if (!res.ok) {
+        const err = await res.json();
+        showToast("error", err.message || t("toasts.failed",),);
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob,);
+      const a = document.createElement("a",);
+      a.href = url;
+      const today = new Date().toISOString().slice(0, 10,);
+      a.download = `effective-config-${today}.json`;
+      document.body.appendChild(a,);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url,);
+    } catch {
+      showToast("error", t("toasts.networkError",),);
+    }
+  },
+
   // ── Danger Zone ─────────────────────────────────────
   dangerConfirm: { purge: "", reset: "", factory: "", },
   dangerBusy: { purge: false, reset: false, factory: false, },

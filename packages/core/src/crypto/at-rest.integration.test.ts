@@ -17,9 +17,9 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 
-import { createSqliteDialect, } from "@/db";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
+import { createSqliteDialect, } from "../../../../src/db";
+import type { DB, } from "../../../../src/db/schema";
+import { createLogger, } from "../logger";
 import { decryptAtRest, encryptAtRest, getChatEncryptionLevel, isE2eOrEncrypted, } from "./at-rest";
 import { isEncryptedPayload, } from "./pipeline";
 import { initSmk, } from "./smk";
@@ -40,7 +40,7 @@ function buildMigrationProvider(): {
 } {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const dir = path.join(__dirname, "..", "db", "migrations",);
+      const dir = path.join(__dirname, "..", "..", "..", "..", "src", "db", "migrations",);
       const files = readdirSync(dir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Caveats:** Shipped on dev as pure functional folds in `src/server/watchdog/state.ts` + `state.test.ts` (`createState/onSpawn/onProbe/onCrash`, injected clock, 60s crash window + shared `supervise.ts` thresholds). Residual AC: the ticket's `WatchdogState` enum / `WatchdogStateMachine` class / `LOOP_LORE_WATCHDOG_BACKOFF` knob do not exist and there is no invalid-transition test (pure folds have none); the emit-to-`watchdog_events` AC is met via #4's `transition-writer.ts` seam, not this module.
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

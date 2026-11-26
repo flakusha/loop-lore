@@ -1,0 +1,300 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Asset Service — read/access (get, list, decrypt, ownership)
+ */
+import type { ExpressionBuilder, Kysely, } from "kysely";
+import { decryptAssetBlob, } from "../../../../../src/crypto/asset-encryption";
+import type { ChatKey, } from "../../../../../src/crypto/chat-keys";
+import { ActorType, ActorVisibility, AssetLinkEntity, AssetVisibility, } from "../../../../../src/db/enums";
+import type { DB, } from "../../../../../src/db/schema";
+import { can, } from "../../../../../src/users/permissions";
+import { isEncryptedAsset, } from "../encryption";
+import { getAssetFilePath, } from "./file-system";
+import type { AssetRecord, } from "./types";
+
+/**
+ * Get a single asset by ID.
+ * @param database
+ * @param assetId
+ * @returns string
+ */
+export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<AssetRecord | null> {
+  const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
+  return (asset as AssetRecord | null) ?? null;
+}
+
+/**
+ * Get a single asset, but only when the caller owns it.
+ *
+ * "Missing" and "not yours" both come back as `null`, so the caller cannot
+ * tell the two apart: an asset id is not authorization, and a differing
+ * answer would be an existence oracle on ids the caller guessed.
+ * @param database
+ * @param assetId
+ * @param ownerId - the authenticated caller
+ * @returns {Promise<AssetRecord | null>} The asset, or null when it is missing or owned by someone else
+ */
+export async function getOwnedAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  ownerId: string,
+): Promise<AssetRecord | null> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset || asset.owner_id !== ownerId) { return null; }
+  return asset;
+}
+
+/**
+ * Get decrypted asset data. If asset is encrypted, decrypts using provided chat key.
+ * If asset is not encrypted, returns raw file data.
+ * @param database - Database connection
+ * @param assetId - Asset ID
+ * @param uploadDir - Upload directory path
+ * @param chatKey - Chat key for decryption (optional, required for encrypted assets)
+ * @returns Decrypted buffer or null if asset not found
+ * @throws {Error}
+ */
+export async function getAssetData(
+  database: Kysely<DB>,
+  assetId: string,
+  uploadDir: string,
+  chatKey?: ChatKey,
+): Promise<Buffer | null> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset) { return null; }
+
+  const filePath = getAssetFilePath(uploadDir, asset.storage_path,);
+  const file = Bun.file(filePath,);
+  if (!(await file.exists())) { return null; }
+
+  // TODO(perf): async read keeps the synchronous driver free; only the
+  // encrypted branch inherently needs bytes (decryption input).
+  const fileData = Buffer.from(await file.arrayBuffer(),);
+
+  // If asset is encrypted, decrypt it (per-asset HKDF subkey derives from chatKey + assetId)
+  if (isEncryptedAsset(asset,)) {
+    if (!chatKey) {
+      throw new Error("Chat key required to decrypt encrypted asset",);
+    }
+
+    return decryptAssetBlob(fileData, chatKey, asset.id,);
+  }
+
+  return fileData;
+}
+
+/**
+ * Check if an asset is encrypted.
+ * @param database
+ * @param assetId
+ * @returns void
+ */
+export async function isAssetEncrypted(
+  database: Kysely<DB>,
+  assetId: string,
+): Promise<boolean> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset) { return false; }
+  return asset.encryption_tier !== "public" && asset.encrypted_key_id !== null;
+}
+
+/**
+ * Build an OR filter for asset visibility: public, owned by the actor, or
+ * shared with the actor via an explicit `asset_shares` row. Pass tablePrefix ""
+ * for unjoined queries, "assets." for joined queries.
+ * @param eb
+ * @param actorId
+ * @param tablePrefix
+ * @returns void
+ */
+export function visibleAssetFilter(
+  eb: ExpressionBuilder<DB, "assets">,
+  actorId: string | null,
+  tablePrefix = "",
+) {
+  // Null/empty actorId yields public-only: "" never equals a real id.
+  const id = actorId ?? "";
+  const visibilityColumn: "visibility" | "assets.visibility" = tablePrefix === "" ? "visibility" : "assets.visibility";
+  const ownerColumn: "owner_id" | "assets.owner_id" = tablePrefix === "" ? "owner_id" : "assets.owner_id";
+  // The share correlation always names the outer table explicitly: an
+  // unqualified "id" here would bind to asset_shares.id inside the subquery.
+  return eb.or([
+    eb(visibilityColumn, "=", AssetVisibility.Public,),
+    eb(ownerColumn, "=", id,),
+    eb.and([
+      eb(visibilityColumn, "=", AssetVisibility.Shared,),
+      eb.exists(
+        eb.selectFrom("asset_shares",)
+          .select("asset_shares.id",)
+          .whereRef("asset_shares.asset_id", "=", "assets.id",)
+          .where("asset_shares.shared_with_id", "=", id,),
+      ),
+    ],),
+  ],);
+}
+
+/**
+ * Build the gallery-grid visibility filter: `visibleAssetFilter` OR the asset is
+ * linked to a PUBLIC character, whose avatars inherit the character's visibility
+ * (G6). Shared by the gallery grid and the gallery search so the two cannot
+ * drift apart.
+ * @param eb
+ * @param actorId
+ * @returns void
+ */
+export function visibleGalleryAssetFilter(eb: ExpressionBuilder<DB, "assets">, actorId: string | null,) {
+  return eb.or([
+    visibleAssetFilter(eb, actorId, "",),
+    eb.exists(
+      eb.selectFrom("asset_links as al",)
+        .innerJoin("actors as act", "act.id", "al.entity_id",)
+        .select("act.id",)
+        .whereRef("al.asset_id", "=", "assets.id",)
+        .where("al.entity_type", "=", AssetLinkEntity.Actor,)
+        .where("act.actor_type", "=", ActorType.Character,)
+        .where("act.visibility", "=", ActorVisibility.Public,),
+    ),
+  ],);
+}
+
+/**
+ * List assets with optional filters (entity_type, entity_id, label).
+ * @param database
+ * @param options
+ * @param options.page
+ * @param options.pageSize
+ * @param options.entityType
+ * @param options.entityId
+ * @param options.label
+ * @param options.actorId
+ * @param options.actorRole
+ * @returns void
+ */
+export async function listAssets(
+  database: Kysely<DB>,
+  options: {
+    page?: number;
+    pageSize?: number;
+    entityType?: AssetLinkEntity;
+    entityId?: string;
+    label?: string;
+    actorId?: string | null;
+    actorRole?: string | null;
+  } = {},
+): Promise<{ data: AssetRecord[]; total: number }> {
+  const page = options.page ?? 1;
+  const pageSize = Math.min(options.pageSize ?? 50, 200,);
+  const offset = (page - 1) * pageSize;
+  const isAdmin = can(options.actorRole, "admin.character",);
+  const actorId = options.actorId ?? "";
+
+  // If entity filter is provided, join through asset_links
+  if (options.entityType || options.entityId) {
+    let countQuery = database
+      .selectFrom("assets",)
+      .innerJoin("asset_links", "assets.id", "asset_links.asset_id",)
+      .select(database.fn.countAll<number>().as("total",),);
+
+    let listQuery = database
+      .selectFrom("assets",)
+      .innerJoin("asset_links", "assets.id", "asset_links.asset_id",)
+      .selectAll("assets",);
+
+    if (options.entityType) {
+      countQuery = countQuery.where("asset_links.entity_type", "=", options.entityType,);
+      listQuery = listQuery.where("asset_links.entity_type", "=", options.entityType,);
+    }
+
+    if (options.entityId) {
+      countQuery = countQuery.where("asset_links.entity_id", "=", options.entityId,);
+      listQuery = listQuery.where("asset_links.entity_id", "=", options.entityId,);
+    }
+
+    if (options.label) {
+      countQuery = countQuery.where("asset_links.label", "=", options.label,);
+      listQuery = listQuery.where("asset_links.label", "=", options.label,);
+    }
+
+    // Apply visibility filter (admin sees all)
+    if (!isAdmin) {
+      countQuery = countQuery.where((eb,) => visibleAssetFilter(eb, actorId, "assets.",));
+      listQuery = listQuery.where((eb,) => visibleAssetFilter(eb, actorId, "assets.",));
+    }
+
+    const countResult = await countQuery.executeTakeFirst();
+    const total = countResult?.total ?? 0;
+    const data = await listQuery
+      .orderBy("assets.created_at", "desc",)
+      .limit(pageSize,)
+      .offset(offset,)
+      .execute();
+
+    return { data: data as unknown as AssetRecord[], total, };
+  }
+
+  // No filter — list all assets (with visibility filter)
+  let countQuery = database
+    .selectFrom("assets",)
+    .select(database.fn.countAll<number>().as("total",),);
+
+  let listQuery = database
+    .selectFrom("assets",)
+    .selectAll();
+
+  if (!isAdmin) {
+    countQuery = countQuery.where((eb,) => visibleAssetFilter(eb, actorId,));
+    listQuery = listQuery.where((eb,) => visibleAssetFilter(eb, actorId,));
+  }
+
+  const countResult = await countQuery.executeTakeFirst();
+  const total = countResult?.total ?? 0;
+
+  const data = await listQuery
+    .orderBy("created_at", "desc",)
+    .limit(pageSize,)
+    .offset(offset,)
+    .execute();
+
+  return { data: data as unknown as AssetRecord[], total, };
+}
+
+/**
+ * Check if an actor can access an asset.
+ * Owner always yes. Admin always yes. Public asset → anyone (open public,
+ * incl. null-actor guests).
+ * Shared asset → check asset_shares. Private → owner only.
+ * @param database
+ * @param assetId
+ * @param actorId
+ * @param actorRole
+ * @returns void
+ */
+export async function canAccessAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  actorId: string | null,
+  actorRole: string | null,
+): Promise<boolean> {
+  if (can(actorRole, "admin.character",)) { return true; }
+
+  const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
+  if (!asset) { return false; }
+  if (actorId && asset.owner_id === actorId) { return true; }
+  // Open public: anyone — including logged-out / synthetic-guest callers
+  // with a null actorId — may read public assets.
+  if (asset.visibility === AssetVisibility.Public) { return true; }
+  if (actorId && asset.visibility === AssetVisibility.Shared) {
+    const share = await database
+      .selectFrom("asset_shares",)
+      .select("id",)
+      .where("asset_id", "=", assetId,)
+      .where("shared_with_id", "=", actorId,)
+      .executeTakeFirst();
+
+    if (share) { return true; }
+  }
+
+  return false;
+}

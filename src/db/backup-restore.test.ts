@@ -1,17 +1,30 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { Database, } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  utimesSync,
+  writeFileSync,
+} from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import {
   createDbBackup,
   hasSqliteHeader,
+  InvalidSnapshotError,
   listDbBackups,
+  pruneDbSnapshots,
   resolveBackupPath,
   restoreDbBackup,
+  validateSqliteSnapshot,
 } from "./backup-restore";
 
 try {
@@ -20,8 +33,17 @@ try {
   /* already initialized */
 }
 
+// Resource contract: every test owns a fresh mkdtempSync dir and file DB;
+// afterEach closes the live handle and removes the dir. No shared paths.
 function makeDb(filePath: string,): Database {
   const db = new Database(filePath,);
+  db.exec(
+    "CREATE TABLE kysely_migration (name TEXT PRIMARY KEY, timestamp INTEGER NOT NULL, completed INTEGER NOT NULL);",
+  );
+
+  db.exec("INSERT INTO kysely_migration (name, timestamp, completed) VALUES ('001_init', 1, 1);",);
+  db.exec("CREATE TABLE chats (id TEXT PRIMARY KEY);",);
+  db.exec("CREATE TABLE messages (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL REFERENCES chats(id));",);
   db.exec("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL);",);
   return db;
 }
@@ -51,7 +73,11 @@ describe("db backup/restore service", () => {
     db = makeDb(livePath,);
   },);
 
-  afterAll(() => {
+  afterEach(() => {
+    try {
+      db.close();
+    } catch { /* closed by restoreDbBackup in that test */ }
+
     rmSync(dir, { recursive: true, force: true, },);
   },);
 
@@ -105,12 +131,53 @@ describe("db backup/restore service", () => {
   });
 
   test("resolveBackupPath rejects traversal, separators and missing files", () => {
-    expect(() => resolveBackupPath(dir, "../escape.db",)).toThrow();
-    expect(() => resolveBackupPath(dir, "sub/dir.db",)).toThrow();
-    expect(() => resolveBackupPath(dir, "nope.db",)).toThrow();
+    for (
+      const bad of [
+        "../escape.db",
+        "sub/dir.db",
+        "/etc/passwd",
+        "sub\\escape.db",
+        "a..b.db",
+        "nope.db",
+      ]
+    ) {
+      expect(() => resolveBackupPath(dir, bad,)).toThrow();
+    }
+
     const created = path.join(dir, "ok.db",);
     writeFileSync(created, "x",);
     expect(resolveBackupPath(dir, "ok.db",),).toBe(created,);
+  });
+
+  test("resolveBackupPath rejects a symlink that escapes the backup directory", () => {
+    const outside = mkdtempSync(path.join(os.tmpdir(), "db-backup-outside-",),);
+    try {
+      const secret = path.join(outside, "secret.db",);
+      writeFileSync(secret, "outside data",);
+      symlinkSync(secret, path.join(dir, "link.db",),);
+      expect(() => resolveBackupPath(dir, "link.db",)).toThrow(/Invalid backup name/,);
+    } finally {
+      rmSync(outside, { recursive: true, force: true, },);
+    }
+  });
+
+  test("pruneDbSnapshots keeps the newest files and deletes the rest", () => {
+    const pruneDir = mkdtempSync(path.join(os.tmpdir(), "db-snap-prune-",),);
+    try {
+      for (let i = 0; i < 4; i += 1) {
+        const file = path.join(pruneDir, `snap-${i}.db`,);
+        writeFileSync(file, "x",);
+        const when = new Date(2026, 0, i + 1,).getTime();
+        utimesSync(file, when, when,);
+      }
+
+      expect(pruneDbSnapshots(pruneDir, 2,),).toBe(2,);
+      expect(readdirSync(pruneDir,).sort(),).toEqual(["snap-2.db", "snap-3.db",],);
+      expect(pruneDbSnapshots(pruneDir, 0,),).toBe(2,);
+      expect(readdirSync(pruneDir,),).toEqual([],);
+    } finally {
+      rmSync(pruneDir, { recursive: true, force: true, },);
+    }
   });
 
   test("restoreDbBackup replaces the live file with the snapshot after close", async () => {
@@ -163,5 +230,73 @@ describe("db backup/restore service", () => {
     },),).rejects.toThrow(/not a SQLite database/,);
 
     expect(readUsers(livePath,),).toEqual([{ id: 1, name: "safe", },],);
+  });
+
+  test("restoreDbBackup rejects a header-valid empty-schema snapshot before touching live data", async () => {
+    insertUser(db, 1, "safe",);
+    const before = readFileSync(livePath,);
+    const empty = path.join(dir, "empty-schema.db",);
+    const emptyDb = new Database(empty,);
+    emptyDb.exec("PRAGMA user_version = 1;",); // header written, no user tables
+    emptyDb.close();
+    expect(hasSqliteHeader(empty,),).toBe(true,);
+
+    let closed = false;
+    await expect(restoreDbBackup({
+      backupPath: empty,
+      livePath,
+      sqlite: db,
+      dir,
+      closeDb: async () => {
+        closed = true;
+      },
+    },),).rejects.toThrow(/no user tables/,);
+
+    expect(closed,).toBe(false,);
+    expect(readFileSync(livePath,),).toEqual(before,);
+  });
+
+  test("restoreDbBackup rejects a header-valid corrupt snapshot before touching live data", async () => {
+    insertUser(db, 1, "safe",);
+    const before = readFileSync(livePath,);
+    const valid = await createDbBackup({ sqlite: db, dir, },);
+    const bytes = readFileSync(valid.path,);
+    // Corrupt page-1 content past the 16-byte magic header.
+    for (let i = 100; i < 160; i += 1) { bytes[i] = 0xff; }
+    const corrupt = path.join(dir, "corrupt.db",);
+    writeFileSync(corrupt, bytes,);
+
+    expect(hasSqliteHeader(corrupt,),).toBe(true,);
+    await expect(restoreDbBackup({
+      backupPath: corrupt,
+      livePath,
+      sqlite: db,
+      dir,
+      closeDb: async () => {
+        throw new Error("closeDb must not run",);
+      },
+    },),).rejects.toThrow(/Snapshot/,);
+
+    expect(readFileSync(livePath,),).toEqual(before,);
+  });
+
+  test("validateSqliteSnapshot reports a path-free InvalidSnapshotError for a schema-less snapshot", () => {
+    const empty = path.join(dir, "validator-empty.db",);
+    const emptyDb = new Database(empty,);
+    emptyDb.exec("PRAGMA user_version = 1;",);
+    emptyDb.close();
+
+    expect(() => validateSqliteSnapshot(empty,)).toThrow(InvalidSnapshotError,);
+    expect(() => validateSqliteSnapshot(empty,)).toThrow(/no user tables/,);
+  });
+
+  test("validateSqliteSnapshot rejects a header-valid foreign SQLite database", () => {
+    const foreign = path.join(dir, "foreign.db",);
+    const foreignDb = new Database(foreign,);
+    foreignDb.exec("CREATE TABLE notes (id INTEGER PRIMARY KEY, body TEXT NOT NULL);",);
+    foreignDb.close();
+
+    expect(() => validateSqliteSnapshot(foreign,)).toThrow(InvalidSnapshotError,);
+    expect(() => validateSqliteSnapshot(foreign,)).toThrow(/loop-lore database/,);
   });
 });

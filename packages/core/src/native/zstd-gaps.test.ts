@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describeOrSkip as describeOrSkipIsolated, ISOLATED as ISOLATED_RUN, } from "@/test-utils/isolate-only";
 import { expect, mock, test, } from "bun:test";
+import {
+  describeOrSkip as describeOrSkipIsolated,
+  ISOLATED as ISOLATED_RUN,
+} from "../../../../src/test-utils/isolate-only";
 
 /** Typed view of Bun's built-in zstd (mirrors the unit under test). */
 interface BunZstd {

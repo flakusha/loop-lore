@@ -3,7 +3,7 @@
 
 # TASK: Harness exec log (JSONL run records)
 
-**Status:** In Progress
+**Status:** Done
 **Status Note:** Core module shipped: `src/harness/{exec-log,exec-recorder,query,stats,read-models,run-context,types-wire}`, three admin-gated routes, live `.harness/executions.jsonl` (3.2 MB), `turn_id` correlation per epic §8. Remaining AC: the RSI consumer cross-link (`epic-recursive-self-improvement` itself Not Started) — treat as cross-epic bookkeeping, not blocking work.
 **Priority:** medium
 **Effort:** Small

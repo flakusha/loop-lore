@@ -37,7 +37,7 @@
       <button
         class="btn btn-ghost btn-cancel"
         @click="cancelGeneration()"
-        title="{{{ t("chat.cancelGeneration") }}}"
+        title='{{{ t("chat.cancelGeneration") }}}'
         data-testid="cancel-generation"
       >
         ⏹ {{{ t("common.cancel") }}}
@@ -163,7 +163,7 @@
         📎
         <input
           type="file"
-          accept="image/*, audio/*, video/*"
+          accept="image/*, audio/*, video/*, image/x-exr, image/openraster, model/gltf-binary, model/gltf+json, model/ply, model/splat, model/spz, model/obj, model/fbx, model/usd, model/stl, model/3mf, .glb, .gltf, .exr, .ora, .ply, .splat, .spz, .obj, .fbx, .usda, .usdc, .usdz, .usd, .stl, .3mf"
           multiple
           style="display: none"
           @change="handleAttach($event)"

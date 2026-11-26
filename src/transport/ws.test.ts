@@ -214,6 +214,21 @@ describe("WsHandler — attach and flush", () => {
     expect(healthy.sent,).toEqual(["m2", "m3",],);
     await handler.close();
   });
+
+  it("does not re-buffer a duplicate payload that was already sent", async () => {
+    const handler = createWsHandler();
+    await handler.connect();
+    handler.send("dup",);
+    handler.send("dup",);
+    let sends = 0;
+    const failing = makeFakeWs(WebSocket.OPEN, { failOnSend: () => ++sends === 2, },);
+
+    expect(() => handler.attach(failing as unknown as WebSocket,)).toThrow(/boom/,);
+    expect(failing.sent,).toEqual(["dup",],);
+    const pending = (handler as unknown as { pendingMessages: unknown[] }).pendingMessages;
+    expect(pending,).toEqual(["dup",],);
+    await handler.close();
+  });
 });
 
 describe("WsHandler — send", () => {

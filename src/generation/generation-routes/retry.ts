@@ -77,18 +77,25 @@ export async function handleRetryGeneration(
 
   let resumeFromStep = 0;
   let totalSteps = 1;
+  let parentMessageId: string | undefined;
+  let actorId: string | undefined;
 
   if (attemptId && step != null) {
+    // Row-level scoping: authorization above is on the caller-supplied chatId,
+    // so an unscoped id lookup would leak another chat's attempt metadata.
     const attempt = await db
       .selectFrom("generation_attempts",)
-      .select(["step_index", "total_steps",],)
+      .select(["step_index", "total_steps", "parent_message_id", "actor_id",],)
       .where("id", "=", attemptId,)
+      .where("chat_id", "=", chatId,)
       .executeTakeFirst();
 
     if (attempt) {
       const maxStep = (attempt.total_steps ?? 1) - 1;
       resumeFromStep = Math.max(0, Math.min(step, maxStep,),);
       totalSteps = attempt.total_steps ?? 1;
+      parentMessageId = attempt.parent_message_id;
+      actorId = attempt.actor_id;
     } else {
       return jsonError({ message: "Generation attempt not found", status: 404, },);
     }
@@ -103,6 +110,8 @@ export async function handleRetryGeneration(
     cancelled: wasActive,
     resumeFromStep,
     totalSteps,
+    parentMessageId,
+    actorId,
   };
 
   return jsonResponse(retryResponse,);

@@ -16,7 +16,7 @@
   as the subgraph-free round-trip control.
 - `i-0037-moss-edit-s.expected.json` is **hand-derived by the implementor**
   field-by-field from the control save above — it is our own work.
-- `object-info.json` (60 classes) is a **reconstructed** `/object_info`
+- `object-info.json` (92 classes) is a **reconstructed** `/object_info`
   snapshot: shapes transcribed from pack `INPUT_TYPES` sources plus UI
   evidence in the fixtures. Provenance per class in `_source`; the build
   script lives at repo `.tmp/build-object-info.py` (scratch, not

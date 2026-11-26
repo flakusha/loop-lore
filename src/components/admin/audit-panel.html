@@ -1,0 +1,99 @@
+<div x-show="activeTab === 'audit'">
+  <div style="padding: var(--space-6)">
+    <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap">
+      <input
+        class="form-input"
+        type="search"
+        placeholder="Search audit messages..."
+        x-model="auditSearch"
+        @input.debounce.300ms="searchAudit()"
+        style="flex: 1; min-width: 200px"
+      />
+      <select class="form-input" style="width: auto" x-model="auditEventType" @change="searchAudit()">
+        <option value="">All event types</option>
+        <option value="auth">Auth</option>
+        <option value="user">User</option>
+        <option value="chat">Chat</option>
+        <option value="world">World</option>
+        <option value="asset">Asset</option>
+        <option value="system">System</option>
+        <option value="plugin">Plugin</option>
+      </select>
+      <select class="form-input" style="width: auto" x-model="auditEntityType" @change="searchAudit()">
+        <option value="">All entities</option>
+        <option value="user">User</option>
+        <option value="chat">Chat</option>
+        <option value="world">World</option>
+        <option value="asset">Asset</option>
+      </select>
+      <button
+        class="btn btn-secondary btn-xs"
+        x-show="auditSearch || auditEventType || auditEntityType"
+        @click="clearAuditFilters()"
+      >
+        Clear
+      </button>
+    </div>
+    <div x-show="loadingAudit" class="empty-state" style="padding: var(--space-8)">
+      <div class="icon">⏳</div>
+    </div>
+    <template x-if="!loadingAudit">
+      <div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Module</th>
+              <th>Event</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody aria-busy="true">
+            <template x-if="auditEntries.length === 0">
+              <tr>
+                <td colspan="4" class="empty-state" style="padding: var(--space-8)">
+                  No audit entries
+                </td>
+              </tr>
+            </template>
+            <template x-for="e in auditEntries" :key="e.id">
+              <tr>
+                <td x-text="formatDate(e.created_at)" style="white-space: nowrap; font-size: 12px"></td>
+                <td x-text="e.module || '-'" style="font-size: 12px"></td>
+                <td x-text="e.event_type || '-'" style="font-size: 12px"></td>
+                <td
+                  x-text="e.message"
+                  style="font-size: 12px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                >
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <div
+          x-show="auditPages > 1"
+          style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
+        >
+          <button
+            class="btn btn-secondary btn-xs"
+            :disabled="auditPage === 1"
+            @click="goAuditPage(auditPage - 1)"
+          >
+            Prev
+          </button>
+          <span
+            style="display: flex; align-items: center; font-size: 13px"
+            x-text="'Page ' + auditPage + ' of ' + auditPages"
+          ></span>
+          <button
+            class="btn btn-secondary btn-xs"
+            :disabled="auditPage >= auditPages"
+            @click="goAuditPage(auditPage + 1)"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 import { emitPluginEvent, } from "../../../plugins/event-bus";
 import { registry, } from "../../../plugins/registry";
+import { removeMemoryAnnotationsForChat, } from "../../proactive/annotations";
 /**
  * Delete a chat and all its related data (cascade).
  *
@@ -53,6 +54,10 @@ export async function deleteChat(database: Kysely<DB>, chatId: string,): Promise
         trx.deleteFrom("chats",).where("id", "=", chatId,).execute()
     );
   },);
+
+  // In-memory note/quest annotations are process-local, not in the
+  // transaction; shadow_notes rows cascade via FK. Safe after commit.
+  removeMemoryAnnotationsForChat(chatId,);
 
   // FEAT-048: emit chat.deleted after the cascade completes so plugins see
   // the canonical post-delete state. Per-handler errors do not affect outcome.

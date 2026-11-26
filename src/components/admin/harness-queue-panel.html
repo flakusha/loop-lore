@@ -1,0 +1,135 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Harness Queue tab — state lives in frontend/alpine/admin-harness-queue.ts. -->
+<template x-if="activeTab === 'harnessQueue'">
+  <div x-data="adminHarnessQueue()" x-init="init()" style="padding: var(--space-6)" data-testid="harness-queue-panel">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4)">
+      <div>
+        <h3 style="font-size: 14px; font-weight: 600; margin: 0">{{{t("harnessQueue.title")}}}</h3>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px">{{{t("harnessQueue.help")}}}</div>
+      </div>
+      <button
+        class="btn btn-secondary btn-xs"
+        @click="load()"
+        :disabled="loading || submitting || cancellingId !== null"
+        data-testid="harness-queue-refresh"
+      >
+        {{{t("harnessQueue.refresh")}}}
+      </button>
+    </div>
+
+    <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px; margin-bottom: var(--space-4)">
+      <div style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)">
+        {{{t("harnessQueue.enqueueTitle")}}}
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-2)">
+        <label style="font-size: 12px; display: flex; flex-direction: column; gap: 4px">
+          <span>{{{t("harnessQueue.profile")}}}</span>
+          <input class="form-input" style="font-size: 12px" x-model="profile" data-testid="harness-queue-profile" />
+        </label>
+        <label style="font-size: 12px; display: flex; flex-direction: column; gap: 4px">
+          <span>{{{t("harnessQueue.chatId")}}}</span>
+          <input class="form-input" style="font-size: 12px" x-model="chatId" data-testid="harness-queue-chat" />
+        </label>
+        <label style="font-size: 12px; display: flex; flex-direction: column; gap: 4px">
+          <span>{{{t("harnessQueue.actorId")}}}</span>
+          <input class="form-input" style="font-size: 12px" x-model="actorId" data-testid="harness-queue-actor" />
+        </label>
+      </div>
+      <label style="font-size: 12px; display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-2)">
+        <span>{{{t("harnessQueue.prompt")}}}</span>
+        <textarea
+          class="form-input"
+          style="font-size: 12px"
+          rows="2"
+          x-model="prompt"
+          data-testid="harness-queue-prompt"
+        ></textarea>
+      </label>
+      <div style="margin-top: var(--space-2)">
+        <button
+          class="btn btn-primary btn-sm"
+          @click="enqueue()"
+          :disabled="loading || submitting || cancellingId !== null"
+          data-testid="harness-queue-enqueue"
+        >
+          <span x-show="!submitting">{{{t("harnessQueue.enqueue")}}}</span>
+          <span x-show="submitting">{{{t("harnessQueue.submitting")}}}</span>
+        </button>
+      </div>
+    </div>
+
+    <div
+      x-show="error !== ''"
+      style="padding: var(--space-3); background: #dc354522; border: 1px solid #dc354544; border-radius: 4px; font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-3)"
+      x-text="error"
+      data-testid="harness-queue-error"
+    >
+    </div>
+    <div
+      x-show="message !== ''"
+      style="padding: var(--space-3); background: #28a74522; border: 1px solid #28a74544; border-radius: 4px; font-size: 12px; margin-bottom: var(--space-3)"
+      x-text="message"
+      data-testid="harness-queue-message"
+    >
+    </div>
+
+    <div
+      x-show="loading"
+      style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-3)"
+      data-testid="harness-queue-loading"
+    >
+      {{{t("harnessQueue.loading")}}}
+    </div>
+
+    <div
+      x-show="!loading && error === '' && rows.length === 0"
+      class="empty-state"
+      style="padding: var(--space-8)"
+      data-testid="harness-queue-empty"
+    >
+      <div class="icon">📋</div>
+      <div class="title">{{{t("harnessQueue.empty")}}}</div>
+    </div>
+
+    <template x-if="!loading && error === '' && rows.length > 0">
+      <div style="display: grid; gap: var(--space-1); overflow-x: auto">
+        <div
+          style="display: grid; grid-template-columns: 90px 110px minmax(140px, 1fr) 120px 120px 150px 110px; gap: var(--space-2); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; min-width: 800px"
+          data-testid="harness-queue-header"
+        >
+          <span>{{{t("harnessQueue.colStatus")}}}</span>
+          <span>{{{t("harnessQueue.colProfile")}}}</span>
+          <span>{{{t("harnessQueue.colPrompt")}}}</span>
+          <span>{{{t("harnessQueue.colChat")}}}</span>
+          <span>{{{t("harnessQueue.colActor")}}}</span>
+          <span>{{{t("harnessQueue.colCreated")}}}</span>
+          <span>{{{t("harnessQueue.colActions")}}}</span>
+        </div>
+        <template x-for="row in rows" :key="row.id">
+          <div
+            style="display: grid; grid-template-columns: 90px 110px minmax(140px, 1fr) 120px 120px 150px 110px; gap: var(--space-2); font-size: 12px; padding: var(--space-2) 0; border-top: 1px solid var(--border-default, #e9ecef); min-width: 800px"
+            data-testid="harness-queue-row"
+          >
+            <span class="status-badge" x-text="row.status" data-testid="harness-queue-status"></span>
+            <span x-text="row.profile"></span>
+            <span x-text="row.prompt" style="overflow-wrap: anywhere"></span>
+            <span x-text="row.chatId" style="overflow-wrap: anywhere"></span>
+            <span x-text="row.actorId" style="overflow-wrap: anywhere"></span>
+            <span x-text="row.createdAt"></span>
+            <button
+              class="btn btn-secondary btn-xs"
+              @click="cancel(row.id)"
+              :disabled="!canCancel(row) || cancellingId !== null"
+              data-testid="harness-queue-cancel"
+            >
+              <span x-show="canCancel(row)">{{{t("harnessQueue.cancel")}}}</span>
+              <span x-show="!canCancel(row)">{{{t("harnessQueue.notCancellable")}}}</span>
+            </button>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>

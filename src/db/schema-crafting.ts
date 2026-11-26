@@ -185,13 +185,13 @@ export interface ProfessionSpecializations {
 export interface Professions {
   id: string;
   actor_id: string;
-  world_id: string | null;
   discipline: CraftingDiscipline;
   level: Generated<number>;
   experience: Generated<number>;
   title: Generated<ProfessionTitle>;
   created_at: string;
   updated_at: string;
+  world_id: string | null;
 }
 
 // ── recipe_discoveries ────────────────────────────────────────────

@@ -4,21 +4,31 @@
 # $schema: ../schemas/loop-lore-config.toml.schema.json
 #
 # NOTE: paths below are examples for configs/ directory layout.
-# Defaults are computed from DATA_DIR (src/config/constants.ts) which
-# resolves relative to the source file location, not CWD or config dir.
+# Defaults live under the per-instance XDG state dir; `${DATA_DIR}` resolves to
+# THIS instance's dir, never to CWD or the config dir.
 # Overriding a path here makes it literal — not relative to this file.
+
+[features]
+profile = "full"
+# profile = "business-only"
+# profile = "rpg-chat-only"
+# profile = "local-only"
+# profile = "relay-only"
+# An explicit unknown profile fails boot; omitting this section keeps `full`.
 
 [server]
 port = 3000
 host = "localhost"
 
 [server.tls]
-key = "../loop-lore-data/certs/key.pem"
-cert = "../loop-lore-data/certs/cert.pem"
+# key = "${DATA_DIR}/certs/key.pem" # resolves inside THIS instance's state dir
+# cert = "${DATA_DIR}/certs/cert.pem" # resolves inside THIS instance's state dir
 
 [db]
 type = "sqlite"
-sqliteFilename = "../loop-lore-data/loop-lore.db"
+# sqliteFilename = "../loop-lore-data/loop-lore.db" # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default (the server ignores this knob — the DB path comes from LOOP_LORE_DB_PATH)
+# backupEnabled = true # opt in to event-driven DB snapshots through the existing backup scheduler
+# snapshotRetention = 10 # snapshots kept after each scheduled backup (minimum 1)
 
 # For Postgres:
 # type = "postgres"
@@ -26,7 +36,7 @@ sqliteFilename = "../loop-lore-data/loop-lore.db"
 
 [assets]
 enabled = true
-uploadDir = "../loop-lore-data/uploads"
+# uploadDir = "${DATA_DIR}/uploads" # resolves inside THIS instance's state dir
 maxFileSize = 10485760
 compression = true
 
@@ -251,6 +261,15 @@ openaiCompatible = []
 # # taesdPath = "/path/to/taesd.safetensors"
 # # hiresUpscalersDir = "/path/to/upscalers"
 # # embdDir = "/path/to/embeddings"
+#
+# [generation.autoStart.honkbox]
+# enabled = true
+# port = 9010                          # GET /health readiness probe (60s timeout)
+# # host = "127.0.0.1"                 # loopback only — honkbox refuses unauthenticated non-loopback binds
+# # apiKey = "..."                     # bearer credential (loopback servers usually need none)
+# # configPath = "~/git-ai/honkbox/config.toml"  # ~ expands to $HOME
+# # model = "local-chat"               # model alias exposed via the OpenAI-compatible API
+# # extraArgs = ["--log-level", "debug"]
 # # photoMakerPath = "/path/to/photomaker.safetensors"
 # # upscaleModelPath = "/path/to/esrgan.safetensors"
 # # ── Performance ──

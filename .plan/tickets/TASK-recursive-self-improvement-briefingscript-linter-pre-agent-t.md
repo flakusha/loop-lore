@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Linter shipped on dev: `src/plan/briefing-linter.ts` + `briefing-linter.test.ts`, `scripts/check-briefing.ts` (`BRIEFING_GATE=off|warn|fail`), `package.json:140-143` (`plan:validate` chain + `plan:validate:briefing` + `plan:lint-briefing`), gate registered in `scripts/check/parallel/gate-table.mjs:172,273`. Residual AC: router `409 Conflict` on a low-score task submission — `src/agent/api/router.ts` exposes only whoami/worktree/check (no task-submission route); `docs/ops/briefing-lint.md` absent.
 **Priority:** Medium
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Input Quality

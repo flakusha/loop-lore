@@ -193,10 +193,24 @@ describe("assertParamsWithinScope", () => {
     }
   });
 
-  test("leaves non-path args untouched", async () => {
+  test("refuses an outside path under a non-path key or nested object", async () => {
+    try {
+      await assertParamsWithinScope({
+        toolName: "t",
+        params: { content: outside, count: 3, nested: { path: outside, }, },
+        root,
+      },);
+
+      expect.unreachable();
+    } catch (error) {
+      expect(error instanceof PathOutsideScopeError,).toBe(true,);
+    }
+  });
+
+  test("allows ordinary string args that resolve inside the root", async () => {
     await assertParamsWithinScope({
       toolName: "t",
-      params: { content: outside, count: 3, nested: { path: outside, }, },
+      params: { content: "hello", nested: { query: "world", }, },
       root,
     },);
   });
@@ -219,7 +233,7 @@ describe("assertParamsWithinScope", () => {
         tool: "writer",
         param: "file",
         path: outsideFile,
-        root: process.cwd(),
+        root,
       },);
     } finally {
       // Reinstate the module default — `() => null` would permanently

@@ -10,7 +10,17 @@ import { LocationEdgeService, } from "../../locations/edge-graph";
 import { EdgeTravelService, } from "../../locations/edge-travel";
 import { jsonParseOr, } from "../../utils";
 import { ErrorResponse, } from "../../validation/schemas";
-import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import {
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  routeAuthError,
+  routeDetail,
+  routeErrors,
+  routeNotFoundError,
+  routeSpec,
+} from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
@@ -83,21 +93,6 @@ interface CreateEdgeBody {
   requiresDiscovery?: boolean;
   cost?: unknown;
 }
-
-/** Wire list response shared by the two graph reads. */
-const EdgeListResponse = {
-  200: t.Object({ data: t.Array(EdgeSchema,), },),
-  401: ErrorResponse,
-  404: ErrorResponse,
-};
-
-/** Response of the owner-only DELETE. */
-const DeletedEdgeResponse = {
-  204: t.Void(),
-  401: ErrorResponse,
-  403: ErrorResponse,
-  404: ErrorResponse,
-};
 
 /**
  * Shared caller resolution + world-permission check.
@@ -179,18 +174,16 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
           requiresDiscovery: t.Optional(t.Boolean(),),
           cost: t.Optional(t.Record(t.String(), t.Any(),),),
         },),
-        response: {
-          201: EdgeSchema,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: {
+            201: EdgeSchema,
+            400: ErrorResponse,
+            403: ErrorResponse,
+          },
           summary: "Create location edge",
           description: "Create one directed adjacency edge from a location. World owner or admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -201,12 +194,15 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [accessGate,],
-        response: EdgeListResponse,
-        detail: {
+        response: {
+          200: t.Object({ data: t.Array(EdgeSchema,), },),
+          ...routeErrors(),
+        },
+        ...routeDetail({
           summary: "List edges at a location",
           description: "All adjacency edges touching a location, in both directions.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .get(
@@ -237,13 +233,16 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         beforeHandle: [accessGate,],
         query: t.Optional(t.Object({ actorId: t.Optional(t.String(),), },),),
-        response: EdgeListResponse,
-        detail: {
+        response: {
+          200: t.Object({ data: t.Array(EdgeSchema,), },),
+          ...routeErrors(),
+        },
+        ...routeDetail({
           summary: "World location graph",
           description: "The world's adjacency edges. Non-privileged callers get the discovery-filtered subgraph: " +
             "requires_discovery edges are hidden until both endpoints are visited.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .put(
@@ -281,18 +280,16 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
           requiresDiscovery: t.Boolean(),
           cost: t.Record(t.String(), t.Any(),),
         },),),
-        response: {
-          200: EdgeSchema,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          403: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: {
+            200: EdgeSchema,
+            400: ErrorResponse,
+            403: ErrorResponse,
+          },
           summary: "Update location edge",
           description: "Edit an edge's mode, travel time, discovery gating, or cost. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .delete(
@@ -311,12 +308,17 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         beforeHandle: [ownerGate,],
-        response: DeletedEdgeResponse,
-        detail: {
+        response: {
+          204: t.Void(),
+          ...routeAuthError(),
+          403: ErrorResponse,
+          ...routeNotFoundError(),
+        },
+        ...routeDetail({
           summary: "Delete location edge",
           description: "Remove one adjacency edge. Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -350,24 +352,22 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
           mode: t.String(),
           actorId: t.Optional(t.String(),),
         },),
-        response: {
-          200: t.Object({
-            edgeId: t.String(),
-            actorId: t.String(),
-            toId: t.String(),
-            mode: t.String(),
-            goldCharged: t.Union([t.Number(), t.Null(),],),
-          },),
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
+        ...routeSpec({
+          response: {
+            200: t.Object({
+              edgeId: t.String(),
+              actorId: t.String(),
+              toId: t.String(),
+              mode: t.String(),
+              goldCharged: t.Union([t.Number(), t.Null(),],),
+            },),
+            400: ErrorResponse,
+          },
           summary: "Travel via location edge",
           description: "Move the actor along one adjacency edge. Locked edges return 404 not-yet-discovered; " +
             "free-jump charges its cost (cooldown, then gold).",
           tags: ["Worlds",],
-        },
+        },),
       },
     )
     .post(
@@ -384,24 +384,21 @@ export function locationEdgeRoutes(opts: HandleOpts, prefix = "/api",) {
       {
         beforeHandle: [ownerGate,],
         body: t.Object({ actorId: t.String(), },),
-        response: DiscoveredResponse,
-        detail: {
+        response: {
+          200: t.Object({ ok: t.Boolean(), },),
+          400: ErrorResponse,
+          ...routeAuthError(),
+          403: ErrorResponse,
+          ...routeNotFoundError(),
+        },
+        ...routeDetail({
           summary: "Force-unlock discovery",
           description: "Latch a visit record for one actor at a location (GM override). Owner/admin only.",
           tags: ["Worlds",],
-        },
+        },),
       },
     );
 }
-
-/** Response of the owner-only force-discover POST. */
-const DiscoveredResponse = {
-  200: t.Object({ ok: t.Boolean(), },),
-  400: ErrorResponse,
-  401: ErrorResponse,
-  403: ErrorResponse,
-  404: ErrorResponse,
-};
 
 /**
  * @param ctx Elysia context carrying derived auth

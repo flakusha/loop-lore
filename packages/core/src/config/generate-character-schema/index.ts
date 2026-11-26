@@ -11,11 +11,11 @@
  * Outputs: schemas/character-card.schema.json
  */
 
-import { createLogger, } from "@/logger";
-import { safeJsonStringify, } from "@/utils";
-import { writeFileSync, } from "node:fs";
-import { dirname, } from "node:path";
+import { mkdirSync, writeFileSync, } from "node:fs";
+import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { createLogger, } from "../../logger";
+import { safeJsonStringify, } from "../../utils/safe-json";
 import { dataProperties, } from "./data-core.js";
 import { extensionsProperties, } from "./extensions.js";
 
@@ -57,13 +57,16 @@ export function characterJsonSchema(): Record<string, unknown> {
 /** */
 function main() {
   const schema = characterJsonSchema();
-  const outputPath = `${__dirname}/@/schemas/character-card.schema.json`;
+  const outputPath = resolve(__dirname, "..", "..", "..", "..", "..", "schemas", "character-card.schema.json",);
   try {
+    mkdirSync(dirname(outputPath,), { recursive: true, },);
     const r = safeJsonStringify(schema, 2,);
     writeFileSync(outputPath, r.ok ? r.value : "{}",);
     log.info(`Generated character schema: ${outputPath}`,);
   } catch (error) {
-    log.fatal(`Failed to write schema: ${error instanceof Error ? error.message : String(error,)}`,);
+    const message = error instanceof Error ? error.message : String(error,);
+    process.stderr.write(`Failed to write schema: ${message}\n`,);
+    log.fatal(`Failed to write schema: ${message}`,);
     process.exit(1,);
   }
 }

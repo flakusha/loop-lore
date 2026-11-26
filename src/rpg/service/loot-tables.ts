@@ -57,11 +57,24 @@ export interface AddLootEntryParams {
  * @param deps
  * @param params
  * @returns {Promise<string>}
+ * @throws {Error} when weight is negative or minQuantity exceeds maxQuantity
  */
 export async function addLootEntry(
   deps: RpgServiceDeps,
   params: AddLootEntryParams,
 ): Promise<string> {
+  const minQuantity = params.minQuantity ?? 1;
+  const maxQuantity = params.maxQuantity ?? 1;
+  if (params.weight < 0) {
+    throw new Error(`addLootEntry: weight must be >= 0, got ${params.weight}`,);
+  }
+
+  if (minQuantity > maxQuantity) {
+    throw new Error(
+      `addLootEntry: minQuantity (${minQuantity}) must be <= maxQuantity (${maxQuantity})`,
+    );
+  }
+
   const { database, } = deps;
   const id = crypto.randomUUID();
 
@@ -75,8 +88,8 @@ export async function addLootEntry(
       item_type: params.itemType,
       rarity: params.rarity,
       weight: params.weight,
-      min_quantity: params.minQuantity ?? 1,
-      max_quantity: params.maxQuantity ?? 1,
+      min_quantity: minQuantity,
+      max_quantity: maxQuantity,
       min_level: params.minLevel ?? 0,
       metadata: jsonStringifyOr(params.metadata ?? {},),
     },)
@@ -143,9 +156,13 @@ export async function rollLootTable(
   for (const entry of entries) {
     random -= entry.weight;
     if (random <= 0) {
-      const quantity = entry.min_quantity + Math.floor(
+      const roll = entry.min_quantity + Math.floor(
         Math.random() * (entry.max_quantity - entry.min_quantity + 1),
       );
+
+      // Legacy inverted rows (max < min) can roll below the configured
+      // minimum; clamp to min. New inverted rows are rejected by addLootEntry.
+      const quantity = Math.max(entry.min_quantity, roll,);
 
       return {
         itemName: entry.item_name,

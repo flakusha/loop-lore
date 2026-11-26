@@ -347,4 +347,56 @@ describeOrSkip("chatVariants.retryFromPoint", () => {
     await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
     expect(ctx.toasts[0]?.type,).toBe("error",);
   });
+
+  test("re-dispatches generation with the resolved resume metadata", async () => {
+    const ctx = buildCtx();
+    handler = async (url: string,) =>
+      url.endsWith("/retry",)
+        ? Response.json({
+          ok: true,
+          chatId: "c1",
+          attemptId: "a1",
+          resumeFromStep: 2,
+          totalSteps: 5,
+          parentMessageId: "parent-1",
+          actorId: "actor-1",
+        },)
+        : Response.json({ ok: true, },);
+
+    await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
+
+    expect(calls.length,).toBe(2,);
+    expect(calls[1]?.url,).toBe("/api/v1/generation/generate",);
+    const body = JSON.parse(calls[1]?.opts.body as string,) as Record<string, unknown>;
+    expect(body.chatId,).toBe("c1",);
+    expect(body.parentMessageId,).toBe("parent-1",);
+    expect(body.actorId,).toBe("actor-1",);
+    expect(body.parentAttemptId,).toBe("a1",);
+    expect(body.stepIndex,).toBe(2,);
+    expect(body.totalSteps,).toBe(5,);
+    expect(body.stream,).toBe(false,);
+    expect(typeof body.idempotencyKey,).toBe("string",);
+    expect(ctx.isGenerating,).toBe(true,);
+    expect(ctx.toasts,).toEqual([{ type: "info", message: "Resuming from step 3 of 5...", },],);
+  });
+
+  test("does not claim a resumed turn when re-dispatch fails", async () => {
+    const ctx = buildCtx();
+    handler = async (url: string,) =>
+      url.endsWith("/retry",)
+        ? Response.json({
+          ok: true,
+          resumeFromStep: 2,
+          totalSteps: 5,
+          parentMessageId: "parent-1",
+          actorId: "actor-1",
+        },)
+        : Response.json({ ok: false, error: "provider down", }, { status: 422, },);
+
+    await chatVariants.retryFromPoint!.call(ctx as never, "a1", 1,);
+
+    expect(calls.length,).toBe(2,);
+    expect(ctx.isGenerating,).toBe(false,);
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to retry", },],);
+  });
 },);

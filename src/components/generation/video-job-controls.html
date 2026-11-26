@@ -1,0 +1,47 @@
+<!-- Owner-scoped controls for one async video render. -->
+<div
+  class="video-job-controls"
+  x-data="videoJobControls()"
+  @video-job-created.window="jobId = $event.detail.jobId; poll(jobId)"
+  x-show="jobId"
+  x-cloak
+  data-testid="video-job-controls"
+>
+  <span class="video-job-status" x-text="status"></span>
+  <span
+    class="generation-busy"
+    x-show="activeCount > 0"
+    data-testid="generation-busy"
+    x-text="activeCount + ' active generation(s)'"
+  ></span>
+  <span class="generation-busy-error" x-show="activeError" x-text="activeError"></span>
+  <button
+    type="button"
+    class="btn btn-ghost btn-cancel"
+    @click="cancel()"
+    :disabled="busy"
+    data-testid="video-job-cancel"
+  >
+    {{{ t("common.cancel") }}}
+  </button>
+  <button
+    type="button"
+    class="btn btn-ghost"
+    @click="defer()"
+    :disabled="busy"
+    data-testid="video-job-delay"
+  >
+    Delay until later
+  </button>
+  <button
+    type="button"
+    class="btn btn-ghost"
+    x-show="status === 'failed'"
+    @click="retry()"
+    :disabled="busy"
+    data-testid="video-job-retry"
+  >
+    Retry
+  </button>
+  <span class="video-job-error" x-show="error" x-text="error"></span>
+</div>

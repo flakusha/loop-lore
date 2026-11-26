@@ -57,6 +57,16 @@ export async function runRewrite(
   const rest = ctx.positionalArgs ?? args;
   const applyRequested = named.apply !== undefined;
   const style = typeof named.style === "string" && named.style !== "" ? named.style : "clear";
+  // A free-text regen direction (/regen custom <instruction>) arrives here as
+  // a named arg. It overrides the style hint in the system prompt.
+  const instruction = typeof named.instruction === "string" && named.instruction.trim() !== ""
+    ? named.instruction.trim()
+    : undefined;
+
+  // The preview label must name the actual direction: a free-text instruction
+  // is not a named style, so showing the default "clear" here would mislead.
+  const label = instruction !== undefined ? "custom instruction" : style;
+
   let targetId: string | undefined;
 
   let targetText: string | undefined;
@@ -82,7 +92,9 @@ export async function runRewrite(
     };
   }
 
-  const systemPrompt = `Rewrite the following text in ${style} style. Preserve meaning.`;
+  const systemPrompt = instruction !== undefined
+    ? `Rewrite the following text following this user instruction: ${instruction}\nPreserve the user's intent.`
+    : `Rewrite the following text in ${style} style. Preserve meaning.`;
 
   let rewritten: string | undefined;
   if (deps.complete) {
@@ -106,6 +118,15 @@ export async function runRewrite(
   }
 
   const fallback = rewritten === undefined;
+  if (fallback && instruction !== undefined) {
+    // Local heuristics ignore free-text direction — never silently apply a
+    // rewrite that did not follow the user's instruction.
+    return {
+      systemMessage: "**Custom instruction could not be applied.** Generation was unavailable — try again.",
+      handled: true,
+    };
+  }
+
   const final = fallback ? rewriteText(targetText, style,) : (rewritten as string);
   if (applyRequested) {
     if (!targetId) {
@@ -123,7 +144,7 @@ export async function runRewrite(
     const applied = await deps.apply(targetId, final,);
     if (applied.ok) {
       return {
-        systemMessage: `**Rewritten (${style}) and applied.**\n\n${final}`,
+        systemMessage: `**Rewritten (${label}) and applied.**\n\n${final}`,
         actionPayload: {
           original: targetText,
           rewritten: final,
@@ -148,12 +169,13 @@ export async function runRewrite(
   }
 
   return {
-    systemMessage: `**Rewritten (${style}):**\n\n${final}` +
+    systemMessage: `**Rewritten (${label}):**\n\n${final}` +
       (fallback ? "\n\n[LLM unavailable — applied local heuristics only]" : ""),
     actionPayload: {
       original: targetText,
       rewritten: final,
-      style,
+      style: label,
+      ...(instruction !== undefined ? { instruction, } : {}),
       ...(fallback ? { fallback: true, } : {}),
     },
     handled: true,

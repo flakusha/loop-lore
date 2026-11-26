@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Surface preparation, plus a follow-up investigation (`docs/meta/research/comfyui-first-class-investigation.md`) that **amended three design decisions**: the workflow library reuses `prompt_templates` rather than a new `comfy_workflows` table, the graph is stored inline in `payload` rather than on disk (no generated-config writer exists, and the loader's dir-mtime cache is not overwrite-safe), and two cited paths did not exist. Six defects are now confirmed by runnable probe against the operator's `i-anima-0001.json` — three original, three found by the investigation. Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
+**Status:** In Progress
+**Status Note:** Core shipped on dev — first-class engine (`src/generation/image-engine/comfyui-first.ts:26`), admin status route (`src/routes/admin/comfyui-status.ts:147-151`), admin builder UI (`src/frontend/alpine/comfyui-builder.ts`) and websocket progress (`src/generation/providers/comfyui-progress.ts:43-69`). The workflow library, the admin workflow surface and the parameterization tail carry the remaining work; the "no ComfyUI admin surface" premise is stale. Surface preparation, plus a follow-up investigation (`docs/meta/research/comfyui-first-class-investigation.md`) that **amended three design decisions**: the workflow library reuses `prompt_templates` rather than a new `comfy_workflows` table, the graph is stored inline in `payload` rather than on disk (no generated-config writer exists, and the loader's dir-mtime cache is not overwrite-safe), and two cited paths did not exist. Six defects are now confirmed by runnable probe against the operator's `i-anima-0001.json` — three original, three found by the investigation. Phases 0–1 are unblocked by that reference; the rest await the remaining operator workflows.
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
@@ -666,6 +666,10 @@ git issue. Workflow JSON is inert — no secrets.
 | `TASK-ui-api-workflow-converter` | UI-format → API-format converter: subgraph flattening, promoted-widget substitution by index, link rewrite, hidden JSON widget preservation — generic, library-level machinery (cross-linked from `epic-image-video-scenario-studio.md`, whose Director-tier workflow is the driving fixture) |
 
 Downstream consumers of the converter (Phase 6 pipeline): `TASK-comfyui-parameter-map-derivation-from-marked-workflows.md`, `TASK-comfyui-workflow-acceptance-probe-scaffold.md`, `TASK-workflow-library-ui-format-ingest.md`.
+
+## Annex: deferred node-ownership boundary (filed 2026-11-19)
+
+- `TASK-comfyui-node-ownership-boundary` (Low) — workflow JSON stays versioned project data; custom node code remains in the ComfyUI soft fork with pinned refs. Revisit only when no upstream pack can express a required workflow.
 
 ## Related Epics
 

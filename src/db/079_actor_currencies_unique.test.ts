@@ -2,25 +2,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 079 — UNIQUE index on
- * `actor_currencies (actor_id, world_id, currency_type)`.
+ * Final-schema oracle for the `(actor_id, world_id, currency_type)` unique
+ * index on `actor_currencies` (owned by 003_actors in the consolidated chain).
  *
- * `ensureBalanceRow` (src/services/trade/balance.ts) was SELECT-then-INSERT
- * with no constraint covering currency_type, so two concurrent ensures for
- * one (actor, world, currency) both inserted a ledger row
- * (BUG-service-layer-multi-query-mutations, ensureBalanceRow leg). 079 makes
- * the DATABASE the arbiter — and first collapses the duplicate groups a raced
- * database already accumulated, because `CREATE UNIQUE INDEX` aborts on those
- * and would leave the migration chain stuck half-applied.
- *
- * Mirrors src/db/078_user_api_keys_unique.test.ts and, like it, lives in
- * `src/db/` NOT `src/db/migrations/` (getMigrationFiles would register the
- * colocated test as a migration).
+ * ensureBalanceRow was SELECT-then-INSERT with no constraint covering
+ * currency_type, so two concurrent ensures both inserted a ledger row. The
+ * final schema makes the DATABASE the arbiter; the migration-time collapse of
+ * pre-existing duplicates is gone, so this file pins the constraint and scope.
  */
 import { describe, expect, test, } from "bun:test";
 import { type Kysely, sql, } from "kysely";
 
-import { captureWarnings, } from "../test-utils/capture-warnings";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActorCurrencies,
@@ -28,14 +20,9 @@ import {
   insertUsers,
   insertWorlds,
 } from "../test-utils/insert-helpers";
-import { down, up, } from "./migrations/079_actor_currencies_unique";
 import type { DB, } from "./schema";
 
-const MIGRATION = "079_actor_currencies_unique";
 const UNIQUE_INDEX = "uq_actor_currencies_actor_world_currency";
-
-/** `up`/`down` are typed against the untyped handle the migrator passes them. */
-type UntypedDb = Kysely<unknown>;
 
 /**
  * @param db database handle
@@ -50,8 +37,8 @@ async function hasIndex(db: Kysely<DB>, name: string,): Promise<boolean> {
   return rows.rows.length > 0;
 }
 
-describe(MIGRATION, () => {
-  test("collapses a duplicate ledger group to its newest row, warns, then enforces the index", async () => {
+describe("actor_currencies unique (final schema)", () => {
+  test("the unique index is present and rejects a racing duplicate ledger row", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const userId = await insertUsers(db, `cur-${crypto.randomUUID()}`, "Cur",);
@@ -67,23 +54,13 @@ describe(MIGRATION, () => {
         settings: "{}",
       },);
 
-      // The index exists already (079 ran in the chain) — drop it so the
-      // duplicate rows can be inserted again.
-      await down(db as unknown as UntypedDb,);
-      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(false,);
+      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(true,);
+      await insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },);
 
-      await Promise.all([
-        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },),
+      // The racing second ensure now aborts at the database.
+      await expect(
         insertActorCurrencies(db, actorId, worldId, "gold", { balance: 20, },),
-      ],);
-
-      const warnings = await captureWarnings(async () => {
-        await up(db as unknown as UntypedDb,);
-      }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-      expect(warnings,).toHaveLength(1,);
-      expect(warnings[0],).toContain(MIGRATION,);
-      expect(warnings[0],).toContain("collapsing to newest",);
+      ).rejects.toThrow(/UNIQUE/i,);
 
       const rows = await db
         .selectFrom("actor_currencies",)
@@ -94,12 +71,7 @@ describe(MIGRATION, () => {
         .execute();
 
       expect(rows,).toHaveLength(1,);
-      expect(await hasIndex(db, UNIQUE_INDEX,),).toBe(true,);
-
-      // Enforced: the racing second ensure now aborts at the database.
-      await expect(
-        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 30, },),
-      ).rejects.toThrow(/UNIQUE/i,);
+      expect(rows[0]!.balance,).toBe(10,);
     } finally {
       await db.destroy();
       sqlite.close();
@@ -122,17 +94,9 @@ describe(MIGRATION, () => {
         settings: "{}",
       },);
 
-      await down(db as unknown as UntypedDb,);
-      await Promise.all([
-        insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },),
-        insertActorCurrencies(db, actorId, worldId, "silver", { balance: 5, },),
-      ],);
+      await insertActorCurrencies(db, actorId, worldId, "gold", { balance: 10, },);
+      await insertActorCurrencies(db, actorId, worldId, "silver", { balance: 5, },);
 
-      const warnings = await captureWarnings(async () => {
-        await up(db as unknown as UntypedDb,);
-      }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-      expect(warnings,).toEqual([],);
       const rows = await db
         .selectFrom("actor_currencies",)
         .selectAll()
@@ -146,4 +110,4 @@ describe(MIGRATION, () => {
       sqlite.close();
     }
   });
-},);
+});

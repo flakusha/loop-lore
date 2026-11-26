@@ -3,7 +3,7 @@
 
 # TASK: RenPy export core plugin route (versioned path)
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
@@ -20,6 +20,6 @@ Core plugin manifest plugins/core/renpy-export (origin core self-approves) regis
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -34,11 +34,29 @@ import { getLogger, } from "../../logger";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, isValidWorkflow, } from "../workflow-loader/workflow-validation";
-import { deriveParameters, repairParameters, } from "./seed-parameters";
+import { BINDINGS_FILE, loadWorkflowBindings, parametersForSpec, } from "./binding-config";
+import type { WorkflowBindingConfig, WorkflowBindingSpec, } from "./bindings";
+import { baseWorkflowId, deriveParameters, repairParameters, } from "./seed-parameters";
 import { CATEGORIES, validateWorkflowPayload, } from "./validate";
 
 const DEFAULT_DIR = "configs/workflows";
 
+/**
+ * Sinks that make a graph a video workflow. The image-edit library has no
+ * video pipeline, so seeding one under a default `txt2img` category hands the
+ * image provider a graph it cannot submit. A node-class rule stays
+ * deterministic and leaves the shipped SaveImage/SaveImageAdvanced graphs
+ * alone.
+ */
+const VIDEO_SINK_CLASSES: ReadonlySet<string> = new Set([
+  "DaSiWaH3ClipAssemble",
+  "DaSiWa_EnhancedVideoCombine",
+  "SaveVideo",
+  "VHS_VideoCombine",
+],);
+
+/** Audio-only sinks are as unusable as video sinks in the image-edit library. */
+const AUDIO_SINK_CLASSES: ReadonlySet<string> = new Set(["SaveAudio",],);
 /**
  * Category for a seeded file, from its name.
  *
@@ -53,7 +71,8 @@ const DEFAULT_DIR = "configs/workflows";
  * @param id - Workflow id (the file's basename)
  */
 function categoryFor(id: string,): ImageEditCategory {
-  return CATEGORIES.includes(id as ImageEditCategory,) ? id as ImageEditCategory : "txt2img";
+  const base = baseWorkflowId(id,);
+  return CATEGORIES.includes(base as ImageEditCategory,) ? base as ImageEditCategory : "txt2img";
 }
 
 /** What the seed did, for logging and for the boot caller. */
@@ -117,11 +136,25 @@ async function resolveOwner(database: Kysely<DB>,): Promise<string | null> {
 async function readPayload(
   path: string,
   id: string,
+  spec?: WorkflowBindingSpec,
+  policy: WorkflowBindingConfig["bindingPolicy"] = "augment",
 ): Promise<{ ok: true; payload: WorkflowPayload } | { ok: false; reason: string }> {
   const text = await readFile(path, "utf8",);
   const graph = jsonParseOr<unknown>(text, undefined,);
   if (graph === undefined) { return { ok: false, reason: "not valid JSON", }; }
-  if (!isValidWorkflow(graph,)) { return { ok: false, reason: "not a ComfyUI graph", }; }
+  if (!isValidWorkflow(graph,)) {
+    return { ok: false, reason: "not a loadable ComfyUI graph (needs a real output sink)", };
+  }
+
+  const classes = Object.values(graph as WorkflowPayload["body"],).map((node,) => node.class_type);
+  if (classes.some((classType,) => VIDEO_SINK_CLASSES.has(classType,))) {
+    return { ok: false, reason: "video workflow is not an image-edit template", };
+  }
+
+  if (classes.some((classType,) => AUDIO_SINK_CLASSES.has(classType,))) {
+    return { ok: false, reason: "audio workflow is not an image-edit template", };
+  }
+
   return {
     ok: true,
     payload: {
@@ -132,8 +165,14 @@ async function readPayload(
       // Guessing txt2img unconditionally mislabelled img2img, and
       // `sd-server-provider` dispatches on this value.
       category: categoryFor(basename(path, ".json",),),
-      parameters: deriveParameters(id, graph as WorkflowPayload["body"],),
-      requiredNodes: [],
+      parameters: parametersForSpec(spec, deriveParameters(id, graph as WorkflowPayload["body"],), policy,),
+      ...(spec === undefined ? {} : { bindings: spec, }),
+      // Declared from the graph itself (same derivation as the admin UI
+      // ingest): every seeded export carries the exact node classes its
+      // runtime needs, so the live `missingRequiredNodes` check on the admin
+      // surface can flag a workflow whose node pack is absent. An empty
+      // declaration would make that check vacuous.
+      requiredNodes: [...new Set(classes,),].toSorted(),
     },
   };
 }
@@ -177,6 +216,10 @@ export async function seedWorkflowLibrary(
     return outcome;
   }
 
+  const loaded = await loadWorkflowBindings(dir,);
+  if (!loaded.ok) { log.warn("ignoring invalid bindings config", { dir, errors: loaded.errors, },); }
+  const config = loaded.ok ? loaded.config : null;
+
   const owner = await resolveOwner(database,);
   if (owner === null) {
     log.info("no admin user to own seeded workflows; skipping seed",);
@@ -184,7 +227,7 @@ export async function seedWorkflowLibrary(
   }
 
   for (const entry of entries.toSorted()) {
-    if (extname(entry,) !== ".json") { continue; }
+    if (extname(entry,) !== ".json" || entry === BINDINGS_FILE) { continue; }
     const id = entry.replace(/\.json$/, "",);
 
     const existing = await database
@@ -212,7 +255,13 @@ export async function seedWorkflowLibrary(
       continue;
     }
 
-    const read = await readPayload(join(dir, entry,), id,);
+    const read = await readPayload(
+      join(dir, entry,),
+      id,
+      config?.workflows[id],
+      config?.bindingPolicy ?? "augment",
+    );
+
     if (!read.ok) {
       log.warn("skipping workflow file", { id, reason: read.reason, },);
       outcome.skipped.push({ id, reason: read.reason, },);

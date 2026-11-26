@@ -69,9 +69,10 @@ export function quotaStorageOptions(): QuotaStorageOptions {
  * @param userId - authenticated caller
  * @param cost - units the operation consumes
  * @param now - current epoch ms (injectable for deterministic tests)
- * @returns the remaining units AFTER deduction, or null when the cost does not fit
+ * @returns the remaining units AFTER deduction, or null when the cost is negative/non-finite or does not fit
  */
 export function consumeQuota(userId: string, cost: number, now: number,): number | null {
+  if (!Number.isFinite(cost,) || cost < 0) { return null; }
   const db = quotaDatabase();
   if (db) {
     return consumeQuotaDb({

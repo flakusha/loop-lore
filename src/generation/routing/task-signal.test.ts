@@ -7,7 +7,7 @@
  * what the exec log reads back.
  */
 import { describe, expect, it, } from "bun:test";
-import { AUTO_GEN, BACKGROUND, INTERACTIVE_TURN, toHarnessTaskType, toTaskSignal, } from "./task-signal";
+import { AUTO_GEN, BACKGROUND, INTERACTIVE_TURN, RERANKING, toHarnessTaskType, toTaskSignal, } from "./task-signal";
 
 describe("toHarnessTaskType", () => {
   it("maps the chat turn to chat", () => {
@@ -26,6 +26,10 @@ describe("toHarnessTaskType", () => {
     expect(toHarnessTaskType("background",),).toBe("memory",);
   });
 
+  it("maps the dedicated rerank signal to memory", () => {
+    expect(toHarnessTaskType("reranking",),).toBe("memory",);
+  });
+
   it("rolls the AUX family up into aux", () => {
     expect(toHarnessTaskType("transition",),).toBe("aux",);
   });
@@ -40,5 +44,6 @@ describe("toTaskSignal", () => {
     expect(INTERACTIVE_TURN.taskType,).toBe("interactive-turn",);
     expect(AUTO_GEN.taskType,).toBe("auto-gen",);
     expect(BACKGROUND.taskType,).toBe("background",);
+    expect(RERANKING.taskType,).toBe("reranking",);
   });
 });

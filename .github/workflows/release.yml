@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [master, release/**]
+    branches: [master, stg, release/**]
     tags: ["*"]
 
 concurrency:
@@ -11,25 +11,34 @@ concurrency:
 
 env:
   # Pinned to the local toolchain; `bun --check` (the `typecheck - bun` gate) needs Bun 1.4.3+.
-  BUN_VERSION: "1.4.4"
+  BUN_VERSION: "1.4.5"
 
 # Hybrid release model:
-#   - Branch push (master/release/*): verification gate only — full checks +
-#     build. CI NEVER creates tags; tagging is a post-testing human decision.
-#   - Tag push (bare `x.y.z`, e.g. `0.1.0`): build + artifacts + GitHub Release,
+#   - Branch push (master/stg/release/*): verification gate only — full
+#     checks + build. CI NEVER creates tags; tagging is a post-testing
+#     human decision.
+#   - Bare stable tag push (`0.1.0`): build + artifacts + GitHub Release,
 #     notes derived from CHANGELOG.md (single source, never git log).
+#   - RC tag push (`0.1.0-rc.N`): same shape, published as a GitHub
+#     PRERELEASE from the staged (`stg`) line. Requires a matching
+#     `## [0.1.0-rc.N]` CHANGELOG section (the changelog gate enforces it).
 #   - `dev-*` tags (dev-release workflow) are excluded — dev builds are not releases.
 
 jobs:
   verify:
     name: Verify (post-merge gate)
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/'))
-    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/stg' || startsWith(github.ref, 'refs/heads/release/'))
+    runs-on: ubuntu-24.04
     # See ci.yml: the browser gate inside `bun run check:ci` has a 45 min
     # budget of its own and runs last - the job timeout has to exceed it.
     timeout-minutes: 90
     permissions:
       contents: read
+    # Same check runner as ci.yml's gates job: no .credentials.env on the
+    # runner and no signing step, so skip the preflight only (signing config
+    # is unchanged).
+    env:
+      CHECK_SKIP_GPG_PRECHECK: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -103,15 +112,16 @@ jobs:
 
       - name: Ready to tag
         run: |
-          echo "Master merge verified green — tag decision is HUMAN (post-testing)."
+          echo "Release-branch merge verified green — tag decision is HUMAN (post-testing)."
           echo "  git tag -s <version> -m \"loop-lore <version>\"   # then:"
           echo "  git push origin <version>                        # triggers Release build"
 
   release-tag-push:
     name: Release from Tag Push
-    # Bare `x.y.z` tags (e.g. 0.1.0). `dev-*` tags are dev builds — excluded.
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/dev-')
-    runs-on: ubuntu-latest
+    # Bare stable `x.y.z` tags (e.g. 0.1.0). `dev-*` tags are dev builds and
+    # `-rc.N` tags are staged prereleases (separate job below) — both excluded.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/dev-') && !contains(github.ref, '-rc.')
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     permissions:
       contents: write
@@ -140,6 +150,11 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      # A tag can be pushed at any commit, not only after the master verify job.
+      # Fail the release before publishing artifacts if that commit's unit suite is red.
+      - name: Run unit tests
+        run: bun run test:unit
 
       # The ONLY check that compiles app.rs and web.rs: lib.rs gates them behind
       # `#[cfg(target_arch = "wasm32")]`, so the host target never sees them.
@@ -265,6 +280,125 @@ jobs:
           body: ${{ steps.notes.outputs.release_notes }}
           draft: false
           prerelease: false
+          files: |
+            ${{ steps.artifacts.outputs.artifact_dir }}/dist/**
+            ${{ steps.artifacts.outputs.artifact_dir }}/src/public/**
+            ${{ steps.artifacts.outputs.artifact_dir }}/SHA256SUMS.txt
+            ${{ steps.artifacts.outputs.artifact_dir }}/MD5SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  stg-prerelease:
+    name: Staged Prerelease from RC Tag
+    # `0.1.0-rc.N` tags from the staged (`stg`) line. Excluded from the
+    # stable job above by its `-rc.` guard. Minimal/source release: unit
+    # suite + build + checksums, published as a GitHub PRERELEASE. No Pages
+    # deploy, no browser gate, native/egui best-effort (same degrade-with-
+    # warning contract as the stable job).
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-rc.')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache bun install
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run unit tests
+        run: bun run test:unit
+
+      - name: Build
+        run: bun run build
+
+      - name: Report egui artifact presence
+        id: egui
+        run: |
+          bun run scripts/check/egui-release-warn.mjs dist | tee /tmp/egui-presence
+          echo "present=$(tail -1 /tmp/egui-presence | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Generate release artifacts and hashes
+        id: artifacts
+        run: |
+          ARTIFACT_DIR="release-artifacts"
+          mkdir -p "$ARTIFACT_DIR"
+
+          cp -r dist "$ARTIFACT_DIR/" 2>/dev/null || true
+          cp -r src/public "$ARTIFACT_DIR/" 2>/dev/null || true
+
+          cd "$ARTIFACT_DIR"
+          find . -type f -exec sha256sum {} \; | sort > SHA256SUMS.txt
+          find . -type f -exec md5sum {} \; | sort > MD5SUMS.txt
+          cat SHA256SUMS.txt
+          cd ..
+
+          echo "artifact_dir=$ARTIFACT_DIR" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes from CHANGELOG.md
+        id: notes
+        run: |
+          TAG="${{ github.ref_name }}"
+          HASHES=$(cat "${{ steps.artifacts.outputs.artifact_dir }}/SHA256SUMS.txt" 2>/dev/null || echo "No artifacts found")
+
+          SECTION=$(awk -v ver="$TAG" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md)
+
+          if [[ -z "$SECTION" ]]; then
+            echo "::error::CHANGELOG.md has no section ## [$TAG] — update CHANGELOG.md, then re-tag"
+            exit 1
+          fi
+
+          {
+            echo "release_notes<<EOF"
+            echo "# Release $TAG (staged prerelease)"
+            echo ""
+            echo "$SECTION"
+            echo ""
+            echo "---"
+            echo ""
+            echo "### SHA256 Checksums"
+            echo ""
+            echo "\`\`\`"
+            echo "$HASHES"
+            echo "\`\`\`"
+            echo ""
+            if [ "${{ steps.egui.outputs.present }}" != "true" ]; then
+              echo ""
+              echo "**egui WASM bundle omitted** — see the run log for the reason."
+            fi
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Prerelease from RC tag
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Prerelease ${{ github.ref_name }}
+          body: ${{ steps.notes.outputs.release_notes }}
+          draft: false
+          prerelease: true
           files: |
             ${{ steps.artifacts.outputs.artifact_dir }}/dist/**
             ${{ steps.artifacts.outputs.artifact_dir }}/src/public/**

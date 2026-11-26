@@ -162,6 +162,7 @@ export async function startSdCpp(
     port: opts.port,
     pid: proc.pid,
     startedAt: Date.now(),
+    launch: { kind: "sd-cpp", opts, },
   };
 
   host.instances.push(instance,);

@@ -19,6 +19,7 @@ import type { DbConfig, } from "./db";
 import type { DocumentationConfig, } from "./docs";
 import type { DynamicResponseConfig, } from "./dynamic-response";
 import type { EncryptionConfig, } from "./encryption";
+import type { FeaturesConfig, } from "./features";
 import type { FederationConfig, } from "./federation";
 import type { FrontendConfig, } from "./frontend";
 import type { GenerationConfig, } from "./generation";
@@ -29,6 +30,7 @@ import type { IdempotencyConfig, } from "./idempotency";
 import type { IntegrationsConfig, } from "./integrations";
 import type { ItemsConfig, } from "./items";
 import type { LoggingConfig, } from "./logging";
+import type { McpConfig, } from "./mcp";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
 import type { ObservabilityConfig, } from "./observability";
@@ -71,7 +73,9 @@ export interface Config {
   frontend: FrontendConfig;
   cron: CronConfig;
   federation: FederationConfig;
+  features?: FeaturesConfig;
   integrations: IntegrationsConfig;
   harness: HarnessConfig;
+  mcp?: McpConfig;
   prompt: PromptConfig;
 }

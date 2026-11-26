@@ -2,10 +2,10 @@
  * Tests for crypto/key-rotation.ts — auto-rotation logic
  */
 
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
 import { beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import { createLogger, } from "../logger";
 import {
   findExpiredKeys,
   runAutoRotation,

@@ -103,13 +103,13 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
     await ctx?.close();
   },);
 
-  // SKIPPED (2026-11-12): the ~1200px chat-header .actions row forced a
+  // Re-enabled 2026-11-18 (LANE-theme4-enqueue-fix; was skipped 2026-11-12): the ~1200px chat-header .actions row forced a
   // ~900px horizontal page overflow at 375/360 — FIXED by wrapping the row at
   // ≤768px (app.css, theme-4 AC4 slice). A residual 5px overflow remains
   // (game-canvas/chat-container/input-area clip correctly; one element is
   // still 5px wider than the viewport — the failure dump above names it).
-  // Re-enable after the TASK-mobile-surface-audit-360px pass closes the gap.
-  test.skip("chat shell renders without horizontal overflow at 375px and 360px", async () => {
+  // Residual risk: the TASK-mobile-surface-audit-360px gap (5px) may still trip this.
+  test("chat shell renders without horizontal overflow at 375px and 360px", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: SPEC_ALLOWLIST, },);
 
@@ -148,7 +148,7 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
     }
   }, 60_000,);
 
-  // SKIPPED (2026-11-12, worktree theme4-pwa-caps): the offline FAILURE-path
+  // Re-enabled 2026-11-18 (LANE-theme4-enqueue-fix; was skipped 2026-11-12): the offline FAILURE-path
   // enqueue never fires in the browser. Instrumented runs with the classifier
   // fix in place show the failure is UPSTREAM of it: the offline FAST path
   // (`isOffline()` gate) runs `queueOfflineSend` → returns false with NO
@@ -157,7 +157,7 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
   // reached. Suspects: `buildBody()` (encryption/compress) or the enqueue
   // throwing inside the silent catch. Next: surface that error, then re-run.
   // Unit-level outbox behaviour (incl. the fixed classifier) is green.
-  test.skip("offline send queues under the banner and delivers on reconnect", async () => {
+  test("offline send queues under the banner and delivers on reconnect", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: SPEC_ALLOWLIST, },);
 
@@ -292,10 +292,10 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
     }
   }, 60_000,);
 
-  // SKIPPED — same upstream fast-path failure as above (this test exercises
-  // the same enqueue path twice). The pending list + discard UI stays
-  // unit-covered in outbox-badge.test.ts.
-  test.skip("outbox badge pending list supports per-entry discard with confirm", async () => {
+  // Re-enabled 2026-11-18 (LANE-theme4-enqueue-fix) — same upstream fast-path
+  // note as above (this test exercises the same enqueue path twice). The
+  // pending list + discard UI stays unit-covered in outbox-badge.test.ts.
+  test("outbox badge pending list supports per-entry discard with confirm", async () => {
     const page = await ctx.openPage();
     const errors = trackPageErrors(page, { allowlist: SPEC_ALLOWLIST, },);
 
@@ -345,7 +345,7 @@ describe("Phone viewport shell + offline outbox badge (theme-4 AC4)", () => {
         .where("content", "in", ["discard-a", "discard-b",],)
         .executeTakeFirst();
 
-      expect(row,).toBeNull();
+      expect(row,).toBeUndefined();
     } finally {
       errors.assert();
       errors.detach();

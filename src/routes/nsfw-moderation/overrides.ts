@@ -9,7 +9,7 @@ import { checkChatAccess, } from "../../chat/service";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { errorMessage, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { requireModerationAction, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -47,7 +47,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse({ ...SuccessResponse, data: result, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, { params: t.Object({ chatId: t.String(), },), response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/chat/:chatId`, async (ctx: any,) => {
@@ -68,7 +68,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
           await svc.setChatNsfwOverride(ctx.params.chatId, override, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, {
         params: t.Object({ chatId: t.String(), },),
@@ -83,7 +83,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
           await svc.setWorldNsfwOverride(ctx.params.worldId, override, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, {
         params: t.Object({ worldId: t.String(), },),

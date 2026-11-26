@@ -83,6 +83,10 @@ export interface RetryFromPointResponse {
   totalSteps: number;
   /** Whether the previous attempt was cancelled */
   cancelled: boolean;
+  /** Parent user message to regenerate — lets the caller re-dispatch generation. */
+  parentMessageId?: string;
+  /** Actor of the original attempt, required by the generate route. */
+  actorId?: string;
 }
 
 // ── Events ─────────────────────────────────────────────────

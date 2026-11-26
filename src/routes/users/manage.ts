@@ -15,11 +15,14 @@ import { jsonParseOr, safeJsonStringify, } from "../../utils";
 import { forbidden, notFound, } from "../../validation/middleware";
 import {
   ErrorResponse,
+  rejectedSettingsKeys,
+  settingsKeysRejectedResponse,
   SettingsUpdateAllowedKeys,
   SuccessResponse,
   UserIdParams,
   UserProfileUpdateBody,
 } from "../../validation/schemas";
+import { wouldRemoveLastAdmin, } from "../admin/users";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
@@ -85,6 +88,14 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           const updates: Record<string, unknown> = {};
           if (body.displayName !== undefined) { updates.display_name = body.displayName; }
           if (body.settings) {
+            if (typeof body.settings !== "object" || Array.isArray(body.settings,)) {
+              return jsonError({ message: "settings must be an object", status: HttpStatus.BadRequest, },);
+            }
+
+            // Whole-blob writes obey the same closed allowlist (RA-03).
+            const rejectedKeys = rejectedSettingsKeys(body.settings as Record<string, unknown>,);
+            if (rejectedKeys.length > 0) { return settingsKeysRejectedResponse(rejectedKeys,); }
+
             const settingsResult = safeJsonStringify(body.settings,);
             if (!settingsResult.ok) {
               return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
@@ -206,6 +217,13 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
             return forbidden();
           }
 
+          if (await wouldRemoveLastAdmin(opts.database, targetId,)) {
+            return jsonError({
+              message: "Cannot delete the last admin account",
+              status: HttpStatus.BadRequest,
+            },);
+          }
+
           await opts.database.deleteFrom("users",).where("id", "=", targetId,).execute();
 
           return jsonNoContent();
@@ -214,6 +232,7 @@ export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
           params: UserIdParams,
           response: {
             204: t.Void(),
+            400: ErrorResponse,
             401: ErrorResponse,
             403: ErrorResponse,
           },

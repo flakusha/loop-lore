@@ -26,12 +26,13 @@
  */
 import path from "node:path";
 import { integer, object, option, optional, runScript, string, withDefault, } from "../../src/cli/parser";
+import { SOURCE_ROOTS, } from "./source-paths.mjs";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 
 /**
  * Paths excluded from every jscpd scan: generated code, vendored assets and
- * the non-TypeScript front-end templates. `scripts/check/test-gaps.mjs`
+ * the non-TypeScript front-end templates and JSON fixture data. `scripts/check/test-gaps.mjs`
  * (SKIP_PATTERNS) mirrors this list for the coverage gate.
  */
 export const JSCPD_IGNORE = [
@@ -45,6 +46,7 @@ export const JSCPD_IGNORE = [
   "frontend/alpine/**",
   "validation/schemas/*",
   "db/schema-*.ts",
+  "**/fixtures/**",
 ];
 
 /**
@@ -58,7 +60,7 @@ export const JSCPD_IGNORE = [
 export function jscpdScanArgs({ minLines, minTokens, reporters, output, },) {
   const args = [
     "jscpd",
-    "src/",
+    ...SOURCE_ROOTS,
     "--min-lines",
     String(minLines,),
     "--min-tokens",

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 344
 // src/config/sections/harness.ts — external-harness config section
 //
 // Defaults + section class + JSON-schema meta for `harness.acp`, plus the
@@ -8,12 +9,13 @@
 // non-`provider/id` models, duplicate profile names).
 
 import { type Stats, statSync, } from "node:fs";
-import { resolve, } from "node:path";
+import { isAbsolute, resolve, } from "node:path";
 import {
   type AcpProfileConfig,
   HARNESS_CAPABILITIES,
   HARNESS_FLAVORS,
   HARNESS_TIERS,
+  HARNESS_TRANSPORTS,
   type HarnessConfig,
   type HarnessTierId,
 } from "../schema/harness";
@@ -61,7 +63,8 @@ export function isConcreteModelId(model: string,): boolean {
  * @param acp - the `harness.acp` sub-config to check
  * @throws {Error} If any profile is malformed: duplicate name, empty command,
  * unknown tier key, missing/invalid tier model, unknown capability, a
- * non-numeric limit, or a non-boolean ToS acknowledgement flag.
+ * non-numeric limit, reserved alias name, unsupported transport, or a
+ * non-boolean ToS acknowledgement flag.
  */
 export function validateAcpProfiles(acp: HarnessConfig["acp"],): void {
   if (!acp.enabled) { return; }
@@ -79,6 +82,9 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
   if (typeof p.name !== "string" || p.name.trim() === "") {
     throw new Error("harness.acp.profiles[] entry is missing a name",);
   }
+  if (p.name === "default") {
+    throw new Error("harness.acp.profiles: default is reserved for implicit failover and cannot name a profile",);
+  }
 
   if (seen.has(p.name,)) {
     throw new Error(`harness.acp.profiles: duplicate profile name "${p.name}"`,);
@@ -90,6 +96,13 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
       `harness.acp.profiles["${p.name}"]: unknown harness flavor "${p.harness}" (allowed: ${
         HARNESS_FLAVORS.join(", ",)
       })`,
+    );
+  }
+  if (p.transport !== undefined && !HARNESS_TRANSPORTS.includes(p.transport,)) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].transport "${
+        String(p.transport,)
+      }" is not implemented (only "acp" is supported)`,
     );
   }
 
@@ -124,6 +137,25 @@ function validateProfile(p: AcpProfileConfig, seen: Set<string>,): void {
   if (p.limits !== undefined) { validateLimits(p.name, p.limits,); }
 
   if (p.sandboxRoot !== undefined) { validateSandboxRoot(p.name, p.sandboxRoot,); }
+
+  if (
+    p.protocolVersion !== undefined &&
+    (!Number.isInteger(p.protocolVersion,) || p.protocolVersion < 1 || p.protocolVersion > 2)
+  ) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].protocolVersion must be 1 or 2`,
+    );
+  }
+
+  if (p.mcpServers !== undefined) { validateMcpServers(p.name, p.mcpServers,); }
+
+  if (p.additionalDirectories !== undefined) { validateAdditionalDirectories(p.name, p.additionalDirectories,); }
+
+  if (p.mode !== undefined && (typeof p.mode !== "string" || p.mode.trim() === "")) {
+    throw new Error(
+      `harness.acp.profiles["${p.name}"].mode must be a non-empty string`,
+    );
+  }
 
   if (p.tosGrayzoneAcknowledged !== undefined && typeof p.tosGrayzoneAcknowledged !== "boolean") {
     throw new Error(
@@ -193,6 +225,75 @@ function validateSandboxRoot(name: string, root: string,): void {
 }
 
 /**
+ * Validate one profile's MCP servers: non-empty name/command per entry, with
+ * string argv and `{name,value}` env entries when present.
+ * @param name - profile name (for the error message)
+ * @param servers - the configured servers
+ * @throws {Error} If the list or an entry is malformed.
+ */
+function validateMcpServers(name: string, servers: AcpProfileConfig["mcpServers"],): void {
+  if (!Array.isArray(servers,)) {
+    throw new Error(`harness.acp.profiles["${name}"].mcpServers must be an array`,);
+  }
+
+  for (const entry of servers) { validateMcpServer(name, entry,); }
+}
+
+/**
+ * Validate one MCP server entry.
+ * @param name - profile name (for the error message)
+ * @param entry - the server entry
+ * @throws {Error} If the entry is malformed.
+ */
+function validateMcpServer(name: string, entry: NonNullable<AcpProfileConfig["mcpServers"]>[number],): void {
+  const prefix = `harness.acp.profiles["${name}"].mcpServers[]`;
+  if (typeof entry?.name !== "string" || entry.name.trim() === "") {
+    throw new Error(`${prefix} entry is missing a non-empty name`,);
+  }
+
+  if (typeof entry?.command !== "string" || entry.command === "") {
+    throw new Error(`${prefix} "${entry.name}" is missing a command`,);
+  }
+
+  if (entry.args !== undefined && (!Array.isArray(entry.args,) || entry.args.some((a,) => typeof a !== "string"))) {
+    throw new Error(`${prefix} "${entry.name}".args must be a string array`,);
+  }
+
+  if (
+    entry.env !== undefined && (!Array.isArray(entry.env,) ||
+      entry.env.some((e,) => typeof e?.name !== "string" || typeof e?.value !== "string"))
+  ) {
+    throw new Error(`${prefix} "${entry.name}".env must be a {name,value} array`,);
+  }
+}
+
+/**
+ * Validate one profile's additional directories: every entry an absolute
+ * path. Fail closed at config load — the adapter also rejects a relative
+ * entry before `session/new` goes out (defense in depth).
+ * @param name - profile name (for the error message)
+ * @param dirs - the configured roots
+ * @throws {Error} If an entry is empty or not absolute.
+ */
+function validateAdditionalDirectories(name: string, dirs: AcpProfileConfig["additionalDirectories"],): void {
+  if (!Array.isArray(dirs,)) {
+    throw new Error(`harness.acp.profiles["${name}"].additionalDirectories must be an array`,);
+  }
+
+  for (const dir of dirs) {
+    if (typeof dir !== "string" || dir.trim() === "") {
+      throw new Error(`harness.acp.profiles["${name}"].additionalDirectories must be non-empty paths`,);
+    }
+
+    if (!isAbsolute(dir,)) {
+      throw new Error(
+        `harness.acp.profiles["${name}"].additionalDirectories must be absolute (got "${dir}")`,
+      );
+    }
+  }
+}
+
+/**
  * Validate profile limits.
  * @param name - profile name
  * @param limits - the limits block
@@ -229,6 +330,12 @@ export const harnessMeta = {
                 enum: [...HARNESS_FLAVORS,],
                 default: "omp",
                 description: "Which shipped ACP adapter speaks this profile (default omp)",
+              },
+              transport: {
+                type: "string",
+                enum: [...HARNESS_TRANSPORTS,],
+                default: "acp",
+                description: "Driver transport for this profile (only ACP stdio is implemented)",
               },
               command: {
                 type: "array",
@@ -274,6 +381,28 @@ export const harnessMeta = {
                 type: "string",
                 description:
                   'Directory the profile\'s permission asks are judged against (must exist; no ".." traversal). Absent = the process cwd',
+              },
+              protocolVersion: {
+                type: "number",
+                description:
+                  "ACP protocol version to request at initialize (default 1; 2 negotiates v2 when the agent supports it)",
+              },
+              mcpServers: {
+                type: "array",
+                description:
+                  "MCP servers handed to the harness agent via session/new (stdio name/command/args/env, verbatim)",
+                items: { type: "object", },
+              },
+              additionalDirectories: {
+                type: "array",
+                items: { type: "string", },
+                description:
+                  "Extra absolute workspace roots handed to the agent via session/new (relative entries are rejected)",
+              },
+              mode: {
+                type: "string",
+                description:
+                  "Default mode id for session/set_mode (e.g. plan/act); absent = only explicitly passed ids are sent",
               },
             },
           },

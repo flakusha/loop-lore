@@ -14,6 +14,9 @@ import { ComfyUIClient, } from "../../providers/comfyui";
 import { loadComfyUIWorkflow, } from "../../workflow-loader";
 import type { AudioGenOutcome, AudioGenRequest, AudioProvider, } from "../types";
 
+/** Generate request with an optional per-call workflow selection. */
+type ComfyAudioGenRequest = AudioGenRequest & { workflow?: string };
+
 /** */
 export interface ComfyAudioProviderOptions {
   baseUrl: string;
@@ -36,9 +39,10 @@ export function createComfyAudioProvider(opts: ComfyAudioProviderOptions,): Audi
   return {
     id: `comfyui:${opts.workflow}`,
     async generate(request: AudioGenRequest,): Promise<AudioGenOutcome> {
+      const workflowName = (request as ComfyAudioGenRequest).workflow || opts.workflow;
       let workflow;
       try {
-        workflow = await loadComfyUIWorkflow(opts.workflow, {
+        workflow = await loadComfyUIWorkflow(workflowName, {
           prompt: request.prompt,
           seconds: request.seconds,
           seed: request.seed,
@@ -46,10 +50,10 @@ export function createComfyAudioProvider(opts: ComfyAudioProviderOptions,): Audi
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error,);
         log?.error("audio workflow load failed", error instanceof Error ? error : undefined, {
-          workflow: opts.workflow,
+          workflow: workflowName,
         },);
 
-        return { ok: false, error: `Audio workflow "${opts.workflow}" could not be loaded: ${message}`, status: 500, };
+        return { ok: false, error: `Audio workflow "${workflowName}" could not be loaded: ${message}`, status: 500, };
       }
 
       try {
@@ -63,7 +67,7 @@ export function createComfyAudioProvider(opts: ComfyAudioProviderOptions,): Audi
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error,);
         log?.error("audio generation failed", error instanceof Error ? error : undefined, {
-          workflow: opts.workflow,
+          workflow: workflowName,
         },);
 
         return { ok: false, error: `Audio generation failed: ${message}`, status: 502, };

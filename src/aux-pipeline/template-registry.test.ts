@@ -42,6 +42,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
         "intent",
         "memory",
         "message-action",
+        "minimax-prompt",
         "moderation",
         "nsfw",
         "prompt-analysis",
@@ -90,7 +91,7 @@ describe("AUX_CLASSIFICATION_TASKS", () => {
       .map(([task,],) => task)
       .sort();
 
-    expect(nullPurpose,).toEqual(["adapt", "immersion-audit", "message-action", "prompt-improve",],);
+    expect(nullPurpose,).toEqual(["adapt", "immersion-audit", "message-action", "minimax-prompt", "prompt-improve",],);
   });
 });
 

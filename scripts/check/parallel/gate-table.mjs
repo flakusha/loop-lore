@@ -8,13 +8,17 @@
  * builders in `gates.mjs`, which owns the assembly.
  */
 
-import { NOOP_OK, } from "./context.mjs";
+import { FEATURE_PROFILES, NOOP_OK, } from "./context.mjs";
 
 // oxlint-disable-next-line sort-keys
 export const checks = {
   // Type checking
-  "typecheck - backend": "bun run typecheck",
-  // Bun 1.4.4's built-in TS7 checker (the version every workflow pins).
+  "typecheck - backend": "bun run typecheck:backend",
+  "typecheck - core": "bun run typecheck:core",
+  "typecheck - i18n": "bun run typecheck:i18n",
+  "typecheck - assets": "bun run typecheck:assets",
+  "typecheck - plugins": "bun run typecheck:plugins",
+  // Bun 1.4.5's built-in TS7 checker (the version every workflow pins).
   // Not a substitute for the tsgo gates —
   // but it CAN select a project: `bun --check --tsconfig-override=<project>`
   // covers tsconfig.backend.json, tsconfig.frontend.json, tsconfig.scripts.json.
@@ -24,14 +28,10 @@ export const checks = {
   // their own projects). ~1.1s, so it rides along in check:fast.
   "typecheck - bun": "bun run typecheck:bun",
   "typecheck - frontend": "bun run typecheck:frontend",
-  "typecheck - coverage": "bun run typecheck:coverage",
-  "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
-  // scripts/** sat outside every coverage gate: tsconfig.backend.json is
-  // src/** minus src/frontend/**, so the backend floor never saw it, and it
-  // has no frontend sibling. Same 95% any-count floor via its own project.
-  // Measured at 97.25% on landing, so the gate opens green rather than
-  // opening as a waiver.
-  "typecheck - coverage - scripts": "bun run typecheck:coverage:scripts",
+  // Three 95% type-coverage floors (backend, frontend, scripts) are ONE gate:
+  // separate rows only multiplied the red output for a single contract. The
+  // aggregate script runs all three projects; none is skipped or downgraded.
+  "typecheck - coverage": "bun run typecheck:coverage:all",
   // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
   // the in-repo scripts/ CLI ships outside tsconfig.backend.json (src/** only).
   // Scoped tsconfig.scripts.json keeps name resolution so unimported
@@ -44,7 +44,7 @@ export const checks = {
   // src/ modules imported by scripts keep their discriminated-union
   // narrowing. The residual debt it surfaced (bun query<T, Params> arity,
   // two test-cast sites) was cleared; do not re-relax strict.
-  "typecheck - scripts": "bunx tsgo --noEmit -p tsconfig.scripts.json",
+  "typecheck - scripts": "bun run typecheck:scripts",
   // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
   // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
   "lint - eslint": "bun run lint:eslint",
@@ -87,6 +87,11 @@ export const checks = {
   "format - native (rustfmt)": "bun run format:native:check",
 
   "md - lint": "bun run md:lint",
+
+  // RSI smoke gate: one in-memory app boot + health probe. Exits non-zero
+  // when the probe fails, so the fast CI loop fails with the app.
+  "smoke - app": "bun run smoke:app",
+
   // Mermaid block lint — every ```mermaid fence in docs/ and .plan/ must parse.
   // mmdlint is headless (jsdom-backed), no browser, bun-native, <30s on the whole tree.
   "mermaid - lint (mmdlint)": "bun run mermaid:lint",
@@ -139,6 +144,10 @@ export const checks = {
   // DB schema staleness (regenerates into temp dir, diffs vs committed)
   "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
+  // Generated JSON/env schema freshness (`schemas:check:fix` regenerates).
+  // BLOCKING: the pre-commit hook alone let stale schemas land via CI.
+  "schemas - check": "bun run schemas:check",
+
   // Migration ordering: numeric-prefix uniqueness + localeCompare-free sort.
   // BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
   "migrations - ordering": "bun run scripts/check-migration-ordering.ts",
@@ -158,12 +167,31 @@ export const checks = {
   // Comprehensive .plan/ validation (format, linkage, backlog, tickets,
   // code-map, links, spdx, naming, epics-doc, status-vocab, matrix)
   "plan - validate": "bun run plan:validate",
+  // BriefingScript pre-agent ticket quality (RSI #17). Advisory: quality
+  // drifts from concurrent .plan/ merges — a signal, not a finalize blocker.
+  "briefing - pre-agent ticket quality": "bun run plan:validate:briefing",
 
   // Feature matrix freshness (.plan/feature-matrix.md vs a fresh rebuild)
   "plan - matrix": "bun run plan:matrix:check",
 
   // Priority matrix freshness (.plan/priority-matrix.md vs a fresh rebuild)
   "plan - priority": "bun run plan:priority:check",
+
+  // Entry-map freshness (.plan/entry-map.md vs a fresh rebuild) — the
+  // lanes → tickets → epics navigation view. Same merge-drift profile as
+  // the matrix gates, so advisory too.
+  "plan - entry map": "bun run plan:entry-map:check",
+
+  // Lane-ticket linkage: canonical-id drift (filename slug vs H1 vs index
+  // extid) fails; unresolvable historical lane claims only warn. BLOCKING:
+  // a pure function of tracked files, so no merge-drift profile — drift is
+  // a defect in the committed tree, like a type error.
+  "plan - linkage": "bun run plan:linkage",
+
+  // Generated plan-artifact guard: runs every artifact's own regenerate-and-
+  // diff --check (see .plan/artifact-spec.md). Advisory: it aggregates the
+  // freshness gates above, which are advisory for the same reason.
+  "plan - artifacts": "bun run plan:artifacts:check",
 
   // Size check
   "size - check": "bun run scripts/check-file-size.ts",
@@ -207,12 +235,21 @@ export const checks = {
   "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
   // Blocking: resolve every physical view through production includes/icons.
   "frontend - template preflight": "bun run scripts/check-frontend-templates.ts",
+  // Blocking: every tracked template must parse with the production options
+  // and keep its data-testid / Alpine / htmx attribute counts.
+  "frontend - minify parity": "bun run scripts/check-html-minify-parity.ts",
   // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
   "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
   // Browser baseline: one serial gate runs the complete Playwright surface.
   // Built lazily by `e2eBrowserCommand()` in gates.mjs, like the coverage gate,
   // so it can narrow to the specs `--diff-base` touched.
   "e2e - browser (baseline)": NOOP_OK, // placeholder; replaced before run
+  // QA subset: the critical-path-only browser slice (qa-subset.txt, ~7 flows,
+  // target <5 min wall) — the fast-trustworthy answer to the baseline's ~9
+  // min. Static spec list, so a plain string entry (no gates.mjs builder).
+  // BLOCKING per operator ruling 2026-11-19 (TASK-decide-1-0-0-qa-e2e-subset):
+  // the curated critical-path subset gates 1.0.0 and every finalize.
+  "e2e - browser (qa subset)": "E2E_SAFEGUARD=1 bun run test:e2e:browser-qa-subset",
   // Banned-pattern findings are collected in the non-blocking report below.
   // Epic coverage remains manual; current planning debt is non-blocking.
 
@@ -248,6 +285,8 @@ export const ADVISORY_GATES = new Set([
   // spdx, naming, epics-doc, status-vocab, matrix — all drift when dev merges
   // plan changes concurrently.
   "plan - validate",
+  // BriefingScript ticket quality: drifts from concurrent .plan/ merges.
+  "briefing - pre-agent ticket quality",
   // Ticket index reconciliation: index.json ↔ .md ↔ git issues — drifts when
   // dev merges ticket changes concurrently.
   "plan - ticket index (sync)",
@@ -260,9 +299,32 @@ export const ADVISORY_GATES = new Set([
   // Priority matrix freshness: .plan/priority-matrix.md vs a fresh rebuild —
   // same ticket-index drift profile as the feature matrix.
   "plan - priority",
+  // Entry-map freshness: .plan/entry-map.md vs a fresh rebuild — derives
+  // from concurrently-edited ticket files, same drift profile as above.
+  "plan - entry map",
+  // Generated plan-artifact guard: aggregates the freshness gates above.
+  "plan - artifacts",
   // jscpd ratchet: clone count vs committed baseline — drifts when dev
   // merges add or remove clones concurrently.
   "jscpd ratchet",
   // Branch audit: verdicts drift as dev lands branch work — see the gate entry.
   "branches - audit",
+  // e2e - browser (qa subset) is BLOCKING (see its entry in `checks`).
 ],);
+
+// Feature profiles are provenance labels over ONE shipped tree: every gate
+// runs in every profile until a build manifest proves a source root absent.
+// All five skip lists are therefore empty by default; a future skip needs BOTH
+// proven-absent source and an entry in the capability allowlist below (both
+// checked in filter.mjs). A profile must never become a gate whitelist.
+export const PROFILE_SKIPS = Object.fromEntries(
+  FEATURE_PROFILES.map((name,) => [name, [],]),
+);
+
+/**
+ * Gates a profile MAY skip, and only with a proven build-manifest reason.
+ * `e2e - browser (baseline)` is the sole entry: it is the one gate whose
+ * absence can be proven by a build without a browser bundle. The QA subset,
+ * coverage gate, test chunks and all static gates stay protected.
+ */
+export const PROFILE_SKIPPABLE_GATES = new Set(["e2e - browser (baseline)",],);

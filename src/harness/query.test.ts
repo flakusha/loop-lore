@@ -323,5 +323,12 @@ describe("harness query (file-backed)", () => {
       // The API row must stay numeric for TypeBox Type.Number() consumers.
       expect(toSummary(record!,).costUsd,).toBe(0,);
     });
+
+    it("keeps the harness profile in the summary row", async () => {
+      write([rec({ runId: "p", profile: "good-profile", },),],);
+      const [record,] = await listRuns({}, 1,);
+      expect(toSummary(record!,).profile,).toBe("good-profile",);
+      expect(toSummary(rec({ runId: "legacy", },),).profile,).toBeNull();
+    });
   });
 });

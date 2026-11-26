@@ -121,6 +121,8 @@ origin for federation nodeinfo + self-referential URLs). For trusted local
 HTTPS use `deploy/Caddyfile.local` (`tls internal`, one-time
 `caddy trust`).
 
+For the full pre-flight list (secrets, registration/demo defaults, cookie `Secure`, HSTS, listener exposure, firewall), see [`ops/secure-startup.md`](../ops/secure-startup.md).
+
 Bun handles:
 
 - Dynamic API routes
@@ -145,7 +147,7 @@ diagram rendering wired in:
 | Command | Purpose |
 | --- | --- |
 | `bun run docs:dev` | VitePress dev server (hot reload) |
-| `bun run docs:build` | Build static site to `docs/.vitepress/dist/` |
+| `bun run docs:build` | Regenerate the OpenAPI spec + `reference/api.md`, then build static site to `docs/.vitepress/dist/` |
 | `bun run docs:preview` | Preview the built site locally |
 | `bun run mermaid:lint` | Parse-validate mermaid fence blocks in `docs/` and `.plan/` |
 
@@ -179,6 +181,31 @@ Start with:
 DOMAIN=lore.example.com ACME_EMAIL=admin@example.com \
   POSTGRES_PASSWORD=<secret> docker compose -f deploy/docker-compose.yml up -d
 ```
+
+
+### Supervised restart (first-boot contention)
+
+Exit-code contract (`src/server/index.ts`): `75` means the boot lost the
+first-boot promotion race — the winner's `config.local.yaml` is on disk, so
+re-running adopts it; `0` is clean shutdown; `1` is crash.
+
+- **systemd:** `ExecStart` points at the shipped `scripts/run-app.sh`
+  wrapper, which `exec`s the app (signals and exit codes propagate
+  unchanged). `Restart=on-failure` restarts `75` and `1`; install steps are
+  in `docs/ops/bare-metal-deploy.md` §7.
+- **compose:** services run `restart: unless-stopped`
+  (`deploy/docker-compose.yml`) — every exit restarts the container;
+  `docker compose stop` is the clean stop.
+- **manual:** re-run until the exit is not `75`:
+
+```sh
+scripts/run-app.sh "$@"
+until [ $? -ne 75 ]; do scripts/run-app.sh "$@"; done
+```
+
+### Supervision on compose
+
+All three services run `restart: unless-stopped`: any exit code — including `75` (first-boot contention retry) and `1` (crash) — restarts the container, and `0` does too (the policy is exit-code-blind; `docker compose stop`/`down` is the clean stop). Ordering comes from `depends_on` (`app` waits for `db` `service_healthy`); the service `healthcheck` polls `/api/health` (liveness). Readiness of the app itself is the `/health/ready` gate — the contract supervisors gate on. The full hierarchy (outer owns the app, app owns its in-process children, app never owns siblings), the per-launcher exit-code table, and the rejected alternatives (no standalone watchdog, no `SIGHUP`-as-reload, no app-level sibling supervision, no watcher on `config.local.yaml`) are declared once in `docs/ops/bare-metal-deploy.md` (§§5.5.1/7.2.1) and not duplicated here.
 
 ## Platform Support
 

@@ -118,6 +118,21 @@ describe("views/worlds", () => {
       expect(html,).toContain("combat",);
       expect(html,).toContain("loot",);
     });
+
+    test("a quote + tag worldId cannot break out of the x-data attribute", async () => {
+      const payload = `';"</script><img src=x onerror=alert(1)>`;
+      await insertWorlds(db, "owner", "Payload World", { id: payload as never, },);
+
+      const html = await (await serveWorldDetailContent(payload, db, "owner", "user",)).text();
+
+      // The id is a JSON string value now: its double quotes are HTML-entity
+      // encoded for the attribute and its angles are JSON unicode escapes.
+      expect(html,).toContain('x-data="worldDetail({ worldId: &quot;',);
+      expect(html,).not.toContain("worldId: '",);
+      expect(html,).not.toContain("</script>",);
+      expect(html,).not.toContain("<img src=x",);
+      expect(html,).toContain("\\u003c/script\\u003e",);
+    });
   });
 
   describe("serveWorldDetail (view-serving.ts substitution)", () => {
@@ -132,6 +147,26 @@ describe("views/worlds", () => {
       // must substitute them all.
       expect(html,).not.toContain("{{worldId}}",);
       expect(html,).toContain("w-sub",);
+    });
+
+    test("escapes a quote + tag worldId in every view placeholder", async () => {
+      const payload = `w2';"</script><img src=y onerror=alert(2)>`;
+      await insertWorlds(db, "owner", "Payload World 2", { id: payload as never, },);
+
+      const res = await serveWorldDetail(payload, db, false, "owner", null, null,);
+      expect(res,).not.toBeNull();
+      const html = await res!.text();
+      const line = html.split("\n",).find((l,) => l.includes("worldTimelineBar(",)) ?? "";
+
+      // The layout has legitimate <script> tags, so scope the assertion to the
+      // worldId-bearing attribute. Entities decode before Alpine evals the
+      // expression: the quote must be a JS unicode escape, not `&#39;`.
+      expect(line,).toContain("\\u0027",);
+      expect(line,).toContain("&quot;",);
+      expect(line,).toContain("&lt;/script&gt;",);
+      expect(line,).not.toContain("</script>",);
+      expect(line,).not.toContain("<img src=y",);
+      expect(line,).not.toContain("&#39;",);
     });
   });
 });

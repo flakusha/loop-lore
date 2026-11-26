@@ -12,7 +12,8 @@ export type ConverterFailure =
   | { readonly kind: "unknown-class"; readonly node: string; readonly type: string }
   | { readonly kind: "missing-subgraph"; readonly node: string; readonly definition: string }
   | { readonly kind: "malformed-link"; readonly detail: string }
-  | { readonly kind: "malformed-workflow"; readonly detail: string };
+  | { readonly kind: "malformed-workflow"; readonly detail: string }
+  | { readonly kind: "unknown-mode"; readonly node: string; readonly mode: number };
 
 /**
  * Thrown when a workflow cannot be converted offline.

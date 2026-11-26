@@ -115,13 +115,15 @@ console.error("\n| module | line % | lines hit / total | floor | status |",);
 console.error("|---|---|---|---|---|",);
 for (const r of rows) {
   const effectiveFloor = floorFor(r.mod,);
-  const status = r.waived ? "WAIVED" : (r.pct >= effectiveFloor ? "ok" : "FAIL");
+  const status = r.pct >= effectiveFloor ? (r.waived ? "WAIVED" : "ok") : "FAIL";
 
   console.error(`| ${r.mod} | ${r.pct.toFixed(1,)}% | ${r.lh}/${r.lf} | ${effectiveFloor}% | ${status} |`,);
 }
 
 const inScope = (mod,) => !onlySet || onlySet.has(mod,);
-const fails = rows.filter((r,) => inScope(r.mod,) && !waivedSet.has(r.mod,) && r.pct < floor);
+// A waiver replaces the floor; it does not exempt the module from it. Diff-file
+// mode already floors waived modules by floorFor() — module mode must agree.
+const fails = rows.filter((r,) => inScope(r.mod,) && r.pct < floorFor(r.mod,));
 // Surfaced separately: waived modules below global floor but passing their own floor
 const waivedBelow = rows.filter((r,) => waivedSet.has(r.mod,) && r.pct < floor);
 const unmeasured = onlySet ? [...onlySet,].filter((m,) => !waivedSet.has(m,) && !rows.some((r,) => r.mod === m)) : [];

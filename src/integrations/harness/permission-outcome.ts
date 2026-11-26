@@ -67,7 +67,7 @@ const RIDABLE_KINDS: Record<string, readonly PermissionOutcome["outcome"][]> = {
  * @returns the union member, or null when the spelling is unknown.
  */
 export function normalizePermissionOutcome(value: string,): PermissionOutcome["outcome"] | null {
-  const key = value.trim().toLowerCase().split("-",).join("_",);
+  const key = value.trim().toLowerCase().replace(/[-\s]+/g, "_",);
   return OUTCOME_VERBS.find((verb,) => verb === key) ?? null;
 }
 
@@ -122,6 +122,10 @@ export function wirePermissionOutcome(
   outcome: PermissionOutcome,
   options: AdvertisedPermissionOption[],
 ): WirePermissionOutcome {
+  if (!outcome || !OUTCOME_VERBS.includes(outcome.outcome,)) {
+    return { outcome: "cancelled", };
+  }
+
   // A cancellation is not an option choice - the protocol answers it as itself.
   if (outcome.outcome === "cancelled") {
     return { outcome: "cancelled", };

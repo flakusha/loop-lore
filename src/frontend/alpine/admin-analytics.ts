@@ -17,6 +17,12 @@ interface ConversationOverview {
   topChats: { id: string; name: string; totalMessages: number; totalTokens: number }[];
 }
 
+/** One generation event-type row from `/telemetry/analytics/models`. */
+interface ModelEventRow {
+  event_type: string;
+  count: number;
+}
+
 interface CharacterStat {
   id: string;
   name: string;
@@ -119,7 +125,8 @@ const ROLE_COLORS = { user: "#4f46e5", assistant: "#059669", system: "#d97706", 
 export const adminAnalytics = {
   analyticsSummary: { total: 0, distinct_sessions: 0, distinct_users: 0, },
   dailyStats: [] as { count: number; active_users: number; date: string }[],
-  errorEvents: [] as { id: string; event_type: string; session_id: string | null; created_at: string }[],
+  errorEvents: [] as { event_type: string; source: string; created_at: string; occurrences: number }[],
+  analyticsModelEvents: [] as ModelEventRow[],
   conversationOverview: {
     totalMessages: 0,
     totalTokens: 0,
@@ -146,14 +153,16 @@ export const adminAnalytics = {
   async loadAnalytics() {
     this.loadingAnalytics = true;
     try {
-      const [summaryRes, dailyRes, errorsRes, conversationRes, charactersRes, qualityRes,] = await Promise.allSettled([
-        apiFetch("/api/v1/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/analytics/overview", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/analytics/characters", { headers: { Accept: "application/json", }, },),
-        apiFetch("/api/v1/analytics/quality", { headers: { Accept: "application/json", }, },),
-      ],);
+      const [summaryRes, dailyRes, errorsRes, conversationRes, charactersRes, qualityRes, modelsRes,] = await Promise
+        .allSettled([
+          apiFetch("/api/v1/telemetry/analytics/summary", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/telemetry/analytics/daily?limit=30", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/telemetry/analytics/errors", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/analytics/overview", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/analytics/characters", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/analytics/quality", { headers: { Accept: "application/json", }, },),
+          apiFetch("/api/v1/telemetry/analytics/models", { headers: { Accept: "application/json", }, },),
+        ],);
 
       if (
         summaryRes.status !== "fulfilled" || dailyRes.status !== "fulfilled" || errorsRes.status !== "fulfilled" ||
@@ -232,6 +241,17 @@ export const adminAnalytics = {
           // Malformed body — leave the quality panel empty instead of toasting.
         }
       }
+
+      // Per-model usage is optional too: reset first, then fill on success.
+      this.analyticsModelEvents = [];
+      if (modelsRes.status === "fulfilled" && modelsRes.value.ok) {
+        try {
+          const rows = await modelsRes.value.json();
+          this.analyticsModelEvents = Array.isArray(rows,) ? rows : [];
+        } catch {
+          // Malformed body — leave the panel empty instead of toasting.
+        }
+      }
     } catch {
       showToast("error", t("toasts.failedLoadAnalytics",),);
     } finally {
@@ -243,7 +263,7 @@ export const adminAnalytics = {
     if (this.purgingAnalytics) { return; }
     this.purgingAnalytics = true;
     try {
-      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90", { method: "DELETE", },);
+      const res = await apiFetch("/api/v1/telemetry/analytics/purge?days=90&confirm=PURGE", { method: "DELETE", },);
       if (res.ok) {
         showToast("success", t("toasts.telemetryPurged",),);
         await this.loadAnalytics();

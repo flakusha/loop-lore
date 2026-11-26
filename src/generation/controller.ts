@@ -11,6 +11,7 @@
  *   GET  /api/v1/generation/status/:chatId — Check generation status
  *   GET  /api/v1/generation/stream/:chatId — HTMX SSE streaming
  *   GET  /api/v1/generation/active         — List active
+ *   GET  /api/v1/generation/active/me      — Count the caller's active jobs
  *   POST /api/v1/generation/retry          — Retry with step-from-point
  *   POST /api/v1/generation/continue       — Continue partial/cancelled message
  *   POST /api/v1/generation/regenerate     — Replace AI response
@@ -31,6 +32,7 @@ import { handleAudioGeneration, } from "./audio-prompt-route";
 import { handleImageCaption, } from "./caption-route";
 import { handleGenerate, } from "./generate-route";
 import {
+  type ActiveMeCtx,
   handleBackupHashes,
   handleBackupRestore,
   handleCancelGeneration,
@@ -38,6 +40,7 @@ import {
   handleGenerationStatus,
   handleGenerationStream,
   handleListActiveGenerations,
+  handleOwnActiveCount,
   handleQuotaOverride,
   handleQuotaState,
   handleRegenerate,
@@ -45,6 +48,7 @@ import {
   handleTestConnection,
 } from "./generation-routes";
 import { handleImageGeneration, } from "./image-gen-route";
+import { handleJobCancel, handleJobDefer, handleJobRetry, } from "./job-control";
 import { handlePromptImprove, } from "./prompt-route";
 import { handleVideoGeneration, handleVideoGenerationStatus, } from "./video-gen-route";
 
@@ -110,6 +114,16 @@ export function generationRoutes(
     return handleListActiveGenerations(database, auth.userId, auth.userRole,);
   },);
 
+  app.get(`${prefix}/generation/active/me`, async (ctx,) => {
+    return handleOwnActiveCount(ctx as unknown as ActiveMeCtx,);
+  }, {
+    detail: {
+      summary: "Count the caller's active generations",
+      description: "Returns { count } for the authenticated caller's own in-flight generations only.",
+      tags: ["Generation",],
+    },
+  },);
+
   app.post(`${prefix}/generation/retry`, async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleRetryGeneration(readBody(ctx,), database, auth.userId, auth.userRole,);
@@ -156,6 +170,43 @@ export function generationRoutes(
       summary: "Poll a video generation job",
       description: "The job's status and, once it succeeds, the persisted asset. A job owned by another " +
         "user reads as not found.",
+      tags: ["Generation",],
+    },
+  },);
+
+  app.post(`${prefix}/generation/jobs/:id/cancel`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string };
+    return handleJobCancel(ctx.params.id, auth.userId,);
+  }, {
+    detail: {
+      summary: "Cancel an owned generation job",
+      description: "Cancels a pending video job and its live IVSS run handle. Foreign ids read as 404.",
+      tags: ["Generation",],
+    },
+  },);
+
+  app.post(`${prefix}/generation/jobs/:id/retry`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleJobRetry(ctx.params.id, auth.userId, {
+      database,
+      userRole: auth.userRole,
+      submit: handleVideoGeneration,
+    },);
+  }, {
+    detail: {
+      summary: "Retry an owned generation job",
+      description: "Resubmits a terminal video job with its original inputs. Repeated retries return the same job.",
+      tags: ["Generation",],
+    },
+  },);
+
+  app.post(`${prefix}/generation/jobs/:id/defer`, async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string };
+    return handleJobDefer(ctx.params.id, auth.userId, readBody(ctx,),);
+  }, {
+    detail: {
+      summary: "Delay an owned generation job",
+      description: "Parks a pending video job until scheduledFor; the lazy pump resumes it on the next read/submit.",
       tags: ["Generation",],
     },
   },);

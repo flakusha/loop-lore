@@ -9,10 +9,10 @@
  * - When a key is already expired (created_at > rotationDays ago), the
  *   auto-rotation picks it up and transitions its status to "expired".
  */
-import type { DB, } from "@/db/schema";
-import { createTestDb, resetTestDb, } from "@/test-utils/create-test-db";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
+import { createTestDb, resetTestDb, } from "../../../../src/test-utils/create-test-db";
 import { generateActorKey, } from "./actor-keys";
 import { findExpiredKeys, runAutoRotation, startAutoRotationTimer, } from "./key-rotation";
 import { getSmk, initSmk, } from "./smk";

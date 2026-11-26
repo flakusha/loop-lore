@@ -11,7 +11,7 @@
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { decryptValue, } from "../../crypto";
+import { decryptValue, deriveUserKek, kekAad, } from "../../crypto/byok";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
@@ -103,6 +103,13 @@ export function userApiKeyResolver(opts: {
         .executeTakeFirst();
 
       if (!row) { return undefined; }
+      // v3+ rows open under the per-user KEK with userId:provider AAD; v1/v2
+      // rows keep the legacy global-secret path (no AAD was sealed then).
+      if ((row.key_version ?? 1) >= 3) {
+        const userKek = await deriveUserKek(config.byoKey.encryptionKey, userId,);
+        return await decryptValue(row.api_key_encrypted, userKek, kekAad(userId, providerName,),);
+      }
+
       return await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey,);
     } catch (error) {
       // Fatal for the request — log provider + userId (never key material),

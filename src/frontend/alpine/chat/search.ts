@@ -20,23 +20,20 @@ export const chatSearch: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     try {
-      const res = await apiFetch(`/api/v1/chats/search?q=${encodeURIComponent(query,)}`,);
+      const res = await apiFetch(`/api/v1/search?q=${encodeURIComponent(query,)}&limit=50`,);
       if (!res.ok) {
         this._searchResults = [];
         return;
       }
 
-      const body = await res.json();
-      const data = Array.isArray(body,)
-        ? body
-        : (body as {
-          data?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
-        }).data ?? [];
+      const body = (await res.json()) as {
+        chats?: { chatId: string; chatName: string; characterName: string; characterAvatar: string | null }[];
+      };
 
-      this._searchResults = Array.from(data, (r,) => ({
-        chatId: r.chatId as string,
-        chatName: r.chatName as string,
-        characterName: r.characterName as string,
+      this._searchResults = Array.from(body.chats ?? [], (r,) => ({
+        chatId: r.chatId,
+        chatName: r.chatName,
+        characterName: r.characterName,
         characterAvatar: r.characterAvatar ?? null,
       }),);
     } catch (error) {

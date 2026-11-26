@@ -41,16 +41,20 @@ interface OutMessage {
   id?: number | string | null;
   method?: string;
   result?: Record<string, unknown>;
-  error?: { code: number; message: string };
+  error?: { code: number; message: string; data?: unknown };
   params?: { sessionId?: string; update?: { sessionUpdate?: string; content?: { text?: string } } };
 }
 
 /** One agent connection: handler + captured output. */
-function makeAgent(ctx: FacadeContext,) {
+function makeAgent(
+  ctx: FacadeContext,
+  elicit?: (request: unknown,) => Promise<{ action: "accept" | "decline" | "cancel" }>,
+) {
   const out: OutMessage[] = [];
   const handler = createAcpAgentHandler({
     registry: getFacadeRegistry({ database: db, config, },),
     ctx,
+    ...(elicit ? { elicit, } : {}),
     write: (message,) => {
       out.push(message as OutMessage,);
     },
@@ -61,10 +65,10 @@ function makeAgent(ctx: FacadeContext,) {
 
 /** The inbound principal context, hand-built (the seam under test lives in
  * principal.ts; here we exercise the AGENT protocol itself). */
-function ctxFor(scope: "read" | "chat-write", requestId: string,): FacadeContext {
+function ctxFor(scope: "read" | "chat-write", requestId: string, cfg: Config = config,): FacadeContext {
   return {
     database: db,
-    config,
+    config: cfg,
     requestId,
     principal: {
       kind: principalKind("external-agent",),
@@ -164,6 +168,197 @@ describe("inbound ACP agent server", () => {
 
     const rows = await db.selectFrom("messages",).selectAll().where("content", "=", "should be denied",).execute();
     expect(rows,).toHaveLength(0,);
+  });
+
+  test("session/list, set_mode, resume and additionalDirectories are typed capabilities", async () => {
+    resetFacadeRegistry();
+    const { out, handler, } = makeAgent(ctxFor("read", "acp-caps",),);
+
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "session/new",
+      params: { loopLoreChatId: CHAT, cwd: "/work", additionalDirectories: ["/a", "/b", 42,], },
+    },),);
+
+    const sessionId = out[0]?.result?.sessionId as string;
+
+    out.length = 0;
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 2, method: "session/list", params: {}, },),);
+    const sessions = out[0]?.result?.sessions as Array<{
+      sessionId: string;
+      cwd: string | null;
+      additionalDirectories: string[];
+      modeId: string | null;
+    }>;
+
+    expect(sessions,).toHaveLength(1,);
+    expect(sessions[0],).toMatchObject({
+      sessionId,
+      cwd: "/work",
+      additionalDirectories: ["/a", "/b",],
+      modeId: null,
+    },);
+
+    out.length = 0;
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 3,
+      method: "session/set_mode",
+      params: { sessionId, modeId: "plan", },
+    },),);
+
+    expect(out[0]?.result?.currentModeId,).toBe("plan",);
+
+    out.length = 0;
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 4, method: "session/resume", params: { sessionId, }, },),);
+    expect(out[0]?.result?.sessionId,).toBe(sessionId,);
+
+    out.length = 0;
+    await handler(
+      JSON.stringify({ jsonrpc: "2.0", id: 5, method: "session/resume", params: { sessionId: "nope", }, },),
+    );
+
+    expect(out[0]?.error?.code,).toBe(ACP_ERRORS.unknownSession,);
+  });
+
+  test("session/set_config_option applies a configured model and rejects unknown options", async () => {
+    resetFacadeRegistry();
+    const configured = {
+      ...config,
+      generation: {
+        ...config.generation,
+        providers: {
+          ...config.generation.providers,
+          openaiCompatible: [{
+            name: "acp-local",
+            label: "ACP local",
+            baseUrl: "http://localhost:8080/v1",
+            model: "acp-local/test",
+            timeout: 1000,
+            retries: 1,
+            allowUserApiKey: false,
+            models: { "acp-local/test": { contextLimit: 4096, maxOutput: 1024, }, },
+          },],
+        },
+      },
+    };
+
+    const { out, handler, } = makeAgent(ctxFor("read", "acp-config", configured,),);
+
+    await handler(
+      JSON.stringify({ jsonrpc: "2.0", id: 1, method: "session/new", params: { loopLoreChatId: CHAT, }, },),
+    );
+
+    const sessionId = out[0]?.result?.sessionId as string;
+    expect(out[0]?.result?.configOptions,).toEqual([{
+      id: "model",
+      name: "Model",
+      type: "select",
+      currentValue: "acp-local/test",
+      options: [{ value: "acp-local/test", name: "acp-local/test", },],
+    },],);
+
+    out.length = 0;
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 2,
+      method: "Session/Set_Config_Option",
+      params: { sessionId, configId: "MODEL_CONFIG_ID", value: "acp-local/test", },
+    },),);
+
+    expect(out[0]?.error,).toBeUndefined();
+    expect((out[0]?.result?.configOptions as Array<{ currentValue: string }>)[0]?.currentValue,).toBe(
+      "acp-local/test",
+    );
+
+    out.length = 0;
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 3, method: "session/list", params: {}, },),);
+    const sessions = out[0]?.result?.sessions as Array<{ modelId: string | null }>;
+    expect(sessions[0]?.modelId,).toBe("acp-local/test",);
+
+    out.length = 0;
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 4,
+      method: "session/set_config_option",
+      params: { sessionId, configId: "effort", value: "high", },
+    },),);
+
+    expect(out[0]?.error,).toMatchObject({
+      code: ACP_ERRORS.invalidParams,
+      data: { allowedConfigIds: ["model", "MODEL_CONFIG_ID",], allowedValues: ["acp-local/test",], },
+    },);
+
+    out.length = 0;
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 5,
+      method: "session/set_config_option",
+      params: { sessionId, configId: "model", value: "unlisted/model", },
+    },),);
+
+    expect(out[0]?.error?.code,).toBe(ACP_ERRORS.invalidParams,);
+
+    out.length = 0;
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 6, method: "session/list", params: {}, },),);
+    const after = out[0]?.result?.sessions as Array<{ modelId: string | null }>;
+    expect(after[0]?.modelId,).toBe("acp-local/test",);
+  });
+
+  test("session/load replays history through the facade chat.history op", async () => {
+    resetFacadeRegistry();
+    const { out, handler, } = makeAgent(ctxFor("chat-write", "acp-load",),);
+
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 1, method: "session/new", params: { chatId: CHAT, }, },),);
+    const sessionId = out[0]?.result?.sessionId as string;
+    await handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 2,
+      method: "session/prompt",
+      params: { sessionId, prompt: [{ type: "text", text: "replay me", },], },
+    },),);
+
+    out.length = 0;
+    await handler(JSON.stringify({ jsonrpc: "2.0", id: 3, method: "session/load", params: { sessionId, }, },),);
+    expect(out.some((message,) => message.method === "session/update"),).toBe(true,);
+    expect(out[out.length - 1]?.result,).toEqual({ sessionId, },);
+  });
+
+  test("elicitation/create uses the composed responder and fails closed without one", async () => {
+    resetFacadeRegistry();
+    const seen: unknown[] = [];
+    const withHook = makeAgent(ctxFor("read", "acp-elicit-hook",), (request,) => {
+      seen.push(request,);
+      return Promise.resolve({ action: "accept", },);
+    },);
+
+    await withHook.handler(
+      JSON.stringify({ jsonrpc: "2.0", id: 1, method: "session/new", params: { chatId: CHAT, }, },),
+    );
+
+    const sessionId = withHook.out[0]?.result?.sessionId as string;
+    await withHook.handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 2,
+      method: "elicitation/create",
+      params: { sessionId, message: "Approve the tool?", mode: "form", },
+    },),);
+
+    expect(seen,).toEqual([{ sessionId, message: "Approve the tool?", mode: "form", },],);
+    expect(withHook.out[1]?.result,).toEqual({ action: "accept", },);
+
+    const plain = makeAgent(ctxFor("read", "acp-elicit-plain",),);
+    await plain.handler(JSON.stringify({ jsonrpc: "2.0", id: 1, method: "session/new", params: { chatId: CHAT, }, },),);
+    const fallbackId = plain.out[0]?.result?.sessionId as string;
+    await plain.handler(JSON.stringify({
+      jsonrpc: "2.0",
+      id: 2,
+      method: "elicitation/create",
+      params: { sessionId: fallbackId, message: "Approve?", },
+    },),);
+
+    expect(plain.out[1]?.result,).toEqual({ action: "decline", },);
   });
 
   test("unknown session, missing text, unknown method, and unparseable lines are errors", async () => {

@@ -50,3 +50,25 @@ export function workflowInvalid(errors: string[],): Response {
     code: ErrorCode.BadRequest,
   },);
 }
+
+/**
+ * The license fence for a write: trimmed, with blank or absent values null.
+ * TypeBox has narrowed the field to string | null; the open body schema still
+ * hands handlers an `unknown`, so the trim happens once here.
+ * @param value - Untrusted `license` value from the request body
+ * @returns {string | null}
+ */
+export function licenseValue(value: unknown,): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
+/**
+ * The `params_reviewed` integer for a write, keeping an omitted value.
+ * @param value - Untrusted `params_reviewed` value from the request body
+ * @param current - Existing row value, used when the field is omitted
+ * @returns {number}
+ */
+export function paramsReviewedValue(value: unknown, current: number,): number {
+  if (value === undefined) { return current; }
+  return value === true ? 1 : 0;
+}

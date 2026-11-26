@@ -18,14 +18,15 @@ consume, with adapters/rules mapping it to each tool's native format.
 ## Directory Structure
 
 1. **`README.md`** — This file, the standard spec.
-2. **`skills/`** — SKILL.md files defining agent skills:
-   - `project-context/` — High-level project overview.
-   - `db-schema/` — Database schema reference.
-   - `testing/` — Testing conventions & commands.
-   - Others as needed per project.
-3. **`rules/`** — Agent-agnostic rule files (plain `.md`).
-4. **`templates/`** — Scaffolds for common tasks:
-   - `commit-template.md`, `pr-template.md`, and more.
+2. **`references/`** — Agent-agnostic reference files (plain `.md`):
+   - `agent-rules.md` — Repo-local agent behavior rules.
+   - `banned-patterns.md` / `recommendations.md` — Review rules.
+   - `cli-config.md` — Development command reference.
+3. **`skills/`** — One directory per skill, each holding a `SKILL.md`:
+   `code-practices/`, `commit-message/`, `giwt-usage/`,
+   `loop-lore-bookkeeping/`, `loop-lore-context/`, `loop-lore-db/`,
+   `loop-lore-tasks/`, `native-issue/`, `sync-tickets/`,
+   `worktree-merge/`.
 
 ## SKILL.md Format
 
@@ -37,7 +38,7 @@ name: my-skill
 description: Use when <trigger>. <one-line behavior>.
 version: 1.0.0
 author: project-maintainers
-license: MIT
+license: Apache-2.0
 metadata:
   agents:
     tags: [keyword, tags]
@@ -51,14 +52,14 @@ Standard frontmatter fields:
 | ------------- | -------- | ------------------------------------ |
 | `name`        | Yes      | Lowercase-hyphenated skill name      |
 | `description` | Yes      | Trigger condition + behavior (≤1KiB) |
-| `version`     | Yes      | Semver                               |
-| `author`      | Yes      | Author or project                    |
-| `license`     | Yes      | SPDX identifier (MIT, Apache-2.0)    |
+| `version`     | No       | Semver                               |
+| `author`      | No       | Author or project                    |
+| `license`     | No       | SPDX identifier (Apache-2.0, MIT)    |
 | `metadata`    | No       | Tool-specific metadata bush          |
 
-## Rules Format
+## Reference Format
 
-Rules in `rules/*.md` are plain markdown files describing agent conventions:
+References in `references/*.md` are plain markdown files describing agent conventions:
 
 ```markdown
 # Rule Name
@@ -78,15 +79,16 @@ How to check the rule was followed.
 
 Each agent tool should map `.agents/` to its native format:
 
-| Tool        | Native Dir                        | Adapter Strategy                    |
-| ----------- | --------------------------------- | ----------------------------------- |
-| OpenCode    | `.config/opencode/`               | Symlink or load `rules/` via config |
-| Claude Code | `.claude/`                        | Read `.agents/rules/` at startup    |
-| Cursor      | `.cursor/rules/`                  | Symlink `.agents/rules/`            |
-| Copilot     | `.github/copilot-instructions.md` | Merge rules into single file        |
+| Tool        | Native Dir                        | Adapter Strategy                         |
+| ----------- | --------------------------------- | ---------------------------------------- |
+| OpenCode    | `.config/opencode/`               | Symlink or load `references/` via config |
+| Claude Code | `.claude/`                        | Read `.agents/references/` at startup    |
+| Cursor      | `.cursor/rules/`                  | Symlink `.agents/references/`            |
+| Copilot     | `.github/copilot-instructions.md` | Merge references into single file        |
 
 ## License
 
-`.agents/` standard and all skill files are **Apache-2.0 OR MIT** dual-licensed.
-See `LICENSES/Apache-2.0.txt` and `LICENSES/MIT.txt` in the project root. Each
+`.agents/` files are **Apache-2.0** — each file's SPDX header says so, and
+`REUSE.toml` annotates `.agents/**` with `Apache-2.0 OR MIT`. See
+`LICENSES/Apache-2.0.txt` and `LICENSES/MIT.txt` in the project root. Each
 skill's frontmatter carries its SPDX identifier.

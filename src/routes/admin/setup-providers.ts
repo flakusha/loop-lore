@@ -107,6 +107,7 @@ export function setupProvidersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               label: body.label,
               baseUrl: body.baseUrl,
               model: body.model,
+              kind: body.kind,
               apiKey: body.apiKey,
               allowedHosts: body.allowedHosts,
               setDefault: body.setDefault,

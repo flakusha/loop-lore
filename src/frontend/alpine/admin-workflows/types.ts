@@ -4,8 +4,8 @@
 /**
  * State for the admin ComfyUI workflow library tab.
  *
- * The create/edit form is a textarea over the raw API-format graph plus the
- * library metadata, because that is what the ingest gate reads; the library
+ * The create/edit form is a textarea over the raw graph (UI or API format) plus
+ * the library metadata, because that is what the ingest gate reads; the library
  * is edited by people who have a ComfyUI export open in another window.
  */
 import type { Static, } from "@sinclair/typebox";
@@ -25,7 +25,7 @@ export type WorkflowDefault = "default" | "not_default";
 
 /**
  * Editor state for one row. `id` is empty while creating; `graph` holds the
- * pasted ComfyUI export and the `*Json` fields are raw JSON the operator
+ * pasted or file-loaded ComfyUI export and the `*Json` fields are raw JSON the operator
  * types, so a malformed one is reported here rather than silently dropped.
  */
 export interface WorkflowForm {
@@ -35,6 +35,8 @@ export interface WorkflowForm {
   model_family: string;
   min_vram: string;
   category: string;
+  license: string;
+  params_reviewed: boolean;
   requiredNodes: string;
   graph: string;
   parametersJson: string;
@@ -53,6 +55,8 @@ export function emptyWorkflowForm(): WorkflowForm {
     model_family: "",
     min_vram: "",
     category: "txt2img",
+    license: "",
+    params_reviewed: false,
     requiredNodes: "",
     graph: "",
     parametersJson: "",
@@ -81,6 +85,7 @@ export interface AdminWorkflows {
   openWorkflowCreate(): void;
   openWorkflowEdit(id: string,): Promise<void>;
   closeWorkflowForm(): void;
+  loadWorkflowFile(event: Event,): Promise<void>;
   saveWorkflow(): Promise<void>;
   setWorkflowDefault(id: string,): Promise<void>;
   toggleWorkflowEnabled(id: string,): Promise<void>;

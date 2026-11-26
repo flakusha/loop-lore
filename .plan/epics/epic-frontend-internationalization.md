@@ -9,8 +9,8 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
-**Status Note:** Not Started
+**Status:** Done
+**Status Note (2026-11-18):** Duplicate frontend-facing view of `epic-i18n.md` (Done). Locale catalogs, middleware and all nine locales are reconciled; i18n gates pass. `FEAT-2026-009` remains a separate scoped middleware question, not a reason to keep this duplicate epic open.
 **Priority:** Medium
 
 ## Summary

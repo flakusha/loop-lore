@@ -14,11 +14,12 @@
 import { describe, expect, it, } from "bun:test";
 import {
   HTML_EXTENSION,
+  I18N_DIRECTIVE,
   TITLE_TAG,
 } from "./template";
 
 const INCLUDE_DIRECTIVE_FRESH = /\{\{>\s*([\w./-]+)\s*\}\}/g;
-const I18N_DIRECTIVE_FRESH = /\{\{\{t\("([^"]+)"\)\}\}\}/g;
+const I18N_DIRECTIVE_FRESH = new RegExp(I18N_DIRECTIVE.source, "g",);
 const ICON_DIRECTIVE_FRESH = /\{\{icon:([\w-]+)\}\}/g;
 
 function include(s: string,) {
@@ -116,8 +117,16 @@ describe("I18N_DIRECTIVE — key injection contract", () => {
     expect(i18n('{{{t("unclosed")',),).toBeNull();
   });
 
-  it("rejects single quotes", () => {
-    expect(i18n("{{{t('single')}}}",),).toBeNull();
+  it("extracts single-quoted keys", () => {
+    expect(i18n("{{{t('single')}}}",)?.[1],).toBe("single",);
+  });
+
+  it("extracts keys with optional inner whitespace", () => {
+    expect(i18n("{{{ t( 'spaced' ) }}}",)?.[1],).toBe("spaced",);
+  });
+
+  it("rejects fallback forms instead of swallowing the fallback", () => {
+    expect(i18n('{{{t("with.fallback") || "Fallback"}}}',),).toBeNull();
   });
 
   it("rejects unquoted argument", () => {

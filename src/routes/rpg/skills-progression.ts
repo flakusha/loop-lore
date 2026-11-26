@@ -18,7 +18,7 @@ import { LevelServiceError, } from "../../rpg/level/types.js";
 import { type SkillCategory, SkillsService, } from "../../rpg/skills";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
@@ -61,8 +61,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
         const skills = await svc().getActorSkills(ctx.params.actorId, worldId,);
         return jsonResponse({ skills, },);
       } catch (error) {
-        log().error("Failed to get actor skills", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get actor skills", error,);
       }
     }, {
       params: actorParams,
@@ -88,8 +87,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
 
         return jsonResponse({ skills, },);
       } catch (error) {
-        log().error("Failed to get skills by category", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get skills by category", error,);
       }
     }, {
       params: categoryParams,
@@ -110,8 +108,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
         const tree = await svc().buildSkillTree(ctx.params.actorId, worldId,);
         return jsonResponse({ tree, },);
       } catch (error) {
-        log().error("Failed to build skill tree", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to build skill tree", error,);
       }
     }, {
       params: actorParams,
@@ -132,8 +129,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
         const result = await svc().checkPrerequisites(body.actorId, body.prerequisites, body.worldId,);
         return jsonResponse(result,);
       } catch (error) {
-        log().error("Failed to check prerequisites", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to check prerequisites", error,);
       }
     }, {
       body: checkPrerequisitesBody,
@@ -178,8 +174,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
           return notFoundResponse("Skill",);
         }
 
-        log().error("Failed to add XP", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to add XP", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -208,8 +203,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
         const skill = await svc().specializeSkill(ctx.params.id, body.specialization,);
         return jsonResponse(skill,);
       } catch (error) {
-        log().error("Failed to specialize skill", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to specialize skill", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),

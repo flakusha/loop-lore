@@ -2,9 +2,9 @@
  * Tests for crypto/at-rest.ts — tier-aware encryption layer
  */
 
-import type { DB, } from "@/db/schema";
 import { beforeAll, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../src/db/schema";
 import {
   decryptAtRest,
   encryptAtRest,

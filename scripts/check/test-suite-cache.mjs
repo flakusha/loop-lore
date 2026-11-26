@@ -141,15 +141,30 @@ function walkHash(hasher, dir,) {
 
 /**
  * The cache key: bun version + hashed tree contents + root configs + the
- * exact passthrough argv. Suite name is deliberately NOT in the key — one
- * key per tree state, per-suite entries beneath it — so any input change
- * invalidates every suite's chunk at once (correct, if occasionally
- * conservative: an src/ edit also invalidates the e2e chunk).
+ * passthrough argv with per-run coverage dirs normalized. Suite name is
+ * deliberately NOT in the key — one key per tree state, per-suite entries
+ * beneath it — so any input change invalidates every suite at once.
+ * The runner puts `--coverage-dir=.tmp/run-<RUN_ID>/...` in the argv; hashing
+ * that literal made every invocation a miss even on an unchanged tree.
  */
+function stableArgv(argv,) {
+  const out = [];
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "--coverage-dir") {
+      out.push("--coverage-dir=<dir>",);
+      i++;
+      continue;
+    }
+    out.push(arg.startsWith("--coverage-dir=",) ? "--coverage-dir=<dir>" : arg,);
+  }
+  return out;
+}
+
 function computeKey() {
   const hasher = createHash("sha256",);
   hasher.update(`bun=${Bun.version}\n`,);
-  hasher.update(`argv=${JSON.stringify(passthrough,)}\n`,);
+  hasher.update(`argv=${JSON.stringify(stableArgv(passthrough,),)}\n`,);
   for (const dir of SCAN_DIRS) { walkHash(hasher, dir,); }
   for (const f of ROOT_FILES) {
     const abs = path.resolve(PROJECT_ROOT, f,);

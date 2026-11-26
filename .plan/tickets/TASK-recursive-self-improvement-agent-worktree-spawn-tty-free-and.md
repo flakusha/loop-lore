@@ -7,7 +7,10 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** Done
+**Landed:** dev `e5adbc696` (RSI #6/#7 landing tip, 2026-11-20; feature commit `49d72b9a6`).
+
+**Caveats:** Re-applied 2026-11-20 from the agent-api collision handover onto branch `agent-capability-routes` (worktree-spawn route + sandbox caps + `rsi_agent_worktrees` registry as migration 115 — 114 is the #5 branch's `agent_tokens`; the FK cascade assumes 114 lands first). The route is token-scoped (`requireAgentScope('agent:worktree')`, 5/token + 10 global + 500MB caps, hourly 24h-idle sweeper in `src/agent/cleanup.ts`). Epic ticket #9's `agent_actions` audit surface is NOT in this lane; the queue-caps ticket (#25) consumes this registry later. Ticket index left untouched (linked-worktree deferral, reconciled post-merge).
 **Priority:** High
 **Effort:** (set per-ticket)
 **Type:** Feature Task / Infrastructure

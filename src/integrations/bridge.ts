@@ -15,8 +15,13 @@
 // tracking and per-(adapter, target) rate limiting are wired from
 // ./health when supplied in the options (spec §4.4, §10).
 
-import type { AdapterMessage, AdapterMessageHandler, } from "./adapter";
-import { type AdapterHealth, type AdapterRateLimiter, classifyAdapterFailure, } from "./health";
+import type { AdapterMessage, AdapterMessageHandler, ProtocolAdapter, } from "./adapter";
+import {
+  type AdapterHealth,
+  type AdapterRateLimiter,
+  classifyAdapterFailure,
+  retryAfterMsFromFailure,
+} from "./health";
 import { type BridgeRegistry, unknownTargetResult, } from "./registry";
 
 /** Moderation verdict — `allowed: false` short-circuits the send. */
@@ -49,6 +54,16 @@ export type BridgeSendResult =
   | { ok: true; adapter: string; id: string; idempotencyKey: string }
   | BridgeSendError;
 
+/** Optional adapter capability: accept a token supplied at call time so an
+ * admin-rotated token reaches the adapter without reconnecting. */
+type TokenBoundSender = {
+  sendWithToken(token: string, target: string, message: AdapterMessage,): Promise<string>;
+};
+
+function hasTokenSend(adapter: ProtocolAdapter,): adapter is ProtocolAdapter & TokenBoundSender {
+  return "sendWithToken" in adapter && typeof adapter.sendWithToken === "function";
+}
+
 /** Options for {@link createMessageBridge} — all optional. */
 export interface MessageBridgeOptions {
   /** Outbound moderation gate; default allows everything. */
@@ -61,6 +76,12 @@ export interface MessageBridgeOptions {
   rateLimiter?: AdapterRateLimiter;
   /** Inbound policy gate; a not-ok verdict drops the message before dispatch. */
   inboundGate?: InboundGate;
+  /** Bot-token → adapter-name bindings; `sendWithToken` refuses unbound tokens. */
+  tokenBindings?: Readonly<Record<string, string>>;
+  /** Dynamic token + target → adapter-name resolver, consulted before
+   * `tokenBindings` so a rotated token rebinds and the target picks the
+   * owning channel when several adapters share one MFA token. */
+  tokenBindingResolver?: (token: string, target: string,) => string | undefined;
   /** Clock injection for tests; default `Date.now`. */
   now?: () => number;
 }
@@ -70,6 +91,13 @@ export interface MessageBridge {
   /** Route `message` to the adapter owning `target`.
    * @throws never — failures return typed {@link BridgeSendError} results. */
   send(target: string, message: AdapterMessage,): Promise<BridgeSendResult>;
+  /** Send through the adapter bound to `token` only — never fall back to a
+   * different adapter. Typed `send_failed` when unbound or target-unowned. */
+  sendWithToken?(
+    token: string,
+    target: string,
+    message: AdapterMessage,
+  ): Promise<BridgeSendResult>;
   /** Register the inbound handler (replaces any previous). */
   onMessage(handler: AdapterMessageHandler,): void;
   /** Ingest an inbound message from `adapterName`: dedup on (adapter, id)
@@ -114,63 +142,113 @@ export function createMessageBridge(
     }
   }
 
+  /** Map an adapter throw to a typed result: a 429 is surfaced with its
+   * retry delay and recorded by the limiter, never as an unhealthy verdict. */
+  function adapterFailureResult(
+    cause: unknown,
+    adapter: ProtocolAdapter,
+    target: string,
+  ): BridgeSendResult {
+    const code = classifyAdapterFailure(cause,);
+    health?.markFailure(adapter.name, code,);
+    if (code === "rate_limited") {
+      const retryAfterMs = retryAfterMsFromFailure(cause,) ?? 0;
+      rateLimiter?.observeRetryAfter(adapter.name, adapter.protocol, target, retryAfterMs,);
+      return {
+        ok: false,
+        code: "rate_limited",
+        message: `adapter ${adapter.name} is rate limited sending to ${target}`,
+        retryAfterMs,
+      };
+    }
+
+    const detail = cause instanceof Error ? cause.message : "unknown error";
+    return {
+      ok: false,
+      code: "send_failed",
+      message: `adapter ${adapter.name} failed to send to ${target}: ${detail}`,
+      cause,
+    };
+  }
+
+  /** Shared outbound path for target-resolved and token-bound sends. */
+  async function dispatch(
+    adapter: ProtocolAdapter,
+    target: string,
+    message: AdapterMessage,
+    token?: string,
+  ): Promise<BridgeSendResult> {
+    // Rate-limit gate (spec §4.4): a limited target never reaches the
+    // adapter — no gate call, no send.
+    const budget = rateLimiter?.consume(adapter.name, adapter.protocol, target,);
+    if (budget !== undefined && !budget.ok) {
+      return {
+        ok: false,
+        code: "rate_limited",
+        message: `rate limited sending to ${target} on ${adapter.name}`,
+        retryAfterMs: budget.retryAfterMs,
+      };
+    }
+
+    let verdict: ModerationVerdict;
+    try {
+      verdict = await moderationGate(message,);
+    } catch (cause) {
+      const detail = cause instanceof Error ? cause.message : "unknown error";
+      return {
+        ok: false,
+        code: "send_failed",
+        message: `moderation gate failed for ${target}: ${detail}`,
+        cause,
+      };
+    }
+
+    if (!verdict.allowed) {
+      return {
+        ok: false,
+        code: "moderation_blocked",
+        message: `moderation gate blocked send to ${target}`,
+        reason: verdict.reason,
+      };
+    }
+
+    const idempotencyKey = message.idempotencyKey ?? crypto.randomUUID();
+    const stamped: AdapterMessage = { ...message, target, idempotencyKey, };
+
+    try {
+      // A token-bound send hands the fresh token to adapters that support it;
+      // everyone else keeps the plain ProtocolAdapter send path.
+      const id = token !== undefined && hasTokenSend(adapter,)
+        ? await adapter.sendWithToken(token, target, stamped,)
+        : await adapter.sendMessage(target, stamped,);
+
+      health?.markSuccess(adapter.name,);
+      return { ok: true, adapter: adapter.name, id, idempotencyKey, };
+    } catch (cause) {
+      return adapterFailureResult(cause, adapter, target,);
+    }
+  }
+
   return {
-    async send(target, message,) {
+    send(target, message,) {
       const adapter = registry.resolve(target,);
-      if (adapter === undefined) { return unknownTargetResult(target,); }
-
-      // Rate-limit gate (spec §4.4): a limited target never reaches the
-      // adapter — no gate call, no send.
-      const budget = rateLimiter?.consume(adapter.name, adapter.protocol, target,);
-      if (budget !== undefined && !budget.ok) {
-        return {
-          ok: false,
-          code: "rate_limited",
-          message: `rate limited sending to ${target} on ${adapter.name}`,
-          retryAfterMs: budget.retryAfterMs,
-        };
+      if (adapter === undefined) { return Promise.resolve(unknownTargetResult(target,),); }
+      return dispatch(adapter, target, message,);
+    },
+    async sendWithToken(token, target, message,) {
+      // Resolver first: a rotated system_config token is absent from the
+      // frozen bindings map, yet still binds to the same adapter.
+      const adapterName = options.tokenBindingResolver?.(token, target,) ?? options.tokenBindings?.[token];
+      if (adapterName === undefined) {
+        return { ok: false, code: "send_failed", message: "no adapter is bound to the supplied token", };
       }
 
-      let verdict: ModerationVerdict;
-      try {
-        verdict = await moderationGate(message,);
-      } catch (cause) {
-        const detail = cause instanceof Error ? cause.message : "unknown error";
-        return {
-          ok: false,
-          code: "send_failed",
-          message: `moderation gate failed for ${target}: ${detail}`,
-          cause,
-        };
+      const adapter = registry.get(adapterName,);
+      if (adapter === undefined || !adapter.ownsTarget?.(target,)) {
+        return { ok: false, code: "send_failed", message: "the token-bound adapter does not own the target", };
       }
 
-      if (!verdict.allowed) {
-        return {
-          ok: false,
-          code: "moderation_blocked",
-          message: `moderation gate blocked send to ${target}`,
-          reason: verdict.reason,
-        };
-      }
-
-      const idempotencyKey = message.idempotencyKey ?? crypto.randomUUID();
-      const stamped: AdapterMessage = { ...message, target, idempotencyKey, };
-
-      try {
-        const id = await adapter.sendMessage(target, stamped,);
-        health?.markSuccess(adapter.name,);
-        return { ok: true, adapter: adapter.name, id, idempotencyKey, };
-      } catch (cause) {
-        const code = classifyAdapterFailure(cause,);
-        health?.markFailure(adapter.name, code,);
-        const detail = cause instanceof Error ? cause.message : "unknown error";
-        return {
-          ok: false,
-          code: "send_failed",
-          message: `adapter ${adapter.name} failed to send to ${target}: ${detail}`,
-          cause,
-        };
-      }
+      return dispatch(adapter, target, message, token,);
     },
     onMessage(newHandler,) {
       handler = newHandler;

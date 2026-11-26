@@ -27,7 +27,7 @@
         },
         "publicOrigin": {
           "type": "string",
-          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN. REQUIRED when host is a wildcard address (0.0.0.0, ::): the instance then answers under names the config cannot enumerate, and the MCP transport's DNS-rebinding allowlist is derived from this origin (it answers 503 naming this knob when unset)."
         },
         "tls": {
           "type": "object",
@@ -108,6 +108,17 @@
           "default": true,
           "description": "Compress uploaded assets"
         },
+        "downloadNaming": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "datetime",
+            "hash",
+            "datetime-hash"
+          ],
+          "default": "raw",
+          "description": "Download filename scheme (user asset_user_preferences.download_naming overrides it): raw app-storage name, datetime and/or content-hash prefix"
+        },
         "signedUrlSecret": {
           "type": "string",
           "default": "",
@@ -140,6 +151,16 @@
           "type": "boolean",
           "default": false,
           "description": "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one"
+        },
+        "smartRegenGate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Smart-regen decision gate: when enabled, /regen without an explicit action resolves by message-size heuristic to a plain re-roll or an alternate style instead of showing the usage menu"
+        },
+        "gmToolKeywordGate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keyword pre-gate for AUX GM-tool detection: default-on; on gate error it fails open (the AUX call proceeds), and it suppresses only the AUX detection call — never the slash-command GM-tool path"
         },
         "quotaWindowMs": {
           "type": "integer",
@@ -311,6 +332,16 @@
           "type": "boolean",
           "default": false,
           "description": "Opt-in guest tier: unauthenticated visitors derive a read-mostly guest context (no account, no session row) instead of a 401. Requires auth.required = true; solo mode (auth.required = false) always yields the solo user."
+        },
+        "guestReadLimit": {
+          "type": "integer",
+          "default": 60,
+          "description": "Per-IP budget of guest GET reads per guestReadWindowSec (sliding window; enforced by src/middleware/guest-rate-limit.ts)."
+        },
+        "guestReadWindowSec": {
+          "type": "integer",
+          "default": 60,
+          "description": "Sliding-window length in seconds for the per-IP guest read budget."
         },
         "registrationOpen": {
           "type": "boolean",
@@ -651,10 +682,20 @@
           "default": true,
           "description": "Enable moderation flagging"
         },
+        "enableImmersionGate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the fictional-consistency immersion gate"
+        },
         "enableModerationLlmClassifier": {
           "type": "boolean",
           "default": true,
           "description": "LLM moderation verdict alongside keyword scan"
+        },
+        "enableImmersionLlmClassifier": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in prose-level LLM audit of immersion gate verdicts (downgrade-only)"
         }
       },
       "required": [
@@ -720,6 +761,21 @@
         "defaultProvider": {
           "type": "string",
           "description": "Default provider name"
+        },
+        "autorouteScenario": {
+          "type": "string",
+          "enum": [
+            "general",
+            "chat",
+            "coding",
+            "local",
+            "observed"
+          ],
+          "description": "Scenario whose ranking rows select unassigned model roles (unset = manual/default)"
+        },
+        "modelRoles": {
+          "type": "object",
+          "description": "Default model role assignments (DB overrides take precedence)"
         },
         "flowControl": {
           "type": "object",
@@ -1669,6 +1725,24 @@
         "duplication"
       ]
     },
+    "features": {
+      "type": "object",
+      "description": "Feature profile: a gating lens over shipped features, never a config rewriter. Default `full`.",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "full",
+            "business-only",
+            "rpg-chat-only",
+            "local-only",
+            "relay-only"
+          ],
+          "default": "full",
+          "description": "Feature profile to gate surfaces; an explicit unknown value fails boot."
+        }
+      }
+    },
     "seeding": {
       "type": "object",
       "description": "Database seeding configuration (default users, characters, etc.)",
@@ -2429,11 +2503,250 @@
                   ]
                 },
                 "x-toml-kind": "array-of-tables"
+              },
+              "skills": {
+                "type": "array",
+                "description": "Config-seeded baseline skills created at seed time",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Skill display name"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "SkillCategory value",
+                      "enum": [
+                        "combat",
+                        "magic",
+                        "crafting",
+                        "social",
+                        "exploration",
+                        "survival",
+                        "knowledge",
+                        "stealth"
+                      ]
+                    },
+                    "level": {
+                      "type": "number",
+                      "description": "Starting level (default 1)"
+                    },
+                    "proficiency": {
+                      "type": "string",
+                      "description": "ProficiencyLevel value (default novice)",
+                      "enum": [
+                        "novice",
+                        "apprentice",
+                        "journeyman",
+                        "expert",
+                        "master",
+                        "grandmaster"
+                      ]
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Skill description"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "category"
+                  ]
+                },
+                "x-toml-kind": "array-of-tables"
+              },
+              "professions": {
+                "type": "array",
+                "description": "Config-seeded starting crafting disciplines",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "discipline": {
+                      "type": "string",
+                      "description": "CraftingDiscipline value",
+                      "enum": [
+                        "alchemy",
+                        "smithing",
+                        "enchanting",
+                        "cooking",
+                        "tailoring",
+                        "woodworking",
+                        "jewelry",
+                        "engineering"
+                      ]
+                    },
+                    "level": {
+                      "type": "number",
+                      "description": "Starting level (default 1, clamped 1..100)"
+                    },
+                    "specializations": {
+                      "type": "array",
+                      "description": "Specializations pre-unlocked with the profession",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "Specialization name"
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Specialization description"
+                          },
+                          "bonusType": {
+                            "type": "string",
+                            "description": "ProfessionBonusType value",
+                            "enum": [
+                              "speed",
+                              "quality",
+                              "success",
+                              "material_saving",
+                              "experience_gain"
+                            ]
+                          },
+                          "bonusValue": {
+                            "type": "number",
+                            "description": "Bonus magnitude"
+                          },
+                          "requirementLevel": {
+                            "type": "number",
+                            "description": "Minimum profession level (must be ≤ starting level)"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "bonusType",
+                          "bonusValue"
+                        ]
+                      },
+                      "x-toml-kind": "array-of-tables"
+                    }
+                  },
+                  "required": [
+                    "discipline"
+                  ]
+                },
+                "x-toml-kind": "array-of-tables"
               }
             },
             "required": [
               "name",
               "description"
+            ]
+          },
+          "x-toml-kind": "array-of-tables"
+        }
+      },
+      "required": [
+        "enabled",
+        "templates"
+      ]
+    },
+    "items": {
+      "type": "object",
+      "description": "Item template configuration — default item definitions seeded on app start",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable item template seeding"
+        },
+        "templates": {
+          "type": "array",
+          "description": "Default item templates to seed on first start",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Hard ID for deterministic test reseeding"
+              },
+              "name": {
+                "type": "string",
+                "description": "Item display name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Item description"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "weapon",
+                  "armor",
+                  "consumable",
+                  "key_item",
+                  "quest_item",
+                  "material",
+                  "tool",
+                  "container",
+                  "treasure",
+                  "book",
+                  "artifact",
+                  "misc",
+                  "other"
+                ],
+                "description": "Unified item taxonomy category"
+              },
+              "rarity": {
+                "type": "string",
+                "enum": [
+                  "common",
+                  "uncommon",
+                  "rare",
+                  "epic",
+                  "legendary",
+                  "unique",
+                  "artifact"
+                ],
+                "default": "common",
+                "description": "Item rarity"
+              },
+              "stackable": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether instances stack"
+              },
+              "maxStack": {
+                "type": "number",
+                "default": 1,
+                "description": "Max stack size when stackable"
+              },
+              "value": {
+                "type": "number",
+                "default": 0,
+                "description": "Gold value"
+              },
+              "weight": {
+                "type": "number",
+                "default": 0,
+                "description": "Weight"
+              },
+              "properties": {
+                "type": "object",
+                "description": "Stats, effects, damage, ac, etc.",
+                "additionalProperties": true
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Free-form tags"
+              },
+              "creator": {
+                "type": "string",
+                "description": "Creator attribution"
+              },
+              "world": {
+                "type": "string",
+                "description": "Restrict seeding to one world (world id or name). Omit = seed into every world"
+              }
+            },
+            "required": [
+              "name",
+              "category"
             ]
           },
           "x-toml-kind": "array-of-tables"
@@ -2485,6 +2798,7 @@
         "xmpp.password",
         "telegram.botToken",
         "discord.botToken",
+        "gifs.apiKey",
         "irc.password"
       ],
       "properties": {
@@ -2492,6 +2806,40 @@
           "type": "boolean",
           "default": false,
           "description": "Master switch. No adapter loads unless this is true."
+        },
+        "inbound": {
+          "type": "object",
+          "description": "Inbound MCP/ACP agentic servers (external tools drive loop-lore). Deny-by-default: disabled and principal-less until explicitly configured.",
+          "properties": {
+            "mcpEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "acpEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "principalUserId": {
+              "type": "string",
+              "default": ""
+            },
+            "principalScope": {
+              "type": "string",
+              "default": "read"
+            },
+            "proxyBind": {
+              "type": "string",
+              "default": "127.0.0.1",
+              "description": "Loopback bind for the stdio-proxy listener. Non-loopback is refused; remote bind is a future ticket."
+            }
+          },
+          "required": [
+            "mcpEnabled",
+            "acpEnabled",
+            "principalUserId",
+            "principalScope",
+            "proxyBind"
+          ]
         },
         "email": {
           "type": "object",
@@ -2644,6 +2992,20 @@
             "botToken"
           ]
         },
+        "gifs": {
+          "type": "object",
+          "description": "GIF provider (Tenor) for the chat GIF picker. Unconfigured = picker answers 501.",
+          "properties": {
+            "apiKey": {
+              "type": "string",
+              "default": "",
+              "description": "Tenor API key. Env-only: TENOR_API_KEY. SECRET — never log or echo."
+            }
+          },
+          "required": [
+            "apiKey"
+          ]
+        },
         "irc": {
           "type": "object",
           "description": "IRC integration. Opt-in; disabled by default.",
@@ -2697,6 +3059,7 @@
       },
       "required": [
         "enabled",
+        "inbound",
         "email",
         "matrix",
         "xmpp",
@@ -2704,6 +3067,173 @@
         "discord",
         "irc",
         "nostr"
+      ]
+    },
+    "harness": {
+      "type": "object",
+      "description": "External harness integration (ACP-speaking agents: omp, opencode, ...)",
+      "properties": {
+        "acp": {
+          "type": "object",
+          "description": "ACP harness profiles (per-process stdio JSON-RPC agents)",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the ACP harness integration"
+            },
+            "profiles": {
+              "type": "array",
+              "description": "External harness profiles in failover preference order",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "loop-lore-local profile id (unique)"
+                  },
+                  "harness": {
+                    "type": "string",
+                    "enum": [
+                      "omp",
+                      "opencode",
+                      "codex",
+                      "claude-code",
+                      "hermes",
+                      "openclaw",
+                      "antigravity"
+                    ],
+                    "default": "omp",
+                    "description": "Which shipped ACP adapter speaks this profile (default omp)"
+                  },
+                  "command": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Spawn argv for the ACP server (stdio NDJSON)"
+                  },
+                  "strategy": {
+                    "type": "string",
+                    "enum": [
+                      "failover"
+                    ],
+                    "description": "Multi-profile strategy (only failover implemented)"
+                  },
+                  "tiers": {
+                    "type": "object",
+                    "description": "Tier → concrete model mapping",
+                    "properties": {
+                      "good": {
+                        "type": "object",
+                        "description": "Strong tier (planning/design/review)"
+                      },
+                      "fast": {
+                        "type": "object",
+                        "description": "Cheap tier (mechanical work)"
+                      }
+                    }
+                  },
+                  "limits": {
+                    "type": "object",
+                    "description": "loop-lore-side usage caps (optional; missing = unlimited)",
+                    "properties": {
+                      "rpm": {
+                        "type": "integer",
+                        "description": "Max dispatches per rolling 60s"
+                      },
+                      "tokensPerDay": {
+                        "type": "integer",
+                        "description": "Max tokens per rolling 24h"
+                      }
+                    }
+                  },
+                  "tosGrayzoneAcknowledged": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Explicit acknowledgement that harness-as-provider use of this profile for RPG/other non-chat functionalities may conflict with the provider's ToS when the profile is subscription-backed. Local execution and direct API access are unaffected. Absent/false: the profile keeps flowing exactly as today (this flag records consent only; runtime gating lives in the dispatch guard)"
+                  },
+                  "health": {
+                    "type": "object",
+                    "description": "Circuit-breaker thresholds (optional)",
+                    "properties": {
+                      "maxConsecutiveFailures": {
+                        "type": "integer",
+                        "description": "Failures before the breaker opens"
+                      },
+                      "cooldownMs": {
+                        "type": "integer",
+                        "description": "Open-breaker cooldown in ms"
+                      }
+                    }
+                  },
+                  "sandboxRoot": {
+                    "type": "string",
+                    "description": "Directory the profile's permission asks are judged against (must exist; no \"..\" traversal). Absent = the process cwd"
+                  },
+                  "protocolVersion": {
+                    "type": "number",
+                    "description": "ACP protocol version to request at initialize (default 1; 2 negotiates v2 when the agent supports it)"
+                  },
+                  "mcpServers": {
+                    "type": "array",
+                    "description": "MCP servers handed to the harness agent via session/new (stdio name/command/args/env, verbatim)",
+                    "items": {
+                      "type": "object"
+                    },
+                    "x-toml-kind": "array-of-tables"
+                  },
+                  "additionalDirectories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Extra absolute workspace roots handed to the agent via session/new (relative entries are rejected)"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "description": "Default mode id for session/set_mode (e.g. plan/act); absent = only explicitly passed ids are sent"
+                  }
+                }
+              },
+              "x-toml-kind": "array-of-tables"
+            }
+          }
+        },
+        "repoAccess": {
+          "type": "object",
+          "description": "RSI repo-root access tier (DANGEROUS, default off): lets the server-resolved internal-service principal execute repo commands and touch repo-root paths (src/, .plan/, migrations, workflows). Every decision is audited to tool_call_audit; the gate fails closed",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Master switch for the repo-access tier. False (default) denies every repo-access execution regardless of principal or grants; only the operator may enable it"
+            }
+          }
+        }
+      },
+      "required": [
+        "acp"
+      ]
+    },
+    "prompt": {
+      "type": "object",
+      "description": "Prompt-assembly token budgets",
+      "properties": {
+        "loreTokenBudget": {
+          "type": "integer",
+          "default": 1024,
+          "description": "Token budget for the world-lore prompt section (128-8192); constant entries are pinned, the rest compete by priority"
+        },
+        "memoryTokenBudget": {
+          "type": "integer",
+          "default": 1024,
+          "description": "Token budget for injected memories (128-8192); pinned memories are never dropped"
+        }
+      },
+      "required": [
+        "loreTokenBudget",
+        "memoryTokenBudget"
       ]
     },
     "web": {
@@ -2760,6 +3290,7 @@
     "seeding",
     "templates",
     "characters",
+    "items",
     "web"
   ],
   "description": "JSON Schema optimized for TOML language servers (Taplo, Even Better TOML, Tombi). Reference from config.toml via $schema key."

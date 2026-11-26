@@ -12,6 +12,7 @@
  * Elysia plugin — uses auth guard for authentication (context.userId available).
  */
 
+import { isComfyUIModelName, } from "@loop-lore/core/config/schema/providers";
 import { Elysia, t, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
@@ -23,6 +24,22 @@ import { ErrorResponse, SettingsUpdateAllowedKeys, } from "../validation/schemas
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 const exportLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: 10, },);
+
+/** @param value - user-supplied comfyUiModels map */
+function isValidComfyUIModelSettings(value: unknown,): boolean {
+  if (value === null || typeof value !== "object" || Array.isArray(value,)) { return false; }
+  return Object.values(value,).every((selection,) => {
+    if (selection === null || typeof selection !== "object" || Array.isArray(selection,)) { return false; }
+    const entry = selection as Record<string, unknown>;
+    if (entry.noVae !== undefined && typeof entry.noVae !== "boolean") { return false; }
+    if (entry.noVae === true && entry.vae !== undefined) { return false; }
+    return (["clip", "diffusion", "vae",] as const).every((role,) => {
+      const name = entry[role];
+      return name === undefined ||
+        (typeof name === "string" && name.length <= 512 && isComfyUIModelName(role, name,));
+    },);
+  },);
+}
 
 /**
  * @param database
@@ -107,6 +124,16 @@ async function handleUpdateSettings(
         "validation_error" as never,
       );
     }
+  }
+
+  // ComfyUI model pins are a trust-boundary value: reject names with an
+  // extension that cannot exist in a role before merging into users.settings.
+  if ("comfyUiModels" in body && !isValidComfyUIModelSettings(body.comfyUiModels,)) {
+    return jsonError(
+      "comfyUiModels must map provider names to compatible model selections",
+      HttpStatus.BadRequest,
+      "validation_error" as never,
+    );
   }
 
   const current = await database

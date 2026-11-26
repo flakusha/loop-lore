@@ -4,7 +4,8 @@
 /**
  * Model Role Resolution
  *
- * Resolves model role assignments (main, auxiliary, captioning, classifier)
+ * Resolves model role assignments (main, auxiliary, captioning, classifier,
+ * translator, rerank)
  * with fallback: DB overrides → config defaults → server defaults.
  *
  * Error-handling strategy (deliberate, do not "unify"): reads degrade to
@@ -13,13 +14,32 @@
  * degradation, so reads MUST NOT throw.
  */
 import type { Kysely, } from "kysely";
-import type { Config, } from "../config/schema";
+import { AUTOROUTE_SCENARIOS, type Config, } from "../config/schema";
+import { EDITABLE_SYSTEM_CONFIG_KEYS, } from "../config/sections/menu-data";
 import type { DB, } from "../db/schema";
 import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
+import { recommendScenarioModel, } from "../models/scenario-ranking";
+import { jsonParseOr, } from "../utils";
+import { getConfigValue, } from "./config";
 
 import { ModelRole, } from "../db/enums-core";
 export type { ModelRole, } from "../db/enums-core";
+
+/**
+ * Warn through the structured logger when one is installed.
+ * @param message
+ * @param meta
+ */
+function warn(message: string, meta: Record<string, unknown>,): void {
+  try {
+    getLogger()
+      .child({ module: "model-roles", },)
+      .warn(message, meta,);
+  } catch {
+    // No root logger installed — the read still succeeds.
+  }
+}
 
 /** Roles manageable from the admin panel (subset of all ModelRole values). */
 export const VALID_ROLES = [
@@ -28,6 +48,7 @@ export const VALID_ROLES = [
   ModelRole.Captioning,
   ModelRole.Classifier,
   ModelRole.Translator,
+  ModelRole.Rerank,
 ] as const;
 
 /** A resolved model role with its provider, model, and source. */
@@ -35,19 +56,79 @@ export interface ResolvedModelRole {
   role: ModelRole;
   provider: string;
   model: string;
-  source: "db" | "config" | "default";
+  source: "db" | "config" | "ranking" | "default";
+}
+
+/**
+ * Pick a scenario-ranked model from the configured default models.
+ * @param role - role being resolved (warning context only)
+ * @param scenario - requested use case
+ * @param defaultModels - provider → model map
+ * @param db - database instance
+ * @returns the ranked provider/model, or null when nothing can be ranked
+ */
+async function scenarioDefault(
+  role: ModelRole,
+  scenario: string,
+  defaultModels: Record<string, string>,
+  db: Kysely<DB>,
+): Promise<{ provider: string; model: string } | null> {
+  const entries = Object.entries(defaultModels ?? {},);
+  try {
+    const recommended = await recommendScenarioModel(
+      db,
+      scenario,
+      entries.map(([, model,],) => model),
+    );
+
+    if (recommended === null) { return null; }
+
+    const provider = entries.find(([, model,],) => model === recommended.modelId)?.[0] ?? "";
+    return { provider, model: recommended.modelId, };
+  } catch (error) {
+    getLogger()
+      .child({ module: "model-roles", },)
+      .warn("Failed to read scenario ranking", { role, error: (error as Error).message, },);
+
+    return null;
+  }
+}
+
+/**
+ * Parse an admin-edited modelRoles JSON value; invalid or partial rows are ignored.
+ * @param raw - stored system_config value
+ * @returns assignments keyed by valid role, or undefined when unusable
+ */
+function parseStoredModelRoles(raw: string | undefined,): Config["generation"]["modelRoles"] | undefined {
+  if (!raw) { return undefined; }
+  const parsed = jsonParseOr<unknown>(raw, undefined,);
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) { return undefined; }
+
+  const result: NonNullable<Config["generation"]["modelRoles"]> = {};
+  for (const [role, assignment,] of Object.entries(parsed,)) {
+    if (!(VALID_ROLES as readonly string[]).includes(role,)) { continue; }
+    if (typeof assignment !== "object" || assignment === null) { continue; }
+    const value = assignment as Record<string, unknown>;
+    if (typeof value.provider === "string" && typeof value.model === "string") {
+      result[role as keyof typeof result] = { provider: value.provider, model: value.model, };
+    }
+  }
+
+  return Object.keys(result,).length > 0 ? result : undefined;
 }
 
 /**
  * Resolve a model role assignment.
  *
  * Resolution order:
- * 1. DB override (model_role_overrides table)
- * 2. Config default (config.generation.modelRoles)
- * 3. Server default (config.generation.defaultProvider + defaultModels)
+ * 1. DB override (model_role_overrides table) — bypasses ranking
+ * 2. Config default (config.generation.modelRoles) — bypasses ranking
+ * 3. Scenario ranking, when a scenario is supplied and ranking rows exist
+ * 4. Server default (config.generation.defaultProvider + defaultModels)
  * @param role - The role to resolve.
  * @param config - App config.
  * @param db - Database instance.
+ * @param opts - Optional scenario for ranking-based selection; falls back to config.generation.autorouteScenario.
  * @returns The resolved model role.
  * @throws {Error}
  */
@@ -55,6 +136,7 @@ export async function resolveModelRole(
   role: ModelRole,
   config: Config,
   db: Kysely<DB>,
+  opts: { scenario?: string } = {},
 ): Promise<ResolvedModelRole> {
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
@@ -66,6 +148,24 @@ export async function resolveModelRole(
   if (!config?.generation) {
     return { role, provider: "", model: "", source: "default", };
   }
+
+  let storedScenario: string | undefined;
+  let storedRoles: string | undefined;
+  try {
+    storedScenario = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,);
+    storedRoles = await getConfigValue(db, EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,);
+  } catch (error) {
+    warn("Failed to read stored model-role config keys", { error: (error as Error).message, },);
+  }
+
+  const storedValidScenario = storedScenario !== undefined &&
+      (AUTOROUTE_SCENARIOS as readonly string[]).includes(storedScenario,)
+    ? storedScenario as Config["generation"]["autorouteScenario"]
+    : undefined;
+
+  // Explicit caller scenario wins; config-menu DB overrides come next.
+  const scenario = opts.scenario ?? storedValidScenario ?? config.generation.autorouteScenario;
+  const roles = parseStoredModelRoles(storedRoles,) ?? config.generation.modelRoles;
 
   // 1. DB overrides
   try {
@@ -79,18 +179,25 @@ export async function resolveModelRole(
       return { role, provider: dbOverride.provider, model: dbOverride.model, source: "db", };
     }
   } catch (error) {
-    getLogger()
-      .child({ module: "model-roles", },)
-      .warn("Failed to read DB override", { role, error: (error as Error).message, },);
+    warn("Failed to read DB override", { role, error: (error as Error).message, },);
   }
 
   // 2. Config defaults
-  const configRole = config.generation.modelRoles?.[role as keyof typeof config.generation.modelRoles];
+  const configRole = roles?.[role as keyof NonNullable<typeof roles>];
   if (configRole) {
     return { role, provider: configRole.provider, model: configRole.model, source: "config", };
   }
 
-  // 3. Server defaults
+  // 3. Scenario ranking. An explicit DB/config assignment above already
+  // bypassed it; a missing ranking degrades to the server default below.
+  if (scenario) {
+    const ranked = await scenarioDefault(role, scenario, config.generation.defaultModels, db,);
+    if (ranked !== null) {
+      return { role, ...ranked, source: "ranking", };
+    }
+  }
+
+  // 4. Server defaults
   const defaultProvider = config.generation.defaultProvider;
   if (defaultProvider) {
     const defaultModel = config.generation.defaultModels[defaultProvider] ?? "";

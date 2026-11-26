@@ -137,6 +137,9 @@ export async function regenerateMessageVariant(
     role: message.role,
     content: message.content,
     key_id: message.key_id,
+    // Carry the source mirror verbatim: FTS5 indexes this column, and the
+    // source ciphertext cannot be re-derived from `content` alone.
+    content_plaintext: message.content_plaintext,
     content_type: message.content_type,
     content_format: message.content_format,
     content_encoding: message.content_encoding,

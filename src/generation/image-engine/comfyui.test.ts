@@ -46,6 +46,68 @@ const OPTS = {
   prompt: "a tiny castle",
   n: 1,
   outputFormat: "png",
+  // The shipped catalog names exports with a -v1 suffix.
+  workflow: "txt2img-v1",
+};
+
+/**
+ * Full fetch stub including /upload/image. Captures uploaded filenames and
+ * the body POSTed to /prompt so the img2img substitution is observable.
+ */
+function stubComfyRun(config: { uploadFail?: boolean; uploadName?: string } = {},) {
+  let submitted = "";
+  const uploadedNames: string[] = [];
+  const png = Buffer.from("comfy-png",);
+  globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+    const target = String(url,);
+    if (target.endsWith("/upload/image",)) {
+      if (config.uploadFail) {
+        return new Response(JSON.stringify({ error: "upload-boom", },), { status: 500, },);
+      }
+
+      const file = (init?.body as FormData | undefined)?.get("image",);
+      if (file instanceof File) { uploadedNames.push(file.name,); }
+      return new Response(JSON.stringify({ name: config.uploadName ?? "stored-init.png", },), { status: 200, },);
+    }
+
+    if (target.endsWith("/object_info",)) {
+      return Response.json({
+        LoraLoader: {
+          input: { required: { lora_name: [["style-lora.safetensors",], {},], }, },
+        },
+      },);
+    }
+
+    if (target.endsWith("/prompt",)) {
+      submitted = typeof init?.body === "string" ? init.body : "";
+      return new Response(JSON.stringify({ prompt_id: "p-init", },), { status: 200, },);
+    }
+
+    if (target.includes("/history/",)) {
+      return new Response(
+        JSON.stringify({
+          "p-init": {
+            prompt_id: "p-init",
+            status: "completed",
+            outputs: { "9": { images: [{ filename: "gen.png", subfolder: "", type: "output", },], }, },
+          },
+        },),
+        { status: 200, },
+      );
+    }
+
+    if (target.includes("/view",)) {
+      return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
+    }
+
+    throw new Error(`unexpected stub call: ${target}`,);
+  }) as typeof fetch;
+
+  return { uploadedNames, submitted: () => submitted, };
+}
+
+type SubmittedPrompt = {
+  prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
 };
 
 describe("generateComfyUI", () => {
@@ -127,6 +189,25 @@ describe("generateComfyUI", () => {
     expect(parsed.prompt["1"]?.class_type,).toBe("CheckpointLoaderSimple",);
   });
 
+  it("submits picked model, sampler, seed and LoRA name", async () => {
+    const capture = stubComfyRun();
+    const outcome = await generateComfyUI({ ...CONFIG, baseUrl: "http://127.0.0.1:9/pick-test", }, {
+      ...OPTS,
+      model: "picked.ckpt",
+      samplerName: "dpmpp_2m",
+      seed: 123456,
+      lora: [{ name: "style-lora", strength: 0.7, backend: "comfyui", },],
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(capture.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["1"]?.inputs["ckpt_name"],).toBe("picked.ckpt",);
+    expect(parsed.prompt["5"]?.inputs["sampler_name"],).toBe("dpmpp_2m",);
+    expect(parsed.prompt["5"]?.inputs["seed"],).toBe(123456,);
+    const loraNodes = Object.values(parsed.prompt,).filter((node,) => node.class_type === "LoraLoader");
+    expect(loraNodes[0]?.inputs["lora_name"],).toBe("style-lora",);
+  });
+
   it("injects a LoraLoader node when the LoRA is discovered on the backend", async () => {
     clearDiscoveryCache("comfyui",);
     let submitted = "";
@@ -160,7 +241,7 @@ describe("generateComfyUI", () => {
 
     const outcome = await generateComfyUI(CONFIG, {
       ...OPTS,
-      lora: { name: "char", strength: 0.7, backend: "comfyui", },
+      lora: [{ name: "char", strength: 0.7, backend: "comfyui", },],
     },);
 
     expect(outcome.ok,).toBe(true,);
@@ -173,7 +254,7 @@ describe("generateComfyUI", () => {
     expect(loraNodes[0]?.inputs.lora_name,).toBe("char",);
   });
 
-  it("warns and skips LoRA injection when the LoRA is unknown", async () => {
+  it("fails closed when the LoRA is unknown instead of submitting a LoRA-free image", async () => {
     clearDiscoveryCache("comfyui",);
     let submitted = "";
     globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
@@ -206,13 +287,14 @@ describe("generateComfyUI", () => {
 
     const outcome = await generateComfyUI(CONFIG, {
       ...OPTS,
-      lora: { name: "missing", strength: 0.7, backend: "comfyui", },
+      lora: [{ name: "missing", strength: 0.7, backend: "comfyui", },],
     },);
 
-    expect(outcome.ok,).toBe(true,);
-    const parsed = JSON.parse(submitted,) as { prompt: Record<string, { class_type: string }> };
-    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
-    expect(loraNodes,).toHaveLength(0,);
+    expect(outcome.ok,).toBe(false,);
+    if (outcome.ok) { return; }
+    expect(outcome.error,).toContain("Unknown LoRA",);
+    expect(outcome.status,).toBe(400,);
+    expect(submitted,).toBe("",);
   });
 
   it("forwards the resolved BYO key as a Bearer auth header", async () => {
@@ -248,7 +330,7 @@ describe("generateComfyUI", () => {
     const outcome = await generateComfyUI(CONFIG, { ...OPTS, apiKey: "byo-key", },);
 
     expect(outcome.ok,).toBe(true,);
-    expect(authHeaders,).toEqual({ authorization: "Bearer byo-key", },);
+    expect(new Headers(authHeaders as HeadersInit,).get("authorization",),).toBe("Bearer byo-key",);
   });
 
   it("falls back to the provider-configured apiKey when no BYO key resolves", async () => {
@@ -287,6 +369,202 @@ describe("generateComfyUI", () => {
     );
 
     expect(outcome.ok,).toBe(true,);
-    expect(authHeaders,).toEqual({ authorization: "Bearer config-key", },);
+    expect(new Headers(authHeaders as HeadersInit,).get("authorization",),).toBe("Bearer config-key",);
+  });
+
+  it("uploads the init image and substitutes input_image + denoise_strength", async () => {
+    const stub = stubComfyRun({ uploadName: "stored-init.png", },);
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      workflow: "img2img",
+      denoise: 0.42,
+      initImage: { assetId: "asset-42", buffer: Buffer.from("init-png",), },
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    // Filename is derived from the asset id, never from caller input.
+    expect(stub.uploadedNames,).toEqual(["init-asset-42.png",],);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.image,).toBe("stored-init.png",);
+    expect(parsed.prompt["6"]?.inputs.denoise,).toBe(0.42,);
+  });
+
+  it("prefers request width/height/scheduler/denoise in the graph", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      width: 768,
+      height: 1024,
+      scheduler: "karras",
+      denoise: 0.8,
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.width,).toBe(768,);
+    expect(parsed.prompt["4"]?.inputs.height,).toBe(1024,);
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("karras",);
+    expect(parsed.prompt["5"]?.inputs.denoise,).toBe(0.8,);
+  });
+
+  it("falls back to config dimensions when the request omits them", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, OPTS,);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["4"]?.inputs.width,).toBe(128,);
+    expect(parsed.prompt["4"]?.inputs.height,).toBe(128,);
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("simple",);
+    expect(parsed.prompt["5"]?.inputs.denoise,).toBe(1,);
+  });
+
+  it("does not upload when no init image is present", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, OPTS,);
+
+    expect(outcome.ok,).toBe(true,);
+    expect(stub.uploadedNames,).toEqual([],);
+    expect(stub.submitted(),).not.toContain("input_image",);
+  });
+
+  it("submits `simple` by default and an explicit scheduler when supplied", async () => {
+    const stub = stubComfyRun();
+    expect((await generateComfyUI(CONFIG, OPTS,)).ok,).toBe(true,);
+    const parsed = JSON.parse(stub.submitted(),) as SubmittedPrompt;
+    expect(parsed.prompt["5"]?.inputs.scheduler,).toBe("simple",);
+
+    const explicit = stubComfyRun();
+    expect((await generateComfyUI(CONFIG, { ...OPTS, scheduler: "karras", },)).ok,).toBe(true,);
+    const overridden = JSON.parse(explicit.submitted(),) as SubmittedPrompt;
+    expect(overridden.prompt["5"]?.inputs.scheduler,).toBe("karras",);
+  });
+
+  it("fails the generation when the init-image upload fails", async () => {
+    const stub = stubComfyRun({ uploadFail: true, },);
+    const outcome = await generateComfyUI(CONFIG, {
+      ...OPTS,
+      workflow: "img2img",
+      initImage: { assetId: "asset-42", buffer: Buffer.from("init-png",), },
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(502,);
+      expect(outcome.error,).toContain("Init image upload failed",);
+    }
+
+    // No workflow was submitted — the failure never silently fell back to txt2img.
+    expect(stub.submitted(),).toBe("",);
+  });
+
+  it("refuses the img2img workflow without an init image", async () => {
+    const stub = stubComfyRun();
+    const outcome = await generateComfyUI(CONFIG, { ...OPTS, workflow: "img2img", },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(400,);
+      expect(outcome.error,).toContain("requires an init image",);
+    }
+
+    expect(stub.submitted(),).toBe("",);
+  });
+
+  it("fills qwen WAS slots with full filenames, not stripped names", async () => {
+    const config = { ...CONFIG, baseUrl: "http://127.0.0.1:9101", };
+    let submitted = "";
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/object_info",)) {
+        return Response.json({
+          LoraLoader: {
+            input: {
+              required: { lora_name: [["char.safetensors", "style.safetensors",], {},], },
+            },
+          },
+        },);
+      }
+
+      if (target.endsWith("/prompt",)) {
+        submitted = typeof init?.body === "string" ? init.body : "";
+        return Response.json({ prompt_id: "p-slot", },);
+      }
+
+      if (target.includes("/history/",)) {
+        return Response.json({
+          "p-slot": { prompt_id: "p-slot", status: "completed", outputs: {}, },
+        },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(config, {
+      ...OPTS,
+      workflow: "qwen-image-2-1-t2i-v1",
+      lora: [
+        { name: "char", strength: 0.6, backend: "comfyui", },
+        { name: "style.safetensors", strength: 0.4, backend: "comfyui", },
+      ],
+    },);
+
+    expect(outcome.ok,).toBe(true,);
+    const parsed = JSON.parse(submitted,) as {
+      prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
+    };
+
+    const slot = Object.values(parsed.prompt,).find(
+      (n,) => n.class_type === "WASPowerLoraLoader",
+    )!;
+
+    expect(slot.inputs["lora_1"],).toBe("char.safetensors",);
+    expect(slot.inputs["lora_1_weight"],).toBe(0.6,);
+    expect(slot.inputs["lora_1_enabled"],).toBe(true,);
+    expect(slot.inputs["lora_2"],).toBe("style.safetensors",);
+    expect(slot.inputs["lora_3"],).toBe("None",);
+    expect(slot.inputs["lora_3_enabled"],).toBe(false,);
+  });
+
+  it("returns a 400 when a requested LoRA is unknown on a slot graph", async () => {
+    const config = { ...CONFIG, baseUrl: "http://127.0.0.1:9102", };
+    let submitted = "";
+    globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
+      const target = String(url,);
+      if (target.endsWith("/object_info",)) {
+        return Response.json({
+          LoraLoader: {
+            input: { required: { lora_name: [["other.safetensors",], {},], }, },
+          },
+        },);
+      }
+
+      if (target.endsWith("/prompt",)) {
+        submitted = typeof init?.body === "string" ? init.body : "";
+        return Response.json({ prompt_id: "p-unknown", },);
+      }
+
+      if (target.includes("/history/",)) {
+        return Response.json({
+          "p-unknown": { prompt_id: "p-unknown", status: "completed", outputs: {}, },
+        },);
+      }
+
+      throw new Error(`unexpected stub call: ${target}`,);
+    }) as typeof fetch;
+
+    const outcome = await generateComfyUI(config, {
+      ...OPTS,
+      workflow: "qwen-image-2-1-t2i-v1",
+      lora: [{ name: "char", strength: 0.7, backend: "comfyui", },],
+    },);
+
+    expect(outcome.ok,).toBe(false,);
+    if (!outcome.ok) {
+      expect(outcome.status,).toBe(400,);
+      expect(outcome.error,).toContain("Unknown LoRA",);
+    }
+
+    expect(submitted,).toBe("",);
   });
 });

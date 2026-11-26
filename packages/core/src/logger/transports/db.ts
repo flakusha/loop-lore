@@ -9,9 +9,9 @@
  * @module logger-transports-db
  */
 
-import type { DB, } from "@/db/schema";
-import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import type { LogEntry, Transport, } from "../types";
 
 /** */

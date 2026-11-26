@@ -191,6 +191,7 @@ export async function buildPreview(options: BuildPreviewOptions,): Promise<Build
     sharedContext: ancestorLines,
     versions: truncatedVersions,
     mode,
+    styleHint: request.styleHint,
   },);
 
   const llmResult = await callMergeLlm(database, config, chatId, actorId, messages,);
@@ -203,7 +204,10 @@ export async function buildPreview(options: BuildPreviewOptions,): Promise<Build
   let changedRatio: number | undefined;
   let guardExceeded = false;
   if (mode === MergeMode.SinglePlusGlean) {
-    const aLines = versionLines[0]!;
+    // renderMessageLines emits one string per message (embedded newlines
+    // included); draftLines is split into physical lines. Flatten A to the
+    // same unit or a multiline message scores as a total rewrite.
+    const aLines = versionLines[0]!.flatMap((line,) => line.split("\n",));
     const draftText = parsed.messages.map((m: { role: string; content: string },) => `${m.role}: ${m.content}`).join(
       "\n",
     );
@@ -224,7 +228,7 @@ export async function buildPreview(options: BuildPreviewOptions,): Promise<Build
   };
 
   if (changedRatio !== undefined) { metadata.changedRatio = changedRatio; }
-  if (guardExceeded) { metadata.guardExceeded = true; }
+  metadata.guardExceeded = guardExceeded;
   await updateMergeMetadata(database, { mergeId, metadata, },);
 
   return {

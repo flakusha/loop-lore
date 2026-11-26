@@ -1,0 +1,206 @@
+<!-- Detailed (nerd) mode: full button row + stats -->
+<div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
+  <button
+    class="btn-icon-action"
+    @click="copyMessage(msg.id, $event)"
+    x-bind:title="t('chats.copy')"
+    x-bind:aria-label="t('chats.copy')"
+  >
+    📋
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="startEdit(msg.id)"
+    x-bind:title="t('common.edit')"
+    x-bind:aria-label="t('common.edit')"
+  >
+    ✏️
+  </button>
+  <!-- Poll trigger: open the inline poll composer (TASK-message-polls-votes) -->
+  <button
+    class="btn-icon-action"
+    @click="openPollComposer(msg.id)"
+    x-bind:title="t('chats.createPoll')"
+    x-bind:aria-label="t('chats.createPoll')"
+    data-testid="poll-add"
+  >
+    📊
+  </button>
+  <!-- Component-buttons AC1: per-message Improve (user-authored) + Attach -->
+  <template x-if="msg.role === 'user'">
+    <button
+      class="btn-icon-action"
+      @click="improveMessage(msg.id)"
+      :disabled="_improvingMessageId === msg.id"
+      x-bind:title="t('chats.improveMessage')"
+      x-bind:aria-label="t('chats.improveMessage')"
+      data-testid="improve-message"
+    >
+      ✨
+    </button>
+  </template>
+  <button
+    class="btn-icon-action"
+    @click="openAssetPicker(msg.id)"
+    x-bind:title="t('chats.attachAsset')"
+    x-bind:aria-label="t('chats.attachAsset')"
+    data-testid="attach-asset"
+  >
+    📎
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="rememberMessage(msg.id, msg.content)"
+    x-bind:title="t('chats.rememberThis')"
+    x-bind:aria-label="t('chats.rememberThis')"
+  >
+    🧠
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="translateMessage(msg.id)"
+    :disabled="_mtBusy === msg.id"
+    x-bind:title="t('messages.translate')"
+    :aria-label="t('messages.translate')"
+    data-testid="translate-message"
+  >
+    🌐
+  </button>
+  <template x-if="msg.role === 'assistant'">
+    <button
+      class="btn-icon-action"
+      x-bind:title="t('chats.regenerate')"
+      x-bind:aria-label="t('chats.regenerate')"
+      @click="regenerateVariant(msg.id)"
+    >
+      ♻
+    </button>
+  </template>
+  <template x-if="msg.role === 'assistant'">
+    <button
+      class="btn-icon-action"
+      x-bind:title="t('chats.regenWithStyle')"
+      x-bind:aria-label="t('chats.regenWithStyle')"
+      aria-haspopup="menu"
+      :aria-expanded="_stylePicker.visible && _stylePicker.messageId === msg.id ? 'true' : 'false'"
+      data-testid="regen-with-style"
+      @click="openStylePicker(msg.id, $event)"
+    >
+      ▾
+    </button>
+  </template>
+  <template x-if="msg.role === 'assistant'">
+    <button
+      class="btn-icon-action"
+      @click="openVariants(msg.id)"
+      title="Browse variants"
+      aria-label="Browse variants"
+      data-testid="browse-variants"
+    >
+      ⋯
+    </button>
+  </template>
+  <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+    <span class="variant-switcher">
+      <button
+        class="btn-icon-action"
+        x-bind:title="t('common.previous')"
+        x-bind:aria-label="t('common.previous')"
+        @click="switchVariant(msg.id, -1)"
+      >
+        ◀
+      </button>
+      <span
+        class="variant-counter"
+        x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"
+      ></span>
+      <button
+        class="btn-icon-action"
+        x-bind:title="t('common.next')"
+        x-bind:aria-label="t('common.next')"
+        @click="switchVariant(msg.id, 1)"
+      >
+        ▶
+      </button>
+    </span>
+  </template>
+  <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
+    <button
+      class="btn-icon-action action-continue"
+      x-bind:title="t('chats.continueAction')"
+      x-bind:aria-label="t('chats.continueAction')"
+      @click="continueMessage(msg.id)"
+    >
+      ↳
+    </button>
+  </template>
+  <template x-if="msg.role === 'assistant'">
+    <button
+      class="btn-icon-action"
+      :class="impersonationActive ? 'action-active' : ''"
+      @click="toggleImpersonate()"
+      :title="impersonationActive ? 'Stop playing as character' : 'Play as character'"
+      :aria-label="impersonationActive ? 'Stop playing as character' : 'Play as character'"
+    >
+      🎭
+    </button>
+  </template>
+  <button
+    class="btn-icon-action"
+    @click="generateImageFromMessage(msg.id)"
+    x-bind:title="t('chats.generateImage')"
+    x-bind:aria-label="t('chats.generateImage')"
+  >
+    🖼
+  </button>
+  <template x-if="msg.attachments && msg.attachments.length > 0">
+    <button
+      class="btn-icon-action"
+      @click="captionMessage(msg.id)"
+      x-bind:title="t('chats.captionImages')"
+      x-bind:aria-label="t('chats.captionImages')"
+    >
+      💬
+    </button>
+  </template>
+  <button
+    class="btn-icon-action"
+    @click="forwardMessage(msg.id)"
+    x-bind:title="t('chats.forward')"
+    aria-label="Forward message"
+  >
+    ➦
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="runMessageAiAction(msg.id, 'summarize')"
+    x-bind:title="t('chats.aiSummarize')"
+    aria-label="Summarize message"
+  >
+    📝
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="pinMessage(msg.id)"
+    title="Pin message"
+    aria-label="Pin message"
+  >
+    📌
+  </button>
+  <button
+    class="btn-icon-action"
+    @click="openFlagDialog('message', msg.id, activeChat)"
+    x-bind:title="t('chats.flag')"
+    aria-label="Flag message"
+    data-testid="flag-message"
+  >
+    🚩
+  </button>
+  <button
+    class="btn-icon-action action-remove"
+    @click="removeMessage(msg.id, $event)"
+    x-bind:title="t('common.remove')"
+  >
+    🗑
+  </button>
+</div>

@@ -3,7 +3,8 @@
 
 # TASK: 1.0.0 GAP: backup/restore before 1.0.0 (required, unstarted)
 
-**Status:** In Progress
+**Status:** Done
+**Status Note (2026-11-18):** Service + admin routes + tests + operator docs all landed (`src/db/backup-restore.ts`, `src/routes/admin/db-backup.ts`, `src/db/backup-restore.test.ts`, `60e34f035`). Restore is intentionally restart-required; download/upload, scheduling, retention and a frontend admin panel remain separate future work.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -20,7 +21,7 @@ Required claims data resilience but epic-database-backup-recovery.md and epic-db
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+- [x] Documentation updated (`60e34f035`)
 
 **Implementation note (2026-11-12, worktree `backup-restore`):**
 
@@ -29,3 +30,4 @@ Landed: `src/db/backup-restore.ts` (service: `createDbBackup` via SQLite `VACUUM
 Restore design decision: true in-place restore is unsafe in-process. Routes and services capture the Kysely `Db` handle at registration (closing the singleton would strand live references to a destroyed connection), and replacing the file under an open connection leaves that connection writing to the unlinked inode. Chosen sequence: snapshot the current live db (rollback path) -> validate the target (SQLite magic header) -> close the live handles (`resetDatabaseSingleton`, checkpoints/flushes) -> remove stale `-wal`/`-shm` sidecars -> atomically rename the snapshot over the live path. Consequence (explicit limitation, surfaced as `restartRequired: true` in the restore response): previously captured handles are dead and the process must be restarted to serve the restored database. Pre-restore snapshot kept as the rollback path. Failed restores before the final rename leave live data untouched.
 
 Remaining: operator-facing docs/changelog entry; optional future work — restore-download/verified-upload over HTTP, scheduled (cron) backups, retention pruning for db snapshots (reinit archives already have retention), and a frontend admin panel.
+**Resolved:** 2026-11-18T05:38:50.752Z Closed by ticket reconciliation on dev (2026-11-18); verification notes cite the landed commits.

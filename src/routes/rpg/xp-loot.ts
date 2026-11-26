@@ -28,7 +28,7 @@ import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate
 import { getXpHistory, } from "../../rpg/service/xp";
 import { levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -47,54 +47,53 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
   return (
     new Elysia({ name: "rpg-xp-loot", },)
       // ── XP: award ──────────────────────────────────────────
-      .post(`${R}/xp/award`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const body = ctx.body as {
-          actorId: string;
-          amount: number;
-          source: string;
-          description?: string;
-          referenceId?: string;
-          chatId?: string;
-          worldId?: string;
-          currentLevel?: number;
-          currentXp?: number;
-        };
+      .post(`${R}/xp/award`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          const body = ctx.body as {
+            actorId: string;
+            amount: number;
+            source: string;
+            description?: string;
+            referenceId?: string;
+            chatId?: string;
+            worldId?: string;
+            currentLevel?: number;
+            currentXp?: number;
+          };
 
-        const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
-        if (typeof actorId !== "string") { return actorId; }
+          const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
+          if (typeof actorId !== "string") { return actorId; }
 
-        // Per-world rpg_xp opt-in (FEAT-gate-xp): an explicit worldId that is
-        // opted out rejects with 403. No worldId stays fail-open (world-less
-        // callers have no gate to consult).
-        if (body.worldId) {
-          const gate = await checkMechanicEnabled(database, body.worldId, RpgMechanic.Xp,);
-          if (!gate.allowed) {
-            return jsonError(gate.reason ?? "RPG XP not enabled for this world", 403,);
-          }
-        }
-
-        try {
-          const result = await awardXpToActor(database, {
-            actorId: body.actorId,
-            amount: body.amount,
-            source: body.source,
-            description: body.description,
-            referenceId: body.referenceId,
-            chatId: body.chatId,
-          },);
-
-          return jsonResponse(result,);
-        } catch (error) {
-          if (error instanceof LevelServiceError) {
-            return jsonError(error.message, 400,);
+          // Per-world rpg_xp opt-in (FEAT-gate-xp): an explicit worldId that is
+          // opted out rejects with 403. No worldId stays fail-open (world-less
+          // callers have no gate to consult).
+          if (body.worldId) {
+            const gate = await checkMechanicEnabled(database, body.worldId, RpgMechanic.Xp,);
+            if (!gate.allowed) {
+              return jsonError(gate.reason ?? "RPG XP not enabled for this world", 403,);
+            }
           }
 
-          log().error("Failed to award XP", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+          try {
+            const result = await awardXpToActor(database, {
+              actorId: body.actorId,
+              amount: body.amount,
+              source: body.source,
+              description: body.description,
+              referenceId: body.referenceId,
+              chatId: body.chatId,
+            },);
+
+            return jsonResponse(result,);
+          } catch (error) {
+            if (error instanceof LevelServiceError) {
+              return jsonError(error.message, 400,);
+            }
+
+            log().error("Failed to award XP", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },), {
         body: AwardBody,
         response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, },
         detail: {
@@ -104,21 +103,20 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         },
       },)
       // ── XP: history ────────────────────────────────────────
-      .get(`${R}/xp/history`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const { actorId, limit, } = ctx.query as { actorId?: string; limit?: string };
-          if (!actorId) { return jsonError("actorId query param required", 400,); }
-          const actorErr = await requireNsfwActorAccess(database, actorId, ctx,);
-          if (typeof actorErr !== "string") { return actorErr; }
-          const rows = await getXpHistory(deps, actorId, limit ? Number(limit,) : 50,);
-          return jsonResponse({ entries: rows, },);
-        } catch (error) {
-          log().error("Failed to fetch XP history", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+      .get(`${R}/xp/history`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          try {
+            const { actorId, limit, } = ctx.query as { actorId?: string; limit?: string };
+            if (!actorId) { return jsonError("actorId query param required", 400,); }
+            const actorErr = await requireNsfwActorAccess(database, actorId, ctx,);
+            if (typeof actorErr !== "string") { return actorErr; }
+            const rows = await getXpHistory(deps, actorId, limit ? Number(limit,) : 50,);
+            return jsonResponse({ entries: rows, },);
+          } catch (error) {
+            log().error("Failed to fetch XP history", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },), {
         query: t.Object({
           actorId: t.String(),
           limit: t.Optional(t.String(),),
@@ -131,17 +129,16 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         },
       },)
       // ── XP: level ──────────────────────────────────────────
-      .post(`${R}/xp/level`, (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as { xp: number };
-          return jsonResponse({ level: levelFromXp(body.xp,), },);
-        } catch (error) {
-          log().error("Failed to compute level", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+      .post(`${R}/xp/level`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          try {
+            const body = ctx.body as { xp: number };
+            return jsonResponse({ level: levelFromXp(body.xp,), },);
+          } catch (error) {
+            log().error("Failed to compute level", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },), {
         body: LevelBody,
         response: { 200: SuccessResponse, 401: ErrorResponse, },
         detail: {
@@ -151,18 +148,17 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         },
       },)
       // ── XP: next level ─────────────────────────────────────
-      .post(`${R}/xp/next`, (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as { currentLevel: number; currentXp: number };
-          const needed = xpToNextLevel(body.currentLevel, body.currentXp,);
-          return jsonResponse({ xpToNextLevel: needed, },);
-        } catch (error) {
-          log().error("Failed to compute next level", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+      .post(`${R}/xp/next`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          try {
+            const body = ctx.body as { currentLevel: number; currentXp: number };
+            const needed = xpToNextLevel(body.currentLevel, body.currentXp,);
+            return jsonResponse({ xpToNextLevel: needed, },);
+          } catch (error) {
+            log().error("Failed to compute next level", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },), {
         body: NextBody,
         response: { 200: SuccessResponse, 401: ErrorResponse, },
         detail: {
@@ -172,24 +168,23 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         },
       },)
       // ── Loot: generate ─────────────────────────────────────
-      .post(`${R}/loot/generate`, (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as {
-            entries: LootEntry[];
-            level: number;
-            dropCount?: number;
-            luckModifier?: number;
-          };
+      .post(`${R}/loot/generate`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          try {
+            const body = ctx.body as {
+              entries: LootEntry[];
+              level: number;
+              dropCount?: number;
+              luckModifier?: number;
+            };
 
-          const result = generateLoot(body.entries, body.level, body.dropCount ?? 1, body.luckModifier ?? 0,);
-          return jsonResponse(result,);
-        } catch (error) {
-          log().error("Failed to generate loot", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+            const result = generateLoot(body.entries, body.level, body.dropCount ?? 1, body.luckModifier ?? 0,);
+            return jsonResponse(result,);
+          } catch (error) {
+            log().error("Failed to generate loot", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
+          }
+        },), {
         body: GenerateBody,
         response: { 200: SuccessResponse, 401: ErrorResponse, },
         detail: {
@@ -199,39 +194,38 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         },
       },)
       // ── Loot: persist ──────────────────────────────────────
-      .post(`${R}/loot/persist`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        try {
-          const body = ctx.body as {
-            result: LootResult;
-            worldId: string;
-            actorId?: string;
-            locationId?: string;
-            defaultCategory?: string;
-          };
+      .post(`${R}/loot/persist`, (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          try {
+            const body = ctx.body as {
+              result: LootResult;
+              worldId: string;
+              actorId?: string;
+              locationId?: string;
+              defaultCategory?: string;
+            };
 
-          // Trust boundary: loot may only be persisted to the caller's own
-          // actor (or by admin/solo). Location drops are world-scoped and
-          // covered by the world's own guards downstream.
-          if (body.actorId) {
-            const actorErr = await requireNsfwActorAccess(database, body.actorId, ctx,);
-            if (typeof actorErr !== "string") { return actorErr; }
+            // Trust boundary: loot may only be persisted to the caller's own
+            // actor (or by admin/solo). Location drops are world-scoped and
+            // covered by the world's own guards downstream.
+            if (body.actorId) {
+              const actorErr = await requireNsfwActorAccess(database, body.actorId, ctx,);
+              if (typeof actorErr !== "string") { return actorErr; }
+            }
+
+            const persisted = await persistLoot(database, body.result, {
+              worldId: body.worldId,
+              actorId: body.actorId,
+              locationId: body.locationId,
+              defaultCategory: body.defaultCategory as any,
+            },);
+
+            return jsonResponse(persisted,);
+          } catch (error) {
+            log().error("Failed to persist loot", error instanceof Error ? error : undefined,);
+            return jsonError("Internal server error", 500,);
           }
-
-          const persisted = await persistLoot(database, body.result, {
-            worldId: body.worldId,
-            actorId: body.actorId,
-            locationId: body.locationId,
-            defaultCategory: body.defaultCategory as any,
-          },);
-
-          return jsonResponse(persisted,);
-        } catch (error) {
-          log().error("Failed to persist loot", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
-        }
-      }, {
+        },), {
         body: PersistBody,
         response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         detail: {

@@ -8,7 +8,7 @@
 // POST /api/export
 // Returns a ZIP archive with all requested data.
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
 import { loadConfig, } from "../config/load";
@@ -56,16 +56,18 @@ export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       },);
     }
 
-    let body: Record<string, unknown> = {};
-    try {
-      body = (await ctx.request.json()) as Record<string, unknown>;
-    } catch {
-      // Empty body is fine
-    }
+    // TypeBox validates the shape at the boundary: a wrong-typed `include`
+    // can no longer throw inside the handler, and `chat_ids` is a typed
+    // string array before it reaches Kysely's `in` filter (RA-07).
+    const body = (ctx.body ?? {}) as {
+      include?: string[];
+      format?: string;
+      chat_ids?: string[];
+    };
 
-    const include = (body.include as string[]) ?? ["characters", "chats",];
-    const format = (body.format as string) ?? "json";
-    const chatIds = body.chat_ids as string[] | undefined;
+    const include = body.include ?? ["characters", "chats",];
+    const format = body.format ?? "json";
+    const chatIds = body.chat_ids;
 
     const zip = new JSZip();
     const counts: Record<string, number> = {};
@@ -136,6 +138,11 @@ export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
       },
     },);
   }, {
+    body: t.Object({
+      include: t.Optional(t.Array(t.String({ maxLength: 32, },),),),
+      format: t.Optional(t.String({ maxLength: 16, },),),
+      chat_ids: t.Optional(t.Array(t.String({ maxLength: 128, },),),),
+    },),
     response: {
       200: SuccessResponse,
       401: ErrorResponse,

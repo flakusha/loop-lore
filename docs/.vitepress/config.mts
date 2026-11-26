@@ -68,6 +68,8 @@ export default withMermaid(defineConfig({
             { text: 'Worlds', link: '/guide/worlds' },
             { text: 'Gallery', link: '/guide/gallery' },
             { text: 'Settings', link: '/guide/settings' },
+            { text: 'Multi-factor Authentication', link: '/guide/mfa' },
+            { text: 'State and Instances', link: '/guide/state-and-instances' },
             { text: 'Browser Models', link: '/guide/local-models' },
           ],
         },

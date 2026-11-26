@@ -21,3 +21,8 @@ Recommended lazy slice from game-engine review: standalone Rust binary crate loo
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Pin Bevy 0.20.1, loopback only, bounded BRP methods, deterministic CI replay and no dev features in release.
+- No published Bevy plugin until this spike proves the need.

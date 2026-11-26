@@ -16,6 +16,7 @@ import { getWorkflowLoader, } from "./loader";
  * @param params.steps
  * @param params.cfgScale
  * @param params.sampler
+ * @param params.scheduler
  * @param params.seed
  * @returns Ready-to-submit ComfyUI workflow
  */
@@ -29,6 +30,7 @@ export async function loadComfyUIWorkflow(
     steps?: number;
     cfgScale?: number;
     sampler?: string;
+    scheduler?: string;
     seed?: number;
     [key: string]: unknown;
   },

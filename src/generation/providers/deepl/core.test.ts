@@ -111,7 +111,7 @@ describe("completeDispatch (deepl)", () => {
     const { url, init, } = captured[0]!;
     expect(url,).toBe("https://api-free.deepl.com/v2/translate",);
     expect(init.method,).toBe("POST",);
-    expect((init.headers as Record<string, string>)["DeepL-Auth-Key"],).toBe("auth-key:fx",);
+    expect(new Headers(init.headers,).get("DeepL-Auth-Key",),).toBe("auth-key:fx",);
     expect(JSON.parse(init.body as string,),).toEqual({ text: ["hola",], target_lang: "EN-US", },);
   });
 

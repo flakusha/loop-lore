@@ -7,10 +7,12 @@
  *
  * Uses a temp dir per test so the real backup dir is untouched.
  */
+// TODO(env): bun-only test seam (bun:test, Bun.env) — add a node shim when a node test target lands.
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import path from "node:path";
+import { resolveDbPath, resolveInstanceDir, } from "../config/state-dir";
 import type { Logger, } from "../logger";
 import {
   archiveDir,
@@ -18,6 +20,7 @@ import {
   MAX_AGE_DAYS,
   MAX_ARCHIVES,
   parseArchiveStamp,
+  parseRetentionLimit,
   pruneArchives,
 } from "./reinit-archive";
 
@@ -57,6 +60,17 @@ afterEach(() => {
     tmpDir = undefined;
   }
 },);
+
+describe("parseRetentionLimit", () => {
+  test("falls back only when unset; rejects empty, non-numeric and non-positive overrides", () => {
+    expect(parseRetentionLimit("X", undefined, 10,),).toBe(10,);
+    expect(parseRetentionLimit("X", "4", 10,),).toBe(4,);
+    expect(() => parseRetentionLimit("X", "", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "ten", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "0", 10,)).toThrow("X must be a positive integer",);
+    expect(() => parseRetentionLimit("X", "-1", 10,)).toThrow("X must be a positive integer",);
+  });
+});
 
 describe("parseArchiveStamp", () => {
   test("parses the move-at timestamp from an archive name", () => {
@@ -130,7 +144,7 @@ describe("archiveFile", () => {
       archiveFile(sourcePath, noopLog,);
 
       expect(readdirSync(sourceDir,).length,).toBe(0,);
-      const archived = readdirSync(backupDir,);
+      const archived = readdirSync(archiveDir(),);
       expect(archived.length,).toBe(1,);
       expect(archived[0],).toMatch(/^\d{4}-\d{2}-\d{2}T[\d-]+Z?-loop-lore\.db$/,);
     } finally {
@@ -139,10 +153,49 @@ describe("archiveFile", () => {
     }
   });
 
-  test("archiveDir falls back to the data-dir sibling when env is unset", () => {
+  test("archiveDir falls back to this instance's dir when env is unset", () => {
     delete Bun.env.LOOP_LORE_BACKUP_DIR;
     const dir = archiveDir();
     // ponytail: don't snapshot absolute paths — just sanity check the suffix.
-    expect(dir.endsWith("loop-lore-data-backup",),).toBe(true,);
+    expect(dir.endsWith(path.join("backups",),),).toBe(true,);
+    // The archive root lives INSIDE the instance dir: a shared sibling root
+    // let one instance's retention pass prune another's rollback point.
+    expect(dir.startsWith(resolveInstanceDir(process.env,),),).toBe(true,);
+  });
+});
+
+describe("archiveDir — standalone db:reinit (B2)", () => {
+  const server = { host: "localhost", port: 4321, };
+
+  test("the archive root shares the DB's server-derived instance dir", () => {
+    const savedStateDir = Bun.env.LOOP_LORE_STATE_DIR;
+    const savedDbPath = Bun.env.LOOP_LORE_DB_PATH;
+    Bun.env.LOOP_LORE_STATE_DIR = tmpDir!;
+    delete Bun.env.LOOP_LORE_DB_PATH;
+    delete Bun.env.LOOP_LORE_BACKUP_DIR;
+    try {
+      const dbPath = resolveDbPath(process.env, server,);
+      const root = archiveDir({ server, },);
+
+      expect(path.dirname(dbPath,),).toContain("port-4321",);
+      expect(root,).toBe(path.join(path.dirname(dbPath,), "backups",),);
+    } finally {
+      if (savedStateDir === undefined) { delete Bun.env.LOOP_LORE_STATE_DIR; }
+      else { Bun.env.LOOP_LORE_STATE_DIR = savedStateDir; }
+
+      if (savedDbPath === undefined) { delete Bun.env.LOOP_LORE_DB_PATH; }
+      else { Bun.env.LOOP_LORE_DB_PATH = savedDbPath; }
+    }
+  });
+
+  test("the backup-root override uses the same server-derived slug", () => {
+    const savedOverride = Bun.env.LOOP_LORE_BACKUP_DIR;
+    Bun.env.LOOP_LORE_BACKUP_DIR = path.join(tmpDir!, "override",);
+    try {
+      expect(archiveDir({ server, },),).toBe(path.join(tmpDir!, "override", "port-4321",),);
+    } finally {
+      if (savedOverride === undefined) { delete Bun.env.LOOP_LORE_BACKUP_DIR; }
+      else { Bun.env.LOOP_LORE_BACKUP_DIR = savedOverride; }
+    }
   });
 });

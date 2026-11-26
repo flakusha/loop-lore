@@ -41,6 +41,8 @@ export function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
     model_family: row.model_family ?? "",
     min_vram: row.min_vram === null ? "" : String(row.min_vram,),
     category: payload?.category ?? "txt2img",
+    license: row.license ?? "",
+    params_reviewed: row.params_reviewed === 1,
     requiredNodes: (payload?.requiredNodes ?? []).join(", ",),
     graph: payload ? pretty(payload.body,) : "",
     parametersJson: payload?.parameters?.length ? pretty(payload.parameters,) : "",
@@ -56,7 +58,7 @@ export function formFromRow(row: NonNullable<WorkflowDetail>,): WorkflowForm {
  * declared parameters.
  * @param form - Editor state
  * @param parsed - Already-parsed graph and optional JSON fields
- * @param parsed.graph - The API-format graph, sent under the `body` wrapper key
+ * @param parsed.graph - The graph (UI or API format), sent under the `body` wrapper key
  * @param parsed.parameters - Declared parameters, omitted when unset
  * @param parsed.loraSlots - Declared LoRA slots, omitted when unset
  * @returns The create/update request body
@@ -70,6 +72,8 @@ export function requestBody(
     description: form.description.trim(),
     model_family: form.model_family.trim(),
     category: form.category,
+    license: form.license.trim() === "" ? null : form.license.trim(),
+    params_reviewed: form.params_reviewed,
     requiredNodes: form.requiredNodes.split(",",).map((node,) => node.trim()).filter((node,) => node.length > 0),
     body: parsed.graph,
   };
@@ -99,6 +103,40 @@ export function parseGraphField(text: string, errors: string[],): object | null 
   if (typeof value !== "object" || value === null || Array.isArray(value,)) {
     errors.push("Graph must be a JSON object of node id to node",);
     return null;
+  }
+
+  return value;
+}
+
+/**
+ * The graph a picked ComfyUI export carries, or null after recording why it
+ * was rejected. UI-format exports carry a `nodes` array; API-format graphs
+ * are a node-id map. Both are stored as graph text — the route decides which
+ * ingest path to use from the graph shape.
+ * @param text - Raw file contents
+ * @param errors - Collected client-side errors
+ * @returns The parsed graph, or null after pushing the reason onto `errors`
+ */
+export function parseWorkflowFile(text: string, errors: string[],): object | null {
+  const reported = errors.length;
+  const value = readJsonField(text, "Workflow file", errors,);
+  if (errors.length > reported) { return null; }
+  if (typeof value !== "object" || value === null || Array.isArray(value,)) {
+    errors.push("Workflow file must be a JSON object",);
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (!Array.isArray(record.nodes,)) {
+    const apiGraph = Object.values(record,).some((node,) =>
+      typeof node === "object" && node !== null && !Array.isArray(node,) &&
+      typeof (node as Record<string, unknown>).class_type === "string"
+    );
+
+    if (!apiGraph) {
+      errors.push("Workflow file is not a UI export (nodes array) or an API-format graph",);
+      return null;
+    }
   }
 
   return value;
@@ -173,6 +211,33 @@ export const workflowFormState: Partial<AdminWorkflows> & ThisType<AdminWorkflow
   closeWorkflowForm() {
     this.showWorkflowForm = false;
     this.workflowFormErrors = [];
+  },
+
+  /**
+   * Read a picked ComfyUI export into the graph field. The route decides UI
+   * vs API format from the graph shape, so this only validates and stores.
+   * @param {Event} event
+   * @returns {Promise<void>}
+   */
+  async loadWorkflowFile(event: Event,) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) { return; }
+    // Clear the picker so picking the same file again fires another change.
+    input.value = "";
+    const errors: string[] = [];
+    try {
+      const graph = parseWorkflowFile(await file.text(), errors,);
+      if (graph === null) {
+        this.workflowFormErrors = errors;
+        return;
+      }
+
+      this.workflowForm.graph = pretty(graph,);
+      this.workflowFormErrors = [];
+    } catch (error) {
+      this.workflowFormErrors = [`Workflow file: ${(error as Error).message}`,];
+    }
   },
 
   /**

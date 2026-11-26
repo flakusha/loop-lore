@@ -26,7 +26,7 @@ import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, withUserAuth, } from "./http-utils";
 
 /** */
 function log(): Logger {
@@ -42,21 +42,19 @@ function log(): Logger {
 export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────
-    .get(`${prefix}/keys`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-
-      try {
-        const keys = await listActorKeys(database, userId,);
-        return jsonResponse({ keys, },);
-      } catch (error) {
-        log().error(`Failed to list keys for actor ${userId}: ${String(error,)}`,);
-        return jsonError({
-          message: ctx.t?.("crypto.keyListFailed",) ?? "Failed to list keys",
-          status: HttpStatus.InternalServerError,
-        },);
-      }
-    }, {
+    .get(`${prefix}/keys`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        try {
+          const keys = await listActorKeys(database, userId,);
+          return jsonResponse({ keys, },);
+        } catch (error) {
+          log().error(`Failed to list keys for actor ${userId}: ${String(error,)}`,);
+          return jsonError({
+            message: ctx.t?.("crypto.keyListFailed",) ?? "Failed to list keys",
+            status: HttpStatus.InternalServerError,
+          },);
+        }
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -70,49 +68,47 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
     // ── Generate new named key ─────────────────────────────────
     .post(
       `${prefix}/keys`,
-      async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-
-        const body = ctx.body as { name: string };
-        if (!body.name || typeof body.name !== "string" || body.name.trim().length === 0) {
-          return jsonError({
-            message: ctx.t?.("crypto.keyNameRequired",) ?? "Key name is required",
-            status: HttpStatus.BadRequest,
-          },);
-        }
-
-        try {
-          const smk = getSmk();
-          if (!smk) {
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as { name: string };
+          if (!body.name || typeof body.name !== "string" || body.name.trim().length === 0) {
             return jsonError({
-              message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
-              status: HttpStatus.InternalServerError,
+              message: ctx.t?.("crypto.keyNameRequired",) ?? "Key name is required",
+              status: HttpStatus.BadRequest,
             },);
           }
 
-          const keyId = await generateActorKey({
-            database,
-            actorId: userId,
-            name: body.name.trim(),
-            smk,
-          },);
+          try {
+            const smk = getSmk();
+            if (!smk) {
+              return jsonError({
+                message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
+                status: HttpStatus.InternalServerError,
+              },);
+            }
 
-          log().info("Generated new key", { actorId: userId, name: body.name.trim(), keyId, },);
+            const keyId = await generateActorKey({
+              database,
+              actorId: userId,
+              name: body.name.trim(),
+              smk,
+            },);
 
-          return jsonResponse({
-            id: keyId,
-            name: body.name.trim(),
-            status: "active",
-          },);
-        } catch (error) {
-          log().error(`Failed to generate key for actor ${userId}: ${String(error,)}`,);
-          return jsonError({
-            message: ctx.t?.("crypto.keyGenerateFailed",) ?? "Failed to generate key",
-            status: HttpStatus.InternalServerError,
-          },);
-        }
-      },
+            log().info("Generated new key", { actorId: userId, name: body.name.trim(), keyId, },);
+
+            return jsonResponse({
+              id: keyId,
+              name: body.name.trim(),
+              status: "active",
+            },);
+          } catch (error) {
+            log().error(`Failed to generate key for actor ${userId}: ${String(error,)}`,);
+            return jsonError({
+              message: ctx.t?.("crypto.keyGenerateFailed",) ?? "Failed to generate key",
+              status: HttpStatus.InternalServerError,
+            },);
+          }
+        },),
       {
         body: t.Object({ name: t.String(), },),
         response: {
@@ -127,37 +123,35 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
       },
     )
     // ── Rotate primary key ─────────────────────────────────────
-    .post(`${prefix}/keys/rotate`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+    .post(`${prefix}/keys/rotate`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        try {
+          const smk = getSmk();
+          if (!smk) {
+            return jsonError({
+              message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
+              status: HttpStatus.InternalServerError,
+            },);
+          }
 
-      try {
-        const smk = getSmk();
-        if (!smk) {
+          const result = await rotateActorKey(database, userId, smk,);
+          const newKeyId = result.newKeyId;
+
+          log().info("Rotated primary key", { actorId: userId, newKeyId, },);
+
+          return jsonResponse({
+            id: newKeyId,
+            status: "active",
+            message: "Primary key rotated. Old key marked as expired.",
+          },);
+        } catch (error) {
+          log().error(`Failed to rotate key for actor ${userId}: ${String(error,)}`,);
           return jsonError({
-            message: ctx.t?.("crypto.encryptionNotConfigured",) ?? "Encryption not configured",
+            message: "Failed to rotate key",
             status: HttpStatus.InternalServerError,
           },);
         }
-
-        const result = await rotateActorKey(database, userId, smk,);
-        const newKeyId = result.newKeyId;
-
-        log().info("Rotated primary key", { actorId: userId, newKeyId, },);
-
-        return jsonResponse({
-          id: newKeyId,
-          status: "active",
-          message: "Primary key rotated. Old key marked as expired.",
-        },);
-      } catch (error) {
-        log().error(`Failed to rotate key for actor ${userId}: ${String(error,)}`,);
-        return jsonError({
-          message: "Failed to rotate key",
-          status: HttpStatus.InternalServerError,
-        },);
-      }
-    }, {
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -172,44 +166,42 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
     // ── Revoke key (irreversible) ──────────────────────────────
     .delete(
       `${prefix}/keys/:id`,
-      async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const keyId = (ctx.params as { id: string }).id;
 
-        const keyId = (ctx.params as { id: string }).id;
+          // Verify key belongs to this actor
+          const keys = await listActorKeys(database, userId,);
+          const existingKey = keys.find((k,) => k.id === keyId);
+          if (!existingKey) {
+            return notFound("Key not found",);
+          }
 
-        // Verify key belongs to this actor
-        const keys = await listActorKeys(database, userId,);
-        const existingKey = keys.find((k,) => k.id === keyId);
-        if (!existingKey) {
-          return notFound("Key not found",);
-        }
+          if (existingKey.status === "revoked") {
+            return jsonError({
+              message: "Key is already revoked",
+              status: HttpStatus.BadRequest,
+            },);
+          }
 
-        if (existingKey.status === "revoked") {
-          return jsonError({
-            message: "Key is already revoked",
-            status: HttpStatus.BadRequest,
-          },);
-        }
+          try {
+            await revokeActorKey(database, keyId,);
 
-        try {
-          await revokeActorKey(database, keyId,);
+            log().warn("Revoked key", { actorId: userId, keyId, },);
 
-          log().warn("Revoked key", { actorId: userId, keyId, },);
-
-          return jsonResponse({
-            id: keyId,
-            status: "revoked",
-            message: "Key revoked. Messages encrypted with this key are now inaccessible.",
-          },);
-        } catch (error) {
-          log().error(`Failed to revoke key ${keyId} for actor ${userId}: ${String(error,)}`,);
-          return jsonError({
-            message: "Failed to revoke key",
-            status: HttpStatus.InternalServerError,
-          },);
-        }
-      },
+            return jsonResponse({
+              id: keyId,
+              status: "revoked",
+              message: "Key revoked. Messages encrypted with this key are now inaccessible.",
+            },);
+          } catch (error) {
+            log().error(`Failed to revoke key ${keyId} for actor ${userId}: ${String(error,)}`,);
+            return jsonError({
+              message: "Failed to revoke key",
+              status: HttpStatus.InternalServerError,
+            },);
+          }
+        },),
       {
         params: t.Object({ id: t.String(), },),
         response: {

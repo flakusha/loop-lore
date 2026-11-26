@@ -14,6 +14,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getAllConfig, setConfig, } from "../admin/config";
+import { validateEditableConfigValue, } from "../admin/config-keys";
 import { buildConfigMenu, type ConfigMenuField, type ConfigMenuSection, } from "../config/sections/menu";
 import type { DB, } from "../db/schema";
 import { can, } from "../users/permissions";
@@ -169,6 +170,11 @@ export function configMenuRoutes({ database, }: ConfigMenuOpts, prefix = "/api/v
         }
 
         const coerced = coerceValue(body?.value, field.type,);
+
+        const invalid = validateEditableConfigValue(key, coerced,);
+        if (invalid !== null) {
+          return jsonError(invalid, HttpStatus.BadRequest, ErrorCode.BadRequest,);
+        }
 
         if (field.scope === "admin") {
           await setConfig(database, key, coerced, field.description,);

@@ -158,8 +158,9 @@ describe("facade assets ops", () => {
     const ids = json.data.map((row,) => row.id);
     expect(ids,).toContain(assets.own,);
     expect(ids,).toContain(assets.otherPublic,);
+    expect(ids,).toContain(assets.shared,);
     expect(ids,).not.toContain(assets.otherPrivate,);
-    expect(json.total,).toBe(2,);
+    expect(json.total,).toBe(3,);
   });
 
   test("a malformed body is refused with the facade's own 400 shape", async () => {

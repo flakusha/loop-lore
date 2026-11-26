@@ -8,10 +8,11 @@ import {
   deleteConfig,
   getAllConfig,
   importConfigFromText,
+  isSecretConfigKeyName,
   REQUIRES_RESTART_KEYS,
-  SECRET_KEY_PATTERN,
   setConfig,
 } from "../../admin/config";
+import { validateEditableConfigValue, } from "../../admin/config-keys";
 import {
   CLASSIFIER_TAG_VOCABULARY_KEY,
   validateTagVocabulary,
@@ -69,7 +70,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const rows = await getAllConfig(opts.database,);
         const body: Record<string, string> = {};
         for (const row of rows) {
-          body[row.key] = SECRET_KEY_PATTERN.test(row.key,) ? "***REDACTED***" : row.value;
+          body[row.key] = isSecretConfigKeyName(row.key,) ? "***REDACTED***" : row.value;
         }
 
         try {
@@ -123,7 +124,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const configs = await getAllConfig(opts.database,);
         const decorated = configs.map((c,) => ({
           ...decorateConfigEntry(c,),
-          value: SECRET_KEY_PATTERN.test(c.key,) ? "***REDACTED***" : c.value,
+          value: isSecretConfigKeyName(c.key,) ? "***REDACTED***" : c.value,
         }));
 
         return jsonResponse(decorated,);
@@ -138,6 +139,11 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         async (ctx: any,) => {
           return withPermissionAuth(ctx, "admin.system", async () => {
             const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
+
+            const invalid = validateEditableConfigValue(key, value,);
+            if (invalid !== null) {
+              return jsonError(invalid, HttpStatus.BadRequest, ErrorCode.BadRequest,);
+            }
 
             // The classifier tag vocabulary is a structured config value: it
             // must parse as a validated JSON string[] before it can persist.
@@ -156,7 +162,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             return jsonResponse({ ok: true, requires_restart: requiresRestart, },);
           },);
         },
-        { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
+        { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, }, },
       )
       // -- Import YAML/TOML config into system_config --
       .post(

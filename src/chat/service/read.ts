@@ -5,7 +5,7 @@
  * Message read operations: access check, listing, variants.
  */
 import type { Kysely, } from "kysely";
-import { ChatVisibility, } from "../../db/enums";
+import { ChatVisibility, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { walkMessagePath, } from "./branch-helpers";
@@ -58,10 +58,13 @@ export async function getMessageWithAccess(
   }
 
   // Public-chat branch mirrors checkChatAccess: guests (null userId, guest
-  // role via `chat.join`) and authed strangers may read single messages.
+  // role via `chat.join`) and authed strangers may read single messages —
+  // but only VISIBLE ones. Moderator-hidden rows are private to the
+  // privileged branches above (BUG-moderator-hidden-message).
   if (
     chat.visibility === ChatVisibility.Public &&
-    (userId !== null || can(userRole, "chat.join",))
+    (userId !== null || can(userRole, "chat.join",)) &&
+    message.visibility === MessageVisibility.Visible
   ) {
     return message;
   }

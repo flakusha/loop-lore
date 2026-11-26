@@ -10,7 +10,7 @@ import {
   type RollModifier,
 } from "../../battle";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { internalError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -35,8 +35,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const result = calculateDamage(body.baseDamage, body.modifiers, body.isCritical, body.damageType,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate damage", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate damage", error,);
         }
       },
       {
@@ -65,8 +64,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const result = makeAttackRoll(body.attackBonus, body.targetAC, mods,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate attack roll", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate attack roll", error,);
         }
       },
       {
@@ -96,8 +94,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
           const result = makeSavingThrow(body.defenseBonus, dc, mods,);
           return jsonResponse(result,);
         } catch (error) {
-          log().error("Failed to calculate defense roll", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to calculate defense roll", error,);
         }
       },
       {
@@ -142,8 +139,7 @@ export function resolutionRoutes(_opts: HandlerOpts, prefix = "/api",) {
 
           return jsonResponse({ round: 1, actions, summary: `Processed ${actions.length} actions`, },);
         } catch (error) {
-          log().error("Failed to process combat round", error instanceof Error ? error : undefined,);
-          return jsonError("Internal server error", 500,);
+          return internalError(log(), "Failed to process combat round", error,);
         }
       },
       {

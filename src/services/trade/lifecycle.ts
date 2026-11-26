@@ -63,13 +63,15 @@ export class OfferService {
    * a `countered` offer is accepted by the buyer. Expired deadlines reject.
    * @param offerId
    * @param acceptorActorId
+   * @param worldId - optional route world; rejects offers from another world
    * @returns the settled trade, or a failure carrying the reason.
    */
   async acceptOffer(
     offerId: string,
     acceptorActorId: string,
+    worldId?: string,
   ): Promise<TradeResult> {
-    const loaded = await loadOfferForAccept(this.db, offerId, acceptorActorId,);
+    const loaded = await loadOfferForAccept(this.db, offerId, acceptorActorId, worldId,);
     if ("success" in loaded && !loaded.success) { return loaded; }
 
     const { offer, buyerItems, sellerItems, } = loaded as {
@@ -99,6 +101,7 @@ export class OfferService {
    * @param opts
    * @param opts.offerId
    * @param opts.counterActorId
+   * @param opts.worldId - optional route world; rejects offers from another world
    * @param opts.buyerItems
    * @param opts.sellerItems
    * @param opts.price
@@ -107,6 +110,7 @@ export class OfferService {
   counterOffer(opts: {
     offerId: string;
     counterActorId: string;
+    worldId?: string;
     buyerItems?: TradeLine[];
     sellerItems?: TradeLine[];
     price?: number;
@@ -118,13 +122,15 @@ export class OfferService {
    * Cancel a pending trade offer. Only the offer creator can cancel.
    * @param offerId
    * @param cancellerActorId
+   * @param worldId - optional route world; rejects offers from another world
    * @returns whether the offer was cancelled, with a reason when not.
    */
   cancelOffer(
     offerId: string,
     cancellerActorId: string,
+    worldId?: string,
   ): Promise<{ success: boolean; reason?: string }> {
-    return cancelOfferFn(this.db, offerId, cancellerActorId,);
+    return cancelOfferFn(this.db, offerId, cancellerActorId, worldId,);
   }
 
   /**

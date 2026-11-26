@@ -71,6 +71,77 @@ describe("getMediaStyle", () => {
   });
 });
 
+describe("getMediaStyle — detailLevel sizing", () => {
+  const original = (chatUtilsGallery as any).detailLevel;
+  afterEach(() => {
+    (chatUtilsGallery as any).detailLevel = original;
+  },);
+
+  test("caps single wide image at 240px in Basic mode", () => {
+    (chatUtilsGallery as any).detailLevel = "Basic";
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 1600, height: 400, },
+      1,
+    );
+
+    expect(style.width,).toBe("100%",);
+    expect(style.maxHeight,).toBe("240px",);
+  });
+
+  test("narrows right-floated tall image to 30% in Basic mode", () => {
+    (chatUtilsGallery as any).detailLevel = "Basic";
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 200, height: 800, },
+      1,
+    );
+
+    expect(style.width,).toBe("30%",);
+    expect(style.float,).toBe("right",);
+  });
+
+  test("narrows left-floated default-ratio image to 35% in Basic mode", () => {
+    (chatUtilsGallery as any).detailLevel = "Basic";
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 800, height: 600, },
+      1,
+    );
+
+    expect(style.width,).toBe("35%",);
+    expect(style.float,).toBe("left",);
+  });
+
+  test("keeps grid sizing unchanged in Basic mode", () => {
+    (chatUtilsGallery as any).detailLevel = "Basic";
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 800, height: 600, },
+      2,
+    );
+
+    expect(style.width,).toBe("calc(50% - 6px)",);
+    expect(style.aspectRatio,).toBe("1",);
+  });
+
+  test("keeps default sizing in Detailed mode", () => {
+    (chatUtilsGallery as any).detailLevel = "Detailed";
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 1600, height: 400, },
+      1,
+    );
+
+    expect(style.maxHeight,).toBe("400px",);
+  });
+
+  test("keeps default sizing when detailLevel is unset", () => {
+    (chatUtilsGallery as any).detailLevel = undefined;
+    const style = (chatUtilsGallery as any).getMediaStyle(
+      { type: "image", width: 200, height: 800, },
+      1,
+    );
+
+    expect(style.width,).toBe("40%",);
+  });
+});
+
 describe("openAssetPreview", () => {
   /** */
   function makeCtx() {

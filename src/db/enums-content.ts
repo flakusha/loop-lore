@@ -28,6 +28,7 @@ export const AssetType = {
   Image: "image",
   Audio: "audio",
   Video: "video",
+  Model: "model",
   Memory: "memory",
   Other: "other",
 } as const;
@@ -81,6 +82,9 @@ export const AssetLinkEntity = {
   Memory: "memory",
   Message: "message",
   Asset: "asset",
+  Scenario: "scenario",
+  Scene: "scenario_scene",
+  Shot: "scenario_shot",
 } as const;
 /** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];
@@ -107,6 +111,7 @@ export const StorageBudgetScope = {
   Image: "image",
   Audio: "audio",
   Video: "video",
+  Model: "model",
   Other: "other",
 } as const;
 /** */

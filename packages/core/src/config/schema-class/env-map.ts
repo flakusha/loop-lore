@@ -12,6 +12,7 @@ import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
+import { FEATURES_DEFAULTS, } from "./features";
 import { FEDERATION_DEFAULTS, } from "./federation";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
@@ -20,6 +21,7 @@ import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
+import { MCP_DEFAULTS, } from "./mcp";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
@@ -49,6 +51,7 @@ export const envMap = (): EnvMap => {
     auth: AUTH_DEFAULTS,
     transport: TRANSPORT_DEFAULTS,
     messages: MESSAGES_DEFAULTS,
+    mcp: MCP_DEFAULTS,
     nsfw: NSFW_DEFAULTS,
     observability: OBSERVABILITY_DEFAULTS,
     hooks: HOOKS_DEFAULTS,
@@ -61,13 +64,14 @@ export const envMap = (): EnvMap => {
     frontend: FRONTEND_DEFAULTS,
     cron: CRON_DEFAULTS,
     federation: FEDERATION_DEFAULTS,
+    features: FEATURES_DEFAULTS,
     integrations: INTEGRATIONS_DEFAULTS,
     prompt: PROMPT_DEFAULTS,
     web: WEB_DEFAULTS,
   };
 
-  const add = (prefix: string, obj: Record<string, unknown>,) => {
-    for (const [key, val,] of Object.entries(obj,)) {
+  const add = (prefix: string, obj: object,) => {
+    for (const [key, val,] of Object.entries(obj as Record<string, unknown>,)) {
       const path = `${prefix}.${key}`;
       const envKey = path.replaceAll(".", "_",).toUpperCase();
       if (val && typeof val === "object" && !Array.isArray(val,)) {
@@ -89,6 +93,7 @@ export const envMap = (): EnvMap => {
   add("auth", s.auth,);
   add("transport", s.transport,);
   add("messages", s.messages,);
+  add("mcp", s.mcp,);
   add("nsfw", s.nsfw,);
   add("observability", s.observability,);
   add("hooks", s.hooks,);
@@ -101,6 +106,7 @@ export const envMap = (): EnvMap => {
   add("frontend", s.frontend,);
   add("cron", s.cron,);
   add("federation", s.federation,);
+  add("features", s.features,);
   add("integrations", s.integrations,);
   add("prompt", s.prompt,);
   add("web", s.web,);
@@ -115,6 +121,7 @@ export const envMap = (): EnvMap => {
   map.ASSETS_UPLOAD_DIR = "assets.uploadDir";
   map.ASSETS_MAX_FILE_SIZE = "assets.maxFileSize";
   map.ASSETS_COMPRESSION = "assets.compression";
+  map.ASSETS_DOWNLOAD_NAMING = "assets.downloadNaming";
   map.ASSETS_SIGNED_URL_SECRET = "assets.signedUrlSecret";
   map.ASSETS_SIGNED_URL_EXPIRY_SECONDS = "assets.signedUrlExpirySeconds";
   map.ENABLE_ASSISTANT = "assistant.enabled";

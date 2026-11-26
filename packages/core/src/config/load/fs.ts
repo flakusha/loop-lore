@@ -3,9 +3,9 @@
 
 // src/config/load/fs.ts — Filesystem lookup helpers
 
-import { findMainRepoRoot, } from "@/utils/git-worktree";
 import fs from "node:fs";
 import path from "node:path";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
 
 /**

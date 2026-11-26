@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { type Expression, type ExpressionBuilder, type SelectQueryBuilder, sql, type SqlBool, } from "kysely";
+import { type Expression, type ExpressionBuilder, type SqlBool, } from "kysely";
 import { ChatVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
@@ -44,59 +44,6 @@ const ChatListQuery = t.Object({
   maxMessages: t.Optional(t.Numeric({ minimum: 0, },),),
   updatedSince: t.Optional(t.String(),),
 },);
-
-/**
- * Apply the requested `sort` to a chat list query. Defaults to recent-first
- * ("updated_at" desc). "unread" orders by newer-than-last-read visible message
- * count (same semantics as routes/activity.ts), then by recency.
- * @param query
- * @param sort
- * @param userId
- */
-function orderChatList<T,>(
-  query: SelectQueryBuilder<DB, "chats", T>,
-  sort: string,
-  userId: string | null,
-): SelectQueryBuilder<DB, "chats", T> {
-  switch (sort) {
-    case "name": {
-      return query.orderBy("name", "asc",).orderBy("updated_at", "desc",);
-    }
-
-    case "pinned-first": {
-      return query
-        .orderBy((eb,) => eb.case().when("is_pinned", "=", "pinned",).then(0,).else(1,).end(), "asc",)
-        .orderBy("updated_at", "desc",);
-    }
-
-    case "unread": {
-      // Correlated scalar subquery: count of visible messages newer than the
-      // participant's last read message (COALESCE('') => never-read counts all).
-      // This rule dislikes the wrapped template indentation; keep the SQL
-      // stable by disabling it for this one expression.
-
-      const unreadSub = sql<number>`(
-        SELECT COUNT(*)
-        FROM messages m
-        WHERE m.chat_id = chats.id
-          AND m.visibility = 'visible'
-          AND m.created_at > COALESCE((
-            SELECT lastm.created_at FROM messages lastm
-            WHERE lastm.id = (
-              SELECT cp.last_read_message_id FROM chat_participants cp
-              WHERE cp.chat_id = chats.id AND cp.actor_id = ${userId}
-            )
-          ), '')
-      )`;
-
-      return query.orderBy(unreadSub, "desc",).orderBy("updated_at", "desc",);
-    }
-
-    default: {
-      return query.orderBy("updated_at", "desc",);
-    }
-  }
-}
 
 /**
  * The access predicate both chat-list queries share: chats the viewer created
@@ -177,61 +124,88 @@ export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // Shared filters. Archive state lives on chats.is_pinned
           // (PinnedState enum: unpinned | pinned | archived).
-          let countQuery = database
-            .selectFrom("chats",)
-            .select(database.fn.countAll<number>().as("total",),)
-            .where(visibleToViewer(userId, userRole,),);
-
           let listQuery = database
             .selectFrom("chats",)
             .selectAll()
             .where(visibleToViewer(userId, userRole,),);
 
           if (type) {
-            countQuery = countQuery.where("type", "=", type,);
             listQuery = listQuery.where("type", "=", type,);
           }
 
           if (archived !== undefined) {
             const isArchived = archived === "true" || archived === "1";
-            countQuery = countQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
             listQuery = listQuery.where("is_pinned", isArchived ? "=" : "!=", "archived",);
           }
 
           if (world) {
-            countQuery = countQuery.where("world_id", "=", world,);
             listQuery = listQuery.where("world_id", "=", world,);
           }
 
           if (updatedSince) {
-            countQuery = countQuery.where("updated_at", ">=", updatedSince,);
             listQuery = listQuery.where("updated_at", ">=", updatedSince,);
           }
 
-          if (minMessages !== undefined || maxMessages !== undefined) {
-            const msgCount = sql<number>`
-              (
-                            SELECT COUNT(*) FROM messages m WHERE m.chat_id = chats.id AND m.visibility = 'visible'
-                          )
-            `;
+          // Counter cutover (migration 122): min/max bounds and sort=unread
+          // read the trigger-maintained chats.visible_message_count /
+          // per-viewer chat_participants.unread_count — zero messages-table
+          // aggregates; the needsCounts grouped query is gone.
+          const allChats = await listQuery.execute();
 
-            if (minMessages !== undefined) {
-              countQuery = countQuery.where(msgCount, ">=", minMessages,);
-              listQuery = listQuery.where(msgCount, ">=", minMessages,);
-            }
+          let unreadByChat: Map<string, number> | null = null;
+          if (sort === "unread") {
+            if (userId === null) {
+              // Guest sort=unread reads visible_message_count: guests have no
+              // participant rows, so "never read" = count all visible — this
+              // exactly matches the previous COALESCE('') grouped-count fallback.
+              unreadByChat = new Map(Array.from(allChats, (c,) => [c.id, c.visible_message_count,] as const,),);
+            } else {
+              // Same source of truth as routes/activity.ts computeActivity.
+              const unreadRows = await database
+                .selectFrom("chat_participants",)
+                .select(["chat_id", "unread_count",],)
+                .where("actor_id", "=", userId,)
+                .execute();
 
-            if (maxMessages !== undefined) {
-              countQuery = countQuery.where(msgCount, "<=", maxMessages,);
-              listQuery = listQuery.where(msgCount, "<=", maxMessages,);
+              unreadByChat = new Map(unreadRows.map((r,) => [r.chat_id, r.unread_count,] as const),);
             }
           }
 
-          const countResult = await countQuery.executeTakeFirst();
-          const total = countResult?.total ?? 0;
+          const visible = allChats.filter((chat,) => {
+            if (minMessages !== undefined && chat.visible_message_count < minMessages) { return false; }
+            if (maxMessages !== undefined && chat.visible_message_count > maxMessages) { return false; }
+            return true;
+          },);
 
-          listQuery = orderChatList(listQuery, sort, userId,);
+          const byUpdatedDesc = (
+            a: { updated_at: string },
+            b: { updated_at: string },
+          ): number => (a.updated_at < b.updated_at ? 1 : a.updated_at > b.updated_at ? -1 : 0);
 
-          const chats = await listQuery.limit(pageSize,).offset(offset,).execute();
+          switch (sort) {
+            case "name":
+              visible.sort((a, b,) => (a.name < b.name ? -1 : a.name > b.name ? 1 : byUpdatedDesc(a, b,)));
+              break;
+            case "pinned-first":
+              visible.sort((a, b,) => {
+                const aPinned = a.is_pinned === "pinned" ? 0 : 1;
+                const bPinned = b.is_pinned === "pinned" ? 0 : 1;
+                return aPinned - bPinned || byUpdatedDesc(a, b,);
+              },);
+
+              break;
+            case "unread": {
+              const unread = unreadByChat as Map<string, number>;
+              visible.sort((a, b,) => (unread.get(b.id,) ?? 0) - (unread.get(a.id,) ?? 0) || byUpdatedDesc(a, b,));
+              break;
+            }
+
+            default:
+              visible.sort(byUpdatedDesc,);
+          }
+
+          const total = visible.length;
+          const chats = visible.slice(offset, offset + pageSize,);
           return jsonPaginated({ data: chats, total, page, pageSize, },);
         },
         { query: ChatListQuery, },

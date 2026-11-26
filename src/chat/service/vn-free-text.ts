@@ -49,7 +49,7 @@ export function resolveVnFreeText(raw: unknown,): VnFreeTextResult {
 
   // Strip C0 control characters (keeping tab/newline/carriage return) and
   // DEL so a typed answer cannot smuggle control bytes into stored rows.
-  // eslint-disable-next-line no-control-regex
+
   const stripped = raw.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "",);
   const text = stripped.trim();
 

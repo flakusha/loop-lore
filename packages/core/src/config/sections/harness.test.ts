@@ -9,7 +9,7 @@ import { describe, expect, it, } from "bun:test";
 import { fileURLToPath, } from "node:url";
 import { jsonSchema, } from "../schema-class/json-schema";
 import type { HarnessAcpConfig, } from "../schema/harness";
-import { HARNESS_FLAVORS, } from "../schema/harness";
+import { HARNESS_FLAVORS, HARNESS_TRANSPORTS, } from "../schema/harness";
 import {
   HARNESS_DEFAULT_COOLDOWN_MS,
   HARNESS_DEFAULT_MAX_CONSECUTIVE_FAILURES,
@@ -74,6 +74,26 @@ describe("harness.acp config section", () => {
     );
   });
 
+  it("accepts omitted transport and explicit acp", () => {
+    expect(() => validateAcpProfiles(acp([profile(),],),)).not.toThrow();
+    expect(() => validateAcpProfiles(acp([profile({ transport: "acp", },),],),)).not.toThrow();
+  });
+
+  it("rejects unimplemented transports", () => {
+    expect(() => validateAcpProfiles(acp([profile({ transport: "sdk", },),],),)).toThrow(
+      /transport "sdk" is not implemented/,
+    );
+    expect(() => validateAcpProfiles(acp([profile({ transport: "websocket", },),],),)).toThrow(
+      /is not implemented/,
+    );
+  });
+
+  it("reserves default as an alias, not a profile name", () => {
+    expect(() => validateAcpProfiles(acp([profile({ name: "default", },),],),)).toThrow(
+      /default is reserved for implicit failover/,
+    );
+  });
+
   it("rejects unknown tier keys", () => {
     const p = profile();
     (p.tiers as Record<string, unknown>).weird = { model: "a/b", capabilities: [], };
@@ -120,7 +140,7 @@ describe("harness.acp config section", () => {
     );
   });
 
-  it("json-schema meta exposes the harness flavor enum", () => {
+  it("json-schema meta exposes the harness flavor and transport enums", () => {
     const section = harnessMeta.properties.acp as { properties?: Record<string, unknown> };
     const profiles = section.properties?.profiles as
       | { items?: { properties?: Record<string, { enum?: string[]; default?: string }> } }
@@ -129,6 +149,10 @@ describe("harness.acp config section", () => {
     const flavor = profiles?.items?.properties?.harness;
     expect(flavor?.enum,).toEqual([...HARNESS_FLAVORS,],);
     expect(flavor?.default,).toBe("omp",);
+
+    const transport = profiles?.items?.properties?.transport;
+    expect(transport?.enum,).toEqual([...HARNESS_TRANSPORTS,],);
+    expect(transport?.default,).toBe("acp",);
   });
 
   it("rejects non-positive limits", () => {

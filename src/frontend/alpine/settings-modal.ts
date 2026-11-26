@@ -16,6 +16,15 @@ settingsModal = function() {
     model: "",
     temperature: 1,
     customInstructions: "",
+    comfyModels: null as null | {
+      provider: string;
+      noVae: boolean;
+      clipRole: { candidates: string[]; selected: string | null };
+      diffusionRole: { candidates: string[]; selected: string | null };
+      vaeRole: { candidates: string[]; selected: string | null };
+      checkpointRole?: { candidates: string[]; selected: string | null };
+      clipVisionRole?: { candidates: string[]; selected: string | null };
+    },
 
     /**
      * @returns {Promise<void>}
@@ -32,6 +41,59 @@ settingsModal = function() {
           if (s.detailLevel) { this.detailLevel = s.detailLevel; }
           if (typeof s.customInstructions === "string") { this.customInstructions = s.customInstructions; }
         }
+      } catch {
+        /* ignore */
+      }
+
+      await this.loadComfyModels();
+    },
+
+    /**
+     * @returns {Promise<void>}
+     */
+    async loadComfyModels() {
+      try {
+        const res = await apiFetch("/api/v1/comfyui/models", {
+          headers: { Accept: "application/json", },
+        },);
+
+        if (res.ok) {
+          const body = await res.json();
+          // provider null = none configured: leave the selector hidden.
+          if (body.provider) { this.comfyModels = body; }
+        }
+      } catch {
+        /* unavailable engine — leave the selector hidden */
+      }
+    },
+
+    /**
+     * Persist the visible model choice under users.settings.comfyUiModels.
+     * @returns {Promise<void>}
+     */
+    async saveComfyModels() {
+      const models = this.comfyModels;
+      if (!models) { return; }
+      const selection: Record<string, unknown> = { noVae: models.noVae, };
+      for (
+        const [role, view,] of [
+          ["clip", models.clipRole,],
+          ["diffusion", models.diffusionRole,],
+          ["vae", models.vaeRole,],
+          ["checkpoint", models.checkpointRole,],
+          ["clip_vision", models.clipVisionRole,],
+        ] as const
+      ) {
+        const selected = view?.selected;
+        if (selected) { selection[role] = selected; }
+      }
+
+      try {
+        await apiFetch("/api/v1/settings", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ comfyUiModels: { [models.provider]: selection, }, },),
+        },);
       } catch {
         /* ignore */
       }

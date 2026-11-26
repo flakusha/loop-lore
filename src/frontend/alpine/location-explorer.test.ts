@@ -1,5 +1,6 @@
 import { afterAll, afterEach, describe, expect, test, } from "bun:test";
 import type { ExplorerDetail, ExplorerLocation, ExplorerLocationState, } from "./location-explorer";
+import { kindOptions, } from "./location-explorer-controls";
 
 // ── apiFetch is a global registered by ./htmx at module load; we override
 // it here because the SUT references it via the global, not a static import.
@@ -38,6 +39,7 @@ interface ExplorerState {
   filterAtmosphere: string;
   filterWeather: string;
   filterTimeOfDay: string;
+  filterKind: string;
   filterTopLevelOnly: boolean;
   atmosphereOptions: string[];
   weatherOptions: string[];
@@ -61,6 +63,11 @@ interface ExplorerState {
   childrenOf(id: string,): ExplorerLocation[];
   hasChildren(id: string,): boolean;
   filteredLocations: ExplorerLocation[];
+  filteredIds: Set<string>;
+  visibleRoots: ExplorerLocation[];
+  visibleChildrenOf(id: string,): ExplorerLocation[];
+  visibleLocations: ExplorerLocation[];
+  isVisible(id: string,): boolean;
 }
 
 const fixture = {
@@ -114,6 +121,85 @@ const fixture = {
       },
       // loc-2 has no state — exercises the "no state" filter.
     ],
+  },
+};
+
+const chainFixture = {
+  data: {
+    locations: [
+      {
+        id: "a",
+        name: "Region",
+        description: null,
+        parent_location_id: null,
+        connections: "[]",
+        publication_status: "draft",
+        kind: "region",
+      },
+      {
+        id: "b",
+        name: "Settlement",
+        description: null,
+        parent_location_id: "a",
+        connections: "[]",
+        publication_status: "draft",
+        kind: "settlement",
+      },
+      {
+        id: "c",
+        name: "Building",
+        description: null,
+        parent_location_id: "b",
+        connections: "[]",
+        publication_status: "draft",
+        kind: "building",
+      },
+      {
+        id: "d",
+        name: "Room",
+        description: null,
+        parent_location_id: "c",
+        connections: "[]",
+        publication_status: "draft",
+        kind: "room",
+      },
+    ],
+    states: [],
+  },
+};
+
+const kindFixture = {
+  data: {
+    locations: [
+      {
+        id: "k1",
+        name: "Port",
+        description: null,
+        parent_location_id: null,
+        connections: "[]",
+        publication_status: "draft",
+        kind: "transit",
+      },
+      {
+        id: "k2",
+        name: "Ship",
+        description: null,
+        parent_location_id: null,
+        connections: "[]",
+        publication_status: "draft",
+        kind: "transport",
+      },
+      {
+        id: "k3",
+        name: "Cabin",
+        description: null,
+        parent_location_id: "k2",
+        connections: "[]",
+        publication_status: "draft",
+        kind: "room",
+      },
+    ],
+    states: [],
   },
 };
 
@@ -290,6 +376,107 @@ describe("locationExplorerState", () => {
       expect(state.viewMode,).toBe("grid",);
       state.setViewMode("bogus",);
       expect(state.viewMode,).toBe("grid",);
+    });
+  });
+
+  describe("hierarchical visibility", () => {
+    test("expand/collapse hides and shows descendants across four levels", async () => {
+      const state = makeState();
+      mockFetch(200, chainFixture,);
+      await state.load();
+      const visible = () => state.visibleLocations.map((l,) => l.id);
+
+      expect(visible(),).toEqual(["a",],);
+      expect(state.visibleChildrenOf("a",),).toEqual([],);
+      expect(state.isVisible("d",),).toBe(false,);
+
+      state.toggleExpand("a",);
+      expect(visible(),).toEqual(["a", "b",],);
+      state.toggleExpand("b",);
+      expect(visible(),).toEqual(["a", "b", "c",],);
+      state.toggleExpand("c",);
+      expect(visible(),).toEqual(["a", "b", "c", "d",],);
+      expect(state.isVisible("d",),).toBe(true,);
+
+      state.toggleExpand("b",);
+      expect(visible(),).toEqual(["a", "b",],);
+      expect(state.isVisible("c",),).toBe(false,);
+      expect(state.isVisible("d",),).toBe(false,);
+
+      state.toggleExpand("b",);
+      expect(visible(),).toEqual(["a", "b", "c", "d",],);
+      state.toggleExpand("a",);
+      expect(visible(),).toEqual(["a",],);
+      expect(state.visibleRoots.map((l,) => l.id),).toEqual(["a",],);
+    });
+
+    test("filteredLocations stays flat while the visible tree is hierarchical", async () => {
+      const state = makeState();
+      mockFetch(200, chainFixture,);
+      await state.load();
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["a", "b", "c", "d",],);
+      expect(state.visibleLocations.map((l,) => l.id),).toEqual(["a",],);
+      expect(state.filteredIds.size,).toBe(4,);
+    });
+
+    test("filterTopLevelOnly hides descendants from the visible tree too", async () => {
+      const state = makeState();
+      mockFetch(200, chainFixture,);
+      await state.load();
+      state.toggleExpand("a",);
+      state.toggleExpand("b",);
+      state.toggleExpand("c",);
+      expect(state.visibleLocations.map((l,) => l.id),).toEqual(["a", "b", "c", "d",],);
+      state.filterTopLevelOnly = true;
+      expect(state.visibleLocations.map((l,) => l.id),).toEqual(["a",],);
+      expect(state.isVisible("b",),).toBe(false,);
+    });
+  });
+
+  describe("kind filter", () => {
+    test("kindOptions covers All plus every fractal kind in order", () => {
+      expect([...kindOptions,],).toEqual([
+        "All",
+        "Region",
+        "Settlement",
+        "Building",
+        "Room",
+        "Transit",
+        "Transport",
+        "Pocket",
+      ],);
+    });
+
+    test("filterKind selects only transport nodes, case-insensitively", async () => {
+      const state = makeState();
+      mockFetch(200, kindFixture,);
+      await state.load();
+      state.filterKind = "Transport";
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k2",],);
+      state.filterKind = "transport";
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k2",],);
+      state.filterKind = "All";
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k1", "k2", "k3",],);
+      state.filterKind = "";
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k1", "k2", "k3",],);
+    });
+
+    test("kind filter composes with search/top-level and clearFilters resets it", async () => {
+      const state = makeState();
+      mockFetch(200, kindFixture,);
+      await state.load();
+      state.filterKind = "Transport";
+      state.search = "ship";
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k2",],);
+      state.filterTopLevelOnly = true;
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k2",],);
+      state.search = "cabin";
+      expect(state.filteredLocations,).toEqual([],);
+      expect(state.hasActiveFilters(),).toBe(true,);
+      state.clearFilters();
+      expect(state.filterKind,).toBe("",);
+      expect(state.hasActiveFilters(),).toBe(false,);
+      expect(state.filteredLocations.map((l,) => l.id),).toEqual(["k1", "k2", "k3",],);
     });
   });
 });

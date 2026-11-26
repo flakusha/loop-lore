@@ -10,33 +10,76 @@
  */
 import { mkdirSync, readdirSync, renameSync, statSync, unlinkSync, } from "node:fs";
 import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
+import { resolveInstanceDir, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import type { Logger, } from "../logger";
+import { safeJsonStringify, } from "../utils";
 import { toDate, } from "../utils/date";
 
-export const MAX_ARCHIVES = Number(process.env.LOOP_LORE_REINIT_MAX_ARCHIVES ?? 10,);
-export const MAX_AGE_DAYS = Number(process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS ?? 90,);
+/**
+ * Parse an env-overridable retention limit. Bare `Number()` mapped empty env
+ * to 0 (delete every archive) and typos to NaN (disable retention entirely).
+ * @throws Error when the override is not a finite positive integer
+ */
+export function parseRetentionLimit(name: string, raw: string | undefined, fallback: number,): number {
+  if (raw === undefined) { return fallback; }
+  const parsed = Number(raw.trim(),);
+  if (!Number.isSafeInteger(parsed,) || parsed <= 0) {
+    const quoted = safeJsonStringify(raw,);
+    throw new Error(`${name} must be a positive integer, got ${quoted.ok ? quoted.value : raw}`,);
+  }
+
+  return parsed;
+}
+
+export const MAX_ARCHIVES = parseRetentionLimit(
+  "LOOP_LORE_REINIT_MAX_ARCHIVES",
+  process.env.LOOP_LORE_REINIT_MAX_ARCHIVES,
+  10,
+);
+export const MAX_AGE_DAYS = parseRetentionLimit(
+  "LOOP_LORE_REINIT_MAX_AGE_DAYS",
+  process.env.LOOP_LORE_REINIT_MAX_AGE_DAYS,
+  90,
+);
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-/** Resolve the archive directory. Env override beats the data-dir sibling —
- * operations may store archives on a separate volume (e.g. cheap object
- * storage) to keep the data volume small.
+/** Options for {@link archiveDir} and {@link archiveFile}. */
+export interface ArchiveDirOptions {
+  /** Loaded server config: resolves the same slug the DB path used. */
+  server?: ServerBind;
+}
+
+/** Resolve the archive directory for THIS instance.
+ *
+ * The root lives inside the instance dir: a root shared by every instance let
+ * one instance's retention pass prune another instance's rollback point.
+ * `LOOP_LORE_BACKUP_DIR` overrides the root — operations may store archives on
+ * a separate volume (e.g. cheap object storage) to keep the data volume small.
+ * The override is a ROOT: each instance archives to `<root>/<instance-slug>/`,
+ * so instances never share a retention pool.
+ * @param options - the loaded server bind, when the caller has one
  * @returns the directory archives are written to
  */
-export function archiveDir(): string {
-  return process.env.LOOP_LORE_BACKUP_DIR ??
-    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
+export function archiveDir(options: ArchiveDirOptions = {},): string {
+  const server = options.server;
+  const override = process.env.LOOP_LORE_BACKUP_DIR?.trim();
+  if (override !== undefined && override !== "") {
+    return path.join(override, resolveInstanceSlug(process.env, server,),);
+  }
+
+  return path.join(resolveInstanceDir(process.env, server,), "backups",);
 }
 
 /** Move `p` into the timestamped backup dir; fall back to unlink on
  * cross-device rename. After the move, retention is enforced via
  * {@link pruneArchives}.  * @param {string} p
  * @param p
- * @param {Logger} log
+ * @param log
+ * @param options - the loaded server bind, when the caller has one
  * @returns {void}
  */
-export function archiveFile(p: string, log: Logger,): void {
-  const dir = archiveDir();
+export function archiveFile(p: string, log: Logger, options: ArchiveDirOptions = {},): void {
+  const dir = archiveDir(options,);
   mkdirSync(dir, { recursive: true, },);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-",);
   try {

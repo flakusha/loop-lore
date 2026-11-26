@@ -34,7 +34,7 @@ import type { GenerationMessage, } from "../types";
 import { buildPrompt, } from "./build-prompt";
 import { runNonStreaming, } from "./non-stream";
 import { buildProviderRequest, } from "./provider-request";
-import { resolveOptions, } from "./resolve-options";
+import { resolveGenerateTarget, resolveOptions, } from "./resolve-options";
 import { streamToClient, } from "./stream-to-client";
 import type { GenerateRequest, } from "./types";
 import { validateGenerateRequest, } from "./validate";
@@ -107,12 +107,16 @@ export async function handleGenerate({
   }
 
   // ── Resolve provider + model ──────────────────────────
+  // Scenario autoroute: with no client-pinned provider/model, let the admin
+  // role chain choose the main target (DB override > config role > ranking >
+  // default). `generation.autorouteScenario` is the ranking switch.
+  const target = await resolveGenerateTarget({ input, cfg, database, },);
 
   let resolved: ResolvedProvider;
   try {
     resolved = await resolveProvider({
-      provider: input.provider,
-      model: input.modelId,
+      provider: target.provider,
+      model: target.model,
       userId,
       config: cfg,
       db: database,

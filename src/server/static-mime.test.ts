@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
-import { findCompressedVariant, getContentType, } from "./static-mime";
+import { findCompressedVariant, getContentType, isCompressible, } from "./static-mime";
 
 describe("getContentType", () => {
   test("maps every known extension to its MIME type", () => {
@@ -208,5 +208,72 @@ describe("findCompressedVariant", () => {
 
     // gzip;q=0 alone yields no compressed variant at all.
     expect(findCompressedVariant(cssPath, "gzip;q=0",),).toBeNull();
+  });
+
+  test("picks the highest-q available variant over fixed priority", () => {
+    expect(findCompressedVariant(cssPath, "br;q=0.3, gzip;q=0.9",),).toEqual({
+      path: `${cssPath}.gz`,
+      encoding: "gzip",
+    },);
+
+    expect(findCompressedVariant(cssPath, "gzip;q=0.9, *;q=0.5",),).toEqual({
+      path: `${cssPath}.gz`,
+      encoding: "gzip",
+    },);
+  });
+
+  test("keeps br > zstd > gzip when q-values tie", () => {
+    expect(findCompressedVariant(cssPath, "gzip;q=1, zstd;q=1, br;q=1",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    expect(findCompressedVariant(cssPath, "gzip;q=1, zstd;q=1",),).toEqual({
+      path: `${cssPath}.zst`,
+      encoding: "zstd",
+    },);
+  });
+
+  test("gzip;q=0 is refused while the wildcard still accepts other codings", () => {
+    expect(findCompressedVariant(cssPath, "gzip;q=0, *",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    rmSync(`${cssPath}.zst`,);
+    expect(findCompressedVariant(cssPath, "gzip;q=0, *",),).toBeNull();
+  });
+
+  test("wildcard accepts any available coding when nothing is explicit", () => {
+    expect(findCompressedVariant(cssPath, "*",),).toEqual({
+      path: `${cssPath}.br`,
+      encoding: "br",
+    },);
+
+    rmSync(`${cssPath}.br`,);
+    expect(findCompressedVariant(cssPath, "*",),).toEqual({
+      path: `${cssPath}.zst`,
+      encoding: "zstd",
+    },);
+  });
+});
+
+describe("isCompressible", () => {
+  test("marks text-like and wasm extensions as compressible", () => {
+    for (const file of ["app.css", "app.js", "index.html", "data.json", "icon.svg", "mod.wasm",]) {
+      expect(isCompressible(file,),).toBe(true,);
+    }
+  });
+
+  test("leaves binary assets and unknown extensions alone", () => {
+    for (const file of ["image.png", "font.woff2", "archive.gz", "Makefile", "",]) {
+      expect(isCompressible(file,),).toBe(false,);
+    }
+  });
+
+  test("lowercases the extension before lookup", () => {
+    expect(isCompressible("app.CSS",),).toBe(true,);
   });
 });

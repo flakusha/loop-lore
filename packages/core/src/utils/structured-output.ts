@@ -57,6 +57,7 @@ export const DEFAULT_CARRIAGE_MAX_BYTES = 8 * 1024;
  * @param format - declared format
  * @returns parsed value or null
  */
+// TODO(env): bun-only — Bun.TOML.parse is the TOML parser resolution point; add a node TOML parser here when a node target lands.
 function tryParse(raw: string, format: StructuredFormat,): unknown | null {
   const text = raw.trim();
   if (!text) { return null; }

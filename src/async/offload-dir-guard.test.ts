@@ -20,7 +20,8 @@
 import { describe, expect, test, } from "bun:test";
 import { existsSync, mkdtempSync, readdirSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { join, resolve, } from "node:path";
+import path, { join, resolve, } from "node:path";
+import { resolveInstanceDir, } from "../config/state-dir";
 import { uid, } from "../utils";
 import {
   offloadDir,
@@ -30,6 +31,7 @@ import {
   setOffloadDir,
   spill,
   SPILL_ROOT,
+  spillRootDir,
 } from "./spill";
 
 /** Repo root: `src/async/` → `src/` → repo. */
@@ -54,14 +56,14 @@ function snapshotSharedDir(): string[] {
 }
 
 describe("async-store spill dir is never the shared repo path", () => {
-  test("the default resolves under the repo .tmp scratch root", () => {
+  test("the default resolves under this instance's state dir", () => {
     resetOffloadDir();
-    expect(SPILL_ROOT,).toContain(".tmp",);
-    expect(SPILL_ROOT,).toContain("async-store",);
+    expect(SPILL_ROOT,).toBe(path.join(resolveInstanceDir(), "spill",),);
+    expect(SPILL_ROOT.startsWith(REPO_ROOT + path.sep,),).toBe(false,);
     // Structure, not a re-derived constant: the pre-fix flat shared
     // `OFFLOAD_DIR` returns `SPILL_ROOT` itself here and fails both.
-    expect(resolve(offloadDir(), "..",),).toBe(SPILL_ROOT,);
-    expect(offloadDir(),).not.toBe(SPILL_ROOT,);
+    expect(resolve(offloadDir(), "..",),).toBe(spillRootDir(),);
+    expect(offloadDir(),).not.toBe(spillRootDir(),);
   });
 
   test("setOffloadDir redirects spills away from the shared repo path", () => {

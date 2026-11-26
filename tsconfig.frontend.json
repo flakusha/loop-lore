@@ -12,7 +12,14 @@
     "paths": {
       "@/*": ["./src/*"],
       "@loop-lore/core": ["./packages/core/src/index.ts"],
-      "@loop-lore/core/*": ["./packages/core/src/*"]
+      "@loop-lore/core/*": ["./packages/core/src/*"],
+      "@loop-lore/i18n": ["./packages/i18n/src/index.ts"],
+      "@loop-lore/i18n/*": ["./packages/i18n/src/*"],
+      "@loop-lore/assets": ["./packages/assets/src/index.ts"],
+      "@loop-lore/assets/*": ["./packages/assets/src/*"],
+      "@loop-lore/plugins": ["./packages/plugins/src/index.ts"],
+      "@loop-lore/plugins/root/*": ["./packages/plugins/*"],
+      "@loop-lore/plugins/*": ["./packages/plugins/src/*"]
     },
     "strict": true,
     "esModuleInterop": true,

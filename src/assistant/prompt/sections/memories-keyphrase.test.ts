@@ -7,7 +7,7 @@
  *   3. no match → no keyphrase injection
  * plus the config flag and per-message limit overrides.
  */
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, setDefaultTimeout, test, } from "bun:test";
 import { MessageRole, MessageStatus, } from "../../../db/enums";
 import { createLogger, } from "../../../logger";
 import { clearKeyphraseRecallCooldowns, recordKeyphraseRecall, } from "../../../memory/keyphrase-recall";
@@ -24,6 +24,9 @@ import {
 import type { AssembleContext, } from "../types";
 import { memorySection, } from "./memories";
 import { applyKeyphraseRecalls, collectKeyphraseHits, type KeyphraseRecallCtx, } from "./memories-keyphrase";
+
+// Full test-DB setup per case trips the 5s default under parallel-check load; tolerance only.
+setDefaultTimeout(15000,);
 
 const KEY_PHRASE = "moonstone relic";
 const MARKER = "KEYPHRASE_JOURNAL_MARKER: the relic hums.";

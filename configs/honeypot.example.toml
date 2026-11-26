@@ -1,0 +1,16 @@
+# Optional standalone decoy configuration. Copy and edit; never autostarted.
+# Env vars HONEYPOT_HOST / HONEYPOT_PORT / HONEYPOT_TARPIT_MS override these.
+# Load with HONEYPOT_CONFIG=/path/to/this/file bun src/honeypot/cli.ts
+
+host = "127.0.0.1"
+port = 8099
+# Repeated bait hits wait up to this many ms (hard-capped at 500).
+tarpitMs = 0
+maxConcurrentTarpits = 4
+
+# Literal-only deny rules. No CIDR or regex: add those only if measured need
+# justifies the parsing on the decoy hot path.
+# [[deny]]
+# ip = "203.0.113.10"
+# [[deny]]
+# userAgent = "ExampleCrawler"

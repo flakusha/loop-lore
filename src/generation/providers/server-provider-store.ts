@@ -25,9 +25,11 @@ import { getProvider, unregisterProvider, } from "./registry";
 import { auditProviderStore, } from "./server-provider-audit";
 import {
   assertValidServerProviderName,
+  isServerProviderKind,
   resolveApprovedHosts,
   type ServerProviderDescriptor,
   serverProviderDescriptorKey,
+  type ServerProviderKind,
   serverProviderSecretKey,
   ServerProviderValidationError,
   type StoredServerProvider,
@@ -48,7 +50,8 @@ export {
   serverProviderSecretKey,
   ServerProviderValidationError,
 } from "./server-provider-descriptor";
-export type { ServerProviderDescriptor, ServerProviderState, } from "./server-provider-descriptor";
+export type { ServerProviderDescriptor, ServerProviderKind, ServerProviderState, } from "./server-provider-descriptor";
+export { isServerProviderKind, } from "./server-provider-descriptor";
 export { ServerProviderMaterializationError, } from "./server-provider-materialize";
 
 /** Default connection timeout for a materialized instance. */
@@ -81,6 +84,7 @@ export async function listServerProviders(db: Kysely<DB>,): Promise<ServerProvid
       label: provider.label,
       baseUrl: provider.baseUrl,
       model: provider.model,
+      kind: provider.kind ?? "openai-compatible",
       allowedHosts: provider.allowedHosts,
       hasApiKey: apiKey !== undefined && apiKey !== "",
       state: live ? "live" : "error",
@@ -117,6 +121,11 @@ export interface SaveServerProviderInput {
   label: string;
   baseUrl: string;
   model: string;
+  /**
+   * Which provider family to materialize. Omitted on create — the instance is
+   * openai-compatible. Omitted on update — the stored kind is kept.
+   */
+  kind?: ServerProviderKind;
   /** Operator-entered API key. Omitted on update — the stored key is kept. */
   apiKey?: string;
   /** Explicit host approval. Omitted — the base URL's own host is approved. */
@@ -161,10 +170,19 @@ export async function saveServerProvider(
   // registry or the config file already uses would hijack that provider.
   if (!isUpdate) { assertNameIsFree(input.name, input.config,); }
 
+  // An unknown kind is rejected, not defaulted — silently materializing the
+  // wrong provider family would point chats at the wrong API.
+  const kind = input.kind ?? previous?.kind ?? "openai-compatible";
+  if (!isServerProviderKind(kind,)) {
+    throw new ServerProviderValidationError(`Unknown provider kind "${kind}".`,);
+  }
+
   // The instance becomes the server default when the operator asked for it, or
   // when it is the only provider and no default is configured yet — the
   // first-run case the wizard exists for. An update keeps the stored intent.
-  const isFirstProvider = !isUpdate && input.config.generation.providers.openaiCompatible.length === 0;
+  // Every family counts: a lone anthropic or ollama-native instance is the
+  // default just like a lone openai-compatible one.
+  const isFirstProvider = !isUpdate && listProviderInstances(input.config,).length === 0;
   const becomesDefault = input.setDefault ??
     (isUpdate ? previous?.setDefault === true : isFirstProvider && !input.config.generation.defaultProvider);
 
@@ -174,6 +192,7 @@ export async function saveServerProvider(
     label: input.label || input.name,
     baseUrl: input.baseUrl,
     model: input.model,
+    kind,
     allowedHosts,
     timeout: input.timeout ?? DEFAULT_TIMEOUT_MS,
     retries: input.retries ?? DEFAULT_RETRIES,

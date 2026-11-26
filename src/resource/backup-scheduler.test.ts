@@ -7,6 +7,10 @@
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { mkdtempSync, readdirSync, rmSync, utimesSync, writeFileSync, } from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { pruneDbSnapshots, } from "../db/backup-restore";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, destroyTestDb, } from "../test-utils/create-test-db";
@@ -17,9 +21,15 @@ import {
   resetBackupScheduling,
   scheduleAssetUploadBackup,
   scheduleChatEndBackup,
+  scheduleDbSnapshotBackup,
   scheduleWorldSaveBackup,
 } from "./backup-scheduler";
-import { addStorageResource, listBackups, registerBackupHook, } from "./external-storage";
+import {
+  addStorageResource,
+  type BackupHook,
+  listBackups,
+  registerBackupHook,
+} from "./external-storage";
 
 let testDb: Kysely<DB>;
 let testSqlite: Database;
@@ -207,5 +217,55 @@ describe("backup-scheduler", () => {
     expect(isBackupSchedulingEnabled(),).toBe(true,);
     resetBackupScheduling();
     expect(isBackupSchedulingEnabled(),).toBe(false,);
+  });
+
+  test("db snapshot hook is inert until enabled and never self-triggers", async () => {
+    let calls = 0;
+    const spy: BackupHook = async () => {
+      calls += 1;
+    };
+
+    resetBackupScheduling();
+    try {
+      registerBackupHook("onDbSnapshot", spy,);
+      expect(await scheduleDbSnapshotBackup(testDb, { ownerId: "u", },),).toEqual({
+        scheduled: false,
+        reason: "disabled",
+      },);
+
+      expect(calls,).toBe(0,);
+
+      configureBackupScheduling({ enabled: true, onDbSnapshot: false, },);
+      registerBackupHook("onDbSnapshot", spy,);
+      expect((await scheduleDbSnapshotBackup(testDb, { ownerId: "u", },)).reason,).toBe("trigger-disabled",);
+      expect(calls,).toBe(0,);
+
+      configureBackupScheduling({ onDbSnapshot: true, },);
+      registerBackupHook("onDbSnapshot", spy,);
+      expect((await scheduleDbSnapshotBackup(testDb, { ownerId: "u", },)).scheduled,).toBe(true,);
+      expect(calls,).toBe(1,);
+      // A second explicit call fires exactly once more — no extra timer/loop.
+      expect((await scheduleDbSnapshotBackup(testDb, { ownerId: "u", },)).scheduled,).toBe(true,);
+      expect(calls,).toBe(2,);
+    } finally {
+      resetBackupScheduling();
+    }
+  });
+
+  test("db snapshot retention prunes the oldest files", () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), "db-snapshot-retention-",),);
+    try {
+      for (let i = 0; i < 4; i += 1) {
+        const file = path.join(dir, `snap-${i}.db`,);
+        writeFileSync(file, "x",);
+        const when = new Date(2026, 0, i + 1,).getTime();
+        utimesSync(file, when, when,);
+      }
+
+      expect(pruneDbSnapshots(dir, 2,),).toBe(2,);
+      expect(readdirSync(dir,).sort(),).toEqual(["snap-2.db", "snap-3.db",],);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });

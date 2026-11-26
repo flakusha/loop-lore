@@ -29,7 +29,7 @@ import {
   uploadedUiWorkflow,
   type WorkflowMetaInput,
 } from "./payload";
-import { log, workflowGuard, workflowInvalid, } from "./shared";
+import { licenseValue, log, paramsReviewedValue, workflowGuard, workflowInvalid, } from "./shared";
 import { ingestErrors, ingestUpload, liveSnapshot, outputKindOf, } from "./ui-ingest";
 
 /**
@@ -47,6 +47,9 @@ const CreateBody = t.Object(
     requiredNodes: t.Optional(t.Array(t.String(),),),
     loraSlots: t.Optional(t.Array(t.Unknown(),),),
     expectedOutputKind: t.Optional(t.String(),),
+    license: t.Optional(t.Union([t.String(), t.Null(),],),),
+    params_reviewed: t.Optional(t.Boolean(),),
+    bindings: t.Optional(t.Unknown(),),
   },
   { additionalProperties: true, },
 );
@@ -71,10 +74,12 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
   const name = typeof body.name === "string" ? body.name.trim() : "";
   const description = typeof body.description === "string" ? body.description : null;
   const modelFamily = typeof body.model_family === "string" ? body.model_family : null;
+  const license = licenseValue(body.license,);
+  const paramsReviewed = paramsReviewedValue(body.params_reviewed, 0,);
   if (name.length === 0) { return workflowInvalid(["name is required",],); }
 
-  const snapshot = await liveSnapshot();
-  if (!snapshot.ok) { return workflowInvalid([`ComfyUI is unreachable: ${snapshot.error}`,],); }
+  const snapshot = await liveSnapshot(upload.nodes.map((node,) => node.type),);
+  if (!snapshot.ok) { return workflowInvalid([`ComfyUI schema check failed: ${snapshot.error}`,],); }
 
   const id = uid();
   let ingested: IngestResult;
@@ -91,7 +96,11 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
 
   if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
 
-  const payload = { ...ingested.payload, };
+  const payload = {
+    ...ingested.payload,
+    ...(meta.bindings === undefined ? {} : { bindings: meta.bindings, }),
+  };
+
   const validated = validateWorkflowPayload(payload, { unreferencedLive: ingested.report.unreferencedLive, },);
   if (!validated.ok) { return workflowInvalid(validated.errors,); }
 
@@ -124,6 +133,8 @@ async function createFromUiUpload(input: UiCreateInput,): Promise<Response> {
     probe_status: ingested.row.probe_status ?? "passing",
     lora_slots: slotsColumn(validated.payload.loraSlots,),
     min_vram: typeof body.min_vram === "number" ? body.min_vram : null,
+    license,
+    params_reviewed: paramsReviewed,
   },).execute();
 
   invalidateWorkflowRegistry();
@@ -184,6 +195,8 @@ export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               const name = typeof body.name === "string" ? body.name.trim() : "";
               const description = typeof body.description === "string" ? body.description : null;
               const modelFamily = typeof body.model_family === "string" ? body.model_family : null;
+              const license = licenseValue(body.license,);
+              const paramsReviewed = paramsReviewedValue(body.params_reviewed, 0,);
               const serialized = serializeTemplateInput({
                 modality: "workflow",
                 name,
@@ -212,6 +225,8 @@ export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 enabled: LoreEntryStatus.Enabled,
                 lora_slots: slotsColumn(validated.payload.loraSlots,),
                 min_vram: typeof body.min_vram === "number" ? body.min_vram : null,
+                license,
+                params_reviewed: paramsReviewed,
               },).execute();
 
               // The registry is a hydrated snapshot; a new row is invisible to

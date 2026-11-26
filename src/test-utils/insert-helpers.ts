@@ -12,7 +12,9 @@ import type {
   ActorType,
   AdminOverrideAction,
   AgencyMode,
+  AgentTokenScope,
   AgentType,
+  AnnotationTargetType,
   AnomalyInteraction,
   AnomalyType,
   AssetAlphaStatus,
@@ -32,6 +34,7 @@ import type {
   CraftingAttemptStatus,
   CraftingDiscipline,
   CraftingStationType,
+  CutType,
   DefaultState,
   DifficultyReroll,
   DifficultyState,
@@ -48,6 +51,8 @@ import type {
   FactionRole,
   FactorKind,
   FantasyCategory,
+  FragmentOperation,
+  FragmentStatus,
   GatheringNodeType,
   GenerationStatus,
   HarnessQueueErrorCode,
@@ -108,8 +113,14 @@ import type {
   QuestProgressStatus,
   QuestStatus,
   QuestType,
+  ReferenceLane,
+  ReferenceScope,
   RelationshipType,
   ResourceQuality,
+  ScenarioDocKind,
+  ScenarioStatus,
+  SceneMode,
+  SceneStatus,
   SeductionSkillCategory,
   ShadowNoteAuthorType,
   ShadowNoteStatus,
@@ -220,91 +231,6 @@ export async function insertMetaProgression(
   return (restOpts as Record<string, unknown>).player_id as string;
 }
 
-/** Insert a model_capabilities row. */
-export async function insertModelCapabilities(
-  db: Db,
-  provider_id: string,
-  model_id: string,
-  last_seen: string,
-  created_at: string,
-  updated_at: string,
-  opts?: {
-    id?: string;
-    context_window?: number | null;
-    max_output?: number | null;
-    supports_tools?: number | null;
-    supports_vision?: number | null;
-    supports_thinking?: number | null;
-    modalities?: string | null;
-    param_size?: string | null;
-    owned_by?: string | null;
-    user_override?: number;
-    notes?: string | null;
-    native_locale?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("model_capabilities",).values({
-    id,
-    provider_id,
-    model_id,
-    last_seen,
-    created_at,
-    updated_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a model_comparisons row. */
-export async function insertModelComparisons(
-  db: Db,
-  message_id: string,
-  user_id: string,
-  reference_model: string,
-  preference: string,
-  confidence: number,
-  created_at: string,
-  opts?: { id?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("model_comparisons",).values({
-    id,
-    message_id,
-    user_id,
-    reference_model,
-    preference,
-    confidence,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a model_role_overrides row. */
-export async function insertModelRoleOverrides(
-  db: Db,
-  provider: string,
-  model: string,
-  opts: {
-    role: ModelRole;
-    created_at?: string;
-    updated_at?: string;
-    temperature?: number | null;
-    max_tokens?: number | null;
-  },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("model_role_overrides",).values({
-    provider,
-    model,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).role as string;
-}
-
 /** Insert a notifications row. */
 export async function insertNotifications(
   db: Db,
@@ -330,26 +256,6 @@ export async function insertNotifications(
     ...restOpts,
   } as any,).execute();
   return id;
-}
-
-/** Insert a plugin_state row. */
-export async function insertPluginState(
-  db: Db,
-  opts: {
-    name: string;
-    status?: PluginStatus;
-    enabled_at?: string | null;
-    disabled_at?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    config_json?: string | null;
-  },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("plugin_state",).values({
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).name as string;
 }
 
 /** Insert a request_results row. */
@@ -520,170 +426,471 @@ export async function insertUsers(
   return id;
 }
 
-/** Insert a asset_links row. */
-export async function insertAssetLinks(
+/** Insert a activitypub_actor_keys row. */
+export async function insertActivitypubActorKeys(
   db: Db,
-  asset_id: string,
-  entity_type: AssetLinkEntity,
-  entity_id: string,
-  opts?: { label?: string | null; sort_order?: number; created_at?: string; archived_at?: string | null },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("asset_links",).values({
-    asset_id,
-    entity_type,
-    entity_id,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a asset_shares row. */
-export async function insertAssetShares(
-  db: Db,
-  asset_id: string,
-  shared_with_id: string,
-  shared_by_id: string,
-  opts?: { id?: string; created_at?: string },
+  actor_id: string,
+  key_id: string,
+  public_jwk: string,
+  encrypted_private_jwk: string,
+  created_at: string,
+  opts?: { id?: string; status?: string; rotated_at?: string | null; expires_at?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("asset_shares",).values({
+  await db.insertInto("activitypub_actor_keys",).values({
     id,
-    asset_id,
-    shared_with_id,
-    shared_by_id,
+    actor_id,
+    key_id,
+    public_jwk,
+    encrypted_private_jwk,
+    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a assets row. */
-export async function insertAssets(
+/** Insert a growth_log row. */
+export async function insertGrowthLog(
+  db: Db,
+  actor_id: string,
+  axis: string,
+  event_type: string,
+  recorded_at: string,
+  opts?: {
+    id?: string;
+    status?: string;
+    subject_kind?: string | null;
+    subject_id?: string | null;
+    before_json?: string | null;
+    after_json?: string | null;
+    reason?: string;
+    source_event_id?: string | null;
+    confirmed_at?: string | null;
+    confirmed_by?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("growth_log",).values({
+    id,
+    actor_id,
+    axis,
+    event_type,
+    recorded_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a proactive_messaging_config row. */
+export async function insertProactiveMessagingConfig(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  opts?: {
+    id?: string;
+    frequency?: string;
+    quiet_hours_start?: string | null;
+    quiet_hours_end?: string | null;
+    enabled?: number;
+    last_proactive_at?: string | null;
+    backoff_count?: number;
+    config_json?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("proactive_messaging_config",).values({
+    id,
+    chat_id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a synthetic_data row. */
+export async function insertSyntheticData(
+  db: Db,
+  type: SyntheticDataType,
+  source_data: string,
+  generated_cases: string,
+  opts?: {
+    id?: string;
+    chat_id?: string | null;
+    world_id?: string | null;
+    metadata?: string;
+    status?: SyntheticDataStatus;
+    created_at?: string;
+    validated_at?: string | null;
+    validated_by?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("synthetic_data",).values({
+    id,
+    type,
+    source_data,
+    generated_cases,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a task_dependencies row. */
+export async function insertTaskDependencies(
+  db: Db,
+  task_id: string,
+  depends_on_task_id: string,
+  opts?: { on_failure?: string; created_at?: string },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("task_dependencies",).values({
+    task_id,
+    depends_on_task_id,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a scheduled_messages row. */
+export async function insertScheduledMessages(
+  db: Db,
+  chat_id: string,
+  author_id: string,
+  body: string,
+  send_at: string,
+  opts?: { id?: string; status?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scheduled_messages",).values({
+    id,
+    chat_id,
+    author_id,
+    body,
+    send_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a message_reminders row. */
+export async function insertMessageReminders(
+  db: Db,
+  message_id: string,
+  user_id: string,
+  remind_at: string,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("message_reminders",).values({
+    id,
+    message_id,
+    user_id,
+    remind_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a plan_items row. */
+export async function insertPlanItems(
   db: Db,
   owner_id: string,
-  filename: string,
-  mime_type: string,
-  asset_type: AssetType,
-  size_bytes: number,
-  storage_path: string,
+  title: string,
   opts?: {
     id?: string;
-    storage_backend?: StorageBackend;
-    width?: number | null;
-    height?: number | null;
-    duration_secs?: number | null;
-    alt_text?: string | null;
-    visibility?: AssetVisibility;
+    chat_id?: string | null;
+    state?: string;
+    kind?: string;
+    position?: number;
+    parent_id?: string | null;
     created_at?: string;
-    encryption_tier?: string;
-    encrypted_key_id?: string | null;
-    alpha_status?: AssetAlphaStatus;
-    content_hash?: string | null;
-    content_version?: number;
-    record_hash?: string;
-    thumbnail_path?: string | null;
+    updated_at?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("assets",).values({
+  await db.insertInto("plan_items",).values({
     id,
     owner_id,
-    filename,
-    mime_type,
-    asset_type,
-    size_bytes,
-    storage_path,
+    title,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a asset_transforms row. */
-export async function insertAssetTransforms(
+/** Insert a plan_links row. */
+export async function insertPlanLinks(
   db: Db,
-  asset_id: string,
-  context: TransformContext,
-  opts?: {
-    crop_x?: number | null;
-    crop_y?: number | null;
-    crop_w?: number | null;
-    crop_h?: number | null;
-    zoom?: number | null;
-    rotation?: number | null;
-    focal_point_x?: number | null;
-    focal_point_y?: number | null;
-    updated_at?: string;
-  },
+  from_id: string,
+  to_id: string,
+  relation: string,
+  opts?: { created_at?: string },
 ): Promise<void> {
   const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("asset_transforms",).values({
-    asset_id,
-    context,
+  await db.insertInto("plan_links",).values({
+    from_id,
+    to_id,
+    relation,
     ...restOpts,
   } as any,).execute();
 }
 
-/** Insert a location_states row. */
-export async function insertLocationStates(
+/** Insert a backup_records row. */
+export async function insertBackupRecords(
   db: Db,
-  location_id: string,
-  world_id: string,
+  resource_type: string,
+  owner_id: string,
+  content_hash: string,
+  payload: string,
   opts?: {
     id?: string;
-    description_override?: string | null;
-    atmosphere?: string | null;
-    npcs_present?: string;
-    items_available?: string;
-    time_of_day?: string | null;
-    weather?: string | null;
-    hazards?: string;
+    server_hash?: string | null;
+    version?: number;
     created_at?: string;
-    updated_at?: string;
+    storage_quota_bytes?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_states",).values({
+  await db.insertInto("backup_records",).values({
     id,
-    location_id,
-    world_id,
+    resource_type,
+    owner_id,
+    content_hash,
+    payload,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a locations row. */
-export async function insertLocations(
+/** Insert a ranking_snapshots row. */
+export async function insertRankingSnapshots(
   db: Db,
-  world_id: string,
-  name: string,
+  source: string,
+  version: string,
+  next_refresh_after: string,
   opts?: {
     id?: string;
-    description?: string | null;
-    connections?: string;
-    publication_status?: PublicationStatus;
-    parent_location_id?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    kind?: LocationKind;
-    mobility_mode?: MobilityMode;
-    path?: string;
-    coord_x?: number | null;
-    coord_y?: number | null;
-    coord_z?: number | null;
-    current_route_id?: string | null;
-    travel_progress?: number;
-    content_version?: number;
-    record_hash?: string;
+    source_key?: string;
+    checksum?: string | null;
+    fetched_at?: string;
+    row_count?: number | null;
+    payload?: string;
+    status?: string;
+    last_error?: string | null;
+    meta?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("locations",).values({
+  await db.insertInto("ranking_snapshots",).values({
     id,
-    world_id,
+    source,
+    version,
+    next_refresh_after,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a tool_call_audit row. */
+export async function insertToolCallAudit(
+  db: Db,
+  tool: string,
+  verdict: string,
+  opts?: {
+    id?: string;
+    chat_id?: string;
+    user_id?: string;
+    rationale?: string;
+    escalation_attempt?: number;
+    required_role?: string | null;
+    tags?: string;
+    duration_ms?: number;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("tool_call_audit",).values({
+    id,
+    tool,
+    verdict,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a integration_tokens row. */
+export async function insertIntegrationTokens(
+  db: Db,
+  name: string,
+  token_hash: string,
+  scopes: IntegrationTokenScope,
+  issuer_admin_user_id: string,
+  opts?: {
+    id?: string;
+    created_at?: string;
+    last_used_at?: string | null;
+    revoked_at?: string | null;
+    expires_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("integration_tokens",).values({
+    id,
     name,
+    token_hash,
+    scopes,
+    issuer_admin_user_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a harness_queue_turns row. */
+export async function insertHarnessQueueTurns(
+  db: Db,
+  batch_id: string,
+  profile: string,
+  prompt: string,
+  chat_id: string,
+  actor_id: string,
+  requested_by: string,
+  opts?: {
+    id?: string;
+    status?: HarnessQueueTurnStatus;
+    requested_role?: string | null;
+    turn_key?: string | null;
+    attempts?: number;
+    result_message_id?: string | null;
+    error_code?: HarnessQueueErrorCode | null;
+    error_message?: string | null;
+    created_at?: string;
+    started_at?: string | null;
+    finished_at?: string | null;
+    owner_slug?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("harness_queue_turns",).values({
+    id,
+    batch_id,
+    profile,
+    prompt,
+    chat_id,
+    actor_id,
+    requested_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a auth_factors row. */
+export async function insertAuthFactors(
+  db: Db,
+  user_id: string,
+  kind: FactorKind,
+  created_at: number,
+  opts?: { id?: string; target?: string | null; verified_at?: number | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("auth_factors",).values({
+    id,
+    user_id,
+    kind,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a auth_challenges row. */
+export async function insertAuthChallenges(
+  db: Db,
+  user_id: string,
+  factor_id: string,
+  purpose: ChallengePurpose,
+  nonce_hash: string,
+  expires_at: number,
+  created_at: number,
+  opts?: { id?: string; attempts?: number; consumed?: number },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("auth_challenges",).values({
+    id,
+    user_id,
+    factor_id,
+    purpose,
+    nonce_hash,
+    expires_at,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a tooling_reports row. */
+export async function insertToolingReports(
+  db: Db,
+  source: string,
+  category: string,
+  opts?: {
+    id?: string;
+    ts?: string;
+    tool?: string;
+    attempt?: number | null;
+    max_attempts?: number | null;
+    detail?: string;
+    duration_ms?: number | null;
+    profile?: string | null;
+    branch?: string | null;
+    git_sha?: string | null;
+    instance_id?: string;
+    dedupe_key?: string | null;
+    count?: number;
+    last_seen?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("tooling_reports",).values({
+    id,
+    source,
+    category,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a watchdog_events row. */
+export async function insertWatchdogEvents(
+  db: Db,
+  event_kind: string,
+  decision_kind: string,
+  at_ms: number,
+  opts?: { id?: number; created_at?: string; reason?: string | null; misses?: number | null; crashes?: number | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("watchdog_events",).values({
+    id,
+    event_kind,
+    decision_kind,
+    at_ms,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -983,28 +1190,261 @@ export async function insertWorlds(
   return id;
 }
 
-/** Insert a activitypub_actor_keys row. */
-export async function insertActivitypubActorKeys(
+/** Insert a playthroughs row. */
+export async function insertPlaythroughs(
   db: Db,
-  actor_id: string,
-  key_id: string,
-  public_jwk: string,
-  encrypted_private_jwk: string,
-  created_at: string,
-  opts?: { id?: string; status?: string; rotated_at?: string | null; expires_at?: string | null },
+  player_id: string,
+  world_id: string,
+  opts?: {
+    id?: string;
+    playthrough_number?: number;
+    difficulty?: string;
+    status?: PlaythroughStatus;
+    ending_id?: string | null;
+    ending_type?: string | null;
+    completion_time?: number;
+    choices_made?: number;
+    secrets_found?: number;
+    achievements_unlocked?: number;
+    metadata?: string;
+    created_at?: string;
+    updated_at?: string;
+    completed_at?: string | null;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("activitypub_actor_keys",).values({
+  await db.insertInto("playthroughs",).values({
     id,
-    actor_id,
-    key_id,
-    public_jwk,
-    encrypted_private_jwk,
-    created_at,
+    player_id,
+    world_id,
     ...restOpts,
   } as any,).execute();
   return id;
+}
+
+/** Insert a world_simulation_state row. */
+export async function insertWorldSimulationState(
+  db: Db,
+  next_tick_at: string,
+  opts: {
+    world_id: string;
+    paused?: number;
+    last_run_at?: string | null;
+    last_error?: string | null;
+    tick_count?: number;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("world_simulation_state",).values({
+    next_tick_at,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).world_id as string;
+}
+
+/** Insert a world_travel_budget row. */
+export async function insertWorldTravelBudget(
+  db: Db,
+  opts: { world_id: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("world_travel_budget",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).world_id as string;
+}
+
+/** Insert a world_event_log row. */
+export async function insertWorldEventLog(
+  db: Db,
+  world_id: string,
+  event_type: string,
+  tick_index: number,
+  dedupe_key: string,
+  opts?: { id?: string; subject_id?: string | null; actor_id?: string | null; payload?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_event_log",).values({
+    id,
+    world_id,
+    event_type,
+    tick_index,
+    dedupe_key,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_timescale row. */
+export async function insertWorldTimescale(
+  db: Db,
+  world_id: string,
+  opts?: {
+    id?: string;
+    epoch?: string;
+    scale_size?: number;
+    advanced_minutes?: number;
+    anchor_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_timescale",).values({
+    id,
+    world_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_timescale_history row. */
+export async function insertWorldTimescaleHistory(
+  db: Db,
+  world_id: string,
+  epoch: string,
+  opts?: { id?: string; changed_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_timescale_history",).values({
+    id,
+    world_id,
+    epoch,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_conditions row. */
+export async function insertWorldConditions(
+  db: Db,
+  opts: {
+    world_id: string;
+    weather?: string;
+    time_of_day?: string;
+    season?: string;
+    temperature?: number;
+    global_modifiers?: string;
+    weather_seed?: number;
+    mode?: string;
+    tick_interval_minutes?: number;
+    last_tick_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("world_conditions",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).world_id as string;
+}
+
+/** Insert a world_condition_history row. */
+export async function insertWorldConditionHistory(
+  db: Db,
+  world_id: string,
+  weather: string,
+  time_of_day: string,
+  season: string,
+  world_minute: number,
+  opts?: { id?: string; recorded_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_condition_history",).values({
+    id,
+    world_id,
+    weather,
+    time_of_day,
+    season,
+    world_minute,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_licenses row. */
+export async function insertWorldLicenses(
+  db: Db,
+  world_id: string,
+  opts?: {
+    id?: string;
+    spdx_or_custom?: LicenseKind;
+    spdx_id?: string | null;
+    license_text?: string | null;
+    attribution?: string;
+    allowed_use?: string;
+    prohibited_use?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_licenses",).values({
+    id,
+    world_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_maps row. */
+export async function insertWorldMaps(
+  db: Db,
+  world_id: string,
+  name: string,
+  width: number,
+  height: number,
+  opts?: { id?: string; map_type?: MapType; tile_asset_id?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("world_maps",).values({
+    id,
+    world_id,
+    name,
+    width,
+    height,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a world_timeline_selections row. */
+export async function insertWorldTimelineSelections(
+  db: Db,
+  user_id: string,
+  world_id: string,
+  timeline_id: string,
+  selected_at: string,
+): Promise<void> {
+  await db.insertInto("world_timeline_selections",).values({
+    user_id,
+    world_id,
+    timeline_id,
+    selected_at,
+  } as any,).execute();
+}
+
+/** Insert a world_lore_search_tokens row. */
+export async function insertWorldLoreSearchTokens(
+  db: Db,
+  entry_id: string,
+  term: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("world_lore_search_tokens",).values({
+    entry_id,
+    term,
+    scope,
+  } as any,).execute();
 }
 
 /** Insert a actor_currencies row. */
@@ -1242,6 +1682,498 @@ export async function insertActors(
   return id;
 }
 
+/** Insert a emotions row. */
+export async function insertEmotions(
+  db: Db,
+  name: string,
+  display_name: string,
+  category: string,
+  valence: number,
+  arousal: number,
+  created_at: string,
+  opts?: { id?: string; icon?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("emotions",).values({
+    id,
+    name,
+    display_name,
+    category,
+    valence,
+    arousal,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mood_events row. */
+export async function insertMoodEvents(
+  db: Db,
+  actor_id: string,
+  event_type: string,
+  happiness_delta: number,
+  source: string,
+  created_at: string,
+  opts?: { id?: string; world_id?: string | null; mood_override?: string | null; source_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mood_events",).values({
+    id,
+    actor_id,
+    event_type,
+    happiness_delta,
+    source,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a npc_states row. */
+export async function insertNpcStates(
+  db: Db,
+  actor_id: string,
+  world_id: string,
+  opts?: {
+    id?: string;
+    location_id?: string | null;
+    health?: number;
+    mental_state?: string;
+    knowledge?: string;
+    relationships?: string;
+    inventory?: string;
+    schedule?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("npc_states",).values({
+    id,
+    actor_id,
+    world_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_memories row. */
+export async function insertActorMemories(
+  db: Db,
+  actor_id: string,
+  content: string,
+  opts?: {
+    id?: string;
+    source_chat_id?: string | null;
+    memory_type?: MemoryType;
+    confidence?: number;
+    importance?: number;
+    keywords?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    expires_at?: string | null;
+    decay_rate?: number;
+    strength?: number;
+    last_accessed_at?: string | null;
+    source_message_id?: string | null;
+    context?: string | null;
+    world_id?: string | null;
+    user_id?: string | null;
+    scope?: string;
+    pinned?: PinnedState;
+    privacy?: string;
+    review_status?: MemoryReviewStatus;
+    shareability?: string | null;
+    source_message_ids?: string | null;
+    source_chat_ids?: string | null;
+    extraction_kind?: ExtractionKind | null;
+    context_window_start?: string | null;
+    context_window_end?: string | null;
+    emotion_impact?: string | null;
+    timeline_id?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_memories",).values({
+    id,
+    actor_id,
+    content,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a memory_embeddings row. */
+export async function insertMemoryEmbeddings(
+  db: Db,
+  vector_blob: Uint8Array,
+  created_at: number,
+  opts: { memory_id: string; model?: string; dimensions?: number },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("memory_embeddings",).values({
+    vector_blob,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).memory_id as string;
+}
+
+/** Insert a actor_locations row. */
+export async function insertActorLocations(
+  db: Db,
+  physical_location_id: string,
+  spatial_location_id: string,
+  opts: { actor_id: string; entered_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("actor_locations",).values({
+    physical_location_id,
+    spatial_location_id,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).actor_id as string;
+}
+
+/** Insert a memory_audit_log row. */
+export async function insertMemoryAuditLog(
+  db: Db,
+  memory_id: string,
+  actor_id: string,
+  action: string,
+  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("memory_audit_log",).values({
+    id,
+    memory_id,
+    actor_id,
+    action,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a agency_play_counters row. */
+export async function insertAgencyPlayCounters(
+  db: Db,
+  dimension: string,
+  hour_bucket: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    chat_id?: string | null;
+    actor_id?: string | null;
+    count?: number;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("agency_play_counters",).values({
+    id,
+    dimension,
+    hour_bucket,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a agency_dimension_counters row. */
+export async function insertAgencyDimensionCounters(
+  db: Db,
+  dimension: string,
+  day: string,
+  opts?: { id?: string; world_id?: string | null; total?: number; meaningful?: number; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("agency_dimension_counters",).values({
+    id,
+    dimension,
+    day,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_daily_plans row. */
+export async function insertActorDailyPlans(
+  db: Db,
+  actor_id: string,
+  plan_date: string,
+  summary: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    priority?: string;
+    created_at?: string;
+    reflection_step_count?: number;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_daily_plans",).values({
+    id,
+    actor_id,
+    plan_date,
+    summary,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_planned_activities row. */
+export async function insertActorPlannedActivities(
+  db: Db,
+  plan_id: string,
+  description: string,
+  opts?: { id?: string; score?: number; completed?: number; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_planned_activities",).values({
+    id,
+    plan_id,
+    description,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_chat_buffers row. */
+export async function insertActorChatBuffers(
+  db: Db,
+  actor_id: string,
+  partner_actor_id: string,
+  opts?: {
+    id?: string;
+    last_chat_at?: string;
+    consecutive_count?: number;
+    cooldown_minutes?: number;
+    max_consecutive_chats?: number;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_chat_buffers",).values({
+    id,
+    actor_id,
+    partner_actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_plan_revisions row. */
+export async function insertActorPlanRevisions(
+  db: Db,
+  plan_id: string,
+  revision_kind: string,
+  before_priority: string,
+  after_priority: string,
+  reason: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_plan_revisions",).values({
+    id,
+    plan_id,
+    revision_kind,
+    before_priority,
+    after_priority,
+    reason,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_story_points row. */
+export async function insertActorStoryPoints(
+  db: Db,
+  actor_id: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    balance?: number;
+    earned_total?: number;
+    spent_total?: number;
+    cap?: number | null;
+    last_earn_at?: string | null;
+    last_spend_at?: string | null;
+    last_earn_reason?: string | null;
+    last_spend_reason?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_story_points",).values({
+    id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a autonomy_budget row. */
+export async function insertAutonomyBudget(
+  db: Db,
+  scope_kind: string,
+  scope_id: string,
+  limit_name: string,
+  window_start_at: string,
+  opts?: { window_count?: number; updated_at?: string },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("autonomy_budget",).values({
+    scope_kind,
+    scope_id,
+    limit_name,
+    window_start_at,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a actor_wardrobe row. */
+export async function insertActorWardrobe(
+  db: Db,
+  actor_id: string,
+  wardrobe_item_id: string,
+  opts?: { id?: string; item_instance_id?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("actor_wardrobe",).values({
+    id,
+    actor_id,
+    wardrobe_item_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a npc_memories row. */
+export async function insertNpcMemories(
+  db: Db,
+  world_id: string,
+  npc_id: string,
+  content: string,
+  opts?: {
+    id?: string;
+    memory_type?: MemoryType;
+    importance?: number;
+    emotional_impact?: number;
+    participants?: string;
+    location_id?: string | null;
+    decay_rate?: number;
+    shared?: number;
+    created_at?: string;
+    last_reinforced_at?: string;
+    expires_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("npc_memories",).values({
+    id,
+    world_id,
+    npc_id,
+    content,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a npc_relationships row. */
+export async function insertNpcRelationships(
+  db: Db,
+  world_id: string,
+  npc_id: string,
+  target_id: string,
+  opts?: {
+    id?: string;
+    standing?: number;
+    relationship_type?: NpcRelationshipType;
+    emotional_bond?: number;
+    history?: string;
+    last_interaction_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("npc_relationships",).values({
+    id,
+    world_id,
+    npc_id,
+    target_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a karma_profiles row. */
+export async function insertKarmaProfiles(
+  db: Db,
+  world_id: string,
+  actor_id: string,
+  opts?: { id?: string; overall?: number; categories_json?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("karma_profiles",).values({
+    id,
+    world_id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a karma_events row. */
+export async function insertKarmaEvents(
+  db: Db,
+  world_id: string,
+  actor_id: string,
+  category: KarmaCategory,
+  delta: number,
+  opts?: { id?: string; reason?: string; occurred_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("karma_events",).values({
+    id,
+    world_id,
+    actor_id,
+    category,
+    delta,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a actor_lore_search_tokens row. */
+export async function insertActorLoreSearchTokens(
+  db: Db,
+  entry_id: string,
+  term: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("actor_lore_search_tokens",).values({
+    entry_id,
+    term,
+    scope,
+  } as any,).execute();
+}
+
 /** Insert a admin_character_overrides row. */
 export async function insertAdminCharacterOverrides(
   db: Db,
@@ -1285,41 +2217,6 @@ export async function insertCharacterArc(
     actor_id,
     current_stage,
     updated_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a growth_log row. */
-export async function insertGrowthLog(
-  db: Db,
-  actor_id: string,
-  axis: string,
-  event_type: string,
-  recorded_at: string,
-  opts?: {
-    id?: string;
-    status?: string;
-    subject_kind?: string | null;
-    subject_id?: string | null;
-    before_json?: string | null;
-    after_json?: string | null;
-    reason?: string;
-    source_event_id?: string | null;
-    confirmed_at?: string | null;
-    confirmed_by?: string | null;
-    created_at?: string | null;
-    updated_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("growth_log",).values({
-    id,
-    actor_id,
-    axis,
-    event_type,
-    recorded_at,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -1980,54 +2877,132 @@ export async function insertCharacters(
   return id;
 }
 
-/** Insert a emotions row. */
-export async function insertEmotions(
+/** Insert a personas row. */
+export async function insertPersonas(
   db: Db,
+  user_id: string,
   name: string,
-  display_name: string,
-  category: string,
-  valence: number,
-  arousal: number,
-  created_at: string,
-  opts?: { id?: string; icon?: string | null },
+  opts?: {
+    id?: string;
+    avatar_asset_id?: string | null;
+    description?: string | null;
+    title?: string | null;
+    is_default?: string;
+    created_at?: string;
+    updated_at?: string;
+    row_version?: number;
+    temperature?: number | null;
+    max_tokens?: number | null;
+    model?: string | null;
+  },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("emotions",).values({
+  await db.insertInto("personas",).values({
     id,
+    user_id,
     name,
-    display_name,
-    category,
-    valence,
-    arousal,
-    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a mood_events row. */
-export async function insertMoodEvents(
+/** Insert a character_license_history row. */
+export async function insertCharacterLicenseHistory(
   db: Db,
   actor_id: string,
-  event_type: string,
-  happiness_delta: number,
-  source: string,
-  created_at: string,
-  opts?: { id?: string; world_id?: string | null; mood_override?: string | null; source_id?: string | null },
+  license_type: string,
+  allow_derivatives: number,
+  allow_commercial: number,
+  share_alike: number,
+  changed_by: string,
+  opts?: { id?: string; custom_license_text?: string | null; attribution?: string | null; created_at?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mood_events",).values({
+  await db.insertInto("character_license_history",).values({
     id,
     actor_id,
-    event_type,
-    happiness_delta,
-    source,
-    created_at,
+    license_type,
+    allow_derivatives,
+    allow_commercial,
+    share_alike,
+    changed_by,
     ...restOpts,
   } as any,).execute();
   return id;
+}
+
+/** Insert a wardrobe_items row. */
+export async function insertWardrobeItems(
+  db: Db,
+  name: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    world_id?: string | null;
+    descriptor?: string;
+    tags?: string;
+    sort_order?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("wardrobe_items",).values({
+    id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a character_stat_allocation row. */
+export async function insertCharacterStatAllocation(
+  db: Db,
+  world_id: string,
+  allocated_str: number,
+  allocated_dex: number,
+  allocated_con: number,
+  allocated_int: number,
+  allocated_wis: number,
+  allocated_cha: number,
+  allocated_at: string,
+  opts: { actor_id: string; allocated_by_user_id?: string | null },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("character_stat_allocation",).values({
+    world_id,
+    allocated_str,
+    allocated_dex,
+    allocated_con,
+    allocated_int,
+    allocated_wis,
+    allocated_cha,
+    allocated_at,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).actor_id as string;
+}
+
+/** Insert a character_trait_assignments row. */
+export async function insertCharacterTraitAssignments(
+  db: Db,
+  actor_id: string,
+  trait_id: string,
+  world_id: string,
+  granted_at: string,
+  opts?: { granted_by_user_id?: string | null },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("character_trait_assignments",).values({
+    actor_id,
+    trait_id,
+    world_id,
+    granted_at,
+    ...restOpts,
+  } as any,).execute();
 }
 
 /** Insert a chat_background_assignments row. */
@@ -2174,6 +3149,8 @@ export async function insertChatParticipants(
     initiative?: number;
     muted_until?: string | null;
     banned_until?: string | null;
+    unread_count?: number;
+    last_read_created_at?: string | null;
   },
 ): Promise<void> {
   const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
@@ -2301,6 +3278,7 @@ export async function insertChats(
     federation_consented_at?: string | null;
     purpose?: string | null;
     timeline_id?: string;
+    visible_message_count?: number;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
@@ -2502,78 +3480,6 @@ export async function insertMessages(
   return id;
 }
 
-/** Insert a music_links row. */
-export async function insertMusicLinks(
-  db: Db,
-  chat_id: string,
-  sender_id: string,
-  service: string,
-  url: string,
-  title: string,
-  artist: string,
-  service_track_id: string,
-  service_url: string,
-  opts?: {
-    id?: string;
-    section_id?: string | null;
-    embed_html?: string | null;
-    thumbnail_url?: string | null;
-    duration_secs?: number | null;
-    is_playlist?: number;
-    track_count?: number | null;
-    explicit?: number;
-    year?: number | null;
-    genre?: string | null;
-    nsfw_hidden?: number;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("music_links",).values({
-    id,
-    chat_id,
-    sender_id,
-    service,
-    url,
-    title,
-    artist,
-    service_track_id,
-    service_url,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a proactive_messaging_config row. */
-export async function insertProactiveMessagingConfig(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  opts?: {
-    id?: string;
-    frequency?: string;
-    quiet_hours_start?: string | null;
-    quiet_hours_end?: string | null;
-    enabled?: number;
-    last_proactive_at?: string | null;
-    backoff_count?: number;
-    config_json?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("proactive_messaging_config",).values({
-    id,
-    chat_id,
-    actor_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a story_turns row. */
 export async function insertStoryTurns(
   db: Db,
@@ -2643,34 +3549,388 @@ export async function insertVnChoices(
   return id;
 }
 
-/** Insert a personas row. */
-export async function insertPersonas(
+/** Insert a message_search_tokens row. */
+export async function insertMessageSearchTokens(
   db: Db,
-  user_id: string,
-  name: string,
+  message_id: string,
+  term: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("message_search_tokens",).values({
+    message_id,
+    term,
+    scope,
+  } as any,).execute();
+}
+
+/** Insert a rpg_questions row. */
+export async function insertRpgQuestions(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  type: string,
+  prompt: string,
+  options: string,
   opts?: {
     id?: string;
-    avatar_asset_id?: string | null;
-    description?: string | null;
-    title?: string | null;
-    is_default?: string;
+    time_limit?: number | null;
+    required_choice?: number;
+    status?: string;
+    selected_option_id?: string | null;
     created_at?: string;
-    updated_at?: string;
-    row_version?: number;
-    temperature?: number | null;
-    max_tokens?: number | null;
-    model?: string | null;
+    answered_at?: string | null;
+    input_kind?: string;
+    answer_value?: string | null;
+    min_value?: number | null;
+    max_value?: number | null;
+    effect?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("personas",).values({
+  await db.insertInto("rpg_questions",).values({
     id,
-    user_id,
+    chat_id,
+    actor_id,
+    type,
+    prompt,
+    options,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a interaction_logs row. */
+export async function insertInteractionLogs(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  command: string,
+  category: InteractionCategory,
+  skill: string,
+  difficulty: number,
+  outcome: InteractionOutcome,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    target_actor_id?: string | null;
+    location_id?: string | null;
+    roll_sides?: number | null;
+    roll_count?: number | null;
+    roll_modifier?: number | null;
+    roll_mode?: string | null;
+    roll_values?: string | null;
+    roll_raw_total?: number | null;
+    roll_total?: number | null;
+    roll_margin?: number | null;
+    action_points?: number;
+    modifiers?: string;
+    result?: string;
+    state_changes?: string;
+    created_at?: string;
+    agency_mode?: AgencyMode;
+    action_type?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("interaction_logs",).values({
+    id,
+    chat_id,
+    actor_id,
+    command,
+    category,
+    skill,
+    difficulty,
+    outcome,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_branches row. */
+export async function insertChatBranches(
+  db: Db,
+  chat_id: string,
+  parent_message_id: string,
+  name: string,
+  opts?: { id?: string; created_at?: string; is_active?: number },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_branches",).values({
+    id,
+    chat_id,
+    parent_message_id,
     name,
     ...restOpts,
   } as any,).execute();
   return id;
+}
+
+/** Insert a chat_wardrobe_overrides row. */
+export async function insertChatWardrobeOverrides(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  outfit_id: string,
+  opts?: { id?: string; changed_by?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_wardrobe_overrides",).values({
+    id,
+    chat_id,
+    actor_id,
+    outfit_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a branch_merges row. */
+export async function insertBranchMerges(
+  db: Db,
+  chat_id: string,
+  base_message_id: string,
+  mode: string,
+  created_by: string,
+  opts?: {
+    id?: string;
+    status?: string;
+    result_message_id?: string | null;
+    merged_branch_id?: string | null;
+    idempotency_key?: string | null;
+    metadata?: string | null;
+    created_at?: string;
+    confirmed_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("branch_merges",).values({
+    id,
+    chat_id,
+    base_message_id,
+    mode,
+    created_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a branch_merge_sources row. */
+export async function insertBranchMergeSources(
+  db: Db,
+  merge_id: string,
+  ordinal: number,
+  tip_message_id: string,
+  opts?: { branch_id?: string | null },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("branch_merge_sources",).values({
+    merge_id,
+    ordinal,
+    tip_message_id,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a vn_questions row. */
+export async function insertVnQuestions(
+  db: Db,
+  chat_id: string,
+  scene_index: number,
+  question_text: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    question_type?: string;
+    speaker_id?: string | null;
+    options?: string;
+    next_scene_id?: string | null;
+    consequences?: string;
+    relationship_impact?: string;
+    mood_impact?: string;
+    status?: string;
+    selected_option_id?: string | null;
+    answered_at?: string | null;
+    applied_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("vn_questions",).values({
+    id,
+    chat_id,
+    scene_index,
+    question_text,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a vn_choice_selections row. */
+export async function insertVnChoiceSelections(
+  db: Db,
+  chat_id: string,
+  choice_id: string,
+  scene_index: number,
+  created_at: string,
+  opts?: {
+    id?: string;
+    relationship_impact?: string;
+    mood_impact?: string;
+    selected_by?: string | null;
+    applied_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("vn_choice_selections",).values({
+    id,
+    chat_id,
+    choice_id,
+    scene_index,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a message_polls row. */
+export async function insertMessagePolls(
+  db: Db,
+  message_id: string,
+  question: string,
+  options: string,
+  created_by: string,
+  opts?: { id?: string; multi?: number; closes_at?: string | null; closed_at?: string | null; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("message_polls",).values({
+    id,
+    message_id,
+    question,
+    options,
+    created_by,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a poll_votes row. */
+export async function insertPollVotes(
+  db: Db,
+  poll_id: string,
+  user_id: string,
+  option_idx: number,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("poll_votes",).values({
+    id,
+    poll_id,
+    user_id,
+    option_idx,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a immersion_failed_checks row. */
+export async function insertImmersionFailedChecks(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  blocked_action: string,
+  reason: string,
+  opts?: { id?: string; source?: string; created_at?: string; resolved_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("immersion_failed_checks",).values({
+    id,
+    chat_id,
+    actor_id,
+    blocked_action,
+    reason,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a immersion_decision_log row. */
+export async function insertImmersionDecisionLog(
+  db: Db,
+  chat_id: string,
+  actor_id: string,
+  severity: string,
+  opts?: {
+    id?: string;
+    source?: string;
+    rule_id?: string | null;
+    engine?: string;
+    claims?: string;
+    state_snapshot?: string;
+    verdict?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("immersion_decision_log",).values({
+    id,
+    chat_id,
+    actor_id,
+    severity,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_owners row. */
+export async function insertChatOwners(
+  db: Db,
+  chat_id: string,
+  user_id: string,
+  opts?: { id?: string; granted_by?: string | null; granted_at?: string; reason?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("chat_owners",).values({
+    id,
+    chat_id,
+    user_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a chat_list_filters row. */
+export async function insertChatListFilters(
+  db: Db,
+  updated_at: string,
+  opts: {
+    user_id: string;
+    chat_type?: string;
+    archived?: string;
+    sort?: string;
+    world_id?: string | null;
+    min_messages?: number | null;
+    max_messages?: number | null;
+    updated_since?: string | null;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("chat_list_filters",).values({
+    updated_at,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).user_id as string;
 }
 
 /** Insert a items row. */
@@ -2701,35 +3961,6 @@ export async function insertItems(
     world_id,
     name,
     category,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a npc_states row. */
-export async function insertNpcStates(
-  db: Db,
-  actor_id: string,
-  world_id: string,
-  opts?: {
-    id?: string;
-    location_id?: string | null;
-    health?: number;
-    mental_state?: string;
-    knowledge?: string;
-    relationships?: string;
-    inventory?: string;
-    schedule?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("npc_states",).values({
-    id,
-    actor_id,
-    world_id,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -2799,68 +4030,6 @@ export async function insertQuests(
     name,
     type,
     target,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a shadow_notes row. */
-export async function insertShadowNotes(
-  db: Db,
-  chat_id: string,
-  type: ShadowNoteType,
-  content: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    status?: ShadowNoteStatus;
-    visibility?: ShadowNoteVisibility;
-    expires_at?: string | null;
-    author_type?: ShadowNoteAuthorType;
-    content_version?: number;
-    record_hash?: string;
-    trigger_condition?: string | null;
-    revealed_to?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("shadow_notes",).values({
-    id,
-    chat_id,
-    type,
-    content,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a whitenotes row. */
-export async function insertWhitenotes(
-  db: Db,
-  chat_id: string,
-  type: WhiteneoteType,
-  content: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    priority?: number;
-    scope?: WhiteneoteScope;
-    expires_at?: string | null;
-    content_version?: number;
-    record_hash?: string;
-    message_id?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("whitenotes",).values({
-    id,
-    chat_id,
-    type,
-    content,
-    created_at,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -3189,7 +4358,7 @@ export async function insertProfessions(
   discipline: CraftingDiscipline,
   created_at: string,
   updated_at: string,
-  opts?: { id?: string; world_id?: string | null; level?: number; experience?: number; title?: ProfessionTitle },
+  opts?: { id?: string; level?: number; experience?: number; title?: ProfessionTitle; world_id?: string | null },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
@@ -3407,39 +4576,6 @@ export async function insertPlayerAchievements(
   return id;
 }
 
-/** Insert a playthroughs row. */
-export async function insertPlaythroughs(
-  db: Db,
-  player_id: string,
-  world_id: string,
-  opts?: {
-    id?: string;
-    playthrough_number?: number;
-    difficulty?: string;
-    status?: PlaythroughStatus;
-    ending_id?: string | null;
-    ending_type?: string | null;
-    completion_time?: number;
-    choices_made?: number;
-    secrets_found?: number;
-    achievements_unlocked?: number;
-    metadata?: string;
-    created_at?: string;
-    updated_at?: string;
-    completed_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("playthroughs",).values({
-    id,
-    player_id,
-    world_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a trade_history row. */
 export async function insertTradeHistory(
   db: Db,
@@ -3496,803 +4632,6 @@ export async function insertXpLedger(
   return id;
 }
 
-/** Insert a blog_comments row. */
-export async function insertBlogComments(
-  db: Db,
-  post_id: string,
-  author_id: string,
-  body: string,
-  opts?: { id?: string; status?: string; created_at?: string; parent_comment_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("blog_comments",).values({
-    id,
-    post_id,
-    author_id,
-    body,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a blog_follows row. */
-export async function insertBlogFollows(
-  db: Db,
-  follower_id: string,
-  author_id: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("blog_follows",).values({
-    id,
-    follower_id,
-    author_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a blog_posts row. */
-export async function insertBlogPosts(
-  db: Db,
-  author_id: string,
-  title: string,
-  body: string,
-  opts?: {
-    id?: string;
-    visibility?: string;
-    author_type?: string;
-    status?: string;
-    category?: string | null;
-    world_id?: string | null;
-    character_id?: string | null;
-    scheduled_at?: string | null;
-    published_at?: string | null;
-    view_count?: number;
-    metadata?: string;
-    created_at?: string;
-    updated_at?: string;
-    content_version?: number;
-    record_hash?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("blog_posts",).values({
-    id,
-    author_id,
-    title,
-    body,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a blog_rag_sources row. */
-export async function insertBlogRagSources(
-  db: Db,
-  post_id: string,
-  source_type: string,
-  uri: string,
-  title: string,
-  opts?: { id?: string; relevance_score?: number; snippet?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("blog_rag_sources",).values({
-    id,
-    post_id,
-    source_type,
-    uri,
-    title,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a blog_tags row. */
-export async function insertBlogTags(
-  db: Db,
-  post_id: string,
-  tag: string,
-  opts?: { id?: string; created_at?: string | null; updated_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("blog_tags",).values({
-    id,
-    post_id,
-    tag,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_memories row. */
-export async function insertActorMemories(
-  db: Db,
-  actor_id: string,
-  content: string,
-  opts?: {
-    id?: string;
-    source_chat_id?: string | null;
-    memory_type?: MemoryType;
-    confidence?: number;
-    importance?: number;
-    keywords?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    expires_at?: string | null;
-    decay_rate?: number;
-    strength?: number;
-    last_accessed_at?: string | null;
-    source_message_id?: string | null;
-    context?: string | null;
-    world_id?: string | null;
-    user_id?: string | null;
-    scope?: string;
-    pinned?: PinnedState;
-    privacy?: string;
-    review_status?: MemoryReviewStatus;
-    shareability?: string | null;
-    source_message_ids?: string | null;
-    source_chat_ids?: string | null;
-    extraction_kind?: ExtractionKind | null;
-    context_window_start?: string | null;
-    context_window_end?: string | null;
-    emotion_impact?: string | null;
-    timeline_id?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_memories",).values({
-    id,
-    actor_id,
-    content,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a memory_embeddings row. */
-export async function insertMemoryEmbeddings(
-  db: Db,
-  vector_blob: Uint8Array,
-  created_at: number,
-  opts: { memory_id: string; model?: string; dimensions?: number },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("memory_embeddings",).values({
-    vector_blob,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).memory_id as string;
-}
-
-/** Insert a generation_attempts row. */
-export async function insertGenerationAttempts(
-  db: Db,
-  chat_id: string,
-  parent_message_id: string,
-  actor_id: string,
-  idempotency_key: string,
-  model_id: string,
-  provider: string,
-  opts?: {
-    id?: string;
-    status?: GenerationStatus;
-    cancel_reason?: CancelReason | null;
-    cancel_reason_detail?: string | null;
-    cancel_source?: CancelSource | null;
-    abort_signal_id?: string | null;
-    started_at?: string;
-    completed_at?: string | null;
-    prompt_tokens?: number | null;
-    completion_tokens?: number | null;
-    total_tokens?: number | null;
-    generation_time_ms?: number | null;
-    error_message?: string | null;
-    streaming_chunks_received?: number | null;
-    streaming_chars_received?: number | null;
-    repetition_score?: number | null;
-    repetition_analysis?: string | null;
-    policy_analysis?: string | null;
-    response_count_in_turn?: number | null;
-    parent_attempt_id?: string | null;
-    continuation_count?: number | null;
-    partial_content?: string | null;
-    step_index?: number | null;
-    total_steps?: number | null;
-    created_at?: string;
-    updated_at?: string;
-    last_rendered_chunk_index?: number | null;
-    delivery_confirmed_at?: string | null;
-    side_effect_jobs_cancelled?: number | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("generation_attempts",).values({
-    id,
-    chat_id,
-    parent_message_id,
-    actor_id,
-    idempotency_key,
-    model_id,
-    provider,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a synthetic_data row. */
-export async function insertSyntheticData(
-  db: Db,
-  type: SyntheticDataType,
-  source_data: string,
-  generated_cases: string,
-  opts?: {
-    id?: string;
-    chat_id?: string | null;
-    world_id?: string | null;
-    metadata?: string;
-    status?: SyntheticDataStatus;
-    created_at?: string;
-    validated_at?: string | null;
-    validated_by?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("synthetic_data",).values({
-    id,
-    type,
-    source_data,
-    generated_cases,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a generation_jobs row. */
-export async function insertGenerationJobs(
-  db: Db,
-  kind: string,
-  opts?: {
-    id?: string;
-    actor_id?: string | null;
-    status?: string;
-    payload?: string;
-    results?: string;
-    error_message?: string | null;
-    started_at?: string | null;
-    completed_at?: string | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("generation_jobs",).values({
-    id,
-    kind,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a prompt_templates row. */
-export async function insertPromptTemplates(
-  db: Db,
-  owner_id: string,
-  name: string,
-  opts?: {
-    id?: string;
-    modality?: TemplateModality;
-    description?: string | null;
-    model_family?: string | null;
-    detail_level?: TemplateDetailLevel;
-    payload?: string;
-    created_at?: string;
-    updated_at?: string;
-    is_default?: DefaultState;
-    enabled?: LoreEntryStatus;
-    lora_slots?: string | null;
-    min_vram?: number | null;
-    probe_status?: WorkflowProbeStatus;
-    params_reviewed?: number;
-    license?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("prompt_templates",).values({
-    id,
-    owner_id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a content_flags row. */
-export async function insertContentFlags(
-  db: Db,
-  reporter_id: string,
-  content_type: string,
-  content_id: string,
-  flag_reason: string,
-  opts?: {
-    id?: string;
-    chat_id?: string | null;
-    world_id?: string | null;
-    description?: string | null;
-    status?: string;
-    resolution?: string | null;
-    resolved_by?: string | null;
-    resolved_at?: string | null;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("content_flags",).values({
-    id,
-    reporter_id,
-    content_type,
-    content_id,
-    flag_reason,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a location_nsfw_config row. */
-export async function insertLocationNsfwConfig(
-  db: Db,
-  location_id: string,
-  location_type: NsfwLocationType,
-  created_at: string,
-  updated_at: string,
-  opts?: {
-    id?: string;
-    privacy_level?: string;
-    discovery_chance?: number;
-    atmosphere?: string;
-    equipment?: string;
-    risks?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_nsfw_config",).values({
-    id,
-    location_id,
-    location_type,
-    created_at,
-    updated_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a moderation_actions row. */
-export async function insertModerationActions(
-  db: Db,
-  action_type: string,
-  target_user_id: string,
-  performed_by: string,
-  reason: string,
-  scope: string,
-  opts?: {
-    id?: string;
-    scope_id?: string | null;
-    metadata?: string;
-    expires_at?: string | null;
-    created_at?: string;
-    superseded_by?: string | null;
-    deleted_at?: string | null;
-    deleted_by?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("moderation_actions",).values({
-    id,
-    action_type,
-    target_user_id,
-    performed_by,
-    reason,
-    scope,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a moderation_appeals row. */
-export async function insertModerationAppeals(
-  db: Db,
-  user_id: string,
-  action_id: string,
-  reason: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    status?: string;
-    reviewed_by?: string | null;
-    review_note?: string | null;
-    updated_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("moderation_appeals",).values({
-    id,
-    user_id,
-    action_id,
-    reason,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a nsfw_consent_state row. */
-export async function insertNsfwConsentState(
-  db: Db,
-  user_id: string,
-  chat_id: string,
-  action: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    scope?: string;
-    reason?: string | null;
-    revoked_at?: string | null;
-    updated_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("nsfw_consent_state",).values({
-    id,
-    user_id,
-    chat_id,
-    action,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a nsfw_encounters row. */
-export async function insertNsfwEncounters(
-  db: Db,
-  encounter_type: NsfwEncounterType,
-  participants: string,
-  created_at: string,
-  updated_at: string,
-  opts?: {
-    id?: string;
-    world_id?: string | null;
-    intensity?: ContentIntensity;
-    narrative_style?: NarrativeStyle;
-    phases?: string;
-    current_phase?: number;
-    outcomes?: string;
-    content_tags?: string;
-    status?: NsfwEncounterStatus;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("nsfw_encounters",).values({
-    id,
-    encounter_type,
-    participants,
-    created_at,
-    updated_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a nsfw_user_preferences row. */
-export async function insertNsfwUserPreferences(
-  db: Db,
-  user_id: string,
-  opts?: {
-    id?: string;
-    nsfw_enabled?: number;
-    max_rating?: string;
-    access_status?: NsfwAccessStatus;
-    shadow_nsfw?: number;
-    block_reason?: string | null;
-    banned_at?: string | null;
-    banned_by?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    nsfw_blur_media?: number;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("nsfw_user_preferences",).values({
-    id,
-    user_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a e2e_group_wraps row. */
-export async function insertE2eGroupWraps(
-  db: Db,
-  group_session_id: string,
-  recipient_actor_id: string,
-  wrapped_key: string,
-  sender_eph_pub_jwk: string,
-  chain_index: number,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("e2e_group_wraps",).values({
-    id,
-    group_session_id,
-    recipient_actor_id,
-    wrapped_key,
-    sender_eph_pub_jwk,
-    chain_index,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a e2e_sessions row. */
-export async function insertE2eSessions(
-  db: Db,
-  sender_actor_id: string,
-  opts?: {
-    id?: string;
-    recipient_actor_id?: string | null;
-    chat_id?: string | null;
-    kind?: string;
-    created_at?: string;
-    last_message_at?: string | null;
-    revoked_at?: string | null;
-    root_key?: Uint8Array | null;
-    sending_chain_key?: Uint8Array | null;
-    receiving_chain_key?: Uint8Array | null;
-    send_count?: number;
-    recv_count?: number;
-    ephemeral_public_jwk?: string | null;
-    ephemeral_private_jwk?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("e2e_sessions",).values({
-    id,
-    sender_actor_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a e2e_skipped_keys row. */
-export async function insertE2eSkippedKeys(
-  db: Db,
-  session_id: string,
-  dh_public_jwk: string,
-  counter: number,
-  encrypted_message_key: string,
-  expires_at: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("e2e_skipped_keys",).values({
-    id,
-    session_id,
-    dh_public_jwk,
-    counter,
-    encrypted_message_key,
-    expires_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a e2e_skipped_message_keys row. */
-export async function insertE2eSkippedMessageKeys(
-  db: Db,
-  session_id: string,
-  recipient_actor_id: string,
-  chain_index: number,
-  message_key: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("e2e_skipped_message_keys",).values({
-    id,
-    session_id,
-    recipient_actor_id,
-    chain_index,
-    message_key,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a message_search_tokens row. */
-export async function insertMessageSearchTokens(
-  db: Db,
-  message_id: string,
-  term: string,
-  scope: string,
-): Promise<void> {
-  await db.insertInto("message_search_tokens",).values({
-    message_id,
-    term,
-    scope,
-  } as any,).execute();
-}
-
-/** Insert a workflow_sessions row. */
-export async function insertWorkflowSessions(
-  db: Db,
-  workflow_id: string,
-  opts: { chat_id: string; step_values?: string; confirmed?: number; updated_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("workflow_sessions",).values({
-    workflow_id,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).chat_id as string;
-}
-
-/** Insert a mesh_peers row. */
-export async function insertMeshPeers(
-  db: Db,
-  opts: {
-    origin: string;
-    state?: string;
-    capabilities?: string;
-    last_seen?: string | null;
-    created_at?: string;
-    capacity_bytes?: number | null;
-    display_name?: string | null;
-    instance_kind?: PeerInstanceKind;
-    auth_mode?: PeerAuthMode;
-    workload_trust?: number;
-    allowed_workload_classes?: string;
-    sticky_enabled?: number;
-    shared_token_enc?: string | null;
-    key_version?: number;
-  },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("mesh_peers",).values({
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).origin as string;
-}
-
-/** Insert a mesh_negotiations row. */
-export async function insertMeshNegotiations(
-  db: Db,
-  peer_origin: string,
-  opts?: { id?: string; state?: string; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_negotiations",).values({
-    id,
-    peer_origin,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a mesh_reservations row. */
-export async function insertMeshReservations(
-  db: Db,
-  peer_origin: string,
-  content_hash: string,
-  size_bytes: number,
-  expires_at: string,
-  opts?: { id?: string; content_type?: string; state?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_reservations",).values({
-    id,
-    peer_origin,
-    content_hash,
-    size_bytes,
-    expires_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a mesh_deliveries row. */
-export async function insertMeshDeliveries(
-  db: Db,
-  origin: string,
-  content_hash: string,
-  clock: number,
-  opts: { content_id: string; received_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("mesh_deliveries",).values({
-    origin,
-    content_hash,
-    clock,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).content_id as string;
-}
-
-/** Insert a mesh_inbound_keys row. */
-export async function insertMeshInboundKeys(
-  db: Db,
-  encrypted_key: string,
-  opts: { peer_origin: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("mesh_inbound_keys",).values({
-    encrypted_key,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).peer_origin as string;
-}
-
-/** Insert a asset_tags row. */
-export async function insertAssetTags(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("asset_tags",).values({
-    id,
-    asset_id,
-    tag,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a asset_tag_dismissals row. */
-export async function insertAssetTagDismissals(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  user_id: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("asset_tag_dismissals",).values({
-    id,
-    asset_id,
-    tag,
-    user_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a rotation_history row. */
 export async function insertRotationHistory(
   db: Db,
@@ -4339,153 +4678,6 @@ export async function insertQuestRewardLedger(
   return id;
 }
 
-/** Insert a character_license_history row. */
-export async function insertCharacterLicenseHistory(
-  db: Db,
-  actor_id: string,
-  license_type: string,
-  allow_derivatives: number,
-  allow_commercial: number,
-  share_alike: number,
-  changed_by: string,
-  opts?: { id?: string; custom_license_text?: string | null; attribution?: string | null; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("character_license_history",).values({
-    id,
-    actor_id,
-    license_type,
-    allow_derivatives,
-    allow_commercial,
-    share_alike,
-    changed_by,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a travel_routes row. */
-export async function insertTravelRoutes(
-  db: Db,
-  world_id: string,
-  name: string,
-  kind: TransportKind,
-  opts?: { id?: string; waypoints?: string; loop?: number; seconds_per_unit?: number; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("travel_routes",).values({
-    id,
-    world_id,
-    name,
-    kind,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a travel_route_stops row. */
-export async function insertTravelRouteStops(
-  db: Db,
-  route_id: string,
-  location_id: string,
-  stop_order: number,
-  opts?: {
-    id?: string;
-    dwell_seconds?: number;
-    coord_x?: number | null;
-    coord_y?: number | null;
-    coord_z?: number | null;
-    created_at?: string | null;
-    updated_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("travel_route_stops",).values({
-    id,
-    route_id,
-    location_id,
-    stop_order,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_locations row. */
-export async function insertActorLocations(
-  db: Db,
-  physical_location_id: string,
-  spatial_location_id: string,
-  opts: { actor_id: string; entered_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("actor_locations",).values({
-    physical_location_id,
-    spatial_location_id,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).actor_id as string;
-}
-
-/** Insert a rpg_questions row. */
-export async function insertRpgQuestions(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  type: string,
-  prompt: string,
-  options: string,
-  opts?: {
-    id?: string;
-    time_limit?: number | null;
-    required_choice?: number;
-    status?: string;
-    selected_option_id?: string | null;
-    created_at?: string;
-    answered_at?: string | null;
-    input_kind?: string;
-    answer_value?: string | null;
-    min_value?: number | null;
-    max_value?: number | null;
-    effect?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("rpg_questions",).values({
-    id,
-    chat_id,
-    actor_id,
-    type,
-    prompt,
-    options,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a memory_audit_log row. */
-export async function insertMemoryAuditLog(
-  db: Db,
-  memory_id: string,
-  actor_id: string,
-  action: string,
-  opts?: { id?: string; user_id?: string | null; details?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("memory_audit_log",).values({
-    id,
-    memory_id,
-    actor_id,
-    action,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a status_effect row. */
 export async function insertStatusEffect(
   db: Db,
@@ -4519,260 +4711,6 @@ export async function insertStatusEffect(
   return id;
 }
 
-/** Insert a interaction_logs row. */
-export async function insertInteractionLogs(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  command: string,
-  category: InteractionCategory,
-  skill: string,
-  difficulty: number,
-  outcome: InteractionOutcome,
-  opts?: {
-    id?: string;
-    world_id?: string | null;
-    target_actor_id?: string | null;
-    location_id?: string | null;
-    roll_sides?: number | null;
-    roll_count?: number | null;
-    roll_modifier?: number | null;
-    roll_mode?: string | null;
-    roll_values?: string | null;
-    roll_raw_total?: number | null;
-    roll_total?: number | null;
-    roll_margin?: number | null;
-    action_points?: number;
-    modifiers?: string;
-    result?: string;
-    state_changes?: string;
-    created_at?: string;
-    agency_mode?: AgencyMode;
-    action_type?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("interaction_logs",).values({
-    id,
-    chat_id,
-    actor_id,
-    command,
-    category,
-    skill,
-    difficulty,
-    outcome,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a agency_play_counters row. */
-export async function insertAgencyPlayCounters(
-  db: Db,
-  dimension: string,
-  hour_bucket: string,
-  opts?: {
-    id?: string;
-    world_id?: string | null;
-    chat_id?: string | null;
-    actor_id?: string | null;
-    count?: number;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("agency_play_counters",).values({
-    id,
-    dimension,
-    hour_bucket,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a agency_dimension_counters row. */
-export async function insertAgencyDimensionCounters(
-  db: Db,
-  dimension: string,
-  day: string,
-  opts?: { id?: string; world_id?: string | null; total?: number; meaningful?: number; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("agency_dimension_counters",).values({
-    id,
-    dimension,
-    day,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_daily_plans row. */
-export async function insertActorDailyPlans(
-  db: Db,
-  actor_id: string,
-  plan_date: string,
-  summary: string,
-  opts?: {
-    id?: string;
-    world_id?: string | null;
-    priority?: string;
-    created_at?: string;
-    reflection_step_count?: number;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_daily_plans",).values({
-    id,
-    actor_id,
-    plan_date,
-    summary,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_planned_activities row. */
-export async function insertActorPlannedActivities(
-  db: Db,
-  plan_id: string,
-  description: string,
-  opts?: { id?: string; score?: number; completed?: number; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_planned_activities",).values({
-    id,
-    plan_id,
-    description,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_chat_buffers row. */
-export async function insertActorChatBuffers(
-  db: Db,
-  actor_id: string,
-  partner_actor_id: string,
-  opts?: {
-    id?: string;
-    last_chat_at?: string;
-    consecutive_count?: number;
-    cooldown_minutes?: number;
-    max_consecutive_chats?: number;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_chat_buffers",).values({
-    id,
-    actor_id,
-    partner_actor_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_plan_revisions row. */
-export async function insertActorPlanRevisions(
-  db: Db,
-  plan_id: string,
-  revision_kind: string,
-  before_priority: string,
-  after_priority: string,
-  reason: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_plan_revisions",).values({
-    id,
-    plan_id,
-    revision_kind,
-    before_priority,
-    after_priority,
-    reason,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a chat_branches row. */
-export async function insertChatBranches(
-  db: Db,
-  chat_id: string,
-  parent_message_id: string,
-  name: string,
-  opts?: { id?: string; created_at?: string; is_active?: number },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("chat_branches",).values({
-    id,
-    chat_id,
-    parent_message_id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a model_comparison_runs row. */
-export async function insertModelComparisonRuns(
-  db: Db,
-  user_id: string,
-  prompt: string,
-  results: string,
-  created_at: string,
-  opts?: { id?: string; ratings?: string; metadata?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("model_comparison_runs",).values({
-    id,
-    user_id,
-    prompt,
-    results,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_story_points row. */
-export async function insertActorStoryPoints(
-  db: Db,
-  actor_id: string,
-  opts?: {
-    id?: string;
-    world_id?: string | null;
-    balance?: number;
-    earned_total?: number;
-    spent_total?: number;
-    cap?: number | null;
-    last_earn_at?: string | null;
-    last_spend_at?: string | null;
-    last_earn_reason?: string | null;
-    last_spend_reason?: string | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_story_points",).values({
-    id,
-    actor_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a game_states row. */
 export async function insertGameStates(
   db: Db,
@@ -4787,46 +4725,6 @@ export async function insertGameStates(
     ...restOpts,
   } as any,).execute();
   return id;
-}
-
-/** Insert a autonomy_budget row. */
-export async function insertAutonomyBudget(
-  db: Db,
-  scope_kind: string,
-  scope_id: string,
-  limit_name: string,
-  window_start_at: string,
-  opts?: { window_count?: number; updated_at?: string },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("autonomy_budget",).values({
-    scope_kind,
-    scope_id,
-    limit_name,
-    window_start_at,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a world_simulation_state row. */
-export async function insertWorldSimulationState(
-  db: Db,
-  next_tick_at: string,
-  opts: {
-    world_id: string;
-    paused?: number;
-    last_run_at?: string | null;
-    last_error?: string | null;
-    tick_count?: number;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("world_simulation_state",).values({
-    next_tick_at,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).world_id as string;
 }
 
 /** Insert a carriage_records row. */
@@ -4846,572 +4744,6 @@ export async function insertCarriageRecords(
     scope,
     payload,
     created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a wardrobe_items row. */
-export async function insertWardrobeItems(
-  db: Db,
-  name: string,
-  opts?: {
-    id?: string;
-    actor_id?: string | null;
-    world_id?: string | null;
-    descriptor?: string;
-    tags?: string;
-    sort_order?: number;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("wardrobe_items",).values({
-    id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a actor_wardrobe row. */
-export async function insertActorWardrobe(
-  db: Db,
-  actor_id: string,
-  wardrobe_item_id: string,
-  opts?: { id?: string; item_instance_id?: string | null; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("actor_wardrobe",).values({
-    id,
-    actor_id,
-    wardrobe_item_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a chat_wardrobe_overrides row. */
-export async function insertChatWardrobeOverrides(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  outfit_id: string,
-  opts?: { id?: string; changed_by?: string | null; created_at?: string; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("chat_wardrobe_overrides",).values({
-    id,
-    chat_id,
-    actor_id,
-    outfit_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a mesh_dek_exports row. */
-export async function insertMeshDekExports(
-  db: Db,
-  chat_id: string,
-  key_id: string,
-  peer_origin: string,
-  sender_origin: string,
-  opts?: { id?: string; created_at?: string; revoked_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_dek_exports",).values({
-    id,
-    chat_id,
-    key_id,
-    peer_origin,
-    sender_origin,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a mesh_outbox row. */
-export async function insertMeshOutbox(
-  db: Db,
-  target_origin: string,
-  content_id: string,
-  envelope: string,
-  next_attempt_at: string,
-  opts?: { id?: string; attempts?: number; status?: string; created_at?: string; chat_id?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("mesh_outbox",).values({
-    id,
-    target_origin,
-    content_id,
-    envelope,
-    next_attempt_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a task_dependencies row. */
-export async function insertTaskDependencies(
-  db: Db,
-  task_id: string,
-  depends_on_task_id: string,
-  opts?: { on_failure?: string; created_at?: string },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("task_dependencies",).values({
-    task_id,
-    depends_on_task_id,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a travel_parties row. */
-export async function insertTravelParties(
-  db: Db,
-  world_id: string,
-  name: string,
-  opts?: {
-    id?: string;
-    kind?: string;
-    cadence?: string;
-    route?: string;
-    route_index?: number;
-    steps_per_tick?: number;
-    travel_progress?: number;
-    current_location_id?: string | null;
-    current_tick?: number;
-    status?: string;
-    blocked_until_tick?: number;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("travel_parties",).values({
-    id,
-    world_id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a npc_migrations row. */
-export async function insertNpcMigrations(
-  db: Db,
-  world_id: string,
-  actor_id: string,
-  depart_tick: number,
-  arrive_tick: number,
-  opts?: {
-    id?: string;
-    origin_location_id?: string | null;
-    destination_location_id?: string | null;
-    cadence?: string;
-    status?: string;
-    last_depart_tick?: number;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("npc_migrations",).values({
-    id,
-    world_id,
-    actor_id,
-    depart_tick,
-    arrive_tick,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_travel_budget row. */
-export async function insertWorldTravelBudget(
-  db: Db,
-  opts: { world_id: string; spent?: number; ceiling?: number; window_start_tick?: number; updated_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("world_travel_budget",).values({
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).world_id as string;
-}
-
-/** Insert a world_event_log row. */
-export async function insertWorldEventLog(
-  db: Db,
-  world_id: string,
-  event_type: string,
-  tick_index: number,
-  dedupe_key: string,
-  opts?: { id?: string; subject_id?: string | null; actor_id?: string | null; payload?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_event_log",).values({
-    id,
-    world_id,
-    event_type,
-    tick_index,
-    dedupe_key,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a location_discovery row. */
-export async function insertLocationDiscovery(
-  db: Db,
-  world_id: string,
-  location_id: string,
-  actor_id: string,
-  opts?: {
-    progress?: number;
-    last_explored_tick?: number;
-    discovered?: number;
-    discovered_tick?: number | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("location_discovery",).values({
-    world_id,
-    location_id,
-    actor_id,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a scheduled_messages row. */
-export async function insertScheduledMessages(
-  db: Db,
-  chat_id: string,
-  author_id: string,
-  body: string,
-  send_at: string,
-  opts?: { id?: string; status?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("scheduled_messages",).values({
-    id,
-    chat_id,
-    author_id,
-    body,
-    send_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a message_reminders row. */
-export async function insertMessageReminders(
-  db: Db,
-  message_id: string,
-  user_id: string,
-  remind_at: string,
-  opts?: { id?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("message_reminders",).values({
-    id,
-    message_id,
-    user_id,
-    remind_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a branch_merges row. */
-export async function insertBranchMerges(
-  db: Db,
-  chat_id: string,
-  base_message_id: string,
-  mode: string,
-  created_by: string,
-  opts?: {
-    id?: string;
-    status?: string;
-    result_message_id?: string | null;
-    merged_branch_id?: string | null;
-    idempotency_key?: string | null;
-    metadata?: string | null;
-    created_at?: string;
-    confirmed_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("branch_merges",).values({
-    id,
-    chat_id,
-    base_message_id,
-    mode,
-    created_by,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a branch_merge_sources row. */
-export async function insertBranchMergeSources(
-  db: Db,
-  merge_id: string,
-  ordinal: number,
-  tip_message_id: string,
-  opts?: { branch_id?: string | null },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("branch_merge_sources",).values({
-    merge_id,
-    ordinal,
-    tip_message_id,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a plan_items row. */
-export async function insertPlanItems(
-  db: Db,
-  owner_id: string,
-  title: string,
-  opts?: {
-    id?: string;
-    chat_id?: string | null;
-    state?: string;
-    kind?: string;
-    position?: number;
-    parent_id?: string | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("plan_items",).values({
-    id,
-    owner_id,
-    title,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a plan_links row. */
-export async function insertPlanLinks(
-  db: Db,
-  from_id: string,
-  to_id: string,
-  relation: string,
-  opts?: { created_at?: string },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("plan_links",).values({
-    from_id,
-    to_id,
-    relation,
-    ...restOpts,
-  } as any,).execute();
-}
-
-/** Insert a vn_questions row. */
-export async function insertVnQuestions(
-  db: Db,
-  chat_id: string,
-  scene_index: number,
-  question_text: string,
-  created_at: string,
-  opts?: {
-    id?: string;
-    question_type?: string;
-    speaker_id?: string | null;
-    options?: string;
-    next_scene_id?: string | null;
-    consequences?: string;
-    relationship_impact?: string;
-    mood_impact?: string;
-    status?: string;
-    selected_option_id?: string | null;
-    answered_at?: string | null;
-    applied_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("vn_questions",).values({
-    id,
-    chat_id,
-    scene_index,
-    question_text,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_timescale row. */
-export async function insertWorldTimescale(
-  db: Db,
-  world_id: string,
-  opts?: {
-    id?: string;
-    epoch?: string;
-    scale_size?: number;
-    advanced_minutes?: number;
-    anchor_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_timescale",).values({
-    id,
-    world_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_timescale_history row. */
-export async function insertWorldTimescaleHistory(
-  db: Db,
-  world_id: string,
-  epoch: string,
-  opts?: { id?: string; changed_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_timescale_history",).values({
-    id,
-    world_id,
-    epoch,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a location_edges row. */
-export async function insertLocationEdges(
-  db: Db,
-  world_id: string,
-  from_id: string,
-  to_id: string,
-  opts?: {
-    id?: string;
-    mode?: LocationEdgeMode;
-    game_hours?: number;
-    requires_discovery?: number;
-    cost_json?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_edges",).values({
-    id,
-    world_id,
-    from_id,
-    to_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_conditions row. */
-export async function insertWorldConditions(
-  db: Db,
-  opts: {
-    world_id: string;
-    weather?: string;
-    time_of_day?: string;
-    season?: string;
-    temperature?: number;
-    global_modifiers?: string;
-    weather_seed?: number;
-    mode?: string;
-    tick_interval_minutes?: number;
-    last_tick_at?: string | null;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("world_conditions",).values({
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).world_id as string;
-}
-
-/** Insert a world_condition_history row. */
-export async function insertWorldConditionHistory(
-  db: Db,
-  world_id: string,
-  weather: string,
-  time_of_day: string,
-  season: string,
-  world_minute: number,
-  opts?: { id?: string; recorded_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_condition_history",).values({
-    id,
-    world_id,
-    weather,
-    time_of_day,
-    season,
-    world_minute,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a location_anomalies row. */
-export async function insertLocationAnomalies(
-  db: Db,
-  location_id: string,
-  world_id: string,
-  name: string,
-  opts?: {
-    id?: string;
-    type?: AnomalyType;
-    stat_modifiers?: string;
-    damage_over_time?: number;
-    healing_over_time?: number;
-    experience_multiplier?: number;
-    loot_multiplier?: number;
-    special_effects?: string;
-    duration_seconds?: number;
-    discovery_chance?: number;
-    discovered_at?: string | null;
-    interaction_required?: AnomalyInteraction;
-    expires_at?: string | null;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_anomalies",).values({
-    id,
-    location_id,
-    world_id,
-    name,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -5474,44 +4806,6 @@ export async function insertEncounterRolls(
   return id;
 }
 
-/** Insert a location_storage row. */
-export async function insertLocationStorage(
-  db: Db,
-  world_id: string,
-  location_id: string,
-  name: string,
-  opts?: { id?: string; capacity?: number; security?: number; access_control?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_storage",).values({
-    id,
-    world_id,
-    location_id,
-    name,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a location_storage_items row. */
-export async function insertLocationStorageItems(
-  db: Db,
-  storage_id: string,
-  item_id: string,
-  opts?: { id?: string; quantity?: number; stored_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("location_storage_items",).values({
-    id,
-    storage_id,
-    item_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a extraction_rolls row. */
 export async function insertExtractionRolls(
   db: Db,
@@ -5533,65 +4827,6 @@ export async function insertExtractionRolls(
     id,
     world_id,
     node_instance_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a npc_memories row. */
-export async function insertNpcMemories(
-  db: Db,
-  world_id: string,
-  npc_id: string,
-  content: string,
-  opts?: {
-    id?: string;
-    memory_type?: MemoryType;
-    importance?: number;
-    emotional_impact?: number;
-    participants?: string;
-    location_id?: string | null;
-    decay_rate?: number;
-    shared?: number;
-    created_at?: string;
-    last_reinforced_at?: string;
-    expires_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("npc_memories",).values({
-    id,
-    world_id,
-    npc_id,
-    content,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a npc_relationships row. */
-export async function insertNpcRelationships(
-  db: Db,
-  world_id: string,
-  npc_id: string,
-  target_id: string,
-  opts?: {
-    id?: string;
-    standing?: number;
-    relationship_type?: NpcRelationshipType;
-    emotional_bond?: number;
-    history?: string;
-    last_interaction_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("npc_relationships",).values({
-    id,
-    world_id,
-    npc_id,
-    target_id,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -5754,155 +4989,6 @@ export async function insertFactionStanding(
   return id;
 }
 
-/** Insert a karma_profiles row. */
-export async function insertKarmaProfiles(
-  db: Db,
-  world_id: string,
-  actor_id: string,
-  opts?: { id?: string; overall?: number; categories_json?: string; updated_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("karma_profiles",).values({
-    id,
-    world_id,
-    actor_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a karma_events row. */
-export async function insertKarmaEvents(
-  db: Db,
-  world_id: string,
-  actor_id: string,
-  category: KarmaCategory,
-  delta: number,
-  opts?: { id?: string; reason?: string; occurred_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("karma_events",).values({
-    id,
-    world_id,
-    actor_id,
-    category,
-    delta,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_licenses row. */
-export async function insertWorldLicenses(
-  db: Db,
-  world_id: string,
-  opts?: {
-    id?: string;
-    spdx_or_custom?: LicenseKind;
-    spdx_id?: string | null;
-    license_text?: string | null;
-    attribution?: string;
-    allowed_use?: string;
-    prohibited_use?: string;
-    created_at?: string;
-    updated_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_licenses",).values({
-    id,
-    world_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_maps row. */
-export async function insertWorldMaps(
-  db: Db,
-  world_id: string,
-  name: string,
-  width: number,
-  height: number,
-  opts?: { id?: string; map_type?: MapType; tile_asset_id?: string | null; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("world_maps",).values({
-    id,
-    world_id,
-    name,
-    width,
-    height,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a map_zones row. */
-export async function insertMapZones(
-  db: Db,
-  map_id: string,
-  name: string,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  opts?: {
-    id?: string;
-    location_id?: string | null;
-    zone_type?: ZoneType;
-    z?: number;
-    metadata?: string;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("map_zones",).values({
-    id,
-    map_id,
-    name,
-    x,
-    y,
-    width,
-    height,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a vn_choice_selections row. */
-export async function insertVnChoiceSelections(
-  db: Db,
-  chat_id: string,
-  choice_id: string,
-  scene_index: number,
-  created_at: string,
-  opts?: {
-    id?: string;
-    relationship_impact?: string;
-    mood_impact?: string;
-    selected_by?: string | null;
-    applied_at?: string | null;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("vn_choice_selections",).values({
-    id,
-    chat_id,
-    choice_id,
-    scene_index,
-    created_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
 /** Insert a instance_storage_budgets row. */
 export async function insertInstanceStorageBudgets(
   db: Db,
@@ -5919,6 +5005,681 @@ export async function insertInstanceStorageBudgets(
   const id = providedId ?? crypto.randomUUID();
   await db.insertInto("instance_storage_budgets",).values({
     id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a resource_records row. */
+export async function insertResourceRecords(
+  db: Db,
+  owner_id: string,
+  type: string,
+  provider: string,
+  endpoint: string,
+  credential_ref: string,
+  opts?: { id?: string; quota?: string; status?: string; created_at?: string; last_used_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("resource_records",).values({
+    id,
+    owner_id,
+    type,
+    provider,
+    endpoint,
+    credential_ref,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a resource_quota_counters row. */
+export async function insertResourceQuotaCounters(
+  db: Db,
+  window_start: string,
+  opts: { resource_id: string; requests?: number; tokens?: number; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("resource_quota_counters",).values({
+    window_start,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).resource_id as string;
+}
+
+/** Insert a model_capabilities row. */
+export async function insertModelCapabilities(
+  db: Db,
+  provider_id: string,
+  model_id: string,
+  last_seen: string,
+  created_at: string,
+  updated_at: string,
+  opts?: {
+    id?: string;
+    context_window?: number | null;
+    max_output?: number | null;
+    supports_tools?: number | null;
+    supports_vision?: number | null;
+    supports_thinking?: number | null;
+    modalities?: string | null;
+    param_size?: string | null;
+    owned_by?: string | null;
+    user_override?: number;
+    notes?: string | null;
+    native_locale?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_capabilities",).values({
+    id,
+    provider_id,
+    model_id,
+    last_seen,
+    created_at,
+    updated_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a model_comparisons row. */
+export async function insertModelComparisons(
+  db: Db,
+  message_id: string,
+  user_id: string,
+  reference_model: string,
+  preference: string,
+  confidence: number,
+  created_at: string,
+  opts?: { id?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_comparisons",).values({
+    id,
+    message_id,
+    user_id,
+    reference_model,
+    preference,
+    confidence,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a model_role_overrides row. */
+export async function insertModelRoleOverrides(
+  db: Db,
+  provider: string,
+  model: string,
+  opts: {
+    role: ModelRole;
+    created_at?: string;
+    updated_at?: string;
+    temperature?: number | null;
+    max_tokens?: number | null;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("model_role_overrides",).values({
+    provider,
+    model,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).role as string;
+}
+
+/** Insert a asset_links row. */
+export async function insertAssetLinks(
+  db: Db,
+  asset_id: string,
+  entity_type: AssetLinkEntity,
+  entity_id: string,
+  opts?: { label?: string | null; sort_order?: number; created_at?: string; archived_at?: string | null },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("asset_links",).values({
+    asset_id,
+    entity_type,
+    entity_id,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a asset_shares row. */
+export async function insertAssetShares(
+  db: Db,
+  asset_id: string,
+  shared_with_id: string,
+  shared_by_id: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("asset_shares",).values({
+    id,
+    asset_id,
+    shared_with_id,
+    shared_by_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a assets row. */
+export async function insertAssets(
+  db: Db,
+  owner_id: string,
+  filename: string,
+  mime_type: string,
+  asset_type: AssetType,
+  size_bytes: number,
+  storage_path: string,
+  opts?: {
+    id?: string;
+    storage_backend?: StorageBackend;
+    width?: number | null;
+    height?: number | null;
+    duration_secs?: number | null;
+    alt_text?: string | null;
+    visibility?: AssetVisibility;
+    created_at?: string;
+    encryption_tier?: string;
+    encrypted_key_id?: string | null;
+    alpha_status?: AssetAlphaStatus;
+    content_hash?: string | null;
+    content_version?: number;
+    record_hash?: string;
+    thumbnail_path?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("assets",).values({
+    id,
+    owner_id,
+    filename,
+    mime_type,
+    asset_type,
+    size_bytes,
+    storage_path,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a asset_transforms row. */
+export async function insertAssetTransforms(
+  db: Db,
+  asset_id: string,
+  context: TransformContext,
+  opts?: {
+    crop_x?: number | null;
+    crop_y?: number | null;
+    crop_w?: number | null;
+    crop_h?: number | null;
+    zoom?: number | null;
+    rotation?: number | null;
+    focal_point_x?: number | null;
+    focal_point_y?: number | null;
+    updated_at?: string;
+  },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("asset_transforms",).values({
+    asset_id,
+    context,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a music_links row. */
+export async function insertMusicLinks(
+  db: Db,
+  chat_id: string,
+  sender_id: string,
+  service: string,
+  url: string,
+  title: string,
+  artist: string,
+  service_track_id: string,
+  service_url: string,
+  opts?: {
+    id?: string;
+    section_id?: string | null;
+    embed_html?: string | null;
+    thumbnail_url?: string | null;
+    duration_secs?: number | null;
+    is_playlist?: number;
+    track_count?: number | null;
+    explicit?: number;
+    year?: number | null;
+    genre?: string | null;
+    nsfw_hidden?: number;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("music_links",).values({
+    id,
+    chat_id,
+    sender_id,
+    service,
+    url,
+    title,
+    artist,
+    service_track_id,
+    service_url,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a generation_attempts row. */
+export async function insertGenerationAttempts(
+  db: Db,
+  chat_id: string,
+  parent_message_id: string,
+  actor_id: string,
+  idempotency_key: string,
+  model_id: string,
+  provider: string,
+  opts?: {
+    id?: string;
+    status?: GenerationStatus;
+    cancel_reason?: CancelReason | null;
+    cancel_reason_detail?: string | null;
+    cancel_source?: CancelSource | null;
+    abort_signal_id?: string | null;
+    started_at?: string;
+    completed_at?: string | null;
+    prompt_tokens?: number | null;
+    completion_tokens?: number | null;
+    total_tokens?: number | null;
+    generation_time_ms?: number | null;
+    error_message?: string | null;
+    streaming_chunks_received?: number | null;
+    streaming_chars_received?: number | null;
+    repetition_score?: number | null;
+    repetition_analysis?: string | null;
+    policy_analysis?: string | null;
+    response_count_in_turn?: number | null;
+    parent_attempt_id?: string | null;
+    continuation_count?: number | null;
+    partial_content?: string | null;
+    step_index?: number | null;
+    total_steps?: number | null;
+    created_at?: string;
+    updated_at?: string;
+    last_rendered_chunk_index?: number | null;
+    delivery_confirmed_at?: string | null;
+    side_effect_jobs_cancelled?: number | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("generation_attempts",).values({
+    id,
+    chat_id,
+    parent_message_id,
+    actor_id,
+    idempotency_key,
+    model_id,
+    provider,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a generation_jobs row. */
+export async function insertGenerationJobs(
+  db: Db,
+  kind: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    status?: string;
+    payload?: string;
+    results?: string;
+    error_message?: string | null;
+    started_at?: string | null;
+    completed_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("generation_jobs",).values({
+    id,
+    kind,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a prompt_templates row. */
+export async function insertPromptTemplates(
+  db: Db,
+  owner_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    modality?: TemplateModality;
+    description?: string | null;
+    model_family?: string | null;
+    detail_level?: TemplateDetailLevel;
+    payload?: string;
+    created_at?: string;
+    updated_at?: string;
+    is_default?: DefaultState;
+    enabled?: LoreEntryStatus;
+    lora_slots?: string | null;
+    min_vram?: number | null;
+    probe_status?: WorkflowProbeStatus;
+    params_reviewed?: number;
+    license?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("prompt_templates",).values({
+    id,
+    owner_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a workflow_sessions row. */
+export async function insertWorkflowSessions(
+  db: Db,
+  workflow_id: string,
+  opts: { chat_id: string; step_values?: string; confirmed?: number; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("workflow_sessions",).values({
+    workflow_id,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).chat_id as string;
+}
+
+/** Insert a asset_tags row. */
+export async function insertAssetTags(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("asset_tags",).values({
+    id,
+    asset_id,
+    tag,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a asset_tag_dismissals row. */
+export async function insertAssetTagDismissals(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  user_id: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("asset_tag_dismissals",).values({
+    id,
+    asset_id,
+    tag,
+    user_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a model_comparison_runs row. */
+export async function insertModelComparisonRuns(
+  db: Db,
+  user_id: string,
+  prompt: string,
+  results: string,
+  created_at: string,
+  opts?: { id?: string; ratings?: string; metadata?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_comparison_runs",).values({
+    id,
+    user_id,
+    prompt,
+    results,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a link_previews row. */
+export async function insertLinkPreviews(
+  db: Db,
+  url_hash: string,
+  url: string,
+  opts?: {
+    id?: string;
+    title?: string | null;
+    description?: string | null;
+    image_url?: string | null;
+    fetched_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("link_previews",).values({
+    id,
+    url_hash,
+    url,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a model_rankings row. */
+export async function insertModelRankings(
+  db: Db,
+  scope: string,
+  subject_key: string,
+  metric: string,
+  value: number,
+  basis: string,
+  source: string,
+  observed_at: string,
+  opts?: {
+    id?: string;
+    scope_key?: string;
+    unit?: string | null;
+    source_version?: string | null;
+    source_ref?: string | null;
+    expires_at?: string | null;
+    meta?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("model_rankings",).values({
+    id,
+    scope,
+    subject_key,
+    metric,
+    value,
+    basis,
+    source,
+    observed_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a asset_user_preferences row. */
+export async function insertAssetUserPreferences(
+  db: Db,
+  opts: { user_id: string; download_naming?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("asset_user_preferences",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).user_id as string;
+}
+
+/** Insert a mesh_peers row. */
+export async function insertMeshPeers(
+  db: Db,
+  opts: {
+    origin: string;
+    state?: string;
+    capabilities?: string;
+    last_seen?: string | null;
+    created_at?: string;
+    capacity_bytes?: number | null;
+    display_name?: string | null;
+    instance_kind?: PeerInstanceKind;
+    auth_mode?: PeerAuthMode;
+    workload_trust?: number;
+    allowed_workload_classes?: string;
+    sticky_enabled?: number;
+    shared_token_enc?: string | null;
+    key_version?: number;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("mesh_peers",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).origin as string;
+}
+
+/** Insert a mesh_negotiations row. */
+export async function insertMeshNegotiations(
+  db: Db,
+  peer_origin: string,
+  opts?: { id?: string; state?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_negotiations",).values({
+    id,
+    peer_origin,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_reservations row. */
+export async function insertMeshReservations(
+  db: Db,
+  peer_origin: string,
+  content_hash: string,
+  size_bytes: number,
+  expires_at: string,
+  opts?: { id?: string; content_type?: string; state?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_reservations",).values({
+    id,
+    peer_origin,
+    content_hash,
+    size_bytes,
+    expires_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_deliveries row. */
+export async function insertMeshDeliveries(
+  db: Db,
+  origin: string,
+  content_hash: string,
+  clock: number,
+  opts: { content_id: string; received_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("mesh_deliveries",).values({
+    origin,
+    content_hash,
+    clock,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).content_id as string;
+}
+
+/** Insert a mesh_inbound_keys row. */
+export async function insertMeshInboundKeys(
+  db: Db,
+  encrypted_key: string,
+  opts: { peer_origin: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("mesh_inbound_keys",).values({
+    encrypted_key,
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).peer_origin as string;
+}
+
+/** Insert a mesh_dek_exports row. */
+export async function insertMeshDekExports(
+  db: Db,
+  chat_id: string,
+  key_id: string,
+  peer_origin: string,
+  sender_origin: string,
+  opts?: { id?: string; created_at?: string; revoked_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_dek_exports",).values({
+    id,
+    chat_id,
+    key_id,
+    peer_origin,
+    sender_origin,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a mesh_outbox row. */
+export async function insertMeshOutbox(
+  db: Db,
+  target_origin: string,
+  content_id: string,
+  envelope: string,
+  next_attempt_at: string,
+  opts?: { id?: string; attempts?: number; status?: string; created_at?: string; chat_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("mesh_outbox",).values({
+    id,
+    target_origin,
+    content_id,
+    envelope,
+    next_attempt_at,
     ...restOpts,
   } as any,).execute();
   return id;
@@ -5969,117 +5730,243 @@ export async function insertFederationPerformanceBudgets(
   } as any,).execute();
 }
 
-/** Insert a message_polls row. */
-export async function insertMessagePolls(
+/** Insert a scenarios row. */
+export async function insertScenarios(
   db: Db,
-  message_id: string,
-  question: string,
-  options: string,
-  created_by: string,
-  opts?: { id?: string; multi?: number; closes_at?: string | null; closed_at?: string | null; created_at?: string },
+  world_id: string,
+  owner_id: string,
+  title: string,
+  opts?: { id?: string; status?: ScenarioStatus; created_at?: string; updated_at?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("message_polls",).values({
+  await db.insertInto("scenarios",).values({
     id,
-    message_id,
-    question,
-    options,
-    created_by,
+    world_id,
+    owner_id,
+    title,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a poll_votes row. */
-export async function insertPollVotes(
+/** Insert a scenario_scenes row. */
+export async function insertScenarioScenes(
   db: Db,
-  poll_id: string,
-  user_id: string,
-  option_idx: number,
-  opts?: { id?: string; created_at?: string },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("poll_votes",).values({
-    id,
-    poll_id,
-    user_id,
-    option_idx,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a link_previews row. */
-export async function insertLinkPreviews(
-  db: Db,
-  url_hash: string,
-  url: string,
+  scenario_id: string,
   opts?: {
     id?: string;
-    title?: string | null;
-    description?: string | null;
-    image_url?: string | null;
-    fetched_at?: string;
+    sort_order?: number;
+    location_id?: string | null;
+    mode?: SceneMode;
+    duration_frames?: number;
+    fps?: number;
+    seed?: string | null;
+    status?: SceneStatus;
+    generated_asset_id?: string | null;
+    created_at?: string;
+    updated_at?: string;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("link_previews",).values({
+  await db.insertInto("scenario_scenes",).values({
     id,
-    url_hash,
-    url,
+    scenario_id,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a character_stat_allocation row. */
-export async function insertCharacterStatAllocation(
+/** Insert a scenario_shots row. */
+export async function insertScenarioShots(
   db: Db,
-  world_id: string,
-  allocated_str: number,
-  allocated_dex: number,
-  allocated_con: number,
-  allocated_int: number,
-  allocated_wis: number,
-  allocated_cha: number,
-  allocated_at: string,
-  opts: { actor_id: string; allocated_by_user_id?: string | null },
+  scene_id: string,
+  end_ms: number,
+  description: string,
+  opts?: {
+    id?: string;
+    sort_order?: number;
+    start_ms?: number;
+    cut_type?: CutType;
+    camera_json?: string | null;
+    narration?: string | null;
+  },
 ): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("character_stat_allocation",).values({
-    world_id,
-    allocated_str,
-    allocated_dex,
-    allocated_con,
-    allocated_int,
-    allocated_wis,
-    allocated_cha,
-    allocated_at,
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_shots",).values({
+    id,
+    scene_id,
+    end_ms,
+    description,
     ...restOpts,
   } as any,).execute();
-  return (restOpts as Record<string, unknown>).actor_id as string;
+  return id;
 }
 
-/** Insert a character_trait_assignments row. */
-export async function insertCharacterTraitAssignments(
+/** Insert a scenario_fragments row. */
+export async function insertScenarioFragments(
   db: Db,
-  actor_id: string,
-  trait_id: string,
-  world_id: string,
-  granted_at: string,
-  opts?: { granted_by_user_id?: string | null },
-): Promise<void> {
-  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
-  await db.insertInto("character_trait_assignments",).values({
-    actor_id,
-    trait_id,
-    world_id,
-    granted_at,
+  scene_id: string,
+  operation: FragmentOperation,
+  workflow_id: string,
+  workflow_hash: string,
+  opts?: {
+    id?: string;
+    shot_id?: string | null;
+    sort_order?: number;
+    status?: FragmentStatus;
+    workflow_version?: string | null;
+    node_versions?: string | null;
+    mode?: SceneMode | null;
+    seed?: string | null;
+    duration_frames?: number | null;
+    transition?: CutType;
+    prompt_message_id?: string | null;
+    prompt_snapshot?: string | null;
+    gallery_asset_id?: string | null;
+    caption?: string | null;
+    input_assets?: string | null;
+    output_asset_id?: string | null;
+    latent_asset_id?: string | null;
+    parent_fragment_id?: string | null;
+    take?: string;
+    cut_in_ms?: number;
+    cut_out_ms?: number | null;
+    error?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_fragments",).values({
+    id,
+    scene_id,
+    operation,
+    workflow_id,
+    workflow_hash,
     ...restOpts,
   } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_references row. */
+export async function insertScenarioReferences(
+  db: Db,
+  scenario_id: string,
+  lane: ReferenceLane,
+  asset_id: string,
+  opts?: {
+    id?: string;
+    scene_id?: string | null;
+    shot_id?: string | null;
+    scope?: ReferenceScope;
+    role?: string | null;
+    sort_order?: number;
+    trim_in_ms?: number | null;
+    trim_out_ms?: number | null;
+    stream?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_references",).values({
+    id,
+    scenario_id,
+    lane,
+    asset_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_docs row. */
+export async function insertScenarioDocs(
+  db: Db,
+  scenario_id: string,
+  kind: ScenarioDocKind,
+  body: string,
+  opts?: { id?: string; title?: string | null; version?: number; created_at?: string; updated_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_docs",).values({
+    id,
+    scenario_id,
+    kind,
+    body,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a annotations row. */
+export async function insertAnnotations(
+  db: Db,
+  target_type: AnnotationTargetType,
+  target_id: string,
+  author_id: string,
+  t0_ms: number,
+  body: string,
+  opts?: {
+    id?: string;
+    t1_ms?: number | null;
+    region?: string | null;
+    resolved_at?: string | null;
+    resolved_by?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("annotations",).values({
+    id,
+    target_type,
+    target_id,
+    author_id,
+    t0_ms,
+    body,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a scenario_assemblies row. */
+export async function insertScenarioAssemblies(
+  db: Db,
+  scenario_id: string,
+  version: number,
+  status: string,
+  fragment_ids: string,
+  cut_points: string,
+  opts?: {
+    id?: string;
+    workflow_id?: string | null;
+    workflow_hash?: string | null;
+    workflow_version?: string | null;
+    output_asset_id?: string | null;
+    error?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("scenario_assemblies",).values({
+    id,
+    scenario_id,
+    version,
+    status,
+    fragment_ids,
+    cut_points,
+    ...restOpts,
+  } as any,).execute();
+  return id;
 }
 
 /** Insert a assistant_quota_usage row. */
@@ -6096,410 +5983,1049 @@ export async function insertAssistantQuotaUsage(
   return (restOpts as Record<string, unknown>).user_id as string;
 }
 
-/** Insert a immersion_failed_checks row. */
-export async function insertImmersionFailedChecks(
+/** Insert a agent_tokens row. */
+export async function insertAgentTokens(
   db: Db,
-  chat_id: string,
-  actor_id: string,
-  blocked_action: string,
-  reason: string,
-  opts?: { id?: string; source?: string; created_at?: string; resolved_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("immersion_failed_checks",).values({
-    id,
-    chat_id,
-    actor_id,
-    blocked_action,
-    reason,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a immersion_decision_log row. */
-export async function insertImmersionDecisionLog(
-  db: Db,
-  chat_id: string,
-  actor_id: string,
-  severity: string,
-  opts?: {
-    id?: string;
-    source?: string;
-    rule_id?: string | null;
-    engine?: string;
-    claims?: string;
-    state_snapshot?: string;
-    verdict?: string;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("immersion_decision_log",).values({
-    id,
-    chat_id,
-    actor_id,
-    severity,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a chat_owners row. */
-export async function insertChatOwners(
-  db: Db,
-  chat_id: string,
-  user_id: string,
-  opts?: { id?: string; granted_by?: string | null; granted_at?: string; reason?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("chat_owners",).values({
-    id,
-    chat_id,
-    user_id,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a world_timeline_selections row. */
-export async function insertWorldTimelineSelections(
-  db: Db,
-  user_id: string,
-  world_id: string,
-  timeline_id: string,
-  selected_at: string,
-): Promise<void> {
-  await db.insertInto("world_timeline_selections",).values({
-    user_id,
-    world_id,
-    timeline_id,
-    selected_at,
-  } as any,).execute();
-}
-
-/** Insert a resource_records row. */
-export async function insertResourceRecords(
-  db: Db,
-  owner_id: string,
-  type: string,
-  provider: string,
-  endpoint: string,
-  credential_ref: string,
-  opts?: { id?: string; quota?: string; status?: string; created_at?: string; last_used_at?: string | null },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("resource_records",).values({
-    id,
-    owner_id,
-    type,
-    provider,
-    endpoint,
-    credential_ref,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a backup_records row. */
-export async function insertBackupRecords(
-  db: Db,
-  resource_type: string,
-  owner_id: string,
-  content_hash: string,
-  payload: string,
-  opts?: {
-    id?: string;
-    server_hash?: string | null;
-    version?: number;
-    created_at?: string;
-    storage_quota_bytes?: number;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("backup_records",).values({
-    id,
-    resource_type,
-    owner_id,
-    content_hash,
-    payload,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a resource_quota_counters row. */
-export async function insertResourceQuotaCounters(
-  db: Db,
-  window_start: string,
-  opts: { resource_id: string; requests?: number; tokens?: number; updated_at?: string },
-): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("resource_quota_counters",).values({
-    window_start,
-    ...restOpts,
-  } as any,).execute();
-  return (restOpts as Record<string, unknown>).resource_id as string;
-}
-
-/** Insert a model_rankings row. */
-export async function insertModelRankings(
-  db: Db,
-  scope: string,
-  subject_key: string,
-  metric: string,
-  value: number,
-  basis: string,
-  source: string,
-  observed_at: string,
-  opts?: {
-    id?: string;
-    scope_key?: string;
-    unit?: string | null;
-    source_version?: string | null;
-    source_ref?: string | null;
-    expires_at?: string | null;
-    meta?: string;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("model_rankings",).values({
-    id,
-    scope,
-    subject_key,
-    metric,
-    value,
-    basis,
-    source,
-    observed_at,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a ranking_snapshots row. */
-export async function insertRankingSnapshots(
-  db: Db,
-  source: string,
-  version: string,
-  next_refresh_after: string,
-  opts?: {
-    id?: string;
-    source_key?: string;
-    checksum?: string | null;
-    fetched_at?: string;
-    row_count?: number | null;
-    payload?: string;
-    status?: string;
-    last_error?: string | null;
-    meta?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("ranking_snapshots",).values({
-    id,
-    source,
-    version,
-    next_refresh_after,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a tool_call_audit row. */
-export async function insertToolCallAudit(
-  db: Db,
-  tool: string,
-  verdict: string,
-  opts?: {
-    id?: string;
-    chat_id?: string;
-    user_id?: string;
-    rationale?: string;
-    escalation_attempt?: number;
-    required_role?: string | null;
-    tags?: string;
-    duration_ms?: number;
-    created_at?: string;
-  },
-): Promise<string> {
-  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
-  const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("tool_call_audit",).values({
-    id,
-    tool,
-    verdict,
-    ...restOpts,
-  } as any,).execute();
-  return id;
-}
-
-/** Insert a integration_tokens row. */
-export async function insertIntegrationTokens(
-  db: Db,
-  name: string,
   token_hash: string,
-  scopes: IntegrationTokenScope,
-  issuer_admin_user_id: string,
+  scope: AgentTokenScope,
   opts?: {
     id?: string;
     created_at?: string;
-    last_used_at?: string | null;
     revoked_at?: string | null;
+    last_used_at?: string | null;
     expires_at?: string | null;
   },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("integration_tokens",).values({
+  await db.insertInto("agent_tokens",).values({
     id,
-    name,
     token_hash,
-    scopes,
-    issuer_admin_user_id,
+    scope,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a chat_list_filters row. */
-export async function insertChatListFilters(
+/** Insert a rsi_agent_worktrees row. */
+export async function insertRsiAgentWorktrees(
   db: Db,
-  updated_at: string,
-  opts: {
-    user_id: string;
-    chat_type?: string;
-    archived?: string;
-    sort?: string;
-    world_id?: string | null;
-    min_messages?: number | null;
-    max_messages?: number | null;
-    updated_since?: string | null;
+  token_id: string,
+  branch: string,
+  path: string,
+  opts?: { id?: string; disk_bytes?: number; created_at?: string; last_active_at?: string; removed_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("rsi_agent_worktrees",).values({
+    id,
+    token_id,
+    branch,
+    path,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a agent_actions row. */
+export async function insertAgentActions(
+  db: Db,
+  token_digest: string,
+  action: string,
+  result: string,
+  opts?: {
+    id?: number;
+    user_id?: string | null;
+    worktree_id?: string | null;
+    commit_hash?: string | null;
+    duration_ms?: number | null;
+    metadata?: string | null;
+    created_at?: string;
   },
 ): Promise<string> {
-  const { ...restOpts } = opts as Record<string, unknown>;
-  await db.insertInto("chat_list_filters",).values({
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("agent_actions",).values({
+    id,
+    token_digest,
+    action,
+    result,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_states row. */
+export async function insertLocationStates(
+  db: Db,
+  location_id: string,
+  world_id: string,
+  opts?: {
+    id?: string;
+    description_override?: string | null;
+    atmosphere?: string | null;
+    npcs_present?: string;
+    items_available?: string;
+    time_of_day?: string | null;
+    weather?: string | null;
+    hazards?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_states",).values({
+    id,
+    location_id,
+    world_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a locations row. */
+export async function insertLocations(
+  db: Db,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    description?: string | null;
+    connections?: string;
+    publication_status?: PublicationStatus;
+    parent_location_id?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    kind?: LocationKind;
+    mobility_mode?: MobilityMode;
+    path?: string;
+    coord_x?: number | null;
+    coord_y?: number | null;
+    coord_z?: number | null;
+    current_route_id?: string | null;
+    travel_progress?: number;
+    content_version?: number;
+    record_hash?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("locations",).values({
+    id,
+    world_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_nsfw_config row. */
+export async function insertLocationNsfwConfig(
+  db: Db,
+  location_id: string,
+  location_type: NsfwLocationType,
+  created_at: string,
+  updated_at: string,
+  opts?: {
+    id?: string;
+    privacy_level?: string;
+    discovery_chance?: number;
+    atmosphere?: string;
+    equipment?: string;
+    risks?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_nsfw_config",).values({
+    id,
+    location_id,
+    location_type,
+    created_at,
     updated_at,
     ...restOpts,
   } as any,).execute();
-  return (restOpts as Record<string, unknown>).user_id as string;
+  return id;
 }
 
-/** Insert a world_lore_search_tokens row. */
-export async function insertWorldLoreSearchTokens(
+/** Insert a travel_routes row. */
+export async function insertTravelRoutes(
   db: Db,
-  entry_id: string,
-  term: string,
-  scope: string,
-): Promise<void> {
-  await db.insertInto("world_lore_search_tokens",).values({
-    entry_id,
-    term,
-    scope,
-  } as any,).execute();
-}
-
-/** Insert a actor_lore_search_tokens row. */
-export async function insertActorLoreSearchTokens(
-  db: Db,
-  entry_id: string,
-  term: string,
-  scope: string,
-): Promise<void> {
-  await db.insertInto("actor_lore_search_tokens",).values({
-    entry_id,
-    term,
-    scope,
-  } as any,).execute();
-}
-
-/** Insert a harness_queue_turns row. */
-export async function insertHarnessQueueTurns(
-  db: Db,
-  batch_id: string,
-  profile: string,
-  prompt: string,
-  chat_id: string,
-  actor_id: string,
-  requested_by: string,
-  opts?: {
-    id?: string;
-    status?: HarnessQueueTurnStatus;
-    requested_role?: string | null;
-    turn_key?: string | null;
-    attempts?: number;
-    result_message_id?: string | null;
-    error_code?: HarnessQueueErrorCode | null;
-    error_message?: string | null;
-    created_at?: string;
-    started_at?: string | null;
-    finished_at?: string | null;
-  },
+  world_id: string,
+  name: string,
+  kind: TransportKind,
+  opts?: { id?: string; waypoints?: string; loop?: number; seconds_per_unit?: number; created_at?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("harness_queue_turns",).values({
+  await db.insertInto("travel_routes",).values({
     id,
-    batch_id,
-    profile,
-    prompt,
-    chat_id,
-    actor_id,
-    requested_by,
+    world_id,
+    name,
+    kind,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a auth_factors row. */
-export async function insertAuthFactors(
+/** Insert a travel_route_stops row. */
+export async function insertTravelRouteStops(
+  db: Db,
+  route_id: string,
+  location_id: string,
+  stop_order: number,
+  opts?: {
+    id?: string;
+    dwell_seconds?: number;
+    coord_x?: number | null;
+    coord_y?: number | null;
+    coord_z?: number | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("travel_route_stops",).values({
+    id,
+    route_id,
+    location_id,
+    stop_order,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a travel_parties row. */
+export async function insertTravelParties(
+  db: Db,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    kind?: string;
+    cadence?: string;
+    route?: string;
+    route_index?: number;
+    steps_per_tick?: number;
+    travel_progress?: number;
+    current_location_id?: string | null;
+    current_tick?: number;
+    status?: string;
+    blocked_until_tick?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("travel_parties",).values({
+    id,
+    world_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a npc_migrations row. */
+export async function insertNpcMigrations(
+  db: Db,
+  world_id: string,
+  actor_id: string,
+  depart_tick: number,
+  arrive_tick: number,
+  opts?: {
+    id?: string;
+    origin_location_id?: string | null;
+    destination_location_id?: string | null;
+    cadence?: string;
+    status?: string;
+    last_depart_tick?: number;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("npc_migrations",).values({
+    id,
+    world_id,
+    actor_id,
+    depart_tick,
+    arrive_tick,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_discovery row. */
+export async function insertLocationDiscovery(
+  db: Db,
+  world_id: string,
+  location_id: string,
+  actor_id: string,
+  opts?: {
+    progress?: number;
+    last_explored_tick?: number;
+    discovered?: number;
+    discovered_tick?: number | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<void> {
+  const { ...restOpts } = (opts ?? {}) as Record<string, unknown>;
+  await db.insertInto("location_discovery",).values({
+    world_id,
+    location_id,
+    actor_id,
+    ...restOpts,
+  } as any,).execute();
+}
+
+/** Insert a location_edges row. */
+export async function insertLocationEdges(
+  db: Db,
+  world_id: string,
+  from_id: string,
+  to_id: string,
+  opts?: {
+    id?: string;
+    mode?: LocationEdgeMode;
+    game_hours?: number;
+    requires_discovery?: number;
+    cost_json?: string;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_edges",).values({
+    id,
+    world_id,
+    from_id,
+    to_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_anomalies row. */
+export async function insertLocationAnomalies(
+  db: Db,
+  location_id: string,
+  world_id: string,
+  name: string,
+  opts?: {
+    id?: string;
+    type?: AnomalyType;
+    stat_modifiers?: string;
+    damage_over_time?: number;
+    healing_over_time?: number;
+    experience_multiplier?: number;
+    loot_multiplier?: number;
+    special_effects?: string;
+    duration_seconds?: number;
+    discovery_chance?: number;
+    discovered_at?: string | null;
+    interaction_required?: AnomalyInteraction;
+    expires_at?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_anomalies",).values({
+    id,
+    location_id,
+    world_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_storage row. */
+export async function insertLocationStorage(
+  db: Db,
+  world_id: string,
+  location_id: string,
+  name: string,
+  opts?: { id?: string; capacity?: number; security?: number; access_control?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_storage",).values({
+    id,
+    world_id,
+    location_id,
+    name,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a location_storage_items row. */
+export async function insertLocationStorageItems(
+  db: Db,
+  storage_id: string,
+  item_id: string,
+  opts?: { id?: string; quantity?: number; stored_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("location_storage_items",).values({
+    id,
+    storage_id,
+    item_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a map_zones row. */
+export async function insertMapZones(
+  db: Db,
+  map_id: string,
+  name: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  opts?: {
+    id?: string;
+    location_id?: string | null;
+    zone_type?: ZoneType;
+    z?: number;
+    metadata?: string;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("map_zones",).values({
+    id,
+    map_id,
+    name,
+    x,
+    y,
+    width,
+    height,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a shadow_notes row. */
+export async function insertShadowNotes(
+  db: Db,
+  chat_id: string,
+  type: ShadowNoteType,
+  content: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    status?: ShadowNoteStatus;
+    visibility?: ShadowNoteVisibility;
+    expires_at?: string | null;
+    author_type?: ShadowNoteAuthorType;
+    content_version?: number;
+    record_hash?: string;
+    trigger_condition?: string | null;
+    revealed_to?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("shadow_notes",).values({
+    id,
+    chat_id,
+    type,
+    content,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a whitenotes row. */
+export async function insertWhitenotes(
+  db: Db,
+  chat_id: string,
+  type: WhiteneoteType,
+  content: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    priority?: number;
+    scope?: WhiteneoteScope;
+    expires_at?: string | null;
+    content_version?: number;
+    record_hash?: string;
+    message_id?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("whitenotes",).values({
+    id,
+    chat_id,
+    type,
+    content,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a blog_comments row. */
+export async function insertBlogComments(
+  db: Db,
+  post_id: string,
+  author_id: string,
+  body: string,
+  opts?: { id?: string; status?: string; created_at?: string; parent_comment_id?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("blog_comments",).values({
+    id,
+    post_id,
+    author_id,
+    body,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a blog_follows row. */
+export async function insertBlogFollows(
+  db: Db,
+  follower_id: string,
+  author_id: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("blog_follows",).values({
+    id,
+    follower_id,
+    author_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a blog_posts row. */
+export async function insertBlogPosts(
+  db: Db,
+  author_id: string,
+  title: string,
+  body: string,
+  opts?: {
+    id?: string;
+    visibility?: string;
+    author_type?: string;
+    status?: string;
+    category?: string | null;
+    world_id?: string | null;
+    character_id?: string | null;
+    scheduled_at?: string | null;
+    published_at?: string | null;
+    view_count?: number;
+    metadata?: string;
+    created_at?: string;
+    updated_at?: string;
+    content_version?: number;
+    record_hash?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("blog_posts",).values({
+    id,
+    author_id,
+    title,
+    body,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a blog_rag_sources row. */
+export async function insertBlogRagSources(
+  db: Db,
+  post_id: string,
+  source_type: string,
+  uri: string,
+  title: string,
+  opts?: { id?: string; relevance_score?: number; snippet?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("blog_rag_sources",).values({
+    id,
+    post_id,
+    source_type,
+    uri,
+    title,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a blog_tags row. */
+export async function insertBlogTags(
+  db: Db,
+  post_id: string,
+  tag: string,
+  opts?: { id?: string; created_at?: string | null; updated_at?: string | null },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("blog_tags",).values({
+    id,
+    post_id,
+    tag,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a content_flags row. */
+export async function insertContentFlags(
+  db: Db,
+  reporter_id: string,
+  content_type: string,
+  content_id: string,
+  flag_reason: string,
+  opts?: {
+    id?: string;
+    chat_id?: string | null;
+    world_id?: string | null;
+    description?: string | null;
+    status?: string;
+    resolution?: string | null;
+    resolved_by?: string | null;
+    resolved_at?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("content_flags",).values({
+    id,
+    reporter_id,
+    content_type,
+    content_id,
+    flag_reason,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a moderation_actions row. */
+export async function insertModerationActions(
+  db: Db,
+  action_type: string,
+  target_user_id: string,
+  performed_by: string,
+  reason: string,
+  scope: string,
+  opts?: {
+    id?: string;
+    scope_id?: string | null;
+    metadata?: string;
+    expires_at?: string | null;
+    created_at?: string;
+    superseded_by?: string | null;
+    deleted_at?: string | null;
+    deleted_by?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("moderation_actions",).values({
+    id,
+    action_type,
+    target_user_id,
+    performed_by,
+    reason,
+    scope,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a moderation_appeals row. */
+export async function insertModerationAppeals(
   db: Db,
   user_id: string,
-  kind: FactorKind,
-  created_at: number,
+  action_id: string,
+  reason: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    status?: string;
+    reviewed_by?: string | null;
+    review_note?: string | null;
+    updated_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("moderation_appeals",).values({
+    id,
+    user_id,
+    action_id,
+    reason,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a nsfw_consent_state row. */
+export async function insertNsfwConsentState(
+  db: Db,
+  user_id: string,
+  chat_id: string,
+  action: string,
+  created_at: string,
+  opts?: {
+    id?: string;
+    scope?: string;
+    reason?: string | null;
+    revoked_at?: string | null;
+    updated_at?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("nsfw_consent_state",).values({
+    id,
+    user_id,
+    chat_id,
+    action,
+    created_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a nsfw_encounters row. */
+export async function insertNsfwEncounters(
+  db: Db,
+  encounter_type: NsfwEncounterType,
+  participants: string,
+  created_at: string,
+  updated_at: string,
+  opts?: {
+    id?: string;
+    world_id?: string | null;
+    intensity?: ContentIntensity;
+    narrative_style?: NarrativeStyle;
+    phases?: string;
+    current_phase?: number;
+    outcomes?: string;
+    content_tags?: string;
+    status?: NsfwEncounterStatus;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("nsfw_encounters",).values({
+    id,
+    encounter_type,
+    participants,
+    created_at,
+    updated_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a nsfw_user_preferences row. */
+export async function insertNsfwUserPreferences(
+  db: Db,
+  user_id: string,
+  opts?: {
+    id?: string;
+    nsfw_enabled?: number;
+    max_rating?: string;
+    access_status?: NsfwAccessStatus;
+    shadow_nsfw?: number;
+    block_reason?: string | null;
+    banned_at?: string | null;
+    banned_by?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    nsfw_blur_media?: number;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("nsfw_user_preferences",).values({
+    id,
+    user_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a plugin_state row. */
+export async function insertPluginState(
+  db: Db,
+  opts: {
+    name: string;
+    status?: PluginStatus;
+    enabled_at?: string | null;
+    disabled_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    config_json?: string | null;
+    origin?: string | null;
+  },
+): Promise<string> {
+  const { ...restOpts } = opts as Record<string, unknown>;
+  await db.insertInto("plugin_state",).values({
+    ...restOpts,
+  } as any,).execute();
+  return (restOpts as Record<string, unknown>).name as string;
+}
+
+/** Insert a e2e_group_wraps row. */
+export async function insertE2eGroupWraps(
+  db: Db,
+  group_session_id: string,
+  recipient_actor_id: string,
+  wrapped_key: string,
+  sender_eph_pub_jwk: string,
+  chain_index: number,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("e2e_group_wraps",).values({
+    id,
+    group_session_id,
+    recipient_actor_id,
+    wrapped_key,
+    sender_eph_pub_jwk,
+    chain_index,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a e2e_sessions row. */
+export async function insertE2eSessions(
+  db: Db,
+  sender_actor_id: string,
+  opts?: {
+    id?: string;
+    recipient_actor_id?: string | null;
+    chat_id?: string | null;
+    kind?: string;
+    created_at?: string;
+    last_message_at?: string | null;
+    revoked_at?: string | null;
+    root_key?: Uint8Array | null;
+    sending_chain_key?: Uint8Array | null;
+    receiving_chain_key?: Uint8Array | null;
+    send_count?: number;
+    recv_count?: number;
+    ephemeral_public_jwk?: string | null;
+    ephemeral_private_jwk?: string | null;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("e2e_sessions",).values({
+    id,
+    sender_actor_id,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a e2e_skipped_keys row. */
+export async function insertE2eSkippedKeys(
+  db: Db,
+  session_id: string,
+  dh_public_jwk: string,
+  counter: number,
+  encrypted_message_key: string,
+  expires_at: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("e2e_skipped_keys",).values({
+    id,
+    session_id,
+    dh_public_jwk,
+    counter,
+    encrypted_message_key,
+    expires_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a e2e_skipped_message_keys row. */
+export async function insertE2eSkippedMessageKeys(
+  db: Db,
+  session_id: string,
+  recipient_actor_id: string,
+  chain_index: number,
+  message_key: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("e2e_skipped_message_keys",).values({
+    id,
+    session_id,
+    recipient_actor_id,
+    chain_index,
+    message_key,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a honeypot_indicators row. */
+export async function insertHoneypotIndicators(
+  db: Db,
+  indicator: string,
+  label: string,
+  confidence: number,
+  source: string,
+  created_at: string,
+  expires_at: string,
   opts?: { id?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("auth_factors",).values({
+  await db.insertInto("honeypot_indicators",).values({
     id,
-    user_id,
-    kind,
+    indicator,
+    label,
+    confidence,
+    source,
     created_at,
+    expires_at,
     ...restOpts,
   } as any,).execute();
   return id;
 }
 
-/** Insert a auth_challenges row. */
-export async function insertAuthChallenges(
+/** Insert a mesh_intel_reports row. */
+export async function insertMeshIntelReports(
   db: Db,
-  user_id: string,
-  factor_id: string,
-  purpose: ChallengePurpose,
-  nonce_hash: string,
-  expires_at: number,
-  created_at: number,
-  opts?: { id?: string; attempts?: number; consumed?: number },
+  indicator: string,
+  type: string,
+  confidence: number,
+  source_peer: string,
+  action: string,
+  nonce: string,
+  created_at: string,
+  expires_at: string,
+  received_at: string,
+  opts?: { id?: string },
 ): Promise<string> {
   const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
   const id = providedId ?? crypto.randomUUID();
-  await db.insertInto("auth_challenges",).values({
+  await db.insertInto("mesh_intel_reports",).values({
     id,
-    user_id,
-    factor_id,
-    purpose,
-    nonce_hash,
-    expires_at,
+    indicator,
+    type,
+    confidence,
+    source_peer,
+    action,
+    nonce,
     created_at,
+    expires_at,
+    received_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a harness_runs row. */
+export async function insertHarnessRuns(
+  db: Db,
+  task: string,
+  task_type: string,
+  started_at: string,
+  opts?: {
+    id?: string;
+    principal_id?: string | null;
+    principal_kind?: string | null;
+    status?: string;
+    command?: string | null;
+    model?: string | null;
+    git_sha?: string | null;
+    branch?: string | null;
+    turn_id?: string | null;
+    instance_id?: string | null;
+    error?: string | null;
+    error_category?: string | null;
+    tools?: string | null;
+    tool_count?: number | null;
+    tokens_in?: number | null;
+    tokens_out?: number | null;
+    cost_usd?: number | null;
+    latency_ms?: number | null;
+    ended_at?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("harness_runs",).values({
+    id,
+    task,
+    task_type,
+    started_at,
+    ...restOpts,
+  } as any,).execute();
+  return id;
+}
+
+/** Insert a harness_calls row. */
+export async function insertHarnessCalls(
+  db: Db,
+  run_id: string,
+  started_at: string,
+  opts?: {
+    id?: string;
+    principal_id?: string | null;
+    principal_kind?: string | null;
+    status?: string;
+    command?: string | null;
+    model?: string | null;
+    git_sha?: string | null;
+    turn_id?: string | null;
+    error?: string | null;
+    error_category?: string | null;
+    tokens_in?: number | null;
+    tokens_out?: number | null;
+    cost_usd?: number | null;
+    latency_ms?: number | null;
+    ended_at?: string | null;
+    created_at?: string;
+  },
+): Promise<string> {
+  const { id: providedId, ...restOpts } = (opts ?? {}) as { id?: string };
+  const id = providedId ?? crypto.randomUUID();
+  await db.insertInto("harness_calls",).values({
+    id,
+    run_id,
+    started_at,
     ...restOpts,
   } as any,).execute();
   return id;

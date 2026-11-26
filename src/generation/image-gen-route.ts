@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// One linear request pipeline; phase extraction would scatter the flow.
+// size-allow: 370
+
 import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
-import { persistGeneratedImages, } from "../assets/service";
+import { getAssetData, getOwnedAsset, persistGeneratedImages, } from "../assets/service";
 import { bindGeneratedActorAvatar, } from "../characters/services/avatar-service";
 import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
@@ -13,13 +16,17 @@ import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { resolveActorAccess, } from "../routes/actor-access";
+import { resolveStoredComfyUIModelPins, } from "../routes/comfyui-models";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { ErrorCode, } from "../routes/http-utils/status";
-import { generateImagesWithFailover, } from "./image-engine";
+import { registerDiscardOnCancel, } from "./cancellation-actions/side-effects";
+import { generateImagesWithFailover, type InitImage, } from "./image-engine";
 import { comfyUiFirstOrder, } from "./image-engine/comfyui-first";
 import { listStoredComfyUIProviders, mergeComfyUISetups, } from "./image-engine/comfyui-setup";
 import { listStoredSdCppProviders, mergeSdCppSetups, } from "./image-engine/sdcpp-setup";
 import type { LoRAConfig, } from "./lora/types";
+import { normalizeLoraConfigs, } from "./lora/validation";
+import { assertComfyUIModelName, } from "./providers/comfyui-model-discovery";
 import { userApiKeyResolver, } from "./providers/user-api-key";
 import {
   applyImageTemplate,
@@ -27,18 +34,34 @@ import {
 } from "./template-service";
 import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-types";
 
+import { setAssetAsChatBackground, } from "../routes/chat-backgrounds/service";
+
+import { resolveWorkflowForUseCase, } from "./workflow-selection";
+
 /**
  * Flat per-image byte estimate for the PRE-PROVIDER quota gate, taken before
  * the output size is known. One 1024x1024 PNG is roughly this big; refusing
  * here avoids paying for a generation this instance cannot store.
  */
 const ESTIMATED_IMAGE_BYTES = 1_500_000;
+/** Max prompt length accepted per request. */
+const MAX_PROMPT = 2_000;
+
+/** 409 response when the generation was cancelled before persisting output. */
+function cancelledResponse(): Response {
+  return Response.json({ error: "Generation cancelled", status: 409, }, { status: 409, },);
+}
 
 interface ImageGenBody {
   prompt?: string;
   chatId?: string;
   messageId?: string;
   size?: string;
+  /** Numeric dimensions; preferred over the openai-shaped `size`. */
+  width?: number;
+  height?: number;
+  /** ComfyUI scheduler axis, independent of `sampler_name`. */
+  scheduler?: string;
   n?: number;
   output_format?: string;
   steps?: number;
@@ -51,8 +74,17 @@ interface ImageGenBody {
   denoising_strength?: number;
   /** ComfyUI workflow name (filename without .json in configs/workflows/) */
   workflow?: string;
-  /** Optional LoRA model to inject into the generation pipeline. */
-  lora?: LoRAConfig;
+  /** Owning asset id of the img2img init image (ComfyUI path only). */
+  init_image?: string;
+  /** One or more LoRAs; a single object is accepted for compatibility. */
+  lora?: LoRAConfig | LoRAConfig[];
+  /** Picked ComfyUI model roles; each substitutes one graph placeholder. */
+  model?: string;
+  /** Diffusion/UNET pick (request-side role matching the persisted pin). */
+  diffusion?: string;
+  clip?: string;
+  vae?: string;
+  clip_vision?: string;
   /** User image-prompt template id — renders `context` into the prompt. */
   templateId?: string;
   /** {{variable}} values substituted into the template body. */
@@ -63,6 +95,31 @@ interface ImageGenBody {
    * the provider runs so a refused request never pays for generation.
    */
   bindActorAvatar?: string;
+  /**
+   * When set (and `chatId` is present), bind the first generated image as the
+   * chat's active background via a `static` catalog row. Chat access is
+   * checked by `chatId` above; without `chatId` this flag is a no-op.
+   */
+  setAsChatBackground?: boolean;
+}
+
+/**
+ * Resolve numeric dimensions from the request, falling back to the
+ * openai-shaped `size` only when neither numeric field was sent.
+ * @param req
+ * @returns dimensions, or a 400-ready error for a malformed `size`
+ */
+function resolveDimensions(req: ImageGenBody,): { width?: number; height?: number; error?: string } {
+  if (req.width !== undefined || req.height !== undefined || req.size === undefined) {
+    return { width: req.width, height: req.height, };
+  }
+
+  const match = /^(\d+)[xX](\d+)$/.exec(req.size.trim(),);
+  if (!match) {
+    return { error: `Invalid size "${req.size}": expected "WIDTHxHEIGHT"`, };
+  }
+
+  return { width: Number(match[1],), height: Number(match[2],), };
 }
 
 /**
@@ -97,6 +154,31 @@ async function bindGeneratedVariants(
 }
 
 /**
+ * @param req - image request carrying optional model role picks
+ * @returns validation error, or null when every pick fits its role
+ */
+function invalidModelPick(req: ImageGenBody,): string | null {
+  for (
+    const [role, name,] of [
+      ["checkpoint", req.model,],
+      ["diffusion", req.diffusion,],
+      ["clip", req.clip,],
+      ["vae", req.vae,],
+      ["clip_vision", req.clip_vision,],
+    ] as const
+  ) {
+    if (name === undefined) { continue; }
+    try {
+      assertComfyUIModelName(role, name,);
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  return null;
+}
+
+/**
  * @param body
  * @param database
  * @param userId
@@ -113,6 +195,15 @@ export async function handleImageGeneration(
 
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
+
+  // Normalize + validate LoRAs at the boundary; bad strengths never reach generation.
+  const lora = normalizeLoraConfigs(req.lora,);
+  if (!lora.ok) { return Response.json({ error: lora.error, status: 400, }, { status: 400, },); }
+
+  const modelPickError = invalidModelPick(req,);
+  if (modelPickError) {
+    return Response.json({ error: modelPickError, status: 400, }, { status: 400, },);
   }
 
   // Authorization: when linked to a chat, only admin, creator, or a
@@ -133,6 +224,8 @@ export async function handleImageGeneration(
     const denied = await resolveActorAccess(database ?? getDatabase(), req.bindActorAvatar, userId,);
     if (denied) { return denied; }
   }
+
+  const discard = registerDiscardOnCancel(req.chatId, "image-queue",);
 
   const db = database ?? getDatabase();
 
@@ -159,11 +252,50 @@ export async function handleImageGeneration(
     negativePrompt = negativePrompt ?? rendered.negativePrompt;
   }
 
-  if (!prompt) {
-    return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
+  // Concatenation (not a template literal): the size gate scans with
+  // ts.createScanner, which mis-lexes an interpolated template tail and
+  // recounts following comment lines as code.
+  if (!prompt || prompt.length > MAX_PROMPT) {
+    return Response.json(
+      { error: "prompt must be 1.." + MAX_PROMPT + " characters", status: 400, },
+      { status: 400, },
+    );
+  }
+
+  // A malformed `size` is a 400 at the boundary, before any DB or provider
+  // work — never a silent fallback to the operator's config default.
+  const { width, height, error: sizeError, } = resolveDimensions(req,);
+  if (sizeError) {
+    return Response.json({ error: sizeError, status: 400, }, { status: 400, },);
   }
 
   const config = loadConfig();
+
+  // Init image (img2img): reference an asset by id only. Ownership is proven
+  // before any bytes are read, so a caller cannot name an arbitrary path or
+  // borrow another user's asset. A missing/foreign/deleted asset fails here.
+  let initImage: InitImage | undefined;
+  if (req.init_image) {
+    const owned = await getOwnedAsset(db, req.init_image, userId,);
+    if (!owned) {
+      return Response.json({ error: "Init image not found", status: 404, }, { status: 404, },);
+    }
+
+    let buffer: Buffer | null;
+    try {
+      buffer = await getAssetData(db, req.init_image, config.assets.uploadDir,);
+    } catch {
+      // Encrypted assets need a chat key this route does not carry — fail
+      // cleanly instead of leaking a decryption error to the caller.
+      return Response.json({ error: "Init image could not be read", status: 400, }, { status: 400, },);
+    }
+
+    if (!buffer) {
+      return Response.json({ error: "Init image not found", status: 404, }, { status: 404, },);
+    }
+
+    initImage = { assetId: req.init_image, buffer, };
+  }
 
   // Stored local-engine setups (admin setup surface) join the failover
   // candidates immediately — a stored setup replaces a config-file provider
@@ -196,7 +328,7 @@ export async function handleImageGeneration(
   // the families that refused it: an operator reading a 400 needs to know
   // which backend has to change.
   const sdCandidates = comfyUiFirstOrder(
-    req.lora
+    lora.configs
       ? configuredSd.filter((p,) => p.apiFamily === "comfyui" || p.apiFamily === "sdcpp")
       : configuredSd,
     config.generation.imageRouting?.comfyUiFirst,
@@ -212,6 +344,27 @@ export async function handleImageGeneration(
       { status: 400, },
     );
   }
+
+  // An init image is meaningful only on the ComfyUI workflow path. Limit
+  // candidates so a non-ComfyUI failover target cannot silently run txt2img.
+  const editCandidates = initImage
+    ? sdCandidates.filter((p,) => p.apiFamily === "comfyui")
+    : sdCandidates;
+
+  if (initImage && editCandidates.length === 0) {
+    return Response.json(
+      { error: "An init image requires a ComfyUI generation provider", status: 400, },
+      { status: 400, },
+    );
+  }
+
+  // Persisted picks are per provider instance: resolving by name keeps a
+  // failover candidate from inheriting another instance's model selection.
+  const modelPins = await resolveStoredComfyUIModelPins(
+    db,
+    userId,
+    [...new Set(editCandidates.filter((p,) => p.apiFamily === "comfyui").map((p,) => p.name),),],
+  );
 
   const n = Math.min(req.n ?? 1, 4,);
   const outputFormat = req.output_format ?? "png";
@@ -242,24 +395,45 @@ export async function handleImageGeneration(
     throw error;
   }
 
+  // Workflow precedence: explicit body field > stored user selection > config
+  // default. The resolver owns the DB read and config fallback; this route
+  // only decides whether an explicit request bypasses it.
+  const workflow = req.workflow ?? await resolveWorkflowForUseCase({
+    database: db,
+    userId,
+    useCase: "image.generate",
+    fallback: req.workflow,
+  },);
+
   const outcome = await generateImagesWithFailover(
-    sdCandidates,
+    editCandidates,
     "generate",
     {
       prompt,
       n,
       size: req.size,
+      width,
+      height,
+      scheduler: req.scheduler,
       outputFormat,
       steps: req.steps,
       cfgScale: req.cfgScale,
       samplerName: req.sampler_name,
+      schedulerName: req.scheduler,
       negativePrompt,
       seed: req.seed,
       enableHr: req.enable_hr,
       hrScale: req.hr_scale,
-      denoisingStrength: req.denoising_strength,
-      workflow: req.workflow,
-      lora: req.lora,
+      denoise: req.denoising_strength,
+      workflow,
+      initImage,
+      lora: lora.configs,
+      model: req.model,
+      diffusion: req.diffusion,
+      clip: req.clip,
+      vae: req.vae,
+      clipVision: req.clip_vision,
+      modelPins,
     },
     userApiKeyResolver({ userId, config, db, },),
   );
@@ -272,6 +446,8 @@ export async function handleImageGeneration(
   }
 
   const { images, mimeType, } = outcome;
+
+  if (discard.isDiscarded()) { return cancelledResponse(); }
 
   const links = [
     ...(req.messageId
@@ -295,6 +471,8 @@ export async function handleImageGeneration(
     links,
   },);
 
+  if (discard.isDiscarded()) { return cancelledResponse(); }
+
   // Avatar Dogfood (slice 1): bind each persisted image as a `generated`
   // avatar variant on the target actor (see bindGeneratedVariants).
   const bound = req.bindActorAvatar
@@ -303,6 +481,16 @@ export async function handleImageGeneration(
 
   if (bound instanceof Response) { return bound; }
   const avatarIds = bound ?? [];
+
+  // Persist the first generated image as the chat's active background when
+  // requested. Requires `chatId` (authorized above); otherwise a no-op.
+  if (req.setAsChatBackground && req.chatId && persisted.length > 0) {
+    await setAssetAsChatBackground({
+      database: db,
+      chatId: req.chatId,
+      assetId: persisted[0]!.asset.id,
+    },);
+  }
 
   const assets = persisted.map(({ asset, }, index,) => ({
     id: asset.id,

@@ -23,19 +23,37 @@ import type { ValidateWorkflowOptions, } from "./validate";
 import { validateWorkflowPayload, } from "./validate";
 
 /**
+ * Category and builtin id behind a versioned export (`img2img-v1` -> `img2img`).
+ * @param id - workflow id from the file basename
+ */
+export function baseWorkflowId(id: string,): string {
+  return id.replace(/-v\d+$/, "",);
+}
+
+/**
+ * Literals a shipped graph held before its `{{placeholder}}` was restored.
+ * An unfilled optional must keep the original value instead of an empty
+ * string; add entries only when a literal is replaced by a placeholder.
+ */
+const PRESERVED_LITERAL_DEFAULTS: Readonly<Record<string, string>> = {
+  attention: "comfy kitchen attention",
+};
+
+/**
  * The parameters a seeded graph needs: one per `{{placeholder}}` in its body.
  *
  * The metadata comes from the builtin template with the same id, so the
  * seeded row and the builtin declare the same parameter (same type, label,
  * default and bounds). A placeholder the builtin does not declare gets a
- * plain string parameter.
+ * plain string parameter, using any literal the graph used to carry as its
+ * default so an unfilled value keeps the shipped behavior.
  * @param id - Workflow id (the file's basename)
  * @param body - The workflow graph
  * @returns {TemplateParameter[]}
  */
 export function deriveParameters(id: string, body: ComfyUIWorkflow,): TemplateParameter[] {
   const placeholders = collectPlaceholders(body,);
-  const builtin = builtinTemplates.find((template,) => template.id === id);
+  const builtin = builtinTemplates.find((template,) => template.id === baseWorkflowId(id,));
   const parameters: TemplateParameter[] = [];
   const declared = new Set<string>();
 
@@ -47,7 +65,7 @@ export function deriveParameters(id: string, body: ComfyUIWorkflow,): TemplatePa
 
   for (const name of [...placeholders,].toSorted()) {
     if (declared.has(name,)) { continue; }
-    parameters.push({ name, type: "string", label: name, default: "", },);
+    parameters.push({ name, type: "string", label: name, default: PRESERVED_LITERAL_DEFAULTS[name] ?? "", },);
   }
 
   return parameters;

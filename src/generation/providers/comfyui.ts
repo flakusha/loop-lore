@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 400
 
 /**
  * ComfyUI Provider — HTTP/WebSocket client for ComfyUI API. Submits
@@ -7,7 +8,8 @@
  * Reference: docs/spec/integrations/image-generation.md §ComfyUI
  */
 
-import { jsonStringifyOr, } from "../../utils";
+import { proxyForUrl, safeFetch, } from "../../utils";
+import { errorDetail, } from "../../utils/safe-fetch";
 import { validateProviderUrl, } from "../../utils/url-validation";
 import { downloadComfyFile, } from "./comfyui-download";
 import {
@@ -15,7 +17,8 @@ import {
   pollComfyResult,
   waitForComfyFiles,
 } from "./comfyui-poll";
-import { uploadImageToComfy, } from "./comfyui-upload";
+import { type ComfyUIProgressEvent, subscribeProgress, } from "./comfyui-progress";
+import { type ComfyUIMaskOriginalRef, uploadImageToComfy, uploadMaskToComfy, } from "./comfyui-upload";
 
 /** */
 export type ComfyUIWorkflow = Record<
@@ -34,10 +37,23 @@ export interface ComfyUIPromptResult {
   node_errors?: Record<string, { class_type: string; errors: unknown[] }>;
 }
 
+/** Status object ComfyUI actually returns in /history entries. */
+export interface ComfyUIHistoryStatus {
+  status_str: "success" | "error" | string;
+  completed: boolean;
+  messages?: Array<[string, Record<string, unknown>,]>;
+}
+
 /** */
 export interface ComfyUIExecutionStatus {
   prompt_id: string;
-  status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  status:
+    | "pending"
+    | "running"
+    | "completed"
+    | "failed"
+    | "cancelled"
+    | ComfyUIHistoryStatus;
   progress?: { value: number; max: number };
   outputs?: Record<string, ComfyUINodeOutput>;
   error?: string;
@@ -48,15 +64,24 @@ export interface ComfyUIOutputFile {
   filename: string;
   subfolder?: string;
   type?: string;
+  /** MIME type when the save node supplies one (DaSiWa, VHS). */
+  format?: string;
 }
 
 /** Media kind of an output bucket (SaveImage / SaveAudio / SaveVideo). */
-export type ComfyUIOutputKind = "image" | "audio" | "video";
+export type ComfyUIOutputKind = "image" | "audio" | "video" | "other";
 
-/** Per-node execution outputs — audio workflows emit `audio`/`videos` instead of `images`. */
-export type ComfyUINodeOutput = Partial<
-  Record<"images" | "audio" | "videos" | "gifs", ComfyUIOutputFile[]>
->;
+/** Per-node execution outputs; buckets vary by save node, not by media type. */
+export interface ComfyUINodeOutput {
+  images?: ComfyUIOutputFile[];
+  audio?: ComfyUIOutputFile[];
+  videos?: ComfyUIOutputFile[];
+  gifs?: ComfyUIOutputFile[];
+  /** KJNodes checkpoint bucket; carries .safetensors latent packages. */
+  files?: ComfyUIOutputFile[];
+  /** Core SaveVideo marks animated output; JSON delivers the tuple as [true]. */
+  animated?: unknown;
+}
 
 /** A downloaded output file with the kind of media it holds. */
 export interface ComfyUIDownloadedFile {
@@ -87,6 +112,10 @@ export interface ComfyUIClientOptions {
    * ComfyUI is unauthenticated, so this stays undefined for local engines.
    */
   apiKey?: string;
+  /** Per-call id echoed in /prompt and in the progress socket's client filter. */
+  clientId?: string;
+  /** Optional progress sink; events are already filtered to this client's prompt. */
+  onProgress?: (event: ComfyUIProgressEvent,) => void;
 }
 
 /** */
@@ -95,6 +124,8 @@ export class ComfyUIClient {
   private timeout: number;
   private pollIntervalMs: number;
   private apiKey?: string;
+  private clientId?: string;
+  private onProgress?: (event: ComfyUIProgressEvent,) => void;
 
   /**
    * @param options - client options (baseUrl, timeout, poll interval, credential)
@@ -105,6 +136,8 @@ export class ComfyUIClient {
     this.timeout = options.timeout ?? 120_000;
     this.pollIntervalMs = options.pollIntervalMs ?? 500;
     this.apiKey = options.apiKey;
+    this.clientId = options.clientId;
+    this.onProgress = options.onProgress;
 
     const validated = validateProviderUrl(this.baseUrl,);
     if (!validated.ok) {
@@ -125,25 +158,22 @@ export class ComfyUIClient {
    */
   async submitWorkflow(workflow: ComfyUIWorkflow,): Promise<ComfyUIPromptResult> {
     const url = `${this.baseUrl}/prompt`;
-    const resp = await fetch(url, {
+    const result = await safeFetch<ComfyUIPromptResult>(url, {
       method: "POST",
       headers: this.authHeaders(),
-      body: jsonStringifyOr({ prompt: workflow, },),
-      signal: AbortSignal.timeout(this.timeout,),
+      body: { prompt: workflow, ...(this.clientId ? { client_id: this.clientId, } : {}), },
+      timeout: this.timeout,
+      includeErrorBody: true,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
 
-    if (!resp.ok) {
-      let body = "unknown";
-      try {
-        body = await resp.text();
-      } catch {
-        // Error body read failed — keep "unknown" fallback
-      }
-
-      throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI prompt submission failed [${result.status}]: ${errorDetail(result.error, "unknown",)}`,);
     }
 
-    return (await resp.json()) as ComfyUIPromptResult;
+    return result.data;
   }
 
   /**
@@ -169,11 +199,25 @@ export class ComfyUIClient {
     promptId: string,
     timeoutMs?: number,
   ): Promise<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[]> {
-    return waitForComfyFiles(this.baseUrl, promptId, {
-      timeoutMs: timeoutMs ?? this.timeout,
-      pollIntervalMs: this.pollIntervalMs,
-      apiKey: this.apiKey,
-    },);
+    const progress = this.clientId
+      ? subscribeProgress({
+        baseUrl: this.baseUrl,
+        clientId: this.clientId,
+        promptId,
+        onProgress: (event,) => this.onProgress?.(event,),
+        timeoutMs: this.timeout,
+      },)
+      : undefined;
+
+    try {
+      return await waitForComfyFiles(this.baseUrl, promptId, {
+        timeoutMs: timeoutMs ?? this.timeout,
+        pollIntervalMs: this.pollIntervalMs,
+        apiKey: this.apiKey,
+      },);
+    } finally {
+      progress?.close();
+    }
   }
 
   /**
@@ -195,10 +239,13 @@ export class ComfyUIClient {
    */
   async cancelExecution(_promptId?: string,): Promise<void> {
     const url = `${this.baseUrl}/interrupt`;
-    await fetch(url, {
+    await safeFetch<string>(url, {
       method: "POST",
       headers: this.authHeaders(),
-      signal: AbortSignal.timeout(10_000,),
+      timeout: 10_000,
+      parseJson: false,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
   }
 
@@ -209,15 +256,63 @@ export class ComfyUIClient {
    */
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
-    const resp = await fetch(url, {
-      signal: AbortSignal.timeout(10_000,),
+    const result = await safeFetch<Record<string, ComfyUINodeInfo>>(url, {
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(url,),
     },);
 
-    if (!resp.ok) {
-      throw new Error(`ComfyUI object_info failed [${resp.status}]`,);
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI object_info failed [${result.status}]`,);
     }
 
-    return (await resp.json()) as Record<string, ComfyUINodeInfo>;
+    return result.data;
+  }
+
+  /**
+   * List model folder names advertised by `/models`.
+   * @returns folder names (e.g. `diffusion_models`, `clip`, `vae`)
+   * @throws {Error} When the models endpoint returns a non-OK status.
+   */
+  async listModelFolders(): Promise<string[]> {
+    const result = await safeFetch<string[]>(`${this.baseUrl}/models`, {
+      headers: this.authHeaders(),
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(this.baseUrl,),
+    },);
+
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI models failed [${result.status}]`,);
+    }
+
+    return result.data;
+  }
+
+  /**
+   * List model file names in one folder (including subfolders, ComfyUI's
+   * `recursive: true` default).
+   * @param folder - ComfyUI model folder name
+   * @returns file names; nested files use `<subfolder>/<file>`
+   * @throws {Error} When the folder endpoint returns a non-OK status.
+   */
+  async listModelFolder(folder: string,): Promise<string[]> {
+    const url = `${this.baseUrl}/models/${encodeURIComponent(folder,)}`;
+    const result = await safeFetch<string[]>(url, {
+      headers: this.authHeaders(),
+      timeout: 10_000,
+      handle401: false,
+      proxy: proxyForUrl(url,),
+    },);
+
+    if (!result.ok) {
+      if (result.status === undefined) { throw result.error; }
+      throw new Error(`ComfyUI model folder ${folder} failed [${result.status}]`,);
+    }
+
+    return result.data;
   }
 
   /**
@@ -290,5 +385,20 @@ export class ComfyUIClient {
    */
   async uploadImage(buffer: Buffer, filename: string,): Promise<string> {
     return uploadImageToComfy(this.baseUrl, this.timeout, buffer, filename, this.apiKey,);
+  }
+
+  /**
+   * Upload a mask for a previously uploaded input image.
+   * @param buffer - mask image bytes
+   * @param filename - name for the stored mask
+   * @param originalRef - the input image the mask overlays
+   * @returns the stored mask filename
+   */
+  async uploadMask(
+    buffer: Buffer,
+    filename: string,
+    originalRef: ComfyUIMaskOriginalRef,
+  ): Promise<string> {
+    return uploadMaskToComfy(this.baseUrl, this.timeout, buffer, filename, originalRef, this.apiKey,);
   }
 }

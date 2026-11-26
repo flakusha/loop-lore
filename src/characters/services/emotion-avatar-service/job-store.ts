@@ -4,12 +4,52 @@
 // In-memory batch job store for emotion avatar generation.
 
 import type { EmotionType, } from "../../../db/enums";
-import { toDate, } from "../../../utils/date";
+import { parseExpiryMs, toDate, } from "../../../utils/date";
 import type { GenerationJobRecord, } from "./job-records";
 import type { BatchGenerationJob, BatchJobId, } from "./types";
 
-/** In-memory job store (persists until server restart) */
+/** In-memory job store. Terminal jobs evict via TTL + cap (see pruneJobs). */
 const activeJobs = new Map<BatchJobId, BatchGenerationJob>();
+
+/** How long a finished job stays in memory. */
+const JOB_TTL_MS = 30 * 60 * 1000;
+/** Hard cap on retained jobs; the oldest finished jobs are evicted first. */
+const MAX_JOBS = 100;
+
+/**
+ * Evict finished jobs past the TTL and bound the map size (the
+ * src/routes/export-sse/jobs.ts pruneJobs pattern). Runs without timers:
+ * called from the store's read/write paths. Durable generation_jobs rows
+ * keep full history, so an evicted id reads as absent while its record
+ * survives. Pollers treat absence as terminal (the SSE stream closes on a
+ * terminal job), and the client list is rebuilt per poll, so eviction never
+ * wedges a loop.
+ * @param now - current time (injectable for tests)
+ */
+function pruneJobs(now = new Date(),): void {
+  const cutoff = now.getTime() - JOB_TTL_MS;
+  for (const [id, job,] of activeJobs) {
+    const completed = parseExpiryMs(job.completedAt,);
+    if (completed !== null && completed < cutoff) {
+      activeJobs.delete(id,);
+    }
+  }
+
+  while (activeJobs.size > MAX_JOBS) {
+    let oldestId: BatchJobId | undefined;
+    let oldestAt = Infinity;
+    for (const [id, job,] of activeJobs) {
+      const at = parseExpiryMs(job.completedAt,) ?? Infinity;
+      if (at < oldestAt) {
+        oldestAt = at;
+        oldestId = id;
+      }
+    }
+
+    if (oldestId === undefined) { break; }
+    activeJobs.delete(oldestId,);
+  }
+}
 
 /**
  * Create a new batch job in "pending" state.
@@ -45,6 +85,7 @@ export function createJob(opts: {
  * @returns void
  */
 export function storeJob(job: BatchGenerationJob,): void {
+  pruneJobs();
   activeJobs.set(job.id, job,);
 }
 
@@ -54,6 +95,7 @@ export function storeJob(job: BatchGenerationJob,): void {
  * @returns void
  */
 export function getJob(jobId: BatchJobId,): BatchGenerationJob | undefined {
+  pruneJobs();
   return activeJobs.get(jobId,);
 }
 
@@ -105,6 +147,7 @@ export function rebuildJobCache(records: GenerationJobRecord[],): void {
  * @returns true if cancelled, false if not found or already completed
  */
 export function cancelJob(jobId: BatchJobId,): boolean {
+  pruneJobs();
   const job = activeJobs.get(jobId,);
   if (!job || job.status === "completed" || job.status === "failed" || job.status === "cancelled") {
     return false;

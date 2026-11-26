@@ -6,11 +6,22 @@
  * `POST /api/models/unload`, no `/pause`).
  */
 import { describe, expect, test, } from "bun:test";
+import type { HonkboxProbeResult, } from "../integrations/honkbox/capabilities";
 import { createLogger, } from "../logger";
 import { releaseModelsForRender, } from "./llama-swap-release";
 import { COMFYUI_PROXY_MODEL_ID, } from "./llama-swap-unload";
 
 createLogger({ level: "error", },);
+
+/** Minimal probe carrying only the residency flag under test. */
+function honkboxProbeWithResidency(residencyControl: boolean,): HonkboxProbeResult {
+  return {
+    ok: true,
+    supported: true,
+    latencyMs: 1,
+    capabilities: { features: { residencyControl, }, },
+  } as unknown as HonkboxProbeResult;
+}
 
 const BASE = "http://127.0.0.1:8080";
 
@@ -226,5 +237,88 @@ describe("releaseModelsForRender", () => {
 
   test("blank base throws (programmer error)", async () => {
     await expect(releaseModelsForRender({ llamaSwapBase: "", },),).rejects.toThrow(/llamaSwapBase/,);
+  });
+
+  test("residency flag routes release through honkbox origin endpoints", async () => {
+    const seen: SeenCall[] = [];
+    let running = [{ model: "llm-a", },];
+    const summary = await releaseModelsForRender({
+      llamaSwapBase: "http://127.0.0.1:1",
+      honkbox: {
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: honkboxProbeWithResidency(true,),
+      },
+      fetchImpl: makeMock(seen, (url,) => {
+        const path = new URL(url,).pathname;
+        if (path === "/running") { return json({ running, },); }
+        expect(path,).toBe("/api/models/unload/llm-a",);
+        running = [];
+        return json({ msg: "ok", },);
+      },),
+    },);
+
+    expect(summary,).toEqual({ released: ["llm-a",], probeOk: true, },);
+    expect(seen[0]?.url,).toBe("http://127.0.0.1:9010/running",);
+    expect(seen.some((call,) => call.url.includes(":1/",)),).toBe(false,);
+  });
+
+  test("residency flag false keeps the llama-swap path", async () => {
+    const seen: SeenCall[] = [];
+    const summary = await releaseModelsForRender({
+      llamaSwapBase: BASE,
+      honkbox: {
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: honkboxProbeWithResidency(false,),
+      },
+      fetchImpl: makeMock(seen, () => json({ running: [], },),),
+    },);
+
+    expect(summary,).toEqual({ released: [], probeOk: true, },);
+    expect(seen[0]?.url,).toBe(`${BASE}/running`,);
+  });
+
+  test("unreachable honkbox backend is warned and non-fatal", async () => {
+    const seen: SeenCall[] = [];
+    const summary = await releaseModelsForRender({
+      honkbox: {
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: honkboxProbeWithResidency(true,),
+      },
+      fetchImpl: makeMock(seen, () => {
+        throw new Error("connection refused",);
+      },),
+    },);
+
+    expect(summary,).toEqual({ released: [], probeOk: false, },);
+  });
+
+  test("non-loopback honkbox base without a credential is refused", async () => {
+    const seen: SeenCall[] = [];
+    const summary = await releaseModelsForRender({
+      honkbox: {
+        baseUrl: "http://10.0.0.5:9010/v1",
+        probe: honkboxProbeWithResidency(true,),
+      },
+      fetchImpl: makeMock(seen, () => json({ running: [], },),),
+    },);
+
+    expect(summary,).toEqual({ released: [], probeOk: false, },);
+    expect(seen,).toHaveLength(0,);
+  });
+
+  test("honkbox unload failure warns but preserves probeOk", async () => {
+    const seen: SeenCall[] = [];
+    const summary = await releaseModelsForRender({
+      honkbox: {
+        baseUrl: "http://127.0.0.1:9010/v1",
+        probe: honkboxProbeWithResidency(true,),
+      },
+      fetchImpl: makeMock(seen, (url,) =>
+        new URL(url,).pathname === "/running"
+          ? json({ running: [{ model: "llm-a", },], },)
+          : json({ error: "nope", }, 500,),),
+    },);
+
+    expect(summary,).toEqual({ released: [], probeOk: true, },);
   });
 });

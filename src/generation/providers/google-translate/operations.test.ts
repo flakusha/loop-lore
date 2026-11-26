@@ -18,7 +18,7 @@ const state: GoogleTranslateState = {
   headers: {},
 };
 
-type FetchHandler = (url: URL, init: RequestInit,) => Response | Promise<Response>;
+type FetchHandler = (url: string, init: RequestInit,) => Response | Promise<Response>;
 
 /** */
 interface CapturedRequest {
@@ -57,7 +57,8 @@ describe("listModelsDispatch (google-translate)", () => {
     const captured: CapturedRequest[] = [];
     await withMockFetch(
       (url,) => {
-        captured.push({ path: `${url.origin}${url.pathname}`, key: url.searchParams.get("key",), },);
+        const parsed = new URL(url,);
+        captured.push({ path: `${parsed.origin}${parsed.pathname}`, key: parsed.searchParams.get("key",), },);
         return jsonResponse({
           data: {
             languages: [{ language: "en", name: "English", }, { language: "zh-CN", name: "Chinese (Simplified)", },],

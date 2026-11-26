@@ -29,9 +29,9 @@ import { toDate, } from "../../utils/date";
 import { forbiddenResponse, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
-/** TypeBox body for minting — expiry OPTIONAL, default non-expiring (open ADR
- * lifetime question; the schema never presumes an answer). The tier union is
- * the FacadeScope vocabulary (IntegrationTokenScope values). */
+/** TypeBox body for minting — expiry OPTIONAL; omitted -> 24h default,
+ * requested instants clamped to 7d by the mint helper. The tier union is the
+ * FacadeScope vocabulary (IntegrationTokenScope values). */
 const MintBody = t.Object({
   name: t.String({ minLength: 1, maxLength: 120, },),
   scopes: t.Union([t.Literal("read",), t.Literal("chat-write",),],),
@@ -122,9 +122,9 @@ export function integrationTokenRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         if (!can(ctx.userRole ?? null, "admin.system",)) { return forbiddenResponse(); }
 
         const body = ctx.body as { name: string; scopes: "read" | "chat-write"; expiresAt?: string };
-        // A present-but-unparseable expiry would corrupt every future lookup
-        // (the seam fails closed on it) — reject at mint time instead.
-        let expiresAt: string | null = null;
+        // An unparseable instant cannot be clamped — keep the existing 400 at
+        // the trust boundary before mintIntegrationToken stamps the expiry.
+        let requestedExpiresAt: string | undefined;
         if (body.expiresAt !== undefined) {
           const parsed = toDate(body.expiresAt,);
           if (Number.isNaN(parsed.getTime(),)) {
@@ -134,10 +134,10 @@ export function integrationTokenRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             }, 400,);
           }
 
-          expiresAt = parsed.toISOString();
+          requestedExpiresAt = parsed.toISOString();
         }
 
-        const { raw, hash, } = mintIntegrationToken();
+        const { raw, hash, expiresAt, } = mintIntegrationToken(requestedExpiresAt,);
         const id = crypto.randomUUID();
         await db.insertInto("integration_tokens",).values({
           id,

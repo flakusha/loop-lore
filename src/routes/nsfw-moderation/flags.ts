@@ -16,7 +16,7 @@
 import { Elysia, t, } from "elysia";
 import { clampFlagLimit, NsfwModerationService, toQueueView, toResolvedView, } from "../../nsfw/moderation-service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, parsePaginationParams, requireUserId, } from "../http-utils";
+import { errorMessage, jsonError, jsonResponse, parsePaginationParams, requireUserId, } from "../http-utils";
 import { flagBody, flagQuery, requireModerationAction, requireModerationReview, resolveFlagBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
@@ -53,7 +53,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
             data: { id: view.id, status: view.status, reporterHash: view.reporterHash, },
           },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 400,);
+          return jsonError(errorMessage(error,), 400,);
         }
       }, { body: flagBody, response: { 200: SuccessResponse, 400: ErrorResponse, }, },)
       .get(`${prefix}/nsfw/moderation/flags`, async (ctx: any,) => {
@@ -74,7 +74,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const flags = result.flags.map((f,) => toQueueView(f, configured,));
           return jsonResponse({ ...SuccessResponse, data: { flags, total: result.total, }, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 500,);
+          return jsonError(errorMessage(error,), 500,);
         }
       }, { query: flagQuery, response: { 200: SuccessResponse, 400: ErrorResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/flags/:id`, async (ctx: any,) => {
@@ -87,7 +87,7 @@ export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
           const view = toResolvedView(flag,);
           return jsonResponse({ ...SuccessResponse, data: view, },);
         } catch (error: unknown) {
-          return jsonError(error instanceof Error ? error.message : String(error,), 400,);
+          return jsonError(errorMessage(error,), 400,);
         }
       }, {
         params: t.Object({ id: t.String(), },),

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 300
 
 /**
  * Shared guard helpers for the message-create route.
@@ -12,9 +13,23 @@ import { isMuted, } from "../../chat/moderation";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { getActorContentRating, } from "../../middleware/nsfw-gate/access";
+import { checkNsfwWithConsent, } from "../../middleware/nsfw-gate/consent";
+import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
+import { logNsfwEvent, } from "../../middleware/nsfw-gate/logging";
+import { NsfwModerationService, } from "../../nsfw/moderation-service";
+import { isNsfwGateReason, type NsfwGateReason, } from "../../nsfw/pii-redaction";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { checkPromptInjection, } from "../../validation/prompt-injection";
-import { conflictResponse, forbiddenResponse, internalErrorResponse, jsonResponse, } from "../http-utils";
+import {
+  conflictResponse,
+  ErrorCode,
+  forbiddenResponse,
+  HttpStatus,
+  internalErrorResponse,
+  jsonError,
+  jsonResponse,
+} from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
 import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { attachMessageAttachments, } from "./post";
@@ -164,6 +179,92 @@ export async function enforceAgeGate(
   );
 
   return forbiddenResponse("Age gate not passed",);
+}
+
+/** Narrow a dynamic verdict reason to the closed, PII-safe audit vocabulary. */
+function toAuditReason(reason: string | undefined,): NsfwGateReason {
+  const base = (reason ?? "").replace(/:.*$/, "",);
+  return isNsfwGateReason(base,) ? base : "verdict_unavailable";
+}
+
+/** Args for the shared send/forward/participant-add consent verdict. */
+export interface NsfwConsentGateArgs {
+  database: Kysely<DB>;
+  config: Config;
+  /** Session user whose consent and age are evaluated. */
+  userId: string;
+  chatId: string;
+  /** Actor whose rating scopes the verdict. */
+  actorId: string;
+  surface: "send" | "forward" | "participant_add";
+}
+
+/**
+ * Single consent choke point: explicit denial → 403 with the stable reason
+ * code; verdict infrastructure failure → allow + audit (Tuwunel policy).
+ * @param args
+ * @returns 403 response on denial, null when the write may proceed
+ */
+export async function enforceNsfwConsentGate(args: NsfwConsentGateArgs,): Promise<Response | null> {
+  const { database, config, userId, chatId, actorId, surface, } = args;
+  const audit = ({ action, reason, verdictReason, }: {
+    action: "allowed" | "blocked";
+    reason: NsfwGateReason;
+    verdictReason: string;
+  },) =>
+    logNsfwEvent(database, {
+      userId,
+      actorId,
+      chatId,
+      action,
+      reason,
+      metadata: { surface, reason: verdictReason, },
+    }, config.nsfw?.piiSecret,);
+
+  let allowed: boolean;
+  let reason: string | undefined;
+  try {
+    // Ordinary (non-NSFW) chats must keep their existing send/invite contract.
+    // Mirrors chat-create: only NSFW-enabled chats with an NSFW-rated actor
+    // reach the consent verdict.
+    const effective = await new NsfwModerationService(database,)
+      .getEffectiveNsfw(chatId, userId,);
+
+    if (!effective.enabled) { return null; }
+    if (!isNsfwRating(await getActorContentRating(database, actorId,),)) { return null; }
+
+    const verdict = await checkNsfwWithConsent({ database, config, userId, chatId, actorId, },);
+    allowed = verdict.allowed;
+    reason = verdict.reason;
+  } catch (error) {
+    getLogger().child({ module: "nsfw-gate", },).warn(
+      "NSFW consent verdict unavailable; allowing write",
+      { chatId, surface, error: String(error,), },
+    );
+
+    await audit({ action: "allowed", reason: "verdict_unavailable", verdictReason: "verdict_unavailable", },);
+    return null;
+  }
+
+  const stableReason = reason ?? "nsfw_denied";
+  await audit({
+    action: allowed ? "allowed" : "blocked",
+    reason: allowed ? "verdict_allowed" : toAuditReason(stableReason,),
+    verdictReason: allowed ? "verdict_allowed" : stableReason,
+  },);
+
+  if (allowed) { return null; }
+
+  // `reason` is the stable code Web/TUI already classify on. Elysia cleans
+  // undeclared response fields against ErrorResponse, so carry it in the
+  // declared `code` field (and keep the legacy prefix + `data` for callers
+  // without that response schema).
+  return jsonError({
+    message: `NSFW access denied: ${stableReason}`,
+    status: HttpStatus.Forbidden,
+    code: stableReason as ErrorCode,
+    data: { reason: stableReason, surface, },
+  },);
 }
 
 /**

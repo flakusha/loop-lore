@@ -1,0 +1,431 @@
+<!-- System Tab -->
+<div x-show="activeTab === 'system'">
+  <div x-show="loadingSystemConfig" class="empty-state" style="padding: var(--space-12)">
+    <div class="icon">⏳</div>
+    <div class="title">Loading configuration...</div>
+  </div>
+  <template x-if="!loadingSystemConfig">
+    <!-- Restart-required banner (TASK-restart-required-indicator) -->
+    <div
+      x-show="hasPendingRestart() && !restartBannerDismissed"
+      style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: #6b5400"
+      role="alert"
+    >
+      <span style="font-size: 18px">⚠️</span>
+      <span style="flex: 1">
+        One or more saved values require a server restart to take effect. The new values are stored, but handlers
+        continue using the previous values until the process restarts.
+      </span>
+      <button class="btn btn-secondary btn-xs" @click="dismissRestartBanner()">Dismiss</button>
+    </div>
+    <div style="padding: var(--space-6)">
+      <div style="display: grid; gap: var(--space-4)">
+        <template x-for="c in systemConfig" :key="c.key">
+          <div style="display: grid; grid-template-columns: 200px 1fr auto auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
+            <div>
+              <span x-text="displayKey(c.key)" style="font-weight: 500; font-size: 13px"></span>
+              <span
+                x-show="c.requires_restart"
+                title="Requires server restart to take effect"
+                style="display: inline-block; margin-left: 6px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b5400; background: #fff3cd; border: 1px solid #ffc107; border-radius: 999px; vertical-align: middle"
+              >restart</span>
+              <span
+                x-show="c.per_chat_overridable"
+                title="This key can be overridden per chat from the chat settings modal"
+                style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #0a4d8c; background: #d8ecff; border: 1px solid #6aa9e6; border-radius: 999px; vertical-align: middle"
+              >per-chat</span>
+              <div
+                x-text="c.description"
+                style="font-size: 11px; color: var(--text-secondary)"
+                x-show="c.description"
+              >
+              </div>
+            </div>
+            <input
+              class="form-input"
+              style="font-size: 13px"
+              :value="c.value"
+              @input="sysConfigDirty[c.key] = $event.target.value"
+            />
+            <button class="btn btn-primary btn-xs" @click="saveSystemConfig(c.key)">Save</button>
+            <div style="display: flex; gap: 4px">
+              <template x-if="confirmDeleteConfig !== c.key">
+                <button class="btn btn-danger btn-xs" @click="confirmDeleteConfig = c.key">
+                  Delete
+                </button>
+              </template>
+              <template x-if="confirmDeleteConfig === c.key">
+                <button class="btn btn-danger btn-xs" @click="deleteSystemConfig(c.key)">
+                  Confirm
+                </button>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- Export Section -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Export Configuration</h3>
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+          Download saved keys as YAML or TOML. Secret values are redacted. File saves to your browser download folder.
+        </div>
+        <div style="display: flex; gap: var(--space-2)">
+          <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('yaml')">Export YAML</button>
+          <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('toml')">Export TOML</button>
+          <button class="btn btn-secondary btn-xs" @click="exportEffectiveConfig()">Export Effective (JSON)</button>
+        </div>
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-top: var(--space-2)">
+          Effective export merges the live file config with stored <code>system_config</code> rows (stored wins on
+          overlap). Secret-adjacent keys are named in <code>omitted</code>, never included.
+        </div>
+      </div>
+      <!-- Scheduled Jobs Section (GET /api/v1/admin/cron/jobs) -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Scheduled Jobs</h3>
+        <div x-show="cronSchedulerUnavailable" class="empty-state" style="padding: var(--space-6)">
+          <div class="title">Scheduler not running</div>
+          <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-top: var(--space-1)">
+            The cron scheduler service is not active on this server, so job statuses are unavailable. Jobs will appear
+            here once the scheduler starts.
+          </div>
+        </div>
+        <template x-if="!cronSchedulerUnavailable">
+          <div>
+            <div
+              x-show="cronError"
+              style="font-size: 12px; color: #c00; margin-bottom: var(--space-2)"
+              x-text="cronError"
+            >
+            </div>
+            <table class="admin-table" x-show="cronJobs.length > 0">
+              <thead>
+                <tr>
+                  <th>Job</th>
+                  <th>Schedule</th>
+                  <th>Enabled</th>
+                  <th>Last Run</th>
+                  <th>Next Run</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="j in cronJobs" :key="j.name">
+                  <tr>
+                    <td x-text="j.name"></td>
+                    <td><code style="font-size: 12px" x-text="j.schedule"></code></td>
+                    <td x-text="j.enabled ? 'Yes' : 'No'"></td>
+                    <td x-text="formatDate(j.lastRunAt)"></td>
+                    <td x-text="formatDate(j.nextRunAt)"></td>
+                    <td>
+                      <button
+                        class="btn btn-secondary btn-xs"
+                        :disabled="runningCronJob === j.name"
+                        @click="runCronJob(j.name)"
+                      >
+                        <span x-show="runningCronJob !== j.name">Run</span>
+                        <span x-show="runningCronJob === j.name">…</span>
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <div
+              x-show="cronJobs.length === 0 && !loadingCronJobs && !cronError"
+              class="empty-state"
+              style="padding: var(--space-4)"
+            >
+              <div class="title">No scheduled jobs</div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <!-- Import Section (TASK-frontend-setup-wizard) -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Import Configuration</h3>
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+          Restore or seed <code>system_config</code> from a YAML/TOML file produced by Export. Secrets are skipped; rows
+          are previewed before they are written.
+        </div>
+        <button class="btn btn-secondary btn-xs" @click="openImportWizard()">Import Config…</button>
+      </div>
+      <!-- NSFW Configuration Section -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">NSFW Content Policy</h3>
+        <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
+            <div style="font-size: 13px; font-weight: 500">Allow NSFW Content</div>
+            <div style="display: flex; align-items: center; gap: var(--space-2)">
+              <input type="checkbox" x-model="nsfwConfig.allowNsfw" style="width: 16px; height: 16px" />
+              <span
+                style="font-size: 12px; color: var(--text-secondary)"
+                x-text="nsfwConfig.allowNsfw ? 'Enabled' : 'Disabled'"
+              ></span>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
+            <div style="font-size: 13px; font-weight: 500">Minimum Age</div>
+            <div style="display: flex; align-items: center; gap: var(--space-2)">
+              <input
+                type="number"
+                class="form-input"
+                style="width: 80px; font-size: 13px"
+                min="13"
+                max="25"
+                x-model.number="nsfwConfig.nsfwMinAge"
+              />
+              <span style="font-size: 12px; color: var(--text-secondary)">years</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">Save NSFW Policy</button>
+        </div>
+      </div>
+      <!-- Classifier Tag Vocabulary (FEAT-classifier-tag-vocabulary-admin-ui) -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+          {{{t("admin.classifierVocab.title")}}}
+        </h3>
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+          {{{t("admin.classifierVocab.description")}}}
+        </div>
+        <div
+          style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)"
+          data-testid="classifier-vocab-card"
+        >
+          <div x-show="classifierVocab.length === 0" style="font-size: 12px; color: var(--text-secondary)">
+            {{{t("admin.classifierVocab.empty")}}}
+          </div>
+          <template x-for="(tag, idx) in classifierVocab" :key="tag">
+            <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-2)">
+              <template x-if="classifierVocabEditIdx === idx">
+                <div style="display: flex; gap: var(--space-2); align-items: center; flex: 1">
+                  <input
+                    class="form-input"
+                    style="font-size: 13px; max-width: 280px"
+                    x-model="classifierVocabEditValue"
+                    maxlength="64"
+                    @keydown.enter.prevent="commitRenameClassifierTag()"
+                    @keydown.escape="cancelRenameClassifierTag()"
+                    :data-testid="'classifier-vocab-rename-input-' + idx"
+                  />
+                  <button class="btn btn-primary btn-xs" @click="commitRenameClassifierTag()">
+                    {{{t("admin.classifierVocab.save")}}}
+                  </button>
+                  <button class="btn btn-secondary btn-xs" @click="cancelRenameClassifierTag()">
+                    {{{t("admin.classifierVocab.cancel")}}}
+                  </button>
+                </div>
+              </template>
+              <template x-if="classifierVocabEditIdx !== idx">
+                <div style="display: flex; gap: var(--space-2); align-items: center; flex: 1">
+                  <code style="font-size: 13px" x-text="tag"></code>
+                </div>
+              </template>
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="startRenameClassifierTag(idx)"
+                :data-testid="'classifier-vocab-rename-' + idx"
+              >
+                {{{t("admin.classifierVocab.rename")}}}
+              </button>
+              <button
+                class="btn btn-danger btn-xs"
+                @click="removeClassifierTag(idx)"
+                :data-testid="'classifier-vocab-remove-' + idx"
+              >
+                {{{t("admin.classifierVocab.remove")}}}
+              </button>
+            </div>
+          </template>
+          <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-3)">
+            <input
+              class="form-input"
+              style="font-size: 13px; max-width: 280px"
+              x-model="classifierVocabInput"
+              maxlength="64"
+              :placeholder="t('admin.classifierVocab.placeholder')"
+              @keydown.enter.prevent="addClassifierTag()"
+              data-testid="classifier-vocab-input"
+            />
+            <button
+              class="btn btn-primary btn-xs"
+              @click="addClassifierTag()"
+              :disabled="classifierVocabBusy"
+              data-testid="classifier-vocab-add"
+            >
+              {{{t("admin.classifierVocab.add")}}}
+            </button>
+          </div>
+          <div
+            x-show="classifierVocabError"
+            x-text="classifierVocabError"
+            style="color: var(--color-danger, #dc3545); font-size: 12px; margin-top: var(--space-2)"
+            data-testid="classifier-vocab-error"
+          >
+          </div>
+        </div>
+      </div>
+      <!-- Danger Zone Section -->
+      <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3); color: var(--color-danger, #dc3545)">
+          Danger Zone
+        </h3>
+        <div style="display: grid; gap: var(--space-4)">
+          <!-- Purge audit log -->
+          <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+            <div style="font-size: 13px; font-weight: 500">Purge Audit Log</div>
+            <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+              Permanently delete all audit log entries. Type <code>PURGE</code> to confirm.
+            </div>
+            <div style="display: flex; gap: var(--space-2); align-items: center">
+              <input
+                class="form-input"
+                style="font-size: 12px; max-width: 160px"
+                placeholder="PURGE"
+                x-model="dangerConfirm.purge"
+              />
+              <button
+                class="btn btn-danger btn-xs"
+                :disabled="dangerConfirm.purge !== 'PURGE' || dangerBusy.purge"
+                @click="runDangerAction('purge')"
+              >
+                <span x-show="!dangerBusy.purge">Purge</span><span x-show="dangerBusy.purge">…</span>
+              </button>
+            </div>
+          </div>
+          <!-- Reset settings -->
+          <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+            <div style="font-size: 13px; font-weight: 500">Reset System Settings</div>
+            <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+              Restore all system config keys to defaults. Type <code>RESET</code> to confirm.
+            </div>
+            <div style="display: flex; gap: var(--space-2); align-items: center">
+              <input
+                class="form-input"
+                style="font-size: 12px; max-width: 160px"
+                placeholder="RESET"
+                x-model="dangerConfirm.reset"
+              />
+              <button
+                class="btn btn-danger btn-xs"
+                :disabled="dangerConfirm.reset !== 'RESET' || dangerBusy.reset"
+                @click="runDangerAction('reset')"
+              >
+                <span x-show="!dangerBusy.reset">Reset</span><span x-show="dangerBusy.reset">…</span>
+              </button>
+            </div>
+          </div>
+          <!-- Factory reset -->
+          <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--color-danger, #dc3545)">
+            <div style="font-size: 13px; font-weight: 500; color: var(--color-danger, #dc3545)">
+              Factory Reset
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin: 2px 0 var(--space-2)">
+              Wipe ALL data (chats, messages, worlds, assets, users) and re-seed a minimal admin. Type <code>DELETE
+                ALL</code> to confirm.
+            </div>
+            <div style="display: flex; gap: var(--space-2); align-items: center">
+              <input
+                class="form-input"
+                style="font-size: 12px; max-width: 200px"
+                placeholder="DELETE ALL"
+                x-model="dangerConfirm.factory"
+              />
+              <button
+                class="btn btn-danger btn-xs"
+                :disabled="dangerConfirm.factory !== 'DELETE ALL' || dangerBusy.factory"
+                @click="runDangerAction('factory')"
+              >
+                <span x-show="!dangerBusy.factory">Factory Reset</span><span x-show="dangerBusy.factory">…</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <!-- Import Wizard Modal (TASK-frontend-setup-wizard) -->
+  <div
+    x-show="importWizard.open"
+    x-cloak
+    style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; z-index: 1000"
+    @click.self="cancelImport()"
+  >
+    <div style="background: var(--bg-primary, #fff); color: inherit; border-radius: 8px; padding: 20px; width: min(720px, 90vw); max-height: 85vh; overflow: auto; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25)">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px">
+        <h3 style="font-size: 16px; font-weight: 600; margin: 0">
+          <span x-show="importWizard.step === 1">Import Configuration — Choose File</span>
+          <span x-show="importWizard.step === 2">Import Configuration — Preview</span>
+        </h3>
+        <button class="btn btn-secondary btn-xs" @click="cancelImport()">Cancel</button>
+      </div>
+
+      <!-- Step 1: file picker -->
+      <div x-show="importWizard.step === 1">
+        <p style="font-size: 13px; color: var(--text-secondary, #6c757d); margin-bottom: 12px">
+          Select a YAML or TOML file produced by Export Configuration. The next step previews the keys that will be
+          written and flags anything that looks like a secret.
+        </p>
+        <input type="file" accept=".yaml, .yml, .toml" @change="handleFileSelect($event)" class="form-input" />
+        <div
+          x-show="importWizard.error"
+          style="color: #c00; font-size: 12px; margin-top: 8px"
+          x-text="importWizard.error"
+        >
+        </div>
+      </div>
+
+      <!-- Step 2: preview -->
+      <div x-show="importWizard.step === 2">
+        <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: 8px">
+          File: <code x-text="importWizard.fileName"></code> · Format: <code
+            x-text="importWizard.format.toUpperCase()"
+          ></code> ·
+          <span x-text="importWizard.preview.length + ' keys'"></span>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px">
+          <thead>
+            <tr style="background: var(--bg-secondary, #f8f9fa)">
+              <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                Key
+              </th>
+              <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                Action
+              </th>
+              <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                Notes
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="row in importWizard.preview" :key="row.key">
+              <tr>
+                <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                  <code x-text="row.key"></code>
+                </td>
+                <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                  <span x-show="row.willOverwrite" style="color: #6b5400">overwrite</span>
+                  <span x-show="!row.willOverwrite" style="color: #0a7">create</span>
+                </td>
+                <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                  <span x-show="row.isSecret" style="color: #c00; font-size: 11px"
+                  >⚠ secret-pattern — will be skipped on import</span>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <div
+          x-show="importWizard.error"
+          style="color: #c00; font-size: 12px; margin-top: 8px"
+          x-text="importWizard.error"
+        >
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end">
+          <button class="btn btn-secondary btn-xs" @click="importWizard.step = 1">Back</button>
+          <button class="btn btn-primary btn-xs" @click="confirmImport()">Apply Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

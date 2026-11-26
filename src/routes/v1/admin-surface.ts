@@ -5,11 +5,15 @@
  */
 import { Elysia, } from "elysia";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { featuresForOpts, } from "../../features/surface";
 import { adminRoutes, } from "../admin";
 import { adminCharacterOverridesRoutes, } from "../admin-character-overrides";
 import { adminComfyuiWorkflowRoutes, } from "../admin-comfyui-workflows";
 import { adminNsfwRoutes, } from "../admin-nsfw";
 import { adminTemplateRoutes, } from "../admin-templates";
+import { agentActionsRoutes, } from "../admin/agent-actions";
+import { agentTokenRoutes, } from "../admin/agent-tokens";
+import { honkboxStatusRoutes, } from "../admin/honkbox-status";
 import { sdTemplatesRoutes, } from "../admin/sd-templates";
 import { commandsRoutes, } from "../commands";
 import { exportRoutes, } from "../export";
@@ -36,56 +40,76 @@ export function adminSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
-  return new Elysia({ name: "v1-admin", },)
+  const features = featuresForOpts(opts,);
+  const app = new Elysia({ name: "v1-admin", },)
     // ── Admin & plugins ──────────────────────────────────────
     .use(adminRoutes(handleOpts, prefix,),)
-    .use(sdTemplatesRoutes(handleOpts, prefix,),)
-    .use(pluginRoutes(handleOpts, prefix,),)
+    // Honkbox capability/queue status: read-only projection of the cached
+    // probe, mounted only on the v1 surface and gated by admin.system.
+    .use(honkboxStatusRoutes(handleOpts, prefix,),)
+    // RSI agent tokens (agent-api-router ticket) — split out of the admin
+    // barrel (which is one .use short of TS2589); same admin triple guard.
+    .use(agentTokenRoutes(handleOpts, prefix,),)
+    // RSI #9 — read-only agent-actions audit surface, same admin guard.
+    .use(agentActionsRoutes(handleOpts, prefix,),)
+    .use(sdTemplatesRoutes(handleOpts, prefix,),);
+
+  if (features.plugins) { app.use(pluginRoutes(handleOpts, prefix,),); }
+
+  app
     .use(adminCharacterOverridesRoutes(handleOpts, prefix,),)
     .use(adminTemplateRoutes({ database, }, prefix,),)
     .use(adminComfyuiWorkflowRoutes({ database, }, prefix,),)
     .use(adminNsfwRoutes({ database, }, prefix,),)
-    .use(commandsRoutes({ prefix, },),)
-    // ── Harness exec log ──────────────────────────────────────
-    // Admin-gated like the rest of this surface, so it mounts versioned
-    // under /api/v1; the unversioned /api/harness/* path 308s here.
-    .use(harnessRoutes({ database, }, prefix,),)
-    // ── Harness permission approval (TASK-permission-approval-flow) ──
-    // Reads its queue off the composed runtime; 503 when the integration
-    // is disabled, so the surface is inert rather than auto-anything.
-    .use(harnessPermissionRoutes(prefix,),)
-    // ── Harness escalation audit queue (TASK-escalation-audit-queue-with-no-auto-approve) ──
-    // Lists the recorded root-change requests and records the admin's
-    // decision on one of them; the queue lives in the repo-access audit
-    // table, so there is nothing to decide on until a request is recorded.
-    .use(harnessEscalationRoutes({ database, }, prefix,),)
-    // ── Harness model discovery (TASK-model-discovery-capability-enrichment) ──
-    // Read-only listing off the composed runtime's EXISTING connections,
-    // enriched from the static capability table; never spawns to list.
-    .use(harnessModelRoutes({ database, }, prefix,),)
-    // ── Harness usage ledger (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
-    // Per-profile rolling usage windows plus breaker state, read off the
-    // composed runtime; 503 when the integration is disabled.
-    .use(harnessUsageRoutes(prefix,),)
-    // ── Harness telemetry (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
-    // Raw usage-ledger rows and the admin Prometheus surface (shared block
-    // + scoped dispatch/quota/flavor/availability families), both read-only
-    // off the composed runtime; 503 when the integration is disabled.
-    .use(harnessLedgerRoutes(prefix,),)
-    .use(harnessMetricsRoutes(prefix,),)
-    // ── Harness exec-log / job-status SSE (TASK-harness-surfacing-exec-log-sse-to-chat-usage-ledger-credit-g) ──
-    // Admin-gated tail of the exec log and the permission queue; anchors at
-    // connect, 503 when the integration is disabled.
-    .use(harnessStreamRoutes(prefix,),)
-    // ── Harness turn queue (TASK-harness-multi-agent-turn-queue) ──────
-    // Enqueue/list/cancel over the boot-composed queue singleton; 503 when
-    // the integration is disabled, so the surface is inert rather than
-    // auto-anything.
-    .use(harnessQueueRoutes(prefix,),)
+    .use(commandsRoutes({ prefix, },),);
+
+  if (features.harness) {
+    app
+      // ── Harness exec log ────────────────────────────────────
+      // Admin-gated like the rest of this surface, so it mounts versioned
+      // under /api/v1; the unversioned /api/harness/* path 308s here.
+      .use(harnessRoutes({ database, }, prefix,),)
+      // ── Harness permission approval (TASK-permission-approval-flow) ──
+      // Reads its queue off the composed runtime; 503 when the integration
+      // is disabled, so the surface is inert rather than auto-anything.
+      .use(harnessPermissionRoutes(prefix,),)
+      // ── Harness escalation audit queue (TASK-escalation-audit-queue-with-no-auto-approve) ──
+      // Lists the recorded root-change requests and records the admin's
+      // decision on one of them; the queue lives in the repo-access audit
+      // table, so there is nothing to decide on until a request is recorded.
+      .use(harnessEscalationRoutes({ database, }, prefix,),)
+      // ── Harness model discovery (TASK-model-discovery-capability-enrichment) ──
+      // Read-only listing off the composed runtime's EXISTING connections,
+      // enriched from the static capability table; never spawns to list.
+      .use(harnessModelRoutes({ database, }, prefix,),)
+      // ── Harness usage ledger (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
+      // Per-profile rolling usage windows plus breaker state, read off the
+      // composed runtime; 503 when the integration is disabled.
+      .use(harnessUsageRoutes(prefix,),)
+      // ── Harness telemetry (TASK-harness-telemetry-metrics-health-signal-usage-ledger-endpoint) ──
+      // Raw usage-ledger rows and the admin Prometheus surface (shared block
+      // + scoped dispatch/quota/flavor/availability families), both read-only
+      // off the composed runtime; 503 when the integration is disabled.
+      .use(harnessLedgerRoutes(prefix,),)
+      .use(harnessMetricsRoutes(prefix,),)
+      // ── Harness exec-log / job-status SSE (TASK-harness-surfacing-exec-log-sse-to-chat-usage-ledger-credit-g) ──
+      // Admin-gated tail of the exec log and the permission queue; anchors at
+      // connect, 503 when the integration is disabled.
+      .use(harnessStreamRoutes(prefix,),)
+      // ── Harness turn queue (TASK-harness-multi-agent-turn-queue) ──────
+      // Enqueue/list/cancel over the boot-composed queue singleton; 503 when
+      // the integration is disabled, so the surface is inert rather than
+      // auto-anything.
+      .use(harnessQueueRoutes(prefix,),);
+  }
+
+  app
     // ── Import / export ──────────────────────────────────────
     .use(importRoutes(handleOpts, prefix,),)
     .use(exportRoutes({ database, }, prefix,),)
     .use(exportSseRoutes({ database, }, prefix,),)
     .use(worldImportRoutes(handleOpts, prefix,),)
     .use(versionedOpenApiPlugin({ version: "1", },),);
+
+  return app;
 }

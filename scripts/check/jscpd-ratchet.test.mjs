@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // Pins the argv contract of jscpd-ratchet.mjs after the Optique migration.
-// `--report` and `--baseline` must still reach the same comparison, and
-// `--update` must still lower a baseline.
+// `--report` and `--baseline` must still reach the same comparison; `--update`
+// must still lower a baseline unless `--accept-new-debt` is explicit.
 //
 // RESOURCE CONTRACT — what each `runRatchet` call owns:
-// - DISK: exactly one `mkdtempSync(join(tmpdir(), "jscpd-ratchet-test-"))`
+// - DISK: exactly one `mkdtempSync(join(SCRATCH_ROOT, "jscpd-ratchet-test-"))`
 //   root holding a private `report.json` AND `baseline.json`. mkdtemp creates
 //   the suffix atomically, so concurrent calls — in this process or another
 //   `bun test` process — cannot collide.
@@ -24,11 +24,12 @@
 // - Ordering: no module-level mutable state; tests pass alone and in any order.
 
 import { expect, test, } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
 const SCRIPT = join(import.meta.dir, "jscpd-ratchet.mjs",);
+const SCRATCH_ROOT = join(tmpdir(), "loop-lore",);
 
 /** Report with `count` duplicate records, as jscpd's json reporter emits. */
 function report(count,) {
@@ -44,7 +45,8 @@ function report(count,) {
  * @returns exit code, both streams, and the baseline file after the run.
  */
 function runRatchet(clones, baseline, extra = [],) {
-  const dir = mkdtempSync(join(tmpdir(), "jscpd-ratchet-test-",),);
+  mkdirSync(SCRATCH_ROOT, { recursive: true, },);
+  const dir = mkdtempSync(join(SCRATCH_ROOT, "jscpd-ratchet-test-",),);
   try {
     const reportPath = join(dir, "report.json",);
     const baselinePath = join(dir, "baseline.json",);
@@ -75,6 +77,7 @@ test("a clone count above the baseline fails", () => {
   const { code, err, } = runRatchet(7, 5,);
   expect(code,).toBe(1,);
   expect(err,).toContain("7 clones exceeds baseline 5",);
+  expect(err,).toContain("--update --accept-new-debt",);
 });
 
 test("--update lowers the baseline to the measured count", () => {
@@ -88,7 +91,15 @@ test("--update still refuses to raise the baseline", () => {
   const { code, err, baseline, } = runRatchet(9, 5, ["--update",],);
   expect(code,).toBe(1,);
   expect(err,).toContain("refusing to update baseline",);
+  expect(err,).toContain("--accept-new-debt",);
   expect(baseline.clones,).toBe(5,);
+});
+
+test("--update --accept-new-debt raises the baseline deliberately", () => {
+  const { code, out, baseline, } = runRatchet(9, 5, ["--update", "--accept-new-debt",],);
+  expect(code,).toBe(0,);
+  expect(out,).toContain("jscpd baseline set: 5 → 9 (accepted new debt)",);
+  expect(baseline.clones,).toBe(9,);
 });
 
 test("no --report still exits 2 with the usage line", () => {

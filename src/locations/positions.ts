@@ -120,6 +120,27 @@ export class ActorPositionService {
   }
 
   /**
+   * Snap every rider aboard a transport to the stop it just reached.
+   * Only `spatial_location_id` moves — `physical_location_id` stays the
+   * transport, so the actor is still recorded as aboard it.
+   * @param transportLocationId the transport's location id
+   * @param spatialLocationId the destination stop location id
+   * @returns how many rider rows were updated
+   */
+  async propagateTransportArrival(
+    transportLocationId: string,
+    spatialLocationId: string,
+  ): Promise<number> {
+    const result = await this.db
+      .updateTable("actor_locations",)
+      .set({ spatial_location_id: spatialLocationId, },)
+      .where("physical_location_id", "=", transportLocationId,)
+      .executeTakeFirst();
+
+    return Number(result?.numUpdatedRows ?? 0n,);
+  }
+
+  /**
    * Derive a position from context for actors on a moving transport.
    * physical = transport, spatial = current stop on transport's route.
    * Caller passes the routeId; if absent, falls back to locations.current_route_id.

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { jsonStringifyOr, } from "@/utils";
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import {
   DEFAULT_ENTITY_TEMPLATE_POSITION,
   type EntityTemplatePosition,

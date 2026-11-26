@@ -21,3 +21,8 @@ Fix .plan/epics/epic-game-engine-sdks.md lines 72,78-83: Godot 4.x has no WebSoc
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Keep this correction ticket: the epic must name `WebSocketPeer`, not the stale WebSocket API.
+- Record the Godot version pin with the fixture; no competing SDK ticket.

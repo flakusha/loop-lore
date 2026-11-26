@@ -48,6 +48,7 @@ export async function markOfferExpired(
  * @param opts
  * @param opts.offerId
  * @param opts.counterActorId
+ * @param opts.worldId - optional route world; rejects offers from another world
  * @param opts.buyerItems
  * @param opts.sellerItems
  * @param opts.price
@@ -58,6 +59,7 @@ export async function counterOffer(
   opts: {
     offerId: string;
     counterActorId: string;
+    worldId?: string;
     buyerItems?: TradeLine[];
     sellerItems?: TradeLine[];
     price?: number;
@@ -67,6 +69,7 @@ export async function counterOffer(
     .select([
       "id",
       "status",
+      "world_id",
       "requester_actor_id",
       "crafter_actor_id",
       "offered_payment",
@@ -78,6 +81,10 @@ export async function counterOffer(
     .executeTakeFirst();
 
   if (!offer) { return { success: false, reason: "offer not found", }; }
+  if (opts.worldId && offer.world_id !== opts.worldId) {
+    return { success: false, reason: "offer not found", };
+  }
+
   if (offer.status !== "pending" && offer.status !== "countered") {
     return { success: false, reason: `offer is ${offer.status}`, };
   }

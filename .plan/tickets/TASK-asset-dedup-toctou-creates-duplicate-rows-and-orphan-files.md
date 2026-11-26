@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-multimodal-asset-reuse
@@ -22,3 +22,13 @@ src/assets/service/create.ts:21-60 does contentHash+owner lookup then uid+write+
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## 2026-11-25 reconciliation
+
+Fully shipped: the INSERT is the arbiter — conflict-targeted `ON CONFLICT` on
+the owner/hash/tier(/key) partial-index key plus a same-key winner re-read and
+orphan-file cleanup at `packages/assets/src/assets/service/create.ts:167-278`;
+the unique indexes live at `src/db/migrations/007_generation_assets.ts:403-412`.
+Concurrency tests (8 identical uploads yield one row/file, owner/tier scoping,
+`dedupe:false`) are at
+`packages/assets/src/assets/service/create-dedup-race.test.ts:49-367`.

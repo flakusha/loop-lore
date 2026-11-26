@@ -6,7 +6,7 @@
 **Overview:** (see sections below)
 
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic
@@ -62,22 +62,20 @@ finish in Ren'Py.
   the loaded list), not a message-anchored FK — no reliable DB reconstruction.
   The authoring-branch structure above already carries the played story and
   fork points; VN-choice export is a follow-up ticket once a DB anchor exists.
-- **Route path:** `POST /api/v1/renpy-export` (versioned — the catch-all
-  308-redirects unversioned `/api/*` to `/api/v1/*`, and plugin dispatch matches
-  the versioned path; the unversioned dice-roller/card-battle pattern is
-  unreachable). `requiresAuth` + `caller.userId` row-level ownership filter
-  (`chats.created_by`, same as `batchExportChats`).
+- **Route path:** `POST /api/renpy/export@v1` (versioned `@v1` suffix; the next
+  format revision ships `@v2` alongside). `requiresAuth` plus a `chat_owners`
+  row for `caller.userId` on every requested chat, matching `batchExportChats`.
 - **UI:** one button in the chat-list batch bar beside `batchExport`,
   reusing the `selectedChats` multi-select.
 
 ## Acceptance Criteria
 
-- [ ] Exported ZIP opens as a Ren'Py project overlay with working start label
-- [ ] Played path renders as dialogue with named character speakers
-- [ ] Fork points render as menus with playable path + author stubs
-- [ ] Only caller-owned chats are included; unowned chat ids are excluded
-- [ ] UI button exports the current multi-select and downloads the ZIP
-- [ ] Tests passing, docs updated
+- [x] Exported ZIP opens as a Ren'Py project overlay with working start label
+- [x] Played path renders as dialogue with named character speakers
+- [x] Fork points render as menus with playable path + author stubs
+- [x] Only caller-owned chats are included; unowned chat ids are excluded
+- [x] UI button exports the current multi-select and downloads the ZIP
+- [x] Tests passing, docs updated
 
 ## Tickets
 
@@ -85,3 +83,6 @@ finish in Ren'Py.
 - `TASK-renpy-export-model-gather-from-db` (dc2e726)
 - `TASK-renpy-export-core-plugin-route-versioned-path` (43f862e)
 - `TASK-renpy-export-button-in-chat-list-batch-bar` (d2bbfa1)
+
+
+git issue: 56f8f61

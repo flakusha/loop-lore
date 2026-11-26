@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { Elysia, t, } from "elysia";
+import { type Context, Elysia, t, } from "elysia";
 import { linkAsset, } from "../../assets/service/links";
 import { ActorType, AgentType, AssetLinkEntity, } from "../../db/enums";
+import type { TranslatorFn, } from "../../i18n/types";
 import { can, } from "../../users/permissions";
 import { jsonStringifyOr, uid, } from "../../utils";
 import {
@@ -12,6 +13,14 @@ import {
 } from "../../validation/schemas";
 import { forbiddenResponse, jsonCreated, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+  t?: TranslatorFn;
+}
+type Ctx = Context & AuthContext;
 
 /**
  * @param opts
@@ -28,11 +37,12 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "characters-create", },)
     .post(
       `${prefix}/actors`,
-      async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
+      async (ctx,) => {
+        const c = ctx as unknown as Ctx;
+        const userId = requireUserId(c,);
         if (typeof userId !== "string") { return userId; }
-        if (!can(ctx.userRole, "character.create",)) {
-          return forbiddenResponse(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+        if (!can(c.userRole, "character.create",)) {
+          return forbiddenResponse(c.t?.("errors.forbidden",) ?? "Forbidden",);
         }
 
         const {

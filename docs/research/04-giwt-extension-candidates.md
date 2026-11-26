@@ -223,7 +223,7 @@ Legend: **(a)** already in giwt · **(b)** natural giwt extension · **(c)** loo
 
 ### 3.4 LLM call inspection, routing config, context budgeting — **(c), not giwt**
 
-**FACT:** loop-lore already has the harness exec-log subsystem: `src/harness/exec-log.ts` (append-only `.harness/executions.jsonl`, best-effort writes, `exec-log.ts:4-14`), `exec-recorder.ts` (writer's only real caller, `:5-9`), `query.ts` (bounded tail reads; `MAX_LINES = 20_000`, `READ_WINDOW_BYTES = 4 MiB`, `:30-36`), `stats.ts`, `run-context.ts`, `types.ts`/`types-wire.ts`. LLM orchestration is in `src/llm/` (`concurrency-limiter.ts`, `resource-manager.ts`, `message-state-machine.ts`, `priority-queue.ts`).
+**FACT:** loop-lore already has the harness exec-log subsystem: `src/harness/exec-log.ts` (append-only `<instance-dir>/harness/executions.jsonl`, best-effort writes, `exec-log.ts:4-14`), `exec-recorder.ts` (writer's only real caller, `:5-9`), `query.ts` (bounded tail reads; `MAX_LINES = 20_000`, `READ_WINDOW_BYTES = 4 MiB`, `:30-36`), `stats.ts`, `run-context.ts`, `types.ts`/`types-wire.ts`. LLM orchestration is in `src/llm/` (`concurrency-limiter.ts`, `resource-manager.ts`, `message-state-machine.ts`, `priority-queue.ts`).
 
 **RECOMMENDATION:** not giwt, on three grounds: (1) it needs an HTTP client and giwt has **zero** network code — adding one changes its security posture wholesale; (2) it already exists; (3) it is per-process runtime state with no git artifact. Git provenance is already attached at the right place: `exec-recorder.ts:88` calls `getGitContext()`.
 

@@ -10,8 +10,11 @@
  * ships img2img) make the fixture assertions see a ghost workflow.
  */
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
-import { mkdir, rm, writeFile, } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, utimes, writeFile, } from "node:fs/promises";
+import { join, } from "node:path";
+import { errorHandler, } from "../../api/error-handler";
 import { createLogger, } from "../../logger/index.js";
+import { NotFoundError, } from "../../routes/http-utils/status";
 import { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader.js";
 
 const DIR = ".tmp/wf-fixtures-loader";
@@ -27,6 +30,11 @@ const WORKFLOW_WITH_DEAD_NODE = {
   "5": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", cfg: 1, }, },
 };
 
+/** A Note-only stub: ComfyUI rejects Note at submit, so ingest must skip it. */
+const WORKFLOW_NOTE_ONLY = {
+  "1": { class_type: "Note", inputs: { text: "PLACEHOLDER", }, },
+};
+
 async function fixtures(): Promise<void> {
   await mkdir(DIR, { recursive: true, },);
   await writeFile(`${DIR}/txt2img.json`, JSON.stringify(WORKFLOW,),);
@@ -34,6 +42,7 @@ async function fixtures(): Promise<void> {
   await writeFile(`${DIR}/empty.json`, "{}",);
   await writeFile(`${DIR}/readme.txt`, "ignored",);
   await writeFile(`${DIR}/deadnode.json`, JSON.stringify(WORKFLOW_WITH_DEAD_NODE,),);
+  await writeFile(`${DIR}/noteonly.json`, JSON.stringify(WORKFLOW_NOTE_ONLY,),);
 }
 
 beforeAll(async () => {
@@ -62,7 +71,7 @@ describe("getWorkflowLoader", () => {
     createLogger({ level: "error", },);
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
-    // deadnode.json is skipped: its CLIPTextEncode is unreferenced and is not a sink.
+    // deadnode.json has a dead CLIPTextEncode; noteonly.json has no real sink.
     expect(await loader.listWorkflows(),).toEqual(["txt2img",],);
     const loaded = await loader.loadWorkflow({ name: "txt2img", vars: { prompt: "cat", }, },);
     expect(inputOf(loaded, "5",).text,).toBe("cat",);
@@ -73,6 +82,13 @@ describe("getWorkflowLoader", () => {
     const loader = getWorkflowLoader(DIR,);
     expect(await loader.listWorkflows(),).not.toContain("deadnode",);
     await expect(loader.loadWorkflow({ name: "deadnode", },),).rejects.toThrowError("not found",);
+  });
+
+  it("refuses to load a Note-only placeholder", async () => {
+    await fixtures();
+    const loader = getWorkflowLoader(DIR,);
+    expect(await loader.listWorkflows(),).not.toContain("noteonly",);
+    await expect(loader.loadWorkflow({ name: "noteonly", },),).rejects.toThrowError("not found",);
   });
 
   it("applies node overrides and returns raw workflows", async () => {
@@ -87,9 +103,54 @@ describe("getWorkflowLoader", () => {
     expect(await loader.getRawWorkflow("missing",),).toBeNull();
   });
 
+  it("reloads an overwritten workflow without a directory mtime change", async () => {
+    const dir = await mkdtemp(".tmp/wf-loader-mtime-",);
+    const file = join(dir, "graph.json",);
+    const graph = (text: string,) => ({
+      "5": { class_type: "CLIPTextEncode", inputs: { text, }, },
+      "6": { class_type: "SaveImage", inputs: { images: ["5", 0,], }, },
+    });
+
+    try {
+      await writeFile(file, JSON.stringify(graph("FIRST",),),);
+      const dirMtimeBefore = (await stat(dir,)).mtimeMs;
+
+      resetWorkflowLoaderForTests();
+      const loader = getWorkflowLoader(dir,);
+      expect(inputOf(await loader.loadWorkflow({ name: "graph", },), "5",).text,).toBe("FIRST",);
+
+      await writeFile(file, JSON.stringify(graph("SECOND",),),);
+      // Force a strictly newer file mtime without touching the directory.
+      const later = new Date(Date.now() + 60_000,);
+      await utimes(file, later, later,);
+      expect((await stat(dir,)).mtimeMs,).toBe(dirMtimeBefore,);
+
+      expect(inputOf(await loader.loadWorkflow({ name: "graph", },), "5",).text,).toBe("SECOND",);
+    } finally {
+      resetWorkflowLoaderForTests();
+      await rm(dir, { recursive: true, force: true, },);
+    }
+  });
+
   it("throws for unknown workflows", async () => {
     await fixtures();
     const loader = getWorkflowLoader(DIR,);
     await expect(loader.loadWorkflow({ name: "nope", },),).rejects.toThrowError("not found",);
+  });
+
+  it("throws a typed 404-shaped error for unknown workflows", async () => {
+    await fixtures();
+    const loader = getWorkflowLoader(DIR,);
+    let caught: unknown;
+    try {
+      await loader.loadWorkflow({ name: "typed-missing", },);
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(caught,).toBeInstanceOf(NotFoundError,);
+    const response = errorHandler(caught, "req-1",);
+    expect(response.status,).toBe(404,);
+    expect((await response.json() as { error_code: string }).error_code,).toBe("NOT_FOUND",);
   });
 });

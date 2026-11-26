@@ -10,15 +10,19 @@ import { dbBackupDir, liveDbPath, } from "./backup-restore";
 
 const ENV_BACKUP = "LOOP_LORE_BACKUP_DIR";
 const ENV_DB = "LOOP_LORE_DB_PATH";
+const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
 
 let savedBackup: string | undefined;
 let savedDb: string | undefined;
+let savedInstance: string | undefined;
 
 beforeEach(() => {
   savedBackup = process.env[ENV_BACKUP];
   savedDb = process.env[ENV_DB];
+  savedInstance = process.env[ENV_INSTANCE];
   delete process.env[ENV_BACKUP];
   delete process.env[ENV_DB];
+  delete process.env[ENV_INSTANCE];
 },);
 
 afterEach(() => {
@@ -27,12 +31,16 @@ afterEach(() => {
 
   if (savedDb === undefined) { delete process.env[ENV_DB]; }
   else { process.env[ENV_DB] = savedDb; }
+
+  if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+  else { process.env[ENV_INSTANCE] = savedInstance; }
 },);
 
 describe("backup path resolvers", () => {
-  test("dbBackupDir appends the db subtree to the env root", () => {
+  test("dbBackupDir appends the instance slug and the db subtree to the env root", () => {
     process.env[ENV_BACKUP] = "/tmp/custom-backup-root";
-    expect(dbBackupDir(),).toBe(path.join("/tmp/custom-backup-root", "db",),);
+    process.env[ENV_INSTANCE] = "canary";
+    expect(dbBackupDir(),).toBe(path.join("/tmp/custom-backup-root", "canary", "db",),);
   });
 
   test("liveDbPath honors the db path env override", () => {

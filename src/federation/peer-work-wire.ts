@@ -47,6 +47,7 @@ export const PeerWorkErrorCode = {
   ClassNotAllowed: "federation.workload_class_not_allowed",
   CredentialRejected: "federation.workload_credential_rejected",
   InvalidRequest: "federation.workload_invalid_request",
+  QuotaExceeded: "federation.quota_exceeded",
   Failed: "federation.workload_failed",
   Cancelled: "federation.workload_cancelled",
 } as const;

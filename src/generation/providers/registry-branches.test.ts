@@ -14,6 +14,8 @@
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { getHealthCache, } from "../../admin/provider-health";
+import type { ProviderHealthStatus, } from "../../admin/provider-health";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import { encryptValue, } from "../../crypto";
@@ -340,6 +342,77 @@ describe("buildFailoverList", () => {
     },).map((e,) => e.name);
 
     expect(names,).toEqual(["sm-cov-noop-a", "sm-cov-noop-b",],);
+  });
+});
+
+/**
+ * Owned resources: the live cache array from getHealthCache() is saved and
+ * restored in `finally` (no blanket reset); fixtures use unique `sm-cov-health-*`
+ * provider names. No ports, paths or other global state are touched.
+ */
+describe("buildFailoverList — provider health cache", () => {
+  const PRIMARY = "sm-cov-health-primary";
+  const BAD = "sm-cov-health-bad";
+  const GOOD = "sm-cov-health-good";
+
+  function status(name: string, s: ProviderHealthStatus["status"],): ProviderHealthStatus {
+    return { name, label: name, status: s, models: [], lastChecked: "2026-01-01T00:00:00.000Z", };
+  }
+
+  function withCache<T,>(statuses: ProviderHealthStatus[], run: () => T,): T {
+    const cache = getHealthCache();
+    const saved = [...cache,];
+    cache.length = 0;
+    cache.push(...statuses,);
+    try {
+      return run();
+    } finally {
+      cache.length = 0;
+      cache.push(...saved,);
+    }
+  }
+
+  function config(): Config {
+    const c = emptyConfig();
+    c.generation.providers.openaiCompatible = [BAD, GOOD,].map((name,) => ({
+      name,
+      label: name,
+      baseUrl: "http://localhost:8080/v1",
+      model: "m",
+      timeout: 1000,
+      retries: 0,
+      allowUserApiKey: false,
+      models: {},
+    }));
+
+    return c;
+  }
+
+  test("excludes a provider reported unhealthy by the cache", () => {
+    registerMock(PRIMARY,);
+    registerMock(BAD,);
+    registerMock(GOOD,);
+    withCache([status(BAD, "unreachable",),], () => {
+      expect(buildFailoverList(PRIMARY, config(),).map((e,) => e.name),).toEqual([PRIMARY, GOOD,],);
+    },);
+  });
+
+  test("no health data leaves the config order untouched", () => {
+    registerMock(PRIMARY,);
+    registerMock(BAD,);
+    registerMock(GOOD,);
+    withCache([], () => {
+      expect(buildFailoverList(PRIMARY, config(),).map((e,) => e.name),).toEqual([PRIMARY, BAD, GOOD,],);
+    },);
+  });
+
+  test("all-unhealthy candidates yield an empty chain (fail closed)", () => {
+    registerMock(PRIMARY,);
+    registerMock(BAD,);
+    registerMock(GOOD,);
+    withCache([status(PRIMARY, "error",), status(BAD, "unreachable",), status(GOOD, "unreachable",),], () => {
+      expect(buildFailoverList(PRIMARY, config(),),).toEqual([],);
+    },);
   });
 });
 

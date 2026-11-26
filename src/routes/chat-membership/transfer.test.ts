@@ -1,0 +1,222 @@
+/**
+ * Tests for the chat-transfer route (`POST /api/chats/:id/transfer`).
+ *
+ * Regression: the route path is `:id` and the handler reads `ctx.params.id`,
+ * but the TypeBox params schema originally declared `chatId` — an
+ * `id`/`chatId` mismatch that made every request fail Elysia param validation
+ * (422). These tests pin the correct `id` param and the move-to-location
+ * contract.
+ */
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
+import type { DB, } from "../../db/schema";
+import { createLogger, } from "../../logger";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertChats, insertLocations, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import { transferRoutes, } from "./transfer";
+
+/**
+ * @param db
+ * @param userId
+ */
+function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
+  return new Elysia({ name: "test-chat-transfer", },)
+    .derive(() => ({ userId, }))
+    // transferRoutes only consumes `database`; config is unused by this route.
+    .use(transferRoutes({ database: db, config: {} as unknown as Config, },),) as unknown as Elysia;
+}
+
+describe("chat membership transfer", () => {
+  let db: Kysely<DB>;
+  const userId: string = crypto.randomUUID();
+  const worldId: string = crypto.randomUUID();
+  const otherWorldId: string = crypto.randomUUID();
+  const chatId: string = crypto.randomUUID();
+  const locationA: string = crypto.randomUUID();
+  const locationB: string = crypto.randomUUID();
+  const otherWorldLocation: string = crypto.randomUUID();
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+
+    await insertWorlds(db, userId, "World", { id: worldId, } as never,);
+    await insertWorlds(db, userId, "Other World", { id: otherWorldId, } as never,);
+
+    await insertLocations(db, worldId, "Location A", { id: locationA, } as never,);
+    await insertLocations(db, worldId, "Location B", { id: locationB, } as never,);
+    await insertLocations(db, otherWorldId, "Other Location", { id: otherWorldLocation, } as never,);
+
+    await insertChats(db, "My Chat", userId, { id: chatId, world_id: worldId, } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("moves a chat to a location in the same world", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const chat = await db.selectFrom("chats",).select("current_location_id",).where("id", "=", chatId,)
+      .executeTakeFirst();
+
+    expect(chat?.current_location_id,).toBe(locationA,);
+  });
+
+  test("rejects a location in a different world", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: otherWorldLocation, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("returns 401 without a user", async () => {
+    const app = createApp(db, null,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(401,);
+  });
+
+  test("rejects a non-uuid chat id (params validation active)", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/not-a-uuid/transfer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
+  });
+
+  test("records a manual location event and returns location_name", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationB, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const body = (await res.json()) as { ok: boolean; locationId: string; location_name: string };
+    expect(body.location_name,).toBe("Location B",);
+
+    const events = await db
+      .selectFrom("chat_location_events",)
+      .select(["from_location_id", "to_location_id", "source", "section_id",],)
+      .where("chat_id", "=", chatId,)
+      .orderBy("created_at", "asc",)
+      .execute();
+
+    const latest = events[events.length - 1]!;
+    expect(latest.from_location_id,).toBe(locationA,);
+    expect(latest.to_location_id,).toBe(locationB,);
+    expect(latest.source,).toBe("manual",);
+    expect(latest.section_id,).toBeNull();
+  });
+
+  test("leaves background assignments untouched when the location has no default background", async () => {
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const assignments = await db
+      .selectFrom("chat_background_assignments",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+
+    expect(assignments,).toHaveLength(0,);
+  });
+
+  test("transfer creates a journey section bound to the destination", async () => {
+    const sectionChatId = crypto.randomUUID();
+    await insertChats(db, "Sectioning Chat", userId, { id: sectionChatId, world_id: worldId, } as never,);
+
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${sectionChatId}/transfer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ locationId: locationA, },),
+      },),
+    );
+
+    expect(res.status,).toBe(200,);
+
+    const sections = await db
+      .selectFrom("chat_sections",)
+      .select(["label", "location_id", "sort_index",],)
+      .where("chat_id", "=", sectionChatId,)
+      .orderBy("sort_index", "asc",)
+      .execute();
+
+    expect(sections,).toHaveLength(1,);
+    expect(sections[0],).toMatchObject({ label: "Location A", location_id: locationA, sort_index: 1, },);
+  });
+
+  test("repeat transfer to the latest section's location does not duplicate sections", async () => {
+    const sectionChatId = crypto.randomUUID();
+    await insertChats(db, "Dedupe Chat", userId, { id: sectionChatId, world_id: worldId, } as never,);
+
+    const app = createApp(db, userId,);
+    for (const locationId of [locationB, locationA, locationA,]) {
+      const res = await app.handle(
+        new Request(`http://localhost/api/chats/${sectionChatId}/transfer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ locationId, },),
+        },),
+      );
+
+      expect(res.status,).toBe(200,);
+    }
+
+    const sections = await db
+      .selectFrom("chat_sections",)
+      .select(["label", "location_id", "sort_index",],)
+      .where("chat_id", "=", sectionChatId,)
+      .orderBy("sort_index", "asc",)
+      .execute();
+
+    // B → A → A: the second transfer to A is covered by the latest section.
+    expect(sections,).toHaveLength(2,);
+    expect(sections.map((s,) => s.location_id),).toEqual([locationB, locationA,],);
+  });
+});

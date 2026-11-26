@@ -17,14 +17,19 @@
  * binaries throw".
  */
 
-import { createLogger, } from "@/logger";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { afterEach, beforeAll, beforeEach, describe, expect, spyOn, test, } from "bun:test";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
-import { join, } from "node:path";
+import { isAbsolute, join, } from "node:path";
+import { createLogger, } from "../logger";
 import { ensureTlsCerts, } from "./cert";
+import { DATA_DIR, } from "./constants";
+import { SERVER_DEFAULTS, } from "./sections/server";
+import { resolveInstanceDir, } from "./state-dir";
 
 type SpawnSync = typeof Bun.spawnSync;
+
+const originalPlatform = process.platform;
 
 let originalSpawnSync: SpawnSync | undefined;
 let tempDir = "";
@@ -41,6 +46,7 @@ beforeEach(() => {
 
 afterEach(() => {
   Bun.spawnSync = originalSpawnSync as SpawnSync;
+  Object.defineProperty(process, "platform", { value: originalPlatform, configurable: true, },);
   if (tempDir && existsSync(tempDir,)) {
     rmSync(tempDir, { recursive: true, force: true, },);
   }
@@ -81,6 +87,158 @@ describe("ensureTlsCerts — fast path", () => {
   });
 });
 
+describe("ensureTlsCerts — instance anchoring (F10)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-cert-instance-",),);
+    process.env[ENV_STATE] = stateRoot;
+    process.env[ENV_INSTANCE] = "alpha";
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("resolves relative cert paths inside the instance dir", () => {
+    const keyPath = join(stateRoot, "alpha", "certs", "key.pem",);
+    const certPath = join(stateRoot, "alpha", "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const result = ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },);
+
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("does not depend on the process cwd", () => {
+    const keyPath = join(stateRoot, "alpha", "certs", "key.pem",);
+    const certPath = join(stateRoot, "alpha", "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const before = ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },);
+    const cwd = spyOn(process, "cwd",).mockReturnValue("/tmp/some-other-cwd",);
+    try {
+      expect(ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", },),).toEqual(before,);
+    } finally {
+      cwd.mockRestore();
+    }
+  });
+
+  test("keeps absolute cert paths as-is", () => {
+    const keyPath = join(tempDir, "abs", "key.pem",);
+    const certPath = join(tempDir, "abs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("honours an explicitly injected instance dir", () => {
+    const injected = join(tempDir, "injected-instance",);
+    const keyPath = join(injected, "certs", "key.pem",);
+    const certPath = join(injected, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(
+      ensureTlsCerts({ key: "certs/key.pem", cert: "certs/cert.pem", }, { instanceDir: injected, },),
+    ).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
+describe("ensureTlsCerts — runtime instance dir (B1)", () => {
+  const ENV_STATE = "LOOP_LORE_STATE_DIR";
+  const ENV_INSTANCE = "LOOP_LORE_INSTANCE";
+  const ENV_PORT = "PORT";
+  let savedState: string | undefined;
+  let savedInstance: string | undefined;
+  let savedPort: string | undefined;
+  let stateRoot = "";
+
+  beforeEach(() => {
+    savedState = process.env[ENV_STATE];
+    savedInstance = process.env[ENV_INSTANCE];
+    savedPort = process.env[ENV_PORT];
+    stateRoot = mkdtempSync(join(tmpdir(), "loop-lore-b1-cert-",),);
+    process.env[ENV_STATE] = stateRoot;
+    delete process.env[ENV_INSTANCE];
+    delete process.env[ENV_PORT];
+  },);
+
+  afterEach(() => {
+    if (savedState === undefined) { delete process.env[ENV_STATE]; }
+    else { process.env[ENV_STATE] = savedState; }
+
+    if (savedInstance === undefined) { delete process.env[ENV_INSTANCE]; }
+    else { process.env[ENV_INSTANCE] = savedInstance; }
+
+    if (savedPort === undefined) { delete process.env[ENV_PORT]; }
+    else { process.env[ENV_PORT] = savedPort; }
+
+    rmSync(stateRoot, { recursive: true, force: true, },);
+  },);
+
+  test("unnamed instance on port 4000: certs are generated inside the runtime instance dir", () => {
+    process.env[ENV_PORT] = "4000";
+    const runtimeDir = resolveInstanceDir(process.env, { port: 4000, host: "localhost", },);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    let keyOut = "";
+    let certOut = "";
+
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      keyOut = cmd[cmd.indexOf("-keyout",) + 1] as string;
+      certOut = cmd[cmd.indexOf("-out",) + 1] as string;
+      writeFileSync(keyOut, "generated-key",);
+      writeFileSync(certOut, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as SpawnSync;
+
+    const result = ensureTlsCerts(SERVER_DEFAULTS.tls,);
+
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+    expect(keyOut,).toBe(keyPath,);
+    expect(certOut,).toBe(certPath,);
+  });
+
+  test("named instance: certs stay in the named instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts(SERVER_DEFAULTS.tls,),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("keeps custom absolute cert paths verbatim", () => {
+    const keyPath = join(tempDir, "custom", "key.pem",);
+    const certPath = join(tempDir, "custom", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+
+  test("re-anchors a legacy absolute DATA_DIR cert path onto the runtime instance dir", () => {
+    process.env[ENV_INSTANCE] = "alpha";
+    const runtimeDir = resolveInstanceDir(process.env,);
+    const keyPath = join(runtimeDir, "certs", "key.pem",);
+    const certPath = join(runtimeDir, "certs", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+
+    const legacy = { key: join(DATA_DIR, "certs", "key.pem",), cert: join(DATA_DIR, "certs", "cert.pem",), };
+    expect(ensureTlsCerts(legacy,),).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
 describe("ensureTlsCerts — generation path", () => {
   test("creates parent directories and returns paths when openssl succeeds", () => {
     const keyPath = join(tempDir, "new", "key.pem",);
@@ -103,6 +261,62 @@ describe("ensureTlsCerts — generation path", () => {
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
     expect(existsSync(keyPath,),).toBe(true,);
     expect(existsSync(certPath,),).toBe(true,);
+  });
+
+  test("restricts the generated private key to 0600 in a temp instance dir", () => {
+    if (originalPlatform === "win32") { return; } // POSIX mode bits only
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const keyPath = join(tempDir, "mode", "key.pem",);
+    const certPath = join(tempDir, "mode", "cert.pem",);
+
+    Bun.spawnSync = (() => {
+      writeFileSync(keyPath, "generated-key",);
+      chmodSync(keyPath, 0o644,); // start loose so the chmod is observable
+      writeFileSync(certPath, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(statSync(keyPath,).mode & 0o777,).toBe(0o600,);
+  });
+
+  test("reusing existing cert files does not change the key mode", () => {
+    if (originalPlatform === "win32") { return; } // POSIX mode bits only
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const keyPath = join(tempDir, "reuse", "key.pem",);
+    const certPath = join(tempDir, "reuse", "cert.pem",);
+    writeCertFiles(keyPath, certPath,);
+    chmodSync(keyPath, 0o644,);
+    let spawnCalled = false;
+    Bun.spawnSync = (() => {
+      spawnCalled = true;
+      throw new Error("must not generate for existing files",);
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(statSync(keyPath,).mode & 0o777,).toBe(0o644,);
+    expect(spawnCalled,).toBe(false,);
+  });
+
+  test("returns the resolved absolute paths when a relative config is generated", () => {
+    const keyPath = join(tempDir, "rel", "key.pem",);
+    const certPath = join(tempDir, "rel", "cert.pem",);
+
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      expect(cmd,).toContain("-keyout",);
+      expect(cmd,).toContain(keyPath,);
+      writeFileSync(keyPath, "generated-key",);
+      writeFileSync(certPath, "generated-cert",);
+      return { success: true, stdout: Buffer.from("",), stderr: Buffer.from("",), exitCode: 0, };
+    }) as SpawnSync;
+
+    const result = ensureTlsCerts({ key: "rel/key.pem", cert: "rel/cert.pem", }, { instanceDir: tempDir, },);
+
+    // The caller loads these files — they must point at the generated certs,
+    // not at the relative config strings.
+    expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+    expect(isAbsolute(result?.key ?? "",),).toBe(true,);
+    expect(isAbsolute(result?.cert ?? "",),).toBe(true,);
   });
 
   test("tries the next binary when the first one throws (only on win32 with two binaries)", () => {
@@ -132,32 +346,37 @@ describe("ensureTlsCerts — generation path", () => {
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
   });
 
-  test("returns null when the only openssl binary fails (POSIX behavior)", () => {
+  test("throws a run-failure hint when the only openssl binary fails (POSIX)", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
     const keyPath = join(tempDir, "k3", "k.pem",);
     const certPath = join(tempDir, "k3", "c.pem",);
+    const binaries: string[] = [];
 
-    Bun.spawnSync = (() => {
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      binaries.push(String(cmd[0],),);
       return { success: false, stdout: Buffer.from("",), stderr: Buffer.from("err",), exitCode: 1, };
     }) as unknown as SpawnSync;
 
-    const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
-
-    expect(result,).toBeNull();
+    expect(() => ensureTlsCerts({ key: keyPath, cert: certPath, },)).toThrow(
+      /OpenSSL ran but certificate generation failed \(tried: openssl \(failed\)\)\. Check the certificate paths and permissions/,
+    );
+    expect(binaries,).toEqual(["openssl",],);
   });
 });
 
 describe("ensureTlsCerts — failure path", () => {
-  test("returns null when every openssl binary throws", () => {
+  test("throws the platform install hint when every openssl binary is missing", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
     const keyPath = join(tempDir, "fail", "k.pem",);
     const certPath = join(tempDir, "fail", "c.pem",);
 
     Bun.spawnSync = (() => {
-      throw new Error("no openssl anywhere",);
+      throw Object.assign(new Error("binary not found",), { code: "ENOENT", },);
     }) as unknown as SpawnSync;
 
-    const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
-
-    expect(result,).toBeNull();
+    expect(() => ensureTlsCerts({ key: keyPath, cert: certPath, },)).toThrow(
+      /OpenSSL is not installed \(tried: openssl \(not found\)\)\. Install OpenSSL or configure certs manually\./,
+    );
   });
 
   test("does not throw when mkdirSync hits an already-present parent", () => {
@@ -175,5 +394,79 @@ describe("ensureTlsCerts — failure path", () => {
     const result = ensureTlsCerts({ key: keyPath, cert: certPath, },);
 
     expect(result,).toEqual({ key: keyPath, cert: certPath, },);
+  });
+});
+
+describe("ensureTlsCerts — OpenSSL classification", () => {
+  test("tries openssl.exe then openssl on Windows and reports both missing", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    const tried: string[] = [];
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      tried.push(String(cmd[0],),);
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "w", "k.pem",),
+        cert: join(tempDir, "w", "c.pem",),
+      },)
+    ).toThrow(/slproweb\.com\/products\/Win32OpenSSL\.html/,);
+    expect(tried,).toEqual(["openssl.exe", "openssl",],);
+  });
+
+  test("reports a run failure when the first Windows candidate is missing but the second fails", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    let call = 0;
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      call++;
+      if (call === 1) {
+        expect(cmd[0],).toBe("openssl.exe",);
+        throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+      }
+      expect(cmd[0],).toBe("openssl",);
+      return { success: false, stdout: Buffer.from("",), stderr: Buffer.from("err",), exitCode: 1, };
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "w2", "k.pem",),
+        cert: join(tempDir, "w2", "c.pem",),
+      },)
+    ).toThrow(
+      /OpenSSL ran but certificate generation failed \(tried: openssl\.exe \(not found\), openssl \(failed\)\)/,
+    );
+  });
+
+  test("does not try a second POSIX candidate after a missing binary", () => {
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true, },);
+    const tried: string[] = [];
+    Bun.spawnSync = ((cmd: unknown[],) => {
+      tried.push(String(cmd[0],),);
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(() =>
+      ensureTlsCerts({
+        key: join(tempDir, "p", "k.pem",),
+        cert: join(tempDir, "p", "c.pem",),
+      },)
+    ).toThrow(/OpenSSL is not installed/,);
+    expect(tried,).toEqual(["openssl",],);
+  });
+
+  test("existing cert files produce no OpenSSL attempt or error", () => {
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true, },);
+    const keyPath = join(tempDir, "existing", "k.pem",);
+    const certPath = join(tempDir, "existing", "c.pem",);
+    writeCertFiles(keyPath, certPath,);
+    let spawnCalled = false;
+    Bun.spawnSync = (() => {
+      spawnCalled = true;
+      throw Object.assign(new Error("not found",), { code: "ENOENT", },);
+    }) as unknown as SpawnSync;
+
+    expect(ensureTlsCerts({ key: keyPath, cert: certPath, },),).toEqual({ key: keyPath, cert: certPath, },);
+    expect(spawnCalled,).toBe(false,);
   });
 });

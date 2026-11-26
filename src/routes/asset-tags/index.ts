@@ -42,13 +42,7 @@ import {
   TagAutocompleteResponse,
   TagPropositionListResponse,
 } from "../../validation/schemas";
-import {
-  badRequestResponse,
-  forbiddenResponse,
-  jsonNoContent,
-  jsonResponse,
-  requireUserId,
-} from "../http-utils";
+import { badRequestResponse, forbiddenResponse, jsonNoContent, jsonResponse, withUserAuth, } from "../http-utils";
 import { AssetIdParams, canCurateGlobal, resolveAccessibleAsset, } from "./helpers";
 import type { AuthContext, HandlerOpts, } from "./types";
 
@@ -66,16 +60,15 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── List ─────────────────────────────────────────────────
     .get(
       `${prefix}/assets/:id/tags`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
-        const tags = await listAssetTags(database, asset.id, userId,);
-        return jsonResponse({ tags, },);
-      },
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
+          const tags = await listAssetTags(database, asset.id, userId,);
+          return jsonResponse({ tags, },);
+        },),
       {
         params: AssetIdParams,
         response: {
@@ -93,34 +86,33 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Add ──────────────────────────────────────────────────
     .post(
       `${prefix}/assets/:id/tags`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const body = ctx.body as typeof AddAssetTagBody.static;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const body = ctx.body as typeof AddAssetTagBody.static;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
 
-        if (
-          body.scope === AssetTagScope.Global &&
-          !canCurateGlobal(userId, auth.userRole, asset.owner_id,)
-        ) {
-          return forbiddenResponse("Only the asset owner can add global tags",);
-        }
+          if (
+            body.scope === AssetTagScope.Global &&
+            !canCurateGlobal(userId, auth.userRole, asset.owner_id,)
+          ) {
+            return forbiddenResponse("Only the asset owner can add global tags",);
+          }
 
-        const ownerId = body.scope === AssetTagScope.User ? userId : null;
-        const tag = await addAssetTag({
-          database,
-          assetId: id,
-          tag: body.tag,
-          scope: body.scope,
-          ownerId,
-        },);
+          const ownerId = body.scope === AssetTagScope.User ? userId : null;
+          const tag = await addAssetTag({
+            database,
+            assetId: id,
+            tag: body.tag,
+            scope: body.scope,
+            ownerId,
+          },);
 
-        if (!tag) { return badRequestResponse("tag must not be empty",); }
-        return jsonResponse({ tag, },);
-      },
+          if (!tag) { return badRequestResponse("tag must not be empty",); }
+          return jsonResponse({ tag, },);
+        },),
       {
         params: AssetIdParams,
         body: AddAssetTagBody,
@@ -141,25 +133,24 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Remove ───────────────────────────────────────────────
     .delete(
       `${prefix}/assets/:id/tags`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const body = ctx.body as typeof RemoveAssetTagBody.static;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const body = ctx.body as typeof RemoveAssetTagBody.static;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
 
-        const ownerId = body.scope === AssetTagScope.User ? userId : null;
-        if (body.scope === AssetTagScope.Global) {
-          if (!canCurateGlobal(userId, auth.userRole, asset.owner_id,)) {
-            return forbiddenResponse("Only the asset owner can remove global tags",);
+          const ownerId = body.scope === AssetTagScope.User ? userId : null;
+          if (body.scope === AssetTagScope.Global) {
+            if (!canCurateGlobal(userId, auth.userRole, asset.owner_id,)) {
+              return forbiddenResponse("Only the asset owner can remove global tags",);
+            }
           }
-        }
 
-        await removeAssetTag(database, id, body.tag, body.scope, ownerId,);
-        return jsonNoContent();
-      },
+          await removeAssetTag(database, id, body.tag, body.scope, ownerId,);
+          return jsonNoContent();
+        },),
       {
         params: AssetIdParams,
         body: RemoveAssetTagBody,
@@ -179,34 +170,33 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Rename ───────────────────────────────────────────────
     .post(
       `${prefix}/assets/:id/tags/rename`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const body = ctx.body as typeof RenameAssetTagBody.static;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const body = ctx.body as typeof RenameAssetTagBody.static;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
 
-        const ownerId = body.scope === AssetTagScope.User ? userId : null;
-        if (body.scope === AssetTagScope.Global) {
-          if (!canCurateGlobal(userId, auth.userRole, asset.owner_id,)) {
-            return forbiddenResponse("Only the asset owner can rename global tags",);
+          const ownerId = body.scope === AssetTagScope.User ? userId : null;
+          if (body.scope === AssetTagScope.Global) {
+            if (!canCurateGlobal(userId, auth.userRole, asset.owner_id,)) {
+              return forbiddenResponse("Only the asset owner can rename global tags",);
+            }
           }
-        }
 
-        const tag = await renameAssetTag({
-          database,
-          assetId: id,
-          oldTag: body.oldTag,
-          newTag: body.newTag,
-          scope: body.scope,
-          ownerId,
-        },);
+          const tag = await renameAssetTag({
+            database,
+            assetId: id,
+            oldTag: body.oldTag,
+            newTag: body.newTag,
+            scope: body.scope,
+            ownerId,
+          },);
 
-        if (!tag) { return badRequestResponse("oldTag and newTag must differ and must not be empty",); }
-        return jsonResponse({ tag, },);
-      },
+          if (!tag) { return badRequestResponse("oldTag and newTag must differ and must not be empty",); }
+          return jsonResponse({ tag, },);
+        },),
       {
         params: AssetIdParams,
         body: RenameAssetTagBody,
@@ -227,16 +217,15 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Propositions ─────────────────────────────────────────
     .get(
       `${prefix}/assets/:id/tag-propositions`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
-        const propositions = await proposeTags(database, asset.id, userId,);
-        return jsonResponse({ propositions, },);
-      },
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
+          const propositions = await proposeTags(database, asset.id, userId,);
+          return jsonResponse({ propositions, },);
+        },),
       {
         params: AssetIdParams,
         response: {
@@ -254,17 +243,16 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Dismiss proposition ──────────────────────────────────
     .delete(
       `${prefix}/assets/:id/tag-propositions`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const auth = ctx as unknown as AuthContext;
-        const { id, } = ctx.params;
-        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
-        if (asset instanceof Response) { return asset; }
-        const body = ctx.body as typeof DismissTagPropositionBody.static;
-        await dismissProposition(database, asset.id, body.tag, userId,);
-        return jsonNoContent();
-      },
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const auth = ctx as unknown as AuthContext;
+          const { id, } = ctx.params;
+          const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+          if (asset instanceof Response) { return asset; }
+          const body = ctx.body as typeof DismissTagPropositionBody.static;
+          await dismissProposition(database, asset.id, body.tag, userId,);
+          return jsonNoContent();
+        },),
       {
         params: AssetIdParams,
         body: DismissTagPropositionBody,
@@ -283,14 +271,13 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     // ── Autocomplete vocabulary ──────────────────────────────
     .get(
       `${prefix}/tag-autocomplete`,
-      async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const url = new URL(ctx.request.url,);
-        const q = url.searchParams.get("q",) ?? undefined;
-        const tags = await tagVocabulary(database, userId, q,);
-        return jsonResponse({ tags, },);
-      },
+      (ctx,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const url = new URL(ctx.request.url,);
+          const q = url.searchParams.get("q",) ?? undefined;
+          const tags = await tagVocabulary(database, userId, q,);
+          return jsonResponse({ tags, },);
+        },),
       {
         response: {
           200: TagAutocompleteResponse,

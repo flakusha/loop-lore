@@ -134,6 +134,72 @@ describe("findBinary", () => {
     }
     // Else: null is also acceptable — this test asserts the contract shape only.
   });
+
+  test("blender PATH name wins over ~/.local/bin and /opt candidates", () => {
+    const path = findBinary("blender", {
+      which: (name,) => name === "blender" ? "/usr/bin/blender" : null,
+      homedir: () => "/home/op",
+      exists: () => true,
+      globSync: () => ["/opt/blender-bin-4.5.15/blender",],
+    },);
+
+    expect(path,).toBe("/usr/bin/blender",);
+  });
+
+  test("blender falls back to expanded ~/.local/bin/blender without shelling out", () => {
+    const path = findBinary("blender", {
+      which: () => null,
+      homedir: () => "/home/op",
+      exists: (p,) => p === "/home/op/.local/bin/blender",
+      globSync: () => [],
+    },);
+
+    expect(path,).toBe("/home/op/.local/bin/blender",);
+  });
+
+  test("blender /opt/blender-bin-* glob picks the highest version", () => {
+    const path = findBinary("blender", {
+      which: () => null,
+      exists: () => false,
+      globSync: (pattern,) =>
+        pattern === "/opt/blender-bin-*/blender"
+          ? ["/opt/blender-bin-4.2.0/blender", "/opt/blender-bin-4.5.15/blender", "/opt/blender-bin-4.9/blender",]
+          : [],
+    },);
+
+    expect(path,).toBe("/opt/blender-bin-4.9/blender",);
+  });
+
+  test("blender /opt/blender* glob takes the first lexicographic match", () => {
+    const path = findBinary("blender", {
+      which: () => null,
+      exists: () => false,
+      globSync: (pattern,) =>
+        pattern === "/opt/blender*/blender"
+          ? ["/opt/blender-fork/blender", "/opt/blenderx/blender",]
+          : [],
+    },);
+
+    expect(path,).toBe("/opt/blender-fork/blender",);
+  });
+
+  test("python resolves its PATH name without absolute candidates", () => {
+    const path = findBinary("python", {
+      which: (name,) => name === "python3" ? "/usr/bin/python3" : null,
+    },);
+
+    expect(path,).toBe("/usr/bin/python3",);
+  });
+
+  test("python returns null when python3 is absent (no absolute fallback)", () => {
+    const path = findBinary("python", {
+      which: () => null,
+      exists: () => true,
+      globSync: () => ["/opt/python3/bin/python",],
+    },);
+
+    expect(path,).toBeNull();
+  });
 });
 
 describe("isPortFree", () => {

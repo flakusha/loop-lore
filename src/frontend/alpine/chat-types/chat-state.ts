@@ -8,11 +8,13 @@ import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
 import type { ChatGalleryBatchState, } from "./gallery-batch-state";
 import type { GifPickerState, } from "./gif-picker-state";
+import type { InitImageState, } from "./init-image-state";
 import type { ChatKeynavState, } from "./keynav-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMergeState, } from "./merge-state";
 import type { MessageActionsState, } from "./message-actions-state";
+import type { MessageBulkState, } from "./message-bulk-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
 import type { LinkPreviewState, } from "./messages";
 import type { ChatMoodState, } from "./mood-state";
@@ -70,6 +72,9 @@ export interface ChatState
     GifPickerState,
     TurnSkipState,
     MessageActionsState,
+    // hint: Structural change (rename/retype). Check callers of this entity.
+    InitImageState,
+    MessageBulkState,
     StylePickerState,
     ChatTouchGestureState,
     ChatKeynavState,

@@ -1,0 +1,253 @@
+<!-- Explore Tab (location explorer + details) -->
+<div
+  x-show="activeTab === 'explore'"
+  x-data="locationExplorerState('{{worldId}}')"
+  data-testid="location-explorer"
+>
+  <!-- Filter bar (collapses to a single row on narrow viewports) -->
+  <div
+    class="loc-explorer-filters"
+    style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-3)"
+  >
+    <input
+      class="form-input"
+      type="text"
+      placeholder="Search by name or description…"
+      aria-label="Search locations by name or description"
+      x-model="search"
+      data-testid="loc-explorer-search"
+      style="flex: 1 1 200px; min-width: 0"
+    />
+    <select
+      class="form-input"
+      x-model="filterStatus"
+      aria-label="Filter by publication status"
+      data-testid="loc-explorer-status"
+      style="flex: 0 1 140px"
+    >
+      <option value="">Status: any</option>
+      <template x-for="s in statusOptions()" :key="s">
+        <option :value="s" x-text="s"></option>
+      </template>
+    </select>
+    <select
+      class="form-input"
+      x-model="filterHasState"
+      aria-label="Filter by state presence"
+      style="flex: 0 1 130px"
+    >
+      <option value="">State: any</option>
+      <option value="yes">Has state</option>
+      <option value="no">No state</option>
+    </select>
+    <select
+      class="form-input"
+      x-model="filterAtmosphere"
+      aria-label="Filter by atmosphere"
+      style="flex: 0 1 140px"
+      :disabled="atmosphereOptions.length === 0"
+    >
+      <option value="">Atmosphere: any</option>
+      <template x-for="a in atmosphereOptions" :key="a">
+        <option :value="a" x-text="a"></option>
+      </template>
+    </select>
+    <select
+      class="form-input"
+      x-model="filterWeather"
+      aria-label="Filter by weather"
+      style="flex: 0 1 130px"
+      :disabled="weatherOptions.length === 0"
+    >
+      <option value="">Weather: any</option>
+      <template x-for="w in weatherOptions" :key="w">
+        <option :value="w" x-text="w"></option>
+      </template>
+    </select>
+    <select
+      class="form-input"
+      x-model="filterTimeOfDay"
+      aria-label="Filter by time of day"
+      style="flex: 0 1 130px"
+      :disabled="timeOfDayOptions.length === 0"
+    >
+      <option value="">Time: any</option>
+      <template x-for="t in timeOfDayOptions" :key="t">
+        <option :value="t" x-text="t"></option>
+      </template>
+    </select>
+    <label
+      style="display: flex; gap: var(--space-1); align-items: center; font-size: 12px; color: var(--text-secondary)"
+    >
+      <input type="checkbox" x-model="filterTopLevelOnly" />
+      Top-level only
+    </label>
+    <button
+      class="btn btn-ghost"
+      x-show="hasActiveFilters()"
+      @click="clearFilters()"
+      data-testid="loc-explorer-clear"
+      style="font-size: 12px"
+    >
+      Clear filters
+    </button>
+    <div role="group" aria-label="Explorer view" style="display: flex; gap: var(--space-1)">
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm"
+        :class="{ 'btn-primary': viewMode === 'tree' }"
+        @click="setViewMode('tree')"
+        :aria-pressed="viewMode === 'tree' ? 'true' : 'false'"
+        data-testid="loc-explorer-view-tree"
+      >
+        Tree
+      </button>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm"
+        :class="{ 'btn-primary': viewMode === 'grid' }"
+        @click="setViewMode('grid')"
+        :aria-pressed="viewMode === 'grid' ? 'true' : 'false'"
+        data-testid="loc-explorer-view-grid"
+      >
+        Grid
+      </button>
+    </div>
+  </div>
+
+  <div class="loc-explorer-layout" style="display: flex; gap: var(--space-4)">
+    <!-- Tree / browse column -->
+    <div class="loc-explorer-tree" x-show="viewMode === 'tree'" style="flex: 1 1 40%; min-width: 0">
+      <div x-show="loading" class="empty-state" style="padding: var(--space-6)">
+        <div class="icon">⏳</div>
+        <div class="title">Loading…</div>
+      </div>
+      <div x-show="!loading && error" class="empty-state" style="padding: var(--space-6)">
+        <div class="title">Failed to load locations.</div>
+      </div>
+      <div style="display: grid; gap: var(--space-1)">
+        <template x-for="loc in filteredLocations" :key="loc.id">
+          <div
+            class="panel-item"
+            style="cursor: pointer; display: flex; gap: var(--space-2); align-items: center"
+            @click="selectLoc(loc.id)"
+            @mouseenter="hoverLoc(loc.id)"
+            @mouseleave="leaveLoc()"
+            :class="{ 'active-section': selectedLocId === loc.id }"
+            :data-loc-id="loc.id"
+          >
+            <span x-show="hasChildren(loc.id)" style="cursor: pointer">
+              <span @click.stop="toggleExpand(loc.id)" x-text="isExpanded(loc.id) ? '▾' : '▸'"></span>
+            </span>
+            <span x-show="!hasChildren(loc.id)">&nbsp;</span>
+            <span style="font-weight: 600" x-text="loc.name"></span>
+            <span
+              style="font-size: 11px; color: var(--text-secondary)"
+              x-text="connectionNames(loc)"
+            ></span>
+          </div>
+        </template>
+        <div
+          x-show="!loading && loaded && filteredLocations.length === 0"
+          style="font-size: 12px; color: var(--text-secondary)"
+        >
+          No matching locations.
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid / card column -->
+    <div
+      class="loc-explorer-grid"
+      x-show="viewMode === 'grid'"
+      style="flex: 1 1 40%; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-2); align-content: start"
+      data-testid="loc-explorer-grid"
+    >
+      <template x-for="loc in filteredLocations" :key="loc.id">
+        <button
+          type="button"
+          class="panel-item"
+          style="cursor: pointer; display: flex; flex-direction: column; gap: var(--space-1); align-items: flex-start; text-align: left"
+          @click="selectLoc(loc.id)"
+          @mouseenter="hoverLoc(loc.id)"
+          @mouseleave="leaveLoc()"
+          :class="{ 'active-section': selectedLocId === loc.id }"
+          :data-loc-id="loc.id"
+          :aria-pressed="selectedLocId === loc.id ? 'true' : 'false'"
+          :aria-current="selectedLocId === loc.id ? 'true' : null"
+        >
+          <span style="font-weight: 600" x-text="loc.name"></span>
+          <span
+            style="font-size: 11px; color: var(--text-secondary)"
+            x-text="loc.publication_status"
+          ></span>
+          <span
+            style="font-size: 11px; color: var(--text-secondary)"
+            x-text="connectionNames(loc)"
+          ></span>
+        </button>
+      </template>
+      <div
+        x-show="!loading && loaded && filteredLocations.length === 0"
+        style="font-size: 12px; color: var(--text-secondary)"
+      >
+        No matching locations.
+      </div>
+    </div>
+
+    <!-- Detail pane -->
+    <div
+      class="loc-explorer-detail"
+      style="flex: 1 1 60%; min-width: 0; border-left: 1px solid var(--border-default); padding-left: var(--space-4)"
+    >
+      <div x-show="!detail" class="empty-state" style="padding: var(--space-8)">
+        <div class="title">Select a location</div>
+      </div>
+      <template x-if="detail">
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-2)">
+            <h3 style="margin: 0" x-text="detail.name"></h3>
+            <button
+              class="btn btn-primary"
+              @click="navigateTo(detail.id)"
+              data-testid="loc-explorer-navigate"
+              style="font-size: 12px"
+            >
+              Open
+            </button>
+          </div>
+          <p x-show="detail.description" x-text="detail.description" style="color: var(--text-secondary)"></p>
+          <p x-show="!detail.description" style="color: var(--text-secondary)">(no description)</p>
+          <div style="display: grid; gap: var(--space-1); margin-top: var(--space-3); font-size: 14px">
+            <template x-if="detail.parent">
+              <div><strong>Parent:</strong> <span x-text="detail.parent.name"></span></div>
+            </template>
+            <template x-if="detail.connections && detail.connections.length > 0">
+              <div>
+                <strong>Connections:</strong>
+                <span x-text="detail.connections.map(c => c.name).join(', ')"></span>
+              </div>
+            </template>
+            <template x-if="detail.state">
+              <div style="margin-top: var(--space-2); border-top: 1px solid var(--border-default); padding-top: var(--space-2)">
+                <div class="nav-section-title">State</div>
+                <div x-show="detail.state.atmosphere">
+                  <strong>Atmosphere:</strong> <span x-text="detail.state.atmosphere"></span>
+                </div>
+                <div x-show="detail.state.description_override">
+                  <strong>Override:</strong> <span x-text="detail.state.description_override"></span>
+                </div>
+                <div x-show="detail.state.weather">
+                  <strong>Weather:</strong> <span x-text="detail.state.weather"></span>
+                </div>
+                <div x-show="detail.state.time_of_day">
+                  <strong>Time:</strong> <span x-text="detail.state.time_of_day"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>

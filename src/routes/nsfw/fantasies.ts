@@ -3,7 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { FantasyService, } from "../../rpg/fantasies/service";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonResponse, requireUserId, } from "../http-utils";
 import {
   log,
   nsfwAccessErrorResponse,
@@ -36,8 +36,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
             const fantasies = await fantasyService.getActorFantasies(ctx.params.actorId,);
             return jsonResponse(fantasies,);
           } catch (error) {
-            log().error("Failed to get fantasies", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get fantasies", error,);
           }
         },
       )
@@ -72,8 +71,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(fantasy,);
           } catch (error) {
-            log().error("Failed to create fantasy", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to create fantasy", error,);
           }
         },
       )
@@ -105,8 +103,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to discover fantasy", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to discover fantasy", error,);
           }
         },
       )
@@ -126,8 +123,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse({ success, },);
           } catch (error) {
-            log().error("Failed to record exploration", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to record exploration", error,);
           }
         },
       )

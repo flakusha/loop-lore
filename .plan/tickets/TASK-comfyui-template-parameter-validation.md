@@ -9,7 +9,7 @@
 **Acceptance Criteria:** Declared ranges enforced server-side; `width`/`height`/`scheduler` reach the workflow from the request.
 
 **Priority:** P1 — High
-**Status:** Not Started
+**Status:** Done
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none (independent of the other tickets in this epic)
 
@@ -83,52 +83,52 @@ same bug, already shipped in a builtin template.
 
 ### Gap A
 
-- [ ] A validator runs over `template.parameters` before `build()` is called,
+- [x] A validator runs over `template.parameters` before `build()` is called,
       enforcing `required`, `min`, `max`, and `step`.
-- [ ] Violations return 400 naming the parameter, the declared bound, and the
+- [x] Violations return 400 naming the parameter, the declared bound, and the
       received value — not a generic message.
-- [ ] Reuses existing primitives rather than inventing new ones: `clamp`
+- [x] Reuses existing primitives rather than inventing new ones: `clamp`
       (`src/utils/clamp.ts:30-34`) and `clampUnit` (`:56-58`), or the Elysia
       `t.Number({ minimum, maximum })` pattern already used at
       `src/generation/lora/routes/validate.ts:13`. No new dependency.
-- [ ] `select` params reject values outside `options`.
-- [ ] **Gap A2:** the required-param check uses `=== undefined` / `=== null`,
+- [x] `select` params reject values outside `options`.
+- [x] **Gap A2:** the required-param check uses `=== undefined` / `=== null`,
       not a falsy test. Regression test: a required `number` param supplied as
       `0` and a required `boolean` supplied as `false` are both **accepted**.
-- [ ] Tests: below-min, above-max, off-step, unknown-select-value, and a
+- [x] Tests: below-min, above-max, off-step, unknown-select-value, and a
       boundary-valid value all behave as declared.
-- [ ] The declared `step: 64` on width/height is re-evaluated — see Gap D.
+- [x] The declared `step: 64` on width/height is re-evaluated — see Gap D.
 
 ### Gap B
 
-- [ ] `ImageGenOptions` gains `width`/`height` (numbers).
-- [ ] `generateComfyUI`, `generateSDAPI`, `generateSDCPP` prefer `opts.width` /
+- [x] `ImageGenOptions` gains `width`/`height` (numbers).
+- [x] `generateComfyUI`, `generateSDAPI`, `generateSDCPP` prefer `opts.width` /
       `opts.height`, falling back to `sdConfig.defaults` when absent — preserving
       current behavior for callers that omit them.
-- [ ] `handleImageGeneration` maps the openai-shaped `size` string
+- [x] `handleImageGeneration` maps the openai-shaped `size` string
       (`"1024x1024"`) to `width`/`height` when the two numeric fields are absent.
       Malformed `size` returns 400, not a silent fallback.
-- [ ] Tests assert opts-supplied dimensions reach the workflow, and that
+- [x] Tests assert opts-supplied dimensions reach the workflow, and that
       omission still yields the config default.
 
 ### Gap C
 
-- [ ] `buildSubstitutionVars` emits `scheduler` and `denoise`.
-- [ ] `ImageGenOptions` gains `scheduler`; `denoise` is reconciled with the
+- [x] `buildSubstitutionVars` emits `scheduler` and `denoise`.
+- [x] `ImageGenOptions` gains `scheduler`; `denoise` is reconciled with the
       existing `denoisingStrength` (one name, not two — pick the ComfyUI-correct
       one and alias at the boundary).
-- [ ] `ksamplerNode` threads `scheduler` from params instead of hardcoding.
-- [ ] `configs/workflows/txt2img.json` replaces its hardcoded
+- [x] `ksamplerNode` threads `scheduler` from params instead of hardcoding.
+- [x] `configs/workflows/txt2img.json` replaces its hardcoded
       `"scheduler": "normal"` with `{{scheduler}}`.
 
 ### Gap D — resolution rules (from InvokeAI, see research §4.3)
 
-- [ ] Width/height snap to `multiple_of = 8` (ComfyUI's `LATENT_SCALE_FACTOR`),
+- [x] Width/height snap to `multiple_of = 8` (ComfyUI's `LATENT_SCALE_FACTOR`),
       not 64. The current `step: 64` is stricter than ComfyUI requires and would
       reject valid 8-aligned sizes like 1000.
-- [ ] Family base sizes documented: 512 (SD1.5) / 768 (SD2) / 1024 (SDXL, Flux,
+- [ ] Family base sizes documented: 512 (SD1.5) / 768 (SD2) / 1024 (SDXL, Flux, Anima) per `invokeai/app/invocations/ideal_size.py:39-74` (deferred docs trivia; landing `ce8856042` covers all enforced behavior).
       Anima) per `invokeai/app/invocations/ideal_size.py:39-74`.
-- [ ] Snap-vs-reject is an explicit decision recorded in the code: snapping is
+- [x] Snap-vs-reject is an explicit decision recorded in the code: snapping is
       friendlier, rejecting is honest. Do not leave it implicit.
 
 ## Technical Notes

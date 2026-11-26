@@ -2,86 +2,46 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Migration 032 — unique index on `chat_branches (chat_id, name)`.
+ * Final-schema behavior for chat branch labels.
  *
- * Before 032 the label was only arbitrated by an unlocked `SELECT COUNT(*)`
- * pre-read in `nextAutoName`, so two concurrent forks in one chat both
- * computed "Branch N" and both inserts succeeded. 032 makes the DATABASE the
- * arbiter — and first renames the same-named siblings a raced database already
- * accumulated, because `CREATE UNIQUE INDEX` aborts on those and would leave
- * the migration stuck half-applied. Duplicates are renamed, never deleted: a
- * branch row is a user-visible fork point.
- *
- * The rename loop is the only code path a clean database never reaches
- * (`dupes.rows` is empty), so it is what this file forces.
+ * The retired 032 migration made the DATABASE the arbiter of
+ * `chat_branches (chat_id, name)`; in the 14-file baseline that unique index
+ * ships inline. The migration-time rename/collision-walk loop is unreachable
+ * against a final-schema database, so these tests assert the shipped key is
+ * live: one label per chat, the same label allowed in a different chat.
  */
 import { Database, } from "bun:sqlite";
-import { afterAll, afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 
-import { createLogger, } from "../logger";
-import { captureWarnings, } from "../test-utils/capture-warnings";
 import { createSqliteDialect, } from "./index";
 import { getMigrationFiles, } from "./migrate";
-import type { DB, } from "./schema";
 
-const MIGRATION = "032_chat_branches_name_unique";
-
-/**
- * Global key the cross-file warning emitter is published under by
- * `030_assets_content_hash_unique.test.ts`. The two files must not import each
- * other, so this literal is the whole contract between them; it is asserted
- * present (or defaulted) in the cross-file test below and consumed by the
- * `afterAll` disposer.
- */
-const FOREIGN_EMITTER = "__ll_foreign_warning_emitter__";
-
-function makeInMemoryDb(): { kysely: Kysely<DB>; raw: Database } {
-  const raw = new Database(":memory:",);
-  const kysely = new Kysely<DB>({ dialect: createSqliteDialect(raw,), },);
-  return { kysely, raw, };
+/** Apply the 14-file baseline to this test's isolated in-memory DB. */
+async function applyBaseline(database: Kysely<unknown>,): Promise<void> {
+  for (const migration of Object.values(await getMigrationFiles(),)) {
+    await migration.up(database,);
+  }
 }
 
-describe(MIGRATION, () => {
-  let db: Kysely<DB>;
+describe("chat branch name unique (final schema)", () => {
   let raw: Database;
+  let db: Kysely<unknown>;
 
   beforeEach(async () => {
-    try {
-      createLogger({ level: "error", },);
-    } catch {
-      // Logger already initialized — ignore.
-    }
-
-    const fresh = makeInMemoryDb();
-    db = fresh.kysely;
-    raw = fresh.raw;
-    // Apply every migration except 032, so chat_branches is in its
-    // pre-migration shape: bare `name` with no dedupe index, duplicates
-    // allowed within a chat.
-    const migrations = await getMigrationFiles();
-    for (const name of Object.keys(migrations,).sort()) {
-      if (name === MIGRATION) { continue; }
-      await migrations[name]!.up(db,);
-    }
-
-    // chat_branches.parent_message_id references messages, which in turn
-    // references chats and actors — seed the whole FK chain.
-    await sql`INSERT INTO users (id, username, display_name)
-      VALUES ('owner-1', 'owner-1', 'Owner One')`.execute(db,);
-
-    await sql`INSERT INTO actors (id, display_name)
-      VALUES ('actor-1', 'Actor One')`.execute(db,);
-
+    raw = new Database(":memory:",);
+    db = new Kysely({ dialect: createSqliteDialect(raw,), },);
+    await applyBaseline(db,);
+    // Seed the FK chain chat_branches -> messages -> chats/actors -> users.
+    await sql`INSERT INTO users (id, username, display_name) VALUES ('owner-1', 'owner-1', 'Owner One')`.execute(db,);
+    await sql`INSERT INTO actors (id, display_name) VALUES ('actor-1', 'Actor One')`.execute(db,);
     await sql`INSERT INTO chats (id, name, created_by) VALUES
       ('chat-a', 'Chat A', 'owner-1'),
-      ('chat-b', 'Chat B', 'owner-1'),
-      ('chat-c', 'Chat C', 'owner-1')`.execute(db,);
+      ('chat-b', 'Chat B', 'owner-1')`.execute(db,);
 
     await sql`INSERT INTO messages (id, chat_id, actor_id, role, content) VALUES
       ('msg-a', 'chat-a', 'actor-1', 'user', 'hello'),
-      ('msg-b', 'chat-b', 'actor-1', 'user', 'hello'),
-      ('msg-c', 'chat-c', 'actor-1', 'user', 'hello')`.execute(db,);
+      ('msg-b', 'chat-b', 'actor-1', 'user', 'hello')`.execute(db,);
   },);
 
   afterEach(async () => {
@@ -89,194 +49,34 @@ describe(MIGRATION, () => {
     raw.close();
   },);
 
-  afterAll(() => {
-    // Resource contract: this test opens no global of its own, but it is the
-    // teardown point for the cross-file warning emitter that
-    // `030_assets_content_hash_unique.test.ts` starts at module scope. It is
-    // stopped HERE rather than in 030's own `afterAll` because files load and
-    // run in name order: 030's teardown fires before 032's tests have opened
-    // the capture window the emitter exists to attack. The timer is unref'd, so
-    // a run without this file still exits.
-    const dispose = (globalThis as Record<string, unknown>)[FOREIGN_EMITTER];
-    if (typeof dispose === "function") { dispose(); }
-  },);
-
-  /**
-   * @param id branch id
-   * @param chatId owning chat — the first half of the unique key
-   * @param name branch label — the second half
-   * @param createdAt insertion timestamp; the oldest row of a group keeps the name
-   */
-  async function insertBranch(
-    id: string,
-    chatId: string,
-    name: string,
-    createdAt: string,
-  ): Promise<void> {
+  async function insertBranch(id: string, chatId: string, name: string,): Promise<void> {
     const parentMessageId = `msg-${chatId.replace("chat-", "",)}`;
     await sql`INSERT INTO chat_branches (id, chat_id, parent_message_id, name, created_at)
-      VALUES (${id}, ${chatId}, ${parentMessageId}, ${name}, ${createdAt})`.execute(db,);
+      VALUES (${id}, ${chatId}, ${parentMessageId}, ${name}, datetime('now'))`.execute(db,);
   }
 
-  /**
-   * @param chatId owning chat
-   * @param name branch label
-   */
-  async function namesIn(chatId: string, name: string,): Promise<string[]> {
-    const rows = await sql<{ id: string }>`SELECT id FROM chat_branches
-      WHERE chat_id = ${chatId} AND name = ${name} ORDER BY id`.execute(db,);
+  test("the unique (chat_id, name) index is present", () => {
+    const rows = raw
+      .query("SELECT name, \"unique\" AS isUnique FROM pragma_index_list('chat_branches')",)
+      .all() as { name: string; isUnique: number }[];
 
-    return rows.rows.map((r,) => r.id);
-  }
-
-  /** @param name branch label */
-  async function idWithName(chatId: string, name: string,): Promise<string | undefined> {
-    const rows = await sql<{ id: string }>`SELECT id FROM chat_branches
-      WHERE chat_id = ${chatId} AND name = ${name}`.execute(db,);
-
-    return rows.rows[0]?.id;
-  }
-
-  test("renames same-named siblings to the oldest, warns, then enforces (chat_id, name)", async () => {
-    // Three branches in one chat sharing a label — the shape the racing
-    // nextAutoName pre-read produced.
-    await insertBranch("a-oldest", "chat-a", "Branch 1", "2026-01-01 00:00:00",);
-    await insertBranch("b-middle", "chat-a", "Branch 1", "2026-01-02 00:00:00",);
-    await insertBranch("c-newest", "chat-a", "Branch 1", "2026-01-03 00:00:00",);
-    // Same label in a DIFFERENT chat: a distinct key, must survive untouched.
-    await insertBranch("d-other-chat", "chat-b", "Branch 1", "2026-01-01 00:00:00",);
-    // Not part of a duplicate group — must keep its name verbatim.
-    await insertBranch("e-unique", "chat-a", "Branch 9", "2026-01-01 00:00:00",);
-
-    // Scoped to this migration's own tag: `warning` is process-wide, so an
-    // unrelated emitter warning during this window would otherwise land in
-    // `warnings` and break the exact count asserted below.
-    const warnings = await captureWarnings(async () => {
-      const migrations = await getMigrationFiles();
-      const migration = migrations[MIGRATION];
-      if (!migration) { throw new Error("migration 032 not registered",); }
-      await migration.up(db,);
-    }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-    // The oldest row keeps the name; the losers are RENAMED, not deleted —
-    // dropping one would silently remove a fork point the user can see.
-    expect(await namesIn("chat-a", "Branch 1",),).toEqual(["a-oldest",],);
-    expect(await idWithName("chat-a", "Branch 1 (2)",),).toBe("b-middle",);
-    expect(await idWithName("chat-a", "Branch 1 (3)",),).toBe("c-newest",);
-    // Nothing is lost: all three rows still exist, under distinct names.
-    const survivors = await sql<{ id: string }>`SELECT id FROM chat_branches
-      WHERE chat_id = 'chat-a' ORDER BY id`.execute(db,);
-
-    expect(survivors.rows.map((r,) => r.id),).toEqual(["a-oldest", "b-middle", "c-newest", "e-unique",],);
-
-    // The key is per-chat, so chat-b keeps its own "Branch 1".
-    expect(await namesIn("chat-b", "Branch 1",),).toEqual(["d-other-chat",],);
-    // A row outside a duplicate group is untouched.
-    expect(await idWithName("chat-a", "Branch 9",),).toBe("e-unique",);
-
-    // One warning per collapsed group, naming the chat and the row count.
-    expect(warnings,).toHaveLength(1,);
-    expect(warnings.some((w,) => /chat chat-a has 3 branches named "Branch 1"/.test(w,)),).toBe(true,);
-
-    // The index exists ...
-    const indexRows = raw.query("PRAGMA index_list(chat_branches)",).all() as { name: string; unique: number }[];
-    expect(indexRows.map((r,) => r.name),).toContain("uq_chat_branches_chat_name",);
-    expect(indexRows.find((r,) => r.name === "uq_chat_branches_chat_name")?.unique,).toBe(1,);
-
-    // ... and it is enforced: a racing second fork in the same chat now aborts.
-    await expect(
-      insertBranch("f-racing-fork", "chat-a", "Branch 1", "2026-01-04 00:00:00",),
-    ).rejects.toThrow(/UNIQUE/i,);
-
-    // The same label in a different chat is still allowed — chat_id is the
-    // first half of the key.
-    await insertBranch("g-other-chat-ok", "chat-c", "Branch 1", "2026-01-05 00:00:00",);
-    expect(await namesIn("chat-c", "Branch 1",),).toEqual(["g-other-chat-ok",],);
+    expect(rows.find((r,) => r.name === "uq_chat_branches_chat_name")?.isUnique,).toBe(1,);
   });
 
-  test("skips rename candidates already taken instead of colliding with them", async () => {
-    // `Branch 1 (2)` is already occupied by a DIFFERENT branch, so the naive
-    // candidate for the second duplicate collides and the loop must walk on
-    // to the next free suffix.
-    await insertBranch("a-oldest", "chat-a", "Branch 1", "2026-01-01 00:00:00",);
-    await insertBranch("b-middle", "chat-a", "Branch 1", "2026-01-02 00:00:00",);
-    await insertBranch("c-newest", "chat-a", "Branch 1", "2026-01-03 00:00:00",);
-    await insertBranch("d-squatter", "chat-a", "Branch 1 (2)", "2026-01-01 00:00:00",);
-
-    // The rename loop warns about the collapsed group; this test is about the
-    // collision-walk, so the capture is there to keep the output readable.
-    await captureWarnings(async () => {
-      const migrations = await getMigrationFiles();
-      const migration = migrations[MIGRATION];
-      if (!migration) { throw new Error("migration 032 not registered",); }
-      await migration.up(db,);
-    }, new RegExp(`^\\[${MIGRATION}\\]`,),);
-
-    // The squatter keeps `Branch 1 (2)`; the first duplicate lands on (3).
-    expect(await idWithName("chat-a", "Branch 1 (2)",),).toBe("d-squatter",);
-    expect(await idWithName("chat-a", "Branch 1 (3)",),).toBe("b-middle",);
-    // The second duplicate's naive `Branch 1 (3)` was taken by the row above,
-    // so it walks on to (4) rather than overwriting it.
-    expect(await idWithName("chat-a", "Branch 1 (4)",),).toBe("c-newest",);
-    expect(await namesIn("chat-a", "Branch 1",),).toEqual(["a-oldest",],);
+  test("a racing second fork with the same label in one chat is rejected", async () => {
+    await insertBranch("a-oldest", "chat-a", "Branch 1",);
+    await expect(insertBranch("b-racing-fork", "chat-a", "Branch 1",),).rejects.toThrow(/UNIQUE/i,);
   });
 
-  test("a warning from ANOTHER test file cannot inflate this capture's count", async () => {
-    // The cross-file half of the warning race. `bun test` runs every file in
-    // one process, so when `030_assets_content_hash_unique.test.ts` is loaded
-    // in the same invocation it leaves an unbounded background emitter running
-    // - a warning every millisecond, in a foreign async context, for the rest
-    // of the process. This capture's window spans a real migration run, so an
-    // unscoped listener collects every one of those ticks and `toHaveLength(1)`
-    // below fails on a warning no other code in this file emitted.
-    //
-    // Strength depends on the invocation, and is NOT asserted here because a
-    // hard requirement would break the legitimate single-file run: co-loaded
-    // with 030 (what `bun test src/db/` does) the foreign stream is continuous
-    // and the count below is the strong property; run alone, with no foreign
-    // emitter, it is only the weaker "the body warns exactly once" claim. The
-    // strong form is the one that fails on the pre-fix helper, and both halves
-    // are in the same directory precisely so the directory run exercises it.
-    //
-    // No `filter` on purpose: the caller is a bare exact-count assertion, and
-    // the point is that it is safe WITHOUT one. The tag-scoped captures
-    // elsewhere in this file filter because they want a narrower shape, not
-    // because an unfiltered count is unsafe.
-    //
-    // `chat-a` is seeded by beforeEach, so the FK chain holds and this stays a
-    // same-named sibling group - the shape 032 actually warns about.
-    await insertBranch("x-oldest", "chat-a", "Fork 1", "2026-01-01 00:00:00",);
-    await insertBranch("y-newest", "chat-a", "Fork 1", "2026-01-02 00:00:00",);
+  test("the same label in a different chat is still allowed", async () => {
+    await insertBranch("a-first", "chat-a", "Branch 1",);
+    await insertBranch("b-other-chat", "chat-b", "Branch 1",);
+    const { rows, } = await sql<{ id: string; chat_id: string }>`SELECT id, chat_id FROM chat_branches ORDER BY id`
+      .execute(db,);
 
-    const warnings = await captureWarnings(async () => {
-      const migrations = await getMigrationFiles();
-      const migration = migrations[MIGRATION];
-      if (!migration) { throw new Error("migration 032 not registered",); }
-      await migration.up(db,);
-    },);
-
-    // Exactly the one warning this body emitted, however many foreign ones
-    // dispatched while it ran. Before the fix this array held every tick from
-    // the other file and the count was in the hundreds.
-    expect(warnings,).toHaveLength(1,);
-    expect(warnings[0],).toMatch(/^\[032_chat_branches_name_unique\]/,);
+    expect(rows,).toEqual([
+      { id: "a-first", chat_id: "chat-a", },
+      { id: "b-other-chat", chat_id: "chat-b", },
+    ],);
   });
-
-  test("down() drops the unique index and restores the duplicate-tolerant shape", async () => {
-    const migrations = await getMigrationFiles();
-    const migration = migrations[MIGRATION]!;
-    await migration.up(db,);
-    if (!migration.down) { throw new Error("migration 032 has no down",); }
-    await migration.down(db,);
-
-    // After down(), two same-named branches in one chat must insert again —
-    // the pre-032 behaviour we are reverting to.
-    await insertBranch("row-x", "chat-a", "Branch 1", "2026-03-01 00:00:00",);
-    await insertBranch("row-y", "chat-a", "Branch 1", "2026-03-01 00:00:01",);
-    expect(await namesIn("chat-a", "Branch 1",),).toEqual(["row-x", "row-y",],);
-
-    // The index is gone, not merely non-enforcing.
-    const indexRows = raw.query("PRAGMA index_list(chat_branches)",).all() as { name: string }[];
-    expect(indexRows.map((r,) => r.name),).not.toContain("uq_chat_branches_chat_name",);
-  });
-},);
+});

@@ -3,14 +3,14 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { BYOK_KEY_VERSION, decryptValue, encryptValue, encryptVersioned, } from "./byok";
+import { BYOK_KEY_VERSION, decryptValue, deriveUserKek, encryptValue, encryptVersioned, kekAad, } from "./byok";
 
 const SECRET = "test-secret-32-bytes-long!!!!"; // arbitrary passphrase
 
 // Resource contract: pure crypto round-trips — no files, ports, DBs, or
 // module-level mutable state; safe under any parallel bun test scheduling.
 describe("versioned envelope (BUG-4a052a5)", () => {
-  test("encryptVersioned emits v2:salt:iv:ciphertext (4 colon chunks)", async () => {
+  test("encryptVersioned emits v3:salt:iv:ciphertext (4 colon chunks)", async () => {
     const encrypted = await encryptVersioned("hello", SECRET,);
     const parts = encrypted.split(":",);
     expect(parts,).toHaveLength(4,);
@@ -188,5 +188,40 @@ describe("encryptValue / decryptValue", () => {
     const legacyCiphertext = `${iv.toBase64()}:${new Uint8Array(ct,).toBase64()}`;
     const decrypted = await decryptValue(legacyCiphertext, SECRET,);
     expect(decrypted,).toBe(plaintext,);
+  });
+});
+
+describe("per-user KEK (v3)", () => {
+  test("deriveUserKek is deterministic per user and distinct across users", async () => {
+    const a1 = await deriveUserKek(SECRET, "user-a",);
+    const a2 = await deriveUserKek(SECRET, "user-a",);
+    const b = await deriveUserKek(SECRET, "user-b",);
+    expect(a1,).toBe(a2,);
+    expect(a1,).not.toBe(b,);
+  });
+
+  test("v3 round-trip under the KEK + AAD", async () => {
+    const kek = await deriveUserKek(SECRET, "user-a",);
+    const sealed = await encryptVersioned("sk-user-key", kek, kekAad("user-a", "prov",),);
+    expect(sealed.startsWith(`v${BYOK_KEY_VERSION}:`,),).toBe(true,);
+    await expect(decryptValue(sealed, kek, kekAad("user-a", "prov",),),).resolves.toBe("sk-user-key",);
+  });
+
+  test("another user's KEK opens nothing", async () => {
+    const kekA = await deriveUserKek(SECRET, "user-a",);
+    const kekB = await deriveUserKek(SECRET, "user-b",);
+    const sealed = await encryptVersioned("sk-user-key", kekA, kekAad("user-a", "prov",),);
+    await expect(decryptValue(sealed, kekB, kekAad("user-b", "prov",),),).rejects.toThrow();
+  });
+
+  test("transplanted provider AAD fails authentication", async () => {
+    const kek = await deriveUserKek(SECRET, "user-a",);
+    const sealed = await encryptVersioned("sk-user-key", kek, kekAad("user-a", "prov-a",),);
+    await expect(decryptValue(sealed, kek, kekAad("user-a", "prov-b",),),).rejects.toThrow();
+  });
+
+  test("v2 rows still open under the global secret after the bump", async () => {
+    const sealed = `v2:${await encryptValue("legacy-v2-row", SECRET,)}`;
+    await expect(decryptValue(sealed, SECRET,),).resolves.toBe("legacy-v2-row",);
   });
 });

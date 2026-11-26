@@ -11,13 +11,7 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { checkActorOwnership, } from "../actor-auth";
-import {
-  forbiddenResponse as forbidden,
-  HttpStatus,
-  jsonError,
-  jsonResponse,
-  requireUserId,
-} from "../http-utils";
+import { forbiddenResponse as forbidden, HttpStatus, jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -32,31 +26,29 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-io-export", },)
       // ── Export Systems Data ─────────────────────────────────
-      .get(`${prefix}/actors/:actorId/systems/export`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .get(`${prefix}/actors/:actorId/systems/export`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, } = ctx.params;
+          if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
 
-        const { actorId, } = ctx.params;
-        if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-          return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
-        }
+          const worldId = ctx.query.worldId as string | undefined;
+          const format = ctx.query.format as string | undefined;
 
-        const worldId = ctx.query.worldId as string | undefined;
-        const format = ctx.query.format as string | undefined;
+          if (format === "json" || !format) {
+            const json = await exportCharacterSystemsJson(database, actorId, worldId,);
+            return new Response(json, {
+              status: 200,
+              headers: {
+                "Content-Type": "application/json",
+                "Content-Disposition": `attachment; filename="character-${String(actorId,)}-systems.json"`,
+              },
+            },);
+          }
 
-        if (format === "json" || !format) {
-          const json = await exportCharacterSystemsJson(database, actorId, worldId,);
-          return new Response(json, {
-            status: 200,
-            headers: {
-              "Content-Type": "application/json",
-              "Content-Disposition": `attachment; filename="character-${String(actorId,)}-systems.json"`,
-            },
-          },);
-        }
-
-        return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
-      }, {
+          return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
+        },), {
         params: ActorIdParams,
         response: {
           200: SuccessResponse,
@@ -70,42 +62,40 @@ export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
       },)
       // ── Export Systems Data (POST for complex queries) ──────
-      .post(`${prefix}/actors/:actorId/systems/export`, async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
+      .post(`${prefix}/actors/:actorId/systems/export`, (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const { actorId, } = ctx.params;
+          if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
+            return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
+          }
 
-        const { actorId, } = ctx.params;
-        if (!await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,)) {
-          return forbidden(ctx.t?.("errors.forbidden",) ?? "Forbidden",);
-        }
+          const {
+            worldId,
+            includeTraits = true,
+            includeMood = true,
+            includeRelationships = true,
+            includeAvatars = true,
+            includeLicensing = true,
+            includeAvailability = true,
+            includeWorldSetup = true,
+          } = ctx.body;
 
-        const {
-          worldId,
-          includeTraits = true,
-          includeMood = true,
-          includeRelationships = true,
-          includeAvatars = true,
-          includeLicensing = true,
-          includeAvailability = true,
-          includeWorldSetup = true,
-        } = ctx.body;
+          const exportData = await exportCharacterSystems(database, actorId, worldId,);
 
-        const exportData = await exportCharacterSystems(database, actorId, worldId,);
+          // Filter based on options
+          const filtered: CharacterSystemsExport = {
+            ...exportData,
+            traits: includeTraits ? exportData.traits : undefined,
+            mood: includeMood ? exportData.mood : undefined,
+            relationships: includeRelationships ? exportData.relationships : undefined,
+            avatars: includeAvatars ? exportData.avatars : undefined,
+            licensing: includeLicensing ? exportData.licensing : undefined,
+            availability: includeAvailability ? exportData.availability : undefined,
+            worldSetup: includeWorldSetup ? exportData.worldSetup : undefined,
+          };
 
-        // Filter based on options
-        const filtered: CharacterSystemsExport = {
-          ...exportData,
-          traits: includeTraits ? exportData.traits : undefined,
-          mood: includeMood ? exportData.mood : undefined,
-          relationships: includeRelationships ? exportData.relationships : undefined,
-          avatars: includeAvatars ? exportData.avatars : undefined,
-          licensing: includeLicensing ? exportData.licensing : undefined,
-          availability: includeAvailability ? exportData.availability : undefined,
-          worldSetup: includeWorldSetup ? exportData.worldSetup : undefined,
-        };
-
-        return jsonResponse(filtered,);
-      }, {
+          return jsonResponse(filtered,);
+        },), {
         params: ActorIdParams,
         body: CharacterSystemsExportBody,
         response: {

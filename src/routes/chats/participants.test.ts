@@ -197,7 +197,15 @@ describe("participantRoutes — list, update and remove", () => {
   test("lists the participants of a chat the caller can access", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
+    const aiId = randomUUID();
+    await insertActors(db, "Nova", {
+      id: aiId,
+      owner_id: INVITER_ID,
+      agent_type: "ai",
+    } as never,);
+
     await insertChatParticipants(db, CHAT_ID, OWNER_ID,);
+    await insertChatParticipants(db, CHAT_ID, aiId,);
 
     const app = makeApp(db, INVITER_ID,);
     const res = await app.handle(
@@ -205,9 +213,19 @@ describe("participantRoutes — list, update and remove", () => {
     );
 
     expect(res.status,).toBe(200,);
-    const rows = await res.json() as Array<{ actor_id: string; display_name: string }>;
+    const rows = await res.json() as Array<{
+      actor_id: string;
+      display_name: string;
+      agent_type?: string;
+    }>;
+
     expect(rows.map((r,) => r.actor_id),).toContain(OWNER_ID,);
-    expect(rows[0]?.display_name,).toBe("Owner",);
+    expect(rows.map((r,) => r.display_name),).toContain("Owner",);
+    // Every row carries the actor kind so the FE member grid can facet with
+    // the same taxonomy as the add-participant picker.
+    const aiRow = rows.find((r,) => r.actor_id === aiId);
+    expect(aiRow?.agent_type,).toBe("ai",);
+    expect(rows.find((r,) => r.actor_id === OWNER_ID)?.agent_type,).toBe("none",);
 
     await db.destroy();
   });

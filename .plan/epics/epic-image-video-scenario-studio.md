@@ -5,8 +5,8 @@
 
 **Overview:** (see sections below)
 
-**Status:** Not Started
-**Status Note:** Filed 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package, on the 2026-10-28 user correction: ComfyUI is the **unified** generation backend across creative AND chat/avatar flows. Consumable before the video engine exists — authoring + payload preview run against a stubbed backend.
+**Status:** In Progress
+**Status Note:** Shipped on dev — scenario schema migrations 107/108/109, the scenario authoring API (`src/routes/ivss/authoring.ts`), the shot grammar compiler (`src/generation/ivss/shot-grammar.ts:95`), the fragment run pipeline (`src/generation/ivss/run-pipeline.ts:221`) and the authoring UI (`src/frontend/alpine/ivss-authoring.ts:75`, `src/views/ivss-authoring.html`). The browser mask/EDL/NLE tiers and the live video backend stay open. Filed 2026-10-28 (plan branch `plan-ivss`) from the IVSS research package, on the 2026-10-28 user correction: ComfyUI is the **unified** generation backend across creative AND chat/avatar flows. Consumable before the video engine exists — authoring + payload preview run against a stubbed backend.
 **Priority:** Medium-High
 **Effort:** XL
 **Type:** Feature Epic
@@ -106,7 +106,8 @@ profiles last (after lineage/licensing land).
 
 | Ticket | Scope | AC (one line) |
 | ------ | ----- | ------------- |
-| `TASK-ivss-scenario-schema` | Migration: scenarios/scenes/shots/references/docs/annotations + enums + `AssetLinkEntity` values + sync artifacts | Migration up/down green; a scenario with 2 scenes × 3 shots + refs + docs round-trips; shots outside a scene rejected |
+| `TASK-ivss-scenario-schema` | Migrations: scenarios/scenes/shots/fragments + references/docs/annotations + enums + generated artifacts | Migration up/down green; scenes/shots/fragments/references/docs/annotations round-trip; scope and doc-kind constraints reject inconsistent rows |
+| `FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING` | Workflow-agnostic fragment manifest: scene → shots → render fragments, workflow pin, operation, prompt/gallery provenance, latent reuse, take/parent chain | Fragment pins workflow id/hash/version and assumes no H3 Director node; rerender creates a new take without touching siblings |
 | `TASK-ivss-scenario-crud-and-pages` | Routes + TypeBox schemas + world-edit-style pages (Scenario \| Shots \| References \| Runs tabs) + i18n | Owner/member CRUD with 401/403/404 matrix tested; page flow edits the same rows the assistant workflow reads |
 | `TASK-ivss-shot-grammar-assembler` | Compile scenes → resolved prompt (`[Shot N]` absolute-timestamp blocks + soundscape/music) + reference-slot assignment; budgeted assembly (`src/memory/budget.ts` pattern) | Assembler output byte-stable for fixed inputs; over-budget prompts are truncated per documented priority, never silently |
 | `TASK-ui-api-workflow-converter` | UI-format → API-format converter (subgraph flattening, promoted-widget substitution by index, link rewrite, hidden JSON widget preservation) — generic, library-level; **lives in `epic-comfyui-first-class-citizen.md`** (cross-linked) | v-0010 converts to a submittable API graph (fixture) and a subgraph-free reference workflow converts identically |
@@ -221,6 +222,7 @@ package's fork list:
 ## Related
 
 - [`TASK-ivss-scenario-schema.md`](../tickets/TASK-ivss-scenario-schema.md)
+- [`FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md`](../tickets/FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md) — workflow-agnostic fragment manifest (no hard H3 Director dependency)
 - [`TASK-ivss-scenario-crud-and-pages.md`](../tickets/TASK-ivss-scenario-crud-and-pages.md)
 - [`TASK-ivss-shot-grammar-assembler.md`](../tickets/TASK-ivss-shot-grammar-assembler.md)
 - [`TASK-ui-api-workflow-converter.md`](../tickets/TASK-ui-api-workflow-converter.md) — filed under `epic-comfyui-first-class-citizen.md`

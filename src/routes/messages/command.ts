@@ -28,6 +28,7 @@ import type { Config, } from "../../config/schema";
 import type { AssistantWorkflowConfig, } from "../../config/sections/templates";
 import type { DB, } from "../../db/schema";
 import { stripLeadingMention, } from "../../group-chat/mention-parser";
+import { CHARACTER_PICTURE_INTENT, } from "../../regex/intent";
 import { auditCommandInvocation, } from "./command-audit";
 import { fetchDispatchContext, insertCommandSystemMessage, } from "./command-context";
 import { dispatchPipeChain, } from "./command-pipe";
@@ -106,14 +107,22 @@ export async function dispatchCommand(
   const effectiveContent = stripLeadingMention(content,);
   if (effectiveContent.length === 0) { return { handled: false, }; }
 
-  if (splitPipeChain(effectiveContent,).length > 1) {
-    return dispatchPipeChain(database, config, actorId, chatId, effectiveContent,);
+  // "picture of <character>" is a natural-language spelling of /avatar.
+  // Prefix the captured identity so the existing command path binds the
+  // generated image to the current chat character; everything else is untouched.
+  const pictureMatch = CHARACTER_PICTURE_INTENT.exec(effectiveContent,);
+  const dispatchContent = pictureMatch?.[1]
+    ? `/avatar ${pictureMatch[1]}: ${effectiveContent.trim()}`
+    : effectiveContent;
+
+  if (splitPipeChain(dispatchContent,).length > 1) {
+    return dispatchPipeChain(database, config, actorId, chatId, dispatchContent,);
   }
 
   const loadedWorkflows = Object.values(config.templates?.workflows?.workflows ?? {},);
-  const rawParsed = parseCommand(effectiveContent,);
+  const rawParsed = parseCommand(dispatchContent,);
   if (rawParsed === null || getCommand(rawParsed.command,) === undefined) {
-    const workflowResult = await runWorkflowFallback(database, chatId, effectiveContent, loadedWorkflows,);
+    const workflowResult = await runWorkflowFallback(database, chatId, dispatchContent, loadedWorkflows,);
     if (workflowResult === null) { return { handled: false, }; }
 
     auditCommandInvocation({ args: [], command: "workflow", result: workflowResult, userId: actorId, },);
@@ -127,7 +136,7 @@ export async function dispatchCommand(
 
   const dispatch = await fetchDispatchContext(database, chatId, actorId,);
   const ctx = buildCommandContext({ chatId, database, config, dispatch, userId: actorId, },);
-  const expanded = expandMacros(effectiveContent, commandMacroRegistry({ ctx, },),);
+  const expanded = expandMacros(dispatchContent, commandMacroRegistry({ ctx, },),);
   const parsed = parseCommand(expanded,);
   const commandName = parsed?.command ?? "";
   const outcome = parsed !== null && getCommand(commandName,) !== undefined
@@ -138,8 +147,7 @@ export async function dispatchCommand(
       commandName: rawParsed.command,
       result: {
         handled: true,
-        systemMessage:
-          `**Command failed:** macro expansion of \`${effectiveContent}\` no longer resolves to a command.`,
+        systemMessage: `**Command failed:** macro expansion of \`${dispatchContent}\` no longer resolves to a command.`,
       },
     };
 

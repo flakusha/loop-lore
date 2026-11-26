@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+import { randomUUID, } from "node:crypto";
 import type { ImageProviderConfig, } from "../../config/schema";
 import { getLogger, type Logger, } from "../../logger";
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { applyLoraSlots, resolveLoraSlotFiles, resolveLoraSlotNode, } from "../lora/apply-slots";
 import { discoverLoras, } from "../lora/discovery";
 import { injectComfyUILora, } from "../lora/discovery-comfyui";
-import type { LoRAModel, } from "../lora/types";
-import { ComfyUIClient, } from "../providers/comfyui";
+import type { LoRAConfig, LoRAModel, } from "../lora/types";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
+import { ComfyUIClient, } from "../providers/comfyui";
+import { uploadImageToComfy, } from "../providers/comfyui-upload";
 import { loadComfyUIWorkflow, } from "../workflow-loader";
 import { failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
@@ -25,6 +27,55 @@ function log(): Logger | null {
   }
 }
 
+/** Outcome of applying LoRAs to a loaded graph. */
+type LoraApplyResult = { ok: true; workflow: ComfyUIWorkflow } | { ok: false; error: string };
+
+/**
+ * Slot-capable nodes take the full discovered filename in their WAS rows;
+ * other graphs keep the legacy core LoraLoader injection path.
+ */
+async function applyRequestedLoras(
+  workflow: ComfyUIWorkflow,
+  loras: readonly LoRAConfig[],
+  baseUrl: string,
+): Promise<LoraApplyResult> {
+  const discovered = await discoverLoras("comfyui", baseUrl,);
+  const slotNode = resolveLoraSlotNode(workflow,);
+
+  if (!slotNode) {
+    for (const lora of loras) {
+      const found = discovered.models.some(
+        (m: LoRAModel,) => m.filename === lora.name || m.name === lora.name,
+      );
+
+      if (found) {
+        workflow = injectComfyUILora(workflow, lora.name, lora.strength,) as ComfyUIWorkflow;
+      } else {
+        return {
+          ok: false,
+          error:
+            `Unknown LoRA "${lora.name}" on ComfyUI at ${baseUrl}: no discovered model matches it. Install the file in the loras folder or use a discovered name; the image request was not submitted.`,
+        };
+      }
+    }
+
+    return { ok: true, workflow, };
+  }
+
+  try {
+    return {
+      ok: true,
+      workflow: applyLoraSlots(
+        workflow,
+        slotNode,
+        resolveLoraSlotFiles(loras, discovered.models,),
+      ) as ComfyUIWorkflow,
+    };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error,), };
+  }
+}
+
 /**
  * Generate images via a ComfyUI workflow (loaded + substituted from disk).
  * @param sdConfig
@@ -35,44 +86,79 @@ export async function generateComfyUI(
   sdConfig: ImageProviderConfig,
   opts: ImageGenOptions,
 ): Promise<ImageGenOutcome> {
-  const workflowName = opts.workflow ?? "txt2img";
+  // The chat route still sends legacy category ids; the shipped catalog
+  // exports them with a -v1 suffix. Normalize before guard and load.
+  const workflowName = opts.workflow === "img2img"
+    ? "img2img-v1"
+    : opts.workflow === "txt2img" || opts.workflow === undefined
+    ? "txt2img-v1"
+    : opts.workflow;
+
   const validatedComfy = validateProviderUrl(sdConfig.baseUrl,);
   if (!validatedComfy.ok) {
     return failure(`Invalid ComfyUI URL: ${validatedComfy.error}`, 400,);
   }
 
+  // img2img's LoadImage node needs an uploaded source; without one the
+  // substitution would submit an empty filename and produce garbage.
+  if (workflowName === "img2img-v1" && !opts.initImage) {
+    return failure('The "img2img" workflow requires an init image', 400,);
+  }
+
+  let uploadedInitImage: string | undefined;
+  if (opts.initImage) {
+    // Filename derives from the asset id — never from caller input. The
+    // upload helper sets overwrite:true, so a re-run is idempotent.
+    try {
+      uploadedInitImage = await uploadImageToComfy(
+        sdConfig.baseUrl,
+        sdConfig.generationTimeout ?? 120_000,
+        opts.initImage.buffer,
+        `init-${opts.initImage.assetId}.png`,
+        opts.apiKey ?? sdConfig.apiKey,
+      );
+    } catch (error) {
+      return failure(
+        `Init image upload failed: ${error instanceof Error ? error.message : String(error,)}`,
+        502,
+      );
+    }
+  }
+
+  const pins = opts.modelPins?.[sdConfig.name];
+
   let workflow = await loadComfyUIWorkflow(workflowName, {
     prompt: opts.prompt,
     negativePrompt: opts.negativePrompt,
-    width: sdConfig.defaults.width,
-    height: sdConfig.defaults.height,
+    width: opts.width ?? sdConfig.defaults.width,
+    height: opts.height ?? sdConfig.defaults.height,
     steps: opts.steps ?? sdConfig.defaults.steps,
     cfgScale: opts.cfgScale ?? sdConfig.defaults.cfgScale,
     sampler: opts.samplerName ?? sdConfig.defaults.sampler,
+    scheduler: opts.scheduler,
+    denoise: opts.denoise ?? 1,
     seed: opts.seed,
+    model: opts.model ?? pins?.checkpoint ?? sdConfig.models?.checkpoint,
+    diffusion: opts.diffusion ?? pins?.diffusion ?? sdConfig.models?.diffusion,
+    clip: opts.clip ?? pins?.clip ?? sdConfig.models?.clip,
+    vae: opts.vae ?? pins?.vae ?? sdConfig.models?.vae,
+    clip_vision: opts.clipVision ?? pins?.clip_vision ?? sdConfig.models?.clip_vision,
+    ...(opts.initImage
+      ? {
+        input_image: uploadedInitImage,
+        // The img2img graph's legacy widget name; both read the one `denoise`
+        // option, so the two widget names can never disagree.
+        denoise_strength: opts.denoise ?? 0.7,
+      }
+      : {}),
   },);
 
-  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
-  // LoRA opt-in: discover available models and inject if found; warn and skip if unknown.
-  if (opts.lora) {
-    const discovered = await discoverLoras("comfyui", sdConfig.baseUrl,);
-    const found = discovered.models.some(
-      (m: LoRAModel,) => m.name === opts.lora!.name,
-    );
-
-    if (found) {
-      // Cast: injectComfyUILora returns Record<string,unknown> which satisfies ComfyUIWorkflow
-      workflow = injectComfyUILora(
-        workflow,
-        opts.lora.name,
-        opts.lora.strength,
-      ) as ComfyUIWorkflow;
-    } else {
-      log()?.warn(
-        "LoRA not found on backend, skipping injection",
-        { loraName: opts.lora.name, backendUrl: sdConfig.baseUrl, },
-      );
-    }
+  // Slot graphs (the shipped qwen exports) take the full filename in their
+  // WAS rows; other graphs keep the existing core LoraLoader injection.
+  if (opts.lora && opts.lora.length > 0) {
+    const applied = await applyRequestedLoras(workflow, opts.lora, sdConfig.baseUrl,);
+    if (!applied.ok) { return failure(applied.error, 400,); }
+    workflow = applied.workflow;
   }
 
   const comfyClient = new ComfyUIClient({
@@ -81,6 +167,15 @@ export async function generateComfyUI(
     // BYO key for reverse-proxy-fronted engines — the same auth seam the
     // sd.cpp and video paths use (Bearer; absent for stock ComfyUI).
     apiKey: opts.apiKey ?? sdConfig.apiKey,
+    clientId: randomUUID(),
+    onProgress: (event,) => {
+      log()?.child({ module: "image-engine/comfyui.progress", },).debug("ComfyUI progress", {
+        promptId: event.promptId,
+        value: event.value,
+        max: event.max,
+        node: event.node,
+      },);
+    },
   },);
 
   const buffers = await comfyClient.runWorkflow(workflow,);

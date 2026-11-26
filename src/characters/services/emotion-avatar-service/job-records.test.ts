@@ -14,6 +14,7 @@ import {
   getGenerationJobRecord,
   listEmotionAvatarJobRecords,
   listGenerationJobRecords,
+  REBUILD_CACHE_LIMIT,
   recordBatchFinish,
   recordBatchStart,
   updateGenerationJobRecord,
@@ -99,6 +100,28 @@ describe("generation job records", () => {
       const listed = await listGenerationJobRecords(db, "actor-list-1",);
       expect(listed.map((record,) => record.id),).toEqual(["job-b", "job-a",],);
       expect(await getGenerationJobRecord(db, "job-nope",),).toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("cache rebuild keeps only the newest REBUILD_CACHE_LIMIT records", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertActors(db, "Cache Actor", { id: "actor-cache-1", },);
+      for (let index = 0; index <= REBUILD_CACHE_LIMIT; index += 1) {
+        await createGenerationJobRecord(db, {
+          id: `job-cache-${index}`,
+          kind: "emotion-avatar",
+          actorId: "actor-cache-1",
+          payload: { emotions: [], baseAvatarId: "av-cache", },
+          startedAt: "2026-09-11T00:00:00.000Z",
+        },);
+      }
+
+      const listed = await listEmotionAvatarJobRecords(db,);
+      expect(listed.length,).toBe(REBUILD_CACHE_LIMIT,);
+      expect(listed[0]?.id,).toBe(`job-cache-${REBUILD_CACHE_LIMIT}`,);
     } finally {
       sqlite.close();
     }

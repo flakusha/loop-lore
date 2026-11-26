@@ -3,7 +3,7 @@
 
 # BUG: config schema generators exit 1 silently
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-contract-and-config-tooling

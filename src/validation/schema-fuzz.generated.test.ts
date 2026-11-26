@@ -32,7 +32,7 @@ import * as routes_characterEmotions_actor from "@/routes/character-emotions/act
 import * as routes_characterEmotions_definitions from "@/routes/character-emotions/definitions";
 import * as routes_characterGrowth_helpers from "@/routes/character-growth/helpers";
 import * as routes_chatBackgrounds_shared from "@/routes/chat-backgrounds/shared";
-import * as routes_chatSearch_types from "@/routes/chat-search/types";
+import * as routes_chatMembership_types from "@/routes/chat-membership/types";
 import * as routes_chatSections_types from "@/routes/chat-sections/types";
 import * as routes_chats_branchShared from "@/routes/chats/branch-shared";
 import * as routes_crafting_recipesSchemas from "@/routes/crafting/recipes-schemas";
@@ -74,6 +74,7 @@ import * as validation_characterRelations from "@/validation/schemas/character-r
 import * as validation_characterSystems from "@/validation/schemas/character-systems";
 import * as validation_chat from "@/validation/schemas/chat";
 import * as validation_comfyuiBuilder from "@/validation/schemas/comfyui-builder";
+import * as validation_comfyuiModels from "@/validation/schemas/comfyui-models";
 import * as validation_emotionAvatars from "@/validation/schemas/emotion-avatars";
 import * as validation_entities from "@/validation/schemas/entities";
 import * as validation_imageEdit from "@/validation/schemas/image-edit";
@@ -303,6 +304,54 @@ describe("AdminAuditRow [validation/responses-admin]", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminAuditRow,));
 });
 
+describe("AdminBackupRecord [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminBackupRecord,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminBackupRecord,));
+});
+
+describe("AdminBackupRecord [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminBackupRecord,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminBackupRecord,));
+});
+
+describe("AdminBackupVerifyResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminBackupVerifyResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminBackupVerifyResponse,));
+});
+
+describe("AdminBackupVerifyResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminBackupVerifyResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminBackupVerifyResponse,));
+});
+
+describe("AdminBackupWriteResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminBackupWriteResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminBackupWriteResponse,));
+});
+
+describe("AdminBackupWriteResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminBackupWriteResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminBackupWriteResponse,));
+});
+
+describe("AdminChatDetail [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminChatDetail,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminChatDetail,));
+});
+
+describe("AdminChatDetail [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminChatDetail,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminChatDetail,));
+});
+
 describe("AdminChatRow [validation/responses]", () => {
   test("accepts generated values", () => checkAllValid(validation_responses.AdminChatRow,));
 
@@ -349,6 +398,12 @@ describe("AdminComfyUISetupResponse", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminComfyUISetupResponse,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminComfyUISetupResponse,));
+});
+
+describe("AdminDbBackupRestoreBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminDbBackupRestoreBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminDbBackupRestoreBody,));
 });
 
 describe("AdminFederationBudget", () => {
@@ -419,6 +474,66 @@ describe("AdminFederationWorkloadBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_adminFederation.AdminFederationWorkloadBody,));
 });
 
+describe("AdminInferenceAddResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminInferenceAddResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminInferenceAddResponse,));
+});
+
+describe("AdminInferenceAddResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminInferenceAddResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminInferenceAddResponse,));
+});
+
+describe("AdminInferenceListResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminInferenceListResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminInferenceListResponse,));
+});
+
+describe("AdminInferenceListResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminInferenceListResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminInferenceListResponse,));
+});
+
+describe("AdminInferenceProbeResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminInferenceProbeResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminInferenceProbeResponse,));
+});
+
+describe("AdminInferenceProbeResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminInferenceProbeResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminInferenceProbeResponse,));
+});
+
+describe("AdminInferenceResource [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminInferenceResource,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminInferenceResource,));
+});
+
+describe("AdminInferenceResource [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminInferenceResource,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminInferenceResource,));
+});
+
+describe("AdminLlamaSwapConfigBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminLlamaSwapConfigBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminLlamaSwapConfigBody,));
+});
+
+describe("AdminLlamaSwapStatusResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminLlamaSwapStatusResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminLlamaSwapStatusResponse,));
+});
+
 describe("AdminModelRoleOverrideBody", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminModelRoleOverrideBody,));
 
@@ -429,6 +544,18 @@ describe("AdminOverrideCreateBody", () => {
   test("accepts generated values", () => checkAllValid(validation_characterSystems.AdminOverrideCreateBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_characterSystems.AdminOverrideCreateBody,));
+});
+
+describe("AdminResourceQuota [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminResourceQuota,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminResourceQuota,));
+});
+
+describe("AdminResourceQuota [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminResourceQuota,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminResourceQuota,));
 });
 
 describe("AdminRoleUpdateBody", () => {
@@ -467,6 +594,12 @@ describe("AdminSdCppSetupResponse", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdCppSetupResponse,));
 });
 
+describe("AdminSdSetupNameParams", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.AdminSdSetupNameParams,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSdSetupNameParams,));
+});
+
 describe("AdminServerProviderDescriptor", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminServerProviderDescriptor,));
 
@@ -489,6 +622,54 @@ describe("AdminSetupProvidersResponse", () => {
   test("accepts generated values", () => checkAllValid(validation_admin.AdminSetupProvidersResponse,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.AdminSetupProvidersResponse,));
+});
+
+describe("AdminStorageAddResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminStorageAddResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminStorageAddResponse,));
+});
+
+describe("AdminStorageAddResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminStorageAddResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminStorageAddResponse,));
+});
+
+describe("AdminStorageListResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminStorageListResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminStorageListResponse,));
+});
+
+describe("AdminStorageListResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminStorageListResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminStorageListResponse,));
+});
+
+describe("AdminStorageProbeResponse [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminStorageProbeResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminStorageProbeResponse,));
+});
+
+describe("AdminStorageProbeResponse [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminStorageProbeResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminStorageProbeResponse,));
+});
+
+describe("AdminStorageResource [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminStorageResource,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminStorageResource,));
+});
+
+describe("AdminStorageResource [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminStorageResource,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminStorageResource,));
 });
 
 describe("AdminSystemConfigBody", () => {
@@ -549,6 +730,18 @@ describe("AdminUserRow [validation/responses-admin]", () => {
   test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminUserRow,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminUserRow,));
+});
+
+describe("AdminWorldDetail [validation/responses]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responses.AdminWorldDetail,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.AdminWorldDetail,));
+});
+
+describe("AdminWorldDetail [validation/responses-admin]", () => {
+  test("accepts generated values", () => checkAllValid(validation_responsesAdmin.AdminWorldDetail,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responsesAdmin.AdminWorldDetail,));
 });
 
 describe("AdminWorldEventRow [validation/responses]", () => {
@@ -623,28 +816,28 @@ describe("AssetBatchIdsBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetBatchIdsBody,));
 });
 
+describe("AssetDownloadAllBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_assets.AssetDownloadAllBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetDownloadAllBody,));
+});
+
 describe("AssetIdParams", () => {
   test("accepts generated values", () => checkAllValid(routes_assetTags_helpers.AssetIdParams,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_assetTags_helpers.AssetIdParams,));
 });
 
-describe("AssetSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchQuery,));
+describe("AssetPreferencesBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_assets.AssetPreferencesBody,));
 
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetPreferencesBody,));
 });
 
-describe("AssetSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchResponse,));
+describe("AssetPreferencesResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_assets.AssetPreferencesResponse,));
 
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchResponse,));
-});
-
-describe("AssetSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(validation_assets.AssetSearchResult,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetSearchResult,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_assets.AssetPreferencesResponse,));
 });
 
 describe("AssetTagListResponse", () => {
@@ -1098,12 +1291,6 @@ describe("ChatRow", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.ChatRow,));
 });
 
-describe("ChatSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(routes_chatSearch_types.ChatSearchQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatSearch_types.ChatSearchQuery,));
-});
-
 describe("ChatSectionCreateBody", () => {
   test("accepts generated values", () => checkAllValid(routes_chatSections_types.ChatSectionCreateBody,));
 
@@ -1186,6 +1373,24 @@ describe("CombatantSchema", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_combatSchemas.CombatantSchema,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_combatSchemas.CombatantSchema,));
+});
+
+describe("ComfyUIModelQuery", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelQuery,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelQuery,));
+});
+
+describe("ComfyUIModelSelectionSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelSelectionSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelSelectionSchema,));
+});
+
+describe("ComfyUIModelsResponse", () => {
+  test("accepts generated values", () => checkAllValid(validation_comfyuiModels.ComfyUIModelsResponse,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_comfyuiModels.ComfyUIModelsResponse,));
 });
 
 describe("completePlaythroughBody", () => {
@@ -1534,6 +1739,12 @@ describe("InviteSchema", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_invites.InviteSchema,));
 });
 
+describe("IssueChallengeBody", () => {
+  test("accepts generated values", () => checkAllValid(validation_auth.IssueChallengeBody,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_auth.IssueChallengeBody,));
+});
+
 describe("ItemCategorySchema", () => {
   test("accepts generated values", () => checkAllValid(validation_primitives.ItemCategorySchema,));
 
@@ -1547,9 +1758,9 @@ describe("ItemRaritySchema", () => {
 });
 
 describe("JoinableQuery", () => {
-  test("accepts generated values", () => checkAllValid(routes_chatSearch_types.JoinableQuery,));
+  test("accepts generated values", () => checkAllValid(routes_chatMembership_types.JoinableQuery,));
 
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatSearch_types.JoinableQuery,));
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_chatMembership_types.JoinableQuery,));
 });
 
 describe("LevelBody", () => {
@@ -1745,6 +1956,12 @@ describe("MessageIdParams", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageIdParams,));
 });
 
+describe("MessageListItemSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_messages.MessageListItemSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageListItemSchema,));
+});
+
 describe("MessageListResponse", () => {
   test("accepts generated values", () => checkAllValid(validation_responses.MessageListResponse,));
 
@@ -1761,24 +1978,6 @@ describe("MessageRow", () => {
   test("accepts generated values", () => checkAllValid(validation_responses.MessageRow,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_responses.MessageRow,));
-});
-
-describe("MessageSearchQuery", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchQuery,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchQuery,));
-});
-
-describe("MessageSearchResponse", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchResponse,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchResponse,));
-});
-
-describe("MessageSearchResult", () => {
-  test("accepts generated values", () => checkAllValid(validation_messages.MessageSearchResult,));
-
-  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageSearchResult,));
 });
 
 describe("MessageSectionAssignBody", () => {
@@ -1821,6 +2020,12 @@ describe("MessageTranslationLocaleParams", () => {
   test("accepts generated values", () => checkAllValid(validation_messages.MessageTranslationLocaleParams,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageTranslationLocaleParams,));
+});
+
+describe("MessageVariantItemSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_messages.MessageVariantItemSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_messages.MessageVariantItemSchema,));
 });
 
 describe("MessageVariantQuery", () => {
@@ -2332,6 +2537,12 @@ describe("SaveBody", () => {
   test("accepts generated values", () => checkAllValid(routes_rpg_combatSchemas.SaveBody,));
 
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_combatSchemas.SaveBody,));
+});
+
+describe("ServerProviderKindSchema", () => {
+  test("accepts generated values", () => checkAllValid(validation_admin.ServerProviderKindSchema,));
+
+  test("survives a JSON round-trip", () => checkJsonRoundTrip(validation_admin.ServerProviderKindSchema,));
 });
 
 describe("SettingsUpdateBody", () => {
@@ -2924,4 +3135,4 @@ describe("xpBody", () => {
   test("survives a JSON round-trip", () => checkJsonRoundTrip(routes_rpg_skillsSchemas.xpBody,));
 });
 
-// 464 schemas discovered across 569 module(s).
+// 499 schemas discovered across 588 module(s).

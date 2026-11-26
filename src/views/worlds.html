@@ -12,7 +12,7 @@
       hx-target="#modal-container"
       hx-swap="innerHTML"
       hx-on::after:swap="window.openModal('import-world-modal')"
-      aria-label="{{{ t("worlds.importWorld") }}}"
+      aria-label='{{{ t("worlds.importWorld") }}}'
       data-testid="import-world"
     >
       {{{ t("worlds.importWorld") }}}
@@ -24,7 +24,7 @@
       hx-target="#modal-container"
       hx-swap="innerHTML"
       hx-on::after:swap="window.openModal('create-world-wizard-modal')"
-      aria-label="{{{ t("worlds.wizardTitle") }}}"
+      aria-label='{{{ t("worlds.wizardTitle") }}}'
       data-testid="create-world-wizard"
     >
       {{{ t("worlds.wizardTitle") }}}
@@ -35,7 +35,7 @@
       hx-target="#modal-container"
       hx-swap="innerHTML"
       hx-on::after:swap="window.openModal('create-world-modal')"
-      aria-label="{{{ t("worlds.create") }}}"
+      aria-label='{{{ t("worlds.create") }}}'
       data-testid="create-world"
     >
       + New
@@ -50,8 +50,8 @@
         <div
           data-search-url="/dynamic/worlds/search"
           data-target-id="world-list"
-          data-search-placeholder="{{{t("worlds.searchWorlds")}}}"
-          data-search-label="{{{t("worlds.searchWorlds")}}}"
+          data-search-placeholder='{{{t("worlds.searchWorlds")}}}'
+          data-search-label='{{{t("worlds.searchWorlds")}}}'
           style="display: contents"
         >
           {{> filter-bar.html}}

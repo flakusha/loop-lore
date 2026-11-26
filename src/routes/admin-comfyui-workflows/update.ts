@@ -24,7 +24,7 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { jsonResponse, requireUserId, } from "../http-utils";
 import { buildWorkflowPayload, readMeta, slotsColumn, uploadedGraph, uploadedUiWorkflow, } from "./payload";
 import { getWorkflowRow, } from "./rows";
-import { log, workflowGuard, workflowInvalid, workflowNotFound, } from "./shared";
+import { licenseValue, log, paramsReviewedValue, workflowGuard, workflowInvalid, workflowNotFound, } from "./shared";
 import { ingestErrors, ingestUpload, liveSnapshot, outputKindOf, } from "./ui-ingest";
 
 /** Open object so a bare graph (node-id keys) passes validation untouched. */
@@ -39,6 +39,9 @@ const UpdateBody = t.Object(
     requiredNodes: t.Optional(t.Array(t.String(),),),
     loraSlots: t.Optional(t.Array(t.Unknown(),),),
     expectedOutputKind: t.Optional(t.String(),),
+    license: t.Optional(t.Union([t.String(), t.Null(),],),),
+    params_reviewed: t.Optional(t.Boolean(),),
+    bindings: t.Optional(t.Unknown(),),
   },
   { additionalProperties: true, },
 );
@@ -69,6 +72,13 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
 
               const row = await getWorkflowRow(database, id,);
               if (!row) { return workflowNotFound(id,); }
+              // A missing fence key keeps the stored value; an explicit null,
+              // blank string or false clears its field without touching the other.
+              const license = body.license === undefined
+                ? row.license ?? null
+                : licenseValue(body.license,);
+
+              const paramsReviewed = paramsReviewedValue(body.params_reviewed, row.params_reviewed ?? 0,);
               const current = rowToPayload(row,);
               if (!current) {
                 return workflowInvalid(["stored payload is unreadable; re-upload the workflow",],);
@@ -83,9 +93,9 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
               // ride along so labels survive the re-ingest.
               const uiUpload = uploadedUiWorkflow(body,);
               if (uiUpload) {
-                const snapshot = await liveSnapshot();
+                const snapshot = await liveSnapshot(uiUpload.nodes.map((node,) => node.type),);
                 if (!snapshot.ok) {
-                  return workflowInvalid([`ComfyUI is unreachable: ${snapshot.error}`,],);
+                  return workflowInvalid([`ComfyUI schema check failed: ${snapshot.error}`,],);
                 }
 
                 let ingested;
@@ -103,6 +113,17 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
 
                 if (!ingested.ok) { return workflowInvalid(ingestErrors(ingested.probe.errors,),); }
 
+                const uiPayload = {
+                  ...ingested.payload,
+                  ...(meta.bindings === undefined ? {} : { bindings: meta.bindings, }),
+                };
+
+                const validatedUi = validateWorkflowPayload(uiPayload, {
+                  unreferencedLive: ingested.report.unreferencedLive,
+                },);
+
+                if (!validatedUi.ok) { return workflowInvalid(validatedUi.errors,); }
+
                 const name = typeof body.name === "string" ? body.name.trim() : row.name;
                 const description = body.description === undefined
                   ? row.description
@@ -118,7 +139,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   description,
                   model_family: modelFamily,
                   detail_level: row.detail_level,
-                  payload: ingested.payload,
+                  payload: validatedUi.payload,
                   unreferencedLive: ingested.report.unreferencedLive,
                 },);
 
@@ -132,6 +153,8 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   probe_status: ingested.row.probe_status ?? "passing",
                   lora_slots: slotsColumn(ingested.payload.loraSlots,),
                   min_vram: typeof body.min_vram === "number" ? body.min_vram : row.min_vram,
+                  license,
+                  params_reviewed: paramsReviewed,
                   updated_at: new Date().toISOString(),
                 },).where("id", "=", id,).where("modality", "=", "workflow",).execute();
 
@@ -156,6 +179,7 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                   parameters: meta.parameters ?? current.parameters,
                   requiredNodes: meta.requiredNodes ?? current.requiredNodes,
                   loraSlots: meta.loraSlots ?? current.loraSlots,
+                  bindings: meta.bindings === undefined ? current.bindings : meta.bindings,
                 },),
                 { unreferencedLive: converted, },
               );
@@ -190,6 +214,8 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
                 payload: serialized.payload,
                 lora_slots: slotsColumn(validated.payload.loraSlots,),
                 min_vram: typeof body.min_vram === "number" ? body.min_vram : row.min_vram,
+                license,
+                params_reviewed: paramsReviewed,
                 updated_at: new Date().toISOString(),
               },).where("id", "=", id,).where("modality", "=", "workflow",).execute();
 

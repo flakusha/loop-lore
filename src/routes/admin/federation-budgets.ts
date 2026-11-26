@@ -21,6 +21,7 @@ import {
 } from "../../federation/peer-assignment-matrix";
 import {
   listPerformanceBudgets,
+  reloadPerformanceQuota,
 } from "../../federation/performance-quota-store";
 import {
   BudgetValidationError,
@@ -33,6 +34,8 @@ import { AdminFederationBudgetBody, AdminFederationMatrixBody, } from "../../val
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, withPermissionAuth, } from "../http-utils";
 import {
   auditFederationChange,
+  badOriginResponse,
+  decodeOriginParam,
   federationOffResponse,
   isBudgetMode,
   isWorkloadClass,
@@ -85,6 +88,7 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
 
         try {
           await writePerformanceBudget({ database: db, input, },);
+          await reloadPerformanceQuota({ database: db, enabled: opts.federationEnabled, },);
         } catch (error) {
           if (error instanceof BudgetValidationError) { return budgetRejection(error,); }
           throw error;
@@ -122,21 +126,25 @@ export function federationBudgetRoutes(opts: AdminFederationRouteOpts, prefix = 
           return notInEnumResponse("workloadClass", ctx.params.workloadClass, PEER_WORKLOAD_CLASSES,);
         }
 
+        const origin = decodeOriginParam(ctx.params.origin,);
+        if (origin === null) { return badOriginResponse(); }
+
         const cleared = await clearPerformanceBudget({
           database: db,
-          origin: ctx.params.origin,
+          origin: origin,
           workloadClass: ctx.params.workloadClass,
         },);
 
+        await reloadPerformanceQuota({ database: db, enabled: opts.federationEnabled, },);
         await auditFederationChange({
           database: db,
           actorId,
           eventType: "federation.budget_cleared",
           action: "budget_clear",
           entityType: "federation_performance_budget",
-          entityId: `${ctx.params.origin}/${ctx.params.workloadClass}`,
-          message: `Performance budget cleared: ${ctx.params.origin} ${ctx.params.workloadClass}`,
-          meta: { origin: ctx.params.origin, workloadClass: ctx.params.workloadClass, cleared, },
+          entityId: `${origin}/${ctx.params.workloadClass}`,
+          message: `Performance budget cleared: ${origin} ${ctx.params.workloadClass}`,
+          meta: { origin, workloadClass: ctx.params.workloadClass, cleared, },
         },);
 
         return jsonResponse({ ok: true, cleared, },);

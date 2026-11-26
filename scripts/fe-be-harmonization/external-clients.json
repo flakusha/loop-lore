@@ -1,0 +1,12 @@
+{
+  "clients": [
+    "src/cli/headless.ts"
+  ],
+  "allowlist": [
+    {
+      "method": "POST",
+      "path": "/api/v1/assets",
+      "reason": "standalone multipart upload route registered in src/elysia-app.ts (createApp), outside the v1Routes/registerPlugins surface the published OpenAPI document collects"
+    }
+  ]
+}

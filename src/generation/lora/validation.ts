@@ -15,6 +15,7 @@ import {
   LORA_STRENGTH_TYPICAL_MAX,
   LORA_STRENGTH_TYPICAL_MIN,
 } from "./types";
+import type { LoRAConfig, } from "./types";
 
 // ── Helpers ──────────────────────────────────────────────
 
@@ -123,6 +124,23 @@ export function validateLoRAConfig(config: unknown,): string | null {
   }
 
   return null;
+}
+
+/**
+ * Normalize the wire shape (single object or array) and validate every entry.
+ * Single-object callers keep working; bad configs fail at the boundary.
+ */
+export function normalizeLoraConfigs(
+  lora: LoRAConfig | LoRAConfig[] | undefined,
+): { ok: true; configs: LoRAConfig[] | undefined } | { ok: false; error: string } {
+  if (lora === undefined) { return { ok: true, configs: undefined, }; }
+  const configs = Array.isArray(lora,) ? lora : [lora,];
+  for (const config of configs) {
+    const error = validateLoRAConfig(config,);
+    if (error) { return { ok: false, error, }; }
+  }
+
+  return { ok: true, configs, };
 }
 
 /**

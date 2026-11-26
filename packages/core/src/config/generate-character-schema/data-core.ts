@@ -4,7 +4,7 @@
 /**
  * Core character card data fields (everything except `extensions`).
  */
-import { ContentRating, } from "@/characters/spec";
+import { ContentRating, } from "../../../../../src/characters/spec";
 
 export const dataProperties = {
   name: {

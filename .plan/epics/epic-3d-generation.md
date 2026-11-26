@@ -17,8 +17,9 @@
 The superseded stub's plan predates the current landscape: ComfyUI now
 ships a **native 3D suite** (TRELLIS.2 + Pixal3D generation, mesh
 post-processing, UV/PBR bake, full splat node set) and MIT/Apache clean
-local tooling exists for every stage (gsplat, COLMAP, trimesh, UniRig,
-Material Anything). loop-lore has **no** 3D asset type, no reconstruction
+local tooling exists for every stage (gsplat, COLMAP, trimesh, Rigify,
+Material Anything). UniRig is GPL-3.0 and quarantined (2026-11-18
+verification); see `TASK-fence-3d-workflow-node-licenses`. loop-lore has **no** 3D asset type, no reconstruction
 pipeline, no model handling (repair/texturing/rigging), no render-judge
 feedback loop, no 3D display, and no open-in-editor path. Meanwhile the
 platform's RPG content (characters, items, locations — and soon
@@ -37,7 +38,8 @@ consume.
    parity with image assets.
 2. **Reconstruction pipelines** (ComfyUI-first, operator-supplied
    workflows):
-   - *feed-forward*: TRELLIS.2 / Pixal3D native nodes (MIT) from a single
+   - *feed-forward*: TRELLIS.2 / Pixal3D native nodes (Apache-2.0, verified
+     2026-11-18) from a single
      image or an E1 view set (multi-image conditioning); Hunyuan3D-Wrapper
      tier explicitly **optional and license-fenced** (Tencent community
      license: EU/UK/KR restrictions, MAU clause) — never a default.
@@ -50,7 +52,8 @@ consume.
    (trimesh/pymeshlab tier) → repair/decimate/UV/PBR bake (ComfyUI native
    nodes + Blender `--background` as external step) → texturing (Material
    Anything MIT default; CHORD research-only, config-gated) → rig attach
-   (UniRig MIT local; Mixamo as user-driven external; glTF
+   (UniRig GPL-3.0 quarantined, OSS Rigify local default; Mixamo
+   user-driven external; glTF
    skins/animations preserved). Resource attachments (textures/rigs/
    animations) stored as linked assets with lineage.
 4. **Automated feedback loop**: render → judge → adjust. Tier 1
@@ -142,6 +145,7 @@ epic file and is superseded-in-scope by these tickets.
 | Ticket | Phase | Scope | Depends on |
 | ------ | ----- | ----- | ---------- |
 | `TASK-3d-asset-type-and-serving` | A | `AssetType.Model3D`, detect/validate, serve parity, renditions | — |
+| `TASK-fence-3d-workflow-node-licenses` | A | Licence inventory + gates for softfork 3D packs (Apache clean, GPL/NC/Tencent fenced) | — |
 | `TASK-3d-frontend-viewer-lazy-mount` | A | Viewer partials, revealed mount, tier gate, poster fallback | asset type |
 | `TASK-reconstruction-run-jobs` | A | `reconstruction_runs` table + state machine + routes + flow control | asset type |
 | `TASK-trellis2-view-set-pipeline` | B | TRELLIS.2/Pixal3D workflow tier (single image or view set) | run jobs, view sets |
@@ -165,11 +169,15 @@ epic file and is superseded-in-scope by these tickets.
   this epic inherits the decision flagged in the workflow family.
 - **SPZ vs PLY as storage:** SPZ chosen for storage (compact, versioned),
   PLY accepted as input and interchange.
+- **Blender job host:** local honkbox service when configured as the backend,
+  loop-lore sidecar otherwise; hosted only as a later BYO-key fallback.
+  Decision recorded in `SOL-blender-job-boundary-and-contract`.
 
 ## Related
 
 - [`TASK-3d-generation.md`](../tickets/TASK-3d-generation.md) — umbrella (superseded-in-scope, kept)
 - [`TASK-3d-asset-type-and-serving.md`](../tickets/TASK-3d-asset-type-and-serving.md)
+- [`TASK-fence-3d-workflow-node-licenses.md`](../tickets/TASK-fence-3d-workflow-node-licenses.md)
 - [`TASK-3d-frontend-viewer-lazy-mount.md`](../tickets/TASK-3d-frontend-viewer-lazy-mount.md)
 - [`TASK-reconstruction-run-jobs.md`](../tickets/TASK-reconstruction-run-jobs.md)
 - [`TASK-trellis2-view-set-pipeline.md`](../tickets/TASK-trellis2-view-set-pipeline.md)

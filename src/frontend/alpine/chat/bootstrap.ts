@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 // size-allow: 280
 // ── Chat page (chat.html) — reactive state object builder ────
 import { chatActions, } from "../chat-actions";
@@ -17,6 +16,7 @@ import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
 import { chatGroup, } from "../chat-group";
+import { chatInitImage, } from "../chat-init-image";
 import { chatInvites, } from "../chat-invites";
 import { chatKeynav, } from "../chat-keynav";
 import { chatKeys, } from "../chat-keys";
@@ -51,9 +51,10 @@ import { chatLifecycle, } from "./lifecycle";
 import { chatMusicEmbed, } from "./music-embed";
 import { chatWorld, } from "./world";
 
+import "../chat-export"; // side-effect: registers window.exportChat
+import { messageBulk, } from "../chat-actions/message-bulk";
 import { schedulingActions, } from "../chat-actions/scheduling";
 import { chatBranchMerge, } from "../chat-branch-merge";
-import "../chat-export"; // side-effect: registers window.exportChat
 import { chatMusicLinks, } from "../chat-music-links";
 import { chatPartySplit, } from "../chat-party-split";
 import { chatStylePicker, } from "../chat-style-picker";
@@ -93,6 +94,7 @@ export function chatState() {
     ...chatGenerations,
     ...chatVariants,
     ...chatStylePicker,
+    ...chatInitImage,
     ...chatActivity,
     ...chatManagement,
     ...chatEditing,
@@ -104,6 +106,7 @@ export function chatState() {
     ...turnSkipActions,
     ...schedulingActions,
     ...messageActions,
+    ...messageBulk,
     ...transitionPicker,
     ...chatMusicEmbed,
     ...chatPins,

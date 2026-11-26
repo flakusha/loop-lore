@@ -526,3 +526,10 @@ docs/spec/
 - `.plan/matrix-emotion-avatar-assets.md` — extend with RAG↔asset references (AV-row for decomposition chips)
 - `epic-rag-evaluation-observability.md` — eval rig + retrieval telemetry + prompt cache (provides NDCG@10 harness cited in B-R4 ACs)
 - `TASK-search-rag-coverage-bridge.md` — cross-ticket glue + execution order for the six search/RAG capability tickets (see Bridges)
+
+## Research addendum (2026-11-25)
+
+- DCC and gallery research (`.tmp/research/dcc-libraries/README.md`, `.tmp/research/gallery-3d-preview/README.md`) confirms `GalleryAssetItem` as the shared projection; RAG decomposition should consume that shape rather than define a second gallery record.
+- Provenance chips consume `BundleManifestEntry.provenance` already carried by honkbox export bundles; do not re-derive provenance from filenames or generated text in the index.
+- Shader/material metadata remains gated on a named gallery consumer. Research found no standalone consumer today, so no new ticket is filed.
+- Keep `key`, `asset_id`, `sha256` and `size_bytes` as the identity spine; add `media_kind`, `variant_kind`, `source_asset_id` only when a consumer needs them.

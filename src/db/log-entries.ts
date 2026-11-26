@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { toDate, } from "../utils/date";
+
 /**
  * Shared `log_entries` row envelope.
  *
@@ -29,10 +31,11 @@ export interface LogEntryEnvelope {
  * @returns the envelope fields, ready to spread into a row
  */
 export function logEntryEnvelope(level: number,): LogEntryEnvelope {
+  const timestamp = Date.now();
   return {
     id: crypto.randomUUID(),
     level,
-    timestamp: Date.now(),
-    time: new Date().toISOString(),
+    timestamp,
+    time: toDate(timestamp,).toISOString(),
   };
 }

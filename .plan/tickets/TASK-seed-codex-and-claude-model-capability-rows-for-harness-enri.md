@@ -17,10 +17,12 @@ Harness model discovery enriches provider/id model ids from the admin model-capa
 
 (fill in before starting: why this change, constraints, alternatives considered.)
 
+Closure was by registry-driven close on 2026-11-12, not a new implementation.
+
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 **Resolved:** 2026-11-12 registry-driven close: git issue 2350e43 (registry tip: 630d045db Konstantin Fedotov Close issue)

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
  * turn-persistence.ts — persist one harness turn as chat-visible message rows.
  *
- * One assistant row per turn (text, `tool_calls`, `thinking`) and one
+ * One assistant row per turn (text, `tool_calls`, `thinking`, plans in
+ * `metadata`) and one
  * `tool_result` row per finished tool call. The rows follow the convention
  * `src/generation/generate-route/tool-execution.ts` established: tool results
  * carry `metadata.tool_call_id` / `tool_name` / `tool_error`, content is
@@ -27,8 +29,10 @@ import {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { assertValidWrite, } from "../../db/validators/enforce";
+import { sanitizeToolOutput, } from "../../generation/generate-route/tool-execution";
 import { encryptStoredContent, } from "../../generation/generate-route/tool-result-persist";
 import { findByIdempotencyKey, isIdempotencyUniqueViolation, } from "../../routes/messages/swipe-race-insert";
+import { indexMessageSearchTokens, } from "../../search";
 import { safeJsonStringify, } from "../../utils";
 import { isTerminalToolStatus, } from "./acp-session-update";
 import { type HarnessTurnResult, } from "./adapter-types";
@@ -130,13 +134,16 @@ export async function persistHarnessTurn(
     plaintext: transcript.text,
   },);
 
+  // Tool output is untrusted. Scrub it once here so the encrypted row, its
+  // plaintext mirror, and the search index never disagree about the content.
+  const safeContents = finished.map((result,) => sanitizeToolOutput(result.content,));
   const settled = await Promise.allSettled(
-    finished.map((result,) =>
+    safeContents.map((plaintext,) =>
       encryptStoredContent({
         database,
         chatId,
         actorId,
-        plaintext: result.content,
+        plaintext,
       },)
     ),
   );
@@ -154,6 +161,10 @@ export async function persistHarnessTurn(
     profile,
     acp_session_id: turn.acpSessionId,
     stop_reason: turn.stopReason,
+    // Agent plans ride the assistant row's metadata, next to `thinking`:
+    // the row has no plan column and the text/thinking columns keep the
+    // shapes the message readers parse.
+    plans: transcript.plans ?? [],
   },);
 
   assertValidWrite("messages", { status, visibility: MessageVisibility.Visible, },);
@@ -168,6 +179,7 @@ export async function persistHarnessTurn(
         role: MessageRole.Assistant,
         content: assistantContent.storedContent,
         key_id: assistantContent.storedKeyId,
+        content_plaintext: transcript.text,
         content_format: MessageContentFormat.Markdown,
         content_type: MessageContentType.Text,
         content_encoding: ContentEncoding.Identity,
@@ -187,10 +199,20 @@ export async function persistHarnessTurn(
         token_cost: turn.costUsd ?? null,
       },).execute();
 
+      // The mirror feeds FTS5; blind tokens stay a fallback for mirrorless rows.
+      await indexMessageSearchTokens(trx, {
+        messageId: assistantId,
+        chatId,
+        plaintext: transcript.text,
+        keyId: assistantContent.storedKeyId,
+        plaintextMirror: transcript.text,
+      },);
+
       const ids: string[] = [];
       for (const [index, result,] of finished.entries()) {
         const id = randomUUID();
         const content = toolContents[index]!;
+        const safeContent = safeContents[index]!;
         await trx.insertInto("messages",).values({
           id,
           chat_id: chatId,
@@ -199,6 +221,7 @@ export async function persistHarnessTurn(
           role: MessageRole.Assistant,
           content: content.storedContent,
           key_id: content.storedKeyId,
+          content_plaintext: safeContent,
           content_format: MessageContentFormat.Markdown,
           content_type: MessageContentType.ToolResult,
           content_encoding: ContentEncoding.Identity,
@@ -206,6 +229,14 @@ export async function persistHarnessTurn(
           visibility: MessageVisibility.Visible,
           metadata: toolResultMetadata(result,),
         },).execute();
+
+        await indexMessageSearchTokens(trx, {
+          messageId: id,
+          chatId,
+          plaintext: safeContent,
+          keyId: content.storedKeyId,
+          plaintextMirror: safeContent,
+        },);
 
         ids.push(id,);
       }

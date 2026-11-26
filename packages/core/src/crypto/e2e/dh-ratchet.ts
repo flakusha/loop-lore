@@ -15,7 +15,7 @@
  * Primitives: `./dh-ratchet-primitives.ts`. Helpers (`skipOldChain`,
  * `SkippedKey`): `./dh-ratchet-helpers.ts`.
  */
-import { toBase64, } from "@/utils/base64";
+import { toBase64, } from "../../utils/base64";
 import { skipOldChain, type SkippedKey, } from "./dh-ratchet-helpers";
 import type { DhMessagePayload, } from "./dh-ratchet-primitives";
 import {

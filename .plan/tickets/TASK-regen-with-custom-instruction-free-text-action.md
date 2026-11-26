@@ -3,7 +3,8 @@
 
 # TASK: Regen with custom instruction free-text action
 
-**Status:** Not Started
+**Status:** Done
+**Scope:** Custom free-text regen instruction
 **Priority:** medium
 **Effort:** Medium
 
@@ -25,3 +26,5 @@ Candidate-for-1.0.0 (feature-research #9, .tmp/intercom/FEATURE-RESEARCH-2026-11
 
 - Deliberately NOT the smart-regen decision gate; if both land, `custom` composes alongside it unchanged.
 - Read-only lane evidence; verify against dev HEAD at implementation time.
+
+**Resolved:** 2026-11-19 registry-driven close: git issue 20e2250 (registry tip: 345f1ef5e Konstantin Fedotov Close issue)

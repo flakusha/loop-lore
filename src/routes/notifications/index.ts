@@ -14,7 +14,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { NotificationService, } from "../../notifications/service";
 import { ErrorResponse, Id, NotificationPreferencesBody, SuccessResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
+import { jsonResponse, withUserAuth, } from "../http-utils";
 import { NotificationStreamer, } from "./stream";
 
 export { NotificationStreamer, } from "./stream";
@@ -29,17 +29,16 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
   const idParams = t.Object({ id: t.String(), },);
   const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);
   return new Elysia({ name: "notifications", },)
-    .get(`${prefix}/notifications`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const unreadOnly = ctx.query?.unread === "true";
-      const items = (await new NotificationService(database,).list(userId, unreadOnly,)).map((item,) => ({
-        ...item,
-        read: item.read === "read" ? 1 : 0,
-      }));
+    .get(`${prefix}/notifications`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const unreadOnly = ctx.query?.unread === "true";
+        const items = (await new NotificationService(database,).list(userId, unreadOnly,)).map((item,) => ({
+          ...item,
+          read: item.read === "read" ? 1 : 0,
+        }));
 
-      return jsonResponse({ items, },);
-    }, {
+        return jsonResponse({ items, },);
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -50,12 +49,11 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         tags: ["Notifications",],
       },
     },)
-    .get(`${prefix}/notifications/unread-count`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const count = await new NotificationService(database,).getUnreadCount(userId,);
-      return jsonResponse({ count, },);
-    }, {
+    .get(`${prefix}/notifications/unread-count`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const count = await new NotificationService(database,).getUnreadCount(userId,);
+        return jsonResponse({ count, },);
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -68,15 +66,14 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
     },)
     .patch(
       `${prefix}/notifications/:id`,
-      async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        if (ctx.body.read === true) {
-          await new NotificationService(database,).markRead(ctx.params.id, userId,);
-        }
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          if (ctx.body.read === true) {
+            await new NotificationService(database,).markRead(ctx.params.id, userId,);
+          }
 
-        return jsonResponse({ ok: true, },);
-      },
+          return jsonResponse({ ok: true, },);
+        },),
       {
         params: idParams,
         body: markReadBody,
@@ -91,12 +88,11 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         },
       },
     )
-    .patch(`${prefix}/notifications/read-all`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      await new NotificationService(database,).markAllRead(userId,);
-      return jsonResponse({ ok: true, },);
-    }, {
+    .patch(`${prefix}/notifications/read-all`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        await new NotificationService(database,).markAllRead(userId,);
+        return jsonResponse({ ok: true, },);
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -107,12 +103,11 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         tags: ["Notifications",],
       },
     },)
-    .delete(`${prefix}/notifications/:id`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      await new NotificationService(database,).delete(ctx.params.id, userId,);
-      return jsonResponse({ ok: true, },);
-    }, {
+    .delete(`${prefix}/notifications/:id`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        await new NotificationService(database,).delete(ctx.params.id, userId,);
+        return jsonResponse({ ok: true, },);
+      },), {
       params: t.Object({ id: Id, },),
       response: {
         200: SuccessResponse,
@@ -124,12 +119,11 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         tags: ["Notifications",],
       },
     },)
-    .get(`${prefix}/notifications/preferences`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const prefs = await new NotificationService(database,).getPrefs(userId,);
-      return jsonResponse(prefs,);
-    }, {
+    .get(`${prefix}/notifications/preferences`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const prefs = await new NotificationService(database,).getPrefs(userId,);
+        return jsonResponse(prefs,);
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,
@@ -142,16 +136,15 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
     },)
     .patch(
       `${prefix}/notifications/preferences`,
-      async (ctx: any,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        const prefs = await new NotificationService(database,).setPrefs(userId, {
-          enabled: ctx.body.enabled,
-          mutedWorlds: ctx.body.mutedWorlds,
-        },);
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const prefs = await new NotificationService(database,).setPrefs(userId, {
+            enabled: ctx.body.enabled,
+            mutedWorlds: ctx.body.mutedWorlds,
+          },);
 
-        return jsonResponse(prefs,);
-      },
+          return jsonResponse(prefs,);
+        },),
       {
         body: NotificationPreferencesBody,
         response: {
@@ -165,11 +158,10 @@ export function notificationsRoutes({ database, }: { database: Kysely<DB> }, pre
         },
       },
     )
-    .get(`${prefix}/notifications/stream`, (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      return new NotificationStreamer(database, userId,).open();
-    }, {
+    .get(`${prefix}/notifications/stream`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        return new NotificationStreamer(database, userId,).open();
+      },), {
       response: {
         200: SuccessResponse,
         401: ErrorResponse,

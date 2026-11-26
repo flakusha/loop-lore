@@ -3,7 +3,7 @@
 
 # TASK: TLS missing OpenSSL friendly error on boot
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** low
 **Effort:** Small
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -20,7 +20,7 @@ Gap G5 of `.tmp/research/AutoSetup-GapAudit-2026-11-15.md:85-90` ("TLS-on-Window
 - `src/server/start.ts:226-235` then fails closed: it logs a fatal and throws `new Error("TLS certificates could not be provisioned — refusing to start without HTTPS")`. That error is what the operator actually reads.
 - The top-level handler `src/server/index.ts:12-16` catches it and prints `[server] startup failed: Error: TLS certificates could not be provisioned — refusing to start without HTTPS`, then exits 1. Nothing in that chain names OpenSSL.
 
-So the gap is narrow and concrete: the failure is already fail-closed (correct, do not change), but the message the operator sees does not say "OpenSSL is missing" or "install OpenSSL" — and on Windows the OpenSSL install is the non-obvious step (no system OpenSSL by default; the docs point at a Win32 OpenSSL build).
+The gap was narrow and concrete: the failure was already fail-closed (kept unchanged), but the message the operator saw did not say "OpenSSL is missing" or "install OpenSSL" — and on Windows the OpenSSL install is the non-obvious step (no system OpenSSL by default; the docs point at a Win32 OpenSSL build). The landed fix (`88d335a9a`) classifies the spawn outcome and names OpenSSL with the platform install hint.
 
 Verified runtime facts the implementation MUST respect:
 
@@ -42,11 +42,13 @@ Alternatives considered: (a) folding into C6 — rejected, see scope decision; (
 
 **Acceptance Criteria:**
 
-- [ ] boot with TLS enabled and OpenSSL absent prints an actionable error naming OpenSSL (and the existing platform install hint) instead of only "certificates could not be provisioned"
-- [ ] boot still fails closed: nonzero exit, no plaintext listener
-- [ ] the "openssl binary missing" case is distinguishable from "openssl ran and failed" (different hint text), and the missing-binary case is detected on both POSIX and Windows (`openssl.exe` then `openssl`)
-- [ ] when both cert files already exist, no OpenSSL-related message appears (provisioning is not attempted)
-- [ ] unit test covers the message shape (classification by spawn outcome; no real OpenSSL invocation)
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] boot with TLS enabled and OpenSSL absent prints an actionable error naming OpenSSL (and the existing platform install hint) instead of only "certificates could not be provisioned"
+- [x] boot still fails closed: nonzero exit, no plaintext listener
+- [x] the "openssl binary missing" case is distinguishable from "openssl ran and failed" (different hint text), and the missing-binary case is detected on both POSIX and Windows (`openssl.exe` then `openssl`)
+- [x] when both cert files already exist, no OpenSSL-related message appears (provisioning is not attempted)
+- [x] unit test covers the message shape (classification by spawn outcome; no real OpenSSL invocation)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+**Resolved:** 2026-11-22 registry-driven close: git issue 6981da3 (registry tip: 45a6e4246 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-TLS-MISSING-OPENSSL-FRIENDL)

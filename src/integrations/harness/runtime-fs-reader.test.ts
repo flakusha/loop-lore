@@ -131,6 +131,21 @@ describe("harness runtime fs/read_text_file bridge (fake ACP fixture)", () => {
     expect(capabilities?.fs?.readTextFile,).toBe(true,);
   });
 
+  it("refuses an oversized file instead of silently truncating it", async () => {
+    const root = tempDir("harness-acp-sandbox-",);
+    const file = join(root, "big.txt",);
+    writeFileSync(file, "x".repeat(1024 * 1024 + 1,), "utf8",);
+    const server = serve({ FAKE_MODELS: "m", FAKE_READ_FILE: file, },);
+    const runtime = runtimeFor(root, server,);
+
+    await runtime.registry.ensureProbed("p",);
+    await runtime.registry.connection("p",)?.prompt("read it",);
+
+    const content = readEntry(server.readLog(),)?.content as { error?: { code: number; message: string } };
+    expect(content?.error?.code,).toBe(-32000,);
+    expect(content?.error?.message,).toContain("over the 1048576-byte fs/read_text_file limit",);
+  });
+
   it("answers a missing file with a typed error, never a raw filesystem error", async () => {
     const root = tempDir("harness-acp-sandbox-",);
     const server = serve({ FAKE_MODELS: "m", FAKE_READ_FILE: join(root, "absent.txt",), },);

@@ -2,15 +2,15 @@
  * Tests for crypto/message-content.ts — the shared message-content
  * encrypt/decrypt helpers used by every write/read path.
  */
-import { createSqliteDialect, } from "@/db/index";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import { type Migration, Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { createSqliteDialect, } from "../../../../src/db/index";
+import type { DB, } from "../../../../src/db/schema";
+import { createLogger, } from "../logger";
 import { deriveChatKeyForChat, } from "./chat-keys";
 import {
   decryptMessageContent,
@@ -30,7 +30,8 @@ let testDb: Kysely<DB>;
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const dir = path.join(import.meta.dir, "..", "db", "migrations",);
+      // TODO(env): bun-only — import.meta.dir; add node shim when node target lands.
+      const dir = path.join(import.meta.dir, "..", "..", "..", "..", "src", "db", "migrations",);
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

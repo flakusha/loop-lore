@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { ALLOWED_VIEWS, } from "./constants";
+import { escapeHtmlAndJsString, } from "./escape-html";
 import { loadView, notFoundView, respond, } from "./layout";
 
 /**
@@ -125,7 +126,7 @@ async function serveWorldDetail(
   let content = loadView("world-detail",);
   if (!content) { return null; }
 
-  content = content.replaceAll("{{worldId}}", () => worldId,);
+  content = content.replaceAll("{{worldId}}", () => escapeHtmlAndJsString(worldId,),);
   return respond(content, isHtmx, "World — Details", userId, sessionId, request, t,);
 }
 
@@ -154,7 +155,7 @@ async function serveWorldEdit(
   let content = loadView("world-edit",);
   if (!content) { return null; }
 
-  content = content.replaceAll("{{worldId}}", () => worldId,);
+  content = content.replaceAll("{{worldId}}", () => escapeHtmlAndJsString(worldId,),);
   return respond(content, isHtmx, "Edit World", userId, sessionId, request, t,);
 }
 

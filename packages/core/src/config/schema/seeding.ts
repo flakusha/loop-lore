@@ -20,9 +20,9 @@
 // username. Environment-specific overrides (seeding.environments[<NODE_ENV>])
 // may replace the base users / seedData for a given environment.
 
-import type { UserRole, } from "@/db/enums-core/users";
-import type { ItemCategory, ItemRarity, } from "@/db/enums-story/items";
-import type { QuestCategory, QuestStatus, QuestType, } from "@/db/enums-story/quests";
+import type { UserRole, } from "../../../../../src/db/enums-core/users";
+import type { ItemCategory, ItemRarity, } from "../../../../../src/db/enums-story/items";
+import type { QuestCategory, QuestStatus, QuestType, } from "../../../../../src/db/enums-story/quests";
 
 /** */
 export interface SeedUserConfig {

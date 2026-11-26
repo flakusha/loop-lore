@@ -23,7 +23,9 @@
  *               NoteCategory, ModelRole
  *   enums-content: ContentEncoding
  *   enums-federation: PeerWorkloadClass, PeerInstanceKind, PeerAuthMode, PeerLinkKind
- *   enums-generation: GenerationStatus, CancelReason, CancelSource, ChunkAction
+ *   enums-generation: GenerationStatus, CancelReason, CancelSource, ChunkAction,
+ *                    ScenarioStatus, SceneMode, SceneStatus, CutType,
+ *                    FragmentOperation, FragmentStatus
  *   enums-story: TurnType, TurnStatus, QuestType, QuestStatus, QuestProgressStatus,
  *                SyntheticDataType, SyntheticDataStatus, SyntheticTestMode, WorldEventType,
  *                MemoryType, LorePosition, LoreEntryStatus, DifficultyReroll, DifficultyState,

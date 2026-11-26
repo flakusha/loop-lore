@@ -9,6 +9,7 @@
 **Status:** Done
 **Status Note:** Reopened 2026-10-23 — open post-completion tickets attached during epic-attachment triage.
 **Status Note:** Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
+**Deferred Note (2026-11-18):** operator labelled the gallery enhancement backlog post-1.0.0. `TASK-gallery-fuzzy-search-pagination.md`, `TASK-gallery-editor-structured-ui.md` and `TASK-gallery-download-review.md` are not in the 1.0.0 cut; the Required gallery lines shipped and this epic stays Done.
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Feature Epic

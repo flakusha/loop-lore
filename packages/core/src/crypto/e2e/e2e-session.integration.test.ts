@@ -30,14 +30,14 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 
-import { createSqliteDialect, } from "@/db";
-import type { DB, } from "@/db/schema";
-import { decryptMessage, } from "@/frontend/e2e/decrypt-message";
+import { createSqliteDialect, } from "../../../../../src/db";
+import type { DB, } from "../../../../../src/db/schema";
+import { decryptMessage, } from "../../../../../src/frontend/e2e/decrypt-message";
 import {
   type EncryptedPayload,
   encryptMessage,
-} from "@/frontend/e2e/encrypt-message";
-import { createLogger, } from "@/logger";
+} from "../../../../../src/frontend/e2e/encrypt-message";
+import { createLogger, } from "../../logger";
 import {
   ensureActiveSession,
   findActiveSession,
@@ -80,7 +80,7 @@ function buildMigrationProvider() {
   // which the project deliberately avoids.
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const migrationDir = path.join(__dirname, "..", "..", "db", "migrations",);
+      const migrationDir = path.join(__dirname, "..", "..", "..", "..", "..", "src", "db", "migrations",);
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

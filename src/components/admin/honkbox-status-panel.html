@@ -1,0 +1,62 @@
+<!-- Read-only honkbox capability/queue status (observability only). -->
+<section x-data="adminHonkbox()" data-testid="admin-honkbox-status">
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3)">
+    <h4 style="font-size: 13px; font-weight: 600; margin: 0">Honkbox capability status</h4>
+    <button
+      class="btn btn-secondary btn-xs"
+      @click="loadStatus()"
+      :disabled="loading"
+      data-testid="honkbox-refresh"
+    >
+      Refresh
+    </button>
+  </div>
+  <div
+    x-show="error !== ''"
+    style="font-size: 12px; color: var(--color-danger, #dc3545); margin-bottom: var(--space-2)"
+    x-text="error"
+    data-testid="honkbox-error"
+  >
+  </div>
+  <div x-show="loading" style="font-size: 12px; color: var(--text-secondary)">Loading…</div>
+  <div style="display: grid; gap: 4px; font-size: 12px; padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 6px">
+    <div>Configured: <span x-text="status.configured ? 'yes' : 'no'" data-testid="honkbox-configured"></span></div>
+    <div>Availability: <span x-text="status.state" data-testid="honkbox-availability"></span></div>
+    <div x-show="status.reason !== null">Reason: <span x-text="status.reason" data-testid="honkbox-reason"></span></div>
+    <div>
+      GPU slots: <span
+        x-text="status.gpuSlots === null ? '—' : status.gpuSlots"
+        data-testid="honkbox-gpu-slots"
+      ></span>
+    </div>
+    <div>
+      Queue wait (s): <span
+        x-text="status.queueWaitSecs === null ? '—' : status.queueWaitSecs"
+        data-testid="honkbox-queue-wait"
+      ></span>
+    </div>
+    <div>
+      Retry after (s): <span
+        x-text="status.retryAfterSecs === null ? '—' : status.retryAfterSecs"
+        data-testid="honkbox-retry-after"
+      ></span>
+    </div>
+    <div>
+      Jobs / events / tools: <span
+        x-text="(status.jobsEnabled ? 'yes' : 'no') + ' / ' + (status.eventsEnabled ? 'yes' : 'no') + ' / ' + (status.toolsEnabled ? 'yes' : 'no')"
+        data-testid="honkbox-features"
+      ></span>
+    </div>
+    <div>Cached probe: <span x-text="status.cached ? 'yes' : 'no'" data-testid="honkbox-cached"></span></div>
+  </div>
+  <div style="font-size: 12px; margin-top: var(--space-2)">
+    <strong>External tools</strong>
+    <div x-show="status.externalTools.length === 0">None reported</div>
+    <template x-for="tool in status.externalTools" :key="tool.id">
+      <div>
+        <span x-text="tool.id"></span>:
+        <span x-text="tool.available ? 'available' : 'unavailable'"></span>
+      </div>
+    </template>
+  </div>
+</section>

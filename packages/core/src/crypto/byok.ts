@@ -108,8 +108,57 @@ export async function encryptValue(plaintext: string, secret: string, aad?: stri
   return `${salt.toBase64()}:${iv.toBase64()}:${new Uint8Array(ciphertext,).toBase64()}`;
 }
 
-/** Current versioned-envelope generation (BUG-4a052a5 rotation story). */
-export const BYOK_KEY_VERSION = 2;
+/** Current versioned-envelope generation: 3 = per-user-KEK-sealed rows. */
+export const BYOK_KEY_VERSION = 3;
+
+/**
+ * Envelope generations this code reads: 2 (global-secret-sealed, pre-KEK) and
+ * 3 (per-user-KEK-sealed). Anything else fails loudly in decryptValue.
+ */
+const SUPPORTED_KEY_VERSIONS = new Set([2, 3,],);
+
+/**
+ * AAD binding a sealed row to its owner + provider: a row transplanted to
+ * another user or provider fails authentication at open time.
+ * @param userId
+ * @param providerName
+ */
+export function kekAad(userId: string, providerName: string,): string {
+  return `${userId}:${providerName}`;
+}
+
+/**
+ * Derive a user's key-encryption key from the server master secret. HKDF
+ * isolates users: one user's KEK reveals nothing about another's, and a row
+ * sealed for A never opens for B (different KEK + AAD). Deterministic — no
+ * storage, no migration; rotation = rotate the master.
+ * @param masterSecret the server-side byoKey.encryptionKey
+ * @param userId seals the derivation to one user
+ */
+export async function deriveUserKek(masterSecret: string, userId: string,): Promise<string> {
+  const ikm = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(masterSecret,),
+    "HKDF",
+    false,
+    ["deriveBits",],
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "HKDF",
+      hash: "SHA-256",
+      salt: new TextEncoder().encode(userId,) as unknown as BufferSource,
+      info: new TextEncoder().encode("loop-lore/byok/user-kek/v3",),
+    },
+    ikm,
+    KEY_LENGTH,
+  );
+
+  const keyBytes = new Uint8Array(bits.byteLength,);
+  keyBytes.set(new Uint8Array(bits,),);
+  return keyBytes.toBase64();
+}
 
 /**
  * Version tag at the head of a versioned envelope: `v<digits>:`.
@@ -122,7 +171,7 @@ const VERSION_TAG = /^v(\d+):/;
 
 /**
  * Encrypt a plaintext string into the VERSIONED envelope:
- * `v2:salt:iv:ciphertext` (version tag + three base64 chunks). The payload
+ * `v3:salt:iv:ciphertext` (version tag + three base64 chunks). The payload
  * bytes are identical to {@link encryptValue} — the tag only records which
  * key generation sealed the row, so a future rotation can branch per record
  * instead of mass re-encrypting under one global secret.
@@ -137,7 +186,7 @@ export async function encryptVersioned(plaintext: string, secret: string, aad?: 
 
 /**
  * Decrypt a base64-encoded string. Accepts all three wire formats:
- *   - versioned (4 chunks): "v2:salt:iv:ciphertext" — current envelope
+ *   - versioned (4 chunks): "v2/v3:salt:iv:ciphertext" — sealed envelopes
  *   - new (3 chunks): "salt:iv:ciphertext"
  *   - old (2 chunks): "iv:ciphertext" — uses the legacy global salt
  * @param encrypted
@@ -160,7 +209,7 @@ export async function decryptValue(encrypted: string, secret: string, aad?: stri
   const versioned = VERSION_TAG.exec(encrypted,);
   if (versioned !== null) {
     const version = Number(versioned[1],);
-    if (version !== BYOK_KEY_VERSION) {
+    if (!SUPPORTED_KEY_VERSIONS.has(version,)) {
       throw new Error(`Unsupported BYOK key version: ${versioned[1]}`,);
     }
 

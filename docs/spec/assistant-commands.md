@@ -289,6 +289,12 @@ dispatch directly. For an unqualified `/regen`, the decision gate chooses:
 The gate is a pure, typed decision step; it does not fire automatically
 mid-pipeline — it only shapes what an explicit `/regen` invocation does.
 
+The AUX GM-tool detection call is fronted by a keyword pre-gate controlled by
+`assistant.gmToolKeywordGate` (default `true`, config-file only). The gate
+suppresses only that AUX detection call when the message cannot name a GM
+tool; on gate error it fails open (the AUX call proceeds). The slash-command
+GM-tool path is never suppressed.
+
 
 `CommandContext` carries `chatId`, `roleInChat`, `userId`, `userRole`, `db`,
 `config`, `activeChat`, `currentCharacter` and `messages`. `CommandResult`

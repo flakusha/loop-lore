@@ -23,3 +23,8 @@ reconstruction_runs table (job-records pattern) with pipeline discriminator, inp
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Decide whether this record parents Blender and export steps; store backend, job and bundle ids plus request/result digests.
+- No Blender-specific loop-lore job registry; a typed local `DevelopmentRun` contract stays a separate gated candidate.

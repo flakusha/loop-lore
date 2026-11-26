@@ -4,27 +4,28 @@
 # $schema: ../schemas/loop-lore-config.schema.json
 #
 # NOTE: paths below are examples for configs/ directory layout.
-# Defaults are computed from DATA_DIR (src/config/constants.ts) which
-# resolves relative to the source file location, not CWD or config dir.
+# Defaults live under the per-instance XDG state dir; `${DATA_DIR}` resolves to
+# THIS instance's dir, never to CWD or the config dir.
 # Overriding a path here makes it literal — not relative to this file.
 
 server:
   port: 3000
   host: "localhost"
-  tls:
-    key: "../loop-lore-data/certs/key.pem" # auto-generated if missing
-    cert: "../loop-lore-data/certs/cert.pem" # auto-generated if missing
+  # tls: # resolves inside THIS instance's state dir
+  #   key: "${DATA_DIR}/certs/key.pem" # auto-generated if missing
+  #   cert: "${DATA_DIR}/certs/cert.pem" # auto-generated if missing
 
 db:
-  type: sqlite # "sqlite" or "postgres"
-  sqliteFilename: "../loop-lore-data/loop-lore.db"
+  # type: "sqlite" or "postgres"
+  type: sqlite
+  # sqliteFilename: "../loop-lore-data/loop-lore.db" # WARNING: repo-sibling paths escape the per-instance state dir — keep commented for the XDG default (the server ignores this knob — the DB path comes from LOOP_LORE_DB_PATH)
   # For Postgres:
   # type: postgres
   # url: "postgres://user:pass@localhost:5432/loop-lore"
 
 assets:
   enabled: true
-  uploadDir: "../loop-lore-data/uploads"
+  # uploadDir: "${DATA_DIR}/uploads" # resolves inside THIS instance's state dir
   maxFileSize: 10485760 # 10 MB
   compression: true
 
@@ -207,6 +208,16 @@ generation:
   #   # llamaSwap:
   #   #   enabled: true
   #   #   configPath: "~/git-ai/ai-scripts/llama-swap.yaml"  # ~ expands to $HOME
+  #   # ── honkbox server (auto-start) ───────────────────────
+  #   # honkbox:
+  #   #   enabled: true
+  #   #   port: 9010                         # GET /health readiness probe (60s timeout)
+  #   #   # host: 127.0.0.1                  # loopback only — honkbox refuses unauthenticated
+  #   #                                    # non-loopback binds
+  #   #   # apiKey: "..."                    # bearer credential (loopback usually needs none)
+  #   #   # configPath: "~/git-ai/honkbox/config.toml"  # ~ expands to $HOME
+  #   #   # model: local-chat                # model alias via the OpenAI-compatible API
+  #   #   # extraArgs: ["--log-level", "debug"]
 
 # ── BYO API Keys ──
 byoKey:

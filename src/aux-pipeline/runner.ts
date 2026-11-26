@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 /**
  * AUX Pipeline — Runner
@@ -21,10 +22,12 @@ import type { DB, } from "../db/schema";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { callWithFailover, } from "../generation/providers/call-with-failover";
 import { getProvider, resolveProvider, } from "../generation/providers/registry";
+import { ByoKeyDecryptError, } from "../generation/providers/user-api-key";
 import { getSchedulerManager, } from "../generation/scheduler";
 import { PriorityLevel, } from "../llm";
 import { getLogger, } from "../logger";
 import { isTelemetryEnabled, record, } from "../telemetry/service";
+import { tryDecisionTransport, } from "./decision-registry";
 import { AUX_CLASSIFICATION_TASKS, } from "./template-registry";
 import type { AuxCallOptions, AuxCallResult, AuxTaskName, } from "./types";
 
@@ -135,7 +138,10 @@ export async function callAux(
     },);
 
     apiKey = resolved.resolvedApiKey;
-  } catch {
+  } catch (error) {
+    // An undecryptable stored key is fatal: proceeding would silently bill
+    // the operator for a request the user believed used their own key.
+    if (error instanceof ByoKeyDecryptError) { return null; }
     // Non-fatal — fall back to the provider instance's configured key
   }
 
@@ -162,6 +168,22 @@ export async function callAux(
       },
     },);
   };
+
+  // Decision-model transport: a configured classifier role on an
+  // OpenAI-compatible base URL tries POST <base>/systemone first; any
+  // failure (501, timeout, unconfigured) falls through to the generative
+  // auxiliary path below unchanged.
+  if (auxRole.role === ModelRole.Classifier && auxRole.source !== "default") {
+    const decided = await tryDecisionTransport({ task, config, auxRole, messages, timeoutMs, },);
+
+    if (decided) {
+      const transport: AuxCallResult = { ...decided, latencyMs: Date.now() - startedAt, };
+
+      recordCall(true, { transport: "decision", },);
+
+      return transport;
+    }
+  }
 
   try {
     // Aux bypass routed through failover + scheduler: the aux provider

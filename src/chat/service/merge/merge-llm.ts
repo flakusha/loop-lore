@@ -128,8 +128,9 @@ export function buildMergePromptMessages(params: {
   sharedContext: string[];
   versions: string[][];
   mode: string;
+  styleHint?: string;
 },): GenerationMessage[] {
-  const { systemPrompt, sharedContext, versions, mode, } = params;
+  const { systemPrompt, sharedContext, versions, mode, styleHint, } = params;
   const instruction = modeInstruction(mode as never,);
   const base = baseOrdinal(mode as never,);
   const overlay = overlayOrdinal(mode as never,);
@@ -147,6 +148,10 @@ export function buildMergePromptMessages(params: {
   if (instruction) {
     sections.push("=== INSTRUCTION ===",);
     sections.push(instruction,);
+  }
+
+  if (styleHint) {
+    sections.push("=== STYLE ===", styleHint,);
   }
 
   if (base !== null && overlay !== null) {

@@ -188,3 +188,46 @@ export function providerToSummary(p: ProviderHealthStatus,) {
     error: p.error,
   };
 }
+
+/**
+ * Watchdog row for the permission-gated admin surface only.
+ *
+ * Deliberately separate from `state.cache`: the shared health cache is read by
+ * anonymous `GET /api/health`, which must carry no upstream detail. This row
+ * carries no reason/crash text and never touches that cache.
+ */
+export interface WatchdogHealthStatus {
+  name: "watchdog";
+  status: "healthy" | "degraded" | "unhealthy" | "unknown";
+  lastDecision: string | null;
+  lastEventAgeMs: number | null;
+}
+
+const WATCHDOG_STATUS_BY_DECISION: Record<string, WatchdogHealthStatus["status"]> = {
+  wait: "healthy",
+  restart: "degraded",
+  kill: "unhealthy",
+  stop: "unhealthy",
+};
+
+/**
+ * Read the newest watchdog transition for the admin providers view.
+ * @param db - instance DB with the watchdog_events table applied
+ * @returns the row, or null when the supervisor has logged nothing yet
+ */
+export async function getWatchdogHealth(db: Kysely<DB>,): Promise<WatchdogHealthStatus | null> {
+  const newest = await db.selectFrom("watchdog_events",)
+    .select(["decision_kind", "at_ms",],)
+    .orderBy("at_ms", "desc",)
+    .orderBy("id", "desc",)
+    .executeTakeFirst();
+
+  if (!newest) { return null; }
+
+  return {
+    name: "watchdog",
+    status: WATCHDOG_STATUS_BY_DECISION[newest.decision_kind] ?? "unknown",
+    lastDecision: newest.decision_kind,
+    lastEventAgeMs: Math.max(0, Date.now() - newest.at_ms,),
+  };
+}

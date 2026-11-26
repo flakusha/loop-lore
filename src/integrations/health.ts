@@ -10,7 +10,7 @@
 // override, plus upstream `Retry-After` observance on the 429 path.
 
 /** Failure codes driving health transitions (spec §10). */
-export type AdapterFailureCode = "timeout" | "auth_expired" | "protocol" | "crash";
+export type AdapterFailureCode = "timeout" | "auth_expired" | "protocol" | "rate_limited" | "crash";
 
 /** Health verdict for a single adapter instance. */
 export type AdapterVerdict = "ok" | "degraded" | "unhealthy";
@@ -110,7 +110,10 @@ export function createAdapterHealth(options: AdapterHealthOptions = {},): Adapte
       return entry === undefined || entry.verdict !== "unhealthy";
     },
     markFailure(name, code,) {
+      // A 429 is upstream back-pressure, not a health signal: surface the
+      // retry delay through the limiter, never trip the unhealthy verdict.
       const entry = record(name,);
+      if (code === "rate_limited") { return; }
       entry.consecutiveFailures++;
       if (code === "timeout") {
         // Spec §10: degraded → unhealthy with backoff on consecutive timeouts.
@@ -156,11 +159,19 @@ export function createAdapterHealth(options: AdapterHealthOptions = {},): Adapte
  */
 export function classifyAdapterFailure(cause: unknown,): AdapterFailureCode {
   if (cause instanceof Error) {
+    const code = "code" in cause ? cause.code : undefined;
+    if (
+      code === "rate_limited" || code === 429 || cause.name === "RateLimitError" ||
+      /\b429\b|rate.?limit|retry.?after/i.test(cause.message,) ||
+      retryAfterMsFromFailure(cause,) !== undefined
+    ) {
+      return "rate_limited";
+    }
+
     if (/timeout|etimedout|econnaborted/i.test(cause.message,) || cause.name === "TimeoutError") {
       return "timeout";
     }
 
-    const code = (cause as { code?: unknown }).code;
     if (code === "ETIMEDOUT") { return "timeout"; }
     if (code === "EACCES" || code === "EAUTH") { return "auth_expired"; }
     if (/unauthorized|forbidden|\b401\b|\b403\b/i.test(cause.message,)) { return "auth_expired"; }
@@ -168,6 +179,39 @@ export function classifyAdapterFailure(cause: unknown,): AdapterFailureCode {
   }
 
   return "crash";
+}
+
+/**
+ * Read an upstream 429 delay from a failed adapter call, normalized to ms.
+ * Telegram's envelope reports seconds (`retry_after` / `retryAfterSeconds`);
+ * other adapters report `retryAfterMs` directly.
+ * @param cause Thrown cause from an adapter call.
+ * @returns Delay in ms, or undefined when the failure carries no delay.
+ */
+export function retryAfterMsFromFailure(cause: unknown,): number | undefined {
+  if (!(cause instanceof Error)) { return undefined; }
+  if (
+    "retryAfterMs" in cause && typeof cause.retryAfterMs === "number" &&
+    Number.isFinite(cause.retryAfterMs,) && cause.retryAfterMs >= 0
+  ) {
+    return cause.retryAfterMs;
+  }
+
+  if (
+    "retryAfterSeconds" in cause && typeof cause.retryAfterSeconds === "number" &&
+    Number.isFinite(cause.retryAfterSeconds,) && cause.retryAfterSeconds >= 0
+  ) {
+    return cause.retryAfterSeconds * 1_000;
+  }
+
+  if (
+    "retry_after" in cause && typeof cause.retry_after === "number" &&
+    Number.isFinite(cause.retry_after,) && cause.retry_after >= 0
+  ) {
+    return cause.retry_after * 1_000;
+  }
+
+  return undefined;
 }
 
 /** Max tracked buckets per limiter — the least-recently-used one is

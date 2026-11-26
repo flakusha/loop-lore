@@ -5,14 +5,15 @@
 
 # Plugin System Specification
 
-Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO management API, NO sandbox, NO examples.
+Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO sandbox, NO examples.
 
 ## Implemented
 
 - Plugin types: core (`plugins/core/`, bundled read-only), community (`plugins/community/`, signature required), local (`plugins/local/`, no verification).
 - Plugin manifest: `plugin.ts`/`.js` exporting the `Plugin` interface; `PluginContext` provided on `onLoad()`.
 - Naming: plugins kebab-case, tools snake_case, agent roles kebab-case, events dot-separated (`chat.message.created`).
-- UI component mount points: web-capable components (`type` `web`/`both`) render as inert host containers (`data-plugin-component` / `data-plugin-location` plus HTML-escaped `props` JSON) at `chat.header` / `chat.sidebar` / `chat.composer` (`src/views/chat.html`) and `admin.dashboard` (`src/views/admin.html`); `GET /api/plugins/ui-components` (admin) lists them with an optional `?location=` filter. TUI-only components are never mounted into web views.
+- UI component mount points: web-capable components (`type` `web`/`both`) render as inert host containers (`data-plugin-component` / `data-plugin-location` plus HTML-escaped `props` JSON) at `chat.header` / `chat.sidebar` / `chat.composer` (`src/views/chat.html`) and `admin.dashboard` (`src/views/admin.html`); `GET /api/v1/plugins/ui-components` (admin) lists them with an optional `?location=` filter. TUI-only components are never mounted into web views.
+- Registry API (admin-only, mounted on the versioned admin surface at `src/routes/v1/admin-surface.ts:40`): `GET /api/v1/plugins`, `GET /api/v1/plugins/discover`, `POST /api/v1/plugins/install` (`{ name }`), `DELETE /api/v1/plugins/:name` (disabled plugins only), `POST /api/v1/plugins/:name/enable`, `POST /api/v1/plugins/:name/disable`, `GET`/`PUT /api/v1/plugins/:name/config`. Route definitions: `src/routes/plugins/index.ts`, `src/routes/plugins/mgmt.ts`, `src/routes/plugins/config.ts`.
 
 ## Extension points (design)
 
@@ -34,7 +35,6 @@ tag is neither a sandbox nor a boundary; stronger isolation is future work
 
 ## Not implemented / aspirational
 
-- Registry API: `GET /api/plugins`, `POST /api/plugins/install`, `DELETE /api/plugins/:name`, enable/disable, manifest/config get/put.
 - Security model: sandboxing (Firecracker/WASM), network/file allowlists, per-execution resource limits, declared-permission grants, signed community publishers.
 - Standard tool categories.
 

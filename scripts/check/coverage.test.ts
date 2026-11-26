@@ -10,6 +10,7 @@
 // - READ-ONLY on the repo: coverage.mjs only reads the lcov file named by
 //   `--coverage-dir` (defaulting to `.tmp/coverage` UNDER the fixture cwd) and
 //   writes nothing. No test points it at a real repo path.
+//   `--files=` only adds read probes of named paths (absent under the fixture cwd).
 // - No ports, no globals, no ordering dependence; `tempDirs` is the only
 //   module-level state and it is drained after every test.
 
@@ -18,9 +19,11 @@ import { spawnSync, } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, resolve, } from "node:path";
+import { aggregateModules, } from "./coverage/lcov.mjs";
 
 const SCRIPT_PATH = resolve(import.meta.dir, "coverage.mjs",);
 const tempDirs: string[] = [];
+const SCRATCH_ROOT = join(tmpdir(), "loop-lore",);
 
 afterEach(() => {
   for (const dir of tempDirs.splice(0,)) {
@@ -32,7 +35,8 @@ function runCoverage(
   lcov: string,
   args: string[] = ["--floor=80",],
 ): { status: number | null; stdout: string; stderr: string } {
-  const root = mkdtempSync(join(tmpdir(), "coverage-script-",),);
+  mkdirSync(SCRATCH_ROOT, { recursive: true, },);
+  const root = mkdtempSync(join(SCRATCH_ROOT, "coverage-script-",),);
   tempDirs.push(root,);
   const coverageDir = join(root, ".tmp", "coverage",);
   mkdirSync(coverageDir, { recursive: true, },);
@@ -58,7 +62,7 @@ describe("coverage.mjs", () => {
       "TN:\n" +
         "SF:src/elysia-app.ts\n" +
         "LF:1\n" +
-        "LH:0\n" +
+        "LH:1\n" +
         "end_of_record\n" +
         "TN:\n" +
         "SF:src/server/handler.ts\n" +
@@ -71,6 +75,42 @@ describe("coverage.mjs", () => {
     expect(result.stderr,).not.toContain("elysia-app.ts",);
     const report = JSON.parse(result.stdout,);
     expect(report.modules.map((row: { mod: string },) => row.mod).sort(),).toEqual(["(root)", "server",].sort(),);
+  });
+
+  test("--files buckets a core file by its real module floor", () => {
+    const result = runCoverage(
+      "TN:\nSF:packages/core/src/native/loader.ts\nLF:2\nLH:2\nend_of_record\n",
+      ["--floor=80", "--files=packages/core/src/native/loader.ts",],
+    );
+
+    expect(result.status,).toBe(0,);
+    const row = JSON.parse(result.stdout,).files[0];
+    expect(row.mod,).toBe("native",);
+    expect(row.floor,).toBe(77,);
+  });
+
+  test("waived modules still fail below their own floor in module mode", () => {
+    // services has a 78% waiver floor: 0% must fail even though the global
+    // floor is 80, matching what --files mode already does.
+    const result = runCoverage(
+      "TN:\nSF:src/services/x.ts\nLF:2\nLH:0\nend_of_record\n",
+    );
+    expect(result.status,).toBe(1,);
+    const report = JSON.parse(result.stdout,);
+    expect(report.fail,).toBe(1,);
+    expect(result.stderr,).toContain("| services | 0.0% | 0/2 | 78% | FAIL |",);
+  });
+
+  test("--files buckets a top-level core file under (root)", () => {
+    const result = runCoverage(
+      "TN:\nSF:packages/core/src/index.ts\nLF:2\nLH:2\nend_of_record\n",
+      ["--floor=80", "--files=packages/core/src/index.ts",],
+    );
+
+    expect(result.status,).toBe(0,);
+    const row = JSON.parse(result.stdout,).files[0];
+    expect(row.mod,).toBe("(root)",);
+    expect(row.floor,).toBe(75,);
   });
 
   // Argv contract after the Optique migration. These pin the exact shapes
@@ -115,5 +155,19 @@ describe("coverage.mjs", () => {
 
   test("an undeclared flag is a parse error", () => {
     expect(runCoverage(FULL, ["--nope",],).status,).toBe(1,);
+  });
+});
+
+describe("aggregateModules", () => {
+  test("buckets packages/core/src modules by their core module, not `packages`", () => {
+    const modules = aggregateModules([
+      "SF:src/chat/service.ts\nLF:2\nLH:1\n",
+      "SF:packages/core/src/config/schema.ts\nLF:4\nLH:2\n",
+      "SF:packages/core/src/index.ts\nLF:1\nLH:1\n",
+    ],) as Record<string, { lf: number; lh: number }>;
+    expect(modules.chat,).toEqual({ lf: 2, lh: 1, },);
+    expect(modules.config,).toEqual({ lf: 4, lh: 2, },);
+    expect(modules["(root)"],).toEqual({ lf: 1, lh: 1, },);
+    expect(modules.packages,).toBeUndefined();
   });
 });

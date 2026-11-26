@@ -383,3 +383,42 @@ describe("intimacy routes — consent ledger matrix at the route layer", () => {
     for (const row of givens) { expect(row.revoked_at,).not.toBeNull(); }
   });
 });
+
+describe("intimacy routes — GET /api/nsfw/intimacy/:actorId", () => {
+  test("owner lists actor pairs → 200 with the applied pair", async () => {
+    const { userId, actorId, } = await seedAuthorized("pairs",);
+    const targetId = await seedTarget("pairs",);
+    const chatId = "intimacy-chat-pairs";
+    await insertChats(db, "Intimacy Chat", userId, { id: chatId as never, },);
+    await insertChatParticipants(db, chatId, actorId,);
+    await insertChatParticipants(db, chatId, targetId,);
+    await insertNsfwConsentState(db, userId, chatId, "given", "2026-01-01T00:00:00Z",);
+    const applied = await makeApp(userId,).handle(
+      new Request("http://localhost/api/nsfw/intimacy/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          chatId,
+          actorId,
+          targetActorId: targetId,
+          actionId: "act-kiss",
+          actionName: "Kiss",
+          actionType: "physical",
+          delta: 5,
+          minIntimacy: 0,
+          requiresConsent: false,
+        },),
+      },),
+    );
+
+    expect(applied.status,).toBe(200,);
+
+    const res = await makeApp(userId,).handle(
+      new Request(`http://localhost/api/nsfw/intimacy/${actorId}`,),
+    );
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as unknown[];
+    expect(body.length,).toBeGreaterThanOrEqual(1,);
+  });
+});

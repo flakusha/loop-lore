@@ -29,6 +29,15 @@
 
       <!-- Chat container (centered) — switches between VN and bubble layout -->
       <div class="chat-container">
+        <!-- Stored chat background: non-interactive backdrop behind bubbles / VN scene. -->
+        <div
+          class="chat-background-backdrop"
+          :style="backgroundImageUrl() ? { backgroundImage: 'url(' + backgroundImageUrl() + ')' } : {}"
+          :data-bg-type="backgroundType()"
+          aria-hidden="true"
+        >
+        </div>
+
         <!-- VN mode: scene renderer overlay -->
         <div
           x-show="_vnEnabled"
@@ -54,15 +63,16 @@
             ⏹ {{{ t("common.cancel") }}}
           </button>
         </div>
+        {{> generation/video-job-controls.html }}
         <!-- Bubble mode: standard message list -->
         <div x-show="!_vnEnabled">{{> chat/message-list.html }} {{> chat/character-info-panel.html }}</div>
       </div>
 
       <!-- Plugin mount point (FEAT-050): chat.composer components -->
       {{> chat/gallery-sidebar.html }} {{> chat/media-preview-modal.html }} {{> chat/rpg-questions.html }} {{>
-      chat/memory-panel.html }} {{plugin:chat.composer}} {{> chat/input-area.html }} {{> chat/mobile-composer.html }}
-      {{> chat/story-points-chip.html }} {{> chat/sections-panel.html }} {{> chat/background-panel.html }} {{>
-      chat/location-panel.html }}
+      chat/memory-panel.html }} {{plugin:chat.composer}} {{> chat/input-area.html }} {{> chat/init-image-attachment.html
+      }} {{> chat/mobile-composer.html }} {{> chat/story-points-chip.html }} {{> chat/sections-panel.html }} {{>
+      chat/background-panel.html }} {{> chat/location-panel.html }}
 
       <!-- Party split / reunite execution modal (T8 group-chat viewer) -->
       {{> chat/party-split-panel.html }}

@@ -5,11 +5,12 @@
 
 **Effort:** Medium
 **Summary:** Give admins a ComfyUI surface (list / upload / enable / default workflows) and make config-declared workflows actually honor their parameters.
-**Context:** The admin panel has no ComfyUI tab at all. Separately, `registerConfigWorkflows` registers config workflows with a `build()` that ignores `params` entirely and returns static `nodes`, so `{{placeholder}}` values in a config-declared workflow are never substituted.
+**Context:** The admin ComfyUI tab shipped on dev — the routes live under `src/routes/admin/comfyui-workflows/`, the view and Alpine component under `src/frontend/alpine/admin-workflows/`, and the panel registers the `workflows` tab (`epic-comfyui-first-class-citizen.md:407-413`). `registerConfigWorkflows` still registers config workflows with a `build()` that ignores `params` entirely and returns static `nodes`, so `{{placeholder}}` values in a config-declared workflow are never substituted (`epic-comfyui-first-class-citizen.md:486`).
 **Acceptance Criteria:** A working admin ComfyUI tab with upload, and config-declared workflows whose `{{var}}` placeholders substitute from request params.
 
 **Priority:** P1 — High
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Gap A shipped on dev; Gap B (`registerConfigWorkflows` parameterization) is still open. The filed premise "the admin panel has no ComfyUI tab at all" was stale.
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** `TASK-comfyui-first-class-workflow-library`, `TASK-comfyui-workflow-parameterization`
 

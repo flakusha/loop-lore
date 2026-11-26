@@ -3,11 +3,13 @@
 
 # TASK: img2img init-image plumbing (prerequisite for the edit rung)
 
-**Status:** Blocked
+**Status:** Done
+**Scope:** Init-image backend plumbing plus UI affordance
 **Priority:** critical
 **Effort:** Medium
 **Epic:** epic-reactive-actor-appearance
 **Epic Note:** kept here 2026-10-23 — `epic-reactive-actor-appearance.md:302-314` binds this ticket as its Phase-4 prerequisite work item; `epic-reference-conditioned-generation.md` targets reference-edit model workflows (a different scope), so no re-file.
+**Status Note (2026-11-18):** Operator approved this plumbing. The historical ComfyUI prerequisite block is lifted; start with the existing `configs/workflows/img2img.json` and `uploadImageToComfy` seam described below. If a substitution defect surfaces, file a separate prerequisite ticket rather than re-blocking this one.
 **Caveats:** **Blocked on `epic-comfyui-plugin` open prerequisites** — do not start until those land. Security: the init image is an asset uploaded to the ComfyUI host at `/upload/image`; it must be the actor's own base avatar, never an arbitrary path, and the stored filename must not be caller-controlled. Authorization: the referenced asset must belong to the actor. Partial failure: an upload failure must fail the generation, not silently fall back to txt2img without recording that it did. Rollback: the field is optional; omitting it restores today's behaviour exactly. Stale state: a deleted base asset must fail cleanly. Idempotency: the same asset uploaded with the same filename overwrites (the upload helper sets `overwrite: "true"`) — deterministic. Observability: log whether the edit rung ran. Resource: uploaded images accumulate in the ComfyUI input directory; nothing prunes them.
 
 **Summary:**
@@ -122,3 +124,4 @@ edges.
   Path A contract at `:44-49`
 - The same three prerequisites named for SAM3:
   `.plan/epics/epic-sam3-segmentation-integration.md:50-55`
+**Resolved:** 2026-11-19 registry-driven close: git issue e45d155 (registry tip: 5133a7928 Konstantin Fedotov Close issue)

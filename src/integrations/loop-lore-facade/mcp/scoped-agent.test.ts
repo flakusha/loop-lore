@@ -87,8 +87,8 @@ beforeAll(async () => {
   await insertChatParticipants(db, FOREIGN_CHAT, STRANGER, { role_in_chat: "owner", },);
 
   for (const scope of [IntegrationTokenScope.Read, IntegrationTokenScope.ChatWrite,]) {
-    const { raw, hash, } = mintIntegrationToken();
-    await insertIntegrationTokens(db, `agentic-${scope}`, hash, scope, ISSUER,);
+    const { raw, hash, expiresAt, } = mintIntegrationToken();
+    await insertIntegrationTokens(db, `agentic-${scope}`, hash, scope, ISSUER, { expires_at: expiresAt, },);
     tokens[scope] = raw;
   }
 },);

@@ -8,14 +8,14 @@
 // so an unrelated reload never clobbers an admin override (e.g. the NSFW
 // toggle) with the on-disk value.
 
-import { ageGateConfig, } from "@/age-gate/controller";
-import { initAssistantQuota, } from "@/assistant/quota/engine";
-import { getLogger, } from "@/logger";
+import { ageGateConfig, } from "../../../../src/age-gate/controller";
+import { initAssistantQuota, } from "../../../../src/assistant/quota/engine";
 import {
   type NsfwRuntimeConfig,
   updateRuntimeNsfwConfig,
   updateRuntimeNsfwFileConfig,
-} from "@/nsfw/runtime-config";
+} from "../../../../src/nsfw/runtime-config";
+import { getLogger, } from "../logger";
 import type { ConfigChange, } from "./hot-apply";
 
 /**

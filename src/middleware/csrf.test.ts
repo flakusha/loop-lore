@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import {
   buildCsrfCookie,
+  configureCookieTls,
   cookieForDecision,
   CSRF_COOKIE,
   CSRF_HEADER,
@@ -95,6 +96,46 @@ describe("buildCsrfCookie + resolveCookieSecure", () => {
     expect(resolveCookieSecure(false, true,),).toBe(false,);
     expect(resolveCookieSecure(undefined, true,),).toBe(true,);
     expect(resolveCookieSecure(undefined, false,),).toBe(false,);
+  });
+});
+
+describe("cookie Secure decision matrix (shared with ll_token)", () => {
+  const d = { ok: true, cookieToIssue: "tok", } as const;
+  const opts = { secret: SECRET, enabled: true, };
+
+  beforeEach(() => {
+    configureCookieTls(false,);
+  },);
+
+  afterEach(() => {
+    configureCookieTls(false,);
+  },);
+
+  test("TLS configured, no override → Secure on both paths", () => {
+    configureCookieTls(true,);
+    expect(resolveCookieSecure(undefined, false,),).toBe(true,);
+    expect(cookieForDecision(d, opts,),).toContain("Secure",);
+  });
+
+  test("TLS off, no override, non-production → no Secure", () => {
+    expect(resolveCookieSecure(undefined, false,),).toBe(false,);
+    expect(cookieForDecision(d, opts,),).not.toContain("Secure",);
+  });
+
+  test("explicit true wins with TLS off", () => {
+    expect(resolveCookieSecure(true, false,),).toBe(true,);
+    expect(cookieForDecision(d, { ...opts, cookieSecureOverride: true, },),).toContain("Secure",);
+  });
+
+  test("explicit false wins with TLS configured", () => {
+    configureCookieTls(true,);
+    expect(resolveCookieSecure(false, true,),).toBe(false,);
+    expect(cookieForDecision(d, { ...opts, cookieSecureOverride: false, },),).not.toContain("Secure",);
+  });
+
+  test("NODE_ENV production default unchanged with TLS off", () => {
+    expect(resolveCookieSecure(undefined, true,),).toBe(true,);
+    expect(cookieForDecision(d, { ...opts, cookieSecureInProd: true, },),).toContain("Secure",);
   });
 });
 

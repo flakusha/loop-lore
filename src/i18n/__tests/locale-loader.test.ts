@@ -36,6 +36,11 @@ describe("locale-loader", () => {
       expect(flat.size,).toBe(0,);
     });
 
+    it("refuses a non-whitelisted id before it becomes a path", () => {
+      // Without the whitelist this joined path resolves to the real en.json.
+      expect(loadLocale("../locales/en" as Locale,).size,).toBe(0,);
+    });
+
     it("loadLocaleSync returns same result as loadLocale", () => {
       const asyncResult = loadLocale("en",);
       clearLocaleCache();

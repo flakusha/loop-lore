@@ -1,0 +1,185 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- IVSS scenario authoring: list → scenes → shots → fragments, all Alpine. -->
+<header id="header-slot" class="main-header" data-page="ivss-authoring">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+  <h1 class="title">IVSS Authoring</h1>
+</header>
+
+<div class="app-layout">
+  <main class="main-content" x-data="ivssAuthoring()" x-init="init()">
+    <p x-show="error" x-text="error" class="error-message" role="alert"></p>
+    <p x-show="busy">Working…</p>
+
+    <section>
+      <h2>Scenarios</h2>
+      <select x-model="scenarioId" x-on:change="loadTree()" aria-label="Scenario">
+        <option value="">Choose a scenario…</option>
+        <template x-for="item in scenarios" :key="item.id">
+          <option :value="item.id" x-text="item.title + ' · ' + item.status"></option>
+        </template>
+      </select>
+    </section>
+
+    <section>
+      <h2>New scenario</h2>
+      <label>World id <input type="text" x-model="draftScenario.worldId" /></label>
+      <label>Title <input type="text" x-model="draftScenario.title" /></label>
+      <button class="btn btn-primary" x-on:click="createScenario()" :disabled="busy">Create scenario</button>
+    </section>
+
+    <template x-if="tree">
+      <div>
+        <section>
+          <h2>New scene</h2>
+          <label>
+            Mode
+            <select x-model="draftScene.mode">
+              <template x-for="mode in modes" :key="mode">
+                <option :value="mode" x-text="mode"></option>
+              </template>
+            </select>
+          </label>
+          <label>Duration frames <input type="number" x-model.number="draftScene.durationFrames" /></label>
+          <label>FPS <input type="number" x-model.number="draftScene.fps" /></label>
+          <label>Location id <input type="text" x-model="draftScene.locationId" /></label>
+          <label>Seed <input type="text" x-model="draftScene.seed" /></label>
+          <button class="btn btn-primary" x-on:click="addScene()" :disabled="busy">Add scene</button>
+        </section>
+
+        <section>
+          <h2>New shot</h2>
+          <label>
+            Scene
+            <select x-model="draftShot.sceneId">
+              <option value="">Choose a scene…</option>
+              <template x-for="scene in tree.scenes" :key="scene.id">
+                <option :value="scene.id" x-text="scene.id + ' · order ' + scene.sortOrder"></option>
+              </template>
+            </select>
+          </label>
+          <label>Start ms <input type="number" x-model.number="draftShot.startMs" /></label>
+          <label>End ms <input type="number" x-model.number="draftShot.endMs" /></label>
+          <label>Description <input type="text" x-model="draftShot.description" /></label>
+          <label>
+            Cut type
+            <select x-model="draftShot.cutType">
+              <template x-for="cut in cutTypes" :key="cut">
+                <option :value="cut" x-text="cut"></option>
+              </template>
+            </select>
+          </label>
+          <button class="btn btn-primary" x-on:click="addShot(draftShot.sceneId)" :disabled="busy">Add shot</button>
+        </section>
+
+        <section>
+          <h2>New fragment</h2>
+          <label>
+            Scene
+            <select x-model="draftFragment.sceneId">
+              <option value="">Choose a scene…</option>
+              <template x-for="scene in tree.scenes" :key="scene.id">
+                <option :value="scene.id" x-text="scene.id + ' · order ' + scene.sortOrder"></option>
+              </template>
+            </select>
+          </label>
+          <label>
+            Shot (optional)
+            <select x-model="draftFragment.shotId">
+              <option value="">None</option>
+              <template x-for="scene in tree.scenes" :key="scene.id">
+                <template x-for="shot in scene.shots" :key="shot.id">
+                  <option :value="shot.id" x-text="shot.id + ' · ' + shot.startMs + '–' + shot.endMs"></option>
+                </template>
+              </template>
+            </select>
+          </label>
+          <label>
+            Operation
+            <select x-model="draftFragment.operation">
+              <template x-for="operation in operations" :key="operation">
+                <option :value="operation" x-text="operation"></option>
+              </template>
+            </select>
+          </label>
+          <label>Workflow id <input type="text" x-model="draftFragment.workflowId" /></label>
+          <label>Workflow hash <input type="text" x-model="draftFragment.workflowHash" /></label>
+          <label>
+            Transition
+            <select x-model="draftFragment.transition">
+              <template x-for="cut in cutTypes" :key="cut">
+                <option :value="cut" x-text="cut"></option>
+              </template>
+            </select>
+          </label>
+          <label>Seed <input type="text" x-model="draftFragment.seed" /></label>
+          <label>Duration frames <input type="number" x-model.number="draftFragment.durationFrames" /></label>
+          <label>Prompt snapshot <textarea x-model="draftFragment.promptSnapshot"></textarea></label>
+          <button
+            class="btn btn-primary"
+            x-on:click="addFragment(draftFragment.sceneId, draftFragment.shotId || null)"
+            :disabled="busy"
+          >
+            Add fragment
+          </button>
+        </section>
+
+        <section>
+          <h2>Scene tree</h2>
+          <template x-for="scene in tree.scenes" :key="scene.id">
+            <article class="ivss-scene">
+              <div>
+                <strong x-text="scene.id"></strong>
+                <span x-text="'order ' + scene.sortOrder"></span>
+                <span x-text="scene.status"></span>
+                <span x-text="scene.mode"></span>
+                <button x-on:click="move('scene', scene.id, -1)" :disabled="busy" aria-label="Move scene up">
+                  ↑
+                </button>
+                <button x-on:click="move('scene', scene.id, 1)" :disabled="busy" aria-label="Move scene down">
+                  ↓
+                </button>
+                <button x-on:click="remove('scene', scene.id)" :disabled="busy">Delete</button>
+              </div>
+              <template x-for="shot in scene.shots" :key="shot.id">
+                <div class="ivss-shot">
+                  <span x-text="shot.id"></span>
+                  <span x-text="'order ' + shot.sortOrder"></span>
+                  <span x-text="shot.startMs + '–' + shot.endMs"></span>
+                  <span x-text="shot.description"></span>
+                  <button x-on:click="move('shot', shot.id, -1)" :disabled="busy" aria-label="Move shot up">↑</button>
+                  <button x-on:click="move('shot', shot.id, 1)" :disabled="busy" aria-label="Move shot down">
+                    ↓
+                  </button>
+                  <button x-on:click="remove('shot', shot.id)" :disabled="busy">Delete</button>
+                </div>
+              </template>
+              <template x-for="fragment in scene.fragments" :key="fragment.id">
+                <div class="ivss-fragment">
+                  <span x-text="fragment.id"></span>
+                  <span x-text="'order ' + fragment.sortOrder"></span>
+                  <span x-text="fragment.status"></span>
+                  <span x-text="fragment.operation"></span>
+                  <span x-text="fragment.workflowId + '@' + fragment.workflowHash"></span>
+                  <span x-text="fragment.cutInMs + '–' + (fragment.cutOutMs ?? 'end')"></span>
+                  <button x-on:click="move('fragment', fragment.id, -1)" :disabled="busy" aria-label="Move fragment up">
+                    ↑
+                  </button>
+                  <button
+                    x-on:click="move('fragment', fragment.id, 1)"
+                    :disabled="busy"
+                    aria-label="Move fragment down"
+                  >
+                    ↓
+                  </button>
+                  <button x-on:click="remove('fragment', fragment.id)" :disabled="busy">Delete</button>
+                </div>
+              </template>
+            </article>
+          </template>
+        </section>
+      </div>
+    </template>
+  </main>
+</div>

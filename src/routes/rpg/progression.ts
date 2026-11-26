@@ -26,7 +26,7 @@ import { getCharacterStats, } from "../../rpg/service/character-stats.js";
 import { checkMechanicEnabled, RpgMechanic, } from "../../rpg/service/world-gate";
 import { getXpHistory, } from "../../rpg/service/xp.js";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
@@ -105,8 +105,7 @@ export function progressionRoutes({ database, }: HandlerOpts, prefix = "/api",):
         return jsonError(error.message, 400,);
       }
 
-      log().error("Progression request failed", error instanceof Error ? error : undefined,);
-      return jsonError("Internal server error", 500,);
+      return internalError(log(), "Progression request failed", error,);
     }
   };
 

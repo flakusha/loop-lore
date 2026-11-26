@@ -103,6 +103,10 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
   const input = panel.querySelector<HTMLInputElement>("[data-tag-input]",)!;
   const ac = panel.querySelector<HTMLElement>("[data-autocomplete]",)!;
 
+  // Monotonic request id (omniSearch idiom): a slow earlier autocomplete
+  // must never overwrite suggestions for the query the user has now.
+  const autocomplete = { seq: 0, };
+
   form.addEventListener("submit", async (e,) => {
     e.preventDefault();
     const value = input.value.trim();
@@ -135,7 +139,8 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
   let debounce: ReturnType<typeof setTimeout> | undefined;
   input.addEventListener("input", () => {
     clearTimeout(debounce,);
-    debounce = setTimeout(() => void renderAutocomplete(input.value, ac,), 120,);
+    const seq = ++autocomplete.seq;
+    debounce = setTimeout(() => void renderAutocomplete(input.value, ac, seq, autocomplete,), 120,);
   },);
 }
 
@@ -165,7 +170,12 @@ function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): 
   },);
 }
 
-async function renderAutocomplete(query: string, container: HTMLElement,): Promise<void> {
+async function renderAutocomplete(
+  query: string,
+  container: HTMLElement,
+  seq: number,
+  request: { seq: number },
+): Promise<void> {
   const q = query.trim();
   if (q === "") {
     container.style.display = "none";
@@ -175,8 +185,10 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
 
   try {
     const res = await feFetch(`/api/v1/tag-autocomplete?q=${encodeURIComponent(q,)}`,);
+    if (seq !== request.seq) { return; }
     if (!res.ok) { return; }
     const { tags, } = (await res.json()) as { tags: string[] };
+    if (seq !== request.seq) { return; }
     container.innerHTML = tags
       .slice(0, 8,)
       .map((t,) =>
@@ -194,6 +206,7 @@ async function renderAutocomplete(query: string, container: HTMLElement,): Promi
       },);
     },);
   } catch {
+    if (seq !== request.seq) { return; }
     container.style.display = "none";
   }
 }

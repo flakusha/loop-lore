@@ -8,6 +8,7 @@
 import { afterEach, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../../logger";
 import { ComfyUIClient, } from "./comfyui";
+import { uploadMaskToComfy, } from "./comfyui-upload";
 
 createLogger({ level: "error", },);
 
@@ -76,5 +77,44 @@ describe("ComfyUIClient.uploadImage", () => {
     await expect(client().uploadImage(Buffer.from(PNG,), "x.png",),).rejects.toThrow(
       "no filename",
     );
+  });
+});
+
+describe("ComfyUIClient.uploadMask", () => {
+  const cleanup: Array<() => void> = [];
+  afterEach(() => {
+    for (const fn of cleanup.splice(0,)) { fn(); }
+  },);
+
+  test("posts the mask with its original_ref and returns the stored name", async () => {
+    const { captured, restore, } = stubUpload(
+      () => new Response(JSON.stringify({ name: "mask-1.png", },),),
+    );
+
+    cleanup.push(restore,);
+
+    const name = await uploadMaskToComfy(
+      "http://127.0.0.1:8188",
+      5_000,
+      Buffer.from(PNG,),
+      "mask-1.png",
+      { filename: "base.png", type: "input", },
+    );
+
+    expect(name,).toBe("mask-1.png",);
+    expect(captured.url,).toBe("http://127.0.0.1:8188/upload/mask",);
+    expect(captured.form?.get("original_ref",),).toBe(JSON.stringify({
+      filename: "base.png",
+      type: "input",
+    },),);
+
+    expect((captured.form?.get("image",) as File).name,).toBe("mask-1.png",);
+  });
+
+  test("throws with the HTTP status on failure", async () => {
+    const { restore, } = stubUpload(() => new Response("denied", { status: 500, },));
+    cleanup.push(restore,);
+    await expect(client().uploadMask(Buffer.from(PNG,), "x.png", { filename: "base.png", },),).rejects
+      .toThrow("mask upload failed [500]",);
   });
 });

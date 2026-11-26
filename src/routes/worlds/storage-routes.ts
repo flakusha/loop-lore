@@ -32,7 +32,7 @@ import {
   storageUsage,
   withdrawItem,
 } from "../../worlds/storage";
-import { extractAuth, jsonCreated, jsonError, jsonResponse, } from "../http-utils";
+import { extractAuth, jsonCreated, jsonError, jsonResponse, routeDetail, routeNotFoundError, } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import {
   requireActingActor,
@@ -61,8 +61,8 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         query: t.Object({ locationId: t.Optional(t.String(),), },),
-        response: { 200: t.Object({ data: t.Array(StorageSummary,), },), 404: ErrorResponse, },
-        detail: { summary: "List storage containers", tags: ["Worlds",], },
+        response: { 200: t.Object({ data: t.Array(StorageSummary,), },), ...routeNotFoundError(), },
+        ...routeDetail({ summary: "List storage containers", tags: ["Worlds",], },),
       },
     )
     .post(
@@ -103,8 +103,8 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
             requireSecurity: t.Optional(t.Integer({ minimum: 0, maximum: 100, },),),
           },),),
         },),
-        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, 404: ErrorResponse, },
-        detail: { summary: "Create a storage container", tags: ["Worlds",], },
+        response: { 201: t.Object({ id: t.String(), },), 400: ErrorResponse, ...routeNotFoundError(), },
+        ...routeDetail({ summary: "Create a storage container", tags: ["Worlds",], },),
       },
     )
     .get(
@@ -119,8 +119,8 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
         return await respond(() => storageUsage(database, ctx.params.worldId, ctx.params.storageId,));
       },
       {
-        response: { 200: t.Object({ data: StorageUsageBody, },), 404: ErrorResponse, },
-        detail: { summary: "Read a container's usage", tags: ["Worlds",], },
+        response: { 200: t.Object({ data: StorageUsageBody, },), ...routeNotFoundError(), },
+        ...routeDetail({ summary: "Read a container's usage", tags: ["Worlds",], },),
       },
     )
     .get(
@@ -148,9 +148,9 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
           200: t.Object({ data: t.Array(StorageContentBody,), },),
           400: ErrorResponse,
           403: ErrorResponse,
-          404: ErrorResponse,
+          ...routeNotFoundError(),
         },
-        detail: { summary: "List a container's contents", tags: ["Worlds",], },
+        ...routeDetail({ summary: "List a container's contents", tags: ["Worlds",], },),
       },
     )
     .post(
@@ -179,10 +179,10 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
           200: t.Object({ data: StorageUsageBody, },),
           400: ErrorResponse,
           403: ErrorResponse,
-          404: ErrorResponse,
+          ...routeNotFoundError(),
           409: ErrorResponse,
         },
-        detail: { summary: "Deposit items into a container", tags: ["Worlds",], },
+        ...routeDetail({ summary: "Deposit items into a container", tags: ["Worlds",], },),
       },
     )
     .post(
@@ -211,9 +211,9 @@ export function storageRoutes(opts: HandleOpts, prefix = "/api",) {
           200: t.Object({ data: StorageUsageBody, },),
           400: ErrorResponse,
           403: ErrorResponse,
-          404: ErrorResponse,
+          ...routeNotFoundError(),
         },
-        detail: { summary: "Withdraw items from a container", tags: ["Worlds",], },
+        ...routeDetail({ summary: "Withdraw items from a container", tags: ["Worlds",], },),
       },
     );
 }

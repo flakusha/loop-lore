@@ -3,7 +3,7 @@
 
 // src/config/sections/encryption.ts — Encryption config section
 
-import { EncryptionCompression, } from "@/db/enums";
+import { EncryptionCompression, } from "../../../../../src/db/enums";
 
 export const ENCRYPTION_DEFAULTS = {
   required: false,

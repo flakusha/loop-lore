@@ -30,3 +30,9 @@ Gap: the schema and the epic plans admit video (`duration_secs`), 3D and PDF, an
 - [ ] **Security:** preview output re-uses the asset's encryption tier and key — never a plaintext path; the preview path is derived from the asset id, **never** from the client-supplied filename (path traversal).
 - [ ] **Regressions:** existing thumbnail tests and serve path unchanged.
 - [ ] **Repo gates:** `bun run check` green; the blocking dependency question above answered before implementation starts.
+
+## Research addendum (2026-11-25)
+
+- 3D preview path is honkbox-generated turntable/log stills, not an in-process renderer; the best-effort null fallback and raw-byte fallback stay unchanged.
+- Web `<model-viewer>` and egui wgpu 3D are separately gated. Do not assume one renderer serves both frontends.
+- The blocking dependency question remains for video/PDF families; for 3D the answer is honkbox stills until a native renderer is chosen with a named consumer.

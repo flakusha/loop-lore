@@ -19,13 +19,15 @@ import { uid, } from "../../utils";
 import { credit, debit, ensureBalanceRow, getBalance, transferCurrency, } from "./balance";
 
 let db: Kysely<DB>;
+let ownerId: string;
 let worldId: string;
 let actorA: string;
 let actorB: string;
 
 beforeAll(async () => {
   ({ db, } = await createTestDb());
-  const userId = uid();
+  ownerId = uid();
+  const userId = ownerId;
   await insertUsers(db, `u-${userId}`, "Owner", {
     id: userId as never,
     role: "solo" as never,
@@ -59,6 +61,52 @@ beforeAll(async () => {
 afterAll(async () => {
   await db.destroy();
 },);
+
+/**
+ * Deterministic stale-pre-image probe: Promise.all cannot interleave two
+ * credits on the SQLite synchronous driver, so force one credit first
+ * balance read to report the starting value after its rival has written.
+ * The unfixed unconditional UPDATE then clobbers the rival credit.
+ */
+function withOneStaleRead(db: Kysely<DB>, balance: number,): Kysely<DB> {
+  let stalePending = true;
+  const wrapQuery = (query: object,): unknown =>
+    new Proxy(query, {
+      get(target, prop,) {
+        if (prop === "executeTakeFirst" && stalePending) {
+          return async () => {
+            stalePending = false;
+            return { balance, } as never;
+          };
+        }
+
+        const value = Reflect.get(target, prop,);
+        if (typeof value !== "function") { return value; }
+        return (...args: unknown[]) => {
+          const result = value.apply(target, args,);
+          return result && typeof result === "object" && "executeTakeFirst" in result
+            ? wrapQuery(result,)
+            : result;
+        };
+      },
+    },);
+
+  return new Proxy(db, {
+    get(target, prop,) {
+      if (prop === "selectFrom") {
+        return (table: string,) => {
+          const query = target.selectFrom(table as never,);
+          return table === "actor_currencies" && stalePending
+            ? wrapQuery(query,)
+            : query;
+        };
+      }
+
+      const value = Reflect.get(target, prop,);
+      return typeof value === "function" ? value.bind(target,) : value;
+    },
+  },) as Kysely<DB>;
+}
 
 describe("transferCurrency — amount<=0 guard", () => {
   test("amount = 0 is a no-op and returns true without ledger writes", async () => {
@@ -179,5 +227,157 @@ describe("ensureBalanceRow — concurrent creation", () => {
 
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.balance,).toBe(0,);
+  });
+});
+
+/**
+ * Exhaustion probe: every `actor_currencies` balance read reports `balance`,
+ * which never matches the real row, so the conditional UPDATE matches 0 rows
+ * on every bounded attempt and the caller must hit its exhaustion path.
+ */
+function withAlwaysStaleRead(db: Kysely<DB>, balance: number,): Kysely<DB> {
+  const wrapQuery = (query: object,): unknown =>
+    new Proxy(query, {
+      get(target, prop,) {
+        if (prop === "executeTakeFirst") {
+          return async () => ({ balance, } as never);
+        }
+
+        const value = Reflect.get(target, prop,);
+        if (typeof value !== "function") { return value; }
+        return (...args: unknown[]) => {
+          const result = value.apply(target, args,);
+          return result && typeof result === "object" && "executeTakeFirst" in result
+            ? wrapQuery(result,)
+            : result;
+        };
+      },
+    },);
+
+  return new Proxy(db, {
+    get(target, prop,) {
+      if (prop === "selectFrom") {
+        return (table: string,) => {
+          const query = target.selectFrom(table as never,);
+          return table === "actor_currencies" ? wrapQuery(query,) : query;
+        };
+      }
+
+      const value = Reflect.get(target, prop,);
+      return typeof value === "function" ? value.bind(target,) : value;
+    },
+  },) as Kysely<DB>;
+}
+
+describe("debit/credit — conditional-write race (BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE)", () => {
+  test("concurrent debit+credit lose no update; final balance is the sum", async () => {
+    const sumActor = uid();
+    await insertActors(db, "Sum Racer", {
+      id: sumActor as never,
+      actor_type: "character" as never,
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await credit(db, sumActor, worldId, 100, "gold",);
+
+    // Serialized by the synchronous SQLite driver, but each mutation reads a
+    // fresh pre-image, so both effects must survive: 100 - 40 + 15 = 75.
+    await Promise.all([
+      debit(db, sumActor, worldId, 40, "gold",),
+      credit(db, sumActor, worldId, 15, "gold",),
+    ],);
+
+    expect(await getBalance(db, sumActor, worldId, "gold",),).toBe(75,);
+  });
+
+  test("concurrent double-debit on the last funds: exactly one succeeds", async () => {
+    const lastActor = uid();
+    await insertActors(db, "Last Racer", {
+      id: lastActor as never,
+      actor_type: "character" as never,
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await credit(db, lastActor, worldId, 10, "gold",);
+
+    const outcomes = await Promise.all([
+      debit(db, lastActor, worldId, 10, "gold",),
+      debit(db, lastActor, worldId, 10, "gold",),
+    ],);
+
+    expect(outcomes.filter(Boolean,),).toHaveLength(1,);
+    expect(await getBalance(db, lastActor, worldId, "gold",),).toBe(0,);
+  });
+
+  test("a debit losing every race attempt returns false, not a throw", async () => {
+    const racedActor = uid();
+    await insertActors(db, "Exhausted Racer", {
+      id: racedActor as never,
+      actor_type: "character" as never,
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await credit(db, racedActor, worldId, 10, "gold",);
+
+    // The probe reports a pre-image (999) that never matches the real row
+    // (10), so the conditional write matches 0 rows on every bounded attempt;
+    // the debit reports a retryable no-op instead of throwing.
+    const ok = await debit(withAlwaysStaleRead(db, 999,), racedActor, worldId, 5, "gold",);
+
+    expect(ok,).toBe(false,);
+    expect(await getBalance(db, racedActor, worldId, "gold",),).toBe(10,);
+  });
+
+  test("credit throws a typed error after losing every race attempt", async () => {
+    const racedActor = uid();
+    await insertActors(db, "Exhausted Creditor", {
+      id: racedActor as never,
+      actor_type: "character" as never,
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await credit(db, racedActor, worldId, 10, "gold",);
+
+    const err = await credit(withAlwaysStaleRead(db, 999,), racedActor, worldId, 5, "gold",)
+      .then(() => null, (e: unknown,) => e,);
+
+    expect((err as Error | null)?.name,).toBe("BalanceWriteExhaustedError",);
+    expect(await getBalance(db, racedActor, worldId, "gold",),).toBe(10,);
+  });
+});
+
+describe("credit — overlapping writers", () => {
+  test("two credits from one starting balance both land", async () => {
+    const raceActor = uid();
+    await insertActors(db, "Race Creditor", {
+      id: raceActor as never,
+      actor_type: "character" as never,
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "ai" as never,
+      settings: "{}" as never,
+    },);
+
+    await credit(db, raceActor, worldId, 5, "gold",);
+
+    await Promise.all([
+      credit(withOneStaleRead(db, 5,), raceActor, worldId, 10, "gold",),
+      credit(db, raceActor, worldId, 20, "gold",),
+    ],);
+
+    // Unfixed code writes 15 or 25; only a pre-image-guarded retry reaches 35.
+    expect(await getBalance(db, raceActor, worldId, "gold",),).toBe(35,);
   });
 });

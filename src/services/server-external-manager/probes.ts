@@ -70,7 +70,7 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
  * Probe a single instance — returns true if responsive
  * @param instance
  */
-async function probeInstance(instance: ServerInstance,): Promise<boolean> {
+export async function probeInstance(instance: ServerInstance,): Promise<boolean> {
   try {
     if (instance.type === "llama-cpp") {
       const result = await safeFetch<string>(`http://127.0.0.1:${instance.port}/health`, {

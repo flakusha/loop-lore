@@ -128,35 +128,49 @@ export async function discoverComfyUILoras(
 // ── Workflow Node Builder ────────────────────────────────
 
 /**
+ * API-format input links are `[producerId, outputSlot]` tuples. UI-only
+ * `outputs` metadata is absent from submitted /prompt graphs.
+ */
+function asComfyLink(value: unknown,): [string, number,] | undefined {
+  if (!Array.isArray(value,) || value.length !== 2) { return undefined; }
+  const [id, slot,] = value;
+  if (
+    (typeof id !== "string" && typeof id !== "number") ||
+    typeof slot !== "number" ||
+    !Number.isInteger(slot,)
+  ) {
+    return undefined;
+  }
+
+  return [String(id,), slot,];
+}
+
+/**
  * Build a ComfyUI LoraLoader node for workflow injection.
  * @param loraName - LoRA model filename (with extension)
  * @param strengthModel - Model strength (0.1-1.0, typical 0.3-0.7)
  * @param strengthClip - CLIP strength (defaults to model strength)
- * @param previousNodeId - Node ID to connect as input (optional)
+ * @param modelLink - MODEL producer link `[nodeId, outputSlot]`
+ * @param clipLink - CLIP producer link `[nodeId, outputSlot]`
  * @returns ComfyUI workflow node
  */
 export function buildComfyUILoraNode(
   loraName: string,
   strengthModel: number,
   strengthClip?: number,
-  previousNodeId?: string,
+  modelLink?: [string, number,],
+  clipLink?: [string, number,],
 ): Record<string, unknown> {
-  const node: Record<string, unknown> = {
-    class_type: "LoraLoader",
-    inputs: {
-      lora_name: loraName,
-      strength_model: strengthModel,
-      strength_clip: strengthClip ?? strengthModel,
-    },
+  const inputs: Record<string, unknown> = {
+    lora_name: loraName,
+    strength_model: strengthModel,
+    strength_clip: strengthClip ?? strengthModel,
   };
 
-  // Connect to previous node if specified
-  if (previousNodeId) {
-    (node.inputs as Record<string, unknown>).model = [previousNodeId, 0,];
-    (node.inputs as Record<string, unknown>).clip = [previousNodeId, 1,];
-  }
+  if (modelLink) { inputs.model = modelLink; }
+  if (clipLink) { inputs.clip = clipLink; }
 
-  return node;
+  return { class_type: "LoraLoader", inputs, };
 }
 
 /**
@@ -165,8 +179,8 @@ export function buildComfyUILoraNode(
  * @param loraName - LoRA model filename
  * @param strengthModel - Model strength
  * @param strengthClip - CLIP strength (optional, defaults to model strength)
- * @param targetNodeId - Node ID to inject after (optional, uses first MODEL/CLIP output)
- * @returns Modified workflow with LoraLoader node inserted
+ * @param targetNodeId - Explicit producer node id (optional, resolved from links)
+ * @returns Modified workflow with LoraLoader nodes inserted
  */
 export function injectComfyUILora(
   workflow: Record<string, unknown>,
@@ -175,38 +189,90 @@ export function injectComfyUILora(
   strengthClip?: number,
   targetNodeId?: string,
 ): Record<string, unknown> {
-  const modified = { ...workflow, };
+  // Clone inputs so rewiring never mutates the caller's graph.
+  const nodes: Record<string, Record<string, unknown>> = {};
+  for (const [id, rawNode,] of Object.entries(workflow,)) {
+    const node = rawNode as Record<string, unknown>;
+    const originalInputs = (node.inputs ?? {}) as Record<string, unknown>;
+    nodes[id] = { ...node, inputs: { ...originalInputs, }, };
+  }
 
-  // Find the target node
-  const nodes = modified as Record<string, Record<string, unknown>>;
-  let nodeId = targetNodeId;
+  const consumers: Array<{
+    inputs: Record<string, unknown>;
+    key: string;
+    producerId: string;
+    slot: number;
+  }> = [];
 
-  if (!nodeId) {
-    // Find first node with MODEL and CLIP outputs
-    for (const [id, node,] of Object.entries(nodes,)) {
-      if (typeof node !== "object" || node === null) { continue; }
-      const outputs = node.outputs as Record<string, unknown[]> | undefined;
-      if (outputs?.MODEL && outputs?.CLIP) {
-        nodeId = id;
-        break;
-      }
+  const producers = new Map<string, { modelSlots: number[]; clipSlots: number[] }>();
+
+  for (const node of Object.values(nodes,)) {
+    const inputs = node.inputs as Record<string, unknown>;
+    for (const key of ["model", "clip",] as const) {
+      const link = asComfyLink(inputs[key],);
+      if (!link) { continue; }
+      const [producerId, slot,] = link;
+      consumers.push({ inputs, key, producerId, slot, },);
+      const slots = producers.get(producerId,) ?? { modelSlots: [], clipSlots: [], };
+      (key === "model" ? slots.modelSlots : slots.clipSlots).push(slot,);
+      producers.set(producerId, slots,);
     }
   }
 
-  // Generate the new node ID. `Number` on a grouped id ("60:45") is NaN, which
-  // made every node collapse onto a single key — see allocateNodeId.
-  const newNodeId = allocateNodeId(Object.keys(nodes,),);
+  // An explicit target wins; otherwise prefer a producer feeding both heads
+  // (the previous LoraLoader on a chain), keeping repeated injections in
+  // request order.
+  const producerIds = [...producers.keys(),];
+  const preferred = targetNodeId ??
+    producerIds.find((id,) => {
+      const slots = producers.get(id,);
+      return Boolean(slots?.modelSlots.length && slots.clipSlots.length,);
+    },);
 
-  if (!nodeId) {
-    // No suitable node found, add at end
-    nodeId = newNodeId;
+  const preferredSlots = preferred ? producers.get(preferred,) : undefined;
+  const preferredModelSlot = preferredSlots?.modelSlots[0];
+  const preferredClipSlot = preferredSlots?.clipSlots[0];
+  const firstModel = consumers.find((consumer,) => consumer.key === "model");
+  const firstClip = consumers.find((consumer,) => consumer.key === "clip");
+
+  // MODEL and CLIP heads are independent: split-producer graphs (model from
+  // one loader, clip from another) must not be collapsed to a single source.
+  const modelHead: [string, number,] | undefined = preferred && preferredModelSlot !== undefined
+    ? [preferred, preferredModelSlot,]
+    : firstModel
+    ? [firstModel.producerId, firstModel.slot,]
+    : undefined;
+
+  const clipHead: [string, number,] | undefined = preferred && preferredClipSlot !== undefined
+    ? [preferred, preferredClipSlot,]
+    : firstClip
+    ? [firstClip.producerId, firstClip.slot,]
+    : undefined;
+
+  const newNodeId = allocateNodeId(Object.keys(nodes,),);
+  nodes[newNodeId] = buildComfyUILoraNode(
+    loraName,
+    strengthModel,
+    strengthClip,
+    modelHead,
+    clipHead,
+  );
+
+  // `consumers` was captured before the new node existed, so it cannot
+  // rewire the node into itself.
+  for (const consumer of consumers) {
+    if (
+      consumer.key === "model" && modelHead &&
+      consumer.producerId === modelHead[0] && consumer.slot === modelHead[1]
+    ) {
+      consumer.inputs.model = [newNodeId, 0,];
+    } else if (
+      consumer.key === "clip" && clipHead &&
+      consumer.producerId === clipHead[0] && consumer.slot === clipHead[1]
+    ) {
+      consumer.inputs.clip = [newNodeId, 1,];
+    }
   }
 
-  // Create LoraLoader node
-  const loraNode = buildComfyUILoraNode(loraName, strengthModel, strengthClip, nodeId,);
-
-  // Add to workflow
-  nodes[newNodeId] = loraNode;
-
-  return modified;
+  return nodes;
 }

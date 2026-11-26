@@ -100,8 +100,12 @@ export interface ApplyOptions {
 export class ResponseHeaderPolicy {
   /**
    * @param config - Resolved `headers` config block.
+   * @param options - Trust forwarded proto from a proxy (default: ignore it).
    */
-  constructor(private readonly config: HeadersConfig,) {}
+  constructor(
+    private readonly config: HeadersConfig,
+    private readonly options: { trustProxy?: boolean } = {},
+  ) {}
 
   /**
    * Decorate a response with the configured header set.
@@ -212,10 +216,13 @@ export class ResponseHeaderPolicy {
       if (cfg.nel) { headers.NEL = cfg.nel; }
     }
 
-    // Strict-Transport-Security: only on HTTPS. Detects via URL protocol
-    // (covers TLS-terminating proxies that preserve the original scheme
-    // in the request URL).
-    if (cfg.hsts.enabled && new URL(request.url,).protocol === "https:") {
+    // Strict-Transport-Security: on HTTPS, or on the trusted proxy’s forwarded
+    // scheme. A spoofed forwarded header is ignored unless trustProxy is true.
+    const forwardedProto = this.options.trustProxy === true
+      ? request.headers.get("x-forwarded-proto",)?.split(",",)[0]?.trim().toLowerCase()
+      : undefined;
+
+    if (cfg.hsts.enabled && (new URL(request.url,).protocol === "https:" || forwardedProto === "https")) {
       const parts = [`max-age=${cfg.hsts.maxAge}`,];
       if (cfg.hsts.includeSubDomains) { parts.push("includeSubDomains",); }
       if (cfg.hsts.preload) { parts.push("preload",); }

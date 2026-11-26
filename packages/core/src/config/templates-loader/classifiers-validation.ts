@@ -6,10 +6,10 @@
 // validation.ts conventions) + Levenshtein typo warnings against the
 // AuxTaskName union.
 
-import { AUX_CLASSIFICATION_TASKS, } from "@/aux-pipeline/template-registry";
-import type { AuxTaskName, } from "@/aux-pipeline/types";
-import { ChatMode, } from "@/db/enums-core/users";
-import { jsonStringifyOr, } from "@/utils";
+import { AUX_CLASSIFICATION_TASKS, } from "../../../../../src/aux-pipeline/template-registry";
+import type { AuxTaskName, } from "../../../../../src/aux-pipeline/types";
+import { ChatMode, } from "../../../../../src/db/enums-core/users";
+import { jsonStringifyOr, } from "../../utils/safe-json";
 import type { MergeStrategy, } from "../sections/templates";
 
 const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [

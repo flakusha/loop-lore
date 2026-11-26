@@ -2,9 +2,64 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // src/config/schema-class/validate.ts — config validation
-import type { Config, } from "../schema";
+import { AUTOROUTE_SCENARIOS, type Config, } from "../schema";
+import { FEATURE_PROFILES, } from "../schema/features";
+import { COMFYUI_MODEL_EXTENSIONS, isComfyUIModelName, } from "../schema/providers";
 import { validateAcpProfiles, } from "../sections/harness";
+import { validateMcpConfig, } from "../sections/mcp";
 import { PROMPT_BUDGET_BOUNDS, } from "../sections/prompt";
+
+/**
+ * @param config - Merged config to check.
+ * @throws {Error} If an enabled BYOK store has a too-short master secret.
+ */
+function validateByoKey(config: Config,): void {
+  const secret = config.byoKey?.encryptionKey;
+  if (config.byoKey?.enabled && secret && secret.length < 32) {
+    throw new Error("byoKey.encryptionKey must be at least 32 characters when BYOK is enabled",);
+  }
+}
+
+/**
+ * @param config - Fully merged config to check, after defaults are applied.
+ * @throws {Error} If a pinned ComfyUI model name is incompatible with its slot.
+ */
+function validateComfyUIModels(config: Config,): void {
+  const providers = [
+    ...(config.generation.providers.video ?? []).map((provider,) => ({ provider, kind: "video", })),
+    ...(config.generation.providers.sd ?? []).map((provider,) => ({ provider, kind: "image", })),
+  ];
+  for (const { provider, kind, } of providers) {
+    const models = provider.models;
+    if (!models) { continue; }
+    if (models.noVae && models.vae) {
+      throw new Error(`${kind} provider ${provider.name} sets models.noVae and models.vae — pick one`,);
+    }
+
+    for (const role of Object.keys(COMFYUI_MODEL_EXTENSIONS,) as (keyof typeof COMFYUI_MODEL_EXTENSIONS)[]) {
+      const name = models[role];
+      if (name !== undefined && !isComfyUIModelName(role, name,)) {
+        throw new Error(
+          `Invalid ComfyUI ${role} model "${name}" on ${kind} provider ${provider.name}`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Feature profiles gate surfaces; an explicit unknown value is boot-rot.
+ * @param config - Merged config to check.
+ * @throws {Error} If features.profile is explicitly unknown.
+ */
+function validateFeatureProfile(config: Config,): void {
+  const profile = config.features?.profile;
+  if (profile !== undefined && !(FEATURE_PROFILES as readonly string[]).includes(profile,)) {
+    throw new Error(
+      `Invalid features.profile: "${profile}". Must be one of: ${FEATURE_PROFILES.join(", ",)}`,
+    );
+  }
+}
 
 /**
  * @param config - Fully merged config to check, after defaults are applied.
@@ -15,11 +70,29 @@ export const validate = (config: Config,): void => {
     throw new Error(`Invalid db.type: "${config.db.type}"`,);
   }
 
-  if (config.db.type === "postgres" && !config.db.url) {
-    throw new Error("db.url is required when db.type is 'postgres'",);
+  // `db.type=postgres` is accepted here: the runtime is always SQLite and
+  // warns loudly about the ignored setting (see load/db-warnings.ts). A missing
+  // `db.url` must not abort the boot — the URL is ignored anyway.
+
+  const autorouteScenario = config.generation.autorouteScenario;
+  if (
+    autorouteScenario !== undefined &&
+    !(AUTOROUTE_SCENARIOS as readonly string[]).includes(autorouteScenario,)
+  ) {
+    throw new Error(
+      `Invalid generation.autorouteScenario: "${autorouteScenario}". Must be one of: ${
+        AUTOROUTE_SCENARIOS.join(", ",)
+      }`,
+    );
   }
 
-  if (config.server.port < 0 || config.server.port > 65_535) {
+  validateFeatureProfile(config,);
+  validateByoKey(config,);
+
+  if (
+    !Number.isFinite(config.server.port,) ||
+    config.server.port < 0 || config.server.port > 65_535
+  ) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
   }
 
@@ -128,7 +201,12 @@ export const validate = (config: Config,): void => {
     }
   }
 
+  // Declarative MCP servers: reject conflicting transports, shell-ish stdio
+  // commands and non-http(s) endpoints at load, not at registration.
+  validateMcpConfig(config.mcp,);
+
   // External harness profiles: duplicate names, unknown tier keys, and
   // non-`provider/id` models are config rot — reject at load, not at dispatch.
   validateAcpProfiles(config.harness.acp,);
+  validateComfyUIModels(config,);
 };

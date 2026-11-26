@@ -49,17 +49,20 @@ describeOrSkip("chatSearch.searchChats", () => {
   });
 
   test("maps array payloads", async () => {
-    mockFetch(200, [{ chatId: "c1", chatName: "General", characterName: "Aria", characterAvatar: null, },],);
+    mockFetch(200, {
+      chats: [{ chatId: "c1", chatName: "General", characterName: "Aria", characterAvatar: null, },],
+    },);
+
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "gen",);
-    expect(fetchCalls[0]!.url,).toBe("/api/v1/chats/search?q=gen",);
+    expect(fetchCalls[0]!.url,).toBe("/api/v1/search?q=gen&limit=50",);
     expect(ctx._searchResults,).toEqual([
       { chatId: "c1", chatName: "General", characterName: "Aria", characterAvatar: null, },
     ],);
   });
 
-  test("maps { data } payloads and defaults null avatars", async () => {
-    mockFetch(200, { data: [{ chatId: "c2", chatName: "Tavern", characterName: "Bob", },], },);
+  test("defaults null avatars", async () => {
+    mockFetch(200, { chats: [{ chatId: "c2", chatName: "Tavern", characterName: "Bob", },], },);
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "tav",);
     expect(ctx._searchResults,).toEqual([
@@ -85,7 +88,7 @@ describeOrSkip("chatSearch.searchChats", () => {
   });
 
   test("encodes unicode queries", async () => {
-    mockFetch(200, [],);
+    mockFetch(200, { chats: [], },);
     const ctx = searchCtx();
     await chatSearch.searchChats!.call(ctx, "酒場",);
     expect(fetchCalls[0]!.url,).toContain(encodeURIComponent("酒場",),);

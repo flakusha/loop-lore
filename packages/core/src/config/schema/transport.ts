@@ -3,7 +3,7 @@
 
 // src/config/schema/transport.ts — Transport protocol / compression / limits config types
 
-import type { CompressionAlgorithm, } from "@/db/enums";
+import type { CompressionAlgorithm, } from "../../../../../src/db/enums";
 import type { TransportSection, } from "../sections/transport";
 
 /** */

@@ -42,14 +42,28 @@ export async function callWithFailover(
   const harness = req.harness;
   const toolNames = (req.tools ?? []).map((t,) => t.function.name);
 
+  // A chunk already delivered to the caller cannot be un-sent. Track emission
+  // so a mid-stream failure aborts the chain instead of appending a second,
+  // complete reply from a fallback (mirrors PeerWorkPartialOutputError).
+  let emitted = false;
+  const trackedHandler = handler === undefined
+    ? undefined
+    : (chunk: ChunkEvent,) => {
+      emitted = true;
+      handler(chunk,);
+    };
+
   // One log line per call, on every path. `name` is the provider that actually
   // served (or last failed) the request, not the first one tried.
   const logRun = (
-    name: string,
-    result: "ok" | "error" | "cancelled",
-    error: string | null,
-    usage?: GenerateResponse["usage"],
+    opts: {
+      name: string;
+      result: "ok" | "error" | "cancelled";
+      error: string | null;
+      usage?: GenerateResponse["usage"];
+    },
   ): void => {
+    const { name, result, error, usage, } = opts;
     if (harness === undefined) { return; }
     recordExecRun({
       taskType: harness.taskType === undefined
@@ -92,10 +106,12 @@ export async function callWithFailover(
       : { ...req, apiKey: await req.resolveApiKey(name,), };
 
     try {
-      const response = handler ? await prov.stream(attempt, handler,) : await prov.complete(attempt,);
+      const response = trackedHandler
+        ? await prov.stream(attempt, trackedHandler,)
+        : await prov.complete(attempt,);
 
       circuitBreaker.onSuccess(name,);
-      logRun(name, "ok", null, response.usage,);
+      logRun({ name, result: "ok", error: null, usage: response.usage, },);
       return response;
     } catch (error) {
       const err = error as Error & { retryable?: boolean; retryAfter?: number };
@@ -107,7 +123,7 @@ export async function callWithFailover(
         // A user cancel is a real outcome worth a log line, but it is NOT a
         // provider failure — never count it against the circuit breaker and
         // never restart the request on a fallback provider.
-        logRun(name, "cancelled", err.message,);
+        logRun({ name, result: "cancelled", error: err.message, },);
         const reason: unknown = req.signal.reason;
         if (reason instanceof GenerationCancelledError) { throw reason; }
         throw new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, err.message, {
@@ -116,6 +132,12 @@ export async function callWithFailover(
       }
 
       circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined,);
+      if (emitted) {
+        // The caller owns the partial output; a fallback would duplicate it.
+        logRun({ name, result: "error", error: err.message, },);
+        throw error;
+      }
+
       errors.push(`${name}: ${err.message}`,);
     }
   }
@@ -124,6 +146,6 @@ export async function callWithFailover(
   // Attribute the total failure to the last provider tried, or to the model's
   // own name when the list was empty — "one log line per call, on every path"
   // has to hold on the empty-list throw too, not just the exhausted one.
-  logRun(providers[providers.length - 1]?.name ?? req.model, "error", failure,);
+  logRun({ name: providers[providers.length - 1]?.name ?? req.model, result: "error", error: failure, },);
   throw new Error(failure,);
 }

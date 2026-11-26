@@ -45,6 +45,22 @@ export const NSFW_GATE_REASONS = [
   "explicit_content_detected",
   "user_override_disabled",
   "admin_emergency_block",
+  // Send/participant verdict reasons (normalised from `reason:underage:17`,
+  // `participant_blocked:<r>` etc. before the audit write).
+  "consent_required",
+  "consent_revoked",
+  "nsfw_disabled",
+  "age_gate_not_accepted",
+  "age_gate_not_passed",
+  "underage",
+  "user_not_found",
+  "auth_required",
+  "blocked",
+  "banned",
+  "participant_blocked",
+  "nsfw_denied",
+  "verdict_allowed",
+  "verdict_unavailable",
 ] as const;
 /** */
 export type NsfwGateReason = typeof NSFW_GATE_REASONS[number];

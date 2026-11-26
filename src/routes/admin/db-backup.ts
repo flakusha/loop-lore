@@ -1,17 +1,30 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { Elysia, t, } from "elysia";
+// size-allow: 339
+import { type Context, Elysia, t, } from "elysia";
+import { randomUUID, } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { Readable, } from "node:stream";
+import { ASSETS_DEFAULTS, } from "../../config/sections/assets";
 import {
   createDbBackup,
   dbBackupDir,
+  hasSqliteHeader,
+  InvalidSnapshotError,
   listDbBackups,
   liveDbPath,
   resolveBackupPath,
   restoreDbBackup,
+  validateSqliteSnapshot,
 } from "../../db/backup-restore";
 import { getSqliteDatabase, resetDatabaseSingleton, } from "../../db/index";
 import { getLogger, } from "../../logger";
-import { ErrorResponse, } from "../../validation/schemas";
+import {
+  ADMIN_NAME_PATTERN,
+  AdminDbBackupRestoreBody,
+  ErrorResponse,
+} from "../../validation/schemas";
 import {
   ErrorCode,
   HttpStatus,
@@ -20,6 +33,34 @@ import {
   withPermissionAuth,
 } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
+
+/** Auth fields injected by the global derive; kept out of Elysia's inferred ctx. */
+type BackupAuthCtx = Context & {
+  userId: string | null;
+  userRole: string | null;
+};
+type BackupParamCtx = BackupAuthCtx & { params: { name: string } };
+
+const BACKUP_NAME_RE = new RegExp(ADMIN_NAME_PATTERN,);
+
+// Bun 1.4.4 omits O_NOFOLLOW from os.constants; these are the verified Linux
+// and Darwin values (O_RDONLY is 0 on POSIX). The lstat/fstat inode match is
+// the portable backstop.
+const NOFOLLOW_FLAG = process.platform === "linux"
+  ? 0o400000
+  : process.platform === "darwin"
+  ? 0x10000
+  : 0;
+
+function downloadUnavailable(): Response {
+  return jsonError({
+    message: "Backup not found or unavailable",
+    status: HttpStatus.NotFound,
+    code: ErrorCode.NotFound,
+  },);
+}
+
+const tBackupMeta = t.Object({ name: t.String(), sizeBytes: t.Number(), },);
 
 /**
  * Admin database backup/restore routes.
@@ -37,13 +78,20 @@ import type { AdminRouteOpts, } from "./types";
  * @returns {Elysia}
  */
 export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
-  void opts;
   const dir = dbBackupDir();
   const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> =>
     getLogger().child({ module: "admin-db-backup", },);
 
   return (
     new Elysia({ name: "admin-db-backup", },)
+      .onError(({ code, },) => {
+        if (code !== "VALIDATION") { return undefined; }
+        return jsonError({
+          message: "Invalid database restore payload",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.ValidationError,
+        },);
+      },)
       .get(`${prefix}/admin/db/backup`, async (ctx: any,) => {
         return withPermissionAuth(ctx, "admin.system", async () => {
           return jsonResponse({ backups: listDbBackups(dir,), dir, },);
@@ -94,14 +142,6 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       },)
       .post(`${prefix}/admin/db/restore`, async (ctx: any,) => {
         return withPermissionAuth(ctx, "admin.system", async () => {
-          if (ctx.body.confirmation !== "RESTORE") {
-            return jsonError({
-              message: "Confirmation string mismatch",
-              status: HttpStatus.BadRequest,
-              code: ErrorCode.ValidationError,
-            },);
-          }
-
           const sqlite = getSqliteDatabase();
           if (!sqlite) {
             return jsonError({
@@ -115,7 +155,7 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             const backupPath = resolveBackupPath(dir, ctx.body.name,);
             const result = await restoreDbBackup({
               backupPath,
-              livePath: liveDbPath(),
+              livePath: liveDbPath(opts.config.server,),
               sqlite,
               dir,
               closeDb: resetDatabaseSingleton,
@@ -134,15 +174,19 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           } catch (error) {
             log().error("Database restore failed", error as Error,);
+            const message = error instanceof InvalidSnapshotError
+              ? "Restore failed: snapshot is not a valid SQLite database"
+              : `Restore failed: ${(error as Error).message}`;
+
             return jsonError({
-              message: `Restore failed: ${(error as Error).message}`,
+              message,
               status: HttpStatus.BadRequest,
               code: ErrorCode.BadRequest,
             },);
           }
         },);
       }, {
-        body: t.Object({ name: t.String(), confirmation: t.String(), },),
+        body: AdminDbBackupRestoreBody,
         response: {
           200: t.Object({
             restored: t.Boolean(),
@@ -151,6 +195,195 @@ export function dbBackupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },),
           400: ErrorResponse,
           403: ErrorResponse,
+        },
+      },)
+      .get(`${prefix}/admin/db/backup/:name`, async (ctx,) => {
+        const c = ctx as unknown as BackupParamCtx;
+        return withPermissionAuth(c, "admin.system", async () => {
+          if (typeof c.params.name !== "string" || !BACKUP_NAME_RE.test(c.params.name,)) {
+            return jsonError({
+              message: "Invalid database backup name",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.ValidationError,
+            },);
+          }
+
+          let resolved: string;
+          try {
+            resolved = resolveBackupPath(dir, c.params.name,);
+          } catch {
+            return jsonError({
+              message: "Backup not found or invalid name",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+
+          // Characterize before opening: a swap between resolve and open fails
+          // the fstat inode match below even where no no-follow flag exists.
+          let before: fs.Stats;
+          try {
+            before = fs.lstatSync(resolved,);
+          } catch (error) {
+            log().error("Database backup download stat failed", error as Error,);
+
+            return downloadUnavailable();
+          }
+
+          if (!before.isFile()) {
+            return downloadUnavailable();
+          }
+
+          let fd: number | undefined;
+          let stream: ReturnType<typeof fs.createReadStream> | undefined;
+          try {
+            fd = fs.openSync(resolved, NOFOLLOW_FLAG,);
+            const after = fs.fstatSync(fd,);
+            if (!after.isFile() || after.dev !== before.dev || after.ino !== before.ino) {
+              throw new Error("Backup file changed while opening",);
+            }
+
+            stream = fs.createReadStream("", { fd, autoClose: true, },);
+            fd = undefined; // the stream owns the fd from here on
+            const body = Readable.toWeb(stream,) as unknown as ReadableStream<Uint8Array>;
+            log().info("Admin downloaded database backup", { userId: c.userId, name: c.params.name, },);
+            return new Response(body, {
+              headers: {
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": `attachment; filename="${c.params.name}"`,
+              },
+            },);
+          } catch (error) {
+            if (stream) {
+              stream.destroy();
+            } else if (fd !== undefined) {
+              try {
+                fs.closeSync(fd,);
+              } catch { /* best-effort fd cleanup */ }
+            }
+
+            log().error("Database backup download failed", error as Error,);
+
+            return downloadUnavailable();
+          }
+        },);
+      }, {
+        response: {
+          400: ErrorResponse,
+          403: ErrorResponse,
+          404: ErrorResponse,
+        },
+        detail: {
+          summary: "Download a database backup snapshot",
+          description:
+            "Streams a named SQLite snapshot from the server-derived backup directory. Only bare file names are accepted; path traversal is rejected.",
+          tags: ["Admin", "Database backups",],
+        },
+      },)
+      .post(`${prefix}/admin/db/backup/upload`, async (ctx,) => {
+        const c = ctx as unknown as BackupAuthCtx;
+        return withPermissionAuth(c, "admin.system", async () => {
+          const maxBytes = opts.config.assets?.maxFileSize ?? ASSETS_DEFAULTS.maxFileSize;
+          const contentType = c.request.headers.get("content-type",) ?? "";
+          if (!contentType.includes("multipart/form-data",)) {
+            return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest, },);
+          }
+
+          let form: FormData;
+          try {
+            form = await c.request.formData();
+          } catch {
+            return jsonError({ message: "Failed to parse upload", status: HttpStatus.BadRequest, },);
+          }
+
+          const file = form.get("file",);
+          if (!file || !(file instanceof File)) {
+            return jsonError({ message: "file field is required", status: HttpStatus.BadRequest, },);
+          }
+
+          if (file.size > maxBytes) {
+            return jsonError({
+              message: `Snapshot too large (max ${maxBytes} bytes)`,
+              status: HttpStatus.UnprocessableEntity,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+
+          const name = file.name;
+          if (!BACKUP_NAME_RE.test(name,) || name.includes("..",) || !name.endsWith(".db",)) {
+            return jsonError({ message: "Invalid snapshot name", status: HttpStatus.BadRequest, },);
+          }
+
+          const target = path.join(dir, name,);
+          const tmp = path.join(dir, `.upload-${randomUUID()}.tmp`,);
+          try {
+            fs.mkdirSync(dir, { recursive: true, },);
+            fs.writeFileSync(tmp, new Uint8Array(await file.arrayBuffer(),),);
+            if (!hasSqliteHeader(tmp,)) {
+              return jsonError({
+                message: "Snapshot is not a SQLite database file",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
+            validateSqliteSnapshot(tmp,);
+            try {
+              fs.linkSync(tmp, target,);
+            } catch (error) {
+              if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+                return jsonError({
+                  message: "Snapshot already exists",
+                  status: HttpStatus.Conflict,
+                  code: ErrorCode.Conflict,
+                },);
+              }
+
+              throw error;
+            }
+
+            fs.unlinkSync(tmp,);
+            const sizeBytes = fs.statSync(target,).size;
+            log().info("Admin uploaded database backup", { userId: c.userId, name, sizeBytes, },);
+            return jsonResponse({ backup: { name, sizeBytes, }, }, HttpStatus.Created,);
+          } catch (error) {
+            if (error instanceof InvalidSnapshotError) {
+              return jsonError({
+                message: "Snapshot is not a valid SQLite database",
+                status: HttpStatus.BadRequest,
+                code: ErrorCode.BadRequest,
+              },);
+            }
+
+            log().error("Database snapshot upload failed", error as Error,);
+            return jsonError({
+              message: "Upload failed",
+              status: HttpStatus.InternalServerError,
+              code: ErrorCode.ServerError,
+            },);
+          } finally {
+            if (fs.existsSync(tmp,)) {
+              try {
+                fs.unlinkSync(tmp,);
+              } catch { /* best-effort temp cleanup */ }
+            }
+          }
+        },);
+      }, {
+        parse: "none",
+        response: {
+          201: t.Object({ backup: tBackupMeta, },),
+          400: ErrorResponse,
+          403: ErrorResponse,
+          409: ErrorResponse,
+          422: ErrorResponse,
+          500: ErrorResponse,
+        },
+        detail: {
+          summary: "Upload a database backup snapshot",
+          description:
+            "Multipart upload of a SQLite snapshot (file field, .db name, byte cap from assets.maxFileSize). Validates the SQLite header and loop-lore schema before writing. Bare names only; traversal is rejected.",
+          tags: ["Admin", "Database backups",],
         },
       },)
   );

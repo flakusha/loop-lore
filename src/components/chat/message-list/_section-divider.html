@@ -1,0 +1,24 @@
+<!-- Section divider: shown when this message starts a new section -->
+<template x-if="sectionDividerFor(i, msg.section_id) !== null">
+  <div
+    class="section-divider"
+    :data-section-id="msg.section_id ?? ''"
+    data-testid="section-divider"
+  >
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">
+      <span class="section-divider-icon" aria-hidden="true">📍</span>
+      <span x-text="sectionLabel(msg.section_id)"></span>
+      <span
+        class="section-divider-meta"
+        x-text="'— ' + sectionDividerMeta(msg.section_id).count + ' msgs'"
+      ></span>
+      <span
+        class="section-divider-meta"
+        x-show="sectionDividerMeta(msg.section_id).startTime"
+        x-text="'· ' + formatSectionTime(sectionDividerMeta(msg.section_id).startTime)"
+      ></span>
+    </div>
+    <div class="section-divider-line"></div>
+  </div>
+</template>

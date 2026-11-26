@@ -3,6 +3,10 @@
 
 import type { Config, } from "../../config/schema";
 import {
+  readCookieSecureOverrideFromEnv,
+  resolveCookieSecure,
+} from "../../middleware/csrf";
+import {
   createRateLimiter,
   type RateLimiter,
 } from "../../middleware/rate-limit";
@@ -21,6 +25,8 @@ import {
 const LOGIN_MAX_ATTEMPTS = 10;
 const REGISTER_MAX_ATTEMPTS = 3;
 const DEMO_LOGIN_MAX_ATTEMPTS = 5;
+const VERIFY_MAX_ATTEMPTS = 10;
+const ENROLL_MAX_ATTEMPTS = 5;
 
 // Module singletons are the production default; tests inject their own
 // instance per file so parallel files never share mutable limiter state
@@ -42,6 +48,8 @@ const DEMO_LOGIN_MAX_ATTEMPTS = 5;
 const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
 const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
 const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+const verifyLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: VERIFY_MAX_ATTEMPTS, },);
+const enrollLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: ENROLL_MAX_ATTEMPTS, },);
 
 /**
  * Build an isolated login limiter (same policy as the production default).
@@ -68,6 +76,22 @@ export function createDemoLoginLimiter(): RateLimiter {
   return createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
 }
 
+/**
+ * Build an isolated factor-verify limiter (same policy as the production default).
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
+ */
+export function createVerifyLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60_000, maxRequests: VERIFY_MAX_ATTEMPTS, },);
+}
+
+/**
+ * Build an isolated factor-enrollment limiter (same policy as production).
+ * @returns {{ check: (key: string) => boolean; clear: () => void; consume: (key: string, now?: number) => RateLimitResult; destroy: () => void; peek: (key: string, now?: number) => RateLimitResult; record: (key: string, now?: number) => void; refund: (key: string) => void; reset: (key: string) => void; }}
+ */
+export function createEnrollLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60_000, maxRequests: ENROLL_MAX_ATTEMPTS, },);
+}
+
 // ── Cookie helpers ────────────────────────────────────────────
 
 const TOKEN_COOKIE = "ll_token";
@@ -79,20 +103,13 @@ const COOKIE_PATH = "/";
  * @returns the `Set-Cookie` header value for the auth token
  */
 function setTokenCookie(token: string, maxAgeSecs: number,): string {
-  // `Secure` is omitted unless the deployment is reachable over HTTPS.
-  // A cookie with `Secure` set will be silently dropped by the browser
-  // when the page is loaded over plain HTTP (e.g. local dev), breaking auth.
-  //
-  // Decision matrix (first match wins):
-  // LL_COOKIE_SECURE=true → emit Secure (override; e.g. behind TLS-terminating proxy on a custom port)
-  // LL_COOKIE_SECURE=false → never emit Secure (override)
-  // NODE_ENV === "production" → emit Secure
-  // otherwise → omit Secure (dev / solo / unknown)
-  const override = process.env.LL_COOKIE_SECURE;
-  let secure: boolean;
-  if (override === "true") { secure = true; }
-  else if (override === "false") { secure = false; }
-  else { secure = process.env.NODE_ENV === "production"; }
+  // Same decision as `csrf_token` (src/middleware/csrf.ts): explicit
+  // LL_COOKIE_SECURE > effective TLS config > NODE_ENV=production. A Secure
+  // cookie is dropped over plain HTTP, so TLS-off dev omits it.
+  const secure = resolveCookieSecure(
+    readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],),
+    process.env["NODE_ENV"] === "production",
+  );
 
   const parts = [
     `${TOKEN_COOKIE}=${token}`,
@@ -171,9 +188,22 @@ export function resetDemoLoginRateLimiter(): void {
   demoLoginLimiter.clear();
 }
 
+/**
+ * @returns {void}
+ */
+export function resetVerifyRateLimiter(): void {
+  verifyLimiter.clear();
+}
+
+/** Clear the production enrollment limiter (test isolation). */
+export function resetEnrollRateLimiter(): void {
+  enrollLimiter.clear();
+}
+
 export {
   COOKIE_PATH,
   demoLoginLimiter,
+  enrollLimiter,
   errorHtml,
   errorJson,
   errorResponse,
@@ -186,5 +216,6 @@ export {
   registerLimiter,
   setTokenCookie,
   TOKEN_COOKIE,
+  verifyLimiter,
   wantsJson,
 };

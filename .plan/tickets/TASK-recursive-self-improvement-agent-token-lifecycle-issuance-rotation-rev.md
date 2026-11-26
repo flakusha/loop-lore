@@ -7,7 +7,8 @@
 **Context:** (none captured)
 **Acceptance Criteria:** (none captured)
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** On dev: `src/db/migrations/118_agent_token_expiry.ts` adds nullable `expires_at`; `src/agent/api/auth.ts` has 24h `AGENT_TOKEN_DEFAULT_TTL_MS`, fail-closed expiry to 401, SHA-256 hashing, `revoked_at` per-request check and 60/600 limiters; `src/routes/admin/agent-tokens.ts` mints with body scope + revokes, and `auth.test.ts` is present. Residual: no standalone `src/agent/api/tokens.ts` (logic lives in auth.ts + admin route) and no `agent:tickets` scope tier on dev (unlanded ticket-ops worktree).
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Task / Security

@@ -24,7 +24,7 @@ describe("assertValidWrite — messages", () => {
   });
 
   test("accepts the legacy 'visible' status default", () => {
-    // messages.status is NOT NULL DEFAULT 'visible' (001_init.ts:1864) and 'visible'
+    // messages.status is NOT NULL DEFAULT 'visible' (005_chat.ts:266) and 'visible'
     // is a MessageVisibility value, never a MessageStatus. updateMessageVisibility
     // merges this persisted status on default-inserted rows (the profanity gate), so
     // exactly this one literal must not block a visibility write.

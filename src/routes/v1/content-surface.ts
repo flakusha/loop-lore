@@ -9,13 +9,13 @@ import { loraRoutes, } from "../../../src/generation/lora/routes";
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
 import { assetRoutes, } from "../../assets/controller";
 import { mattingRoutes, } from "../../assets/matting-routes";
+import { featuresForOpts, } from "../../features/surface";
 import { generationRoutes, } from "../../generation/controller";
 import { imageEditRoutes, } from "../../image-edit/routes";
 import { personaRoutes, } from "../../personas/controller";
 import { activityRoutes, } from "../activity";
 import { activityStreamRoutes, } from "../activity-stream";
 import { analyticsRoutes, } from "../analytics";
-import { assetSearchRoutes, } from "../asset-search";
 import { assetTagRoutes, } from "../asset-tags";
 import { assetsRoutes, } from "../assets";
 import { blogRoutes, } from "../blog";
@@ -39,19 +39,25 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
-  return new Elysia({ name: "v1-content", },)
+  const features = featuresForOpts(opts,);
+  const app = new Elysia({ name: "v1-content", },);
+  if (features.generation) {
     // ── Generation & assets ──────────────────────────────────
-    .use(generationRoutes({ database, config, }, prefix,),)
-    .use(loraRoutes({ config, }, prefix,),)
-    .use(assetRoutes({ database, config, }, prefix,),)
-    .use(assetsRoutes(handleOpts, prefix,),)
-    .use(mattingRoutes({ database, config, }, prefix,),)
-    .use(assetSearchRoutes(handleOpts, prefix,),)
-    .use(assetTagRoutes({ database, }, prefix,),)
-    .use(gifSearchRoutes(handleOpts, prefix,),)
-    .use(imageEditRoutes({ database, }, prefix,),)
-    .use(comfyuiBuilderRoutes({ database, }, prefix,),)
-    // ── Social / content ─────────────────────────────────────
+    app
+      .use(generationRoutes({ database, config, }, prefix,),)
+      .use(loraRoutes({ config, }, prefix,),)
+      .use(assetRoutes({ database, config, }, prefix,),)
+      .use(assetsRoutes(handleOpts, prefix,),)
+      .use(mattingRoutes({ database, config, }, prefix,),)
+      .use(assetTagRoutes({ database, }, prefix,),)
+      .use(gifSearchRoutes(handleOpts, prefix,),)
+      .use(imageEditRoutes({ database, }, prefix,),)
+      .use(comfyuiBuilderRoutes({ database, }, prefix,),)
+      .use(generationCompareRoutes({ config, database, }, prefix,),);
+  }
+
+  // ── Social / content ─────────────────────────────────────
+  app
     .use(personaRoutes({ database, }, prefix,),)
     .use(nsfwRoutes(handleOpts, prefix,),)
     .use(nsfwModerationRoutes(handleOpts, prefix,),)
@@ -64,6 +70,7 @@ export function contentSurface(opts: RegisterPluginsOpts,) {
     .use(modelComparisonsRoutes({ database, }, prefix,),)
     .use(modelComparisonsAnalyticsRoutes({ database, }, prefix,),)
     .use(comparisonsExportRoutes({ database, }, prefix,),)
-    .use(generationCompareRoutes({ config, database, }, prefix,),)
     .use(promptTemplateRoutes({ database, }, prefix,),);
+
+  return app;
 }

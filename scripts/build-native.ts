@@ -9,8 +9,9 @@
  * Build-stage integration model (two paths):
  *
  *   Native cdylib:
- *   - cargo available  → `cargo build --release --target-dir target` in
- *     `native/loop-lore-native/`, producing the shared library the FFI loader
+ *   - cargo available  → `cargo build --release` in
+ *     `native/loop-lore-native/` (target dir: the shared `/tmp/cargo` via
+ *     `CARGO_TARGET_DIR`), producing the shared library the FFI loader
  *     (`src/native/loader.ts`) dlopens at runtime.
  *   - cargo absent     → skip with a notice; the pure-TS implementation
  *     (src/native/fallback/) becomes the default. Never fails the build.
@@ -18,7 +19,8 @@
  *   WASM modules (frontend, feature-split):
  *   - wasm32 std via scripts/native/toolchain.ts — a std the host already
  *     ships, `rustup target add`, or the version-matched official component
- *     provisioned into .tmp/native-toolchain/ and reached through a RUSTC
+ *     provisioned into the shared build scratch (/tmp/cargo/native-toolchain/)
+ *     and reached through a RUSTC
  *     --sysroot wrapper (no sudo, no cross-install copies).
  *   - none available (no rustc / offline) → skip with a notice; JS fallbacks
  *     (zstd stubs, TS crypto) become the frontend default.
@@ -29,8 +31,8 @@
  *   `loop_lore_native.wasm` — both (full, ~700K)
  *
  * Each is copied to `dist/public/wasm/` for static serving.
- * Compiled artifacts live under the crate's `target/` dir, gitignored —
- * never committed.
+ * Compiled artifacts live under the shared `/tmp/cargo` target dir
+ * (never committed, never under the repo tree).
  *
  * Run via: `bun run build:native`
  */
@@ -38,6 +40,7 @@
 import { spawnSync, } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, statSync, } from "node:fs";
 import { join, } from "node:path";
+import { jsonParseOr, } from "../src/utils/safe-json";
 import { ensureWasmToolchain, } from "./native/toolchain";
 
 /** Crate dir relative to this script (scripts/ → native/loop-lore-native/). */
@@ -48,6 +51,26 @@ const WASM_DIST = join(import.meta.dir, "..", "dist", "public", "wasm",);
 
 /** WASM target triple. */
 const WASM_TARGET = "wasm32-unknown-unknown";
+
+/**
+ * Cargo's target directory for this crate, honoring `CARGO_TARGET_DIR` /
+ * build config instead of assuming a repo-local `target/` (the host sets a
+ * shared `/tmp/cargo`).
+ * @returns absolute path to the `${triple}/release` output dir
+ */
+function cargoReleaseDir(): string {
+  const result = spawnSync(
+    "cargo",
+    ["metadata", "--format-version", "1", "--no-deps", "--manifest-path", join(CRATE_DIR, "Cargo.toml",),],
+    { encoding: "utf8", },
+  );
+
+  const base = result.status === 0
+    ? jsonParseOr<{ target_directory?: string }>(result.stdout, {},).target_directory
+    : undefined;
+
+  return join(base ?? join(import.meta.dir, "..", "target",), WASM_TARGET, "release",);
+}
 
 /** Platforms with a supported shared-library target (see loader BINARY_NAMES). */
 const SUPPORTED_PLATFORMS = new Set(["linux", "darwin", "win32",],);
@@ -157,7 +180,7 @@ function buildWasm(): boolean {
       return false;
     }
 
-    const src = join(import.meta.dir, "..", "target", WASM_TARGET, "release", "loop_lore_native.wasm",);
+    const src = join(cargoReleaseDir(), "loop_lore_native.wasm",);
     if (!existsSync(src,)) {
       console.error(`[build:native:wasm] expected ${src} not found`,);
       return false;

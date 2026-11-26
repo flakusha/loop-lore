@@ -14,12 +14,13 @@
  * convention: registered up front under the ISOLATED guard, file runs under
  * --isolate in the gate.
  */
-import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import * as realPersist from "../assets/service/persist-generated";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
-import { StorageBudgetScope, } from "../db/enums";
+import { CancelReason, CancelSource, GenerationStatus, StorageBudgetScope, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { StorageWriteRefusedError, } from "../federation/storage-quota";
 import * as realQuota from "../federation/storage-quota";
@@ -27,12 +28,19 @@ import { ErrorCode, } from "../routes/http-utils/status";
 import { createTestDb, destroyTestDb, type TestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { cancelGeneration, } from "./cancellation-actions/cancel";
+import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
+import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realVideoEngine from "./video-engine";
 import type * as videoGenRoute from "./video-gen-route";
-import { __resetVideoJobsForTests, storeVideoJob, } from "./video-jobs";
+import { __resetVideoJobsForTests, getVideoJob, storeVideoJob, type VideoJob, } from "./video-jobs";
 
 /** Engine outcome the route test controls per case. */
 let engineOutcome: { ok: true } | { ok: false; error: string; status: number } = { ok: true, };
+/** Engine submissions observed by the stub; snapshot per test. */
+let engineCalls = 0;
+/** Invoked inside the engine stub to cancel the chat mid-render. */
+let engineCancel: (() => void) | null = null;
 /** Quota refusal to throw, or null for the pass-through path. */
 let quotaRefusal: StorageWriteRefusedError | null = null;
 /** Persisted asset the stub returns; null simulates a persistence miss. */
@@ -53,6 +61,16 @@ let videoProviders: Array<Record<string, unknown>> | null = [
     generationTimeout: 5_000,
   },
 ];
+
+/** Selection the mocked resolver returns; undefined = no stored selection. */
+let resolvedWorkflowForTests: string | undefined;
+/** Resolver calls, for precedence assertions. */
+const workflowResolverCalls: Array<Record<string, unknown>> = [];
+/** Provider snapshots handed to the engine, captured at dispatch time. */
+const videoEngineCalls: Array<Array<Record<string, unknown>>> = [];
+
+/** Request snapshots handed to the engine, captured at dispatch time. */
+const videoEngineRequests: Array<Record<string, unknown>> = [];
 
 // ── Register mocks BEFORE importing the module under test ──────────────────────
 //
@@ -77,7 +95,12 @@ if (ISOLATED) {
 
   mock.module("./video-engine", () => ({
     ...realVideoEngine,
-    generateVideoWithFailover: async () => {
+    generateVideoWithFailover: async (providers: Array<Record<string, unknown>>, request: Record<string, unknown>,) => {
+      videoEngineCalls.push(providers.map((provider,) => ({ ...provider, })),);
+
+      videoEngineRequests.push({ ...request, },);
+      engineCancel?.();
+      engineCalls += 1;
       if (!engineOutcome.ok) { return engineOutcome; }
 
       return {
@@ -117,9 +140,23 @@ let lastPersistOpts: {
 // Dynamic import: mocks must register before the SUT module evaluates.
 let handleVideoGeneration: typeof videoGenRoute.handleVideoGeneration;
 let handleVideoGenerationStatus: typeof videoGenRoute.handleVideoGenerationStatus;
+let startVideoRender: typeof videoGenRoute.startVideoRender;
 
 if (ISOLATED) {
-  ({ handleVideoGeneration, handleVideoGenerationStatus, } = await import("./video-gen-route"));
+  mock.module("./workflow-selection", () => ({
+    getWorkflowDefaults: () => ({
+      "image.generate": { supported: [], default: "", },
+      "image.edit": { supported: [], default: "", },
+      "video.generate": { supported: ["explicit-video-wf", "txt2video",], default: "txt2video", },
+      "audio.generate": { supported: [], default: "", },
+    }),
+    resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
+      workflowResolverCalls.push(opts,);
+      return resolvedWorkflowForTests;
+    },
+  }),);
+
+  ({ handleVideoGeneration, handleVideoGenerationStatus, startVideoRender, } = await import("./video-gen-route"));
 }
 
 /**
@@ -168,9 +205,45 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(res.status,).toBe(401,);
   });
 
-  test("400 when neither prompt nor template renders one", async () => {
-    const res = await handleVideoGeneration({}, db, "video-route-user", "user",);
+  test("400 when the prompt is missing or empty", async () => {
+    for (const prompt of [undefined, "",]) {
+      const res = await handleVideoGeneration({ prompt, }, db, "video-route-user", "user",);
+      expect(res.status,).toBe(400,);
+    }
+  });
+
+  test("400s a prompt of 2001 characters with the bound message", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "x".repeat(2_001,), },
+      db,
+      "video-route-user",
+      "user",
+    );
+
     expect(res.status,).toBe(400,);
+    const body = (await res.json()) as { error: string };
+    expect(body.error,).toBe("prompt must be 1..2000 characters",);
+  });
+
+  test("passes a 2000-character prompt past the bound", async () => {
+    const configured = videoProviders;
+    videoProviders = null;
+    try {
+      const res = await handleVideoGeneration(
+        { prompt: "x".repeat(2_000,), },
+        db,
+        "video-route-user",
+        "user",
+      );
+
+      // The no-provider gate sits after the prompt bound: reaching it proves
+      // the 2000-character body was accepted by the bound check.
+      expect(res.status,).toBe(501,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toContain("No video generation provider configured",);
+    } finally {
+      videoProviders = configured;
+    }
   });
 
   test("501 when no video provider is configured", async () => {
@@ -393,6 +466,60 @@ describeOrSkip("handleVideoGeneration — pre-engine gates", () => {
     expect(terminal["code"],).toBe(500,);
     persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
   });
+
+  test("invalid graph returns 400 without submitting to the engine", async () => {
+    const before = engineCalls;
+    const res = await handleVideoGeneration(
+      { prompt: "a clip", workflow: {}, },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
+  });
+
+  test("invalid LoRA config returns 400 without submitting to the engine", async () => {
+    const before = engineCalls;
+    const res = await handleVideoGeneration(
+      { prompt: "a clip", lora: { name: "", strength: 0.5, backend: "comfyui", }, },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
+  });
+
+  test("valid LoRA config is refused before the engine", async () => {
+    const before = engineCalls;
+    const res = await handleVideoGeneration(
+      {
+        prompt: "a clip",
+        workflow: {
+          "1": { class_type: "CheckpointLoaderSimple", inputs: { ckpt_name: "model.safetensors", }, },
+          "2": { class_type: "SaveImage", inputs: { images: ["1", 0,], }, },
+        },
+        lora: { name: "detail_lora", strength: 0.5, backend: "comfyui", },
+      },
+      db,
+      "video-route-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+    expect(engineCalls,).toBe(before,);
+  });
+
+  beforeEach(() => {
+    __resetVideoJobsForTests();
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
+    lastPersistOpts = null;
+  },);
 },);
 
 describeOrSkip("handleVideoGenerationStatus — async poll", () => {
@@ -427,6 +554,31 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
 
     const { terminal, } = await submitAndPoll({ prompt: "a clip", }, pollDb, "video-status-user",);
     expect(terminal["status"],).toBe("done",);
+  });
+
+  test("400s an out-of-window scheduledFor before storing a job", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "bad schedule", scheduledFor: "tomorrow", },
+      pollDb,
+      "video-status-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(400,);
+  });
+
+  test("deferred submit stores the job without dispatching the engine", async () => {
+    const res = await handleVideoGeneration(
+      { prompt: "later clip", scheduledFor: Date.now() + 60_000, },
+      pollDb,
+      "video-status-user",
+      "user",
+    );
+
+    expect(res.status,).toBe(202,);
+    const submitBody = (await res.json()) as { data: { jobId: string } };
+
+    expect(getVideoJob(submitBody.data.jobId,)?.deferred,).toBe(true,);
   });
 
   test("done poll returns id/url/filename/mimeType/provider", async () => {
@@ -490,6 +642,56 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
     expect(terminal["status"],).toBe("failed",);
     expect(terminal["code"],).toBe(502,);
     expect(terminal["error"],).toBe("boom",);
+  });
+
+  test("cancel mid-render fails the job with 499 and persists no clip", async () => {
+    await insertUsers(pollDb, "video-discard-user", "Discard User", { id: "video-discard-user", } as never,);
+    await insertChats(pollDb, "Discard Chat", "video-discard-user", { id: "discard-chat", } as never,);
+    const attemptId = randomUUID();
+    const previousGen = activeGenerations.get(attemptId,);
+    const previousChat = chatToAttempt.get("discard-chat",);
+    // Only the fields cancelGeneration touches are needed; the cast keeps this
+    // route test independent of the full ActiveGeneration fixture.
+    const active = {
+      attemptId,
+      chatId: "discard-chat",
+      status: GenerationStatus.Streaming,
+      abortController: new AbortController(),
+      repetitionDetector: { getBufferText: () => "", },
+      sideEffectJobs: undefined,
+      events: undefined,
+    } as unknown as ActiveGeneration;
+
+    try {
+      activeGenerations.set(attemptId, active,);
+      chatToAttempt.set("discard-chat", attemptId,);
+      engineCancel = () => {
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.UserCancel,
+          source: CancelSource.User,
+          detail: "stop",
+        },);
+      };
+
+      const { submitStatus, terminal, } = await submitAndPoll(
+        { prompt: "a cancelled clip", chatId: "discard-chat", },
+        pollDb,
+        "video-discard-user",
+      );
+
+      expect(submitStatus,).toBe(202,);
+      expect(terminal["status"],).toBe("failed",);
+      expect(terminal["code"],).toBe(499,);
+      expect(lastPersistOpts,).toBeNull();
+    } finally {
+      engineCancel = null;
+      if (previousGen === undefined) { activeGenerations.delete(attemptId,); }
+      else { activeGenerations.set(attemptId, previousGen,); }
+
+      if (previousChat === undefined) { chatToAttempt.delete("discard-chat",); }
+      else { chatToAttempt.set("discard-chat", previousChat,); }
+    }
   });
 
   test("202 does not wait for the render: submit returns while the job is pending", async () => {
@@ -558,5 +760,228 @@ describeOrSkip("handleVideoGenerationStatus — async poll", () => {
         generationTimeout: 5_000,
       },
     ];
+  });
+},);
+
+// ── Stored workflow selection (useCase: video.generate) ─────────────────────────
+
+describeOrSkip("handleVideoGeneration — workflow selection", () => {
+  let selectionDb: TestDb;
+  let selectionDbHandle: Kysely<DB>;
+  const configuredProviders = () => [
+    {
+      name: "video-test-provider",
+      baseUrl: "http://127.0.0.1:8188",
+      apiFamily: "comfyui",
+      workflow: "txt2video",
+      timeout: 1_000,
+      generationTimeout: 5_000,
+    },
+  ];
+
+  beforeAll(async () => {
+    selectionDb = await createTestDb();
+    selectionDbHandle = selectionDb.db;
+  },);
+
+  afterAll(() => destroyTestDb(selectionDb,));
+
+  beforeEach(() => {
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    videoProviders = configuredProviders();
+    resolvedWorkflowForTests = undefined;
+    workflowResolverCalls.length = 0;
+    videoEngineCalls.length = 0;
+
+    videoEngineRequests.length = 0;
+  },);
+
+  afterEach(() => {
+    resolvedWorkflowForTests = undefined;
+    videoProviders = configuredProviders();
+  },);
+
+  test("stored selection reaches the engine without mutating config", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(workflowResolverCalls[0],).toMatchObject({
+      userId: "video-route-user",
+      useCase: "video.generate",
+      fallback: "txt2video",
+    },);
+
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("stored-video-wf",);
+    expect(videoProviders?.[0]?.workflow,).toBe("txt2video",);
+  });
+
+  test("explicit body workflow wins and skips the resolver", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+
+    const { terminal, } = await submitAndPoll(
+      { prompt: "a clip", workflow: "explicit-video-wf", },
+      selectionDbHandle,
+      "video-route-user",
+    );
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(0,);
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("explicit-video-wf",);
+    expect(videoProviders?.[0]?.workflow,).toBe("txt2video",);
+  });
+
+  test("sampling pins reach the engine request", async () => {
+    const { terminal, } = await submitAndPoll(
+      {
+        prompt: "a clip",
+        steps: 31,
+        cfgScale: 6.5,
+        sampler_name: "euler_a",
+        scheduler: "karras",
+      },
+      selectionDbHandle,
+      "video-route-user",
+    );
+
+    expect(terminal["status"],).toBe("done",);
+    expect(videoEngineRequests[0],).toMatchObject({
+      steps: 31,
+      cfgScale: 6.5,
+      sampler: "euler_a",
+      scheduler: "karras",
+    },);
+  });
+
+  test("overrides every configured provider on the per-request copy only", async () => {
+    resolvedWorkflowForTests = "stored-video-wf";
+    const storedVideoWf = "stored-video-wf";
+    videoProviders = [
+      {
+        name: "first",
+        baseUrl: "http://127.0.0.1:8188",
+        apiFamily: "comfyui",
+        workflow: "first-wf",
+        generationTimeout: 5_000,
+      },
+      {
+        name: "second",
+        baseUrl: "http://127.0.0.1:8189",
+        apiFamily: "comfyui",
+        workflow: "second-wf",
+        generationTimeout: 5_000,
+      },
+    ];
+
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(videoEngineCalls[0]?.map((provider,) => provider.workflow),).toEqual([
+      storedVideoWf,
+      storedVideoWf,
+    ],);
+
+    expect(videoProviders?.map((provider,) => provider.workflow),).toEqual(["first-wf", "second-wf",],);
+  });
+
+  test("falls back to the configured workflow when no selection resolves", async () => {
+    const { terminal, } = await submitAndPoll({ prompt: "a clip", }, selectionDbHandle, "video-route-user",);
+
+    expect(terminal["status"],).toBe("done",);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(videoEngineCalls[0]?.[0]?.workflow,).toBe("txt2video",);
+  });
+},);
+
+describeOrSkip("startVideoRender — deferred re-entry and dispatch gate", () => {
+  let seamDb: TestDb;
+  let seamHandle: Kysely<DB>;
+  let deps: Parameters<typeof startVideoRender>[1];
+
+  beforeAll(async () => {
+    seamDb = await createTestDb();
+    seamHandle = seamDb.db;
+    deps = {
+      generationTimeout: 5_000,
+      resolveApiKey: async () => undefined,
+      database: seamHandle,
+      uploadDir: "/tmp",
+      discard: { isDiscarded: () => false, },
+    };
+  },);
+
+  afterAll(async () => {
+    await destroyTestDb(seamDb,);
+  },);
+
+  beforeEach(() => {
+    engineCalls = 0;
+    videoEngineCalls.length = 0;
+    engineOutcome = { ok: true, };
+    quotaRefusal = null;
+    persistAsset = { id: "video-asset-1", filename: "clip.mp4", mime_type: "video/mp4", };
+    engineCancel = null;
+    __resetVideoJobsForTests();
+  },);
+
+  afterEach(() => {
+    __resetVideoJobsForTests();
+  },);
+
+  /** @param overrides @returns a fresh pending snapshot for the dispatch seam */
+  function renderJob(overrides: Partial<VideoJob> = {},): VideoJob {
+    return {
+      id: randomUUID(),
+      ownerId: "video-route-user",
+      status: "pending",
+      request: { prompt: "a clip", },
+      providers: [],
+      deadline: Date.now() + 60_000,
+      createdAt: Date.now(),
+      ...overrides,
+    };
+  }
+
+  test("ignores unknown and settled jobs", () => {
+    const missing = renderJob();
+    startVideoRender(missing, deps,);
+    expect(missing.started,).toBeUndefined();
+    expect(missing.resume,).toBeUndefined();
+
+    const settled = renderJob({ status: "failed", },);
+    storeVideoJob(settled,);
+    startVideoRender(settled, deps,);
+    expect(settled.resume,).toBeUndefined();
+    expect(engineCalls,).toBe(0,);
+  });
+
+  test("registers a re-entry closure for deferred jobs without starting them", () => {
+    const job = renderJob({ deferred: true, scheduledFor: Date.now() + 60_000, },);
+    storeVideoJob(job,);
+    startVideoRender(job, deps,);
+
+    expect(job.started,).toBeUndefined();
+    expect(typeof job.resume,).toBe("function",);
+    expect(engineCalls,).toBe(0,);
+
+    job.resume?.();
+    // The engine stub increments synchronously when the continuation dispatches.
+    expect(engineCalls,).toBe(1,);
+  });
+
+  test("starts a pending job once and ignores a second start", () => {
+    const job = renderJob();
+    storeVideoJob(job,);
+    startVideoRender(job, deps,);
+    const resume = job.resume;
+    startVideoRender(job, deps,);
+
+    expect(typeof resume,).toBe("function",);
+    expect(job.started,).toBe(true,);
+    expect(job.resume,).toBe(resume,);
+    expect(engineCalls,).toBe(1,);
   });
 },);

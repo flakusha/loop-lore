@@ -18,6 +18,7 @@
  * reports.
  */
 
+import type { McpServerConfig, } from "../../config/schema/harness";
 import { type HarnessTurnTranscript, } from "./turn-transcript";
 
 /** Quota report status, as published by harness `_omp/usage`-style reports. */
@@ -198,6 +199,35 @@ export interface HarnessAcpAdapter {
    *   express the decision and refused the tool call instead
    */
   respondPermission(outcome: PermissionOutcome,): WirePermissionOutcome;
+  /**
+   * Switch the session's mode (plan/act) via `session/set_mode`.
+   * @param modeId - the mode id, or omitted for the profile-configured default
+   * @returns the harness's reply (its confirmed mode when it echoes one)
+   * @throws {HarnessAcpError} kind `session` when no mode id is known or the harness rejects it
+   */
+  setMode(modeId?: string,): Promise<unknown>;
+  /**
+   * Sessions the harness remembers, via `session/list`.
+   * @returns session ids with their cwd, when the harness reports one.
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  listSessions(): Promise<Array<{ sessionId: string; cwd: string | null }>>;
+  /**
+   * Re-attach to a remembered session via `session/resume`, without replay:
+   * the transcript restarts empty and the next prompt continues the session.
+   * @param sessionId - the remembered session id
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  resumeSession(sessionId: string,): Promise<void>;
+  /**
+   * Re-attach to a remembered session via `session/load`, replaying its
+   * history: the harness re-emits `session/update` notifications, which the
+   * engine folds into a fresh transcript.
+   * @param sessionId - the remembered session id
+   * @returns the replayed transcript
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  loadSession(sessionId: string,): Promise<HarnessTurnTranscript>;
   /** Terminate the underlying process/connection. Idempotent. */
   close(): void;
 }
@@ -228,8 +258,24 @@ export interface HarnessAdapterCommandOptions {
   cwd?: string;
   /** Per-request timeout in ms. */
   requestTimeoutMs?: number;
+  /** ACP protocol version to request at initialize (default 1; 2 for v2-capable flavors). */
+  protocolVersion?: number;
   /** Serves server-originated `fs/read_text_file` asks; without one the adapter answers them as unsupported. */
   readTextFile?: (path: string,) => Promise<string>;
+  /**
+   * Serves server-originated `fs/write_text_file` asks; without one the
+   * adapter answers them as unsupported (and advertises no write bridge).
+   */
+  writeTextFile?: (path: string, content: string,) => Promise<void>;
+  /** MCP servers `session/new` hands to the agent (verbatim); absent = none. */
+  mcpServers?: McpServerConfig[];
+  /**
+   * Extra workspace roots `session/new` hands to the agent. Every entry must
+   * be absolute — a relative entry is rejected before the request goes out.
+   */
+  additionalDirectories?: string[];
+  /** Default mode id `setMode()` sends when called without one. */
+  mode?: string;
   /** Called once per open permission request, so hosts can prompt a human. */
   onPermissionRequest?: (pending: PendingPermission,) => void;
   /** Called when the connection dies or closes with an ask still parked, so hosts drop the queue entry. */

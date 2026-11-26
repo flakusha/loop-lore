@@ -24,6 +24,7 @@ import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { findDeadNodes, } from "../workflow-loader/workflow-validation";
 import { collectPlaceholders, } from "../workflow-substitutor";
+import { bindingPlaceholders, parseWorkflowBindingSpec, validateBindingTargets, } from "./bindings";
 
 /** Every valid `ImageEditCategory`, as a runtime list. The TS type is a union,
  * so the seeder needs this to resolve a filename to a category. */
@@ -65,7 +66,11 @@ function nodeShapeErrors(graph: ComfyUIWorkflow,): string[] {
  * @param parameters
  * @param placeholders
  */
-function parameterErrors(parameters: TemplateParameter[], placeholders: Set<string>,): string[] {
+function parameterErrors(
+  parameters: TemplateParameter[],
+  placeholders: Set<string>,
+  boundNames: ReadonlySet<string> = new Set(),
+): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
   for (const param of parameters) {
@@ -79,8 +84,8 @@ function parameterErrors(parameters: TemplateParameter[], placeholders: Set<stri
     }
 
     seen.add(param.name,);
-    if (!placeholders.has(param.name,)) {
-      errors.push(`parameter ${param.name} has no matching {{placeholder}} in the graph`,);
+    if (!placeholders.has(param.name,) && !boundNames.has(param.name,)) {
+      errors.push(`parameter ${param.name} has no matching {{placeholder}} or binding in the graph`,);
     }
   }
 
@@ -108,6 +113,25 @@ function loraSlotErrors(payload: WorkflowPayload,): string[] {
       errors.push(
         `loraSlots[${index}]: node ${nodeId} is ${node.class_type}, declared ${slot.classType}`,
       );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Future API exports carry LoRA slots as `{{lora_N}}` plus weight/enabled
+ * placeholders. A half-bound slot submits a literal model name or strength.
+ * @param placeholders - Placeholders found in the graph
+ */
+function loraPlaceholderErrors(placeholders: ReadonlySet<string>,): string[] {
+  const errors: string[] = [];
+  for (const name of placeholders) {
+    if (!/^lora_\d+$/.test(name,)) { continue; }
+    for (const suffix of ["weight", "enabled",] as const) {
+      if (!placeholders.has(`${name}_${suffix}`,)) {
+        errors.push(`${name} has no {{${name}_${suffix}}} placeholder`,);
+      }
     }
   }
 
@@ -174,8 +198,27 @@ export function validateWorkflowPayload(value: unknown, options: ValidateWorkflo
 
   if (badRequired) { errors.push("requiredNodes must be non-empty strings",); }
 
-  errors.push(...parameterErrors(payload.parameters, collectPlaceholders(graph,),),);
+  const boundNames = new Set<string>();
+  if (payload.bindings !== undefined) {
+    const parsed = parseWorkflowBindingSpec(payload.bindings,);
+    if (!parsed.ok) {
+      errors.push(...parsed.errors.map((error,) => `bindings: ${error}`),);
+    } else {
+      for (const name of bindingPlaceholders(parsed.spec,)) { boundNames.add(name,); }
+      for (const rule of parsed.spec.bindings) { boundNames.add(rule.parameter,); }
+      errors.push(
+        ...validateBindingTargets(parsed.spec, graph,).map(
+          (error,) => `bindings: ${error}`,
+        ),
+      );
+    }
+  }
+
+  // hint: Logic changed on both sides. Requires understanding intent of each change.
+  const placeholders = collectPlaceholders(graph,);
+  errors.push(...parameterErrors(payload.parameters, placeholders, boundNames,),);
   errors.push(...loraSlotErrors(payload,),);
+  errors.push(...loraPlaceholderErrors(placeholders,),);
 
   // Same strict rule as the disk loader: reject, do not warn. Converted
   // mode exempts exactly the converter-reported ids — each must still be

@@ -26,6 +26,8 @@ export interface ProviderWizardState {
   label: string;
   baseUrl: string;
   model: string;
+  /** Which provider family the save materializes — set by the preset picker. */
+  kind: string;
   apiKey: string;
   setDefault: boolean;
   hasStoredKey: boolean;
@@ -98,6 +100,7 @@ export function createProviderWizard(): ProviderWizardSlice {
     label: "",
     baseUrl: "",
     model: "",
+    kind: "openai-compatible",
     apiKey: "",
     setDefault: false,
     hasStoredKey: false,
@@ -129,6 +132,7 @@ export function createProviderWizard(): ProviderWizardSlice {
       this.wizard.label = "";
       this.wizard.baseUrl = "";
       this.wizard.model = "";
+      this.wizard.kind = "openai-compatible";
       this.wizard.apiKey = "";
       this.wizard.setDefault = false;
       this.wizard.hasStoredKey = false;
@@ -163,6 +167,7 @@ export function createProviderWizard(): ProviderWizardSlice {
       this.wizard.label = preset.label;
       this.wizard.baseUrl = preset.baseUrl;
       this.wizard.model = preset.model;
+      this.wizard.kind = preset.kind;
     },
 
     editProvider(this: ProviderWizardScope, name: string,): void {
@@ -174,6 +179,7 @@ export function createProviderWizard(): ProviderWizardSlice {
       this.wizard.label = provider.label;
       this.wizard.baseUrl = provider.baseUrl;
       this.wizard.model = provider.model;
+      this.wizard.kind = provider.kind ?? preset?.kind ?? "openai-compatible";
       this.wizard.apiKey = "";
       this.wizard.hasStoredKey = provider.hasApiKey;
       this.wizard.setDefault = false;
@@ -196,6 +202,11 @@ export function createProviderWizard(): ProviderWizardSlice {
         model: this.wizard.model,
         setDefault: this.wizard.setDefault,
       };
+
+      // The backend defaults an absent kind to openai-compatible — only the
+      // native families travel the wire, so the default payload shape is
+      // untouched.
+      if (this.wizard.kind !== "openai-compatible") { payload.kind = this.wizard.kind; }
 
       if (this.wizard.apiKey !== "") { payload.apiKey = this.wizard.apiKey; }
       this.wizard.saving = true;

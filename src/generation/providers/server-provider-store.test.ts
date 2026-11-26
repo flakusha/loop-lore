@@ -22,6 +22,7 @@ import {
   materializeServerProviders,
   saveServerProvider,
   serverProviderDescriptorKey,
+  type ServerProviderKind,
   serverProviderSecretKey,
   ServerProviderValidationError,
 } from "./server-provider-store";
@@ -646,5 +647,202 @@ describe("server provider store", () => {
 
     expect(descriptor?.state,).toBe("error",);
     expect(descriptor?.error,).toBe("The descriptor has no stored API key.",);
+  });
+});
+
+describe("non-openai-compatible providers", () => {
+  test("materializes an anthropic-native provider sealed, audited and retrievable", async () => {
+    const config = testConfig();
+    await saveServerProvider(db, {
+      name: "anthropic-provider",
+      label: "Anthropic Provider",
+      baseUrl: "https://api.anthropic.com",
+      model: "claude-sonnet-4-5",
+      kind: "anthropic",
+      apiKey: "sk-anthropic-value",
+      actor: "admin-user-1",
+      config,
+    },);
+
+    registered.push("anthropic-provider",);
+
+    // Sealed: the stored key row never carries plaintext.
+    const row = await db
+      .selectFrom("system_config",)
+      .select("value",)
+      .where("key", "=", serverProviderSecretKey("anthropic-provider",),)
+      .executeTakeFirst();
+
+    expect(row?.value,).toStartWith("secret:v1:",);
+    expect(row?.value,).not.toContain("sk-anthropic-value",);
+    expect(await getConfigValue(db, serverProviderSecretKey("anthropic-provider",),),).toBe("sk-anthropic-value",);
+
+    // Live in the registry and in the anthropic config slot — not the list.
+    expect(getProvider("anthropic-provider",),).toBeDefined();
+    expect(config.generation.providers.anthropic?.name,).toBe("anthropic-provider",);
+    expect(config.generation.providers.openaiCompatible.map((entry,) => entry.name),).not.toContain(
+      "anthropic-provider",
+    );
+
+    // Audited without the key.
+    const rows = await db
+      .selectFrom("log_entries",)
+      .select(["action", "entity_id", "meta",],)
+      .where("action", "=", "server-provider.saved",)
+      .where("entity_id", "=", "anthropic-provider",)
+      .execute();
+
+    expect(rows.length,).toBe(1,);
+    expect(rows[0]?.meta,).toContain("anthropic",);
+    expect(rows[0]?.meta,).not.toContain("sk-anthropic-value",);
+
+    // Retrievable with its kind.
+    const providers = await listServerProviders(db,);
+    expect(providers.find((entry,) => entry.name === "anthropic-provider")?.kind,).toBe("anthropic",);
+  });
+
+  test("materializes an ollama-native provider sealed, audited and retrievable", async () => {
+    const config = testConfig();
+    await saveServerProvider(db, {
+      name: "ollama-native-provider",
+      label: "Ollama Native Provider",
+      baseUrl: "http://localhost:11434",
+      model: "llama3.2",
+      kind: "ollama-native",
+      apiKey: "sk-ollama-value",
+      actor: "admin-user-1",
+      config,
+    },);
+
+    registered.push("ollama-native-provider",);
+
+    // Sealed: the stored key row never carries plaintext.
+    const row = await db
+      .selectFrom("system_config",)
+      .select("value",)
+      .where("key", "=", serverProviderSecretKey("ollama-native-provider",),)
+      .executeTakeFirst();
+
+    expect(row?.value,).toStartWith("secret:v1:",);
+    expect(row?.value,).not.toContain("sk-ollama-value",);
+
+    // Live in the registry and in the ollamaNative config slot — not the list.
+    expect(getProvider("ollama-native-provider",),).toBeDefined();
+    expect(config.generation.providers.ollamaNative?.name,).toBe("ollama-native-provider",);
+    expect(config.generation.providers.openaiCompatible.map((entry,) => entry.name),).not.toContain(
+      "ollama-native-provider",
+    );
+
+    // Audited without the key.
+    const rows = await db
+      .selectFrom("log_entries",)
+      .select(["action", "entity_id", "meta",],)
+      .where("action", "=", "server-provider.saved",)
+      .where("entity_id", "=", "ollama-native-provider",)
+      .execute();
+
+    expect(rows.length,).toBe(1,);
+    expect(rows[0]?.meta,).toContain("ollama-native",);
+    expect(rows[0]?.meta,).not.toContain("sk-ollama-value",);
+
+    // Retrievable with its kind.
+    const providers = await listServerProviders(db,);
+    expect(providers.find((entry,) => entry.name === "ollama-native-provider")?.kind,).toBe("ollama-native",);
+  });
+
+  test("materializes stored native descriptors at boot", async () => {
+    const config = testConfig();
+    await seedDescriptor("boot-anthropic", {
+      baseUrl: "https://api.anthropic.com",
+      model: "claude-sonnet-4-5",
+      kind: "anthropic",
+      allowedHosts: ["api.anthropic.com",],
+    },);
+
+    await seedDescriptor("boot-ollama", {
+      baseUrl: "http://localhost:11434",
+      model: "llama3.2",
+      kind: "ollama-native",
+      allowedHosts: [],
+    },);
+
+    const materialized = await materializeServerProviders(db, config,);
+    registered.push("boot-anthropic", "boot-ollama",);
+
+    expect(materialized,).toContain("boot-anthropic",);
+    expect(materialized,).toContain("boot-ollama",);
+    expect(getProvider("boot-anthropic",),).toBeDefined();
+    expect(getProvider("boot-ollama",),).toBeDefined();
+    expect(config.generation.providers.anthropic?.name,).toBe("boot-anthropic",);
+    expect(config.generation.providers.ollamaNative?.name,).toBe("boot-ollama",);
+  });
+
+  test("makes a lone native provider the default", async () => {
+    const config = testConfig();
+    await saveServerProvider(db, {
+      name: "lone-anthropic",
+      label: "Lone Anthropic",
+      baseUrl: "https://api.anthropic.com",
+      model: "claude-sonnet-4-5",
+      kind: "anthropic",
+      apiKey: "sk-lone-value",
+      config,
+    },);
+
+    registered.push("lone-anthropic",);
+
+    expect(config.generation.defaultProvider,).toBe("lone-anthropic",);
+    expect(config.generation.defaultModels["lone-anthropic"],).toBe("claude-sonnet-4-5",);
+    expect(await getConfigValue(db, "default_provider",),).toBe("lone-anthropic",);
+  });
+
+  test("deletes a native provider from its config slot", async () => {
+    const config = testConfig();
+    await saveServerProvider(db, {
+      name: "doomed-anthropic",
+      label: "Doomed Anthropic",
+      baseUrl: "https://api.anthropic.com",
+      model: "claude-sonnet-4-5",
+      kind: "anthropic",
+      apiKey: "sk-doomed-value",
+      config,
+    },);
+
+    registered.push("doomed-anthropic",);
+    expect(config.generation.providers.anthropic?.name,).toBe("doomed-anthropic",);
+
+    await deleteServerProvider(db, { name: "doomed-anthropic", config, },);
+
+    expect(getProvider("doomed-anthropic",),).toBeUndefined();
+    expect(config.generation.providers.anthropic,).toBeUndefined();
+    expect((await listServerProviders(db,)).some((entry,) => entry.name === "doomed-anthropic"),).toBe(false,);
+  });
+
+  test("rejects an unknown kind on save", async () => {
+    const config = testConfig();
+
+    await expect(saveServerProvider(db, {
+      name: "unknown-kind-provider",
+      label: "Unknown Kind Provider",
+      baseUrl: "https://api.example.com/v1",
+      model: "demo-model",
+      kind: "unknown-kind" as unknown as ServerProviderKind,
+      apiKey: "sk-unknown-value",
+      config,
+    },),).rejects.toThrow(ServerProviderValidationError,);
+
+    expect(getProvider("unknown-kind-provider",),).toBeUndefined();
+    expect(await getConfigValue(db, serverProviderDescriptorKey("unknown-kind-provider",),),).toBeUndefined();
+  });
+
+  test("skips a stored descriptor with an unknown kind", async () => {
+    const config = testConfig();
+    await seedDescriptor("unknown-stored-kind", { kind: "unknown-kind", },);
+
+    const materialized = await materializeServerProviders(db, config,);
+
+    expect(materialized,).not.toContain("unknown-stored-kind",);
+    expect(getProvider("unknown-stored-kind",),).toBeUndefined();
+    expect((await listServerProviders(db,)).some((entry,) => entry.name === "unknown-stored-kind"),).toBe(false,);
   });
 });

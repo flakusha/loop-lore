@@ -56,7 +56,7 @@ describe("peer workload wire — protocol constants", () => {
 
   test("every error code is namespaced so a peer can route on it", () => {
     for (const code of Object.values(PeerWorkErrorCode,)) {
-      expect(code.startsWith("federation.workload_",),).toBe(true,);
+      expect(code.startsWith("federation.workload_",) || code.startsWith("federation.quota_",),).toBe(true,);
     }
   });
 

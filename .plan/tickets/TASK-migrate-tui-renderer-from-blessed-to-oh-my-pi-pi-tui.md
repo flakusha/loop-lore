@@ -3,7 +3,8 @@
 
 # TASK: Migrate TUI renderer from blessed to @oh-my-pi/pi-tui
 
-**Status:** In Progress
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the migration landed — every widget is pi-tui via the single subpath facade (`src/tui/pi.ts:13-36`), the subpath-only purity rule is enforced by `src/tui/import-purity.test.ts:5-10,40`, and no `blessed` import remains under `src/tui`. Residual: blessed-style tag markup survives as the render dialect (`src/tui/ansi.ts:5-9`), which pi-tui has no parser for.
 **Priority:** high
 **Effort:** Medium
 **Caveats:** TOCTOU, security, authorization, parallelism, lock/unlock lifecycle, partial failure, rollback, stale state, data races, idempotency, observability
@@ -18,7 +19,7 @@ Where: worktree branch tui-pi-migration; analysis docs at .tmp/tui-pi-analysis/o
 
 Related: .plan/epics/epic-terminal-ui.md.
 
-Status: In Progress
+Status: Done
 
 **Context:**
 

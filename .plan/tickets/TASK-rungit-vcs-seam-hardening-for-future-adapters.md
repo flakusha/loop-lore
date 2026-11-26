@@ -10,7 +10,7 @@
 
 **Summary:**
 
-Harness shells git directly (runGit in run-context.ts, worktree-scope.ts) and giwt is git-native. Keep one choke point so a future vcs adapter (jj/sapling) is a seam, not a rewrite. Scope: audit + centralize VCS calls, keep test seams; NO jj support (premature). Research: harness-git-integration section 4.
+Harness shells git directly (runGit in run-context.ts, worktree-scope.ts) and giwt is git-native. The VCS seam lands in `giwt` (`TASK-vcs-backend-interface-and-git-adapter`); loop-lore's `runGit` stays a thin read-side helper with a scrubbed git env and explicit cwd, and must not grow a second backend abstraction. Scope: audit + centralize VCS calls, keep test seams; NO jj support (premature). Research: harness-git-integration section 4.
 
 **Context:**
 

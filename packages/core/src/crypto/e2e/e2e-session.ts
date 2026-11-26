@@ -24,8 +24,8 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
-import type { DB, } from "@/db/schema";
-import { uid, } from "@/utils";
+import type { DB, } from "../../../../../src/db/schema";
+import { uid, } from "../../../../../src/utils";
 import { type E2eSessionRow, type E2eSessionsDbRow, rowToSession, } from "./e2e-session-row";
 
 /** */

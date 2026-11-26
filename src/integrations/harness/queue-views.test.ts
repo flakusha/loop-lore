@@ -23,6 +23,7 @@ const baseRow: QueuedTurnRow = {
   requested_by: "user-admin",
   requested_role: "admin",
   turn_key: null,
+  owner_slug: null,
   attempts: 0,
   result_message_id: null,
   error_code: null,

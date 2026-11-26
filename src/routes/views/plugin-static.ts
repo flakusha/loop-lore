@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { SuccessResponse, } from "../../validation/schemas";
 import { applyI18n, htmlResponse, } from "./layout";
+import { redirectUnlessFragment, } from "./negotiate";
 import { serveStaticPartial, } from "./static-partials";
 
 /**
@@ -12,10 +13,8 @@ import { serveStaticPartial, } from "./static-partials";
 export function staticRoutes() {
   return new Elysia({ name: "views-static", },)
     .get("/partials/:page/:section", (ctx: any,) => {
-      const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
-      if (!isHtmx) {
-        return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
-      }
+      const fragmentRedirect = redirectUnlessFragment(ctx, false,);
+      if (fragmentRedirect) { return fragmentRedirect; }
 
       const name = `${ctx.params.page}/${ctx.params.section}`;
       const url = new URL(ctx.request.url,);

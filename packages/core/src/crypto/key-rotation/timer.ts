@@ -4,8 +4,8 @@
 /**
  * Auto-rotation timer.
  */
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import { runAutoRotation, } from "./auto-run";
 import { log, } from "./log";
 

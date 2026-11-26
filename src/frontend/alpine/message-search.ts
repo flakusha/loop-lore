@@ -4,7 +4,7 @@
 // ── In-chat message search — highlight + keyboard navigation ──
 //
 // Adds a search toggle to the chat header (🔍). When opened, a search bar
-// queries the FTS-backed GET /api/v1/messages/search endpoint (scoped to the
+// queries the FTS-backed GET /api/v1/search endpoint (scoped to the
 // active chat), highlights matched message bubbles, shows an "N / M matches"
 // counter, and supports Enter/Shift+Enter plus ↑/↓ navigation. Escape closes
 // the bar and clears highlights.
@@ -81,7 +81,7 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
 
     this._msgSearchLoading = true;
     try {
-      const url = `/api/v1/messages/search?chatId=${encodeURIComponent(chatId,)}&q=${
+      const url = `/api/v1/search?chatId=${encodeURIComponent(chatId,)}&q=${
         encodeURIComponent(q,)
       }&limit=${SEARCH_LIMIT}`;
 
@@ -93,12 +93,11 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
       }
 
       const body = (await res.json()) as {
-        results?: { messageId: string }[];
-        total?: number;
+        messages?: { messageId: string }[];
       };
 
-      this._msgSearchMatches = Array.from(body.results ?? [], (r,) => r.messageId,);
-      this._msgSearchTotal = body.total ?? this._msgSearchMatches.length;
+      this._msgSearchMatches = Array.from(body.messages ?? [], (r,) => r.messageId,);
+      this._msgSearchTotal = this._msgSearchMatches.length;
       this._msgSearchIndex = 0;
       this.applyMessageSearchHighlights();
       this.scrollToSearchMatch(0,);

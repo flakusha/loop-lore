@@ -14,6 +14,7 @@ import { db, } from "./db";
 import { docs, } from "./docs";
 import { dynamicResponse, } from "./dynamic-response";
 import { encryption, } from "./encryption";
+import { features, } from "./features";
 import { federation, } from "./federation";
 import { frontend, } from "./frontend";
 import { generation, } from "./generation";
@@ -24,6 +25,7 @@ import { idempotency, } from "./idempotency";
 import { integrations, } from "./integrations";
 import { items, } from "./items";
 import { logging, } from "./logging";
+import { mcp, } from "./mcp";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
 import { observability, } from "./observability";
@@ -76,6 +78,7 @@ export const jsonSchema = (): JSONSchema => {
       auth,
       transport,
       messages,
+      mcp,
       nsfw,
       observability,
       hooks,
@@ -87,6 +90,7 @@ export const jsonSchema = (): JSONSchema => {
       dynamicResponse,
       frontend,
       federation,
+      features,
       seeding,
       templates,
       characters,

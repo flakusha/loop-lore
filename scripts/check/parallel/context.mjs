@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 265
 
 /**
  * Diff-scope context for the parallel check runner: `--diff-base` resolution,
@@ -74,6 +75,52 @@ if (GATES_FILTER && SKIP_GATES_FILTER) {
   process.exit(2,);
 }
 
+// ── Feature profile selector ────────────────────────────────────
+// `--profile=<name>` / `--profile <name>` labels the gate run for provenance.
+// All five profiles ship the SAME source tree, so a profile is NOT a gate
+// filter: every gate still enforces in every profile. A typo must never fall
+// through to a green full run claiming coverage it did not announce, so
+// missing, empty and unknown values are usage errors listing the valid names.
+// --gates is rejected (a whitelist could silently drop a gate) while
+// --skip-gates composes (skip-only, fail-closed).
+// Keep the names in sync with FEATURE_PROFILES in the core config schema.
+export const FEATURE_PROFILES = [
+  "full",
+  "business-only",
+  "rpg-chat-only",
+  "local-only",
+  "relay-only",
+];
+
+function profileUsage(detail,) {
+  console.error(`error: ${detail}`,);
+  console.error(`valid profiles: ${FEATURE_PROFILES.join(", ",)}`,);
+  process.exit(2,);
+}
+
+function parseProfile() {
+  const spaceIdx = process.argv.indexOf("--profile",);
+  const eqIdx = process.argv.findIndex((a,) => a.startsWith("--profile=",));
+  if (spaceIdx === -1 && eqIdx === -1) { return "full"; }
+  if (GATES_FILTER) {
+    profileUsage("--gates and --profile are mutually exclusive",);
+  }
+  const raw = spaceIdx !== -1
+    ? process.argv[spaceIdx + 1]
+    : process.argv[eqIdx].slice("--profile=".length,);
+  // A following flag is not a profile name: consuming it would hide the typo
+  // and leave the real flag unparsed.
+  if (raw === undefined || raw.startsWith("--",) || raw.trim() === "") {
+    profileUsage("--profile requires a profile name",);
+  }
+  const name = raw.trim();
+  if (!FEATURE_PROFILES.includes(name,)) {
+    profileUsage(`unknown profile ${JSON.stringify(name,)}`,);
+  }
+  return name;
+}
+export const PROFILE = parseProfile();
+
 /**
  * Files `git diff --name-only base HEAD` reports, plus uncommitted
  * working-tree changes. Empty when `base` is null.
@@ -139,14 +186,21 @@ export function changedFiles(base, cwd = DIFF_ROOT,) {
 }
 
 /**
- * Top-level `src/` modules touched by the changed files
- * (`src/chat/service/x.ts` → `chat`). Feeds the coverage gate's `--only`.
+ * Module roots touched by the changed files: `src/chat/service/x.ts` → `chat`,
+ * `packages/core/src/config/x.ts` → `packages/core/src/config`. Feeds scoped
+ * coverage test-dir selection.
  * @param files - Changed paths.
- * @returns Sorted unique module names, or null when nothing under src/ changed.
+ * @returns Sorted unique roots, or null when nothing changed.
  */
-function changedModules(files,) {
+export function changedModules(files,) {
   const mods = new Set();
   for (const f of files) {
+    if (/^packages\/[^/]+\/src\//.test(f,)) {
+      // Keep the real workspace path: `src/<mod>` points at the app-side shim
+      // tree, not the package that owns the implementation and its tests.
+      mods.add(path.posix.dirname(f,).split("/",).slice(0, 4,).join("/",),);
+      continue;
+    }
     if (f.startsWith("src/",)) {
       mods.add(f.split("/",)[1],);
       continue;
@@ -184,12 +238,12 @@ function dirHasTests(dir,) {
  * lcov produced by only the co-located test files of the diff cannot floor
  * anything, so coverage is the only consumer of this scoping.
  * @param files - Changed paths.
- * @returns Existing `src/<mod>` dirs that contain tests, sorted.
+ * @returns Existing `src/<mod>` / `packages/core/src/<mod>` dirs with tests.
  */
-function scopedCoveragePaths(files,) {
+export function scopedCoveragePaths(files,) {
   const mods = changedModules(files,) ?? [];
   return mods
-    .map((m,) => `src/${m}`)
+    .map((m,) => m.startsWith("packages/",) ? m : `src/${m}`)
     .filter((p,) => {
       const abs = path.resolve(DIFF_ROOT, p,);
       // Guard: a top-level changed FILE (e.g. `.gitignore`) maps to a
@@ -222,10 +276,15 @@ export const CHANGED_FILES = (() => {
 export const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED_FILES,);
 // BUG-37a3763: floor diff-touched FILES, not whole modules — a scoped lcov
 // only contains files the scoped tests loaded, so module aggregates are
-// structurally unpassable. Test files and non-src trees are excluded (no
-// meaningful per-file line coverage; non-src paths are unmeasured SKIPs).
+// structurally unpassable. Test files and non-(src|core) trees are excluded
+// (no meaningful per-file line coverage; those paths are unmeasured SKIPs).
+/** Whether a changed file is a source file the scoped lcov can floor. */
+export function isScopedDiffSrcFile(f,) {
+  return (f.startsWith("src/",) || /^packages\/[^/]+\/src\//.test(f,)) &&
+    f.endsWith(".ts",) && !f.endsWith(".test.ts",);
+}
 export const SCOPED_DIFF_SRC_FILES = (DIFF_BASE ? CHANGED_FILES : [])
-  .filter((f,) => f.startsWith("src/",) && f.endsWith(".ts",) && !f.endsWith(".test.ts",));
+  .filter(isScopedDiffSrcFile,);
 export const NOOP_OK = "true # diff-scope: no matching files";
 
 // Prefix every skip marker shares. A gate that could not be EVALUATED — no

@@ -4,17 +4,18 @@
 /**
  * Background transport resolution for embeddings + rerank.
  *
- * Both run off the chat hot path, so they declare the `background` task
- * signal and let `ModelRouter` order their candidate endpoints. The default
- * strategy scores unannotated endpoints 0, so the env-var precedence chain
- * below is the resolved order unless an operator annotates cost/latency.
+ * Both run off the chat hot path and let `ModelRouter` order their candidate
+ * endpoints. Embeddings declares `background`; rerank declares its own
+ * `reranking` signal so a per-task routing rule can fire. The default strategy
+ * scores unannotated endpoints 0, so the env-var precedence chain below is the
+ * resolved order unless an operator annotates cost/latency.
  *
  * No second config mechanism: candidates come from the env chain the callers
  * already used, and routing only reorders them.
  */
-import { ModelRouter, type RoutableModel, } from "../generation/routing/router";
+import { type RoutableModel, sharedRouter, } from "../generation/routing/router";
 import type { GenerationRoutingConfig, } from "../generation/routing/routing-config";
-import { BACKGROUND, } from "../generation/routing/task-signal";
+import { BACKGROUND, type TaskSignal, } from "../generation/routing/task-signal";
 
 /** Fallback endpoint when no env var is set (local Ollama default). */
 const DEFAULT_ENDPOINT = "http://localhost:11434";
@@ -33,6 +34,38 @@ function envUrl(name: string,): string | undefined {
   return value !== undefined && value.trim() !== "" ? value : undefined;
 }
 
+/** Rerank wire provider: "ollama" (default, llama.cpp) | "openrouter". */
+export type RerankProvider = "ollama" | "openrouter";
+
+/** OpenRouter's OpenAI-compatible API base. */
+export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+
+/**
+ * Provider selection for the rerank wire: E2E_RERANK_PROVIDER=openrouter picks
+ * the OpenRouter wire; anything else keeps the default llama.cpp wire.
+ * @returns {RerankProvider}
+ */
+export function resolveRerankProvider(): RerankProvider {
+  return process.env.E2E_RERANK_PROVIDER === "openrouter" ? "openrouter" : "ollama";
+}
+
+/**
+ * Bearer key for the rerank wire (E2E_RERANK_KEY, else the shared
+ * BYOK_E2E_API_KEY). The shared key is only sent to a remote endpoint, never
+ * to a loopback one. Unset → no Authorization header.
+ * @param base - The endpoint base the key would be sent to.
+ * @returns {string | undefined}
+ */
+export function resolveRerankApiKey(base: string,): string | undefined {
+  const explicit = process.env.E2E_RERANK_KEY?.trim();
+  if (explicit) { return explicit; }
+  const shared = process.env.BYOK_E2E_API_KEY?.trim();
+  if (!shared) { return undefined; }
+  return /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(base,)
+    ? undefined
+    : shared;
+}
+
 /**
  * Resolve the endpoint for a background model call.
  * @param envNames - Env vars in descending precedence; the first match wins
@@ -40,11 +73,18 @@ function envUrl(name: string,): string | undefined {
  * @param opts
  * @param opts.routing - `config.generation.routing`; absent = no reordering.
  * @param opts.model - Model id recorded on the candidate (routing is model-agnostic today).
+ * @param opts.signal - Task signal to route on (default `background`).
+ * @param opts.defaultUrl - Last candidate when no env var is set (default local Ollama).
  * @returns The winning base URL.
  */
 export function resolveBackgroundEndpoint(
   envNames: string[],
-  opts: { routing?: GenerationRoutingConfig; model?: string } = {},
+  opts: {
+    routing?: GenerationRoutingConfig;
+    model?: string;
+    signal?: TaskSignal;
+    defaultUrl?: string;
+  } = {},
 ): string {
   const candidates: EndpointCandidate[] = [];
   for (const name of envNames) {
@@ -52,8 +92,12 @@ export function resolveBackgroundEndpoint(
     if (baseUrl) { candidates.push({ name, model: opts.model ?? "", baseUrl, capabilities: {}, },); }
   }
 
+  if (opts.defaultUrl) {
+    candidates.push({ name: "default", model: opts.model ?? "", baseUrl: opts.defaultUrl, capabilities: {}, },);
+  }
+
   if (candidates.length === 0) { return DEFAULT_ENDPOINT; }
   if (candidates.length === 1) { return candidates[0]!.baseUrl; }
-  return new ModelRouter(opts.routing,).route(BACKGROUND, candidates,).primary?.baseUrl ??
+  return sharedRouter(opts.routing,).route(opts.signal ?? BACKGROUND, candidates,).primary?.baseUrl ??
     candidates[0]!.baseUrl;
 }

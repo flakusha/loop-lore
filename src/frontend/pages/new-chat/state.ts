@@ -56,6 +56,8 @@ export interface NewChatCtx {
   form: HTMLFormElement | null;
   impersonateGroup: HTMLElement | null;
   impersonateToggle: HTMLInputElement | null;
+  greetingGroup: HTMLElement | null;
+  greetingSelect: HTMLSelectElement | null;
   memoryCarryGroup: HTMLElement | null;
   memorySelectiveList: HTMLElement | null;
   memoryCheckboxList: HTMLElement | null;
@@ -91,6 +93,8 @@ export function createCtx(): NewChatCtx {
     form: null,
     impersonateGroup: null,
     impersonateToggle: null,
+    greetingGroup: null,
+    greetingSelect: null,
     memoryCarryGroup: null,
     memorySelectiveList: null,
     memoryCheckboxList: null,
@@ -102,3 +106,12 @@ export function createCtx(): NewChatCtx {
 }
 
 export const isGroup = (ctx: NewChatCtx,): boolean => ctx.chatType?.value === "group";
+
+/**
+ * Only these two variants seed `gm_config.validation`; `llm_only_group_gm` is
+ * a Guided/Story variant with a `gm_profile` seed and must never receive it.
+ * @param variant - selected chat variant id
+ * @returns whether the validation-harness field applies
+ */
+export const hasValidationHarness = (variant: string,): boolean =>
+  variant === "llm_only" || variant === "llm_only_group";

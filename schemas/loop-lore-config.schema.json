@@ -27,7 +27,7 @@
         },
         "publicOrigin": {
           "type": "string",
-          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN. REQUIRED when host is a wildcard address (0.0.0.0, ::): the instance then answers under names the config cannot enumerate, and the MCP transport's DNS-rebinding allowlist is derived from this origin (it answers 503 naming this knob when unset)."
         },
         "tls": {
           "type": "object",
@@ -73,6 +73,17 @@
           "default": "${DATA_DIR}/loop-lore.db",
           "description": "SQLite database file path"
         },
+        "backupEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable event-driven DB snapshots through the backup scheduler"
+        },
+        "snapshotRetention": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Number of DB snapshots kept after each scheduled backup"
+        },
         "url": {
           "type": "string",
           "description": "PostgreSQL connection URL"
@@ -107,6 +118,17 @@
           "type": "boolean",
           "default": true,
           "description": "Compress uploaded assets"
+        },
+        "downloadNaming": {
+          "type": "string",
+          "enum": [
+            "raw",
+            "datetime",
+            "hash",
+            "datetime-hash"
+          ],
+          "default": "raw",
+          "description": "Download filename scheme (user asset_user_preferences.download_naming overrides it): raw app-storage name, datetime and/or content-hash prefix"
         },
         "signedUrlSecret": {
           "type": "string",
@@ -145,6 +167,11 @@
           "type": "boolean",
           "default": false,
           "description": "Smart-regen decision gate: when enabled, /regen without an explicit action resolves by message-size heuristic to a plain re-roll or an alternate style instead of showing the usage menu"
+        },
+        "gmToolKeywordGate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keyword pre-gate for AUX GM-tool detection: default-on; on gate error it fails open (the AUX call proceeds), and it suppresses only the AUX detection call — never the slash-command GM-tool path"
         },
         "quotaWindowMs": {
           "type": "integer",
@@ -530,6 +557,77 @@
         "idempotencyExpiryHours"
       ]
     },
+    "mcp": {
+      "type": "object",
+      "description": "Declarative MCP servers loop-lore connects to (stdio or http)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Master switch; absent/false exposes no MCP servers"
+        },
+        "servers": {
+          "type": "object",
+          "description": "Servers keyed by local name; each needs a transport and exactly one of command/url",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Per-server switch"
+              },
+              "transport": {
+                "type": "string",
+                "enum": [
+                  "stdio",
+                  "http"
+                ],
+                "description": "Server transport"
+              },
+              "command": {
+                "type": "string",
+                "description": "stdio executable (argv head, never a shell command)"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "stdio argv tail"
+              },
+              "env": {
+                "type": "object",
+                "description": "stdio environment (string → string)"
+              },
+              "url": {
+                "type": "string",
+                "description": "http endpoint (absolute http(s) URL)"
+              },
+              "headers": {
+                "type": "object",
+                "description": "http request headers (string → string)"
+              },
+              "timeoutMs": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Per-call timeout in ms (0 disables)"
+              },
+              "allowlist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tool names eligible for the registry; empty/absent exports none"
+              }
+            },
+            "required": [
+              "transport"
+            ]
+          }
+        }
+      }
+    },
     "nsfw": {
       "type": "object",
       "description": "NSFW configuration",
@@ -742,6 +840,21 @@
         "defaultProvider": {
           "type": "string",
           "description": "Default provider name"
+        },
+        "autorouteScenario": {
+          "type": "string",
+          "enum": [
+            "general",
+            "chat",
+            "coding",
+            "local",
+            "observed"
+          ],
+          "description": "Scenario whose ranking rows select unassigned model roles (unset = manual/default)"
+        },
+        "modelRoles": {
+          "type": "object",
+          "description": "Default model role assignments (DB overrides take precedence)"
         },
         "flowControl": {
           "type": "object",
@@ -1686,6 +1799,24 @@
         "meshPsk",
         "duplication"
       ]
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature profile: a gating lens over shipped features, never a config rewriter. Default `full`.",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "full",
+            "business-only",
+            "rpg-chat-only",
+            "local-only",
+            "relay-only"
+          ],
+          "default": "full",
+          "description": "Feature profile to gate surfaces; an explicit unknown value fails boot."
+        }
+      }
     },
     "seeding": {
       "type": "object",
@@ -2757,13 +2888,19 @@
             "principalScope": {
               "type": "string",
               "default": "read"
+            },
+            "proxyBind": {
+              "type": "string",
+              "default": "127.0.0.1",
+              "description": "Loopback bind for the stdio-proxy listener. Non-loopback is refused; remote bind is a future ticket."
             }
           },
           "required": [
             "mcpEnabled",
             "acpEnabled",
             "principalUserId",
-            "principalScope"
+            "principalScope",
+            "proxyBind"
           ]
         },
         "email": {
@@ -3025,10 +3162,19 @@
                       "codex",
                       "claude-code",
                       "hermes",
-                      "openclaw"
+                      "openclaw",
+                      "antigravity"
                     ],
                     "default": "omp",
                     "description": "Which shipped ACP adapter speaks this profile (default omp)"
+                  },
+                  "transport": {
+                    "type": "string",
+                    "enum": [
+                      "acp"
+                    ],
+                    "default": "acp",
+                    "description": "Driver transport for this profile (only ACP stdio is implemented)"
                   },
                   "command": {
                     "type": "array",
@@ -3094,6 +3240,28 @@
                   "sandboxRoot": {
                     "type": "string",
                     "description": "Directory the profile's permission asks are judged against (must exist; no \"..\" traversal). Absent = the process cwd"
+                  },
+                  "protocolVersion": {
+                    "type": "number",
+                    "description": "ACP protocol version to request at initialize (default 1; 2 negotiates v2 when the agent supports it)"
+                  },
+                  "mcpServers": {
+                    "type": "array",
+                    "description": "MCP servers handed to the harness agent via session/new (stdio name/command/args/env, verbatim)",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "additionalDirectories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Extra absolute workspace roots handed to the agent via session/new (relative entries are rejected)"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "description": "Default mode id for session/set_mode (e.g. plan/act); absent = only explicitly passed ids are sent"
                   }
                 }
               }
@@ -3114,6 +3282,26 @@
       },
       "required": [
         "acp"
+      ]
+    },
+    "prompt": {
+      "type": "object",
+      "description": "Prompt-assembly token budgets",
+      "properties": {
+        "loreTokenBudget": {
+          "type": "integer",
+          "default": 1024,
+          "description": "Token budget for the world-lore prompt section (128-8192); constant entries are pinned, the rest compete by priority"
+        },
+        "memoryTokenBudget": {
+          "type": "integer",
+          "default": 1024,
+          "description": "Token budget for injected memories (128-8192); pinned memories are never dropped"
+        }
+      },
+      "required": [
+        "loreTokenBudget",
+        "memoryTokenBudget"
       ]
     },
     "web": {

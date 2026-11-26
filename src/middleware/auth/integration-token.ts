@@ -36,6 +36,13 @@ export const INTEGRATION_TOKEN_PREFIX = "llri_";
 /** Entropy: 32 random bytes -> 43 unpadded base64url chars (256-bit). */
 const TOKEN_RANDOM_BYTES = 32;
 
+/** Default lifetime for newly minted integration tokens (24h — the same
+ * lifetime documented for `llra_` agent tokens). Never leave one open-ended. */
+export const INTEGRATION_TOKEN_DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** Upper bound on a requested lifetime: no integration credential lives past 7d. */
+export const INTEGRATION_TOKEN_MAX_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
 /** Throttle window for `last_used_at` writes — mirrors users.last_seen_at. */
 const LAST_USED_THROTTLE_MS = 5 * 60 * 1000;
 
@@ -59,12 +66,28 @@ export function hashIntegrationToken(rawToken: string,): string {
 /**
  * Mint a fresh integration token: `llri_<32 random urlsafe base64 bytes>`.
  * The raw value is returned EXACTLY ONCE (POST response body) — only the
- * hash is persisted.
- * @returns the raw bearer value and its stored hash
+ * hash is persisted. Every mint carries a stamped UTC expiry: absent -> 24h,
+ * requested instants clamped into `(now, now + 7d]`.
+ * @param requestedExpiresAt - optional ISO 8601 instant supplied by the minter
+ * @returns the raw bearer value, its stored hash and the stamped expiry
+ * @throws {RangeError} when a requested expiry is unparseable
  */
-export function mintIntegrationToken(): { raw: string; hash: string } {
+export function mintIntegrationToken(
+  requestedExpiresAt?: string | null,
+): { raw: string; hash: string; expiresAt: string } {
+  const nowMs = Date.now();
+  const requestedMs = requestedExpiresAt == null
+    ? nowMs + INTEGRATION_TOKEN_DEFAULT_TTL_MS
+    : parseExpiryMs(requestedExpiresAt,);
+
+  if (requestedMs === null) {
+    throw new RangeError("expiresAt must be a parseable ISO 8601 instant",);
+  }
+
+  const ttlMs = Math.min(Math.max(requestedMs - nowMs, 1,), INTEGRATION_TOKEN_MAX_TTL_MS,);
+  const expiresAt = toDate(nowMs + ttlMs,).toISOString();
   const raw = `${INTEGRATION_TOKEN_PREFIX}${randomBytes(TOKEN_RANDOM_BYTES,).toString("base64url",)}`;
-  return { raw, hash: hashIntegrationToken(raw,), };
+  return { raw, hash: hashIntegrationToken(raw,), expiresAt, };
 }
 
 /**
@@ -90,15 +113,13 @@ export async function verifyIntegrationToken(
     return null;
   }
 
-  // Expiry is OPTIONAL (default-non-expiring, pending the open ADR lifetime
-  // question). A PRESENT (non-null) but unparseable value is a corrupt row —
-  // fail closed, never "eternal" (mirrors sessions.expires_at handling).
-  if (row.expires_at !== null) {
-    const expiresMs = parseExpiryMs(row.expires_at,);
-    if (expiresMs === null || expiresMs <= Date.now()) {
-      log?.debug("integration token expired", { tokenId: row.id, },);
-      return null;
-    }
+  // Absent, unparseable and expired stamps all fail closed. A minted row
+  // ALWAYS carries an expiry, so NULL is a pre-policy credential that must be
+  // re-issued — never "eternal" (mirrors sessions.expires_at handling).
+  const expiresMs = parseExpiryMs(row.expires_at,);
+  if (expiresMs === null || expiresMs <= Date.now()) {
+    log?.debug("integration token expired", { tokenId: row.id, },);
+    return null;
   }
 
   // Throttled usage stamp (audit hygiene, not a security decision). A

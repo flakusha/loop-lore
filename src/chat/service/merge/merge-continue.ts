@@ -12,6 +12,7 @@ import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
 import { triggerAutoGeneration, } from "../../../generation/auto-gen";
 import { isLlmGenerationConfigured, } from "../../../generation/auto-gen/llm-config";
+import { enforceAgeGate, } from "../../../routes/messages/guards";
 import { insertUserMessageRow, } from "../../../routes/messages/insert-message";
 import { maybeAutoReply, } from "../../../routes/messages/reply";
 import { uid, } from "../../../utils";
@@ -56,6 +57,13 @@ export async function continueFromMerge(
 
   const access = await checkChatAccess(database, chatId, actorId, userRole,);
   if (!access.ok) { return access.error; }
+
+  // Age gate (theme-5 send-time enforcement): continuation inserts a user
+  // message like a normal send, so a blocked actor must not reach it. Mirrors
+  // send-intake.ts; the branch-merge wrapper itself is auth-only.
+  if (await enforceAgeGate(database, actorId,)) {
+    return { code: "forbidden", message: "Age gate not passed", };
+  }
 
   const merge = await loadMerge(database, mergeId,);
   if (!merge || merge.chat_id !== chatId) {

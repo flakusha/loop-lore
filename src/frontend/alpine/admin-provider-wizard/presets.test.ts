@@ -14,11 +14,12 @@
  * - deriveProviderName produces the instance name, which the backend validates
  *   against `^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$`.
  */
+import { ADMIN_NAME_PATTERN, } from "@/validation/schemas/name-pattern";
 import { describe, expect, test, } from "bun:test";
 import { deriveProviderName, MODEL_ROLES, PROVIDER_PRESETS, } from "./presets";
 
 /** The provider-name pattern the backend enforces. */
-const PROVIDER_NAME_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$/u;
+const PROVIDER_NAME_RE = new RegExp(ADMIN_NAME_PATTERN, "u",);
 
 describe("model roles", () => {
   test("offers exactly the admin-manageable roles", () => {
@@ -28,6 +29,7 @@ describe("model roles", () => {
       "captioning",
       "classifier",
       "translator",
+      "rerank",
     ],);
   });
 

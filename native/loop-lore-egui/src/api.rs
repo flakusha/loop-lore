@@ -451,14 +451,12 @@ pub struct GalleryAsset {
   pub asset_type: String,
   /// Size in bytes.
   pub size_bytes: u64,
-  /// Pre-computed size label.
-  pub size_label: String,
   /// Thumbnail URL for images; `None` for other types.
   pub thumb_url: Option<String>,
   /// Visible tag names in query order.
   pub tags: Vec<String>,
-  /// `public` | `private`.
-  pub visibility: String,
+  /// v1 rating signal: linked to an NSFW-rated actor (coverable by user blur).
+  pub nsfw: bool,
   /// Raw `created_at` column.
   pub created_at: String,
 }
@@ -574,9 +572,9 @@ pub fn gallery_attach_url(asset_id: &str) -> String {
 /// Parse a gallery page view-model into rows plus the paging the server reported.
 ///
 /// The server returns `{assets: [{id, filename, assetType, sizeBytes,
-/// sizeLabel, thumbUrl, tags, visibility, createdAt}], page, pageSize}` for
-/// both `/dynamic/gallery/grid` and `/dynamic/gallery/search`. `thumbUrl` is
-/// null for non-images.
+/// createdAt, thumbUrl, tags, nsfw}], page, pageSize}` for both
+/// `/dynamic/gallery/grid` and `/dynamic/gallery/search`. `thumbUrl` is
+/// null for non-images; `nsfw` is the web gallery's blur signal.
 ///
 /// `page` echoes the request, so a response that omits it falls back to
 /// `requested_page` — the page the client asked for — rather than rewinding
@@ -622,7 +620,6 @@ fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
       .unwrap_or("image")
       .to_string(),
     size_bytes: row.get("sizeBytes").and_then(serde_json::Value::as_u64).unwrap_or(0),
-    size_label: row.get("sizeLabel").and_then(|v| v.as_str()).unwrap_or("").to_string(),
     thumb_url: if thumb.is_none_or(str::is_empty) {
       None
     } else {
@@ -633,11 +630,7 @@ fn parse_gallery_row(row: &serde_json::Value) -> Result<GalleryAsset, String> {
       .and_then(|v| v.as_array())
       .map(|arr| arr.iter().filter_map(|t| t.as_str().map(String::from)).collect())
       .unwrap_or_default(),
-    visibility: row
-      .get("visibility")
-      .and_then(|v| v.as_str())
-      .unwrap_or("public")
-      .to_string(),
+    nsfw: row.get("nsfw").and_then(serde_json::Value::as_bool).unwrap_or(false),
     created_at: row.get("createdAt").and_then(|v| v.as_str()).unwrap_or("").to_string(),
   })
 }
@@ -944,18 +937,18 @@ mod tests {
   #[test]
   fn gallery_grid_parses_view_model_in_order() {
     let raw = r#"{"assets":[
-      {"id":"a1","filename":"cat.png","assetType":"image","sizeBytes":2048,"sizeLabel":"2.0 KB","thumbUrl":"/api/v1/assets/a1/thumb","tags":["pet"],"visibility":"public","createdAt":"2026-10-01"},
-      {"id":"a2","filename":"voice.mp3","assetType":"audio","sizeBytes":1048576,"sizeLabel":"1.0 MB","thumbUrl":null,"tags":[],"visibility":"private","createdAt":"2026-10-02"}
+      {"id":"a1","filename":"cat.png","assetType":"image","sizeBytes":2048,"thumbUrl":"/api/v1/assets/a1/thumb","tags":["pet"],"nsfw":true,"createdAt":"2026-10-01"},
+      {"id":"a2","filename":"voice.mp3","assetType":"audio","sizeBytes":1048576,"thumbUrl":null,"tags":[],"nsfw":false,"createdAt":"2026-10-02"}
     ]}"#;
     let page = parse_gallery_page(raw, 1).unwrap();
     assert_eq!(page.assets.len(), 2);
     assert_eq!(page.assets[0].id, "a1");
     assert_eq!(page.assets[0].thumb_url.as_deref(), Some("/api/v1/assets/a1/thumb"));
     assert_eq!(page.assets[0].tags, vec!["pet"]);
-    assert_eq!(page.assets[0].size_label, "2.0 KB");
+    assert!(page.assets[0].nsfw);
     assert_eq!(page.assets[1].id, "a2");
     assert_eq!(page.assets[1].thumb_url, None);
-    assert_eq!(page.assets[1].visibility, "private");
+    assert!(!page.assets[1].nsfw);
   }
 
   #[test]
@@ -966,7 +959,7 @@ mod tests {
     assert_eq!(page.assets[0].asset_type, "image");
     assert_eq!(page.assets[0].size_bytes, 0);
     assert_eq!(page.assets[0].tags.len(), 0);
-    assert_eq!(page.assets[0].visibility, "public");
+    assert!(!page.assets[0].nsfw);
     assert!(parse_gallery_page("nope", 1).is_err());
     assert!(parse_gallery_page("{\"assets\":\"x\"}", 1).is_err());
     assert!(parse_gallery_page("{\"assets\":[{\"noId\":1}]}", 1).is_err());

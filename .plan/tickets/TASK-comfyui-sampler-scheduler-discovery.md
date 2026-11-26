@@ -6,10 +6,10 @@
 **Effort:** Small
 **Summary:** Sampler and scheduler value lists must come from the installed ComfyUI at runtime, not a hardcoded array and not InvokeAI's conflated enum.
 **Context:** Found by investigation 2026-09-27 (`docs/meta/research/comfyui-first-class-investigation.md` §4.1). Sampling a sampler the operator's ComfyUI does not have fails the whole graph at submit.
-**Acceptance Criteria:** Both enums discovered and cached; no hardcoded sampler list ships.
+**Acceptance Criteria:** Both enums discovered and cached; no hardcoded sampler list ships (landing `ce8856042`: shared 5-minute cache, `/nodes` exposure, 400 on out-of-enum before submit; the builtin `select` options remain advisory-only per line 68-70).
 
 **Priority:** P2 — Medium
-**Status:** Not Started
+**Status:** Done
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** none
 
@@ -63,23 +63,23 @@ as ComfyUI models them.
 
 ## Acceptance Criteria
 
-- [ ] Sampler and scheduler value lists are obtained from `/object_info`, reusing
+- [x] Sampler and scheduler value lists are obtained from `/object_info`, reusing
       the existing LoRA discovery cache and TTL (`src/generation/lora/discovery.ts`).
-- [ ] No hardcoded sampler-name array ships in `src/`. If a static list exists for
+- [x] No hardcoded sampler-name array ships in `src/`. If a static list exists for
       editor UX (a `select` needs options before discovery returns), it is marked
       advisory and superseded by discovery — not used for validation.
-- [ ] `/api/v1/image-edit/nodes` (`src/image-edit/routes.ts:53-69`) exposes the
+- [x] `/api/v1/image-edit/nodes` (`src/image-edit/routes.ts:53-69`) exposes the
       discovered samplers and schedulers so a `select` param can populate itself.
-- [ ] Server-side validation rejects an out-of-enum `sampler_name` or `scheduler`
+- [x] Server-side validation rejects an out-of-enum `sampler_name` or `scheduler`
       with a 400 naming the valid values, **before** the graph is submitted. Catching
       it at submit yields an opaque ComfyUI `node_errors` blob; catching it here
       yields a useful message.
-- [ ] When ComfyUI is unreachable, the failure is a clear advisory, not a hard 500
+- [x] When ComfyUI is unreachable, the failure is a clear advisory, not a hard 500
       on a route that only wanted a dropdown.
-- [ ] Tests: a `/object_info` fixture returns distinct sampler and scheduler lists
+- [x] Tests: a `/object_info` fixture returns distinct sampler and scheduler lists
       and both are read; a graph with an invalid sampler is rejected with a
       message listing the valid values.
-- [ ] Validation composes with `TASK-comfyui-template-parameter-validation` rather
+- [x] Validation composes with `TASK-comfyui-template-parameter-validation` rather
       than duplicating the validation pass.
 
 ## Technical Notes

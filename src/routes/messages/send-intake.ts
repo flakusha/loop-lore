@@ -17,13 +17,14 @@
 //    earlier would turn an idempotent retry into a 409).
 
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
 import { executeGmToolRequest, } from "../../assistant/gm-tool-execution";
 import { ProactiveMessagingService, } from "../../chat/proactive";
 import { checkChatAccess, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { parseAssetMentions, parseInitiativeFlag, stripAssetMentions, } from "../../group-chat/mention-parser";
-import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import type { MessageCreateBody, } from "../../validation/schemas";
 import { badRequestResponse, jsonCreated, } from "../http-utils";
 import { dispatchCommand, } from "./command";
@@ -31,6 +32,7 @@ import {
   enforceAgeGate,
   enforceInjectionGate,
   enforceMuteGate,
+  enforceNsfwConsentGate,
   enforceVnDecisionGate,
 } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
@@ -107,6 +109,19 @@ export async function prepareUserMessage(params: SendIntakeParams,): Promise<Sen
   const ageRejection = await enforceAgeGate(database, actorId,);
   if (ageRejection) { return { ok: false, response: ageRejection, }; }
 
+  // ── NSFW consent verdict — shared with forwards and participant-add.
+  // Sits beside the age gate, before idempotency and every side effect.
+  const consentRejection = await enforceNsfwConsentGate({
+    database,
+    config,
+    userId: actorId,
+    chatId,
+    actorId,
+    surface: "send",
+  },);
+
+  if (consentRejection) { return { ok: false, response: consentRejection, }; }
+
   // ── Idempotency: short-circuit if a row already covers this key.
   // Runs before any side effect (NSFW audit, backoff resets,
   // slash-command dispatch, GM tools, mention/asset prep) so a
@@ -142,8 +157,14 @@ export async function prepareUserMessage(params: SendIntakeParams,): Promise<Sen
     effectiveBody.content = stripAssetMentions(effectiveBody.content,);
   }
 
-  const filteredContent = filterProfanity(effectiveBody.content,);
-  const hasProfanity = containsProfanity(effectiveBody.content,);
+  // One configured policy for censoring: off stores raw text, on censors it.
+  // `hasProfanity` still reports on the raw text so the existing
+  // visibility-hiding gate keeps its verdict unchanged.
+  const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+  const { text: filteredContent, hasProfanity, } = applyProfanityWritePolicy(
+    profanityEnabled,
+    effectiveBody.content,
+  );
 
   // ── NSFW content check on user message ─────────────────────
   // Lightweight flag/warn — does not suppress the message, just logs

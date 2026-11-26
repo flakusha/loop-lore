@@ -5,7 +5,7 @@ import { Elysia, } from "elysia";
 import { type AdvantageMode, type DiceSides, rollDice, rollFromNotation, } from "../../rpg/dice.js";
 import { logDiceRoll, } from "../../rpg/service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { internalError, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { DiceAdvantageBody, DiceNotationBody, DiceRollBody, type HandlerOpts, } from "./types";
 
@@ -60,8 +60,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to roll dice", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to roll dice", error,);
           }
         },
         {
@@ -91,8 +90,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to roll from notation", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to roll from notation", error,);
           }
         },
         {
@@ -128,8 +126,7 @@ export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(result,);
           } catch (error) {
-            log().error("Failed to roll with advantage", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to roll with advantage", error,);
           }
         },
         {

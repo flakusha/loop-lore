@@ -21,3 +21,8 @@ Ponytail path from game-engine review: single TS reference client against the fr
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Engine research addendum (2026-11-25)
+
+- Preserve the deferral: do not silently turn the reference client into an Unreal or Unity implementation ticket.
+- Promote only with a named consumer decision and an exact engine pin.

@@ -308,4 +308,52 @@ describe("storeMessage", () => {
       sqlite.run("DROP TRIGGER npc_movement_fail",);
     }
   });
+
+  test("profanity_filter governs stored assistant text", async () => {
+    await seedChat("chat-policy",);
+    const raw = "you are fuck amazing";
+    await db.insertInto("system_config",).values({
+      key: "profanity_filter",
+      value: "false",
+      description: "test",
+    },).execute();
+
+    const off = await storeMessage(
+      makeOpts(db, {
+        chatId: "chat-policy",
+        actorId: "actor-chat-policy",
+        content: raw,
+      },),
+    );
+
+    const offRow = await db
+      .selectFrom("messages",)
+      .select("content_plaintext",)
+      .where("id", "=", off.messageId,)
+      .executeTakeFirstOrThrow();
+
+    expect(offRow.content_plaintext,).toBe(raw,);
+
+    await db
+      .updateTable("system_config",)
+      .set({ value: "true", },)
+      .where("key", "=", "profanity_filter",)
+      .execute();
+
+    const on = await storeMessage(
+      makeOpts(db, {
+        chatId: "chat-policy",
+        actorId: "actor-chat-policy",
+        content: raw,
+      },),
+    );
+
+    const onRow = await db
+      .selectFrom("messages",)
+      .select("content_plaintext",)
+      .where("id", "=", on.messageId,)
+      .executeTakeFirstOrThrow();
+
+    expect(onRow.content_plaintext,).toMatch(/^you are \*+ amazing$/,);
+  });
 });

@@ -244,6 +244,7 @@ describe("harnessRoutes", () => {
           {
             name: string;
             flavor: string;
+            transport: "acp";
             usageClasses: string[];
             subscriptionBacked: boolean;
             noteKey: string;
@@ -257,6 +258,7 @@ describe("harnessRoutes", () => {
       expect(body.profiles,).toHaveLength(2,);
       expect(body.profiles[0],).toEqual({
         name: "omp-main",
+        transport: "acp",
         flavor: "omp",
         usageClasses: ["api", "local",],
         subscriptionBacked: false,
@@ -331,6 +333,20 @@ describe("harnessRoutes", () => {
       const res = await get("admin", "/api/v1/harness/runs?limit=7&taskType=chat&result=error",);
       expect(res.status,).toBe(200,);
       expect(seen,).toEqual([{ taskType: "chat", result: "error", }, 7,],);
+    });
+
+    it("passes the turnId filter through to listRuns", async () => {
+      let seen: unknown[] = [];
+      withQuery({
+        listRuns: (filter: unknown, limit: number,): Promise<HarnessRunRecord[]> => {
+          seen = [filter, limit,];
+          return Promise.resolve([],);
+        },
+      },);
+
+      const res = await get("admin", "/api/v1/harness/runs?turnId=turn-42",);
+      expect(res.status,).toBe(200,);
+      expect(seen,).toEqual([{ turnId: "turn-42", }, undefined,],);
     });
   });
 
@@ -491,8 +507,8 @@ describe("harnessRoutes", () => {
       // Three real rows: a chat run, a harnessCode run and a chat run that
       // timed out. Written by the real serializer, so the lines are
       // indistinguishable from the ones the running server produces.
-      const rows: Array<{ runId: string; taskType: HarnessTaskType; result: HarnessResult }> = [
-        { runId: "run-chat", taskType: "chat", result: "ok", },
+      const rows: Array<{ runId: string; taskType: HarnessTaskType; result: HarnessResult; profile?: string }> = [
+        { runId: "run-chat", taskType: "chat", result: "ok", profile: "good-profile", },
         { runId: "run-code", taskType: "harnessCode", result: "ok", },
         { runId: "run-timeout", taskType: "chat", result: "timeout", },
       ];
@@ -507,7 +523,7 @@ describe("harnessRoutes", () => {
           tools: ["read",],
         },);
 
-        return JSON.stringify(serializeRun({ ...record, runId: row.runId, },),);
+        return JSON.stringify(serializeRun({ ...record, runId: row.runId, profile: row.profile, },),);
       },);
 
       writeFileSync(log, lines.join("\n",) + "\n", "utf8",);
@@ -521,6 +537,12 @@ describe("harnessRoutes", () => {
       setExecLogPath(null,);
       rmSync(dir, { recursive: true, force: true, },);
     },);
+
+    it("returns the exec-log profile on the list row", async () => {
+      const res = await get("admin", "/api/v1/harness/runs",);
+      const body = await res.json() as { items: Array<{ runId: string; profile?: string | null }> };
+      expect(body.items.find((item,) => item.runId === "run-chat")?.profile,).toBe("good-profile",);
+    });
 
     it("returns only the rows whose task type matches the panel's vocabulary", async () => {
       const res = await get("admin", "/api/v1/harness/runs?taskType=harnessCode",);

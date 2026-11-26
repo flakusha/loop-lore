@@ -12,8 +12,8 @@
  * Mounts BOTH halves of the real app — `v1Routes` then `registerPlugins`. That
  * is NOT the order `src/elysia-app.ts` uses (which mounts `registerPlugins`
  * first), but the order does not affect the collected spec: both sequences
- * yield the same 600 paths / 807 operations, since registration order changes
- * no path or operation count. Barrel-only mounting silently omitted
+ * yield the same path and operation set, since registration order changes
+ * no routes. Barrel-only mounting silently omitted
  * every `registerPlugins` route still served under `/api/v1` —
  * `location-explorer` and `game-state` among them — so the spec described a
  * smaller API than the server exposes. `registerPlugins` reads

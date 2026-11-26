@@ -13,7 +13,7 @@
  * The hash pattern matches bun's 8-char hex output (e.g. `alpine-tx4kdwfm.js`).
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync, } from "node:fs";
 import { extname, } from "node:path";
 import { HASH_INJECTION_LINK, HASH_INJECTION_SCRIPT, } from "../regex/html-sanitize";
 
@@ -60,6 +60,7 @@ function collectFiles(dir: string, prefix: string, out: string[],): void {
  */
 export function buildHashLookup(dir: string,): Map<string, string> {
   const map = new Map<string, string>();
+  const mtimes = new Map<string, number>();
   const files: string[] = [];
   collectFiles(dir, "", files,);
   for (const rel of files) {
@@ -69,7 +70,25 @@ export function buildHashLookup(dir: string,): Map<string, string> {
       const logical = `${match[1]}.${match[3]}`;
       const slash = rel.lastIndexOf("/",);
       const key = slash === -1 ? logical : `${rel.slice(0, slash + 1,)}${logical}`;
-      map.set(key, rel,);
+      let mtimeMs: number;
+      try {
+        mtimeMs = statSync(`${dir}/${rel}`,).mtimeMs;
+      } catch {
+        continue; // best-effort: a file that vanished is not a candidate
+      }
+
+      // Repeated builds leave several variants; keep the newest so injection
+      // points at the current build. Filename breaks mtime ties.
+      const previous = map.get(key,);
+      const previousMtime = mtimes.get(key,);
+      if (
+        previous === undefined ||
+        mtimeMs > (previousMtime ?? -Infinity) ||
+        (mtimeMs === previousMtime && rel < previous)
+      ) {
+        map.set(key, rel,);
+        mtimes.set(key, mtimeMs,);
+      }
     }
   }
 

@@ -1,30 +1,34 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 350
 import { serve, } from "bun";
 import { join, } from "node:path";
-import { initAgeGate, } from "../age-gate/controller";
+import { applyStoredAgeGateConfig, initAgeGate, } from "../age-gate/controller";
 import { initAssistantQuota, } from "../assistant/quota/engine";
-import { flushActiveStore, } from "../async";
 import { reconcileInterruptedJobs, } from "../characters/services/emotion-avatar-service/restart-reconcile";
 import { ensureTlsCerts, } from "../config/cert";
 import { applyConfigChange, initConfigHotApply, onConfigChange, } from "../config/hot-apply";
 import { applyHotConfig, } from "../config/hot-apply-consumers";
 import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
-import { getScheduler, } from "../cron";
+import { resolveDbPath, setEffectiveServerBind, } from "../config/state-dir";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runDataMigrations, runMigrations, } from "../db/migrate";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
+import { featuresForOpts, } from "../features/surface";
 import { initializeProviders, } from "../generation";
 import { initDefaultHooks, } from "../generation/hooks";
 import { bindSharedQuotaEngine, } from "../generation/quota-engine";
 import { applyStoredHarnessSettings, initHarnessAdminSettings, } from "../integrations/harness/admin-settings";
 import { applyStoredInboundSettings, initInboundSettings, } from "../integrations/inbound/settings";
+import { maybeStartStdioProxyListener, } from "../integrations/inbound/stdio-proxy-listener";
+import { runBootIntegrityGate, } from "../integrity/boot";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
-import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
+import { loadAllPlugins, } from "../plugins";
+import { configureDocsNav, } from "../routes/views/layout";
 import {
   applyEnvironmentOverrides,
   seedConfiguredContent,
@@ -32,13 +36,17 @@ import {
   seedHarnessModelCapabilities,
 } from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
+import { resolveBindHost, } from "./bind-host";
 import { seedDynamicContent, } from "./boot-seed";
 import { createRequestHandler, handleApiRequest, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
+import { registerShutdownHandlers, } from "./shutdown";
 import { createNonApiHandler, } from "./static-files";
 import { createTerminalGateway, type TerminalSocketData, } from "./terminal-ws";
 import { isTerminalUpgradeRequest, } from "./terminal-ws-protocol";
+
+import { runWatchdogSupervisor, watchdogBootMode, } from "./watchdog/boot";
 
 import {
   applyStoredRepoAccessSettings,
@@ -51,10 +59,14 @@ import {
 import { initHarnessTurnQueue, } from "../integrations/harness/queue";
 import { getHarnessRuntime, initHarnessRuntime, } from "../integrations/harness/runtime";
 
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+/** Warn loudly when BYOK is on but no master secret can seal stored keys. */
+function warnByokWithoutSecret(config: Config, logger: ReturnType<typeof getLogger>,): void {
+  if (config.byoKey?.enabled && !config.byoKey.encryptionKey) {
+    logger.warn("BYOK enabled without byoKey.encryptionKey; stored keys cannot be sealed", {
+      module: "server",
+    },);
+  }
+}
 
 /**
  * Bootstrap the Loop Lore HTTP/HTTPS server: init subsystems, seed the DB,
@@ -68,9 +80,19 @@ function autoProviderName(apiFamily: string,): string {
 }
 
 export async function start() {
+  // Opt-in process supervision. Supervised children carry LOOP_LORE_WATCHDOG=1
+  // and never re-supervise; default startup stays a plain server.
+  if (watchdogBootMode(process.env,) === "supervisor") {
+    process.exit(await runWatchdogSupervisor(),);
+  }
+
   // Bootstrap logger before config load (template expansion needs it)
   createLogger();
   let config = loadConfig();
+  const features = featuresForOpts({ config, },);
+  // Pin the effective server bind before any path resolution so the DB and
+  // runtime instance dirs derive the same slug (explicit args still win).
+  setEffectiveServerBind(config.server,);
   setGlobalLogger(createLogger(config.logging,),);
   initAgeGate(config.ageGate,);
   initNsfwRuntimeConfig(config.nsfw,);
@@ -80,27 +102,35 @@ export async function start() {
   // the outbound ACP runtime from the same snapshot (a disabled config
   // composes nothing; both take effect on restart).
   const harnessAcp = config.harness?.acp ?? { enabled: false, profiles: [], };
-  initHarnessAdminSettings(harnessAcp,);
-  initHarnessRuntime(harnessAcp,);
+  if (features.harness) {
+    initHarnessAdminSettings(harnessAcp,);
+    initHarnessRuntime(harnessAcp,);
+  }
+
   // Inbound MCP/ACP studio servers (§3.3): seed the effective-settings store
   // from the file layer. Deny-by-default — an omitted `integrations.inbound`
   // section seeds as "disabled, no principal", so the stdio entrypoints
   // refuse to serve until the operator configures it.
-  initInboundSettings(
-    config.integrations?.inbound ?? {
-      mcpEnabled: false,
-      acpEnabled: false,
-      principalUserId: "",
-      principalScope: "read",
-    },
-  );
+  if (features.harness) {
+    initInboundSettings(
+      config.integrations?.inbound ?? {
+        mcpEnabled: false,
+        acpEnabled: false,
+        principalUserId: "",
+        principalScope: "read",
+        // Loopback default mirrors the schema default; remote bind is refused
+        // by the proxy listener, not defaulted here.
+        proxyBind: "127.0.0.1",
+      },
+    );
+  }
 
   // RSI repo-access tier: seeded from the file layer only (absent = off);
   // the operator's stored admin override re-applies below, after the DB
   // opens. Disabled by default; never auto-enabled.
-  initRepoAccessSettings(config.harness?.repoAccess,);
+  if (features.harness) { initRepoAccessSettings(config.harness?.repoAccess,); }
 
-  initAssistantQuota(config.assistant,);
+  if (features.chat || features.business) { initAssistantQuota(config.assistant,); }
   // Seed the hot-apply snapshot and register live consumers so config edits
   // re-apply without a restart (see src/config/hot-apply.ts).
   initConfigHotApply(config,);
@@ -129,27 +159,16 @@ export async function start() {
   initializeProviders(config,);
   initDefaultHooks();
 
-  // Startup health check — scan providers and log any failures
-  const { scanAllProviders, } = await import("../admin/provider-health");
-  const healthResults = await scanAllProviders();
-  const failedProviders: (typeof healthResults)[number][] = [];
-  for (const p of healthResults) {
-    if (p.status !== "healthy") { failedProviders.push(p,); }
-  }
-
-  const startLogger = getLogger();
-  if (failedProviders.length > 0) {
-    startLogger.warn("providers unreachable on startup", {
-      module: "server",
-      failedProviders: Array.from(failedProviders, (p,) => p.name,),
-    },);
-  } else {
-    startLogger.info("all providers healthy", { module: "server", count: healthResults.length, },);
-  }
-
-  const database = getDatabase();
+  const database = getDatabase(resolveDbPath(process.env, config.server,),);
   const logger = getLogger();
   bindSharedQuotaEngine(database,);
+
+  // Federation budgets live in in-process counters: reload the persisted rows
+  // before the first peer-work request can reach the admission guard.
+  if (config.federation?.enabled === true && features.federation) {
+    const { reloadPerformanceQuota, } = await import("../federation/performance-quota-store");
+    await reloadPerformanceQuota({ database, enabled: true, },);
+  }
 
   // ── Periodic key rotation + telemetry retention ──────────
   // Owned by the cron scheduler (started in createApp below): jobs
@@ -159,12 +178,15 @@ export async function start() {
   const serverLogger = logger.child({ module: "server", },);
 
   // ── Non-API request handler (views, docs, static files) ──
+  // Same resolved docs config drives /docs/ and the sidebar link.
+  configureDocsNav(config.docs?.enabled !== false,);
   const handleNonApiRequest = createNonApiHandler(config.docs,);
 
   // ── Elysia app (handles routing + transforms) ──────────────
   const app = createApp({
     database,
     config,
+    features,
     handleNonApiRequest,
     handleApiRequest,
   },);
@@ -207,6 +229,25 @@ export async function start() {
 
   await runMigrations(database,); // ensure DB schema ready before serving
   await runDataMigrations(database,); // row-level, after schema is final, before seeding
+  // Unclean-shutdown detection + startup integrity gate. On a fail verdict
+  // this enters safe mode; the central request gate then rejects writes.
+  // Best-effort fs + a bounded PRAGMA quick_check; never blocks boot.
+  runBootIntegrityGate(serverLogger,);
+
+  // Startup health check — scan after the schema exists so the boot scan
+  // populates model_capabilities before the first request.
+  const { scanAllProviders, } = await import("../admin/provider-health");
+  const healthResults = await scanAllProviders(database,);
+  const failedProviders: (typeof healthResults)[number][] = [];
+  for (const p of healthResults) {
+    if (p.status !== "healthy") { failedProviders.push(p,); }
+  }
+
+  const startLogger = getLogger();
+  warnByokWithoutSecret(config, startLogger,);
+  // The boot verdict is emitted once, after the stored-provider rescan below,
+  // so failures from both scans aggregate into a single structured warning.
+
   // Orphaned emotion-avatar jobs from a previous process are terminal, never
   // resumed: mark them failed with an explicit reason and rebuild the
   // in-memory job cache from the durable rows, so no list/status/SSE consumer
@@ -222,8 +263,26 @@ export async function start() {
   // ── TLS certificates (fail closed) ─────────────────────────
   // Provisioned before any listener starts: when TLS is configured and the
   // certificates cannot be provisioned we fail closed instead of silently
-  // downgrading to plaintext.
-  const tlsFiles = config.server.tls ? ensureTlsCerts(config.server.tls,) : null;
+  // downgrading to plaintext. Provisioning throws a classified error naming
+  // OpenSSL and the platform install hint — propagate it verbatim.
+  let tlsFiles: ReturnType<typeof ensureTlsCerts> = null;
+  if (config.server.tls) {
+    try {
+      tlsFiles = ensureTlsCerts(config.server.tls,);
+    } catch (error) {
+      const failure = error instanceof Error ? error : new Error(String(error,),);
+      serverLogger.fatal(
+        `TLS is configured but the certificates could not be provisioned — refusing to serve plaintext. ${failure.message}`,
+        failure,
+        { module: "server", tls: config.server.tls, },
+      );
+
+      throw new Error(
+        `TLS certificates could not be provisioned — refusing to start without HTTPS. ${failure.message}`,
+      );
+    }
+  }
+
   if (config.server.tls && !tlsFiles) {
     serverLogger.fatal(
       "TLS is configured but the certificates could not be provisioned — refusing to serve plaintext",
@@ -234,15 +293,23 @@ export async function start() {
     throw new Error("TLS certificates could not be provisioned — refusing to start without HTTPS",);
   }
 
+  // ── Bind address (one family, pinned) ───────────────────────
+  // Bun resolves the host name itself and binds the FIRST address it gets:
+  // a second instance on the same port then binds the NEXT address of the
+  // same name instead of failing — a silent split across address families.
+  // Resolving once and pinning one literal makes the second instance
+  // collide with EADDRINUSE and land in the port-conflict path.
+  const bindAddress = await resolveBindHost({ host: config.server.host, },);
+
   // ── Start HTTP server ──────────────────────────────────────
   const httpServer = serve({
     port: config.server.port,
-    hostname: config.server.host,
+    hostname: bindAddress,
     fetch: (request, server,) => handleGatedRequest(request, server,),
     websocket: terminalGateway.websocket,
   },);
 
-  serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
+  serverLogger.info(`HTTP  → http://${bindAddress}:${httpServer.port}`,);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
   let httpsServer: ReturnType<typeof serve> | undefined;
@@ -250,22 +317,24 @@ export async function start() {
     const httpsPort = config.server.port + 443;
     httpsServer = serve({
       port: httpsPort,
-      hostname: config.server.host,
+      hostname: bindAddress,
       tls: { key: Bun.file(tlsFiles.key,), cert: Bun.file(tlsFiles.cert,), },
       fetch: (request, server,) => handleGatedRequest(request, server,),
       websocket: terminalGateway.websocket,
     },);
 
-    serverLogger.info(`HTTPS → https://localhost:${httpsPort}`,);
+    serverLogger.info(`HTTPS → https://${bindAddress}:${httpsServer.port}`,);
   }
 
-  serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`,);
+  serverLogger.info(`Docs  → http://${bindAddress}:${httpServer.port}/docs/`,);
 
   // Admin — seed system config defaults + wire DB log transport
   const { seedDefaults, } = await import("../admin/config");
   await seedDefaults(database, config,);
   // Apply persisted admin NSFW overrides (if any) so the toggle survives restart.
   await applyStoredNsfwConfig(database,);
+  // Same for the age gate admin overrides (RA-13).
+  await applyStoredAgeGateConfig(database,);
   // Same for the harness admin settings (ACP enable + ToS acknowledgements).
   await applyStoredHarnessSettings(database,);
   // Same for the inbound MCP/ACP studio settings (server switches + principal).
@@ -281,7 +350,7 @@ export async function start() {
   // process → failed `interrupted`), then pumps, so `queued` rows left by a
   // previous process resume here; the dispatch gate re-judges every turn at
   // run time under the enqueueing principal.
-  if (harnessAcp.enabled) {
+  if (harnessAcp.enabled && features.harness) {
     initHarnessTurnQueue({ database, runtime: getHarnessRuntime, },);
   }
 
@@ -290,6 +359,30 @@ export async function start() {
   // survives a restart.
   const { materializeServerProviders, } = await import("../generation/providers/server-provider-store");
   await materializeServerProviders(database, config,);
+
+  // Stored/wizard-created providers only enter the registry at materialize
+  // time, so rescan now to give them a boot health verdict and populate
+  // model_capabilities. Reuses the scanAllProviders binding from this scope.
+  const rescanResults = await scanAllProviders(database,);
+  for (const p of rescanResults) {
+    if (p.status !== "healthy") { failedProviders.push(p,); }
+  }
+
+  // Configured providers appear in both scans; report each name once.
+  const failedProviderNames = Array.from(new Set(failedProviders.map((p,) => p.name),),);
+  const providerCount = new Set([...healthResults, ...rescanResults,].map((p,) => p.name),).size;
+
+  if (failedProviders.length > 0) {
+    startLogger.warn("providers unreachable on startup", {
+      module: "server",
+      failedProviders: failedProviderNames,
+    },);
+  } else {
+    startLogger.info("all providers healthy", {
+      module: "server",
+      count: providerCount,
+    },);
+  }
 
   if (config.logging.dbEnabled) {
     const { DBTransport, } = await import("../logger/transports/db");
@@ -336,7 +429,9 @@ export async function start() {
   // `authRequired` lets the loader warn when a plugin's `requiresAuth` /
   // `permissions` cannot be enforced (solo mode auto-authenticates everyone
   // as the `solo` super-user).
-  await loadAllPlugins(database, { authRequired: config.auth.required, },);
+  if (features.plugins) {
+    await loadAllPlugins(database, { authRequired: config.auth.required, },);
+  }
 
   // ── Pre-compress static assets + hash-inject HTML ──────
   await initAssetCompression(logger,);
@@ -344,13 +439,26 @@ export async function start() {
   // Plugins, seeds and assets are ready — open the traffic gate.
   ready = true;
 
+  // ── stdio-proxy listener (Design B) ──────────────────────────
+  // Local-only relay target for `--proxy` stdio shims (see
+  // maybeStartStdioProxyListener): starts only when an inbound server is
+  // enabled, and never reads stdio itself.
+  const stdioProxy = features.harness
+    ? await maybeStartStdioProxyListener(database, config,)
+    : undefined;
+
   // One-line boot readiness summary (TASK-boot-readiness-summary): check ids
-  // + ok/off only, never values, hints, or paths. Dynamic import keeps the
-  // boot graph lazy like the provider/materialize imports above.
+  // + ok/off only, never values, hints, or paths. The promotion field reports
+  // ensureFirstBootPiiSecrets' actual outcome (via its last-outcome register),
+  // never re-inferred env flags. Dynamic import keeps the boot graph lazy
+  // like the provider/materialize imports above.
   try {
     const { setupChecks, } = await import("../routes/setup/checks");
     const { buildBootReadinessSummary, } = await import("./boot-readiness");
-    serverLogger.info(buildBootReadinessSummary(await setupChecks(config, database,),),);
+    const { getLastFirstBootPromotion, } = await import("../config/load/first-boot");
+    serverLogger.info(
+      buildBootReadinessSummary(await setupChecks(config, database,), getLastFirstBootPromotion(),),
+    );
   } catch {
     serverLogger.info("setup readiness: unknown (checks unavailable)",);
   }
@@ -358,81 +466,18 @@ export async function start() {
   // ── Start liveliness probes for managed servers ──────────
   serverManager.startLivenessProbes();
 
-  // ── Hard-exit guard — kills subprocesses at OS level ──
-  process.on("exit", () => {
-    serverManager.killAllSync();
-  },);
-
-  // ── Graceful shutdown ────────────────────────────────────
-  const shutdown = async ({ exitCode, }: { exitCode: number },): Promise<void> => {
-    (domainConfigWatcher as { __close?: () => void } | undefined)?.__close?.();
-    backgroundServices.stop();
-    getScheduler()?.stop();
-    await flushActiveStore();
-    await serverManager.stopAll();
-    await unloadAllPlugins();
-    httpServer.stop();
-    httpsServer?.stop();
-    const SHUTDOWN_TIMEOUT = 5000;
-    const flushed = logger.flush();
-    const timer = setTimeout(() => {
-      process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`,);
-      process.exit(1,);
-    }, SHUTDOWN_TIMEOUT,);
-
-    await flushed;
-    clearTimeout(timer,);
-    process.exit(exitCode,);
-  };
-
-  /** Run the graceful shutdown, guaranteeing a rejected shutdown step (a
-   *  stuck store flush or plugin unload) still exits the process instead of
-   *  surfacing an unhandled rejection from inside the signal / fatal-error
-   * @param opts
-   *  handlers below. */
-  function runShutdown({ signal, exitCode, }: { signal: string; exitCode: number },): void {
-    shutdown({ exitCode, },).catch((err,) => {
-      process.stderr.write(`[shutdown] ${signal} failed: ${String(err,)}\n`,);
-      process.exit(1,);
-    },);
-  }
-
-  process.on("SIGTERM", () => runShutdown({ signal: "SIGTERM", exitCode: CLEAN_EXIT_CODE, },),);
-  process.on("SIGINT", () => runShutdown({ signal: "SIGINT", exitCode: CLEAN_EXIT_CODE, },),);
-  // SIGHUP is unsupported on Windows — registering a handler there throws at
-  // boot. Windows never delivers SIGHUP, so omitting the handler is safe.
-  if (process.platform !== "win32") {
-    process.on("SIGHUP", () => runShutdown({ signal: "SIGHUP", exitCode: CLEAN_EXIT_CODE, },),);
-  }
-
-  process.on("uncaughtException", (err,) => {
-    try {
-      // Pass the Error object (not String(err)) so the logger captures the
-      // full stack for maxStackBytes post-mortem analysis.
-      logger.fatal({ message: "Uncaught exception", }, err,);
-    } catch {
-      /* last resort */
-    }
-
-    runShutdown({ signal: "uncaughtException", exitCode: CRASH_EXIT_CODE, },);
-  },);
-
-  process.on("unhandledRejection", (reason,) => {
-    try {
-      const err = reason instanceof Error ? reason : new Error(String(reason,),);
-      logger.fatal({ message: "Unhandled rejection", }, err,);
-    } catch {
-      /* last resort */
-    }
-
-    runShutdown({ signal: "unhandledRejection", exitCode: CRASH_EXIT_CODE, },);
+  // ── Shutdown wiring ───────────────────────────────────────
+  registerShutdownHandlers({
+    domainConfigWatcher,
+    backgroundServices,
+    serverManager,
+    stdioProxy,
+    httpServer,
+    httpsServer,
+    logger,
+  }, {
+    // Under supervision an uncaught exception must stay a hard crash so the
+    // watchdog sees the non-zero exit. Signal-triggered clean exits are intact.
+    installCrashHandlers: watchdogBootMode(process.env,) !== "child",
   },);
 }
-
-/** Exit code for a clean, signal-triggered shutdown. */
-const CLEAN_EXIT_CODE = 0;
-
-/** Exit code for a crash-path shutdown (uncaughtException/unhandledRejection):
- * a supervisor must see a non-zero code so the crash is not reported as a
- * clean stop. */
-const CRASH_EXIT_CODE = 1;

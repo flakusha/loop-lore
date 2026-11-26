@@ -6,6 +6,7 @@ import { expect, mock, test, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { commandPalette, } from "./chat-actions/command-palette";
 import { chatGroup, } from "./chat-group";
+import { recallComposerHistory, } from "./composer-history";
 
 interface FakeTextarea {
   tagName: string;
@@ -24,6 +25,15 @@ interface MentionCtx {
   _showCommandPalette: boolean;
   _filteredCommands: { name: string; descriptionKey: string; description: string }[];
   _paletteActiveIndex: number;
+  activeChat: string | null;
+  _composerHistory: Map<string, string[]>;
+  _composerHistoryChat: string | null;
+  _composerHistoryCursor: number;
+  _showSlashPopover: boolean;
+  _showEmojiPopover: boolean;
+  _emojiPickerOpen: boolean;
+  autoResize(el: FakeTextarea,): void;
+  saveComposerDraft(): void;
   $refs: { messageInput: FakeTextarea };
 }
 
@@ -49,6 +59,15 @@ function buildCtx(list: typeof participants, ta: FakeTextarea,): MentionCtx {
     _showCommandPalette: false,
     _filteredCommands: [],
     _paletteActiveIndex: 0,
+    activeChat: "c1",
+    _composerHistory: new Map<string, string[]>(),
+    _composerHistoryChat: null,
+    _composerHistoryCursor: 0,
+    _showSlashPopover: false,
+    _showEmojiPopover: false,
+    _emojiPickerOpen: false,
+    autoResize() {},
+    saveComposerDraft() {},
     $refs: { messageInput: ta, },
   };
 }
@@ -382,5 +401,103 @@ describeOrSkip("chatGroup.handleComposerEnter", () => {
     await new Promise((resolve,) => setTimeout(resolve, 0,));
     // i18n.test-helper loads the real en.json catalog; t("toasts.failedSend") resolves to "Failed to send".
     expect(toasts,).toEqual([{ type: "error", message: "Failed to send", },],);
+  });
+},);
+
+describeOrSkip("chatGroup composer history recall", () => {
+  test("ArrowUp walks older lines, ArrowDown returns to newer then the empty draft", () => {
+    const ta = makeTextarea("",);
+    const ctx = buildCtx([], ta,);
+    wire(ctx,);
+    ctx._composerHistory = new Map<string, string[]>([
+      ["c1", ["first", "second",],],
+      ["c2", ["other chat",],],
+    ],);
+
+    ctx._composerHistoryCursor = 2;
+    let resizes = 0;
+    let saves = 0;
+    ctx.autoResize = () => {
+      resizes += 1;
+    };
+
+    ctx.saveComposerDraft = () => {
+      saves += 1;
+    };
+
+    for (const text of ["second", "first",]) {
+      const up = keyEvent("ArrowUp", ta,);
+      chatGroup.handleComposerKeydown!.call(ctx as never, up.event,);
+      expect(up.prevented(),).toBe(true,);
+      expect(ta.value,).toBe(text,);
+    }
+
+    // Oldest entry reached: further Up is a no-op.
+    chatGroup.handleComposerKeydown!.call(ctx as never, keyEvent("ArrowUp", ta,).event,);
+    expect(ta.value,).toBe("first",);
+
+    for (const text of ["second", "",]) {
+      chatGroup.handleComposerKeydown!.call(ctx as never, keyEvent("ArrowDown", ta,).event,);
+      expect(ta.value,).toBe(text,);
+    }
+
+    // Empty draft reached: further Down is a no-op.
+    chatGroup.handleComposerKeydown!.call(ctx as never, keyEvent("ArrowDown", ta,).event,);
+    expect(ta.value,).toBe("",);
+    expect(resizes,).toBe(4,);
+    expect(saves,).toBe(4,);
+
+    // Chat switch: cursor follows the new chat, with no cross-chat leak.
+    ctx.activeChat = "c2";
+    chatGroup.handleComposerKeydown!.call(ctx as never, keyEvent("ArrowUp", ta,).event,);
+    expect(ta.value,).toBe("other chat",);
+    expect(ctx._composerHistoryChat,).toBe("c2",);
+  });
+
+  test("recallComposerHistory steps back one line within the active chat", () => {
+    const ta = makeTextarea("",);
+    const ctx = buildCtx([], ta,);
+    ctx._composerHistory = new Map<string, string[]>([["c1", ["first", "second",],],],);
+    ctx._composerHistoryChat = "c1";
+    ctx._composerHistoryCursor = 2;
+
+    recallComposerHistory(ctx as never, ta as never, -1,);
+    expect(ta.value,).toBe("second",);
+    expect(ctx._composerHistoryCursor,).toBe(1,);
+  });
+
+  test("open popovers own the arrows, including with zero results", () => {
+    const ta = makeTextarea("typing",);
+    const ctx = buildCtx([], ta,);
+    wire(ctx,);
+    ctx._composerHistory = new Map<string, string[]>([["c1", ["sent",],],],);
+    ctx._composerHistoryCursor = 1;
+    ctx._composerHistoryChat = "c1";
+
+    const popovers = [
+      "_showMentionAutocomplete",
+      "_showCommandPalette",
+      "_showSlashPopover",
+      "_showEmojiPopover",
+      "_emojiPickerOpen",
+    ] as const;
+
+    for (const key of popovers) {
+      ctx[key] = true;
+      const up = keyEvent("ArrowUp", ta,);
+      chatGroup.handleComposerKeydown!.call(ctx as never, up.event,);
+      expect(ta.value,).toBe("typing",);
+      expect(up.prevented(),).toBe(false,);
+      expect(ctx._composerHistoryCursor,).toBe(1,);
+      ctx[key] = false;
+    }
+
+    ctx._showCommandPalette = true;
+    ctx._filteredCommands = [{ name: "roll", descriptionKey: "k1", description: "d1", },];
+    const paletteUp = keyEvent("ArrowUp", ta,);
+    chatGroup.handleComposerKeydown!.call(ctx as never, paletteUp.event,);
+    expect(paletteUp.prevented(),).toBe(true,);
+    expect(ta.value,).toBe("typing",);
+    expect(ctx._composerHistoryCursor,).toBe(1,);
   });
 },);

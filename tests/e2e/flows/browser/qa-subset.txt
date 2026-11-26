@@ -1,0 +1,13 @@
+# QA subset: critical user-path browser flows only (see .tmp/intercom/LANE-qa-gate.md).
+# One spec per line, relative to tests/e2e/flows/browser/. Keep to ~8 max;
+# this gate's value is speed (<5 min wall), not coverage — the full baseline
+# (`test:e2e:browser`) covers everything else.
+# NOTE: no billing browser spec exists in the suite, so the billing leg is
+# uncovered here; age-gate-guard + access-correctness cover the gate half.
+smoke.browser.ts
+auth-flow.browser.ts
+auth-session.browser.ts
+chat-send.browser.ts
+chat-flow.browser.ts
+age-gate-guard.browser.ts
+access-correctness.browser.ts

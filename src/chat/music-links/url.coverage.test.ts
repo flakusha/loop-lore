@@ -94,4 +94,30 @@ describe("toEmbedSrc", () => {
       "https://www.youtube.com/watch?v=abc",
     );
   });
+
+  test("rejects non-https schemes and off-service hosts", () => {
+    expect(toEmbedSrc("javascript:alert(1)", "youtube_music",),).toBe("",);
+    expect(toEmbedSrc("data:text/html,<script>alert(1)</script>", "spotify",),).toBe("",);
+    expect(toEmbedSrc("https://evil.example.com/watch?v=abc", "youtube_music",),).toBe("",);
+  });
+
+  test("percent-encodes attribute-breaking characters instead of emitting them", () => {
+    expect(
+      toEmbedSrc('https://music.youtube.com/watch?v=abc"><script>alert(1)</script>', "youtube_music",),
+    ).toBe("https://www.youtube.com/watch?v=abc%22%3E%3Cscript%3Ealert(1)%3C/script%3E",);
+
+    expect(
+      toEmbedSrc('https://open.spotify.com/track/abc" onload="alert(1)', "spotify",),
+    ).toBe("https://open.spotify.com/track/abc%22%20onload=%22alert(1)",);
+  });
+
+  test("drops backticks and encodes control characters", () => {
+    expect(
+      toEmbedSrc("https://music.youtube.com/watch?v=abc`onload=`alert(1)", "youtube_music",),
+    ).toBe("",);
+
+    expect(toEmbedSrc("https://open.spotify.com/track/a\u0000bc", "spotify",),).toBe(
+      "https://open.spotify.com/track/a%00bc",
+    );
+  });
 });

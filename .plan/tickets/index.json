@@ -207,7 +207,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-ADDLOOTENTRY-ACCEPTS-NEGATIVE-WEIGHTS-SILENTLY-CORRUPTING-TH.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-ADDXP-ACCEPTS-NEGATIVE-XP-PRODUCING-NAN-LEVEL-STORED-IN-DB": {
     "hash": "8924253",
@@ -324,6 +324,20 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-dashboard-browser-tests-repeat-the-login-hx-redirect-r.md",
+    "status": "done"
+  },
+  "BUG-ADMIN-DB-RESTORE-VALIDATES-ONLY-SQLITE-HEADER": {
+    "hash": "29d1529",
+    "git_issue": "29d1529",
+    "extid": "BUG-ADMIN-DB-RESTORE-VALIDATES-ONLY-SQLITE-HEADER",
+    "type": "BUG",
+    "title": "admin DB restore validates only SQLite header",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-database-backup-recovery.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-db-restore-validates-only-sqlite-header.md",
     "status": "done"
   },
   "BUG-ADMIN-MODEL-NEWS-WEIGHT-CHANGE-TEST-TIMES-OUT-UNDER-PARALLEL": {
@@ -1053,6 +1067,20 @@
     "tags": [],
     "source": ".plan/tickets/BUG-async-orphan-spill-retention-sweep-silently-deleted-by-workt.md",
     "status": "Done"
+  },
+  "BUG-ASYNC-SPILL-AND-TUI-LOGS-ARE-CWD-RELATIVE-SO-LOCAL-INSTANCES": {
+    "hash": "f8ccaea",
+    "extid": "BUG-ASYNC-SPILL-AND-TUI-LOGS-ARE-CWD-RELATIVE-SO-LOCAL-INSTANCES",
+    "type": "BUG",
+    "title": "Async spill and TUI logs are cwd-relative so local instances collide",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-async-spill-and-tui-logs-are-cwd-relative-so-local-instances.md",
+    "status": "done",
+    "git_issue": "f8ccaea"
   },
   "BUG-ASYNC-SPILL-OFFLOAD-DIR-IS-A-FIXED-CWD-RELATIVE-PATH-SHARED-": {
     "hash": "0114005",
@@ -2950,6 +2978,20 @@
     "source": ".plan/tickets/BUG-comfyui-edit-provider-persists-nothing-ownerid-system-violat.md",
     "status": "done"
   },
+  "BUG-COMFYUI-MODEL-FOLDER-COMMENTS-AND-MOCKS-MUST-MATCH-STOCK-SERVER-SHAPE": {
+    "hash": "13d3d27",
+    "extid": "BUG-COMFYUI-MODEL-FOLDER-COMMENTS-AND-MOCKS-MUST-MATCH-STOCK-SERVER-SHAPE",
+    "type": "BUG",
+    "title": "ComfyUI model-folder comments and mocks must match stock server shape",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-comfyui-first-class-citizen",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-comfyui-model-folder-comments-and-mocks-must-match-stock-server-shape.md",
+    "status": "open",
+    "git_issue": "13d3d27"
+  },
   "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "BUG-COMMAND-DISPATCH-ASYNC-HANDLER-UNCAUGHT",
@@ -2988,6 +3030,26 @@
     "tags": [],
     "title": "computeContextWindow phase-3 trims newest instead of oldest",
     "type": "BUG"
+  },
+  "BUG-CONCURRENT-MIGRATIONS-RACE-ON-A-SHARED-SQLITE-FILE": {
+    "hash": "ba4e666",
+    "git_issue": "ba4e666",
+    "extid": "BUG-CONCURRENT-MIGRATIONS-RACE-ON-A-SHARED-SQLITE-FILE",
+    "type": "BUG",
+    "title": "Concurrent migrations race on a shared SQLite file",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-multi-instance-reconciliation",
+    "project": "",
+    "tags": [
+      "db",
+      "sqlite",
+      "migrations",
+      "concurrency",
+      "boot"
+    ],
+    "source": ".plan/tickets/BUG-concurrent-migrations-race-on-a-shared-sqlite-file.md",
+    "status": "done"
   },
   "BUG-CONFIG-FILE-RELOAD-SILENTLY-RE-ENABLES-NSFW-AFTER-THE-ADMIN-": {
     "hash": "b751a45",
@@ -3066,7 +3128,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-config-schema-generators-exit-1-silently.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
     "epic": "epic-nsfw-integration-gaps",
@@ -3174,7 +3236,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-CONTEXT-WINDOW-REORDERS-MESSAGES-SHARING-AN-IDENTICAL-CREATE.md",
-    "status": "open"
+    "status": "Wontfix"
   },
   "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
     "epic": "",
@@ -3291,7 +3353,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-CREDIT-DEBIT-SELECT-THEN-UPDATE-RACE-IN-SRC-SERVICES-TRADE-B.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-CRITICAL-HIT-ROLLS-IGNORE-ADVANTAGE": {
     "epic": "",
@@ -3370,7 +3432,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-csrf-gate-rejects-the-tui-s-bearer-only-posts-so-every-tui-w.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES": {
     "epic": "epic-i18n",
@@ -3424,6 +3486,27 @@
     "title": "db-reinit archive directory has no rotation; PII accumulates indefinitely",
     "type": "BUG"
   },
+  "BUG-DB-TYPE-POSTGRES-ACCEPTED-BUT-NO-POSTGRES-RUNTIME": {
+    "hash": "424179d",
+    "git_issue": "424179d",
+    "extid": "BUG-DB-TYPE-POSTGRES-ACCEPTED-BUT-NO-POSTGRES-RUNTIME",
+    "type": "BUG",
+    "title": "db-type-postgres-accepted-but-no-postgres-runtime",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-multi-instance-reconciliation.md",
+    "project": "",
+    "tags": [
+      "config",
+      "db",
+      "postgres",
+      "boot",
+      "guard",
+      "honesty"
+    ],
+    "source": ".plan/tickets/BUG-db-type-postgres-accepted-but-no-postgres-runtime.md",
+    "status": "done"
+  },
   "BUG-DEAD-BEDROCK-CONFIG-PATH-ACCEPTED-BUT-NEVER-DISPATCHED": {
     "hash": "3edc50d",
     "git_issue": "3edc50d",
@@ -3448,6 +3531,20 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-dead-code-guard-in-advancepartytravel.md",
+    "status": "done"
+  },
+  "BUG-DELETE-ALL-DATA-CALLS-NONEXISTENT-DELETE-USERS-ME-ROUTE": {
+    "hash": "8d44816",
+    "git_issue": "8d44816",
+    "extid": "BUG-DELETE-ALL-DATA-CALLS-NONEXISTENT-DELETE-USERS-ME-ROUTE",
+    "type": "BUG",
+    "title": "delete all data calls nonexistent DELETE users me route",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-frontend-settings.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-delete-all-data-calls-nonexistent-delete-users-me-route.md",
     "status": "done"
   },
   "BUG-DELETE-AUDIT-ACTION-HAS-NO-UNIT-TEST": {
@@ -5702,7 +5799,96 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-harness-f1-non-admin-providers-callers-swallow-403.md",
+    "status": "done"
+  },
+  "BUG-HARNESS-FS-BRIDGE-SECRET-RECHECK-TOCTOU": {
+    "hash": "f436db0",
+    "git_issue": "f436db0",
+    "extid": "BUG-HARNESS-FS-BRIDGE-SECRET-RECHECK-TOCTOU",
+    "type": "BUG",
+    "title": "Harness fs bridge secret recheck TOCTOU",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harness-fs-bridge-secret-recheck-toctou.md",
     "status": "open"
+  },
+  "BUG-HARNESS-QUEUE-BOOT-RECOVERY-FAILS-OTHER-INSTANCES-INFLIGHT-T": {
+    "hash": "6887ad6",
+    "git_issue": "6887ad6",
+    "extid": "BUG-HARNESS-QUEUE-BOOT-RECOVERY-FAILS-OTHER-INSTANCES-INFLIGHT-T",
+    "type": "BUG",
+    "title": "harness-queue-boot-recovery-fails-other-instances-inflight-turns",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "boot",
+      "recovery",
+      "multi-instance",
+      "data-loss"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-boot-recovery-fails-other-instances-inflight-t.md",
+    "status": "done"
+  },
+  "BUG-HARNESS-QUEUE-CLAIM-IGNORES-AFFECTED-ROWS-DOUBLE-EXECUTES-TU": {
+    "hash": "df0d0cc",
+    "git_issue": "df0d0cc",
+    "extid": "BUG-HARNESS-QUEUE-CLAIM-IGNORES-AFFECTED-ROWS-DOUBLE-EXECUTES-TU",
+    "type": "BUG",
+    "title": "harness-queue-claim-ignores-affected-rows-double-executes-turn",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "concurrency",
+      "duplicate-execution",
+      "spend"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-claim-ignores-affected-rows-double-executes-tu.md",
+    "status": "done"
+  },
+  "BUG-HARNESS-QUEUE-PER-PROFILE-SERIALIZATION-IS-PROCESS-LOCAL-NOT": {
+    "hash": "6fde7bb",
+    "git_issue": "6fde7bb",
+    "extid": "BUG-HARNESS-QUEUE-PER-PROFILE-SERIALIZATION-IS-PROCESS-LOCAL-NOT",
+    "type": "BUG",
+    "title": "harness-queue-per-profile-serialization-is-process-local-not-global",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "queue",
+      "concurrency",
+      "profile",
+      "multi-instance"
+    ],
+    "source": ".plan/tickets/BUG-harness-queue-per-profile-serialization-is-process-local-not.md",
+    "status": "done"
+  },
+  "BUG-HARNESS-QUEUE-ROLE-RECHECK-DISPATCH-RACE": {
+    "hash": "0e9cf3a",
+    "git_issue": "0e9cf3a",
+    "extid": "BUG-HARNESS-QUEUE-ROLE-RECHECK-DISPATCH-RACE",
+    "type": "BUG",
+    "title": "harness queue role recheck dispatch race",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harness-queue-role-recheck-dispatch-race.md",
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "epic": "epic-nsfw-moderation-priority",
@@ -5729,6 +5915,20 @@
     "tags": [],
     "source": ".plan/tickets/BUG-HELP.md",
     "status": "open"
+  },
+  "BUG-HONKBOX-UPLOAD-DROPS-ARTIFACT-MIME-METADATA": {
+    "hash": "3e5f3ce",
+    "git_issue": "3e5f3ce",
+    "extid": "BUG-HONKBOX-UPLOAD-DROPS-ARTIFACT-MIME-METADATA",
+    "type": "BUG",
+    "title": "Honkbox upload drops artifact MIME metadata",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-honkbox-upload-drops-artifact-mime-metadata.md",
+    "status": "in_progress"
   },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "epic": "",
@@ -6354,6 +6554,20 @@
     "title": "keynav stale unsubscribe deletes live handler set",
     "type": "BUG"
   },
+  "BUG-KEYPHRASE-FORCED-RECALL-BYPASSES-THE-MEMORY-TOKEN-BUDGET": {
+    "hash": "92c0441",
+    "git_issue": "92c0441",
+    "extid": "BUG-KEYPHRASE-FORCED-RECALL-BYPASSES-THE-MEMORY-TOKEN-BUDGET",
+    "type": "BUG",
+    "title": "Keyphrase forced recall bypasses the memory token budget",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-keyphrase-forced-recall-bypasses-the-memory-token-budget.md",
+    "status": "Done"
+  },
   "BUG-KYSELY-ANY-TYPE-SAFETY-GAPS-IN-DB-LAYER": {
     "hash": "6738d32",
     "git_issue": "6738d32",
@@ -6612,7 +6826,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-LORA-DISCOVER-MANAGE-ROUTES-LACK-ADMIN-GUARD.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-LORE-CONSISTENCY-SCORER-ENTITY-MATCHING-BRANCH-UNREACHABLE-D": {
     "hash": "9f7d4ef",
@@ -6762,6 +6976,20 @@
     "source": ".plan/tickets/BUG-memory-extraction-store-writes-memories-without-a-transactio.md",
     "status": "done"
   },
+  "BUG-MEMORY-INJECTION-COOLDOWN-NEVER-FIRES-IN-PRODUCTION": {
+    "hash": "25a1c3d",
+    "git_issue": "25a1c3d",
+    "extid": "BUG-MEMORY-INJECTION-COOLDOWN-NEVER-FIRES-IN-PRODUCTION",
+    "type": "BUG",
+    "title": "Memory injection cooldown never fires in production",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-injection-cooldown-never-fires-in-production.md",
+    "status": "Done"
+  },
   "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI": {
     "epic": "",
     "extid": "BUG-MEMORY-INJECTION-REASON-NOT-DISPLAYED-IN-UI",
@@ -6799,6 +7027,20 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-memory-panel-never-renders-memories-in-any-chat-response-env.md",
+    "status": "done"
+  },
+  "BUG-MEMORY-SEMANTIC-FLOOR-EVALUATED-AGAINST-RERANKER-SCORES": {
+    "hash": "e7fa219",
+    "git_issue": "e7fa219",
+    "extid": "BUG-MEMORY-SEMANTIC-FLOOR-EVALUATED-AGAINST-RERANKER-SCORES",
+    "type": "BUG",
+    "title": "memory semantic floor evaluated against reranker scores",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-semantic-floor-evaluated-against-reranker-scores.md",
     "status": "done"
   },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
@@ -7144,6 +7386,20 @@
     "tags": [],
     "title": "moderateComment has no authorization — any caller can change any comment's status (IDOR/moderation bypass)",
     "type": "BUG"
+  },
+  "BUG-MODERATOR-HIDDEN-MESSAGE-READABLE-BY-DIRECT-ID-IN-PUBLIC-CHA": {
+    "hash": "5113af5",
+    "git_issue": "5113af5",
+    "extid": "BUG-MODERATOR-HIDDEN-MESSAGE-READABLE-BY-DIRECT-ID-IN-PUBLIC-CHA",
+    "type": "BUG",
+    "title": "moderator-hidden message readable by direct ID in public chats",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-privacy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-moderator-hidden-message-readable-by-direct-id-in-public-cha.md",
+    "status": "done"
   },
   "BUG-MODULE-LEVEL-IN-MEMORY-STATE-GROWS-WITHOUT-EVICTION": {
     "hash": "368aa6d",
@@ -8197,6 +8453,20 @@
     "title": "plan:sync --fix mass-creates orphan git issues for placeholder hashes",
     "type": "BUG"
   },
+  "BUG-PLAN-TICKET-STATUS-PARSES-INSIDE-FENCED-CODE-BLOCKS": {
+    "hash": "b45712e",
+    "git_issue": "b45712e",
+    "extid": "BUG-PLAN-TICKET-STATUS-PARSES-INSIDE-FENCED-CODE-BLOCKS",
+    "type": "BUG",
+    "title": "plan ticket Status parses inside fenced code blocks",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plan-ticket-status-parses-inside-fenced-code-blocks.md",
+    "status": "done"
+  },
   "BUG-PLUGIN-APPROVAL-IS-KEYED-BY-NAME-ONLY-WITH-NO-ORIGIN-COLUMN-": {
     "hash": "5d27599",
     "git_issue": "5d27599",
@@ -8209,6 +8479,20 @@
     "tags": [],
     "source": ".plan/tickets/BUG-plugin-approval-is-keyed-by-name-only-with-no-origin-column-.md",
     "status": "done"
+  },
+  "BUG-PLUGIN-APPROVAL-MUST-BE-KEYED-BY-PLUGIN-NAME-AND-ORIGIN": {
+    "hash": "739f614",
+    "extid": "BUG-PLUGIN-APPROVAL-MUST-BE-KEYED-BY-PLUGIN-NAME-AND-ORIGIN",
+    "type": "BUG",
+    "title": "Plugin approval must be keyed by plugin name and origin",
+    "label": "bug",
+    "priority": "Critical",
+    "epic": "epic-plugin-system",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plugin-approval-must-be-keyed-by-plugin-name-and-origin.md",
+    "status": "Done",
+    "git_issue": "739f614"
   },
   "BUG-PLUGIN-ROUTE-REGISTRY-LACKS-OWNERSHIP-ENFORCEMENT-IDOR": {
     "hash": "7c24397",
@@ -8392,6 +8676,20 @@
     "tags": [],
     "title": "promptOverride schema has no maxLength - token-bomb storage vector",
     "type": "BUG"
+  },
+  "BUG-PRUNE-PROMOTED-MESSAGES-NEVER-REACH-THE-MEMORY-STORE": {
+    "hash": "52118c3",
+    "git_issue": "52118c3",
+    "extid": "BUG-PRUNE-PROMOTED-MESSAGES-NEVER-REACH-THE-MEMORY-STORE",
+    "type": "BUG",
+    "title": "Prune-promoted messages never reach the memory store",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-prune-promoted-messages-never-reach-the-memory-store.md",
+    "status": "Done"
   },
   "BUG-PRUNEEXPIRED-BOUNDARY-COMMENT-STATES-OPPOSITE-OF-IMPLEMENTAT": {
     "hash": "910710d",
@@ -8682,6 +8980,20 @@
     "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
     "type": "BUG"
   },
+  "BUG-REDUCED-MOTION-GLOBAL-FLOOR-MUST-BECOME-PER-RULE-HANDLING": {
+    "hash": "735a0ce",
+    "extid": "BUG-REDUCED-MOTION-GLOBAL-FLOOR-MUST-BECOME-PER-RULE-HANDLING",
+    "type": "BUG",
+    "title": "Reduced-motion global floor must become per-rule handling",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-frontend",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-reduced-motion-global-floor-must-become-per-rule-handling.md",
+    "status": "Done",
+    "git_issue": "735a0ce"
+  },
   "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS": {
     "epic": "",
     "extid": "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS",
@@ -8811,6 +9123,20 @@
     "tags": [],
     "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
     "type": "BUG"
+  },
+  "BUG-REPAIR-TELEMETRY-ANALYTICS-UI-CONTRACTS": {
+    "hash": "36af604",
+    "git_issue": "36af604",
+    "extid": "BUG-REPAIR-TELEMETRY-ANALYTICS-UI-CONTRACTS",
+    "type": "BUG",
+    "title": "Repair telemetry analytics UI contracts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-analytics-observability",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-repair-telemetry-analytics-ui-contracts.md",
+    "status": "Done"
   },
   "BUG-RESOLVEFLAGBODY-SCHEMA-ALLOWS-UPHELD-BUT-SERVICE-TYPE-EXPECT": {
     "epic": "epic-nsfw-moderation-priority",
@@ -9223,7 +9549,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-SEED-ADOPTION-CAN-ADOPT-A-USER-S-OWN-ACTOR-ROW.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-SEEDED-USER-CONFIG-OPTION-SEEDACTOR-IS-NEVER-READ-SO-THE-MIR": {
     "hash": "d71ac02",
@@ -9276,6 +9602,27 @@
     "tags": [],
     "title": "server.host config and HOST env override are dead - start.ts never passes hostname to Bun.serve",
     "type": "BUG"
+  },
+  "BUG-SERVER-SECOND-INSTANCE-SILENTLY-SPLITS-PORT-BY-ADDRESS-FAMIL": {
+    "hash": "a31dc0d",
+    "git_issue": "a31dc0d",
+    "extid": "BUG-SERVER-SECOND-INSTANCE-SILENTLY-SPLITS-PORT-BY-ADDRESS-FAMIL",
+    "type": "BUG",
+    "title": "server-second-instance-silently-splits-port-by-address-family",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-deployment-topologies.md",
+    "project": "",
+    "tags": [
+      "server",
+      "port",
+      "bind",
+      "address-family",
+      "ipv6",
+      "multi-instance"
+    ],
+    "source": ".plan/tickets/BUG-server-second-instance-silently-splits-port-by-address-famil.md",
+    "status": "done"
   },
   "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE": {
     "epic": "epic-i18n",
@@ -9367,6 +9714,20 @@
     "tags": [],
     "title": "Settings save omits gmConfig for online chats",
     "type": "BUG"
+  },
+  "BUG-SETUP-STATE-TLS-CHECK-USES-UNREANCHORED-CERT-PATHS": {
+    "hash": "6a677f2",
+    "git_issue": "6a677f2",
+    "extid": "BUG-SETUP-STATE-TLS-CHECK-USES-UNREANCHORED-CERT-PATHS",
+    "type": "BUG",
+    "title": "setup state TLS check uses unreanchored cert paths",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-first-run-auto-setup",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-setup-state-tls-check-uses-unreanchored-cert-paths.md",
+    "status": "Done"
   },
   "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT": {
     "epic": "epic-chat-lifecycle-moderation",
@@ -9460,6 +9821,24 @@
     "epic": "epic-byok-api-keys",
     "tags": [],
     "source": ".plan/tickets/BUG-single-global-byok-encryption-key-no-rotation-story.md",
+    "status": "done"
+  },
+  "BUG-SINGLE-QUOTED-I18N-DIRECTIVES-RENDER-RAW-TO-USERS": {
+    "hash": "9286218",
+    "git_issue": "9286218",
+    "extid": "BUG-SINGLE-QUOTED-I18N-DIRECTIVES-RENDER-RAW-TO-USERS",
+    "type": "BUG",
+    "title": "Single-quoted i18n directives render raw to users",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-i18n.md",
+    "project": "",
+    "tags": [
+      "i18n",
+      "templates",
+      "frontend"
+    ],
+    "source": ".plan/tickets/BUG-single-quoted-i18n-directives-render-raw-to-users.md",
     "status": "done"
   },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
@@ -9661,7 +10040,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-stale-hashed-bundles-in-dist-public-make-the-served-page-run.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STALE-SSE-STREAM-WRITES-RENDER-INTO-WRONG-CHAT": {
     "epic": "",
@@ -9785,7 +10164,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-story-escalate-action-posts-story-escalate-but-route-is-gm-e.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
     "epic": "",
@@ -9837,7 +10216,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-STORY-POINT-EARN-SPEND-API-RETURNS-BOGUS-LEDGER-ID.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-STORY-POINTS-MUTATIONS-DOUBLE-SWALLOW-CACHE-REFRESH-FAILURES": {
     "hash": "9e05192",
@@ -10020,6 +10399,20 @@
     ],
     "title": "`DELETE /api/telemetry/analytics/purge` accepts unbounded `?days=` — admin can wipe instantly with `days=0`",
     "type": "BUG"
+  },
+  "BUG-TELEMETRY-RETENTION-DAYS-MUST-VALIDATE-NONPOSITIVE-AND-NON-NUMERIC-INPUT": {
+    "hash": "2387a37",
+    "extid": "BUG-TELEMETRY-RETENTION-DAYS-MUST-VALIDATE-NONPOSITIVE-AND-NON-NUMERIC-INPUT",
+    "type": "BUG",
+    "title": "Telemetry retention days must validate nonpositive and non-numeric input",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-telemetry",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-telemetry-retention-days-must-validate-nonpositive-and-non-numeric-input.md",
+    "status": "Done",
+    "git_issue": "2387a37"
   },
   "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS": {
     "epic": "",
@@ -10218,6 +10611,20 @@
     "epic": "epic-timeline-system",
     "tags": [],
     "source": ".plan/tickets/BUG-timeline-event-steering-manifest-status-update-and-timeline-.md",
+    "status": "done"
+  },
+  "BUG-TLS-GENERATED-PRIVATE-KEY-WRITTEN-WITHOUT-0600-PERMISSIONS": {
+    "hash": "adcbf2e",
+    "git_issue": "adcbf2e",
+    "extid": "BUG-TLS-GENERATED-PRIVATE-KEY-WRITTEN-WITHOUT-0600-PERMISSIONS",
+    "type": "BUG",
+    "title": "TLS generated private key written without 0600 permissions",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-certificate-and-tls-management",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tls-generated-private-key-written-without-0600-permissions.md",
     "status": "done"
   },
   "BUG-TOOL-CALL-ARG-PARSE-SILENT-FALLBACK": {
@@ -10778,7 +11185,7 @@
     "label": "bug",
     "priority": "critical",
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
-    "status": "fixed-in-worktree",
+    "status": "Done",
     "tags": [],
     "title": "vn-choices IDOR guard does not compile (merge `3ab26ccd`)",
     "type": "BUG"
@@ -10807,7 +11214,7 @@
     "epic": "epic-review-20261025-api-governance-perimeter",
     "tags": [],
     "source": ".plan/tickets/BUG-vn-generate-questions-is-the-only-vn-generate-endpoint-with-.md",
-    "status": "Not Started"
+    "status": "Done"
   },
   "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES": {
     "epic": "",
@@ -10860,7 +11267,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-webhook-adapter-endpoint-500s-body-already-used-under-compos.md",
-    "status": "open"
+    "status": "Done"
   },
   "BUG-WEBHOOK-DEDUP-IS-RECORDED-BEFORE-DISPATCH-SO-A-HANDLER-THROW": {
     "hash": "ebafd77",
@@ -12357,7 +12764,7 @@
       "3d",
       "gallery"
     ],
-    "source": ".plan/tickets/epic-asset-generation-metadata.md",
+    "source": ".plan/epics/epic-asset-generation-metadata.md",
     "status": "Not Started"
   },
   "EPIC-ASSET-LINEAGE-PROVENANCE": {
@@ -12376,7 +12783,7 @@
       "hash",
       "gallery"
     ],
-    "source": ".plan/tickets/epic-asset-lineage-provenance.md",
+    "source": ".plan/epics/epic-asset-lineage-provenance.md",
     "status": "Not Started"
   },
   "EPIC-ASSET-PLATFORM-CAPABILITIES": {
@@ -12852,7 +13259,7 @@
       "websocket",
       "bun"
     ],
-    "source": ".plan/tickets/epic-browser-editor-support.md",
+    "source": ".plan/epics/epic-browser-editor-support.md",
     "status": "Not Started"
   },
   "EPIC-BYOK-API-KEYS": {
@@ -13191,7 +13598,7 @@
       "audit"
     ],
     "source": ".plan/epics/epic-chat-multi-ownership.md",
-    "status": "in_progress",
+    "status": "done",
     "git_issue": "0befebe",
     "project": ""
   },
@@ -13664,7 +14071,7 @@
     "type": "EPIC"
   },
   "EPIC-CONTRACT-AND-CONFIG-TOOLING": {
-    "hash": "pending",
+    "hash": "d2dd7ed",
     "extid": "EPIC-CONTRACT-AND-CONFIG-TOOLING",
     "type": "EPIC",
     "title": "Contract and config tooling gaps",
@@ -13680,8 +14087,9 @@
       "schema",
       "generator"
     ],
-    "source": ".plan/tickets/epic-contract-and-config-tooling.md",
-    "status": "open"
+    "source": ".plan/epics/epic-contract-and-config-tooling.md",
+    "status": "open",
+    "git_issue": "d2dd7ed"
   },
   "EPIC-CONVERSATION-BRANCHING": {
     "epic": "",
@@ -14131,7 +14539,7 @@
     "type": "EPIC"
   },
   "EPIC-DISPLAY-TRANSITIONS": {
-    "hash": "pending",
+    "hash": "a7b7f0e",
     "extid": "EPIC-DISPLAY-TRANSITIONS",
     "type": "EPIC",
     "title": "Display Transitions — world ↔ chat ↔ map ↔ inventory ↔ battle",
@@ -14147,8 +14555,9 @@
       "arrival-events",
       "writeback"
     ],
-    "source": ".plan/tickets/epic-display-transitions.md",
-    "status": "open"
+    "source": ".plan/epics/epic-display-transitions.md",
+    "status": "open",
+    "git_issue": "a7b7f0e"
   },
   "EPIC-DISTRIBUTED-COMPUTE-SHARING": {
     "epic": "",
@@ -14252,6 +14661,27 @@
     ],
     "title": "Economy & Trading Systems",
     "type": "EPIC"
+  },
+  "EPIC-EDITOR-LSP-INTEGRATION": {
+    "hash": "0a45cea",
+    "extid": "EPIC-EDITOR-LSP-INTEGRATION",
+    "type": "EPIC",
+    "title": "Editor LSP Integration",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "lsp",
+      "editor",
+      "helix",
+      "mitos",
+      "nvim",
+      "harness"
+    ],
+    "source": ".plan/epics/epic-editor-lsp-integration.md",
+    "status": "open",
+    "git_issue": "0a45cea"
   },
   "EPIC-EDITORIAL-WORKFLOW": {
     "hash": "f1a9f47",
@@ -14553,7 +14983,7 @@
       "testing"
     ],
     "source": ".plan/epics/epic-external-harness-acp.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "253e7e4",
     "project": ""
   },
@@ -14723,7 +15153,7 @@
     "label": "epic",
     "priority": "High",
     "source": ".plan/epics/epic-fractal-locations.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "hierarchy",
@@ -15011,7 +15441,7 @@
     "label": "epic",
     "priority": "Medium",
     "source": ".plan/epics/epic-frontend-internationalization.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "frontend",
       "i18n",
@@ -15164,7 +15594,7 @@
       "manifest",
       "packaging"
     ],
-    "source": ".plan/tickets/epic-game-asset-pipeline-export.md",
+    "source": ".plan/epics/epic-game-asset-pipeline-export.md",
     "status": "Not Started"
   },
   "EPIC-GAME-ENGINE-SDKS": {
@@ -15519,7 +15949,7 @@
       "collaboration",
       "browser-editors"
     ],
-    "source": ".plan/tickets/epic-image-video-scenario-studio.md",
+    "source": ".plan/epics/epic-image-video-scenario-studio.md",
     "status": "Not Started"
   },
   "EPIC-IMMERSION-CONSISTENCY-GATE": {
@@ -16639,7 +17069,7 @@
     "project": ""
   },
   "EPIC-MULTI-AGENT-ORCHESTRATION": {
-    "hash": "pending",
+    "hash": "fbf71e8",
     "extid": "EPIC-MULTI-AGENT-ORCHESTRATION",
     "type": "EPIC",
     "title": "Multi-agent orchestration (turn queue)",
@@ -16655,8 +17085,9 @@
       "subagents",
       "parallelism"
     ],
-    "source": ".plan/tickets/epic-multi-agent-orchestration.md",
-    "status": "in_progress"
+    "source": ".plan/epics/epic-multi-agent-orchestration.md",
+    "status": "in_progress",
+    "git_issue": "fbf71e8"
   },
   "EPIC-MULTI-INSTANCE-RECONCILIATION": {
     "epic": "",
@@ -17854,8 +18285,32 @@
     "title": "Release 0.1.0",
     "type": "EPIC"
   },
+  "EPIC-REMOTE-HARNESS-FEDERATION": {
+    "hash": "287aa65",
+    "extid": "EPIC-REMOTE-HARNESS-FEDERATION",
+    "type": "EPIC",
+    "title": "Remote Harness / Federation (Future Work)",
+    "label": "epic",
+    "priority": "Medium",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "harness",
+      "remote",
+      "federation",
+      "tls",
+      "auth",
+      "worktree",
+      "git",
+      "jj",
+      "pijul"
+    ],
+    "source": ".plan/epics/epic-remote-harness-federation.md",
+    "status": "open",
+    "git_issue": "287aa65"
+  },
   "EPIC-RENPY-EXPORT": {
-    "hash": "pending",
+    "hash": "56f8f61",
     "extid": "EPIC-RENPY-EXPORT",
     "type": "EPIC",
     "title": "Ren'Py Conversion Export",
@@ -17869,8 +18324,9 @@
       "plugin",
       "vn"
     ],
-    "source": ".plan/tickets/epic-renpy-export.md",
-    "status": "open"
+    "source": ".plan/epics/epic-renpy-export.md",
+    "status": "done",
+    "git_issue": "56f8f61"
   },
   "EPIC-REPLAYABILITY": {
     "epic": "",
@@ -18303,7 +18759,7 @@
       "reuse",
       "propagation"
     ],
-    "source": ".plan/tickets/epic-scene-environment-world-generation.md",
+    "source": ".plan/epics/epic-scene-environment-world-generation.md",
     "status": "Not Started"
   },
   "EPIC-SCHEMA": {
@@ -19028,7 +19484,7 @@
       "assets",
       "assistant"
     ],
-    "source": ".plan/tickets/epic-view-set-generation.md",
+    "source": ".plan/epics/epic-view-set-generation.md",
     "status": "Not Started"
   },
   "EPIC-VISUAL-NOVEL-MODE": {
@@ -19553,7 +20009,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-059.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "# FEAT-059: Conversation analytics dashboard",
     "type": "FEAT"
@@ -19708,7 +20164,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-065-template-system.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "# Template System — Unified Architecture Spec",
     "type": "FEAT"
@@ -21164,7 +21620,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-COMFYUI-WEBSOCKET-PROGRESS-CLIENT.md",
-    "status": "open"
+    "status": "done"
   },
   "FEAT-COMFYUI-WORKFLOW-PATCH-ORIGINAL-MODE": {
     "hash": "34631bf",
@@ -21386,6 +21842,20 @@
     "title": "decay timeline visualization for memory lifecycle",
     "type": "FEAT"
   },
+  "FEAT-DEDICATED-RERANK-MODEL-ROLE-AND-TASK-SIGNAL-WITH-AUX-GENERAL": {
+    "hash": "d195a7c",
+    "git_issue": "d195a7c",
+    "extid": "FEAT-DEDICATED-RERANK-MODEL-ROLE-AND-TASK-SIGNAL-WITH-AUX-GENERAL",
+    "type": "FEAT",
+    "title": "dedicated rerank model role and task signal with aux/general fallback routing",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-dedicated-rerank-model-role-and-task-signal-with-aux-general.md",
+    "status": "done"
+  },
   "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "FEAT-DIRECTOR-S-MODE-CAMERA-SCENE-CUT-MUSIC-METADATA",
@@ -21410,8 +21880,14 @@
     "title": "Director timeline scene mapping",
     "label": "feat",
     "priority": "medium",
-    "epic": "",
-    "tags": [],
+    "epic": "epic-image-video-scenario-studio",
+    "tags": [
+      "director",
+      "video",
+      "fragments",
+      "comfyui",
+      "honkbox"
+    ],
     "source": ".plan/tickets/FEAT-DIRECTOR-TIMELINE-SCENE-MAPPING.md",
     "status": "open"
   },
@@ -21550,6 +22026,20 @@
     "tags": [],
     "title": "Expose full VN settings from spec",
     "type": "FEAT"
+  },
+  "FEAT-EXPOSE-NEW-HONKBOX-CAPABILITY-KEYS": {
+    "hash": "b424d3c",
+    "git_issue": "b424d3c",
+    "extid": "FEAT-EXPOSE-NEW-HONKBOX-CAPABILITY-KEYS",
+    "type": "FEAT",
+    "title": "Expose new honkbox capability keys",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-expose-new-honkbox-capability-keys.md",
+    "status": "open"
   },
   "FEAT-EXTRA-MODEL-PATHS-YAML-CONFIG": {
     "hash": "2feaa09",
@@ -22024,7 +22514,7 @@
     "title": "Generation usage analytics",
     "label": "feat",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-analytics-observability",
     "tags": [],
     "source": ".plan/tickets/FEAT-GENERATION-USAGE-ANALYTICS.md",
     "status": "open"
@@ -22105,6 +22595,20 @@
     ],
     "source": ".plan/tickets/FEAT-header-only-safetensors-metadata-parser.md",
     "status": "Not Started"
+  },
+  "FEAT-HONKBOX-CAPABILITY-DESCRIPTOR-REGISTRY-AND-FEATURE-GATE-HELP": {
+    "hash": "55f8fd5",
+    "git_issue": "55f8fd5",
+    "extid": "FEAT-HONKBOX-CAPABILITY-DESCRIPTOR-REGISTRY-AND-FEATURE-GATE-HELP",
+    "type": "FEAT",
+    "title": "honkbox capability descriptor registry and feature gate helper",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-platform-integrations.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-honkbox-capability-descriptor-registry-and-feature-gate-help.md",
+    "status": "done"
   },
   "FEAT-HUMAN-HYBRID-GM-CONFIG-AUTHORING-D3": {
     "hash": "dcbd923",
@@ -22931,7 +23435,7 @@
     "label": "feat",
     "priority": "high",
     "source": ".plan/tickets/FEAT-npc-navigation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "NPC Navigation",
     "type": "FEAT"
@@ -23434,6 +23938,20 @@
     "title": "Relationships",
     "type": "FEAT"
   },
+  "FEAT-RELAY-SWARM-NODE-MODE": {
+    "hash": "f308ebc",
+    "git_issue": "f308ebc",
+    "extid": "FEAT-RELAY-SWARM-NODE-MODE",
+    "type": "FEAT",
+    "title": "Relay/swarm node mode",
+    "label": "feat",
+    "priority": "low",
+    "epic": "epic-federation-offload-quotas.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-relay-swarm-node-mode.md",
+    "status": "open"
+  },
   "FEAT-RELEVANCE-GATED-MEMORY-INJECTION-WITH-CLASSIFIER-OR-RERANKER": {
     "hash": "ef636a2",
     "git_issue": "ef636a2",
@@ -23636,7 +24154,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-style-picker-ui-for-smart-regen.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [],
     "title": "style picker UI for smart-regen",
     "type": "FEAT"
@@ -23733,7 +24251,7 @@
     "label": "feat",
     "priority": "medium",
     "source": ".plan/tickets/FEAT-time-scale.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Time Scale",
     "type": "FEAT"
@@ -24063,29 +24581,45 @@
     "title": "Parallelize bun test invocations - isolate pins suite to one core",
     "type": "FIX"
   },
+  "FIX-RECONCILE-HONKBOX-INTEGRATION-TICKET-TEXT": {
+    "hash": "bab3379",
+    "git_issue": "bab3379",
+    "extid": "FIX-RECONCILE-HONKBOX-INTEGRATION-TICKET-TEXT",
+    "type": "FIX",
+    "title": "Reconcile honkbox integration ticket text",
+    "label": "fix",
+    "priority": "low",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/FIX-reconcile-honkbox-integration-ticket-text.md",
+    "status": "open"
+  },
   "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL": {
     "epic": "epic-chat-product-features",
     "extid": "IDEA-CHAT-COMPOSER-INLINE-SUGGESTIONS-PROPOSAL",
-    "hash": "8ae1e91",
+    "hash": "14f1f1d",
     "label": "idea",
     "priority": "low",
     "source": ".plan/tickets/IDEA-chat-composer-inline-suggestions-proposal.md",
     "status": "Not Started",
     "tags": [],
     "title": "Chat composer — predictive inline text suggestions (proposal)",
-    "type": "IDEA"
+    "type": "IDEA",
+    "git_issue": "14f1f1d"
   },
   "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS": {
     "epic": "epic-chat-product-features",
     "extid": "IDEA-CHAT-COMPOSER-PREDICTIVE-INLINE-TEXT-SUGGESTIONS",
-    "hash": "056e932",
+    "hash": "e37ccde",
     "label": "idea",
     "priority": "low",
     "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md",
     "status": "Not Started",
     "tags": [],
     "title": "Chat composer: predictive inline text suggestions",
-    "type": "IDEA"
+    "type": "IDEA",
+    "git_issue": "e37ccde"
   },
   "IDEA-MICRODRAMA-POST-EPISODE-CHAT-HANDOFF": {
     "epic": "epic-platform-research",
@@ -24138,6 +24672,24 @@
     "tags": [],
     "title": "gallery uploadChatAssets runs uploads sequentially",
     "type": "PERF"
+  },
+  "SOL-BLENDER-JOB-BOUNDARY-AND-CONTRACT": {
+    "hash": "98a44e1",
+    "git_issue": "98a44e1",
+    "extid": "SOL-BLENDER-JOB-BOUNDARY-AND-CONTRACT",
+    "type": "SOL",
+    "title": "Blender job boundary and contract",
+    "label": "sol",
+    "priority": "medium",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [
+      "blender",
+      "integration",
+      "contract"
+    ],
+    "source": ".plan/tickets/SOL-blender-job-boundary-and-contract.md",
+    "status": "open"
   },
   "TASK-001": {
     "epic": "epic-frontend-components",
@@ -25173,7 +25725,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-backup-restore-before-1-0-0-required-unstarted.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-OMNI-SEARCH-FRONTEND-CONSUMER": {
     "hash": "91d9e08",
@@ -25187,7 +25739,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-omni-search-frontend-consumer.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-SD-CPP-LOCAL-IMAGE-WIRING-AS-OWNED-SCOPE": {
     "hash": "4bd966e",
@@ -25201,7 +25753,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-sd-cpp-local-image-wiring-as-owned-scope.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-UNIFIED-CROSS-SURFACE-OMNI-SEARCH": {
     "hash": "9d90969",
@@ -25215,7 +25767,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-gap-unified-cross-surface-omni-search.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-GAP-VERIFY-MULTI-ASSISTANT-AND-MULTI-LLM-CHAT-ROWS": {
     "hash": "2f405b6",
@@ -25232,7 +25784,7 @@
     "status": "open"
   },
   "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES": {
-    "hash": "pending",
+    "hash": "6f48dd7",
     "extid": "TASK-1-0-0-GAP-VN-CUSTOM-TYPEABLE-CHOICES",
     "type": "TASK",
     "title": "1.0.0 GAP — VN custom-typeable choices (typed answers and typed actions)",
@@ -25247,7 +25799,8 @@
       "release-1-0-0"
     ],
     "source": ".plan/tickets/TASK-1-0-0-gap-vn-custom-typeable-choices.md",
-    "status": "done"
+    "status": "done",
+    "git_issue": "6f48dd7"
   },
   "TASK-1-0-0-MFA-EMAIL-MESSENGER-CODE-CHANNEL-FIRST-METAAPPLICATION": {
     "hash": "7466fb8",
@@ -25261,7 +25814,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-mfa-email-messenger-code-channel-first-metaapplication.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-1-3-3-INBOUND-MCP-ACP-STUDIO-SERVERS-EXTERNAL-TO": {
     "hash": "05bdec6",
@@ -25321,7 +25874,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-1-0-0-theme-3-chat-as-the-product-scripting-lite-product-res.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-1-0-0-THEME-4-MOBILE-READY-WEB-WITHOUT-A-NATIVE-PACKAGE": {
     "hash": "c137c78",
@@ -26253,6 +26806,34 @@
     "title": "Achievements enum revival — promote service-layer to db barrel",
     "type": "TASK"
   },
+  "TASK-ACP-ADDITIONALDIRECTORIES-SUPPORT": {
+    "hash": "ab96118",
+    "git_issue": "ab96118",
+    "extid": "TASK-ACP-ADDITIONALDIRECTORIES-SUPPORT",
+    "type": "TASK",
+    "title": "ACP additionalDirectories support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-additionaldirectories-support.md",
+    "status": "done"
+  },
+  "TASK-ACP-CANCEL-REQUEST-TRANSPORT-SUPPORT": {
+    "hash": "7a85e75",
+    "git_issue": "7a85e75",
+    "extid": "TASK-ACP-CANCEL-REQUEST-TRANSPORT-SUPPORT",
+    "type": "TASK",
+    "title": "ACP cancel_request transport support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-cancel-request-transport-support.md",
+    "status": "done"
+  },
   "TASK-ACP-CLAUDE-CODE-ADAPTER": {
     "hash": "44122d6",
     "extid": "TASK-ACP-CLAUDE-CODE-ADAPTER",
@@ -26279,7 +26860,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-composition-root-wiring.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ACP-DRIVER-MODULE": {
     "hash": "a727ddb",
@@ -26292,6 +26873,34 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-acp-driver-module.md",
+    "status": "done"
+  },
+  "TASK-ACP-ELICITATION-CREATE-FORM-SUPPORT": {
+    "hash": "b7b0301",
+    "git_issue": "b7b0301",
+    "extid": "TASK-ACP-ELICITATION-CREATE-FORM-SUPPORT",
+    "type": "TASK",
+    "title": "ACP elicitation create form support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-elicitation-create-form-support.md",
+    "status": "done"
+  },
+  "TASK-ACP-PLAN-EVENTS-SUPPORT": {
+    "hash": "ef3a0bf",
+    "git_issue": "ef3a0bf",
+    "extid": "TASK-ACP-PLAN-EVENTS-SUPPORT",
+    "type": "TASK",
+    "title": "ACP plan events support",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-plan-events-support.md",
     "status": "done"
   },
   "TASK-ACP-PROFILE-AWARE-MODEL-SELECTION": {
@@ -26320,6 +26929,48 @@
     "source": ".plan/tickets/TASK-acp-profile-harness-adapters.md",
     "status": "done"
   },
+  "TASK-ACP-SESSION-NEW-MCP-HANDOFF-AND-FS-WRITE-FILE": {
+    "hash": "424f6d6",
+    "git_issue": "424f6d6",
+    "extid": "TASK-ACP-SESSION-NEW-MCP-HANDOFF-AND-FS-WRITE-FILE",
+    "type": "TASK",
+    "title": "ACP session/new MCP handoff and fs write file",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-new-mcp-handoff-and-fs-write-file.md",
+    "status": "done"
+  },
+  "TASK-ACP-SESSION-PERSISTENCE-LOAD-RESUME-LIST": {
+    "hash": "0a65d93",
+    "git_issue": "0a65d93",
+    "extid": "TASK-ACP-SESSION-PERSISTENCE-LOAD-RESUME-LIST",
+    "type": "TASK",
+    "title": "ACP session persistence load resume list",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-persistence-load-resume-list.md",
+    "status": "done"
+  },
+  "TASK-ACP-SESSION-SET-MODE-PLAN-ACT-CONTROL": {
+    "hash": "79b3fa2",
+    "git_issue": "79b3fa2",
+    "extid": "TASK-ACP-SESSION-SET-MODE-PLAN-ACT-CONTROL",
+    "type": "TASK",
+    "title": "ACP session set_mode plan act control",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-session-set-mode-plan-act-control.md",
+    "status": "done"
+  },
   "TASK-ACP-STDIO-SERVER-OVER-EXISTING-CHAT-SESSIONS": {
     "hash": "6297321",
     "git_issue": "6297321",
@@ -26335,6 +26986,20 @@
     ],
     "source": ".plan/tickets/TASK-acp-stdio-server-over-existing-chat-sessions.md",
     "status": "Not Started"
+  },
+  "TASK-ACP-V2-PROTOCOL-NEGOTIATION": {
+    "hash": "b7aaa37",
+    "git_issue": "b7aaa37",
+    "extid": "TASK-ACP-V2-PROTOCOL-NEGOTIATION",
+    "type": "TASK",
+    "title": "ACP v2 protocol negotiation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-acp-v2-protocol-negotiation.md",
+    "status": "done"
   },
   "TASK-ACTION-APPLICABILITY-GATE": {
     "epic": "epic-immersion-consistency-gate",
@@ -26955,6 +27620,40 @@
     "title": "Add HeatPhase state machine for character_heat_cycle.current_phase",
     "type": "TASK"
   },
+  "TASK-ADD-HTML-MINIFY-PARITY-GATE-FOR-TEMPLATES-AND-ATTRIBUTE-DRIF": {
+    "hash": "f253dfe",
+    "git_issue": "f253dfe",
+    "extid": "TASK-ADD-HTML-MINIFY-PARITY-GATE-FOR-TEMPLATES-AND-ATTRIBUTE-DRIF",
+    "type": "TASK",
+    "title": "Add HTML minify-parity gate for templates and attribute drift",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-code-quality.md",
+    "project": "",
+    "tags": [
+      "frontend",
+      "build",
+      "html",
+      "minify",
+      "gates"
+    ],
+    "source": ".plan/tickets/TASK-add-html-minify-parity-gate-for-templates-and-attribute-drif.md",
+    "status": "done"
+  },
+  "TASK-ADD-INIT-IMAGE-ATTACHMENT-AFFORDANCE": {
+    "hash": "4d84a63",
+    "git_issue": "4d84a63",
+    "extid": "TASK-ADD-INIT-IMAGE-ATTACHMENT-AFFORDANCE",
+    "type": "TASK",
+    "title": "Add init-image attachment affordance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-init-image-attachment-affordance.md",
+    "status": "done"
+  },
   "TASK-ADD-MISSING-RPG-MODULE-BARRELS": {
     "epic": "epic-nsfw-game-mechanics",
     "extid": "TASK-ADD-MISSING-RPG-MODULE-BARRELS",
@@ -27427,6 +28126,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-user-management-ui-session-revoke-password-reset-accou.md",
     "status": "Not Started"
+  },
+  "TASK-ADMIT-EXTERNAL-AGENT-TO-WORKTREE-CONFINED-REPO-CHECK": {
+    "hash": "fde2df0",
+    "git_issue": "fde2df0",
+    "extid": "TASK-ADMIT-EXTERNAL-AGENT-TO-WORKTREE-CONFINED-REPO-CHECK",
+    "type": "TASK",
+    "title": "admit external agent to worktree confined repo check",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-rsi-repo-access.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admit-external-agent-to-worktree-confined-repo-check.md",
+    "status": "done"
   },
   "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING": {
     "epic": "epic-platform-api-adoption",
@@ -28497,7 +29210,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-alternate-greeting-picker-at-chat-creation.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-AMBIENT-SOUND-SYSTEM": {
     "epic": "epic-audio-video-sound",
@@ -28569,6 +29282,20 @@
     "title": "Anthropic Provider",
     "type": "TASK"
   },
+  "TASK-ANTIGRAVITY-ACP-FLAVOR-PLUS-BYOK-HARDENING-AND-PROVIDER-DOCS": {
+    "hash": "9c66da0",
+    "git_issue": "9c66da0",
+    "extid": "TASK-ANTIGRAVITY-ACP-FLAVOR-PLUS-BYOK-HARDENING-AND-PROVIDER-DOCS",
+    "type": "TASK",
+    "title": "antigravity ACP flavor plus BYOK hardening and provider docs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-antigravity-acp-flavor-plus-byok-hardening-and-provider-docs.md",
+    "status": "done"
+  },
   "TASK-API-FIRST-FOUNDATION": {
     "epic": "epic-api-library-distribution",
     "extid": "TASK-API-FIRST-FOUNDATION",
@@ -28610,7 +29337,7 @@
       "api-keys"
     ],
     "source": ".plan/tickets/TASK-api-key-auth-middleware-for-external-agents.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-API-ROUTES": {
     "epic": "epic-api-routes",
@@ -28783,7 +29510,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Asset dedup TOCTOU creates duplicate rows and orphan files",
     "type": "TASK"
@@ -29030,6 +29757,20 @@
     ],
     "title": "Asset Templates and Presets",
     "type": "TASK"
+  },
+  "TASK-ASSET-TEXT-EXTRACTION-VIA-HONKBOX-RECOGNIZE": {
+    "hash": "31f94d7",
+    "git_issue": "31f94d7",
+    "extid": "TASK-ASSET-TEXT-EXTRACTION-VIA-HONKBOX-RECOGNIZE",
+    "type": "TASK",
+    "title": "Asset text extraction via honkbox recognize",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-ingestion",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-text-extraction-via-honkbox-recognize.md",
+    "status": "open"
   },
   "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM": {
     "epic": "epic-asset-transform-metadata",
@@ -30298,7 +31039,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-auto-generate-docs-reference-api-md-from-openapi-spec.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Auto-generate docs/reference/api.md from OpenAPI spec",
     "type": "TASK"
@@ -31016,13 +31757,27 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-backup-consistency-vacuum-into-snapshots-plus-archive-dbs.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "database",
       "backup"
     ],
     "title": "Backup consistency: VACUUM INTO snapshots plus archive DBs",
     "type": "TASK"
+  },
+  "TASK-BACKUP-DOWNLOAD-UPLOAD-SCHEDULING-AND-ADMIN-PANEL-FOLLOW-UP": {
+    "hash": "cd35549",
+    "git_issue": "cd35549",
+    "extid": "TASK-BACKUP-DOWNLOAD-UPLOAD-SCHEDULING-AND-ADMIN-PANEL-FOLLOW-UP",
+    "type": "TASK",
+    "title": "backup download upload scheduling and admin panel follow-up",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-database-backup-recovery.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md",
+    "status": "done"
   },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
     "epic": "epic-database-backup-recovery, epic-db-asset-snapshot-recovery, epic-federation-swarm-sync",
@@ -31536,6 +32291,20 @@
     "source": ".plan/tickets/TASK-bdi-plan-recompute-implementation.md",
     "status": "done"
   },
+  "TASK-BEARER-SCOPE-CONFIG-SURFACE-AND-403-MAPPING-PLUS-ROTATION-HO": {
+    "hash": "0110299",
+    "git_issue": "0110299",
+    "extid": "TASK-BEARER-SCOPE-CONFIG-SURFACE-AND-403-MAPPING-PLUS-ROTATION-HO",
+    "type": "TASK",
+    "title": "Bearer scope config surface and 403 mapping plus rotation hookup",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-principal-scoped-credentials",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bearer-scope-config-surface-and-403-mapping-plus-rotation-ho.md",
+    "status": "open"
+  },
   "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL": {
     "epic": "epic-enemies-monsters",
     "extid": "TASK-BESTIARY-ADMIN-GM-FORCE-SPAWN-AND-CULL",
@@ -31780,6 +32549,20 @@
     "title": "PostgreSQL Backup Compatibility Layer",
     "type": "TASK"
   },
+  "TASK-BLENDER-BINARY-DISCOVERY-AND-ADMIN-CAPABILITY-PROBE": {
+    "hash": "baeddef",
+    "git_issue": "baeddef",
+    "extid": "TASK-BLENDER-BINARY-DISCOVERY-AND-ADMIN-CAPABILITY-PROBE",
+    "type": "TASK",
+    "title": "Blender binary discovery and admin capability probe",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-blender-binary-discovery-and-admin-capability-probe.md",
+    "status": "done"
+  },
   "TASK-BLENDER-HEADLESS-NODE-BRIDGE": {
     "hash": "ec74d7a",
     "git_issue": "ec74d7a",
@@ -31794,7 +32577,7 @@
       "blender"
     ],
     "source": ".plan/tickets/TASK-blender-headless-node-bridge.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-BLOG-FRONTEND-AUTHORING": {
     "epic": "epic-frontend-backend-integration",
@@ -32206,7 +32989,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "testing",
       "e2e",
@@ -32589,6 +33372,20 @@
     "title": "Caddy TLS termination with automatic HTTPS",
     "type": "TASK"
   },
+  "TASK-CAP-SEMANTIC-RECALL-TOPK-AND-PRE-BUDGET-COST-ACROSS-MEMORY-O": {
+    "hash": "8eee692",
+    "git_issue": "8eee692",
+    "extid": "TASK-CAP-SEMANTIC-RECALL-TOPK-AND-PRE-BUDGET-COST-ACROSS-MEMORY-O",
+    "type": "TASK",
+    "title": "Cap semantic recall topK and pre-budget cost across memory owners",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cap-semantic-recall-topk-and-pre-budget-cost-across-memory-o.md",
+    "status": "open"
+  },
   "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING": {
     "epic": "epic-lore-knowledge",
     "extid": "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING",
@@ -32647,6 +33444,20 @@
     "tags": [],
     "title": "Caption variants: create/recreate/pick-best scenario",
     "type": "TASK"
+  },
+  "TASK-CAVEATS-COVERAGE-METRIC-FOR-THE-TICKET-CORPUS": {
+    "hash": "87ceebb",
+    "git_issue": "87ceebb",
+    "extid": "TASK-CAVEATS-COVERAGE-METRIC-FOR-THE-TICKET-CORPUS",
+    "type": "TASK",
+    "title": "caveats coverage metric for the ticket corpus",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-caveats-coverage-metric-for-the-ticket-corpus.md",
+    "status": "done"
   },
   "TASK-CERTIFICATE-LIFECYCLE-EXPIRY-MONITORING-AND-HEALTH-VERDICTS": {
     "epic": "epic-certificate-and-tls-management",
@@ -34009,6 +34820,20 @@
     "title": "Per-Scope Preferred Chat Context Window with Pre-Cap Degradation",
     "type": "TASK"
   },
+  "TASK-CHAT-DENSITY-LABELS-MUST-USE-COMPACT-STANDARD-COMFORTABLE": {
+    "hash": "b41d234",
+    "extid": "TASK-CHAT-DENSITY-LABELS-MUST-USE-COMPACT-STANDARD-COMFORTABLE",
+    "type": "TASK",
+    "title": "Chat density labels must use compact, standard, and comfortable",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-density-labels-must-use-compact-standard-comfortable.md",
+    "status": "open",
+    "git_issue": "b41d234"
+  },
   "TASK-CHAT-EXTERNAL-MUSIC-LINKING": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-CHAT-EXTERNAL-MUSIC-LINKING",
@@ -35141,6 +35966,20 @@
     "title": "feat(check): --gates/--skip-gates filter on parallel runner",
     "type": "TASK"
   },
+  "TASK-CHECK-VALIDATE-AND-VERIFY-COMPOSER-COMMANDS-WITH-UNDEFINED-S": {
+    "hash": "b160346",
+    "git_issue": "b160346",
+    "extid": "TASK-CHECK-VALIDATE-AND-VERIFY-COMPOSER-COMMANDS-WITH-UNDEFINED-S",
+    "type": "TASK",
+    "title": "check validate and verify composer commands with undefined semantics",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-chat-commands.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-check-validate-and-verify-composer-commands-with-undefined-s.md",
+    "status": "open"
+  },
   "TASK-CI-CD": {
     "epic": "epic-cicd-pipeline",
     "extid": "TASK-CI-CD",
@@ -35179,6 +36018,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-ci-no-check-gate-executes-scripts-smoke-tests.md",
     "status": "Not Started"
+  },
+  "TASK-CLAIM-MANIFEST-MACHINE-CHECKABLE-LANE-OWNERSHIP-PROTOCOL": {
+    "hash": "4aa89fc",
+    "git_issue": "4aa89fc",
+    "extid": "TASK-CLAIM-MANIFEST-MACHINE-CHECKABLE-LANE-OWNERSHIP-PROTOCOL",
+    "type": "TASK",
+    "title": "claim manifest: machine-checkable lane ownership protocol",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-claim-manifest-machine-checkable-lane-ownership-protocol.md",
+    "status": "open"
   },
   "TASK-CLARIFY-PROMPT-IMPROVE-ROUTE-PATH-RECONCILIATION": {
     "epic": "epic-prompt-improvement",
@@ -35325,6 +36178,34 @@
     "tags": [],
     "title": "Client-Side Encryption (AES-256-GCM)",
     "type": "TASK"
+  },
+  "TASK-CLOSE-MULTI-INSTANCE-H18-PATH-HYGIENE": {
+    "hash": "6d125d3",
+    "git_issue": "6d125d3",
+    "extid": "TASK-CLOSE-MULTI-INSTANCE-H18-PATH-HYGIENE",
+    "type": "TASK",
+    "title": "Close multi-instance H18 path hygiene",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-close-multi-instance-h18-path-hygiene.md",
+    "status": "done"
+  },
+  "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT": {
+    "hash": "65a5e31",
+    "git_issue": "65a5e31",
+    "extid": "TASK-CLOSE-REMAINING-RELEASE-GATE-DEBT",
+    "type": "TASK",
+    "title": "close remaining release gate debt",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-code-quality.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-close-remaining-release-gate-debt.md",
+    "status": "done"
   },
   "TASK-CLOSE-THE-FIRST-BOOT-PII-CONFIG-GATE-AND-EXPOSE-SETUP-STATE": {
     "hash": "62be90c",
@@ -35634,7 +36515,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-comfyui-first-class-client-id-websocket-progress-in-comfyuic.md",
-    "status": "open",
+    "status": "done",
     "tags": [
       "comfyui",
       "websocket",
@@ -35798,6 +36679,24 @@
     "status": "Not Started",
     "git_issue": "be1f42a"
   },
+  "TASK-COMFYUI-LATENT-OUTPUT-BUCKET-CAPTURE": {
+    "hash": "dda589f",
+    "extid": "TASK-COMFYUI-LATENT-OUTPUT-BUCKET-CAPTURE",
+    "type": "TASK",
+    "title": "ComfyUI latent output bucket capture",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-latent-output-bucket-capture.md",
+    "status": "done",
+    "git_issue": "dda589f"
+  },
   "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS": {
     "hash": "a4f6771",
     "extid": "TASK-COMFYUI-LAUNCH-CONTRACT-LLAMA-SWAP-RECIPE-AND-DOCS",
@@ -35816,6 +36715,24 @@
     "source": ".plan/tickets/TASK-comfyui-launch-contract-llama-swap-recipe-and-docs.md",
     "status": "Not Started",
     "git_issue": "a4f6771"
+  },
+  "TASK-COMFYUI-MODEL-DISCOVERY-AND-CONFIGURABLE-MODEL-NAMES": {
+    "hash": "dcb6c5c",
+    "extid": "TASK-COMFYUI-MODEL-DISCOVERY-AND-CONFIGURABLE-MODEL-NAMES",
+    "type": "TASK",
+    "title": "ComfyUI model discovery and configurable model names",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "models"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-model-discovery-and-configurable-model-names.md",
+    "status": "done",
+    "git_issue": "dcb6c5c"
   },
   "TASK-COMFYUI-NODE-DISCOVERY": {
     "epic": "epic-comfyui-plugin",
@@ -35840,7 +36757,7 @@
     "epic": "epic-reference-conditioned-generation",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-discovery-template-autofilter.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "a533944"
   },
   "TASK-COMFYUI-NODE-ID-ALLOCATION": {
@@ -35856,6 +36773,23 @@
     "status": "done",
     "git_issue": "7fe2a33"
   },
+  "TASK-COMFYUI-NODE-OWNERSHIP-BOUNDARY": {
+    "hash": "123cae3",
+    "git_issue": "123cae3",
+    "extid": "TASK-COMFYUI-NODE-OWNERSHIP-BOUNDARY",
+    "type": "TASK",
+    "title": "ComfyUI node ownership boundary",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-comfyui-first-class-citizen",
+    "project": "",
+    "tags": [
+      "comfyui",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-node-ownership-boundary.md",
+    "status": "open"
+  },
   "TASK-COMFYUI-OUTPUT-DIRECTORY-CONFIG": {
     "hash": "f2b36c5",
     "extid": "TASK-COMFYUI-OUTPUT-DIRECTORY-CONFIG",
@@ -35868,6 +36802,24 @@
     "source": ".plan/tickets/TASK-comfyui-output-directory-config.md",
     "status": "Not Started",
     "git_issue": "f2b36c5"
+  },
+  "TASK-COMFYUI-OUTPUT-KIND-BY-FORMAT": {
+    "hash": "91f0779",
+    "extid": "TASK-COMFYUI-OUTPUT-KIND-BY-FORMAT",
+    "type": "TASK",
+    "title": "ComfyUI output kind by format",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-output-kind-by-format.md",
+    "status": "done",
+    "git_issue": "91f0779"
   },
   "TASK-COMFYUI-PARAMETER-FORM-RENDERER": {
     "hash": "9d82194",
@@ -35944,7 +36896,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-sampler-scheduler-discovery.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "5880e44"
   },
   "TASK-COMFYUI-TEMPLATE-PARAMETER-VALIDATION": {
@@ -35957,7 +36909,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-template-parameter-validation.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "b89e39a"
   },
   "TASK-COMFYUI-TEMPLATE-REGISTRY": {
@@ -35972,6 +36924,24 @@
     "tags": [],
     "title": "ComfyUI Workflow Template Registry",
     "type": "TASK"
+  },
+  "TASK-COMFYUI-TERMINAL-SINK-REGISTRY": {
+    "hash": "c07f141",
+    "extid": "TASK-COMFYUI-TERMINAL-SINK-REGISTRY",
+    "type": "TASK",
+    "title": "ComfyUI terminal sink registry",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "workflow"
+    ],
+    "source": ".plan/tickets/TASK-comfyui-terminal-sink-registry.md",
+    "status": "done",
+    "git_issue": "c07f141"
   },
   "TASK-COMFYUI-WIRE-DELTAS-PAINTERI2V-PPM-HUNYUAN3D-WRAPPERS-PLYPRE": {
     "hash": "0724304",
@@ -36028,7 +36998,7 @@
     "epic": "epic-comfyui-first-class-citizen",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-workflow-parameterization.md",
-    "status": "Not Started",
+    "status": "done",
     "git_issue": "cefeb42"
   },
   "TASK-COMFYUI-WS-CLIENT-ID-PROGRESS-REFERENCE-GENERATION": {
@@ -36126,7 +37096,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-command-palette-descriptions-are-raw-i18n-keys-for-43-of-the.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-COMMENT-ONLY-CATCH-BLOCKS-IN-SRC-FRONTEND-ARE-INVISIBLE-TO-E": {
     "hash": "71aa87f",
@@ -36429,6 +37399,20 @@
     "source": ".plan/tickets/TASK-composer-primitive-extraction.md",
     "status": "done"
   },
+  "TASK-COMPOSER-UP-DOWN-RECALL-OF-PRIOR-TYPED-TEXT": {
+    "hash": "dd0970d",
+    "git_issue": "dd0970d",
+    "extid": "TASK-COMPOSER-UP-DOWN-RECALL-OF-PRIOR-TYPED-TEXT",
+    "type": "TASK",
+    "title": "composer Up Down recall of prior typed text",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-composer-flows.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-composer-up-down-recall-of-prior-typed-text.md",
+    "status": "done"
+  },
   "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR": {
     "epic": "epic-npcs",
     "extid": "TASK-CONDITION-DRIVEN-NPC-BEHAVIOR",
@@ -36623,6 +37607,20 @@
     "title": "Config Migration Tool",
     "type": "TASK"
   },
+  "TASK-CONNECTION-HARDENING-FOR-HONKBOX-DISPATCH": {
+    "hash": "197ed90",
+    "git_issue": "197ed90",
+    "extid": "TASK-CONNECTION-HARDENING-FOR-HONKBOX-DISPATCH",
+    "type": "TASK",
+    "title": "Connection hardening for honkbox dispatch",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-server-lifecycle-hardening",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-connection-hardening-for-honkbox-dispatch.md",
+    "status": "open"
+  },
   "TASK-CONNECTION-PROFILES-MASTER-PRESET-ONE-NAMED-BUNDLE-PER-CHAT": {
     "hash": "b4c40f6",
     "git_issue": "b4c40f6",
@@ -36777,6 +37775,20 @@
     "title": "Consolidate unsafe Date/Buffer/JSON usage into shared utils",
     "type": "TASK"
   },
+  "TASK-CONSUME-HONKBOX-CAPABILITIES-CONTRACT": {
+    "hash": "48bc41a",
+    "git_issue": "48bc41a",
+    "extid": "TASK-CONSUME-HONKBOX-CAPABILITIES-CONTRACT",
+    "type": "TASK",
+    "title": "Consume honkbox capabilities contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consume-honkbox-capabilities-contract.md",
+    "status": "done"
+  },
   "TASK-CONSUME-SIDE-MCP-COMFYUI-LOCAL-BLENDER-MCP-NODES-AS-TOOLS": {
     "hash": "01b1c19",
     "git_issue": "01b1c19",
@@ -36909,6 +37921,20 @@
     "source": ".plan/tickets/TASK-continuous-fuzzing-cluster-scheduler-corpus-sync-crash-triag.md",
     "status": "Not Started"
   },
+  "TASK-CONTROLNET-REQUEST-PATH-FOR-HONKBOX-AND-COMFYUI-IMAGE": {
+    "hash": "fc7403f",
+    "git_issue": "fc7403f",
+    "extid": "TASK-CONTROLNET-REQUEST-PATH-FOR-HONKBOX-AND-COMFYUI-IMAGE",
+    "type": "TASK",
+    "title": "ControlNet request path for honkbox and ComfyUI image",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-reference-conditioned-generation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-controlnet-request-path-for-honkbox-and-comfyui-image.md",
+    "status": "open"
+  },
   "TASK-CONVERSATION-BRANCHING": {
     "epic": "epic-conversation-branching",
     "extid": "TASK-CONVERSATION-BRANCHING",
@@ -36938,6 +37964,20 @@
     ],
     "title": "Convert Generated<number> boolean shims to boolean state machines across schema",
     "type": "TASK"
+  },
+  "TASK-COOKIE-SECURE-DEFAULT-FROM-EFFECTIVE-TLS": {
+    "hash": "429d8b8",
+    "git_issue": "429d8b8",
+    "extid": "TASK-COOKIE-SECURE-DEFAULT-FROM-EFFECTIVE-TLS",
+    "type": "TASK",
+    "title": "Cookie secure default from effective TLS",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cookie-secure-default-from-effective-tls.md",
+    "status": "done"
   },
   "TASK-CORRECT-DEAD-FILE-REFERENCES-AND-STORE-SHAPE-DRIFT-IN-THE-IN": {
     "hash": "0a4df5c",
@@ -37021,6 +38061,34 @@
     "title": "Cover frontend VN pages: new-chat, quests, worlds",
     "type": "TASK"
   },
+  "TASK-COVER-MESSAGE-BULK-TS-ALPINE-ACTION": {
+    "hash": "a51a3b0",
+    "git_issue": "a51a3b0",
+    "extid": "TASK-COVER-MESSAGE-BULK-TS-ALPINE-ACTION",
+    "type": "TASK",
+    "title": "Cover message-bulk.ts Alpine action",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-message-bulk-ts-alpine-action.md",
+    "status": "open"
+  },
+  "TASK-COVER-NEW-CHAT-SELECTION-TS-DOM-FUNCTIONS": {
+    "hash": "e0a81ea",
+    "git_issue": "e0a81ea",
+    "extid": "TASK-COVER-NEW-CHAT-SELECTION-TS-DOM-FUNCTIONS",
+    "type": "TASK",
+    "title": "Cover new-chat selection.ts DOM functions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-new-chat-selection-ts-dom-functions.md",
+    "status": "open"
+  },
   "TASK-COVER-ROUTES-BATTLE-EQUIPMENT-AND-COMPARISONS-EXPORT-TO-THE-": {
     "hash": "5f09a48",
     "git_issue": "5f09a48",
@@ -37042,10 +38110,24 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Coverage gate: true multi-worker fanout investigation",
     "type": "TASK"
+  },
+  "TASK-COVERAGE-MUST-BUCKET-PACKAGES-CORE-MODULES-SEPARATELY": {
+    "hash": "153d530",
+    "extid": "TASK-COVERAGE-MUST-BUCKET-PACKAGES-CORE-MODULES-SEPARATELY",
+    "type": "TASK",
+    "title": "Coverage must bucket `packages/core` modules separately",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-must-bucket-packages-core-modules-separately.md",
+    "status": "open",
+    "git_issue": "153d530"
   },
   "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT": {
     "epic": "(none — hygiene/self-contained)",
@@ -37430,7 +38512,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-credentials-story-decision-record.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CRON-ADMIN-OBSERVABILITY-DOCS": {
     "epic": "epic-cron-scheduler",
@@ -38185,6 +39267,20 @@
     "title": "DB: asset delete no tx, N+1 memory purge, column allowlist, playthrough ownership",
     "type": "TASK"
   },
+  "TASK-DB-BACKED-INJECTION-HISTORY-AND-KEYPHRASE-COOLDOWN-FOR-MEMOR": {
+    "hash": "69fe8cd",
+    "git_issue": "69fe8cd",
+    "extid": "TASK-DB-BACKED-INJECTION-HISTORY-AND-KEYPHRASE-COOLDOWN-FOR-MEMOR",
+    "type": "TASK",
+    "title": "DB-backed injection history and keyphrase cooldown for memory injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-backed-injection-history-and-keyphrase-cooldown-for-memor.md",
+    "status": "open"
+  },
   "TASK-DB-CONTENT-VERSIONING": {
     "epic": "epic-db-content-versioning",
     "extid": "TASK-DB-CONTENT-VERSIONING",
@@ -38320,7 +39416,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-dbrt-validation-gaps.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "DB Roundtrip Tests — Validate Inserted Values",
     "type": "TASK"
@@ -38351,6 +39447,48 @@
     "title": "Dead rejectBodyImpersonation guard never fires — Elysia TypeBox parser strips performedBy before beforeHandle",
     "type": "TASK"
   },
+  "TASK-DECIDE-1-0-0-EPIC-SCOPE-EXCLUSIONS": {
+    "hash": "90b91fc",
+    "git_issue": "90b91fc",
+    "extid": "TASK-DECIDE-1-0-0-EPIC-SCOPE-EXCLUSIONS",
+    "type": "TASK",
+    "title": "Decide 1.0.0 epic scope exclusions",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-1-0-0-epic-scope-exclusions.md",
+    "status": "done"
+  },
+  "TASK-DECIDE-1-0-0-QA-E2E-SUBSET": {
+    "hash": "76bc07f",
+    "git_issue": "76bc07f",
+    "extid": "TASK-DECIDE-1-0-0-QA-E2E-SUBSET",
+    "type": "TASK",
+    "title": "Decide 1.0.0 QA e2e subset",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-1-0-0-qa-e2e-subset.md",
+    "status": "done"
+  },
+  "TASK-DECIDE-API-VERSION-PIN-AND-ADR": {
+    "hash": "1e287f3",
+    "git_issue": "1e287f3",
+    "extid": "TASK-DECIDE-API-VERSION-PIN-AND-ADR",
+    "type": "TASK",
+    "title": "Decide API version pin and ADR",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-api-version-pin-and-adr.md",
+    "status": "done"
+  },
   "TASK-DECIDE-LLM-IMAGE-PROMPT-WRITER-FATE": {
     "hash": "534cfab",
     "git_issue": "534cfab",
@@ -38363,6 +39501,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-decide-llm-image-prompt-writer-fate.md",
     "status": "Not Started"
+  },
+  "TASK-DECIDE-TICKET-INDEX-SPLIT-TIMING": {
+    "hash": "fc7c398",
+    "git_issue": "fc7c398",
+    "extid": "TASK-DECIDE-TICKET-INDEX-SPLIT-TIMING",
+    "type": "TASK",
+    "title": "Decide ticket index split timing",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decide-ticket-index-split-timing.md",
+    "status": "done"
   },
   "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
     "epic": "epic-asset-platform-capabilities",
@@ -38428,6 +39580,23 @@
     "tags": [],
     "title": "Dedicated gallery pages for assistant functionalities",
     "type": "TASK"
+  },
+  "TASK-DEDICATED-MEDIA-SCORER-PACK-EVALUATION": {
+    "hash": "a620b71",
+    "git_issue": "a620b71",
+    "extid": "TASK-DEDICATED-MEDIA-SCORER-PACK-EVALUATION",
+    "type": "TASK",
+    "title": "Dedicated media scorer pack evaluation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-multimodal-asset-reuse",
+    "project": "",
+    "tags": [
+      "scoring",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-dedicated-media-scorer-pack-evaluation.md",
+    "status": "open"
   },
   "TASK-DEDUP-INVITES-REDEEM-AND-AUTH-FORM-FLOWS": {
     "epic": "epic-auth-channel-provisioning",
@@ -38686,7 +39855,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-delete-or-wire-dead-modules-flagged-in-glm-review-sweep.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-DELETE-ORPHANED-LOCALE-KEYS-ACROSS-ALL-10-LOCALE-FILES-LEAVE": {
     "hash": "041ce61",
@@ -38902,6 +40071,34 @@
     "status": "Not Started",
     "git_issue": "74cea0f"
   },
+  "TASK-DESIRED-CONTEXT-WINDOW-AND-PROMOTE-PRUNED-MESSAGES-TO-MEMORY": {
+    "hash": "3e9a8e5",
+    "git_issue": "3e9a8e5",
+    "extid": "TASK-DESIRED-CONTEXT-WINDOW-AND-PROMOTE-PRUNED-MESSAGES-TO-MEMORY",
+    "type": "TASK",
+    "title": "desired context window and promote pruned messages to memory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-context-optimization.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-desired-context-window-and-promote-pruned-messages-to-memory.md",
+    "status": "open"
+  },
+  "TASK-DETECT-TITLE-DRIFT-BETWEEN-TICKET-FILENAME-TITLE-AND-H1": {
+    "hash": "6e93118",
+    "git_issue": "6e93118",
+    "extid": "TASK-DETECT-TITLE-DRIFT-BETWEEN-TICKET-FILENAME-TITLE-AND-H1",
+    "type": "TASK",
+    "title": "detect title drift between ticket filename title and H1",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-detect-title-drift-between-ticket-filename-title-and-h1.md",
+    "status": "done"
+  },
   "TASK-DEV-TOOLING-UPDATES": {
     "epic": "",
     "extid": "TASK-DEV-TOOLING-UPDATES",
@@ -39084,7 +40281,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -39101,7 +40298,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-profanity-filter.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -39118,7 +40315,7 @@
     "label": "task",
     "priority": "P3",
     "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "docs",
       "spec",
@@ -39283,6 +40480,26 @@
     "title": "Docs UI endpoint linkage",
     "type": "TASK"
   },
+  "TASK-DOCUMENT-AND-ENFORCE-RUNTIME-HTML-RESPONSE-ATTRIBUTE-POLICY": {
+    "hash": "a05e15d",
+    "git_issue": "a05e15d",
+    "extid": "TASK-DOCUMENT-AND-ENFORCE-RUNTIME-HTML-RESPONSE-ATTRIBUTE-POLICY",
+    "type": "TASK",
+    "title": "Document and enforce runtime HTML response attribute policy",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-architecture.md",
+    "project": "",
+    "tags": [
+      "architecture",
+      "runtime",
+      "html",
+      "frontend",
+      "contract"
+    ],
+    "source": ".plan/tickets/TASK-document-and-enforce-runtime-html-response-attribute-policy.md",
+    "status": "done"
+  },
   "TASK-DOCUMENT-ASSET-RELATION-GRAPH-ON-2D-CANVAS": {
     "hash": "afdce38",
     "git_issue": "afdce38",
@@ -39420,6 +40637,20 @@
     "title": "Dynamic Memory Writes via Tool-Call",
     "type": "TASK"
   },
+  "TASK-E2E-ADMIN-STATUS-LIVE-LEG-LOCAL-LLAMA-SWAP": {
+    "hash": "18e7433",
+    "extid": "TASK-E2E-ADMIN-STATUS-LIVE-LEG-LOCAL-LLAMA-SWAP",
+    "type": "TASK",
+    "title": "e2e admin-status live leg against local llama-swap",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-admin-status-live-leg-local-llama-swap.md",
+    "status": "open",
+    "git_issue": "18e7433"
+  },
   "TASK-E2E-ALPINE-STATE-HARNESS": {
     "epic": "epic-e2e-integration-testing",
     "extid": "TASK-E2E-ALPINE-STATE-HARNESS",
@@ -39464,6 +40695,20 @@
     "tags": [],
     "title": "E2E browser reliability hardening",
     "type": "TASK"
+  },
+  "TASK-E2E-BUILD-LOCK-WAITS-WITHOUT-BOUND-BURNS-BROWSER-HOOK-BUDGET": {
+    "hash": "13cc99f",
+    "git_issue": "13cc99f",
+    "extid": "TASK-E2E-BUILD-LOCK-WAITS-WITHOUT-BOUND-BURNS-BROWSER-HOOK-BUDGET",
+    "type": "TASK",
+    "title": "e2e build lock waits without bound, burns browser hook budget",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-build-lock-waits-without-bound-burns-browser-hook-budget.md",
+    "status": "open"
   },
   "TASK-E2E-ENV-GATED-SCENARIO": {
     "hash": "e8e777f",
@@ -39830,6 +41075,20 @@
     ],
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
+  },
+  "TASK-EFFECTIVE-CONFIG-SECRET-PATTERN-MISSES-PASS-FIELDS": {
+    "hash": "c058164",
+    "git_issue": "c058164",
+    "extid": "TASK-EFFECTIVE-CONFIG-SECRET-PATTERN-MISSES-PASS-FIELDS",
+    "type": "TASK",
+    "title": "Effective config secret pattern misses Pass fields",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-effective-config-secret-pattern-misses-pass-fields.md",
+    "status": "open"
   },
   "TASK-EGUI-BATTLE-DISPLAY-PANEL": {
     "hash": "532dd0e",
@@ -40589,7 +41848,7 @@
       "multi-user"
     ],
     "source": ".plan/tickets/TASK-enforce-rbac-tranche-1-capability-gates-on-the-create-import.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ENFORCE-VIEWER-ID-CONTRACT-IN-MEMORY-INJECTION": {
     "hash": "b64e902",
@@ -40659,6 +41918,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-engine-feedback-loop.md",
     "status": "Not Started"
+  },
+  "TASK-ENGRAM-MEMORY-ADAPTER-AS-FIRST-EXTERNAL-BACKEND": {
+    "hash": "a01a2cc",
+    "git_issue": "a01a2cc",
+    "extid": "TASK-ENGRAM-MEMORY-ADAPTER-AS-FIRST-EXTERNAL-BACKEND",
+    "type": "TASK",
+    "title": "Engram memory adapter as first external backend",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-engram-memory-adapter-as-first-external-backend.md",
+    "status": "open"
   },
   "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE": {
     "epic": "epic-conversation-branching",
@@ -40810,7 +42083,7 @@
       "stale-doc"
     ],
     "source": ".plan/tickets/TASK-epic-db-migration-compaction-stale-premise-reconcile.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-EPIC-FRONTEND-COMPONENT-ARCHITECTURE-CLARIFICATION-2026-09-26": {
     "epic": "epic-frontend-component-architecture",
@@ -41215,6 +42488,39 @@
     "title": "Export Frontend Progress UI",
     "type": "TASK"
   },
+  "TASK-EXPORT-GAP-GATE-MUST-INSPECT-CORE-EXPORTS": {
+    "hash": "ab1f62e",
+    "extid": "TASK-EXPORT-GAP-GATE-MUST-INSPECT-CORE-EXPORTS",
+    "type": "TASK",
+    "title": "Export-gap gate must inspect core exports",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-export-gap-gate-must-inspect-core-exports.md",
+    "status": "open",
+    "git_issue": "ab1f62e"
+  },
+  "TASK-EXPORT-PRODUCTION-MINIMAX-H3-WORKFLOW-JSONS": {
+    "hash": "2722132",
+    "extid": "TASK-EXPORT-PRODUCTION-MINIMAX-H3-WORKFLOW-JSONS",
+    "type": "TASK",
+    "title": "Export production MiniMax H3 workflow JSONs",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-image-video-scenario-studio",
+    "project": "",
+    "tags": [
+      "ivss",
+      "comfyui",
+      "video",
+      "operator"
+    ],
+    "source": ".plan/tickets/TASK-export-production-minimax-h3-workflow-jsons.md",
+    "status": "open",
+    "git_issue": "2722132"
+  },
   "TASK-EXPOSE-DEK-EXPORT-AND-IMPORT-OVER-THE-FEDERATION-WIRE-ROUTES": {
     "hash": "742e1ef",
     "git_issue": "742e1ef",
@@ -41227,6 +42533,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-expose-dek-export-and-import-over-the-federation-wire-routes.md",
     "status": "Not Started"
+  },
+  "TASK-EXPOSE-VALIDATION-HARNESS-NAME": {
+    "hash": "f5c960b",
+    "git_issue": "f5c960b",
+    "extid": "TASK-EXPOSE-VALIDATION-HARNESS-NAME",
+    "type": "TASK",
+    "title": "Expose validation harness name",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-variants-taxonomy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-expose-validation-harness-name.md",
+    "status": "done"
   },
   "TASK-EXTEND-FE-BE-HARMONIZATION-GATE-TO-COVER-EXTERNAL-NON-HTMX-A": {
     "hash": "229d7a3",
@@ -42282,6 +43602,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-federation-workload-routing-policy.md",
     "status": "done"
+  },
+  "TASK-FENCE-3D-WORKFLOW-NODE-LICENSES": {
+    "hash": "90bebe1",
+    "git_issue": "90bebe1",
+    "extid": "TASK-FENCE-3D-WORKFLOW-NODE-LICENSES",
+    "type": "TASK",
+    "title": "Fence 3D workflow node licenses",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-3d-generation",
+    "project": "",
+    "tags": [
+      "3d",
+      "license",
+      "comfyui"
+    ],
+    "source": ".plan/tickets/TASK-fence-3d-workflow-node-licenses.md",
+    "status": "open"
   },
   "TASK-FETCHSKIPCOOLDOWNS-ISSUES-ONE-QUERY-PER-COOLING-ACTOR": {
     "hash": "8383ed3",
@@ -43349,7 +44687,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-frontend-story-mode-ui.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Frontend Story Mode UI",
     "type": "TASK"
@@ -43522,6 +44860,20 @@
     "tags": [],
     "title": "FTS5 cross-session recall and summarization for RAG-unified memory",
     "type": "TASK"
+  },
+  "TASK-FULL-CHATPRIVACY-MODEL-PROFILE-BEHIND-A-DOCUMENTED-DEFAULT": {
+    "hash": "d88966b",
+    "git_issue": "d88966b",
+    "extid": "TASK-FULL-CHATPRIVACY-MODEL-PROFILE-BEHIND-A-DOCUMENTED-DEFAULT",
+    "type": "TASK",
+    "title": "full ChatPrivacy model profile behind a documented default",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-privacy.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-full-chatprivacy-model-profile-behind-a-documented-default.md",
+    "status": "open"
   },
   "TASK-FULL-EFFECTIVE-CONFIG-EXPORT-WITH-OMIT-ON-UNOPENABLE-ENVELOP": {
     "hash": "a3a2dea",
@@ -43911,6 +45263,20 @@
     "title": "Generalized pre/post-generation hook registry",
     "type": "TASK"
   },
+  "TASK-GENERATE-PLAN-MAP-MD-ENTRY-MAP-FOR-PLAN-NAVIGATION": {
+    "hash": "aca24ab",
+    "git_issue": "aca24ab",
+    "extid": "TASK-GENERATE-PLAN-MAP-MD-ENTRY-MAP-FOR-PLAN-NAVIGATION",
+    "type": "TASK",
+    "title": "generate plan-map.md entry map for plan navigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generate-plan-map-md-entry-map-for-plan-navigation.md",
+    "status": "done"
+  },
   "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO": {
     "hash": "db7edfa",
     "extid": "TASK-GENERATED-DB-TYPES-MARK-EVERY-PRIMARY-KEY-AS-DB-GENERATED-SO",
@@ -44252,6 +45618,20 @@
     ],
     "title": "giwt migration open items (docs/giwt-scripts-map.md)",
     "type": "TASK"
+  },
+  "TASK-GIWT-OBJECT-TO-MD-SERIALIZER-FOR-LOSSLESS-TICKET-REGENERATIO": {
+    "hash": "90759e6",
+    "git_issue": "90759e6",
+    "extid": "TASK-GIWT-OBJECT-TO-MD-SERIALIZER-FOR-LOSSLESS-TICKET-REGENERATIO",
+    "type": "TASK",
+    "title": "giwt object-to-md serializer for lossless ticket regeneration",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-giwt-object-to-md-serializer-for-lossless-ticket-regeneratio.md",
+    "status": "done"
   },
   "TASK-GIWT-SHOW-STATE-RESOLVE-PLAN-TICKETS-FILENAME-SLUGS": {
     "epic": "(none — hygiene/self-contained)",
@@ -44857,6 +46237,34 @@
     "title": "Guided-regen frontend menu wiring on assistant messages",
     "type": "TASK"
   },
+  "TASK-H4-BUILD-INSTANCE-SCOPED-SYSTEM-CONFIG-OVERRIDES-VIA-KEY-TAX": {
+    "hash": "ce2f585",
+    "git_issue": "ce2f585",
+    "extid": "TASK-H4-BUILD-INSTANCE-SCOPED-SYSTEM-CONFIG-OVERRIDES-VIA-KEY-TAX",
+    "type": "TASK",
+    "title": "H4 build: instance-scoped system_config overrides via key taxonomy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-h4-build-instance-scoped-system-config-overrides-via-key-tax.md",
+    "status": "open"
+  },
+  "TASK-H5-BUILD-DB-BACKED-CROSS-INSTANCE-PERMISSION-QUEUE-ARCHIVE": {
+    "hash": "acd3d1c",
+    "git_issue": "acd3d1c",
+    "extid": "TASK-H5-BUILD-DB-BACKED-CROSS-INSTANCE-PERMISSION-QUEUE-ARCHIVE",
+    "type": "TASK",
+    "title": "H5 build: DB-backed cross-instance permission queue + archive",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-h5-build-db-backed-cross-instance-permission-queue-archive.md",
+    "status": "open"
+  },
   "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE": {
     "epic": "epic-review-dev-2026-08-26-security-data-integrity-merges",
     "extid": "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE",
@@ -44922,6 +46330,23 @@
     "source": ".plan/tickets/TASK-harness-backlog-jira.md",
     "status": "Not Started",
     "git_issue": "7ab14da"
+  },
+  "TASK-HARNESS-BUDGET-PROGNOSIS-AND-EXECUTION-ORDER": {
+    "hash": "bdb22d9",
+    "git_issue": "bdb22d9",
+    "extid": "TASK-HARNESS-BUDGET-PROGNOSIS-AND-EXECUTION-ORDER",
+    "type": "TASK",
+    "title": "harness budget prognosis and execution order",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [
+      "harness",
+      "planning"
+    ],
+    "source": ".plan/tickets/TASK-harness-budget-prognosis-and-execution-order.md",
+    "status": "open"
   },
   "TASK-HARNESS-CACHE-BUDGETS": {
     "hash": "1bf6c77",
@@ -45031,6 +46456,20 @@
     "status": "Not Started",
     "git_issue": "55d6d79"
   },
+  "TASK-HARNESS-DEFAULT-PROFILE-ALIAS": {
+    "hash": "d0fd157",
+    "git_issue": "d0fd157",
+    "extid": "TASK-HARNESS-DEFAULT-PROFILE-ALIAS",
+    "type": "TASK",
+    "title": "harness default profile alias",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-default-profile-alias.md",
+    "status": "Done"
+  },
   "TASK-HARNESS-DELEGATED-PERMISSION-GRANTS": {
     "hash": "176912d",
     "git_issue": "176912d",
@@ -45093,7 +46532,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-exec-log.md",
-    "status": "Not Started",
+    "status": "Done",
     "git_issue": "4879281"
   },
   "TASK-HARNESS-EXECUTIONS-JSONL-QUERY-SIDECAR-OFFSET-INDEX-BEHIND-E": {
@@ -45107,7 +46546,7 @@
     "epic": "epic-harness-integration",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-executions-jsonl-query-sidecar-offset-index-behind-e.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-HARNESS-FRONTEND-CONSOLIDATION": {
     "hash": "4ae6238",
@@ -45161,6 +46600,20 @@
     "source": ".plan/tickets/TASK-harness-inflight-job-handles.md",
     "status": "done"
   },
+  "TASK-HARNESS-INJECTION-TRUST-BOUNDARIES": {
+    "hash": "e351b25",
+    "git_issue": "e351b25",
+    "extid": "TASK-HARNESS-INJECTION-TRUST-BOUNDARIES",
+    "type": "TASK",
+    "title": "Harness injection trust boundaries",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-injection-trust-boundaries.md",
+    "status": "open"
+  },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
     "extid": "TASK-HARNESS-IRC-TTSR",
@@ -45198,7 +46651,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-HARNESS-LEDGER-SURFACING-USER-SIDE-RECURSIVE-SELF-IMPROVEMEN.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-MCP-CALL-AUDIT": {
     "hash": "1710a00",
@@ -45252,6 +46705,20 @@
     "status": "Not Started",
     "git_issue": "5e63952"
   },
+  "TASK-HARNESS-MEMORY-SCOPE-FOR-EXEC-LOG-RECALL": {
+    "hash": "617da09",
+    "git_issue": "617da09",
+    "extid": "TASK-HARNESS-MEMORY-SCOPE-FOR-EXEC-LOG-RECALL",
+    "type": "TASK",
+    "title": "harness memory scope for exec log recall",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-memory-scope-for-exec-log-recall.md",
+    "status": "done"
+  },
   "TASK-HARNESS-MERGE-COORDINATION": {
     "hash": "0a63dda",
     "extid": "TASK-HARNESS-MERGE-COORDINATION",
@@ -45277,7 +46744,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-model-discovery-ui-wiring-frontend-models-caller-cos.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-MODEL-ROUTING": {
     "hash": "ca8751c",
@@ -45345,6 +46812,20 @@
     "source": ".plan/tickets/TASK-harness-production-dispatch-path-runturn-caller-tasktype-mem.md",
     "status": "done"
   },
+  "TASK-HARNESS-PROFILE-TRANSPORT-FIELD": {
+    "hash": "e3e759c",
+    "git_issue": "e3e759c",
+    "extid": "TASK-HARNESS-PROFILE-TRANSPORT-FIELD",
+    "type": "TASK",
+    "title": "harness profile transport field",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-harness-integration",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-profile-transport-field.md",
+    "status": "Done"
+  },
   "TASK-HARNESS-PROGRAMMATIC-API": {
     "hash": "a893dc4",
     "extid": "TASK-HARNESS-PROGRAMMATIC-API",
@@ -45410,7 +46891,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-harness-sandbox-root-knob-configurable-cwd.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-HARNESS-SCOPED-FALLBACK-CHAIN": {
     "hash": "bfad1d6",
@@ -45882,6 +47363,127 @@
     "title": "Hold inbound http 3 until bun ws over h3",
     "type": "TASK"
   },
+  "TASK-HONKBOX-AUDIO-ROUTES-FOR-TTS-STT-VAD": {
+    "hash": "a999467",
+    "git_issue": "a999467",
+    "extid": "TASK-HONKBOX-AUDIO-ROUTES-FOR-TTS-STT-VAD",
+    "type": "TASK",
+    "title": "Honkbox audio routes for TTS STT VAD",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-tts-foundation",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-audio-routes-for-tts-stt-vad.md",
+    "status": "Blocked"
+  },
+  "TASK-HONKBOX-FACE-DETECTION-CONSUMER-FOR-AVATAR-CROP-GATE": {
+    "hash": "9352e23",
+    "git_issue": "9352e23",
+    "extid": "TASK-HONKBOX-FACE-DETECTION-CONSUMER-FOR-AVATAR-CROP-GATE",
+    "type": "TASK",
+    "title": "Honkbox face-detection consumer for avatar crop gate",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-wardrobe-avatar-variants",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-face-detection-consumer-for-avatar-crop-gate.md",
+    "status": "Blocked"
+  },
+  "TASK-HONKBOX-FEATURE-KEYS-DECISIONS-FLIP-AND-FIZGIG-GATE": {
+    "hash": "e39340b",
+    "git_issue": "e39340b",
+    "extid": "TASK-HONKBOX-FEATURE-KEYS-DECISIONS-FLIP-AND-FIZGIG-GATE",
+    "type": "TASK",
+    "title": "Honkbox feature keys decisions flip and fizgig gate",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-feature-keys-decisions-flip-and-fizgig-gate.md",
+    "status": "open"
+  },
+  "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST": {
+    "hash": "22b5def",
+    "extid": "TASK-HONKBOX-GENERATION-RESULT-DELIVERY-AND-ASSET-INGEST",
+    "type": "TASK",
+    "title": "Honkbox generation-result delivery and remote-asset ingest",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-generation-result-delivery-and-asset-ingest.md",
+    "status": "done",
+    "git_issue": "22b5def"
+  },
+  "TASK-HONKBOX-JOB-FRAME-ARTIFACT-METADATA-AND-JOBS-REPLAY": {
+    "hash": "9368a8d",
+    "git_issue": "9368a8d",
+    "extid": "TASK-HONKBOX-JOB-FRAME-ARTIFACT-METADATA-AND-JOBS-REPLAY",
+    "type": "TASK",
+    "title": "Honkbox job frame artifact metadata and jobs replay",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-job-frame-artifact-metadata-and-jobs-replay.md",
+    "status": "open"
+  },
+  "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD": {
+    "hash": "ce6deca",
+    "git_issue": "ce6deca",
+    "extid": "TASK-HONKBOX-MEDIA-EDITING-OFFLOAD",
+    "type": "TASK",
+    "title": "Honkbox media editing offload",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-external-creative-tool-bridge",
+    "project": "",
+    "tags": [
+      "honkbox",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-media-editing-offload.md",
+    "status": "open"
+  },
+  "TASK-HONKBOX-PROVIDER-WIRING-AND-GPU-ADMISSION-OWNERSHIP": {
+    "hash": "a7794f8",
+    "git_issue": "a7794f8",
+    "extid": "TASK-HONKBOX-PROVIDER-WIRING-AND-GPU-ADMISSION-OWNERSHIP",
+    "type": "TASK",
+    "title": "Honkbox provider wiring and GPU admission ownership",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-honkbox-provider-wiring-and-gpu-admission-ownership.md",
+    "status": "done"
+  },
+  "TASK-HONKBOX-RESIDENCY-CONTROL-PLANE-FOR-PRE-RENDER-RELEASE": {
+    "hash": "acdbc4a",
+    "git_issue": "acdbc4a",
+    "extid": "TASK-HONKBOX-RESIDENCY-CONTROL-PLANE-FOR-PRE-RENDER-RELEASE",
+    "type": "TASK",
+    "title": "Honkbox residency control plane for pre-render release",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [
+      "honkbox"
+    ],
+    "source": ".plan/tickets/TASK-honkbox-residency-control-plane-for-pre-render-release.md",
+    "status": "open"
+  },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "epic": "epic-chat-lifecycle-moderation",
     "extid": "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE",
@@ -45907,6 +47509,23 @@
     "tags": [],
     "title": "Add a canonical context-carrier wrapper to HookResult.data",
     "type": "TASK"
+  },
+  "TASK-HOSTED-VIDEO-AND-AUDIO-API-BENCHMARK-TIER": {
+    "hash": "121ec39",
+    "git_issue": "121ec39",
+    "extid": "TASK-HOSTED-VIDEO-AND-AUDIO-API-BENCHMARK-TIER",
+    "type": "TASK",
+    "title": "Hosted video and audio API benchmark tier",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-hosted-video-and-audio-api-benchmark-tier.md",
+    "status": "open"
   },
   "TASK-HOUSING-BASE-BUILDING": {
     "epic": "epic-housing",
@@ -45986,6 +47605,20 @@
     ],
     "title": "Neighborhood & Housing Customization System",
     "type": "TASK"
+  },
+  "TASK-HSTS-PROXY-PROTO-AND-ENV-MAPPING": {
+    "hash": "964db8d",
+    "git_issue": "964db8d",
+    "extid": "TASK-HSTS-PROXY-PROTO-AND-ENV-MAPPING",
+    "type": "TASK",
+    "title": "HSTS proxy proto and env mapping",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-certificate-and-tls-management",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hsts-proxy-proto-and-env-mapping.md",
+    "status": "done"
   },
   "TASK-HTML-DEDUP-AUDIT": {
     "epic": "epic-frontend-html-dedup-htmx-reuse",
@@ -46220,7 +47853,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
-    "status": "in_progress",
+    "status": "done",
     "tags": [],
     "title": "i18n Locale Completion (Phase 1)",
     "type": "TASK"
@@ -46285,7 +47918,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-i18n-template-strings.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "i18n Template String Replacement",
     "type": "TASK"
@@ -46474,7 +48107,7 @@
     "epic": "epic-reactive-actor-appearance",
     "tags": [],
     "source": ".plan/tickets/TASK-img2img-init-image-plumbing.md",
-    "status": "Blocked"
+    "status": "done"
   },
   "TASK-IMGEDIT-IN-CHAT-COMMAND": {
     "hash": "6c1fecd",
@@ -46487,7 +48120,7 @@
     "epic": "epic-assistant-generation-extensions",
     "tags": [],
     "source": ".plan/tickets/TASK-imgedit-in-chat-command.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-IMMERSION-GATE-CLAIM-EXTRACTION": {
     "hash": "17e9357",
@@ -46828,6 +48461,23 @@
     "title": "In-chat asset edit flow",
     "type": "TASK"
   },
+  "TASK-IN-COMFYUI-TRAINER-EVALUATION": {
+    "hash": "9b554fe",
+    "git_issue": "9b554fe",
+    "extid": "TASK-IN-COMFYUI-TRAINER-EVALUATION",
+    "type": "TASK",
+    "title": "In-ComfyUI trainer evaluation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-training-finetune-datasets",
+    "project": "",
+    "tags": [
+      "training",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-in-comfyui-trainer-evaluation.md",
+    "status": "open"
+  },
   "TASK-IN-PLACE-GENERATION-OWNER-BACKFILL": {
     "epic": "epic-assistant-gm-flows",
     "extid": "TASK-IN-PLACE-GENERATION-OWNER-BACKFILL",
@@ -47057,6 +48707,20 @@
     "title": "Installed Plugins",
     "type": "TASK"
   },
+  "TASK-INSTANCE-PATH-HYGIENE-CLOSE-F18-H4-H5": {
+    "hash": "c5b2746",
+    "git_issue": "c5b2746",
+    "extid": "TASK-INSTANCE-PATH-HYGIENE-CLOSE-F18-H4-H5",
+    "type": "TASK",
+    "title": "instance path hygiene close F18 H4 H5",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-configs-path-resolution.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-instance-path-hygiene-close-f18-h4-h5.md",
+    "status": "open"
+  },
   "TASK-INSTANCE-STATE-ADVERTISEMENT-ENDPOINT": {
     "epic": "epic-federation-swarm-sync",
     "extid": "TASK-INSTANCE-STATE-ADVERTISEMENT-ENDPOINT",
@@ -47108,6 +48772,20 @@
     "tags": [],
     "title": "Integration Infrastructure",
     "type": "TASK"
+  },
+  "TASK-INTEGRATION-TOKENS-EXPIRE-BY-DEFAULT": {
+    "hash": "be9affa",
+    "git_issue": "be9affa",
+    "extid": "TASK-INTEGRATION-TOKENS-EXPIRE-BY-DEFAULT",
+    "type": "TASK",
+    "title": "Integration tokens expire by default",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-integration-tokens-expire-by-default.md",
+    "status": "done"
   },
   "TASK-INTEGRATIONS-INBOUND-WEBHOOK-INGESTION-ENDPOINT": {
     "hash": "9d39ebf",
@@ -47354,6 +49032,24 @@
     "tags": [],
     "source": ".plan/tickets/TASK-isolate-auth-cookies-per-local-instance-so-two-dev-servers-d.md",
     "status": "Not Started"
+  },
+  "TASK-ISOLATED-PRIVATE-PROJECTS-GIT-JJ-PIJUL-EXPERIMENTAL": {
+    "hash": "a4ef99b",
+    "git_issue": "a4ef99b",
+    "extid": "TASK-ISOLATED-PRIVATE-PROJECTS-GIT-JJ-PIJUL-EXPERIMENTAL",
+    "type": "TASK",
+    "title": "isolated-private-projects-git-jj-pijul-experimental",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "vcs"
+    ],
+    "source": ".plan/tickets/TASK-isolated-private-projects-git-jj-pijul-experimental.md",
+    "status": "open"
   },
   "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION": {
     "epic": "epic-inventory",
@@ -47915,6 +49611,34 @@
     "source": ".plan/tickets/TASK-json-view-models-for-gallery-and-chat-list-endpoints-egui-cl.md",
     "status": "done"
   },
+  "TASK-JWT-ADD-ISSUER-CLAIM": {
+    "hash": "88938c6",
+    "git_issue": "88938c6",
+    "extid": "TASK-JWT-ADD-ISSUER-CLAIM",
+    "type": "TASK",
+    "title": "JWT add issuer claim",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jwt-add-issuer-claim.md",
+    "status": "done"
+  },
+  "TASK-JWT-CONSUMER-FOR-AGENT-TOKENS-AND-MESH-MEMBER-AUTH": {
+    "hash": "2230d2a",
+    "git_issue": "2230d2a",
+    "extid": "TASK-JWT-CONSUMER-FOR-AGENT-TOKENS-AND-MESH-MEMBER-AUTH",
+    "type": "TASK",
+    "title": "JWT consumer for agent tokens and mesh member auth",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-auth-access",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jwt-consumer-for-agent-tokens-and-mesh-member-auth.md",
+    "status": "Blocked"
+  },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "epic": "epic-auth-access",
     "extid": "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT",
@@ -48330,6 +50054,23 @@
     ],
     "source": ".plan/tickets/TASK-listener-leak-checker-exempt-top-level-module-registrations-.md",
     "status": "Not Started"
+  },
+  "TASK-LIVE-AND-REEL-BATCH-PRODUCTION-TIERS": {
+    "hash": "1cec367",
+    "git_issue": "1cec367",
+    "extid": "TASK-LIVE-AND-REEL-BATCH-PRODUCTION-TIERS",
+    "type": "TASK",
+    "title": "Live and reel batch production tiers",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-live-and-reel-batch-production-tiers.md",
+    "status": "open"
   },
   "TASK-LIVE-AVATAR-SPIKE": {
     "hash": "2564bd2",
@@ -48785,7 +50526,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-location-explorer-recursive-tree.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "ui",
       "alpine",
@@ -48889,7 +50630,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-locations-fractal-migration.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "schema",
@@ -48908,7 +50649,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-locations-tree-integrity-service.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "locations",
       "tree",
@@ -49326,6 +51067,79 @@
     "tags": [],
     "title": "Lorebook unified search index",
     "type": "TASK"
+  },
+  "TASK-LSP-CLIENT-CONFIGS-DOCS": {
+    "hash": "093d15f",
+    "git_issue": "093d15f",
+    "extid": "TASK-LSP-CLIENT-CONFIGS-DOCS",
+    "type": "TASK",
+    "title": "lsp-client-configs-docs",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-client-configs-docs.md",
+    "status": "open"
+  },
+  "TASK-LSP-COMPLETION-VIA-HARNESS": {
+    "hash": "da2c5f4",
+    "git_issue": "da2c5f4",
+    "extid": "TASK-LSP-COMPLETION-VIA-HARNESS",
+    "type": "TASK",
+    "title": "lsp-completion-via-harness",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-completion-via-harness.md",
+    "status": "open"
+  },
+  "TASK-LSP-STDIO-SERVER-SKELETON": {
+    "hash": "6a6d22a",
+    "git_issue": "6a6d22a",
+    "extid": "TASK-LSP-STDIO-SERVER-SKELETON",
+    "type": "TASK",
+    "title": "lsp-stdio-server-skeleton",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-stdio-server-skeleton.md",
+    "status": "open"
+  },
+  "TASK-LSP-TOKEN-AUTH-PERMISSIONS": {
+    "hash": "0f9b52b",
+    "git_issue": "0f9b52b",
+    "extid": "TASK-LSP-TOKEN-AUTH-PERMISSIONS",
+    "type": "TASK",
+    "title": "lsp-token-auth-permissions",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-editor-lsp-integration.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lsp-token-auth-permissions.md",
+    "status": "open"
+  },
+  "TASK-LTX-FOLEY-AND-NATIVE-AUDIO-ALTERNATIVES": {
+    "hash": "7764a0d",
+    "git_issue": "7764a0d",
+    "extid": "TASK-LTX-FOLEY-AND-NATIVE-AUDIO-ALTERNATIVES",
+    "type": "TASK",
+    "title": "LTX Foley and native audio alternatives",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "audio",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-ltx-foley-and-native-audio-alternatives.md",
+    "status": "open"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "epic": "epic-magic-spell-systems",
@@ -49995,6 +51809,20 @@
     "title": "Matting fallback aux-pipeline job",
     "type": "TASK"
   },
+  "TASK-MATTING-VIA-HONKBOX-AS-FIRST-CHOICE": {
+    "hash": "df84186",
+    "git_issue": "df84186",
+    "extid": "TASK-MATTING-VIA-HONKBOX-AS-FIRST-CHOICE",
+    "type": "TASK",
+    "title": "Matting via honkbox as first choice",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-avatar-alpha-vn-layering",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-matting-via-honkbox-as-first-choice.md",
+    "status": "Blocked"
+  },
   "TASK-MCP-CLIENT-OVER-STDIO-AND-STREAMABLE-HTTP": {
     "hash": "3fd4937",
     "git_issue": "3fd4937",
@@ -50037,7 +51865,7 @@
       "security"
     ],
     "source": ".plan/tickets/TASK-mcp-stdio-server-via-typescript-sdk.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MCP-TASKS-EXTENSION-AS-LONG-OPERATION-STATE-MACHINE": {
     "hash": "84db321",
@@ -50079,7 +51907,7 @@
       "tools"
     ],
     "source": ".plan/tickets/TASK-mcp-tool-set-v1-from-facade-registry.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-MEDIA-FFPROBE-METADATA-EXTRACTION": {
     "hash": "cdff699",
@@ -50585,7 +52413,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-message-multi-select-bulk-actions.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-MESSAGE-PERSISTENCE-MAPPING": {
     "hash": "caaa1f2",
@@ -50795,6 +52623,20 @@
     "source": ".plan/tickets/TASK-metadata-detection-provenance-stamping.md",
     "status": "Not Started"
   },
+  "TASK-MFA-DEDICATED-OPERATOR-DOCUMENTATION": {
+    "hash": "26384e0",
+    "git_issue": "26384e0",
+    "extid": "TASK-MFA-DEDICATED-OPERATOR-DOCUMENTATION",
+    "type": "TASK",
+    "title": "MFA dedicated operator documentation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-auth-access.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mfa-dedicated-operator-documentation.md",
+    "status": "done"
+  },
   "TASK-MID-MESSAGE-CHECKPOINT-RETRY-RETRY-CONTINUE-INSIDE-SWIPE-REP": {
     "hash": "afe18a4",
     "git_issue": "afe18a4",
@@ -50807,6 +52649,23 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mid-message-checkpoint-retry-retry-continue-inside-swipe-rep.md",
     "status": "Not Started"
+  },
+  "TASK-MID-SAMPLER-RESUME-FEASIBILITY": {
+    "hash": "21158f5",
+    "git_issue": "21158f5",
+    "extid": "TASK-MID-SAMPLER-RESUME-FEASIBILITY",
+    "type": "TASK",
+    "title": "Mid-sampler resume feasibility",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-mid-sampler-resume-feasibility.md",
+    "status": "open"
   },
   "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
     "epic": "epic-middleware-request-lifecycle",
@@ -50997,7 +52856,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-migrate-tui-renderer-from-blessed-to-oh-my-pi-pi-tui.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
     "epic": "epic-db-migration-compaction",
@@ -51131,7 +52990,7 @@
     "label": "task",
     "priority": "P0 — Critical",
     "source": ".plan/tickets/TASK-mobile-touch-gestures.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Mobile Touch Gestures",
     "type": "TASK"
@@ -51585,6 +53444,24 @@
     "title": "Multi-Session Support",
     "type": "TASK"
   },
+  "TASK-MULTI-USER-COLLABORATION-PIJUL-EXPERIMENTAL": {
+    "hash": "c55543a",
+    "git_issue": "c55543a",
+    "extid": "TASK-MULTI-USER-COLLABORATION-PIJUL-EXPERIMENTAL",
+    "type": "TASK",
+    "title": "multi-user-collaboration-pijul-experimental",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "pijul"
+    ],
+    "source": ".plan/tickets/TASK-multi-user-collaboration-pijul-experimental.md",
+    "status": "open"
+  },
   "TASK-MULTIMODAL-ASSET-REUSE": {
     "epic": "epic-audio-video-sound",
     "extid": "TASK-MULTIMODAL-ASSET-REUSE",
@@ -51689,6 +53566,20 @@
     "title": "Native AWS Bedrock Adapter",
     "type": "TASK"
   },
+  "TASK-NATURAL-LANGUAGE-PICTURE-OF-THE-CHARACTER-DISPATCHES-TO-AVAT": {
+    "hash": "6e2d4a2",
+    "git_issue": "6e2d4a2",
+    "extid": "TASK-NATURAL-LANGUAGE-PICTURE-OF-THE-CHARACTER-DISPATCHES-TO-AVAT",
+    "type": "TASK",
+    "title": "natural language picture of the character dispatches to avatar",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-generation-extensions.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-natural-language-picture-of-the-character-dispatches-to-avat.md",
+    "status": "done"
+  },
   "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL": {
     "epic": "epic-testing-qa",
     "extid": "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL",
@@ -51792,6 +53683,20 @@
     "tags": [],
     "title": "Non-Standard Browser Crypto Research",
     "type": "TASK"
+  },
+  "TASK-NORMALIZE-EPIC-FIELD-SPELLING-VARIANTS-IN-LINKAGE": {
+    "hash": "ee15807",
+    "git_issue": "ee15807",
+    "extid": "TASK-NORMALIZE-EPIC-FIELD-SPELLING-VARIANTS-IN-LINKAGE",
+    "type": "TASK",
+    "title": "normalize Epic field spelling variants in linkage",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-normalize-epic-field-spelling-variants-in-linkage.md",
+    "status": "done"
   },
   "TASK-NOTIFICATION-AND-TELEMETRY-SERVICE-NITS": {
     "hash": "2942731",
@@ -53129,7 +55034,21 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-omp-adapter.md",
-    "status": "Not Started"
+    "status": "done"
+  },
+  "TASK-ONE-LLM-OWNER-DECISION-PLUS-HONKBOX-NATIVE-MODEL-MANAGEMENT": {
+    "hash": "b098402",
+    "git_issue": "b098402",
+    "extid": "TASK-ONE-LLM-OWNER-DECISION-PLUS-HONKBOX-NATIVE-MODEL-MANAGEMENT",
+    "type": "TASK",
+    "title": "One LLM owner decision plus honkbox-native model management",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-local-process-swarm",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-one-llm-owner-decision-plus-honkbox-native-model-management.md",
+    "status": "open"
   },
   "TASK-OPEN-IN-EDITOR-HANDOFF": {
     "hash": "1358401",
@@ -53198,7 +55117,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-openapi-spec-omits-harness-routes-plugin.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-OPENAPI-SPECIFICATION": {
     "epic": "epic-api-governance",
@@ -53224,7 +55143,7 @@
     "epic": "epic-external-harness-acp",
     "tags": [],
     "source": ".plan/tickets/TASK-opencode-adapter.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-OPENSCAD-PARAMETRIC-RENDER-VIA-CLI-ALLOWLIST": {
     "hash": "57326b4",
@@ -53744,6 +55663,20 @@
     "title": "Per-command Valves-like options schema",
     "type": "TASK"
   },
+  "TASK-PER-HARNESS-FAMILY-MEMORY-ADAPTERS-AFTER-ENGRAM-EACH-EVAL-GA": {
+    "hash": "7ac6da6",
+    "git_issue": "7ac6da6",
+    "extid": "TASK-PER-HARNESS-FAMILY-MEMORY-ADAPTERS-AFTER-ENGRAM-EACH-EVAL-GA",
+    "type": "TASK",
+    "title": "Per-harness-family memory adapters after engram, each eval-gated",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-harness-family-memory-adapters-after-engram-each-eval-ga.md",
+    "status": "open"
+  },
   "TASK-PER-LOCAL-BOX-SERIAL-VIDEO-DISPATCH-GATE": {
     "hash": "78a333c",
     "git_issue": "78a333c",
@@ -53914,6 +55847,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-persist-delivered-mesh-payload-in-mesh-deliveries-not-metada.md",
     "status": "Not Started"
+  },
+  "TASK-PERSIST-GENERATED-IMAGE-AS-CHAT-BACKGROUND": {
+    "hash": "2b21d43",
+    "git_issue": "2b21d43",
+    "extid": "TASK-PERSIST-GENERATED-IMAGE-AS-CHAT-BACKGROUND",
+    "type": "TASK",
+    "title": "persist generated image as chat background",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-immersion-presentation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persist-generated-image-as-chat-background.md",
+    "status": "done"
   },
   "TASK-PERSIST-LOOT-DROPS": {
     "epic": "epic-item-systems-unification",
@@ -54298,6 +56245,20 @@
     "title": "Plan Validate Debt Cleanup",
     "type": "TASK"
   },
+  "TASK-PLAN-VALIDATE-WARN-ON-UNKNOWN-TICKET-HEADERS": {
+    "hash": "d67ebb8",
+    "git_issue": "d67ebb8",
+    "extid": "TASK-PLAN-VALIDATE-WARN-ON-UNKNOWN-TICKET-HEADERS",
+    "type": "TASK",
+    "title": "plan validate: warn on unknown ticket headers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plan-validate-warn-on-unknown-ticket-headers.md",
+    "status": "done"
+  },
   "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA": {
     "epic": "epic-platform-integrations",
     "extid": "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA",
@@ -54646,6 +56607,20 @@
     "title": "Plugin Override System",
     "type": "TASK"
   },
+  "TASK-PLUGIN-SCOPE-GUARD-JSON-STRING-LEAVES": {
+    "hash": "5645c3e",
+    "git_issue": "5645c3e",
+    "extid": "TASK-PLUGIN-SCOPE-GUARD-JSON-STRING-LEAVES",
+    "type": "TASK",
+    "title": "Plugin scope guard JSON-string leaves",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-plugin-system",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-scope-guard-json-string-leaves.md",
+    "status": "open"
+  },
   "TASK-PLUGIN-SECURITY-SANDBOXING": {
     "epic": "epic-plugin-system",
     "extid": "TASK-PLUGIN-SECURITY-SANDBOXING",
@@ -54827,7 +56802,7 @@
       "auth"
     ],
     "source": ".plan/tickets/TASK-principal-kind-model-and-server-side-resolution.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-PROACTIVE-MESSAGING": {
     "epic": "",
@@ -54850,7 +56825,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Production TLS modes BYO certs ACME and proxy termination",
     "type": "TASK"
@@ -54925,6 +56900,24 @@
     ],
     "title": "Professions Service & Routes (Crafting Disciplines)",
     "type": "TASK"
+  },
+  "TASK-PROJECT-OWNER-ROOT-PERMISSIONS": {
+    "hash": "d12efef",
+    "git_issue": "d12efef",
+    "extid": "TASK-PROJECT-OWNER-ROOT-PERMISSIONS",
+    "type": "TASK",
+    "title": "project-owner-root-permissions",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "auth",
+      "ownership"
+    ],
+    "source": ".plan/tickets/TASK-project-owner-root-permissions.md",
+    "status": "open"
   },
   "TASK-PROJECT-SPACE-KIND-WORLDKIND-PROJECT-SCOPING-CONTRACT": {
     "hash": "87ac3b9",
@@ -55081,7 +57074,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Composer \"improve my prompt\" UI affordance",
     "type": "TASK"
@@ -55094,7 +57087,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-improve-shared-service.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Prompt improvement shared service (gradation levels)",
     "type": "TASK"
@@ -55107,7 +57100,7 @@
     "label": "task",
     "priority": "High",
     "source": ".plan/tickets/TASK-prompt-injection-two-step-validation.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [],
     "title": "Two-step prompt/message injection validation",
     "type": "TASK"
@@ -55230,11 +57223,12 @@
     "title": "Prompt/turn trace view (why-this-output inspector)",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-analytics-observability",
     "project": "",
     "tags": [
       "observability",
       "prompt-inspector",
+      "trace",
       "research-gap"
     ],
     "source": ".plan/tickets/TASK-prompt-turn-trace-view-why-this-output-inspector.md",
@@ -55587,6 +57581,48 @@
     "source": ".plan/tickets/TASK-pwa-cached-shell-plus-send-queue-offline-survival-slice.md",
     "status": "Not Started"
   },
+  "TASK-PYTHON-BRIDGE-CORE-GENERIC-PYTHON3-SUBPROCESS-BRIDGE": {
+    "hash": "2767f47",
+    "git_issue": "2767f47",
+    "extid": "TASK-PYTHON-BRIDGE-CORE-GENERIC-PYTHON3-SUBPROCESS-BRIDGE",
+    "type": "TASK",
+    "title": "Python bridge core: generic python3 subprocess bridge",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-bridge-core-generic-python3-subprocess-bridge.md",
+    "status": "done"
+  },
+  "TASK-PYTHON-DISCOVERY-INTERPRETER-CANDIDATES-AND-CACHED-SNAPSHOT": {
+    "hash": "214ffec",
+    "git_issue": "214ffec",
+    "extid": "TASK-PYTHON-DISCOVERY-INTERPRETER-CANDIDATES-AND-CACHED-SNAPSHOT",
+    "type": "TASK",
+    "title": "Python discovery: interpreter candidates and cached snapshot",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-discovery-interpreter-candidates-and-cached-snapshot.md",
+    "status": "done"
+  },
+  "TASK-PYTHON-VENV-KNOB-OPERATOR-PROVISIONED-VENVPATH-NO-RUNTIME-PI": {
+    "hash": "1895d83",
+    "git_issue": "1895d83",
+    "extid": "TASK-PYTHON-VENV-KNOB-OPERATOR-PROVISIONED-VENVPATH-NO-RUNTIME-PI",
+    "type": "TASK",
+    "title": "Python venv knob: operator-provisioned venvPath, no runtime pip install",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-external-harness-acp",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-python-venv-knob-operator-provisioned-venvpath-no-runtime-pi.md",
+    "status": "done"
+  },
   "TASK-QUEST-LOG": {
     "epic": "epic-story-mode-ui",
     "extid": "TASK-QUEST-LOG",
@@ -55732,6 +57768,23 @@
     "tags": [],
     "title": "Quiet Hours / Do-Not-Disturb",
     "type": "TASK"
+  },
+  "TASK-QUIET-HOURS-PRIORITY-RENDER-SCHEDULING": {
+    "hash": "5180cf2",
+    "git_issue": "5180cf2",
+    "extid": "TASK-QUIET-HOURS-PRIORITY-RENDER-SCHEDULING",
+    "type": "TASK",
+    "title": "Quiet-hours priority render scheduling",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-video-generation",
+    "project": "",
+    "tags": [
+      "video",
+      "deferred"
+    ],
+    "source": ".plan/tickets/TASK-quiet-hours-priority-render-scheduling.md",
+    "status": "open"
   },
   "TASK-QWEN-IMAGE-EDIT-21-REFERENCE-TEMPLATE": {
     "hash": "9cba818",
@@ -56274,6 +58327,20 @@
     "title": "RBAC capability matrix not enforced (25 of 30 caps decorative)",
     "type": "TASK"
   },
+  "TASK-RE-ENABLE-STALE-SKIPPED-BROWSER-E2ES-FOR-SHIPPED-FIXES": {
+    "hash": "02b410d",
+    "git_issue": "02b410d",
+    "extid": "TASK-RE-ENABLE-STALE-SKIPPED-BROWSER-E2ES-FOR-SHIPPED-FIXES",
+    "type": "TASK",
+    "title": "re-enable stale skipped browser E2Es for shipped fixes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-e2e-integration-testing.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-re-enable-stale-skipped-browser-e2es-for-shipped-fixes.md",
+    "status": "done"
+  },
   "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR": {
     "epic": "epic-asset-transform-metadata",
     "extid": "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR",
@@ -56418,6 +58485,20 @@
     "title": "# TASK-recon-test-coverage: Backend reconciliation — Phase 3 test coverage",
     "type": "TASK"
   },
+  "TASK-RECONCILE-1-0-0-TRACKER-AND-TICKET-STATUSES-WITH-SHIPPED-COD": {
+    "hash": "a9012f2",
+    "git_issue": "a9012f2",
+    "extid": "TASK-RECONCILE-1-0-0-TRACKER-AND-TICKET-STATUSES-WITH-SHIPPED-COD",
+    "type": "TASK",
+    "title": "reconcile 1.0.0 tracker and ticket statuses with shipped code",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-docs-reconciliation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-1-0-0-tracker-and-ticket-statuses-with-shipped-cod.md",
+    "status": "open"
+  },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "epic": "epic-replayability",
     "extid": "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES",
@@ -56439,7 +58520,7 @@
     "label": "task",
     "priority": "medium",
     "source": ".plan/tickets/TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md",
-    "status": "open",
+    "status": "done",
     "tags": [],
     "title": "Reconcile epic-frontend-age-gate: verify age-gate frontend, capture gaps",
     "type": "TASK"
@@ -56558,6 +58639,20 @@
     "source": ".plan/tickets/TASK-reconcile-social-hub-notifications-block-with-protocoladapte.md",
     "status": "Not Started"
   },
+  "TASK-RECONCILE-STALE-DONE-MEMORY-DISTILLATION-AND-DREAMS-TICKET": {
+    "hash": "7be026c",
+    "git_issue": "7be026c",
+    "extid": "TASK-RECONCILE-STALE-DONE-MEMORY-DISTILLATION-AND-DREAMS-TICKET",
+    "type": "TASK",
+    "title": "Reconcile stale-Done memory distillation and dreams ticket",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-stale-done-memory-distillation-and-dreams-ticket.md",
+    "status": "open"
+  },
   "TASK-RECONCILE-STALE-PLAN-STATUS-FOR-SHIPPED-SUBSYSTEMS": {
     "hash": "adde248",
     "git_issue": "adde248",
@@ -56636,7 +58731,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-actions-audit-table-and-sur.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "audit",
@@ -56655,7 +58750,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-api-router-and-token-scope-.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "api",
@@ -56674,7 +58769,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-check-stream-bun-run-check-.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "check",
@@ -56769,7 +58864,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-agent-worktree-spawn-tty-free-and.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "agent",
       "worktree",
@@ -57031,7 +59126,7 @@
     "label": "task",
     "priority": "Medium",
     "source": ".plan/tickets/TASK-recursive-self-improvement-smoke-gate-fast-ci-loop.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "smoke",
       "ci",
@@ -57103,7 +59198,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-recursive-self-improvement-watchdog-supervisor-process-spawn.md",
-    "status": "⬜ Not Started",
+    "status": "Done",
     "tags": [
       "watchdog",
       "supervisor",
@@ -57434,7 +59529,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-regen-with-custom-instruction-free-text-action.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-REGEX-EXTRACTION-PIPELINE-IMPLEMENTATION": {
     "epic": "(none — proposed epic never materialized)",
@@ -57660,6 +59755,25 @@
     "title": "Relationships System Implementation",
     "type": "TASK"
   },
+  "TASK-RELEASE-CUT-CHANGELOG-1-0-0-SECTION-AND-SYNC-WORKSPACE-VERSI": {
+    "hash": "582c93a",
+    "git_issue": "582c93a",
+    "extid": "TASK-RELEASE-CUT-CHANGELOG-1-0-0-SECTION-AND-SYNC-WORKSPACE-VERSI",
+    "type": "TASK",
+    "title": "release-cut-changelog-1-0-0-section-and-sync-workspace-version",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [
+      "release",
+      "changelog",
+      "version",
+      "release-yml"
+    ],
+    "source": ".plan/tickets/TASK-release-cut-changelog-1-0-0-section-and-sync-workspace-versi.md",
+    "status": "done"
+  },
   "TASK-RELEVANCE-AWARE-DECAY-AND-PURGE-SIGNALS-IN-MEMORY-PURGE": {
     "hash": "660fcca",
     "git_issue": "660fcca",
@@ -57672,6 +59786,37 @@
     "tags": [],
     "source": ".plan/tickets/TASK-relevance-aware-decay-and-purge-signals-in-memory-purge.md",
     "status": "done"
+  },
+  "TASK-RELEVANCE-AWARE-MEMORY-DECAY-AND-TUNABLE-INJECTION-POLICY": {
+    "hash": "c233bc9",
+    "git_issue": "c233bc9",
+    "extid": "TASK-RELEVANCE-AWARE-MEMORY-DECAY-AND-TUNABLE-INJECTION-POLICY",
+    "type": "TASK",
+    "title": "relevance aware memory decay and tunable injection policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-relevance-aware-memory-decay-and-tunable-injection-policy.md",
+    "status": "open"
+  },
+  "TASK-REMOTE-HARNESS-TLS-TOKEN-AUTH": {
+    "hash": "1c71023",
+    "git_issue": "1c71023",
+    "extid": "TASK-REMOTE-HARNESS-TLS-TOKEN-AUTH",
+    "type": "TASK",
+    "title": "remote-harness-tls-token-auth",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "remote"
+    ],
+    "source": ".plan/tickets/TASK-remote-harness-tls-token-auth.md",
+    "status": "open"
   },
   "TASK-REMOVE-DEAD-FRONTEND-MODULES": {
     "epic": "epic-frontend-bundle-optimization",
@@ -57699,6 +59844,20 @@
     "title": "Remove dist/server.js Build Artifact",
     "type": "TASK"
   },
+  "TASK-REMOVE-INJECTED-DEFAULTS-FROM-KEY-MECHANIC-ENUMS": {
+    "hash": "2b99d96",
+    "git_issue": "2b99d96",
+    "extid": "TASK-REMOVE-INJECTED-DEFAULTS-FROM-KEY-MECHANIC-ENUMS",
+    "type": "TASK",
+    "title": "remove injected defaults from key mechanic enums",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-validation-guardrails.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-remove-injected-defaults-from-key-mechanic-enums.md",
+    "status": "open"
+  },
   "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE": {
     "epic": "(none — hygiene/self-contained)",
     "extid": "TASK-REMOVE-NOOP-OXLINT-CORRECTNESS-GATE",
@@ -57724,6 +59883,25 @@
     "tags": [],
     "source": ".plan/tickets/TASK-remove-or-record-intent-for-stale-empty-diff-worktrees-g2-ti.md",
     "status": "Not Started"
+  },
+  "TASK-REMOVE-UNUSED-BUN-PLUGIN-HTML-DEPENDENCY": {
+    "hash": "49947e0",
+    "git_issue": "49947e0",
+    "extid": "TASK-REMOVE-UNUSED-BUN-PLUGIN-HTML-DEPENDENCY",
+    "type": "TASK",
+    "title": "Remove unused bun-plugin-html dependency",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-code-quality.md",
+    "project": "",
+    "tags": [
+      "build",
+      "dependencies",
+      "cleanup",
+      "html"
+    ],
+    "source": ".plan/tickets/TASK-remove-unused-bun-plugin-html-dependency.md",
+    "status": "done"
   },
   "TASK-RENDER-JUDGE-LOOP": {
     "hash": "4c11089",
@@ -57754,6 +59932,20 @@
     "title": "Render path resolveTransform in chat bubbles",
     "type": "TASK"
   },
+  "TASK-RENDER-STORED-CHAT-BACKGROUND-ON-STANDARD-CHAT-SURFACE": {
+    "hash": "9c69f09",
+    "git_issue": "9c69f09",
+    "extid": "TASK-RENDER-STORED-CHAT-BACKGROUND-ON-STANDARD-CHAT-SURFACE",
+    "type": "TASK",
+    "title": "render stored chat background on standard chat surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-immersion-presentation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-render-stored-chat-background-on-standard-chat-surface.md",
+    "status": "done"
+  },
   "TASK-RENPY-EXPORT-BUTTON-IN-CHAT-LIST-BATCH-BAR": {
     "hash": "d2bbfa1",
     "git_issue": "d2bbfa1",
@@ -57770,7 +59962,7 @@
       "ui"
     ],
     "source": ".plan/tickets/TASK-renpy-export-button-in-chat-list-batch-bar.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-RENPY-EXPORT-CORE-PLUGIN-ROUTE-VERSIONED-PATH": {
     "hash": "43f862e",
@@ -57788,7 +59980,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-core-plugin-route-versioned-path.md",
-    "status": "in_progress"
+    "status": "Done"
   },
   "TASK-RENPY-EXPORT-MODEL-GATHER-FROM-DB": {
     "hash": "dc2e726",
@@ -57806,7 +59998,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-model-gather-from-db.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-RENPY-EXPORT-SCRIPT-GENERATOR-PURE-FUNCTION": {
     "hash": "e472ddb",
@@ -57824,7 +60016,7 @@
       "plugin"
     ],
     "source": ".plan/tickets/TASK-renpy-export-script-generator-pure-function.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-REPAIR-CHAT-NORMAL-STARTUP-REMOVE-TEST-BYPASS": {
     "epic": "epic-testing-qa",
@@ -58016,6 +60208,20 @@
     ],
     "title": "Shared Reputation Schema",
     "type": "TASK"
+  },
+  "TASK-RERANK-VIA-HONKBOX-WHEN-CAPABILITY-ENABLED": {
+    "hash": "0c775c2",
+    "git_issue": "0c775c2",
+    "extid": "TASK-RERANK-VIA-HONKBOX-WHEN-CAPABILITY-ENABLED",
+    "type": "TASK",
+    "title": "Rerank via honkbox when capability enabled",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-retrieval",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rerank-via-honkbox-when-capability-enabled.md",
+    "status": "open"
   },
   "TASK-REROLL-EMOTION-COMMAND": {
     "hash": "e114243",
@@ -58461,7 +60667,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-restrict-acp-strategy-enum-to-failover.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-RESULT-GRADE-PERSISTENCE": {
     "hash": "b5fb1b1",
@@ -58504,6 +60710,26 @@
     ],
     "source": ".plan/tickets/TASK-retire-the-scripts-worktree-fork-of-giwt-migration-not-delet.md",
     "status": "⬜ Not Started"
+  },
+  "TASK-REVIEW-HTML-MINIFIER-OPTIONS-AND-RECORD-NEVER-ENABLE-LIST": {
+    "hash": "bfe627d",
+    "git_issue": "bfe627d",
+    "extid": "TASK-REVIEW-HTML-MINIFIER-OPTIONS-AND-RECORD-NEVER-ENABLE-LIST",
+    "type": "TASK",
+    "title": "Review HTML minifier options and record never-enable list",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-frontend-bundle-optimization.md",
+    "project": "",
+    "tags": [
+      "frontend",
+      "build",
+      "html",
+      "minify",
+      "configuration"
+    ],
+    "source": ".plan/tickets/TASK-review-html-minifier-options-and-record-never-enable-list.md",
+    "status": "done"
   },
   "TASK-REVIEW-THREAD-COMMENT-MODEL": {
     "hash": "807530b",
@@ -58585,6 +60811,20 @@
     "tags": [],
     "title": "Role-scoped assistant command visibility",
     "type": "TASK"
+  },
+  "TASK-ROLLBACK-LEDGER-APPEND-ONLY-MUTATION-LOG-BLOB-STORE-FOR-TMP-": {
+    "hash": "58d47ee",
+    "git_issue": "58d47ee",
+    "extid": "TASK-ROLLBACK-LEDGER-APPEND-ONLY-MUTATION-LOG-BLOB-STORE-FOR-TMP-",
+    "type": "TASK",
+    "title": "rollback ledger: append-only mutation log + blob store for .tmp scratch",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rollback-ledger-append-only-mutation-log-blob-store-for-tmp-.md",
+    "status": "open"
   },
   "TASK-ROUTE-PLUGIN-CALLS-THROUGH-THE-SHARED-PROVIDER-PATH": {
     "hash": "87881e3",
@@ -59806,6 +62046,20 @@
     "title": "Shared Schema Validation",
     "type": "TASK"
   },
+  "TASK-SCOPED-COVERAGE-MUST-HANDLE-CORE-ONLY-DIFFS": {
+    "hash": "6fd3769",
+    "extid": "TASK-SCOPED-COVERAGE-MUST-HANDLE-CORE-ONLY-DIFFS",
+    "type": "TASK",
+    "title": "Scoped coverage must handle core-only diffs",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cicd-pipeline",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scoped-coverage-must-handle-core-only-diffs.md",
+    "status": "open",
+    "git_issue": "6fd3769"
+  },
   "TASK-SCOPED-CREDENTIAL-MODEL-AND-API-KEY-TABLE": {
     "hash": "3b95e8b",
     "git_issue": "3b95e8b",
@@ -60036,6 +62290,20 @@
     ],
     "title": "Search Telemetry & Quota Observability",
     "type": "TASK"
+  },
+  "TASK-SECURE-STARTUP-OPERATOR-CHECKLIST": {
+    "hash": "375ae56",
+    "git_issue": "375ae56",
+    "extid": "TASK-SECURE-STARTUP-OPERATOR-CHECKLIST",
+    "type": "TASK",
+    "title": "Secure startup operator checklist",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-deployment-infrastructure",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-secure-startup-operator-checklist.md",
+    "status": "done"
   },
   "TASK-SEED-CODEX-AND-CLAUDE-MODEL-CAPABILITY-ROWS-FOR-HARNESS-ENRI": {
     "hash": "2350e43",
@@ -60286,6 +62554,24 @@
     "title": "Shared macro engine for templates and commands",
     "type": "TASK"
   },
+  "TASK-SHARED-MULTI-WORKTREE-GIT-PROJECTS": {
+    "hash": "795741c",
+    "git_issue": "795741c",
+    "extid": "TASK-SHARED-MULTI-WORKTREE-GIT-PROJECTS",
+    "type": "TASK",
+    "title": "shared-multi-worktree-git-projects",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-remote-harness-federation.md",
+    "project": "",
+    "tags": [
+      "harness",
+      "federation",
+      "git"
+    ],
+    "source": ".plan/tickets/TASK-shared-multi-worktree-git-projects.md",
+    "status": "open"
+  },
   "TASK-SHARED-SCHEMAS": {
     "epic": "epic-character-core-system",
     "extid": "TASK-SHARED-SCHEMAS",
@@ -60474,6 +62760,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-simplification-sweep-micro-cleanups-and-single-implementatio.md",
     "status": "Not Started"
+  },
+  "TASK-SINGLE-DECLARATIVE-ARTIFACT-SPEC-PLUS-REGENERATE-AND-DIFF-GU": {
+    "hash": "ce42084",
+    "git_issue": "ce42084",
+    "extid": "TASK-SINGLE-DECLARATIVE-ARTIFACT-SPEC-PLUS-REGENERATE-AND-DIFF-GU",
+    "type": "TASK",
+    "title": "single declarative artifact spec plus regenerate-and-diff guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-single-declarative-artifact-spec-plus-regenerate-and-diff-gu.md",
+    "status": "done"
   },
   "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS": {
     "epic": "",
@@ -60857,6 +63157,20 @@
     "title": "Split `src/generation/generate-route.ts` (736L)",
     "type": "TASK"
   },
+  "TASK-SPLIT-GENERIC-ACP-TS-PROTOCOL-ADAPTER-SIZE-DEBT": {
+    "hash": "531483c",
+    "git_issue": "531483c",
+    "extid": "TASK-SPLIT-GENERIC-ACP-TS-PROTOCOL-ADAPTER-SIZE-DEBT",
+    "type": "TASK",
+    "title": "Split generic-acp.ts protocol adapter (size debt)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-generic-acp-ts-protocol-adapter-size-debt.md",
+    "status": "open"
+  },
   "TASK-SPLIT-LOGGER-GOD-MODULE": {
     "epic": "epic-code-quality",
     "extid": "TASK-SPLIT-LOGGER-GOD-MODULE",
@@ -60933,6 +63247,20 @@
     "epic": "(none — hygiene/self-contained)",
     "tags": [],
     "source": ".plan/tickets/TASK-split-the-visibility-column-across-its-five-vocabularies.md",
+    "status": "open"
+  },
+  "TASK-SPLIT-TICKET-INDEX-BEFORE-1-0-0": {
+    "hash": "f7e7988",
+    "git_issue": "f7e7988",
+    "extid": "TASK-SPLIT-TICKET-INDEX-BEFORE-1-0-0",
+    "type": "TASK",
+    "title": "Split ticket index before 1.0.0",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-split-ticket-index-before-1-0-0.md",
     "status": "open"
   },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
@@ -61019,6 +63347,20 @@
     ],
     "source": ".plan/tickets/TASK-sse-live-model-status-and-in-flight-tracking.md",
     "status": "Not Started"
+  },
+  "TASK-SSE-RESUME-CURSOR-FOR-HONKBOX-EVENTS": {
+    "hash": "73b07ff",
+    "git_issue": "73b07ff",
+    "extid": "TASK-SSE-RESUME-CURSOR-FOR-HONKBOX-EVENTS",
+    "type": "TASK",
+    "title": "SSE resume cursor for honkbox events",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-realtime-transports",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sse-resume-cursor-for-honkbox-events.md",
+    "status": "Blocked"
   },
   "TASK-STABILITY-AI-IMAGE-PROVIDER-IMPLEMENTATION": {
     "hash": "1f5978b",
@@ -61164,7 +63506,7 @@
     "label": "task",
     "priority": "P1 — High",
     "source": ".plan/tickets/TASK-story-alpine.md",
-    "status": "in_progress",
+    "status": "Done",
     "tags": [
       "story",
       "frontend",
@@ -61366,7 +63708,21 @@
       "security"
     ],
     "source": ".plan/tickets/TASK-streamable-http-mcp-transport-behind-central-guard.md",
-    "status": "Not Started"
+    "status": "done"
+  },
+  "TASK-STRUCTURED-LANE-TICKET-LINKAGE-AND-SINGLE-CANONICAL-TICKET-I": {
+    "hash": "23ab3c9",
+    "git_issue": "23ab3c9",
+    "extid": "TASK-STRUCTURED-LANE-TICKET-LINKAGE-AND-SINGLE-CANONICAL-TICKET-I",
+    "type": "TASK",
+    "title": "structured lane-ticket linkage and single canonical ticket id",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-unified-spec-framework",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-structured-lane-ticket-linkage-and-single-canonical-ticket-i.md",
+    "status": "done"
   },
   "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
     "epic": "epic-hidden-carriage-context",
@@ -61527,6 +63883,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-swipe-preference-pair-extraction-dpo-groundwork.md",
     "status": "Not Started"
+  },
+  "TASK-SYNC-INSTANCE-RESOLUTION-RULE-AND-DROP-IGNORED-SQLITEFILENAM": {
+    "hash": "f444817",
+    "git_issue": "f444817",
+    "extid": "TASK-SYNC-INSTANCE-RESOLUTION-RULE-AND-DROP-IGNORED-SQLITEFILENAM",
+    "type": "TASK",
+    "title": "sync-instance-resolution-rule-and-drop-ignored-sqlitefilename",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-deployment-topologies.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-sync-instance-resolution-rule-and-drop-ignored-sqlitefilenam.md",
+    "status": "open"
   },
   "TASK-SYNTHETIC-QA-CAPTURE-WIRE-OR-REMOVE-DECISION-ADMIN-GATED-CAP": {
     "hash": "de50ac4",
@@ -62061,6 +64431,20 @@
     "title": "Test Telemetry Module",
     "type": "TASK"
   },
+  "TASK-TEST-UNIFIED-SEARCH-ADMIN-SCOPE-AND-PARTIAL-FAILURE": {
+    "hash": "13c2ea3",
+    "git_issue": "13c2ea3",
+    "extid": "TASK-TEST-UNIFIED-SEARCH-ADMIN-SCOPE-AND-PARTIAL-FAILURE",
+    "type": "TASK",
+    "title": "test unified search admin scope and partial failure",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-api-routes.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-test-unified-search-admin-scope-and-partial-failure.md",
+    "status": "open"
+  },
   "TASK-TEST-UNTESTED-ROUTES": {
     "epic": "epic-logic-reconciliation",
     "extid": "TASK-TEST-UNTESTED-ROUTES",
@@ -62196,6 +64580,20 @@
     ],
     "title": "Thumbnail Generation (256px WebP at upload)",
     "type": "TASK"
+  },
+  "TASK-THUMBNAIL-RESIZE-VIA-HONKBOX-IMAGE-OPS": {
+    "hash": "3647b51",
+    "git_issue": "3647b51",
+    "extid": "TASK-THUMBNAIL-RESIZE-VIA-HONKBOX-IMAGE-OPS",
+    "type": "TASK",
+    "title": "Thumbnail resize via honkbox image-ops",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-asset-transform-metadata",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-thumbnail-resize-via-honkbox-image-ops.md",
+    "status": "open"
   },
   "TASK-TICKET-EPIC-LINK-BACKFILL": {
     "epic": "(none — hygiene/self-contained)",
@@ -62466,7 +64864,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-tls-missing-openssl-friendly-error-on-boot.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-TMP-JANITOR-AND-STALENESS-MARKERS": {
     "epic": "",
@@ -62609,7 +65007,7 @@
     "epic": "epic-external-tooling-build",
     "tags": [],
     "source": ".plan/tickets/TASK-tooling-build-status-verify.md",
-    "status": "Not Started"
+    "status": "done"
   },
   "TASK-TOOLING-BUILD-UNVERIFIED-MATRIX-DOCS": {
     "hash": "3481f10",
@@ -62649,6 +65047,23 @@
     "tags": [],
     "title": "Tooling Support & Improvement",
     "type": "TASK"
+  },
+  "TASK-TOOLING-REPORT-STORE-AND-INGEST-API": {
+    "hash": "c20e139",
+    "git_issue": "c20e139",
+    "extid": "TASK-TOOLING-REPORT-STORE-AND-INGEST-API",
+    "type": "TASK",
+    "title": "tooling report store and ingest API",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-recursive-self-improvement",
+    "project": "",
+    "tags": [
+      "harness",
+      "rsi"
+    ],
+    "source": ".plan/tickets/TASK-tooling-report-store-and-ingest-api.md",
+    "status": "done"
   },
   "TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION": {
     "epic": "epic-workflow-engine",
@@ -63011,7 +65426,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-travel-routes-schema-and-crud.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "routes",
       "travel",
@@ -63049,7 +65464,7 @@
     "label": "task",
     "priority": "high",
     "source": ".plan/tickets/TASK-travel-scheduler-tick.md",
-    "status": "⬜ Not Started",
+    "status": "done",
     "tags": [
       "scheduler",
       "transport",
@@ -63115,6 +65530,20 @@
     "tags": [],
     "title": "TTS Provider Interface + Edge-TTS Integration",
     "type": "TASK"
+  },
+  "TASK-TTS-INPUT-LENGTH-CAP-REJECT-OVER-LONG-TTS-INPUT-WITH-400": {
+    "hash": "ef54de5",
+    "git_issue": "ef54de5",
+    "extid": "TASK-TTS-INPUT-LENGTH-CAP-REJECT-OVER-LONG-TTS-INPUT-WITH-400",
+    "type": "TASK",
+    "title": "tts-input-length-cap: reject over-long TTS input with 400",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-tts-foundation.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tts-input-length-cap-reject-over-long-tts-input-with-400.md",
+    "status": "open"
   },
   "TASK-TTS-STT-BACKENDS-CHATTERBOX-SERVER-TTS-AUDIO-SUITE-PARAKEET-": {
     "hash": "0c2ed43",
@@ -63762,6 +66191,48 @@
     "title": "Unified hold semantics — per-chat pause gates primary generate route",
     "type": "TASK"
   },
+  "TASK-UNIFIED-MEMORY-READER-WITH-RANK-FUSION-AND-BUDGET-LAST-GUARA": {
+    "hash": "926c542",
+    "git_issue": "926c542",
+    "extid": "TASK-UNIFIED-MEMORY-READER-WITH-RANK-FUSION-AND-BUDGET-LAST-GUARA",
+    "type": "TASK",
+    "title": "Unified memory reader with rank fusion and budget-last guarantee",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memory-reader-with-rank-fusion-and-budget-last-guara.md",
+    "status": "open"
+  },
+  "TASK-UNIFIED-MEMORY-WRITER-WITH-NATIVE-FIRST-BEST-EFFORT-FAN-OUT": {
+    "hash": "56a425b",
+    "git_issue": "56a425b",
+    "extid": "TASK-UNIFIED-MEMORY-WRITER-WITH-NATIVE-FIRST-BEST-EFFORT-FAN-OUT",
+    "type": "TASK",
+    "title": "Unified memory writer with native-first best-effort fan-out",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memory-writer-with-native-first-best-effort-fan-out.md",
+    "status": "open"
+  },
+  "TASK-UNIFIED-MEMORYBACKEND-SEAM-WITH-NATIVE-AUTHORITY": {
+    "hash": "acb6354",
+    "git_issue": "acb6354",
+    "extid": "TASK-UNIFIED-MEMORYBACKEND-SEAM-WITH-NATIVE-AUTHORITY",
+    "type": "TASK",
+    "title": "Unified MemoryBackend seam with native authority",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-unified-memorybackend-seam-with-native-authority.md",
+    "status": "open"
+  },
   "TASK-UNIFY-401-GUARD-HELPERS": {
     "epic": "epic-code-quality",
     "extid": "TASK-UNIFY-401-GUARD-HELPERS",
@@ -64164,6 +66635,20 @@
     "status": "Not Started",
     "git_issue": "c910362"
   },
+  "TASK-VERIFY-ACTOR-KIND-PARTICIPANT-FILTER": {
+    "hash": "6438f76",
+    "git_issue": "6438f76",
+    "extid": "TASK-VERIFY-ACTOR-KIND-PARTICIPANT-FILTER",
+    "type": "TASK",
+    "title": "Verify actor-kind participant filter",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-verify-actor-kind-participant-filter.md",
+    "status": "open"
+  },
   "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
     "epic": "epic-logging-telemetry",
     "extid": "TASK-VERIFY-LOGGING-CHANGES-GREEN",
@@ -64375,6 +66860,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-visibility-report-for-chat-admins.md",
     "status": "Not Started"
+  },
+  "TASK-VISION-CHAT-PARTS-VIA-HONKBOX-LLM-VISION": {
+    "hash": "6af8b0f",
+    "git_issue": "6af8b0f",
+    "extid": "TASK-VISION-CHAT-PARTS-VIA-HONKBOX-LLM-VISION",
+    "type": "TASK",
+    "title": "Vision chat parts via honkbox llm-vision",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-chat-product-features",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vision-chat-parts-via-honkbox-llm-vision.md",
+    "status": "Blocked"
   },
   "TASK-VISUAL-NOVEL-MODE": {
     "epic": "epic-visual-novel-mode",
@@ -65361,6 +67860,20 @@
     "title": "Wire Quests Routes",
     "type": "TASK"
   },
+  "TASK-WIRE-REAL-COMFORT-INTIMACY-AND-MOOD-INPUTS-INTO-MEMORY-INJEC": {
+    "hash": "e217927",
+    "git_issue": "e217927",
+    "extid": "TASK-WIRE-REAL-COMFORT-INTIMACY-AND-MOOD-INPUTS-INTO-MEMORY-INJEC",
+    "type": "TASK",
+    "title": "Wire real comfort, intimacy, and mood inputs into memory injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-memory-knowledge-systems",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-real-comfort-intimacy-and-mood-inputs-into-memory-injec.md",
+    "status": "open"
+  },
   "TASK-WIRE-REPLAYABILITY-ROUTES": {
     "epic": "epic-replayability",
     "extid": "TASK-WIRE-REPLAYABILITY-ROUTES",
@@ -65373,6 +67886,20 @@
     "tags": [],
     "title": "Wire Replayability Routes",
     "type": "TASK"
+  },
+  "TASK-WIRE-SCENARIO-INTO-MODEL-ROLE-AUTOROUTE": {
+    "hash": "aef1299",
+    "git_issue": "aef1299",
+    "extid": "TASK-WIRE-SCENARIO-INTO-MODEL-ROLE-AUTOROUTE",
+    "type": "TASK",
+    "title": "Wire scenario into model role autoroute",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-model-rankings-history.md",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-scenario-into-model-role-autoroute.md",
+    "status": "open"
   },
   "TASK-WIRE-SKILLS-ROUTES": {
     "epic": "epic-skills",
@@ -66238,8 +68765,8 @@
   "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION": {
     "epic": "epic-emotion-avatar-message-binding",
     "extid": "TEST-EMOTION-HOOK-TO-AVATARFORMESSAGE-INTEGRATION",
-    "git_issue": "3da357e",
-    "hash": "3da357e",
+    "git_issue": "0eaeb43",
+    "hash": "0eaeb43",
     "label": "test",
     "priority": "P2",
     "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md",
@@ -66374,8 +68901,8 @@
   "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY": {
     "epic": "(none — proposed epic never materialized)",
     "extid": "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY",
-    "git_issue": "837bc93",
-    "hash": "837bc93",
+    "git_issue": "920d2c7",
+    "hash": "920d2c7",
     "label": "wire",
     "priority": "Medium",
     "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md",

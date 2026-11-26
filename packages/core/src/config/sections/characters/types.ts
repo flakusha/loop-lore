@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { ActorVisibility, ContentRating, UserRole, } from "@/db/enums";
+import type { ActorVisibility, ContentRating, UserRole, } from "../../../../../../src/db/enums";
 
 /** */
 export interface CharacterTemplate {

@@ -20,8 +20,7 @@ import type { QualityLevel, } from "../../db/enums";
 import { CraftingOrderService, } from "../../rpg/crafting/orders";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { resolveActorAccess, } from "../actor-access";
-import { jsonError, jsonResponse, } from "../http-utils";
-import { requireUserId, } from "../http-utils/responses";
+import { jsonError, jsonResponse, withUserAuth, } from "../http-utils";
 
 /** A single crafting order as returned by list/detail. */
 const orderResponse = t.Object({
@@ -58,27 +57,26 @@ const fulfillResponse = t.Object({
 export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new CraftingOrderService(database,);
   return new Elysia({ name: "crafting-orders", },)
-    .post(`${prefix}/worlds/:worldId/crafting-orders`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as Record<string, unknown>;
-      const requesterActorId = body.requesterActorId as string;
-      const denied = await resolveActorAccess(database, requesterActorId, userId,);
-      if (denied) { return denied; }
-      const id = await svc().placeOrder({
-        worldId: ctx.params.worldId,
-        requesterActorId,
-        recipeId: body.recipeId as string,
-        quantity: body.quantity as number | undefined,
-        offeredPayment: body.offeredPayment as number | undefined,
-        offeredMaterials: body.offeredMaterials as unknown[] | undefined,
-        maxQuality: body.maxQuality as QualityLevel | null | undefined,
-        deadline: body.deadline as string | null | undefined,
-        tradeType: body.tradeType as string | undefined,
-      },);
+    .post(`${prefix}/worlds/:worldId/crafting-orders`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const body = ctx.body as Record<string, unknown>;
+        const requesterActorId = body.requesterActorId as string;
+        const denied = await resolveActorAccess(database, requesterActorId, userId,);
+        if (denied) { return denied; }
+        const id = await svc().placeOrder({
+          worldId: ctx.params.worldId,
+          requesterActorId,
+          recipeId: body.recipeId as string,
+          quantity: body.quantity as number | undefined,
+          offeredPayment: body.offeredPayment as number | undefined,
+          offeredMaterials: body.offeredMaterials as unknown[] | undefined,
+          maxQuality: body.maxQuality as QualityLevel | null | undefined,
+          deadline: body.deadline as string | null | undefined,
+          tradeType: body.tradeType as string | undefined,
+        },);
 
-      return jsonResponse({ id, }, 201,);
-    }, {
+        return jsonResponse({ id, }, 201,);
+      },), {
       params: t.Object({ worldId: Id, },),
       body: t.Object({
         requesterActorId: Id,
@@ -102,18 +100,17 @@ export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/
         tags: ["Crafting",],
       },
     },)
-    .get(`${prefix}/worlds/:worldId/crafting-orders`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const actorId = (ctx.query as Record<string, string | undefined>).actorId;
-      if (actorId) {
-        const denied = await resolveActorAccess(database, actorId, userId,);
-        if (denied) { return denied; }
-      }
+    .get(`${prefix}/worlds/:worldId/crafting-orders`, (ctx: any,) =>
+      withUserAuth(ctx, async (userId,) => {
+        const actorId = (ctx.query as Record<string, string | undefined>).actorId;
+        if (actorId) {
+          const denied = await resolveActorAccess(database, actorId, userId,);
+          if (denied) { return denied; }
+        }
 
-      const orders = await svc().listOrders(ctx.params.worldId, actorId,);
-      return jsonResponse({ orders, },);
-    }, {
+        const orders = await svc().listOrders(ctx.params.worldId, actorId,);
+        return jsonResponse({ orders, },);
+      },), {
       params: t.Object({ worldId: Id, },),
       query: t.Object({ actorId: t.Optional(Id,), },),
       response: { 200: listResponse, 401: ErrorResponse, 403: ErrorResponse, },
@@ -123,68 +120,77 @@ export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/
         tags: ["Crafting",],
       },
     },)
-    .post(`${prefix}/worlds/:worldId/crafting-orders/:orderId/accept`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as { crafterActorId: string };
-      const denied = await resolveActorAccess(database, body.crafterActorId, userId,);
-      if (denied) { return denied; }
-      const accepted = await svc().acceptOrder(ctx.params.orderId, body.crafterActorId,);
-      if (!accepted) { return jsonError("Order is not open for acceptance", 409,); }
-      return jsonResponse({ ok: true, },);
-    }, {
-      params: t.Object({ worldId: Id, orderId: Id, },),
-      body: t.Object({ crafterActorId: Id, },),
-      response: {
-        200: t.Object({ ok: t.Boolean(), },),
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        409: ErrorResponse,
+    .post(
+      `${prefix}/worlds/:worldId/crafting-orders/:orderId/accept`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as { crafterActorId: string };
+          const denied = await resolveActorAccess(database, body.crafterActorId, userId,);
+          if (denied) { return denied; }
+          const accepted = await svc().acceptOrder(ctx.params.orderId, body.crafterActorId,);
+          if (!accepted) { return jsonError("Order is not open for acceptance", 409,); }
+          return jsonResponse({ ok: true, },);
+        },),
+      {
+        params: t.Object({ worldId: Id, orderId: Id, },),
+        body: t.Object({ crafterActorId: Id, },),
+        response: {
+          200: t.Object({ ok: t.Boolean(), },),
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          409: ErrorResponse,
+        },
+        detail: {
+          summary: "Accept a crafting order",
+          description: "A crafter claims an open crafting order.",
+          tags: ["Crafting",],
+        },
       },
-      detail: {
-        summary: "Accept a crafting order",
-        description: "A crafter claims an open crafting order.",
-        tags: ["Crafting",],
+    )
+    .post(
+      `${prefix}/worlds/:worldId/crafting-orders/:orderId/fulfill`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (_userId,) => {
+          const result = await svc().fulfillOrder(ctx.params.orderId,);
+          return jsonResponse(result,);
+        },),
+      {
+        params: t.Object({ worldId: Id, orderId: Id, },),
+        response: { 200: fulfillResponse, 401: ErrorResponse, },
+        detail: {
+          summary: "Fulfil a crafting order",
+          description: "Run the recipe and transfer payment, marking the order fulfilled.",
+          tags: ["Crafting",],
+        },
       },
-    },)
-    .post(`${prefix}/worlds/:worldId/crafting-orders/:orderId/fulfill`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const result = await svc().fulfillOrder(ctx.params.orderId,);
-      return jsonResponse(result,);
-    }, {
-      params: t.Object({ worldId: Id, orderId: Id, },),
-      response: { 200: fulfillResponse, 401: ErrorResponse, },
-      detail: {
-        summary: "Fulfil a crafting order",
-        description: "Run the recipe and transfer payment, marking the order fulfilled.",
-        tags: ["Crafting",],
+    )
+    .post(
+      `${prefix}/worlds/:worldId/crafting-orders/:orderId/cancel`,
+      (ctx: any,) =>
+        withUserAuth(ctx, async (userId,) => {
+          const body = ctx.body as { actorId: string };
+          const denied = await resolveActorAccess(database, body.actorId, userId,);
+          if (denied) { return denied; }
+          const cancelled = await svc().cancelOrder(ctx.params.orderId, body.actorId,);
+          if (!cancelled) { return jsonError("Order cannot be cancelled", 409,); }
+          return jsonResponse({ ok: true, },);
+        },),
+      {
+        params: t.Object({ worldId: Id, orderId: Id, },),
+        body: t.Object({ actorId: Id, },),
+        response: {
+          200: t.Object({ ok: t.Boolean(), },),
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+          409: ErrorResponse,
+        },
+        detail: {
+          summary: "Cancel a crafting order",
+          description: "Requester cancels an open or accepted order.",
+          tags: ["Crafting",],
+        },
       },
-    },)
-    .post(`${prefix}/worlds/:worldId/crafting-orders/:orderId/cancel`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const body = ctx.body as { actorId: string };
-      const denied = await resolveActorAccess(database, body.actorId, userId,);
-      if (denied) { return denied; }
-      const cancelled = await svc().cancelOrder(ctx.params.orderId, body.actorId,);
-      if (!cancelled) { return jsonError("Order cannot be cancelled", 409,); }
-      return jsonResponse({ ok: true, },);
-    }, {
-      params: t.Object({ worldId: Id, orderId: Id, },),
-      body: t.Object({ actorId: Id, },),
-      response: {
-        200: t.Object({ ok: t.Boolean(), },),
-        400: ErrorResponse,
-        401: ErrorResponse,
-        403: ErrorResponse,
-        409: ErrorResponse,
-      },
-      detail: {
-        summary: "Cancel a crafting order",
-        description: "Requester cancels an open or accepted order.",
-        tags: ["Crafting",],
-      },
-    },);
+    );
 }

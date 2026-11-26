@@ -460,6 +460,36 @@
     </template>
   </div>
 
+  <!-- Per-profile usage ledger + admin-only metrics signal (already-served endpoints) -->
+  <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Usage ledger</h3>
+  <table x-show="harnessLedgerRows.length > 0" class="admin-table" data-testid="harness-ledger-table">
+    <thead>
+      <tr>
+        <th>Profile</th>
+        <th>Dispatches / 60s</th>
+        <th>Tokens / 24h</th>
+        <th>Quota reset</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="row in harnessLedgerRows" :key="row.profile">
+        <tr data-testid="harness-ledger-row">
+          <td x-text="row.profile"></td>
+          <td x-text="row.dispatchesInWindow"></td>
+          <td x-text="row.tokensInDay"></td>
+          <td x-text="row.quotaResetAt === null ? '—' : new Date(row.quotaResetAt).toLocaleString()"></td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div x-show="harnessAdminSignals.length > 0" data-testid="harness-admin-signals">
+    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Admin metrics signal</h3>
+    <template x-for="signal in harnessAdminSignals" :key="signal">
+      <div x-text="signal"></div>
+    </template>
+  </div>
+
   <!-- Runs table from /api/v1/harness/runs -->
   <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">{{{t("harness.recentRuns")}}}</h3>
   <div x-show="harnessRunsEmpty()" class="empty-state" style="padding: var(--space-8)" data-testid="harness-runs-empty">

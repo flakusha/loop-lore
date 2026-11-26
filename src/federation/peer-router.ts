@@ -23,7 +23,8 @@
  *      its peer survives stages 1-3. ONLY `chat` is sticky; every other class
  *      is stateless per request.
  *   5. ranking — headroom, then latency EWMA, then a stable origin tiebreak.
- *      Local is not in this list: it is the fallback when it empties.
+ *      When the caller supplies local load, local joins this ranking; without
+ *      it, local stays the fallback when the peer list empties.
  *
  * A peer is NEVER an `LLMProvider`. Nothing here touches the provider registry
  * or `buildFailoverList` — the dispatch seam (./peer-dispatch) owns the single
@@ -47,6 +48,7 @@ export const PeerRouteReason = {
   UnknownWorkloadClass: "unknown-workload-class",
   NoMatrixRow: "no-matrix-row",
   NoEligiblePeer: "no-eligible-peer",
+  LocalPreferred: "local-preferred",
   StickyAssignment: "sticky-assignment",
   Ranked: "ranked",
 } as const;
@@ -108,7 +110,23 @@ export interface PeerRouteInput {
   matrix: PeerAssignmentMatrix;
   /** The stored pin, when one exists. Read before dispatch. */
   assignment?: PeerWorkloadAssignment | null;
+  /**
+   * Local scheduler pressure, when the caller can see it. Absent keeps the
+   * legacy behaviour: local is only the fallback when peers run out.
+   */
+  localLoad?: LocalLoadSnapshot;
 }
+
+/** Local scheduler pressure for the workload provider chain. */
+export interface LocalLoadSnapshot {
+  /** Requests queued or running locally. */
+  inFlight: number;
+  /** Local concurrency ceiling, or null when unlimited. */
+  maxConcurrency: number | null;
+}
+
+/** Ranking sentinel for local. NUL cannot occur in a peer origin (a URL). */
+export const LOCAL_ROUTE_CANDIDATE = "\u0000local";
 
 /** Local route with an explicit reason. */
 function local(reason: PeerRouteReason,): PeerLocalRoute {
@@ -185,13 +203,22 @@ function narrowCandidates(
  */
 export function peerRankComparator(
   workloadClass: PeerWorkloadClass,
+  localLoad?: LocalLoadSnapshot,
 ): (a: string, b: string,) => number {
   const headroom = (origin: string,): number => {
+    if (origin === LOCAL_ROUTE_CANDIDATE) {
+      const capacity = localLoad?.maxConcurrency;
+      return capacity === undefined || capacity === null
+        ? Number.POSITIVE_INFINITY
+        : Math.max(0, capacity - localLoad!.inFlight,);
+    }
+
     const value = peerLoad({ origin, workloadClass, },).headroom;
     return value === null ? Number.POSITIVE_INFINITY : value;
   };
 
   const latency = (origin: string,): number => {
+    if (origin === LOCAL_ROUTE_CANDIDATE) { return Number.POSITIVE_INFINITY; }
     const value = peerLoad({ origin, workloadClass, },).ewmaLatencyMs;
     return value === null ? Number.POSITIVE_INFINITY : value;
   };
@@ -240,7 +267,20 @@ export function resolvePeerRoute(
     ? candidates.find((peer,) => peer.origin === assignment.peerOrigin)
     : undefined;
 
-  const byRank = peerRankComparator(workloadClass,);
+  const byRank = peerRankComparator(workloadClass, input.localLoad,);
+  if (input.localLoad !== undefined) {
+    const ranked = [LOCAL_ROUTE_CANDIDATE, ...candidates.map((peer,) => peer.origin),].toSorted(byRank,);
+    if (ranked[0] === LOCAL_ROUTE_CANDIDATE) {
+      log?.info("peer workload routed local under load", {
+        workloadClass,
+        localLoad: input.localLoad,
+        excluded,
+      },);
+
+      return { ...local(PeerRouteReason.LocalPreferred,), excluded, };
+    }
+  }
+
   const chosen = pinned ?? candidates.toSorted((a, b,) => byRank(a.origin, b.origin,))[0]!;
   const reason = pinned === undefined ? PeerRouteReason.Ranked : PeerRouteReason.StickyAssignment;
 

@@ -7,7 +7,9 @@ import {
   ChatIdParams,
   ErrorResponse,
   MessageIdParams,
+  MessageListItemSchema,
   MessagesQuery,
+  MessageVariantItemSchema,
   MessageVariantQuery,
 } from "../../validation/schemas";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
@@ -63,7 +65,12 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         params: ChatIdParams,
         query: MessagesQuery,
         response: {
-          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          200: t.Object({
+            data: t.Array(MessageListItemSchema,),
+            total: t.Number(),
+            page: t.Number(),
+            pageSize: t.Number(),
+          },),
           401: ErrorResponse,
         },
         detail: {
@@ -114,7 +121,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           tool_error: toolMeta?.toolError ?? false,
         },);
       },
-      { params: MessageIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
+      { params: MessageIdParams, response: { 200: MessageListItemSchema, 401: ErrorResponse, 404: ErrorResponse, }, },
     )
     .get(
       `${prefix}/messages/:id/variants`,
@@ -160,6 +167,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectFrom("messages",)
           .selectAll()
           .where("parent_id", "=", parentId,)
+          // BUG-moderator-hidden-message: hidden siblings are not public.
+          .where("visibility", "=", "visible",)
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();
@@ -187,7 +196,10 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         return jsonResponse(enriched,);
       },
-      { params: MessageIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
+      {
+        params: MessageIdParams,
+        response: { 200: t.Array(MessageVariantItemSchema,), 401: ErrorResponse, 404: ErrorResponse, },
+      },
     )
     // BUG-chat-minors-variant-put-never-persists: the former PUT never
     // wrote anything — it only SELECTed siblings and returned one. Demoted
@@ -216,6 +228,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           .selectAll()
           .where("parent_id", "=", message.parent_id as string,)
           .where("chat_id", "=", message.chat_id as string,)
+          // BUG-moderator-hidden-message: hidden siblings are not selectable.
+          .where("visibility", "=", "visible",)
           .orderBy("swipe_index", "asc",)
           .orderBy("created_at", "asc",)
           .execute();
@@ -233,7 +247,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
       {
         params: MessageIdParams,
         query: MessageVariantQuery,
-        response: { 200: t.Any(), 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
+        response: { 200: MessageVariantItemSchema, 400: ErrorResponse, 401: ErrorResponse, 404: ErrorResponse, },
       },
     );
 }

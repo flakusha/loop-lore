@@ -28,15 +28,42 @@ async function makeTransportKindLoc(worldId: string, mobility: string,): Promise
   return id;
 }
 
-async function makeStop(worldId: string, name: string,): Promise<string> {
+async function makeStop(
+  worldId: string,
+  name: string,
+  coords?: { x: number; y: number; z: number },
+): Promise<string> {
   const id = randomUUID();
   testDb.sqlite.run(
-    `INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode)
-     VALUES (?, ?, ?, '', '[]', 'draft', NULL, 'transit', 'static')`,
-    [id, worldId, name,],
+    `INSERT INTO locations (id, world_id, name, description, connections, publication_status, parent_location_id, kind, mobility_mode, coord_x, coord_y, coord_z)
+     VALUES (?, ?, ?, '', '[]', 'draft', NULL, 'transit', 'static', ?, ?, ?)`,
+    [id, worldId, name, coords?.x ?? null, coords?.y ?? null, coords?.z ?? null,],
   );
 
   return id;
+}
+
+function addRider(actorId: string, transportId: string, spatialId: string,): void {
+  testDb.sqlite.run(
+    `INSERT INTO actor_locations (actor_id, physical_location_id, spatial_location_id, entered_at)
+     VALUES (?, ?, ?, datetime('now'))`,
+    [actorId, transportId, spatialId,],
+  );
+}
+
+interface EventRow {
+  world_id: string;
+  event_type: string;
+  subject_id: string;
+  tick_index: number;
+  payload: string;
+}
+
+function eventsFor(transportId: string,): EventRow[] {
+  return testDb.sqlite.query(
+    `SELECT world_id, event_type, subject_id, tick_index, payload
+     FROM world_event_log WHERE subject_id = ? ORDER BY id`,
+  ).all(transportId,) as EventRow[];
 }
 
 beforeAll(async () => {
@@ -151,6 +178,212 @@ describe("TravelTickEngine", () => {
     const summary = await engine.tick({ elapsedSeconds: 30, },);
     expect(summary.advanced,).toBe(1,);
     expect(summary.capped,).toBe(0,);
+  });
+
+  test("no crossing leaves coords, riders and events untouched", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({ worldId, name: "Calm", kind: "sea", loop: true, secondsPerUnit: 60, },);
+    const a = await makeStop(worldId, "a", { x: 1, y: 2, z: 3, },);
+    const b = await makeStop(worldId, "b", { x: 4, y: 5, z: 6, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+    testDb.sqlite.run(`UPDATE locations SET coord_x = 99, coord_y = 99, coord_z = 99 WHERE id = ?`, [ship,],);
+    addRider("rider-no-cross", ship, a,);
+
+    await engine.tick({ elapsedSeconds: 30, tickIndex: 7, },);
+
+    const loc = testDb.sqlite.query(`SELECT coord_x, coord_y, coord_z FROM locations WHERE id = ?`,).get(ship,) as {
+      coord_x: number;
+      coord_y: number;
+      coord_z: number;
+    };
+
+    expect([loc.coord_x, loc.coord_y, loc.coord_z,],).toEqual([99, 99, 99,],);
+    const rider = testDb.sqlite.query(`SELECT spatial_location_id FROM actor_locations WHERE actor_id = ?`,).get(
+      "rider-no-cross",
+    ) as {
+      spatial_location_id: string;
+    };
+
+    expect(rider.spatial_location_id,).toBe(a,);
+    expect(eventsFor(ship,),).toHaveLength(0,);
+  });
+
+  test("terminal arrival snaps coords + riders and emits one arrival event", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "LastCall",
+      kind: "road",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    const a = await makeStop(worldId, "a", { x: 1, y: 1, z: 1, },);
+    const b = await makeStop(worldId, "b", { x: 7, y: 8, z: 9, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+    // Start at the first stop; crossing to the terminal stop is the arrival.
+    testDb.sqlite.run(`UPDATE locations SET travel_progress = 0 WHERE id = ?`, [ship,],);
+    addRider("rider-arrive", ship, a,);
+
+    await engine.tick({ elapsedSeconds: 60, tickIndex: 3, },);
+
+    const loc = testDb.sqlite.query(`SELECT coord_x, coord_y, coord_z FROM locations WHERE id = ?`,).get(ship,) as {
+      coord_x: number;
+      coord_y: number;
+      coord_z: number;
+    };
+
+    expect([loc.coord_x, loc.coord_y, loc.coord_z,],).toEqual([7, 8, 9,],);
+    const rider = testDb.sqlite.query(
+      `SELECT physical_location_id, spatial_location_id FROM actor_locations WHERE actor_id = ?`,
+    ).get("rider-arrive",) as {
+      physical_location_id: string;
+      spatial_location_id: string;
+    };
+
+    expect(rider.physical_location_id,).toBe(ship,);
+    expect(rider.spatial_location_id,).toBe(b,);
+
+    const events = eventsFor(ship,);
+    expect(events,).toHaveLength(1,);
+    expect(events[0]!.event_type,).toBe("transport:arrived",);
+    expect(events[0]!.subject_id,).toBe(ship,);
+    expect(events[0]!.world_id,).toBe(worldId,);
+    expect(events[0]!.tick_index,).toBe(3,);
+    const payload = JSON.parse(events[0]!.payload,) as {
+      routeId: string;
+      stopId: string;
+      progress: number;
+      coords: { x: number; y: number; z: number };
+    };
+
+    expect(payload.routeId,).toBe(routeId,);
+    expect(payload.stopId,).toBe(b,);
+    expect(payload.progress,).toBe(1,);
+    expect(payload.coords,).toEqual({ x: 7, y: 8, z: 9, },);
+  });
+
+  test("each crossed stop emits an arrival and moves riders with it", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "IslandLoop",
+      kind: "sea",
+      loop: true,
+      secondsPerUnit: 60,
+    },);
+
+    const a = await makeStop(worldId, "a", { x: 1, y: 1, z: 1, },);
+    const b = await makeStop(worldId, "b", { x: 2, y: 2, z: 2, },);
+    const c = await makeStop(worldId, "c", { x: 3, y: 3, z: 3, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    await routes.addStop({ routeId, locationId: c, stopOrder: 2, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+    addRider("rider-march", ship, a,);
+
+    const riderStop = () =>
+      (testDb.sqlite.query(
+        `SELECT spatial_location_id FROM actor_locations WHERE actor_id = ?`,
+      ).get("rider-march",) as { spatial_location_id: string }).spatial_location_id;
+
+    for (const [tickIndex, expected,] of [[1, b,], [2, c,], [3, a,],] as const) {
+      await engine.tick({ elapsedSeconds: 60, tickIndex, },);
+      expect(riderStop(),).toBe(expected,);
+    }
+
+    const arrivals = eventsFor(ship,).filter((e,) => e.event_type === "transport:arrived")
+      .sort((a, b,) => a.tick_index - b.tick_index);
+
+    expect(arrivals,).toHaveLength(3,);
+    expect(arrivals.map((e,) => (JSON.parse(e.payload,) as { stopId: string }).stopId),).toEqual([b, c, a,],);
+  });
+
+  test("a docked non-loop transport emits no repeat arrivals", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "Docked",
+      kind: "road",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    await routes.addStop({ routeId, locationId: await makeStop(worldId, "a",), stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: await makeStop(worldId, "b",), stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+
+    for (let tickIndex = 1; tickIndex <= 5; tickIndex += 1) {
+      await engine.tick({ elapsedSeconds: 60, tickIndex, },);
+    }
+
+    expect(eventsFor(ship,).filter((e,) => e.event_type === "transport:arrived"),).toHaveLength(1,);
+  });
+
+  test("loop wrap also emits a departure event", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({ worldId, name: "Loop", kind: "sea", loop: true, secondsPerUnit: 60, },);
+    const a = await makeStop(worldId, "a", { x: 1, y: 2, z: 3, },);
+    const b = await makeStop(worldId, "b", { x: 4, y: 5, z: 6, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+    testDb.sqlite.run(`UPDATE locations SET travel_progress = 1 WHERE id = ?`, [ship,],);
+
+    await engine.tick({ elapsedSeconds: 60, tickIndex: 9, },);
+
+    expect(eventsFor(ship,).map((e,) => e.event_type).sort(),).toEqual(["transport:arrived", "transport:departed",],);
+    const loc = testDb.sqlite.query(`SELECT coord_x, coord_y, coord_z FROM locations WHERE id = ?`,).get(ship,) as {
+      coord_x: number;
+      coord_y: number;
+      coord_z: number;
+    };
+
+    expect([loc.coord_x, loc.coord_y, loc.coord_z,],).toEqual([1, 2, 3,],);
+  });
+
+  test("a second identical tick does not duplicate events", async () => {
+    const routes = new TravelRouteService(testDb.db,);
+    const engine = new TravelTickEngine(testDb.db,);
+    const worldId = await makeWorld();
+    const routeId = await routes.createRoute({
+      worldId,
+      name: "Replay",
+      kind: "road",
+      loop: false,
+      secondsPerUnit: 60,
+    },);
+
+    const a = await makeStop(worldId, "a", { x: 1, y: 1, z: 1, },);
+    const b = await makeStop(worldId, "b", { x: 2, y: 2, z: 2, },);
+    await routes.addStop({ routeId, locationId: a, stopOrder: 0, },);
+    await routes.addStop({ routeId, locationId: b, stopOrder: 1, },);
+    const ship = await makeTransportKindLoc(worldId, "free",);
+    await routes.attachTransport(ship, routeId,);
+
+    await engine.tick({ elapsedSeconds: 120, tickIndex: 11, },);
+    expect(eventsFor(ship,),).toHaveLength(1,);
+    await engine.tick({ elapsedSeconds: 120, tickIndex: 11, },);
+    expect(eventsFor(ship,),).toHaveLength(1,);
   });
 });
 

@@ -180,3 +180,17 @@ describe("world & location traits (auth-gated)", () => {
     expect(res.status,).toBe(403,);
   });
 });
+
+describe("trait routes — service failure surfaces generic 500", () => {
+  test("delete failure → 500 without leaking internals", async () => {
+    const app = new Elysia({ name: "test-traits-broken", },)
+      .derive(() => ({ userId: uid(), }))
+      .use(worldLocationTraitsRoutes({ database: {} as never, config: {} as never, },),) as unknown as Elysia;
+
+    const res = await app.handle(
+      new Request(`http://localhost/api/rpg/world-location-traits/world/${uid()}`, { method: "DELETE", },),
+    );
+
+    expect(res.status,).toBe(500,);
+  });
+});

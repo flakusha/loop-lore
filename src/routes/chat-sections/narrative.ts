@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import { getConfigValue, } from "../../admin/config";
 import {
   type ContentEncoding,
   MessageContentFormat,
@@ -10,13 +11,13 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
-import { filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { uid, } from "../../utils";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
+import { jsonResponse, } from "../http-utils";
 import { prepareContentStorage, } from "../messages/post";
-import { chatAccess, } from "./access";
+import { requireChatAccess, } from "./access";
 import { type HandlerOpts, } from "./types";
 
 /**
@@ -40,13 +41,10 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
       .post(
         `${prefix}/chats/:id/sections/:sectionId/narrative`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { userId, chatId, } = access;
           const sectionId = ctx.params.sectionId as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
 
           const section = await database
             .selectFrom("chat_sections",)
@@ -58,7 +56,8 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (!section) { return notFound("Section not found in this chat",); }
 
           const body = ctx.body as { text: string };
-          const content = filterProfanity(body.text,);
+          const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+          const content = applyProfanityWritePolicy(profanityEnabled, body.text,).text;
 
           const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
             database,

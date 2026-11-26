@@ -16,7 +16,9 @@ export async function runNonBlockingChecks(notes,) {
 
   // Version drift check
   try {
-    const tagProc = Bun.spawn(["bash", "-c", "git tag --list v*",], {
+    // Bare semver tags (`0.1.0`, `0.1.0-rc.1`); `dev-*`/`stg-*` never match.
+    // `sort -V` picks the newest deterministically.
+    const tagProc = Bun.spawn(["bash", "-c", "git tag --list '[0-9]*' | sort -V",], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
@@ -40,7 +42,10 @@ export async function runNonBlockingChecks(notes,) {
       packageVersion = packageText.trim();
 
     if (latestTag && packageVersion) {
-      const tagVersion = latestTag.replace(/^v/, "",);
+      // Candidates compare by base version: `0.1.0-rc.1` against a
+      // package.json at `0.1.0` is the normal staged state (package.json
+      // only moves at stable).
+      const tagVersion = latestTag.replace(/-rc\.\d+$/, "",);
       if (tagVersion === packageVersion) {
         console.log(`OK: Version in sync: ${packageVersion}`,);
         notes.push({ level: "ok", message: `Version in sync: ${packageVersion}`, },);
@@ -54,10 +59,10 @@ export async function runNonBlockingChecks(notes,) {
         },);
       }
     } else if (packageVersion) {
-      // No v* tag found — the check cannot run; emit a skipped note so the
+      // No release tag found — the check cannot run; emit a skipped note so the
       // report is not silent about this.
-      console.log("warn: Version check skipped (no v* tag found)",);
-      notes.push({ level: "skipped", message: "Version check skipped: no v* tag found in repository", },);
+      console.log("warn: Version check skipped (no release tag found)",);
+      notes.push({ level: "skipped", message: "Version check skipped: no release tag found in repository", },);
     }
   } catch {
     console.log("warn: Version check skipped",);

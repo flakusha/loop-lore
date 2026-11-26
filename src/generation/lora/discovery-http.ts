@@ -11,6 +11,7 @@
  * @module generation/lora/discovery-http
  */
 
+import { proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 import type { LoRADiscoveryResult, } from "./types";
 
 /**
@@ -32,29 +33,41 @@ export interface DiscoveryFailureContext {
 /**
  * Fetch a URL with an abort-based timeout.
  *
- * Throws on timeout (AbortError) or network failure; callers catch and route
- * the error through {@link discoveryErrorResult}. The timer is always cleared
- * once the request settles, even on throw.
+ * Throws on timeout or network failure; callers catch and route the error
+ * through {@link discoveryErrorResult}.
  * @param url - URL to fetch
  * @param timeoutMs - Timeout in ms before the request is aborted
  * @returns The resolved {@link Response}
- * @throws {DOMException} AbortError on timeout, plus any underlying fetch error
+ * @throws {Error} safeFetch rejection on timeout or network failure (an abort
+ * message classifies as a timeout in {@link discoveryErrorResult})
  */
 export async function fetchWithTimeout(
   url: string,
   timeoutMs: number,
 ): Promise<Response> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs,);
+  const timeout = AbortSignal.timeout(timeoutMs,);
+  const result = await safeFetch<Response>(url, {
+    headers: { "Content-Type": "application/json", },
+    signal: timeout,
+    stream: true,
+    handle401: false,
+    proxy: proxyForUrl(url,),
+  },);
 
-  try {
-    return await fetch(url, {
-      headers: { "Content-Type": "application/json", },
-      signal: controller.signal,
-    },);
-  } finally {
-    clearTimeout(timeout,);
+  if (result.ok) { return result.data; }
+  if (result.status === undefined) {
+    // Abort or timeout: fetch used to reject with an AbortError here, which
+    // the caller classifies as a timeout. Restore that shape; raw network
+    // failures pass through untouched.
+    const aborted = result.error.message === "Request aborted" ||
+      result.error.message.startsWith("Request timed out",);
+
+    if (aborted) { throw new DOMException("The operation was aborted", "AbortError",); }
+    throw result.error;
   }
+
+  // Error bodies are never read here — callers only use status/statusText.
+  return new Response(result.error.message, { status: result.status, headers: result.headers, },);
 }
 
 /**

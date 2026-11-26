@@ -1,0 +1,108 @@
+<!-- General Tab -->
+<div x-show="activeTab === 'general'">
+  <form @submit.prevent="saveWorld()" data-testid="edit-world-form">
+    <div class="form-group">
+      <label class="form-label" for="edit-name">{{{t("worlds.name")}}}</label>
+      <input class="form-input" type="text" id="edit-name" x-model="world.name" maxlength="255" required />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="edit-description">{{{t("worlds.description")}}}</label>
+      <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+        <textarea
+          class="form-input form-textarea"
+          id="edit-description"
+          style="flex: 1"
+          x-model="world.description"
+          rows="3"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
+        ></textarea>
+        <div x-data="textToolbar({ target: '#edit-description' })">
+          {{> text-toolbar.html }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="edit-lore">{{{t("worlds.lore")}}}</label>
+      <div style="display: flex; gap: var(--space-1); align-items: flex-start">
+        <textarea
+          class="form-input form-textarea"
+          id="edit-lore"
+          style="flex: 1"
+          x-model="world.lore"
+          rows="6"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
+        ></textarea>
+        <div x-data="textToolbar({ target: '#edit-lore' })">
+          {{> text-toolbar.html }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="world-tags">{{{t("worlds.tags")}}}</label>
+      <input
+        type="text"
+        class="form-input"
+        id="world-tags"
+        x-model="tagsStr"
+        :placeholder="t('worlds.tagsPlaceholder')"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="edit-kind">{{{t("worlds.kind")}}}</label>
+      <select class="form-input" id="edit-kind" x-model="world.kind">
+        <option value="rpg">RPG</option>
+        <option value="chat">Chat channels</option>
+      </select>
+      <p class="form-hint">{{{t("worlds.kindHint")}}}</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="edit-visibility">{{{t("worlds.visibility")}}}</label>
+      <select class="form-input" id="edit-visibility" x-model="world.visibility">
+        <option value="private">Private</option>
+        <option value="unlisted">Unlisted</option>
+        <option value="public">Public</option>
+      </select>
+      <p class="form-hint">{{{t("worlds.visibilityHint")}}}</p>
+    </div>
+    <div class="form-group" x-show="world.kind === 'rpg'">
+      <label class="form-label">
+        <input type="checkbox" x-model="world.rpgEnabled" data-testid="edit-rpg-enabled" />
+        {{{t("worlds.wizardRpgEnabled")}}}
+      </label>
+      <p class="form-hint">{{{t("worlds.wizardRpgEnabledHint")}}}</p>
+    </div>
+    <div class="form-group" x-show="world.kind === 'rpg' && world.rpgEnabled">
+      <label class="form-label">
+        <input type="checkbox" x-model="world.rpgXp" data-testid="edit-rpg-xp" />
+        {{{t("worlds.wizardRpgXp")}}}
+      </label>
+    </div>
+    <div class="form-group" x-show="world.kind === 'rpg' && world.rpgEnabled">
+      <label class="form-label">
+        <input type="checkbox" x-model="world.rpgSkills" data-testid="edit-rpg-skills" />
+        {{{t("worlds.wizardRpgSkills")}}}
+      </label>
+      <p class="form-hint">{{{t("worlds.wizardRpgSkillsHint")}}}</p>
+    </div>
+    <div style="display: flex; gap: var(--space-3); justify-content: space-between; margin-top: var(--space-6)">
+      <button
+        type="button"
+        class="btn btn-danger"
+        style="color: var(--accent-red)"
+        @click.prevent="deleteWorld()"
+        data-testid="delete-world-btn"
+      >
+        {{{t("worlds.delete")}}}
+      </button>
+      <div style="display: flex; gap: var(--space-3)">
+        <a href="/worlds/{{worldId}}" class="btn btn-secondary" data-testid="cancel-edit-world"
+        >{{{t("common.cancel")}}}</a>
+        <button type="submit" class="btn btn-primary" data-testid="save-world-btn">
+          {{{t("worlds.saveWorld")}}}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

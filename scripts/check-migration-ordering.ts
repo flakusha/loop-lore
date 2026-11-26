@@ -8,15 +8,18 @@
  *      (3-digit numeric prefix). Stray .ts (README siblings, helpers,
  *      tests) get flagged.
  *   2. Numeric prefixes are unique within the loader scope
- *      (src/db/migrations/) — the directory migrate.ts's readdirSync
- *      actually scans. Duplicate prefixes there were the original
- *      ticket's failure mode (041a_/041b_ etc. ordered alphabetically
- *      by localeCompare rather than by author intent).
- *   3. Names sort numerically by prefix, then alphabetically — the same
- *      rule src/db/migrate.ts:compareMigrationNames enforces at runtime.
+ *      (src/db/migrations/) — the directory the production loader scans.
+ *      Duplicate prefixes were the original ticket's failure mode
+ *      (041a_/041b_ etc. ordered alphabetically rather than by author intent).
  *
- * Post-collapse (DB v0), migrations/ holds a single 001_init.ts plus any
- * future NNN_*.ts appends; no parts/ subdirectory exists.
+ * Load order is NOT a filesystem-order invariant: src/db/migrate.ts sorts
+ * its readdir snapshot with compareMigrationNames, so ordering is identical
+ * on dev and in fresh worktrees. The comparator is tested directly in
+ * check-migration-ordering.test.ts; this gate covers only what a sort cannot
+ * fix — stray files and ambiguous prefixes.
+ *
+ * The S2 baseline holds 001_core.ts through 014_support_singletons.ts plus
+ * later NNN_*.ts appends; no parts/ subdirectory exists.
  *
  * BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
  *
@@ -117,26 +120,10 @@ if (loaderCollisions.length === 0) {
   }
 }
 
-const numericSort = (a: FileRow, b: FileRow,): number => {
-  if (a.prefix !== b.prefix) { return Number(a.prefix,) - Number(b.prefix,); }
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-};
-const sorted = [...loaderReport.collected,].sort(numericSort,);
-let orderOk = true;
-for (let i = 0; i < sorted.length; i++) {
-  if (sorted[i] !== sorted[i]) {
-    orderOk = false;
-    break;
+if (import.meta.main) {
+  if (failed) {
+    console.error("\nMigration ordering gate FAILED.",);
+    process.exit(1,);
   }
+  console.log("\nMigration ordering gate PASSED.",);
 }
-if (orderOk) {
-  ok("loader scope: declared order is stable under numeric + alphabetical comparator",);
-} else {
-  fail("loader scope: declared order disagrees with comparator — re-run after sort fix",);
-}
-
-if (failed) {
-  console.error("\nMigration ordering gate FAILED.",);
-  process.exit(1,);
-}
-console.log("\nMigration ordering gate PASSED.",);

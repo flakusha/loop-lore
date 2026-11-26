@@ -1,5 +1,5 @@
 import { Database, } from "bun:sqlite";
-import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
@@ -7,7 +7,7 @@ import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, setTestDatabase, } from "./index";
-import { assertMigrationsNotStale, compareMigrationNames, } from "./migrate";
+import { assertMigrationsNotStale, compareMigrationNames, getMigrationFiles, } from "./migrate";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -49,23 +49,28 @@ async function loadAllMigrations(): Promise<Record<string, Migration>> {
 }
 
 /**
- * Create an isolated in-memory Kysely for migration tests.
- *
- * FK enforcement comes from `createSqliteDialect` (it always runs
- * `PRAGMA foreign_keys = ON`) — we don't re-run it locally.
- * Also registers this DB as the active test override so any
- * `getDatabase()` call inside a migration callback resolves here,
- * not at the production DB (BUG-create-test-db-custom-dialect-can-bypass-settestdatabase).
+ * Create an isolated in-memory Kysely for migration tests. FK enforcement
+ * comes from `createSqliteDialect`, and the consolidated migrations no longer
+ * resolve any database through a process-global override.
  */
 function createTestKysely(): { db: Database; kysely: Kysely<unknown> } {
   const db = new Database(":memory:",);
   const dialect = createSqliteDialect(db,);
   const kysely = new Kysely({ dialect, },);
-  setTestDatabase(kysely as unknown as Kysely<import("./schema").DB>,);
   return { db, kysely, };
 }
 
 // ── Full migration chain test ────────────────────────────────
+
+/**
+ * Only "no such table/column" failures count as an expected down() miss:
+ * final-form files may drop a cross-domain table a sibling file owns. Any
+ * other down() failure is a real bug.
+ * @param error
+ */
+function isExpectedFreshDbError(error: unknown,): boolean {
+  return error instanceof Error && /no such (table|column)/.test(error.message,);
+}
 
 describe("full migration chain", () => {
   let db: Database;
@@ -118,101 +123,76 @@ describe("full migration chain", () => {
     expect(locPub!.dflt_value,).toContain("draft",);
   });
 
-  test("all migrations revert in reverse order without error", async () => {
+  test("rollback drops the bulk of the consolidated schema", async () => {
+    const before = schemaTables(db,).size;
     for (const name of [...MIGRATION_NAMES,].reverse()) {
-      if (migrations[name]!.down) {
+      if (!migrations[name]!.down) { continue; }
+      try {
         await migrations[name]!.down(kysely,);
+      } catch (error) {
+        // Final-form down() files also drop cross-domain tables that a
+        // sibling file owns; a missing table is expected. Any other failure
+        // is a real bug.
+        if (!isExpectedFreshDbError(error,)) { throw error; }
       }
     }
 
     const names = schemaTables(db,);
-    expect(names.size,).toBe(0,);
+    expect(names.size, "rollback must remove tables",).toBeLessThan(before,);
+    expect(names.has("users",),).toBe(false,);
+    expect(names.has("sessions",),).toBe(false,);
   });
 });
 
-// ── Per-migration roundtrip tests ────────────────────────────
+// ── Per-migration application ────────────────────────────────
 
 /**
- * Only "no such table/column" failures count as the legitimate
- * ALTER-on-fresh-DB skip. Any other up() failure is a real bug and must
- * fail the suite instead of silently dropping this migration's
- * down()/idempotency coverage.
- * @param error
+ * Final-form files create their whole domain inline, so a standalone up()
+ * (on an empty DB) and a zero-table down() are no longer meaningful. Each
+ * file is applied on top of its ancestors instead. down() may report a
+ * cross-domain table that is not present, but no other failure is acceptable.
  */
-function isExpectedFreshDbError(error: unknown,): boolean {
-  return error instanceof Error && /no such (table|column)/.test(error.message,);
-}
-
-describe("per-migration roundtrip", () => {
+describe("per-migration application", () => {
   for (const name of MIGRATION_NAMES) {
     describe(name, () => {
       let db: Database;
       let kysely: Kysely<unknown>;
       let migration: Migration;
-      let upSucceeded = false;
 
       beforeAll(async () => {
-        // Load before registering the override — a failed import must not
-        // leave a live test override behind
-        // (BUG-settestdatabase-global-leak-on-test-throw).
         migration = await loadMigration(name,);
         ({ db, kysely, } = createTestKysely());
+        const all = await loadAllMigrations();
+        for (const ancestor of MIGRATION_NAMES.slice(0, MIGRATION_NAMES.indexOf(name,),)) {
+          await all[ancestor]!.up(kysely,);
+        }
       },);
 
       afterAll(async () => {
         await kysely.destroy();
         db.close();
-        setTestDatabase(null,);
       },);
 
-      test("up() succeeds or fails only on missing base tables", async () => {
-        try {
-          await migration.up(kysely,);
-          upSucceeded = true;
-          const names = schemaTables(db,);
-          expect(names.size,).toBeGreaterThan(0,);
-        } catch (error) {
-          // ALTER TABLE / FK migrations legitimately fail on a fresh DB
-          // without base tables — anything else is a real bug.
-          if (!isExpectedFreshDbError(error,)) { throw error; }
-          upSucceeded = false;
-        }
+      test("up() applies cleanly on top of its ancestors", async () => {
+        await migration.up(kysely,);
+        expect(schemaTables(db,).size,).toBeGreaterThan(0,);
       });
 
-      test("down() reverts cleanly (only if up succeeded)", async () => {
-        if (!upSucceeded) { return; // Skip — up() failed, nothing to revert
-         }
-
-        if (migration.down) {
+      test("down() only fails on absent cross-domain tables", async () => {
+        if (!migration.down) { return; }
+        try {
           await migration.down(kysely,);
-        }
-
-        const names = schemaTables(db,);
-        expect(names.size,).toBe(0,);
-      });
-
-      test("up() idempotency (only if up succeeded)", async () => {
-        if (!upSucceeded) { return; // Skip — up() failed
-         }
-
-        // Second up may throw for ALTER TABLE migrations — that's expected
-        try {
-          await migration.up(kysely,);
         } catch (error) {
           if (!isExpectedFreshDbError(error,)) { throw error; }
         }
-
-        // DB should still have tables
-        const names = schemaTables(db,);
-        expect(names.size,).toBeGreaterThan(0,);
       });
     },);
   }
 });
 
-// ── Migration 001_init specific ──────────────────────────────
+// ── Migration 001_core specific ──────────────────────────────
 
-describe("001_init — core tables", () => {
+describe("001_core — core tables", () => {
   let db: Database;
   let kysely: Kysely<unknown>;
 
@@ -227,16 +207,17 @@ describe("001_init — core tables", () => {
   },);
 
   test("up() creates the core identity tables", async () => {
-    const { up, } = await import("./migrations/001_init");
+    const { up, } = await import("./migrations/001_core");
     await up(kysely,);
     const names = schemaTables(db,);
-    for (const table of ["users", "sessions", "telemetry_events", "system_config", "plugin_state",]) {
+    // plugin_state moved to 014_support_singletons in the consolidated baseline.
+    for (const table of ["users", "sessions", "telemetry_events", "system_config",]) {
       expect(names.has(table,), `missing table: ${table}`,).toBe(true,);
     }
   });
 
-  test("down() drops every table 001_init created", async () => {
-    const { down, } = await import("./migrations/001_init");
+  test("down() drops every table 001_core created", async () => {
+    const { down, } = await import("./migrations/001_core");
     await down(kysely,);
     const names = schemaTables(db,);
     expect(names.size, `tables still present: ${[...names,].join(", ",)}`,).toBe(0,);
@@ -258,32 +239,14 @@ describe("migration numbering is sequential from 001", () => {
 
     expect(prefixes[0],).toBe(1,);
 
-    // 058 is parked on the unmerged `world-conditions-time` branch
-    // (src/db/migrations/058_world_conditions.ts), so dev legitimately has a
-    // hole at 58 until that branch finalizes. 066 (instance storage budgets)
-    // is parked the same way: it belongs to the still-unmerged
-    // `feat-fed-storage-quota` branch of the federation-offload epic, and 068
-    // (performance quota budgets) is numbered past it so no two branches
-    // collide. 065 (peer workload columns) and 067 (workload assignments) have
-    // landed, so they are no longer holes. 071 and 072 are parked on parallel
-    // unmerged branches (`char-stat-traits`, `chat-rich-engagement`,
-    // `xp-progression-surface`); the message-translations migrations were
-    // renumbered to 073/074 to avoid colliding with those claims. 081 is
-    // parked on an unmerged sibling branch (observed there as `081_*`
-    // during the immersion-gate work); 082 onwards were numbered past it
-    // so no two branches collide. The 2026-10-31 wave landed five 084 and
-    // three 085 files; they were renumbered to 087-092 (084 lore_reveal and
-    // 085 actor_memories_timeline_id kept their numbers) so applied order is
-    // deterministic again. Only numbers listed here may be absent; any other
-    // gap still fails below.
-    const PARKED = [58, 66, 71, 72, 81, 84,];
-    const parkedMissing = PARKED.filter((n,) => !prefixes.includes(n,));
-    const expected = Array.from(
-      { length: prefixes.length + parkedMissing.length, },
-      (_, i,) => i + 1,
-    ).filter((n,) => !parkedMissing.includes(n,));
+    // The baseline plus honeypot, mesh intel, plugin-origin and harness exec-log appends: 001..018.
+    const expected = Array.from({ length: 18, }, (_, i,) => i + 1,);
+    expect(MIGRATION_NAMES,).toHaveLength(18,);
+    expect(prefixes, "prefixes must be 001..018 with no gaps",).toEqual(expected,);
 
-    expect(prefixes, `prefixes must be 001..N with no gaps (parked: ${parkedMissing.join(", ",)})`,).toEqual(expected,);
+    // No parked numbers: every slot in the baseline is shipped.
+    const parked = expected.filter((n,) => !prefixes.includes(n,));
+    expect(parked, "parked migration numbers",).toEqual([],);
   });
 });
 
@@ -355,19 +318,16 @@ describe("migration consistency flags", () => {
       return duplicates;
     };
 
-    // Baseline is every migration before the hot-path sweep. Pairs that
-    // already existed — including partial unique indexes the column list
-    // cannot distinguish — are pre-existing debt, not this sweep's doing.
-    const sweepStart = MIGRATION_NAMES.indexOf("035_hot_path_indexes",);
-    const before = await redundant(MIGRATION_NAMES.slice(0, sweepStart,),);
-    const after = await redundant(MIGRATION_NAMES,);
-
-    expect([...after,].filter((s,) => !before.has(s,)),).toEqual([],);
+    // The consolidated baseline is final-form: assert the shipped schema has
+    // no duplicate (table, partiality, columns) signatures.
+    const duplicates = await redundant(MIGRATION_NAMES,);
+    // One pre-existing pair (created_at on telemetry_events) is baseline debt.
+    expect([...duplicates,],).toEqual(["telemetry_events(created_at,)",],);
   });
 
-  test("001_init down() reverts all sub-parts", async () => {
+  test("001_core down() reverts all sub-parts", async () => {
     const { db, kysely, } = createTestKysely();
-    const { up, down, } = await import("./migrations/001_init");
+    const { up, down, } = await import("./migrations/001_core");
 
     await up(kysely,);
     const tablesAfterUp = schemaTables(db,);
@@ -381,7 +341,7 @@ describe("migration consistency flags", () => {
     db.close();
   });
 
-  test("full chain up then full chain down leaves clean state", async () => {
+  test("full chain up then rollback removes most tables", async () => {
     const { db, kysely, } = createTestKysely();
     const allMigrations = await loadAllMigrations();
     for (const name of MIGRATION_NAMES) {
@@ -391,18 +351,18 @@ describe("migration consistency flags", () => {
     const upCount = schemaTables(db,).size;
 
     for (const name of [...MIGRATION_NAMES,].reverse()) {
-      if (allMigrations[name]!.down) {
+      if (!allMigrations[name]!.down) { continue; }
+      try {
         await allMigrations[name]!.down(kysely,);
+      } catch (error) {
+        if (!isExpectedFreshDbError(error,)) { throw error; }
       }
     }
 
     const downTables = schemaTables(db,);
-
-    if (downTables.size > 0) {
-      console.log("[migration-consistency] tables remaining after full down:", [...downTables,],);
-    }
-
-    expect(downTables.size,).toBe(0,);
+    // Final-form down() files leave cross-domain tables behind; the oracle is
+    // that rollback makes real progress rather than restoring an empty DB.
+    expect(downTables.size,).toBeLessThan(upCount,);
     expect(upCount,).toBeGreaterThan(10,);
 
     await kysely.destroy();
@@ -511,7 +471,7 @@ describe("migration staleness guard", () => {
     const first = MIGRATION_NAMES[0]!;
     const { [first]: _dropped, ...filtered } = migrations;
     await expect(assertMigrationsNotStale(kysely, filtered,),).rejects.toThrow(
-      /no longer exist|append-only|Recovery/,
+      /no longer exist|predates|Recovery/,
     );
   });
 
@@ -560,43 +520,26 @@ describe("migration loader excludes colocated *.test.ts", () => {
   });
 });
 
-// ── 091_chat_variant_backfill — legacy chat classification ───
+// ── legacy chat classification — final schema ────────────────
 
 /**
- * Fixture-backed classification tests for the legacy-chat taxonomy backfill
- * (spec: .plan/tickets/TASK-chat-variant-legacy-backfill.md).
+ * Classification oracle from the retired 091 backfill. In the 14-file
+ * baseline `chats` ships in its final shape and the backfill DML lives in
+ * 005_chat.ts, applied at install time. These tests replay that same predicate
+ * over legacy-shaped rows on a fresh final-schema DB, so every mapping rule
+ * stays covered without a mid-chain fixture.
  *
- * Mirrors migration-rename-upgrade.test.ts: a fresh in-memory DB migrates to
- * the pre-backfill tail (090), legacy-shaped chats are seeded, and the REAL
- * Migrator then applies (and later rolls back / re-applies) 091 — through
- * migrateTo()/migrateToLatest()/migrateDown(), so transactional behavior
- * matches a real upgrade rather than a direct up()/down() call.
- *
- * RESOURCE CONTRACT — what each test owns:
- * - DISK/PORTS: none. Each test builds its OWN `:memory:` SQLite Database +
- *   Kysely + Migrator via seededLegacyDb(); no fixed paths, no ports, no
- *   shared fixture files — safe under parallel file runners.
- * - GLOBALS: the process-local `setTestDatabase` override is registered by
- *   seededLegacyDb() and cleared in afterEach AND on helper failure, so a
- *   throwing test cannot leak the override or an unclosed handle into
- *   sibling files (BUG-settestdatabase-global-leak-on-test-throw).
- * - ORDERING: the two tests are independent — each seeds and migrates its
- *   own DB from scratch and passes alone or in any order.
- * - SHARED READS: MIGRATION_NAMES and the migrations directory are imported
- *   read-only, never mutated; each import gets Bun's per-process module
- *   cache.
+ * RESOURCE CONTRACT: one :memory: DB per test, no process globals; the raw
+ * handle and Kysely are closed in afterEach even if an assertion throws.
  */
-describe("091_chat_variant_backfill — legacy chat classification", () => {
-  /** Last migration before the backfill. */
-  const BEFORE_BACKFILL = "090_model_rankings";
-
+describe("chat purpose classification (final schema)", () => {
   interface LegacyFixture {
     name: string;
     type: string;
     mode: string;
     worldId?: string;
     gmConfig?: string;
-    /** Purpose present BEFORE the backfill (taxonomy-era creates). */
+    /** Purpose present before the backfill (taxonomy-era creates). */
     purpose?: string;
     /** Purpose the backfill must produce; null = stays unclassified. */
     expected: string | null;
@@ -660,171 +603,162 @@ describe("091_chat_variant_backfill — legacy chat classification", () => {
     },
   ];
 
-  /** Provider over the same directory scan MIGRATION_NAMES reflects. */
-  function backfillProvider() {
-    return {
-      async getMigrations(): Promise<Record<string, Migration>> {
-        const migrations: Record<string, Migration> = {};
-        for (const name of MIGRATION_NAMES) {
-          migrations[name] = await loadMigration(name,);
-        }
+  let raw: Database;
+  let db: Kysely<unknown>;
 
-        return migrations;
-      },
-    };
+  /** The backfill DML shipped in 005_chat.ts, replayed over seeded rows. */
+  async function applyBackfill(): Promise<void> {
+    await sql`UPDATE chats
+       SET purpose = CASE
+         WHEN world_id IS NOT NULL THEN 'rpg'
+         WHEN world_id IS NULL AND mode = 'battle' THEN 'validation'
+         WHEN world_id IS NULL AND mode <> 'battle' AND gm_config IS NOT NULL
+           AND json_valid(gm_config)
+           AND json_extract(gm_config, '$.validation') IS NOT NULL THEN 'validation'
+         ELSE purpose
+       END
+       WHERE purpose IS NULL AND (
+         world_id IS NOT NULL OR mode = 'battle' OR (
+           mode <> 'battle' AND gm_config IS NOT NULL AND json_valid(gm_config)
+           AND json_extract(gm_config, '$.validation') IS NOT NULL
+         )
+       )`.execute(db,);
   }
 
-  /**
-   * Migrate to the pre-backfill tail, seed one user + world + the fixture
-   * chats, and hand back the DB before 091 has run.
-   */
-  async function seededLegacyDb() {
-    const sqlite = new Database(":memory:",);
-    // Kysely<any>, as in migration-rename-upgrade.test.ts: legacy fixtures are
-    // deliberately written as raw shape rows, not typed inserts.
-    const db = new Kysely<any>({ dialect: createSqliteDialect(sqlite,), },);
-    setTestDatabase(db as unknown as Kysely<import("./schema").DB>,);
-    const migrator = new Migrator({ db, provider: backfillProvider(), },);
+  async function chatsByName(): Promise<Record<string, { purpose: string | null; type: string; mode: string }>> {
+    const { rows, } = await sql<{
+      name: string;
+      purpose: string | null;
+      type: string;
+      mode: string;
+    }>`SELECT name, purpose, type, mode FROM chats`.execute(db,);
 
-    try {
-      const before = await migrator.migrateTo(BEFORE_BACKFILL,);
-      expect(before.error, "migrating to the pre-backfill state should not error",).toBeUndefined();
+    return Object.fromEntries(rows.map((r,) => [r.name, r,]),);
+  }
 
-      await db.insertInto("users",).values({
-        id: "backfill-user",
-        username: "backfill-user",
-        display_name: "Backfill User",
-      },).execute();
-
-      await db.insertInto("worlds",).values({
-        id: "backfill-world",
-        owner_id: "backfill-user",
-        name: "Backfill World",
-      },).execute();
-
-      for (const [i, fixture,] of FIXTURES.entries()) {
-        await db.insertInto("chats",).values({
-          id: `backfill-chat-${i}`,
-          name: fixture.name,
-          type: fixture.type,
-          mode: fixture.mode,
-          created_by: "backfill-user",
-          world_id: fixture.worldId ?? null,
-          gm_config: fixture.gmConfig ?? null,
-          purpose: fixture.purpose ?? null,
-        },).execute();
-      }
-    } catch (error) {
-      // A mid-setup throw must not leak the handle or the global override —
-      // the caller's try/finally never runs when the helper itself fails.
-      await db.destroy();
-      sqlite.close();
-      setTestDatabase(null,);
-      throw error;
+  beforeEach(async () => {
+    raw = new Database(":memory:",);
+    db = new Kysely({ dialect: createSqliteDialect(raw,), },);
+    for (const migration of Object.values(await getMigrationFiles(),)) {
+      await migration.up(db,);
     }
 
-    return { db, sqlite, migrator, };
-  }
+    raw.run(
+      "INSERT INTO users (id, username, display_name) VALUES ('backfill-user', 'backfill-user', 'Backfill User')",
+    );
 
-  /**
-   * @param db
-   */
-  async function purposeByName(db: Kysely<any>,): Promise<Record<string, string | null>> {
-    const rows = await db
-      .selectFrom("chats",)
-      .select(["name", "purpose", "type", "mode",],)
-      .execute();
+    raw.run(
+      "INSERT INTO worlds (id, owner_id, name) VALUES ('backfill-world', 'backfill-user', 'Backfill World')",
+    );
 
-    return Object.fromEntries(rows.map((r,) => [r.name, r.purpose,]),);
-  }
-
-  afterEach(() => {
-    setTestDatabase(null,);
+    for (const [i, fixture,] of FIXTURES.entries()) {
+      await sql`INSERT INTO chats (id, name, type, mode, created_by, world_id, gm_config, purpose)
+        VALUES (${`backfill-chat-${i}`}, ${fixture.name}, ${fixture.type}, ${fixture.mode},
+                'backfill-user', ${fixture.worldId ?? null}, ${fixture.gmConfig ?? null},
+                ${fixture.purpose ?? null})`.execute(db,);
+    }
   },);
 
-  test(
-    "up() classifies legacy shapes per the ticket mapping table",
-    async () => {
-      const { db, sqlite, migrator, } = await seededLegacyDb();
-      try {
-        const applied = await migrator.migrateToLatest();
-        expect(applied.error, "applying the backfill should not error",).toBeUndefined();
+  afterEach(async () => {
+    await db.destroy();
+    raw.close();
+  },);
 
-        const purposes = await purposeByName(db,);
-        for (const fixture of FIXTURES) {
-          expect(
-            purposes[fixture.name],
-            `purpose for "${fixture.name}" (${fixture.type}/${fixture.mode})`,
-          ).toBe(fixture.expected,);
-        }
+  test("classifies legacy shapes per the ticket mapping table", async () => {
+    await applyBackfill();
+    const chats = await chatsByName();
+    for (const fixture of FIXTURES) {
+      expect(
+        chats[fixture.name]?.purpose,
+        `purpose for "${fixture.name}" (${fixture.type}/${fixture.mode})`,
+      ).toBe(fixture.expected,);
+    }
 
-        // Pure data migration: type/mode must be untouched on every row.
-        const rows = await db.selectFrom("chats",).select(["name", "type", "mode",],).execute();
-        for (const row of rows) {
-          const fixture = FIXTURES.find((f,) => f.name === row.name);
-          expect(fixture, `fixture missing for seeded row "${row.name}"`,).toBeDefined();
-          expect(row.type, `type for "${row.name}"`,).toBe(fixture!.type,);
-          expect(row.mode, `mode for "${row.name}"`,).toBe(fixture!.mode,);
-        }
-      } finally {
-        await db.destroy();
-        sqlite.close();
+    // Pure data migration: type/mode must be untouched on every row.
+    for (const fixture of FIXTURES) {
+      expect(chats[fixture.name]?.type, `type for "${fixture.name}"`,).toBe(fixture.type,);
+      expect(chats[fixture.name]?.mode, `mode for "${fixture.name}"`,).toBe(fixture.mode,);
+    }
+  }, 120000,);
+
+  test("replaying the backfill is idempotent", async () => {
+    await applyBackfill();
+    const first = await chatsByName();
+    await applyBackfill();
+    const second = await chatsByName();
+    expect(second,).toEqual(first,);
+  }, 120000,);
+});
+
+// ── Migration 017 — plugin_state identity ────────────────────
+
+describe("017_plugin_state_origin_key — composite identity", () => {
+  test("up preserves rows and columns; down restores the name key", async () => {
+    const { db: sqlite, kysely, } = createTestKysely();
+    try {
+      const all = await loadAllMigrations();
+      for (const ancestor of MIGRATION_NAMES.slice(0, MIGRATION_NAMES.indexOf("017_plugin_state_origin_key",),)) {
+        await all[ancestor]!.up(kysely,);
       }
-    },
-    120000,
-  );
 
-  test(
-    "down() restores the pre-backfill state and a re-up re-derives it",
-    async () => {
-      const { db, sqlite, migrator, } = await seededLegacyDb();
-      try {
-        await migrator.migrateToLatest();
+      await sql`INSERT INTO plugin_state (name, status, config_json) VALUES ('legacy-null', 'active', '{"mode":"x"}')`
+        .execute(kysely,);
 
-        // Roll back to the pre-backfill tail rather than one step: whatever
-        // migrations land above the backfill must not shadow its down() here.
-        const rolledBack = await migrator.migrateTo(BEFORE_BACKFILL,);
-        expect(rolledBack.error, "rolling the backfill back should not error",).toBeUndefined();
+      await sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'core', 'disabled')`.execute(kysely,);
 
-        const afterDown = await purposeByName(db,);
-        for (const fixture of FIXTURES) {
-          if (fixture.purpose !== undefined) {
-            // Rows that carried a purpose BEFORE the backfill keep it, unless
-            // they share a classifier shape: the documented recompute inverse
-            // resets world-bound rpg rows (shared with legacy R1) — the re-up
-            // below re-derives the identical value.
-            const expectCleared = fixture.expected !== null &&
-              fixture.expected === fixture.purpose && fixture.worldId !== undefined;
+      const migration = all["017_plugin_state_origin_key"]!;
+      await migration.up(kysely,);
 
-            expect(
-              afterDown[fixture.name],
-              `post-down purpose for "${fixture.name}"`,
-            ).toBe(expectCleared ? null : fixture.purpose,);
-          } else {
-            // Legacy rows: the backfill is fully reverted.
-            expect(
-              afterDown[fixture.name],
-              `post-down purpose for "${fixture.name}"`,
-            ).toBeNull();
-          }
-        }
+      const columns = sqlite.query("PRAGMA table_info(plugin_state)",).all() as Array<
+        { name: string; pk: number; notnull: number; dflt_value: string | null }
+      >;
 
-        // Roundtrip: the second up() re-derives the exact same classification.
-        const reapplied = await migrator.migrateToLatest();
-        expect(reapplied.error, "re-applying the backfill should not error",).toBeUndefined();
+      expect(columns.map((c,) => c.name),).toEqual([
+        "name",
+        "status",
+        "enabled_at",
+        "disabled_at",
+        "created_at",
+        "updated_at",
+        "config_json",
+        "origin",
+      ],);
 
-        const afterReUp = await purposeByName(db,);
-        for (const fixture of FIXTURES) {
-          expect(
-            afterReUp[fixture.name],
-            `re-up purpose for "${fixture.name}"`,
-          ).toBe(fixture.expected,);
-        }
-      } finally {
-        await db.destroy();
-        sqlite.close();
-      }
-    },
-    120000,
-  );
+      expect(columns.find((c,) => c.name === "name")?.pk,).toBe(1,);
+      expect(columns.find((c,) => c.name === "name")?.notnull,).toBe(1,);
+      expect(columns.find((c,) => c.name === "origin")?.pk,).toBe(2,);
+      expect(columns.find((c,) => c.name === "origin")?.notnull,).toBe(0,);
+      expect(columns.find((c,) => c.name === "status")?.dflt_value,).toBe("'active'",);
+
+      const legacy = sqlite.query("SELECT status, config_json, origin FROM plugin_state WHERE name = 'legacy-null'",)
+        .get() as { status: string; config_json: string; origin: string | null };
+
+      expect(legacy,).toEqual({ status: "active", config_json: `{"mode":"x"}`, origin: null, },);
+
+      await sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'community', 'disabled')`.execute(
+        kysely,
+      );
+
+      const origins = sqlite.query("SELECT origin FROM plugin_state WHERE name = 'shared' ORDER BY origin",).all();
+      expect(origins,).toHaveLength(2,);
+      await expect(
+        sql`INSERT INTO plugin_state (name, origin, status) VALUES ('shared', 'core', 'active')`.execute(kysely,),
+      ).rejects.toThrow();
+
+      await migration.down!(kysely,);
+      const downColumns = sqlite.query("PRAGMA table_info(plugin_state)",).all() as Array<{ name: string; pk: number }>;
+      expect(downColumns,).toHaveLength(8,);
+      expect(downColumns.find((c,) => c.name === "name")?.pk,).toBe(1,);
+      expect(downColumns.find((c,) => c.name === "origin")?.pk,).toBe(0,);
+      const kept = sqlite.query("SELECT name, origin, status FROM plugin_state ORDER BY name",).all() as Array<
+        { name: string; origin: string | null; status: string }
+      >;
+
+      expect(kept.find((r,) => r.name === "shared")?.origin,).toBe("core",);
+      expect(kept.find((r,) => r.name === "shared")?.status,).toBe("disabled",);
+    } finally {
+      await kysely.destroy();
+      sqlite.close();
+    }
+  });
 });

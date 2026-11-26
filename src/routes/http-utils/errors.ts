@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { TranslatorFn, } from "../../i18n/types";
+import type { Logger, } from "../../logger";
 import { ErrorCode, HttpStatus, type HttpStatusCode, } from "./status";
 import type { ApiResponseMeta, JsonErrorOptions, } from "./types";
 
@@ -13,6 +14,14 @@ export const API_VERSION = "1" as const;
 
 /** Shared meta block for all API responses. */
 export const API_META: ApiResponseMeta = { api_version: API_VERSION, };
+
+/**
+ * @param error - caught value
+ * @returns its message for Error instances, String() otherwise
+ */
+export function errorMessage(error: unknown,): string {
+  return error instanceof Error ? error.message : String(error,);
+}
 
 const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.BadRequest]: ErrorCode.BadRequest,
@@ -152,6 +161,23 @@ export function internalErrorResponse(message: string, data?: Record<string, unk
     code: ErrorCode.ServerError,
     ...(data ? { data, } : {}),
   },);
+}
+
+/**
+ * Log an unexpected failure and answer a generic 500.
+ *
+ * Folds the `log().error(operation, …) + return jsonError("Internal
+ * server error", 500,)` pair repeated across route catch blocks. The
+ * caller passes its own module-scoped logger so the record keeps its
+ * namespace; the wire body is byte-identical to the inlined pair.
+ * @param logger - the caller's module-scoped logger
+ * @param operation - what failed (log only, never sent on the wire)
+ * @param error - the caught value
+ * @returns {Response}
+ */
+export function internalError(logger: Logger, operation: string, error: unknown,): Response {
+  logger.error(operation, error instanceof Error ? error : undefined,);
+  return internalErrorResponse("Internal server error",);
 }
 
 /**

@@ -98,6 +98,14 @@ Post-generation: `src/generation/policy-detector.ts` — ruleset (banned topics,
 
 `GET /v1/models` (via `GET /models` on the provider base URL) with timeout. Returns `"ok" | "degraded" | "down"` (`providers/openai-compatible/operations.ts` — empty list maps to `degraded`). On-demand only: `POST /api/generation/test-connection` and the admin provider scan — no startup/periodic poller exists in code.
 
+### Decision models (`POST /v1/systemone`)
+
+Native non-generative classifier transport (llama.cpp PR #29818): typed `choice` / `score` / `noul` questions answered with probabilities and zero generated text. `callAux` tries it first when the classifier role resolves to a configured model on an OpenAI-compatible base URL (`src/aux-pipeline/decision-client.ts`, questions from `decision-registry.ts` built off the task's label vocabulary); any failure — 400/501/502, timeout, unparseable body — falls back to the generative auxiliary path unchanged. Loopback only; no remote decision endpoint.
+
+Request body: `{ model, state, questions }` where `questions` is an object keyed by question name; each value carries `type` plus `instructions` and a `criteria` map (choice/noul) or list (score). Answers return keyed by the same names. This is the upstream shape from PR #29818 / the System One API — a name-keyed object, not an array with `id` fields.
+
+Upstream limits: a GGUF without `<arch>.decision.*` metadata answers 501; without a `systemone` chat template the server throws at load; options cap is per model family (52 openjev-style, up to 255 laya-style); probabilities are temperature-scaled and NOT calibrated, so confidence cutoffs live per model AND per quantization. Images need a loaded multimodal projector (the local llama-swap proxy 502s image payloads on this path while vision over chat completions works), video input is 400 upstream — the client sends text-only state, vision coverage stays on the generative path. Measured 2026-10-26 against the local proxy (`:7180`, `llama-d3-2b`): text `choice`+`noul` → 200, `output_tokens: 0`.
+
 ## Multi-Model: llama-swap
 
 Reverse proxy managing multiple llama-server backends. Single OpenAI-compatible endpoint routing by `model` field.
@@ -184,9 +192,9 @@ OpenAI-compatible. Same `LLMProvider` + `ProviderInstanceConfig` seams (`src/gen
 
 ## Other LLM Integrations (Future)
 
-Ollama (OpenAI-compatible mode via /v1) and LM Studio, text-generation-webui, KoboldCpp, LocalAI, Mistral API, Groq, Together AI, Fireworks AI (Tier-1 — supported via openaiCompatible config entries; none are in the example config today). Mistral API, Groq, and others already work as openaiCompatible instances.
+Ollama (OpenAI-compatible mode via /v1) and LM Studio, text-generation-webui, KoboldCpp, LocalAI, Mistral API, Groq, Together AI, Fireworks AI (Tier-1 — supported via openaiCompatible config entries; OpenRouter ships as a commented example in `configs/config.generation.example.toml`). Mistral API, Groq, and others already work as openaiCompatible instances.
 
-Google AI (Gemini) remains a separate native adapter (FEAT-077, TASK-gemini-provider.md, Not Started).
+Google AI (Gemini) has no native adapter (FEAT-077, TASK-gemini-provider.md, Not Started) — reach it two ways: an `openaiCompatible` instance pointed at OpenRouter with a `google/gemini-*` model id (`:free`-suffixed ids work with no code change), or the `antigravity` ACP harness flavor driving `agy acp` (`harness.acp.profiles[]` with `harness: "antigravity"`; subscription-backed, ToS-acknowledgement-gated like codex).
 
 Anthropic native API and Ollama native API are implemented (src/generation/providers/anthropic/, src/generation/providers/ollama-native/).
 
@@ -200,13 +208,17 @@ Server lifecycle NOT managed by loop-lore — run separately via a llama-server 
 
 ### Model Roles
 
-A model role names the provider + model used for one class of work. Roles resolve DB override → config `generation.modelRoles.<role>` → server default (`src/admin/model-roles.ts`), and are assignable per role from the admin panel (PUT `/api/admin/model-roles/:role`). Roles currently exposed there: `main`, `auxiliary`, `captioning`, `classifier`, `translator`.
+A model role names the provider + model used for one class of work. Roles resolve DB override → config `generation.modelRoles.<role>` → server default (`src/admin/model-roles.ts`), and are assignable per role from the admin panel (PUT `/api/admin/model-roles/:role`). Roles currently exposed there: `main`, `auxiliary`, `captioning`, `classifier`, `translator`, `rerank`.
+
+`generation.autorouteScenario` is the ranking switch (`general`, `chat`, `coding`, `local`, `observed`). When a role has no DB override or config assignment, `resolveModelRole` picks the highest-ranked configured default model from `model_rankings`; explicit role assignments still win. The chat turn reaches that chain through `resolveGenerateTarget` (`src/generation/generate-route/resolve-options.ts`) when the request pins neither provider nor model; a client-pinned provider/model always wins. Retry order is provider-level failover (`buildFailoverList`), not a per-model ranked chain. Provider-side autorouting needs no loop-lore switch: set an OpenAI-compatible instance's `model` to that provider's router id (for example `openrouter/auto`).
 
 The `translator` role selects the model for `/translate`, its `/tl` alias, and per-chat auto-translate. **Unset (or set without both provider and model), it resolves to the general model** — resolved through the `main` role, so a `main` override is honoured. The rule lives in one place, `resolveTranslatorRole` (`src/generation/translator-role.ts`); callers must not re-implement `translator ?? general`.
 
 Config env vars (manual overrides in `src/config/schema-class/env-map.ts`): `LLM_TRANSLATOR_PROVIDER`, `LLM_TRANSLATOR_MODEL`.
 
 A `translator` naming an unregistered provider is not silently swapped for another model: the translation degrades to the untranslated original (auto-translate) or the local-heuristic note (`/translate`), with a warn log.
+
+The `rerank` role selects the cross-encoder for memory reranking. Only an explicit DB override or config assignment is used; when unset, rerank keeps its `RERANK_MODEL` env fallback and fail-open behaviour. The `general` autoroute scenario never supplies a rerank model.
 
 ## References
 

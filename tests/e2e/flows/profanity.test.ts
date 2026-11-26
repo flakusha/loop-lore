@@ -18,6 +18,12 @@ describe("Profanity Filter E2E", () => {
   beforeAll(async () => {
     server = await createTestServer();
     await seedAll(server.db,);
+    await server.db
+      .insertInto("system_config",)
+      .values({ key: "profanity_filter", value: "true", description: "e2e", },)
+      .onConflict((oc,) => oc.column("key",).doUpdateSet({ value: "true", },))
+      .execute();
+
     api = createClient(server.url,);
     await api.loginAs(SEED.user.username, SEED.user.password,);
   },);

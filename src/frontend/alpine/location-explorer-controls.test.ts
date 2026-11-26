@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { ExplorerLocation, ExplorerLocationState, } from "./location-explorer";
-import { locationExplorerControls, } from "./location-explorer-controls";
+import { locationExplorerControls, matchesKind, } from "./location-explorer-controls";
 
 interface ControlState {
   worldId: string;
@@ -260,5 +260,13 @@ describe("locationExplorerControls window guards", () => {
     locationExplorerControls.leaveLoc.call(ctx,);
     locationExplorerControls.navigateTo.call(ctx, "loc-1",);
     // No throw — the window guards held.
+  });
+});
+
+describe("matchesKind", () => {
+  test("filters by kind and treats empty filter as All", () => {
+    expect(matchesKind({ kind: "Transport", }, "Transport",),).toBe(true,);
+    expect(matchesKind({ kind: "Transport", }, "Region",),).toBe(false,);
+    expect(matchesKind({ kind: null, }, "",),).toBe(true,);
   });
 });

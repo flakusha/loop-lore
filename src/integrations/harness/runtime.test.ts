@@ -28,6 +28,7 @@ import { ProfileBreaker, } from "./profile-breaker";
 import { ProfileRegistry, } from "./profile-registry";
 import { ProfileSelector, } from "./profile-selector";
 import {
+  closeHarnessRuntime,
   createHarnessRuntime,
   getHarnessRuntime,
   harnessAdapterFactoryFor,
@@ -222,6 +223,32 @@ describe("initHarnessRuntime", () => {
   it("a disabled config composes nothing", () => {
     initHarnessRuntime({ enabled: false, profiles: [], },);
     expect(getHarnessRuntime(),).toBeNull();
+  });
+});
+
+describe("closeHarnessRuntime", () => {
+  it("is a null-safe no-op when the runtime is uncomposed", () => {
+    initHarnessRuntime({ enabled: false, profiles: [], },);
+    expect(() => closeHarnessRuntime()).not.toThrow();
+  });
+
+  // The exact sync entry both server shutdown paths call (graceful
+  // shutdown AND the `process.on("exit")` hard-exit guard, which cannot
+  // await): probed children must die through it.
+  it("closes the composed registry's spawned children", async () => {
+    const acp: HarnessAcpConfig = {
+      enabled: true,
+      profiles: [{ name: "p", command: ["fake", "p",], tiers: {}, },],
+    };
+
+    const { factory, logs, } = fakeFactory({ p: { models: [], }, },);
+
+    initHarnessRuntime(acp, factory,);
+    await getHarnessRuntime()?.registry.ensureProbed("p",);
+    closeHarnessRuntime();
+
+    expect(logs.get("p",)?.closes,).toBe(1,);
+    expect(getHarnessRuntime()?.registry.connection("p",),).toBeUndefined();
   });
 });
 

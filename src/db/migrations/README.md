@@ -4,43 +4,30 @@ Schema migrations are top-level `NNN_name.ts` files auto-discovered by
 `getMigrationFiles()` in `src/db/migrate.ts`; each exports `up(db)` and
 `down(db)`. `kysely_migration` holds one row per applied migration.
 
-## Append-Only Policy
+## Baseline Policy (S2)
 
-Applied migrations are append-only. Once a migration ships, never:
+`001_core.ts` through `014_support_singletons.ts` are the pre-release
+baseline: one final-form `.createTable("t",)…execute()` per table, with
+inline Kysely DSL only. No helper functions, loops or imported fragments —
+the textual migration parser needs literal `createTable`/`addColumn` calls
+inside `up()` and silently drops columns it cannot parse.
 
-- delete it
-- rename it (the filename is the identity stored in `kysely_migration`)
-- renumber it (inserts/suffixes are fine; renumbering orphans the old rows)
-- rewrite it to change what a committed database already ran
+Existing local databases are disposable under S2: export what you need,
+reinitialize (`db:reinit`), then import. There is no compatibility shim for
+the retired 122-file chain and no expectation that its `kysely_migration`
+rows survive. `src/db/migrate.ts` still fails fast when applied migration
+names are missing; recreate the local DB rather than restoring old files.
 
-Deleting/renumbering a shipped migration orphans its `kysely_migration` row.
-`src/db/migrate.ts` detects this at startup via `assertMigrationsNotStale`
-and fails fast with the list of missing migrations plus recovery options
-(restore from git, recreate the DB, or manually clean the orphaned rows).
-
-To change schema behavior for an existing migration, add a new forward
-migration that alters the schema to the desired state.
-
-## Two Paths for New Schema Changes
-
-There are only two ways to land a schema change:
-
-1. **Append a new top-level migration** — `src/db/migrations/NNN_name.ts`,
-   exporting `up(db)` and `down(db)`. Auto-discovered by
-   `getMigrationFiles()` — no wiring step. This is the default.
-
-2. **Extend the current HEAD migration** — when the latest migration is not
-   yet shipped (no DB has run it), append changes to its `up`/`down`. This
-   avoids polluting `kysely_migration` with multiple rows for the same
-   logical change.
-
-There is no third path. There is no `parts/` subdirectory, no folding into a
-frozen base migration, and no append-only-via-extend for shipped files.
+New migrations appended after the baseline are append-only: never delete,
+rename, renumber or rewrite one that has shipped. Add a new forward
+migration instead. Extend only the current unshipped HEAD migration.
 
 ## Structure Rules
 
 - One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement — SQLite does
   not support multi-column ALTER TABLE.
+- Baseline files use inline DSL only; raw `sql` carries indexes, triggers,
+  FTS virtual tables and the retained backfill oracles.
 
 ## Regeneration
 

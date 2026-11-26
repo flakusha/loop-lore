@@ -30,10 +30,10 @@
  *     deprecated alias — clean cutover).
  */
 
-import type { EncryptionLevel, } from "@/db/enums";
-import type { DB, } from "@/db/schema";
-import { safeJsonParse, } from "@/utils";
 import type { Kysely, } from "kysely";
+import type { EncryptionLevel, } from "../../../../src/db/enums";
+import type { DB, } from "../../../../src/db/schema";
+import { safeJsonParse, } from "../utils/safe-json";
 import { deriveChatKeyForChat, getChatKeyById, } from "./chat-keys";
 import {
   compressThenEncrypt,

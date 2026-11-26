@@ -1,0 +1,123 @@
+# Nightly Heavy Gate
+#
+# The full local gate suite (`bun run check:ci`) on a schedule: the browser
+# gate alone has a 45 min budget, so it is too heavy for every push.
+#
+# EXTERNAL PREREQUISITE: the `nightly` repository label must exist in the
+# GitHub repository settings (Issues -> Labels). It is a settings action, not
+# a file in this repo - there is deliberately no `.github/labeler.yml`.
+name: Nightly
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+  pull_request:
+    types: [labeled]
+    branches: [master, dev, stg]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # One Bun version for the whole workflow: it matches the local toolchain
+  # (the repo ships a `bun.lock` text lockfile) and satisfies the
+  # `typecheck - bun` gate, which runs `bun --check`.
+  BUN_VERSION: "1.4.5"
+
+jobs:
+  gates:
+    name: Nightly Gate Suite
+    runs-on: ubuntu-24.04
+    # The browser gate's OWN budget is 45 min (scripts/check/parallel/
+    # runner.mjs) and it runs LAST in the solo tail - a job timeout equal
+    # to the gate budget kills the job exactly as the gate expires, so the
+    # suite could never finish. 90 leaves room for the gate plus the rest.
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    # Only PRs labelled `nightly` opt in to the heavy gate on a pull request
+    # event; the schedule and manual runs are unconditional.
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'nightly')
+    # The parallel check runner's GPG preflight reads .credentials.env before
+    # any gate runs; CI has no credentials and no gate signs commits. Skip only
+    # that preflight - commit signing configuration is untouched.
+    env:
+      CHECK_SKIP_GPG_PRECHECK: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache bun install
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Chromium WITHOUT `--with-deps`: the runner image already ships all 26
+      # shared libraries Playwright asks apt for, and the extra apt packages it
+      # pulls are FONT packages whose download fails with DNS errors. The
+      # browser specs assert DOM state, never rendered pixels, so the fonts are
+      # not needed.
+      - name: Install Playwright browsers
+        run: bunx playwright install chromium
+
+      - name: Build frontend
+        run: bun run build:frontend
+
+      # Rust toolchain for the Rust gates in the suite below: `lint - native
+      # (clippy)`, `format - native (rustfmt)`, and the egui peers
+      # `lint - egui (clippy)` / `format - egui (rustfmt)` / `test - egui`.
+      # The ROOT rust-toolchain.toml pins 1.97.1 with clippy + rustfmt, and
+      # rustup honours it because every cargo invocation runs from the repo
+      # root. `stable` is named explicitly so the install step's intent is
+      # readable. Do NOT weaken the root pin: it is what makes local and CI
+      # agree.
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Run local gate suite
+        run: bun run check:ci
+
+      - name: Upload check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-check-report
+          path: .tmp/check-report.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7

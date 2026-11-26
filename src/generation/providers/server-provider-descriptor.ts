@@ -18,6 +18,20 @@ import { isMetadataTarget, validateProviderUrl, } from "../../utils/url-validati
 /** Provider instance names are slug-ish: letters, digits, dot, dash, underscore. */
 const SERVER_PROVIDER_NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
 
+/** Provider kinds the first-run wizard can materialize. */
+export const SERVER_PROVIDER_KINDS = ["openai-compatible", "anthropic", "ollama-native",] as const;
+
+/** Provider kinds the first-run wizard can materialize. */
+export type ServerProviderKind = (typeof SERVER_PROVIDER_KINDS)[number];
+
+/**
+ * @param value - the raw `kind` of a persisted descriptor
+ * @returns true when the value names a materializable provider kind
+ */
+export function isServerProviderKind(value: unknown,): value is ServerProviderKind {
+  return typeof value === "string" && (SERVER_PROVIDER_KINDS as readonly string[]).includes(value,);
+}
+
 /** Prefix of the `system_config` keys that hold a provider descriptor. */
 const DESCRIPTOR_KEY_PREFIX = "provider.";
 
@@ -63,6 +77,11 @@ export interface ServerProviderDescriptor {
   model: string;
   /** Hosts the operator approved for this instance (SSRF validator allowlist). */
   allowedHosts: string[];
+  /**
+   * Which provider family the instance materializes as. Absent on rows the
+   * wizard wrote before kinds existed — those are openai-compatible.
+   */
+  kind?: ServerProviderKind;
   /** Whether a sealed API key is stored for this instance. */
   hasApiKey: boolean;
   /** Whether the instance is live in the provider registry. */
@@ -82,6 +101,12 @@ export interface StoredServerProvider {
   retries: number;
   allowUserApiKey: boolean;
   setDefault: boolean;
+  /**
+   * Which provider family the instance materializes as. Optional so rows the
+   * wizard wrote before kinds existed still parse — absent means
+   * openai-compatible.
+   */
+  kind?: ServerProviderKind;
 }
 
 /** Raised when operator input for a provider instance is rejected. */
@@ -263,8 +288,16 @@ export function parseStoredServerProvider(value: string,): StoredServerProvider 
   ) {
     return null;
   }
+  // An unknown kind never bypasses validation: a row injected through the
+  // generic system-config path with a kind no provider implements is
+  // malformed — skipped with a warning, never materialized.
+
+  if (row.kind !== undefined && !isServerProviderKind(row.kind,)) { return null; }
 
   return {
+    // Absent on rows the wizard wrote before kinds existed — consumers treat
+    // a missing kind as openai-compatible, so the legacy shape round-trips.
+    ...(isServerProviderKind(row.kind,) ? { kind: row.kind, } : {}),
     name: row.name,
     label: typeof row.label === "string" ? row.label : row.name,
     baseUrl: row.baseUrl,

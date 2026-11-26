@@ -24,19 +24,28 @@
  */
 import { type FederationPeerTrustConfig, } from "../config/schema";
 import { type ChunkEvent, type GenerateResponse, } from "../generation/providers/types";
+import { MAX_JSONRPC_LINE_BYTES, } from "../integrations/harness/jsonrpc-process";
 import { safeFetch, } from "../utils/safe-fetch";
 import {
   assemblePeerWorkChunks,
   parsePeerWorkChunkLine,
   PEER_ORIGIN_HEADER,
   PEER_WORK_RUN_PATH,
-  type PeerWorkErrorCode,
+  PeerWorkErrorCode,
   type PeerWorkRunRequest,
   readPeerWorkErrorCode,
 } from "./peer-work-wire";
 
 /** Default per-attempt budget when the caller supplies none. */
 export const PEER_WORK_DEFAULT_TIMEOUT_MS = 30_000;
+
+/** Cap on chunks in one peer answer; a runaway peer must be cut off. */
+export const MAX_PEER_WORK_CHUNKS = 20_000;
+
+/** Actionable protocol errors for the two response-size ceilings. */
+const LINE_TOO_LARGE = `peer workload line exceeds ${MAX_JSONRPC_LINE_BYTES} bytes; ask the peer to split lines`;
+const TOO_MANY_CHUNKS =
+  `peer workload stream exceeds ${MAX_PEER_WORK_CHUNKS} chunks; ask the peer to emit fewer chunks`;
 
 /** Why an attempt failed, in terms a caller can branch on. */
 export type PeerWorkFailureCode = PeerWorkErrorCode | "transport" | "protocol" | "aborted";
@@ -46,6 +55,28 @@ export interface PeerWorkFailure {
   code: PeerWorkFailureCode;
   status: number;
   message: string;
+  /** Advertised cooldown from a 429 Retry-After header, in whole seconds. */
+  retryAfterSec?: number;
+  /** Retry-After (ms) the peer advertised on the rejection, when parseable.
+   *  Only a plain seconds integer counts; an HTTP-date or garbage leaves this
+   *  unset so the peer circuit falls back to its fixed default cooldown. */
+  retryAfterMs?: number;
+}
+
+/**
+ * Parse a `Retry-After` value into milliseconds. Only the seconds-integer form
+ * is honored — an HTTP-date would require trusting peer clock alignment, so it
+ * (and anything unparseable) yields `undefined` and the caller keeps its
+ * default cooldown.
+ * @param raw The raw header value, if any.
+ * @returns Milliseconds, or undefined when absent/invalid.
+ */
+export function parsePeerRetryAfterMs(raw: string | null | undefined,): number | undefined {
+  if (raw === undefined || raw === null) { return undefined; }
+  const trimmed = raw.trim();
+  if (!/^\d+$/.test(trimmed,)) { return undefined; }
+  const ms = Number(trimmed,) * 1000;
+  return Number.isFinite(ms,) && ms > 0 ? ms : undefined;
 }
 
 /** The outcome of one peer attempt. `emitted` is what the caller already saw. */
@@ -95,10 +126,20 @@ async function failureFromRejection(response: Response,): Promise<PeerWorkFailur
   }
 
   const fallback = `peer workload rejected with ${response.status}`;
-  const code = readPeerWorkErrorCode(raw,);
-  return code === null
-    ? { code: "transport", status: response.status, message: envelopeMessage(raw, fallback,), }
-    : { code, status: response.status, message: envelopeMessage(raw, fallback,), };
+  const parsedCode = readPeerWorkErrorCode(raw,);
+  const code = parsedCode ?? (response.status === 429 ? PeerWorkErrorCode.QuotaExceeded : null);
+  const rawRetryAfter = response.status === 429 ? response.headers.get("retry-after",) : null;
+  const seconds = rawRetryAfter === null ? Number.NaN : Number(rawRetryAfter,);
+  const retryAfterSec = Number.isFinite(seconds,) && seconds > 0 ? Math.ceil(seconds,) : undefined;
+  const retryAfterMs = parsePeerRetryAfterMs(rawRetryAfter,);
+
+  return {
+    code: code ?? "transport",
+    status: response.status,
+    message: envelopeMessage(raw, fallback,),
+    ...(retryAfterSec === undefined ? {} : { retryAfterSec, }),
+    ...(retryAfterMs === undefined ? {} : { retryAfterMs, }),
+  };
 }
 
 /**
@@ -178,6 +219,11 @@ export async function runPeerWorkload(options: {
       for (let index = buffer.indexOf("\n",); index >= 0;) {
         const line = buffer.slice(0, index,);
         buffer = buffer.slice(index + 1,);
+        if (Buffer.byteLength(line, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+          await reader.cancel();
+          return protocolFailure(LINE_TOO_LARGE,);
+        }
+
         const chunk = parsePeerWorkChunkLine(line,);
         if (chunk === null) {
           await reader.cancel();
@@ -193,9 +239,19 @@ export async function runPeerWorkload(options: {
           };
         }
 
+        if (chunks.length >= MAX_PEER_WORK_CHUNKS) {
+          await reader.cancel();
+          return protocolFailure(TOO_MANY_CHUNKS,);
+        }
+
         chunks.push(chunk,);
         onChunk?.(chunk,);
         index = buffer.indexOf("\n",);
+      }
+
+      if (Buffer.byteLength(buffer, "utf8",) > MAX_JSONRPC_LINE_BYTES) {
+        await reader.cancel();
+        return protocolFailure(LINE_TOO_LARGE,);
       }
     }
 

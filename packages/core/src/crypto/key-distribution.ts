@@ -16,11 +16,11 @@
  *   which loads (or creates lazily) the stable chat key.
  */
 
-import type { DB, } from "@/db/schema";
-import { getLogger, } from "@/logger";
-import type { Logger, } from "@/logger";
 import type { Kysely, } from "kysely";
 import fs from "node:fs";
+import type { DB, } from "../../../../src/db/schema";
+import { getLogger, } from "../logger";
+import type { Logger, } from "../logger";
 import { encryptBytes, } from "./actor-key-bytes";
 import { ensureActorKey, } from "./actor-keys";
 import { type ChatKey, deriveChatKeyForChat, } from "./chat-keys";

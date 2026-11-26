@@ -240,3 +240,42 @@ describe("validate — ollamaNative target language", () => {
     },).toThrow("ollamaNative requires model",);
   });
 });
+
+describe("validate — ComfyUI video model pins", () => {
+  /** @param models */
+  function videoConfig(models: Record<string, unknown>,) {
+    const cfg = defaults();
+    cfg.generation.providers.video = [{
+      name: "h3-local",
+      baseUrl: "http://127.0.0.1:8188",
+      apiFamily: "comfyui",
+      workflow: "minimax-h3",
+      timeout: 30_000,
+      generationTimeout: 600_000,
+      models,
+    },] as never;
+    return cfg;
+  }
+
+  test("accepts role-compatible pins", () => {
+    expect(() =>
+      validate(videoConfig({
+        clip: "umt5.safetensors",
+        diffusion: "h3.gguf",
+        vae: "vae.bin",
+      },),)
+    ).not.toThrow();
+  });
+
+  test("rejects an incompatible extension", () => {
+    expect(() => validate(videoConfig({ clip: "notes.json", },),)).toThrow(
+      /Invalid ComfyUI clip model/,
+    );
+  });
+
+  test("rejects noVae together with a VAE pin", () => {
+    expect(() => validate(videoConfig({ noVae: true, vae: "vae.bin", },),)).toThrow(
+      /sets models.noVae and models.vae/,
+    );
+  });
+});

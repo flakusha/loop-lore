@@ -105,7 +105,10 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // Only pass key-mechanic fields when the client explicitly sent them —
           // Elysia defaults optional enums (mode → "direct", turnStrategy →
-          // "round_robin"), which would otherwise trip the online immutability guard.
+          // "round_robin", and inside gmConfig assistantRole → "off", type →
+          // "llm"), which would otherwise trip the online immutability guard.
+          // gmConfig is a mixed blob: use the raw sub-key set for the guard so
+          // schema-injected defaults are not mistaken for GM-execution edits.
           let rawBody: Record<string, unknown> = {};
           const rawText = (ctx as { rawBodyText?: string }).rawBodyText;
           if (rawText) {
@@ -113,6 +116,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           }
 
           const hasExplicit = (key: string,) => key in rawBody;
+          const rawGmConfig = rawBody.gmConfig;
 
           const result = await updateChat(database, id, {
             name: body.name,
@@ -122,7 +126,9 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             isPinned: body.isPinned,
             isPaused: body.isPaused,
             freezePanel: body.freezePanel,
-            gmConfig: hasExplicit("gmConfig",) ? body.gmConfig : undefined,
+            gmConfig: rawGmConfig && typeof rawGmConfig === "object"
+              ? rawGmConfig as typeof body.gmConfig
+              : undefined,
             renderingOverride: hasExplicit("renderingOverride",) ? body.renderingOverride : undefined,
             thinkingVisibility: body.thinkingVisibility,
             promptOverride: hasExplicit("promptOverride",) ? body.promptOverride : undefined,

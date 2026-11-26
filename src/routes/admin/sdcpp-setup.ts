@@ -28,6 +28,7 @@ import {
 import {
   AdminSdCppSetupBody,
   AdminSdCppSetupResponse,
+  AdminSdSetupNameParams,
   ErrorResponse,
 } from "../../validation/schemas";
 import {
@@ -146,6 +147,7 @@ export function sdCppSetupRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
         return jsonNoContent();
       }, {
+        params: AdminSdSetupNameParams,
         detail: {
           summary: "Delete an sd.cpp instance",
           description: "Removes the stored setup descriptor and its sealed API key.",

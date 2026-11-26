@@ -32,41 +32,6 @@ import type {
 } from "./enums";
 import type { AuditColumns, } from "./schema-audit";
 
-// ── location_states ────────────────────────────────────────────
-export interface LocationStates {
-  id: string;
-  location_id: string;
-  world_id: string;
-  description_override: string | null;
-  atmosphere: string | null;
-  npcs_present: Generated<string>;
-  items_available: Generated<string>;
-  time_of_day: string | null;
-  weather: string | null;
-  hazards: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-// ── locations ────────────────────────────────────────────
-export interface Locations extends AuditColumns {
-  id: string;
-  world_id: string;
-  name: string;
-  description: string | null;
-  connections: Generated<string>;
-  publication_status: Generated<PublicationStatus>;
-  parent_location_id: string | null;
-  kind: Generated<LocationKind>;
-  mobility_mode: Generated<MobilityMode>;
-  path: Generated<string>;
-  coord_x: number | null;
-  coord_y: number | null;
-  coord_z: number | null;
-  current_route_id: string | null;
-  travel_progress: Generated<number>;
-}
-
 // ── world_items ────────────────────────────────────────────
 export interface WorldItems {
   id: string;
@@ -165,6 +130,26 @@ export interface Worlds extends AuditColumns {
   prompt_budget_ratio: Generated<number>;
 }
 
+// ── world_timescale ────────────────────────────────────────────
+export interface WorldTimescale {
+  id: string;
+  world_id: string;
+  epoch: Generated<string>;
+  scale_size: Generated<number>;
+  advanced_minutes: Generated<number>;
+  anchor_at: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_timescale_history ────────────────────────────────────────────
+export interface WorldTimescaleHistory {
+  id: string;
+  world_id: string;
+  epoch: string;
+  changed_at: Generated<string>;
+}
+
 // ── actor_lore_entries ────────────────────────────────────────────
 export interface ActorLoreEntries extends AuditColumns {
   id: string;
@@ -196,6 +181,56 @@ export interface ActorLoreEntries extends AuditColumns {
   inclusion_group: string | null;
 }
 
+// ── npc_states ────────────────────────────────────────────
+export interface NpcStates {
+  id: string;
+  actor_id: string;
+  world_id: string;
+  location_id: string | null;
+  health: Generated<number>;
+  mental_state: Generated<string>;
+  knowledge: Generated<string>;
+  relationships: Generated<string>;
+  inventory: Generated<string>;
+  schedule: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── actor_memories ────────────────────────────────────────────
+export interface ActorMemories {
+  id: string;
+  actor_id: string;
+  source_chat_id: string | null;
+  content: string;
+  memory_type: Generated<MemoryType>;
+  confidence: Generated<number>;
+  importance: Generated<number>;
+  keywords: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  expires_at: string | null;
+  decay_rate: Generated<number>;
+  strength: Generated<number>;
+  last_accessed_at: string | null;
+  source_message_id: string | null;
+  context: string | null;
+  world_id: string | null;
+  user_id: string | null;
+  scope: Generated<string>;
+  pinned: Generated<PinnedState>;
+  privacy: Generated<string>;
+  review_status: Generated<MemoryReviewStatus>;
+  shareability: string | null;
+  source_message_ids: string | null;
+  source_chat_ids: string | null;
+  extraction_kind: ExtractionKind | null;
+  context_window_start: string | null;
+  context_window_end: string | null;
+  emotion_impact: string | null;
+  timeline_id: string | null;
+}
+
 // ── story_turns ────────────────────────────────────────────
 export interface StoryTurns {
   id: string;
@@ -218,6 +253,27 @@ export interface StoryTurns {
   updated_at: Generated<string>;
 }
 
+// ── rpg_questions ────────────────────────────────────────────
+export interface RpgQuestions {
+  id: string;
+  chat_id: string;
+  actor_id: string;
+  type: string;
+  prompt: string;
+  options: string;
+  time_limit: number | null;
+  required_choice: Generated<number>;
+  status: Generated<string>;
+  selected_option_id: string | null;
+  created_at: Generated<string>;
+  answered_at: string | null;
+  input_kind: Generated<string>;
+  answer_value: string | null;
+  min_value: number | null;
+  max_value: number | null;
+  effect: Generated<string>;
+}
+
 // ── items ────────────────────────────────────────────
 export interface Items extends AuditColumns {
   id: string;
@@ -231,22 +287,6 @@ export interface Items extends AuditColumns {
   properties: Generated<string>;
   value: Generated<number>;
   weight: Generated<number>;
-}
-
-// ── npc_states ────────────────────────────────────────────
-export interface NpcStates {
-  id: string;
-  actor_id: string;
-  world_id: string;
-  location_id: string | null;
-  health: Generated<number>;
-  mental_state: Generated<string>;
-  knowledge: Generated<string>;
-  relationships: Generated<string>;
-  inventory: Generated<string>;
-  schedule: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
 }
 
 // ── quest_progress ────────────────────────────────────────────
@@ -285,40 +325,6 @@ export interface Quests extends AuditColumns {
   completed_at: string | null;
 }
 
-// ── actor_memories ────────────────────────────────────────────
-export interface ActorMemories {
-  id: string;
-  actor_id: string;
-  source_chat_id: string | null;
-  content: string;
-  memory_type: Generated<MemoryType>;
-  confidence: Generated<number>;
-  importance: Generated<number>;
-  keywords: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-  expires_at: string | null;
-  decay_rate: Generated<number>;
-  strength: Generated<number>;
-  last_accessed_at: string | null;
-  source_message_id: string | null;
-  context: string | null;
-  world_id: string | null;
-  user_id: string | null;
-  scope: Generated<string>;
-  pinned: Generated<PinnedState>;
-  privacy: Generated<string>;
-  review_status: Generated<MemoryReviewStatus>;
-  shareability: string | null;
-  source_message_ids: string | null;
-  source_chat_ids: string | null;
-  extraction_kind: ExtractionKind | null;
-  context_window_start: string | null;
-  context_window_end: string | null;
-  emotion_impact: string | null;
-  timeline_id: string | null;
-}
-
 // ── quest_reward_ledger ────────────────────────────────────────────
 export interface QuestRewardLedger {
   id: string;
@@ -328,43 +334,37 @@ export interface QuestRewardLedger {
   created_at: Generated<string>;
 }
 
-// ── rpg_questions ────────────────────────────────────────────
-export interface RpgQuestions {
+// ── location_states ────────────────────────────────────────────
+export interface LocationStates {
   id: string;
-  chat_id: string;
-  actor_id: string;
-  type: string;
-  prompt: string;
-  options: string;
-  time_limit: number | null;
-  required_choice: Generated<number>;
-  status: Generated<string>;
-  selected_option_id: string | null;
-  created_at: Generated<string>;
-  answered_at: string | null;
-  input_kind: Generated<string>;
-  answer_value: string | null;
-  min_value: number | null;
-  max_value: number | null;
-  effect: Generated<string>;
-}
-
-// ── world_timescale ────────────────────────────────────────────
-export interface WorldTimescale {
-  id: string;
+  location_id: string;
   world_id: string;
-  epoch: Generated<string>;
-  scale_size: Generated<number>;
-  advanced_minutes: Generated<number>;
-  anchor_at: Generated<string>;
+  description_override: string | null;
+  atmosphere: string | null;
+  npcs_present: Generated<string>;
+  items_available: Generated<string>;
+  time_of_day: string | null;
+  weather: string | null;
+  hazards: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 
-// ── world_timescale_history ────────────────────────────────────────────
-export interface WorldTimescaleHistory {
+// ── locations ────────────────────────────────────────────
+export interface Locations extends AuditColumns {
   id: string;
   world_id: string;
-  epoch: string;
-  changed_at: Generated<string>;
+  name: string;
+  description: string | null;
+  connections: Generated<string>;
+  publication_status: Generated<PublicationStatus>;
+  parent_location_id: string | null;
+  kind: Generated<LocationKind>;
+  mobility_mode: Generated<MobilityMode>;
+  path: Generated<string>;
+  coord_x: number | null;
+  coord_y: number | null;
+  coord_z: number | null;
+  current_route_id: string | null;
+  travel_progress: Generated<number>;
 }

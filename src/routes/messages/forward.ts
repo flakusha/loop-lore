@@ -21,13 +21,13 @@ import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import type { ContentEncoding, } from "../../db/enums";
-import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { uid, } from "../../utils";
 import { ErrorResponse, MessageForwardBody, } from "../../validation/schemas";
 import { Id, } from "../../validation/schemas/primitives";
 import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
-import { attachAttachmentsOrForbidden, enforceAgeGate, } from "./guards";
+import { attachAttachmentsOrForbidden, enforceAgeGate, enforceNsfwConsentGate, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { prepareContentStorage, } from "./post";
@@ -78,6 +78,18 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         const ageRejection = await enforceAgeGate(database, actorId,);
         if (ageRejection) { return ageRejection; }
 
+        // Same verdict as a direct send, scoped to the target chat.
+        const consentRejection = await enforceNsfwConsentGate({
+          database,
+          config,
+          userId: actorId,
+          chatId: targetChatId,
+          actorId,
+          surface: "forward",
+        },);
+
+        if (consentRejection) { return consentRejection; }
+
         // Empty string is "no key": storing "" would collide on the unique index.
         const idempotencyKey = body.idempotencyKey ? body.idempotencyKey : null;
         const existingId = idempotencyKey
@@ -88,8 +100,12 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonCreated({ id: existingId, droppedAttachments: 0, },);
         }
 
-        const filteredContent = filterProfanity(plaintext,);
-        const hasProfanity = containsProfanity(plaintext,);
+        const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+        const { text: filteredContent, hasProfanity, } = applyProfanityWritePolicy(
+          profanityEnabled,
+          plaintext,
+        );
+
         await flagNsfwUserMessage(database, actorId, targetChatId, plaintext,);
 
         const links = await database
@@ -164,11 +180,8 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           throw err;
         }
 
-        if (hasProfanity) {
-          const profanityFilter = (await getConfigValue(database, "profanity_filter",)) === "true";
-          if (profanityFilter) {
-            await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
-          }
+        if (hasProfanity && profanityEnabled) {
+          await updateMessageVisibility(database, id, "hidden_by_moderator", "profanity",);
         }
 
         if (forwardable.length > 0) {

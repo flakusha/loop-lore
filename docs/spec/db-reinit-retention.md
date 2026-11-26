@@ -9,8 +9,9 @@
 ## Why
 
 `bun run db:reinit` is destructive — it drops the SQLite file and rebuilds it
-from migrations + seeds. The previous DB file is moved into a sibling
-`loop-lore-data-backup/` directory with an ISO timestamp prefix, so an
+from migrations + seeds. The previous DB file is moved into the instance
+archive root (`<state>/<instance>/backups/`, or `<LOOP_LORE_BACKUP_DIR>/<instance-slug>/`)
+with an ISO timestamp prefix, so an
 operator can roll back if the new build is bad. **Without retention, every
 reinit grows that directory by one full plaintext PII snapshot, forever.**
 That collides with right-to-erasure (GDPR), disk-cap alarms, and the
@@ -46,8 +47,8 @@ ISO. Files where the regex does not match the prefix are skipped.
 
 | Source             | Path                                                       |
 | ------------------ | ---------------------------------------------------------- |
-| `LOOP_LORE_BACKUP_DIR` env (if set) | that path verbatim                          |
-| Default            | `<DATA_DIR>/../loop-lore-data-backup`                      |
+| `LOOP_LORE_BACKUP_DIR` env (if set) | `<LOOP_LORE_BACKUP_DIR>/<instance-slug>/`         |
+| Default            | `<state>/<instance>/backups/`                              |
 
 The env override is intended for production deployments where archives
 should live on a separate, cheaper volume (object storage via FUSE mount,

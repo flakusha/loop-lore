@@ -295,6 +295,26 @@ describe("isOfflineClassError", () => {
       expect(isOfflineClassError(err,),).toBe(true,);
     }
   });
+
+  test("transport-death messages win over an attached in-range status", () => {
+    for (
+      const message of [
+        "Failed to fetch",
+        "fetch failed",
+        "Load failed",
+        "NetworkError when attempting to fetch resource.",
+        "Network request failed",
+        "Request timed out after 30000ms",
+        "Request aborted",
+      ]
+    ) {
+      const err = Object.assign(new Error(message,), { status: 503, },);
+      expect(isOfflineClassError(err,),).toBe(true,);
+    }
+
+    // A genuine HTTP answer with a status-like message stays non-offline.
+    expect(isOfflineClassError(Object.assign(new Error("HTTP 503",), { status: 503, },),),).toBe(false,);
+  });
 });
 
 describe("outbox store — discard", () => {

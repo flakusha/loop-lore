@@ -40,6 +40,7 @@ const FILE_CONFIG: HarnessConfig = {
         name: "codex-sub",
         command: ["codex", "--acp",],
         harness: "codex",
+        transport: "acp",
         tiers: { good: { model: "test-provider/test-model", capabilities: ["tools",], }, },
       },
       {
@@ -78,6 +79,8 @@ describe("harness admin settings store", () => {
     expect(view.profiles.find((p,) => p.name === "ack-in-file")?.tosGrayzoneAcknowledged,).toBe(true,);
     expect(view.profiles.find((p,) => p.name === "ack-in-file")?.flavor,).toBe("omp",);
     expect(view.profiles.find((p,) => p.name === "codex-sub")?.flavor,).toBe("codex",);
+    expect(view.profiles.find((p,) => p.name === "omp-main")?.transport,).toBe("acp",);
+    expect(view.profiles.find((p,) => p.name === "codex-sub")?.transport,).toBe("acp",);
   });
 
   it("exposes the raw file layer and the singleton behind the accessors", () => {

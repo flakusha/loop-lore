@@ -11,8 +11,9 @@ import type { Kysely, } from "kysely";
 import { verifyChallenge, } from "../../auth/factors/challenge";
 import { signJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
-import type { ChallengePurpose, } from "../../db/enums";
+import { ChallengePurpose, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { RateLimiter, } from "../../middleware/rate-limit";
 import { can, } from "../../users/permissions";
 import { notFound, unauthorized, } from "../../validation/middleware";
 import { HttpStatus, jsonError, } from "../http-utils";
@@ -34,7 +35,21 @@ export interface VerifyFactorOptions {
   challengeId: string;
   code: string;
   purpose: ChallengePurpose;
+  /** Per-user verify budget; omitted means unthrottled (tests). */
+  limiter?: RateLimiter;
   now?: () => number;
+}
+
+/** Consume one unit of the per-user verify budget.
+ * @param limiter Rate limiter owning the budget.
+ * @param userId Budget owner.
+ * @param now Injected clock.
+ * @returns True when the attempt may proceed, false when throttled. */
+function consumeVerifyBudget(limiter: RateLimiter, userId: string, now: () => number,): boolean {
+  const key = `verify:${userId}`;
+  if (!limiter.peek(key, now(),).allowed) { return false; }
+  limiter.record(key, now(),);
+  return true;
 }
 
 /** Verify an MFA challenge and elevate the session with step-up claims.
@@ -52,6 +67,34 @@ export async function handleVerifyFactor(options: VerifyFactorOptions,): Promise
     return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
   }
 
+  // Route-level verify budget per user — the store already caps attempts
+  // per challenge; this caps rapid-fire probing across challenges.
+  if (options.limiter !== undefined && !consumeVerifyBudget(options.limiter, userId, now,)) {
+    return jsonError({
+      message: "Too many verification attempts — try again shortly",
+      status: HttpStatus.TooManyRequests,
+    },);
+  }
+
+  // Unverified factors have zero auth power. Check BEFORE verifyChallenge so
+  // a refused challenge is not consumed. Enroll is the one purpose that may
+  // activate an unverified factor.
+  const challengeState = await database
+    .selectFrom("auth_challenges",)
+    .innerJoin("auth_factors", "auth_factors.id", "auth_challenges.factor_id",)
+    .select("auth_factors.verified_at",)
+    .where("auth_challenges.id", "=", challengeId,)
+    .where("auth_challenges.user_id", "=", userId,)
+    .where("auth_challenges.purpose", "=", purpose,)
+    .executeTakeFirst();
+
+  if (
+    challengeState === undefined ||
+    (purpose !== ChallengePurpose.Enroll && challengeState.verified_at === null)
+  ) {
+    return notFound("Not found",);
+  }
+
   const verified = await verifyChallenge({ database, challengeId, userId, code, purpose, now, },);
   if (!verified.ok) {
     const errorCode = verified.error.code;
@@ -62,6 +105,20 @@ export async function handleVerifyFactor(options: VerifyFactorOptions,): Promise
       : HttpStatus.Unauthorized;
 
     return jsonError({ message: verified.error.message, status, },);
+  }
+
+  if (purpose === ChallengePurpose.Enroll) {
+    // Ownership proved on the enrolled channel: activate it once. No JWT —
+    // enrollment is not a login or step-up event.
+    await database
+      .updateTable("auth_factors",)
+      .set({ verified_at: now(), },)
+      .where("id", "=", verified.value.factorId,)
+      .where("user_id", "=", userId,)
+      .where("verified_at", "is", null,)
+      .execute();
+
+    return new Response("OK", { status: HttpStatus.OK, },);
   }
 
   const factor = await database

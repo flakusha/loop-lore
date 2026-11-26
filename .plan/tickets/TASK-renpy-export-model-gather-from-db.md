@@ -3,7 +3,7 @@
 
 # TASK: RenPy export model gather from DB
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** M
 **Epic:** epic-renpy-export
@@ -20,6 +20,6 @@ DB layer in plugins/core/renpy-export (model.ts): unknown chats throw (route map
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

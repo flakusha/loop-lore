@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Asset Service — input validation
+ * @param sizeBytes
+ * @param maxSize
+ * @returns the rejection message with the cap in MB, or null when the size fits
+ */
+export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
+  if (sizeBytes > maxSize) {
+    const maxMb = (maxSize / 1_048_576).toFixed(0,);
+    return `File too large. Maximum size is ${maxMb} MB.`;
+  }
+
+  return null;
+}
+
+const ALLOWED_MIME_PREFIXES = [
+  "image/",
+  "audio/",
+  "video/",
+  "application/pdf",
+  "text/plain",
+  "application/json",
+  "model/",
+];
+
+const BLOCKED_MIME_TYPES = new Set(["image/svg+xml",],);
+
+/**
+ * Validate MIME type is allowed. Active formats (SVG) are rejected outright —
+ * asset bytes are served from the app origin and must stay inert.
+ * @param mime
+ * @returns void
+ */
+export function validateMimeType(mime: string,): string | null {
+  // Strip MIME parameters ("; charset=...") before matching: the trust
+  // boundary sees only the type/subtype, and a suffixed SVG is still SVG.
+  const lowered = mime.toLowerCase().split(";", 1,)[0]!.trim();
+  if (BLOCKED_MIME_TYPES.has(lowered,)) {
+    return `Unsupported file type: ${mime}`;
+  }
+
+  const allowed = ALLOWED_MIME_PREFIXES.some((prefix,) => lowered.startsWith(prefix,));
+  if (!allowed) { return `Unsupported file type: ${mime}`; }
+  return null;
+}

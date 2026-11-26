@@ -22,7 +22,9 @@ export type GraphIssueKind =
   | "duplicate_id"
   | "missing_input"
   | "cycle"
-  | "dead_node";
+  | "dead_node"
+  | "no_sink"
+  | "placeholder";
 
 /** One validation finding. */
 export interface GraphIssue {

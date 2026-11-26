@@ -6,6 +6,23 @@
 import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
 
 /**
+ * Read the `q` weight from one header entry (RFC 9110 §12.5.1).
+ * Scans every `;`-separated parameter so `q` need not be first; an absent
+ * or non-numeric weight defaults to 1.
+ */
+function parseQuality(part: string,): number {
+  const params = part.split(";", 100,);
+  for (let i = 1; i < params.length; i++) {
+    const [name, value,] = params[i]!.split("=", 2,);
+    if (name?.trim().toLowerCase() !== "q" || value === undefined) { continue; }
+    const raw = Number(value.trim(),);
+    return Number.isFinite(raw,) ? Math.min(1, Math.max(0, raw,),) : 1;
+  }
+
+  return 1;
+}
+
+/**
  * Parse `Accept` header into ordered protocol preference list.
  * @param accept
  * @returns {TransportProtocol[]}
@@ -22,10 +39,8 @@ export function parseAcceptProtocols(accept: string | null,): TransportProtocol[
 
   const parsed: { protocol: TransportProtocol; q: number }[] = [];
   for (const part of accept.split(",", 100,)) {
-    const [proto, qStr,] = part.trim().split(";", 2,);
-    const qRaw = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
-    const q = Number.isFinite(qRaw,) ? Math.min(1, Math.max(0, qRaw,),) : 1;
-    const key = proto!.trim();
+    const key = part.split(";", 1,)[0]!.trim();
+    const q = parseQuality(part,);
     if (!Object.hasOwn(map, key,)) {
       continue;
     }
@@ -55,10 +70,8 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
 
   const parsed: { algorithm: CompressionAlgorithm; q: number }[] = [];
   for (const part of acceptEncoding.split(",", 100,)) {
-    const [algo, qStr,] = part.trim().split(";", 2,);
-    const qRaw = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
-    const q = Number.isFinite(qRaw,) ? Math.min(1, Math.max(0, qRaw,),) : 1;
-    const key = algo!.trim();
+    const key = part.split(";", 1,)[0]!.trim();
+    const q = parseQuality(part,);
     if (!Object.hasOwn(map, key,)) {
       continue;
     }

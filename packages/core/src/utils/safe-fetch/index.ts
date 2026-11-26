@@ -8,6 +8,6 @@
  * public import surface (`safe-fetch` / `safe-fetch/index`).
  */
 export { DEFAULT_TIMEOUT, } from "./constants";
-export { safeFetch, } from "./fetch";
+export { errorDetail, proxyForUrl, safeFetch, } from "./fetch";
 export { safeFetchWithRetry, } from "./retry";
 export type { FetchAuth, FetchFailure, FetchResult, SafeFetchOptions, } from "./types";

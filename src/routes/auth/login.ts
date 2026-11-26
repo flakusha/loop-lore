@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { createHash, } from "node:crypto";
 import { verifyPassword, } from "../../auth/password";
 import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
@@ -10,7 +11,7 @@ import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../../middleware/auth";
 import type { RateLimiter, } from "../../middleware/rate-limit";
-import { HttpStatus, jsonError, } from "../http-utils";
+import { forbiddenResponse, HttpStatus, jsonError, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
 import {
   demoLoginLimiter,
@@ -40,9 +41,11 @@ async function handleLogin(
   limiter: RateLimiter = loginLimiter,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
+  // IP bucket is spent first: malformed bodies must never bypass the gate.
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit
   // X-RateLimit-* + Retry-After so well-behaved clients back off correctly.
-  const loginLimit = limiter.consume(ip,);
+  const ipKey = `ip:${ip}`;
+  const loginLimit = limiter.consume(ipKey,);
   if (!loginLimit.allowed) {
     return rateLimitResponse({
       request,
@@ -69,6 +72,28 @@ async function handleLogin(
       "Username and password are required.",
     );
   }
+
+  // R2: rotating source IPs must not renew the budget for one account.
+  // Digest keeps the account name out of limiter keys; both bucket families
+  // share the injected limiter under distinct prefixes.
+  const accountDigest = createHash("sha256",)
+    .update(username.toLowerCase(),)
+    .digest("hex",)
+    .slice(0, 32,);
+
+  const accountKey = `account:${accountDigest}`;
+  const accountLimit = limiter.peek(accountKey,);
+  if (!accountLimit.allowed) {
+    limiter.refund(ipKey,);
+    return rateLimitResponse({
+      request,
+      limit: accountLimit,
+      t,
+      fallbackMessage: "Too many attempts for this account. Try again later.",
+    },);
+  }
+
+  limiter.record(accountKey,);
 
   const user = await database
     .selectFrom("users",)
@@ -146,6 +171,12 @@ async function handleDemoLogin(
   peerIp?: string | null,
   limiter: RateLimiter = demoLoginLimiter,
 ): Promise<Response> {
+  // RA-15: demo login grants the admin-equivalent solo role. In required
+  // mode no anonymous caller may mint that session, on either route prefix.
+  if (config.auth.required) {
+    return forbiddenResponse(undefined, t,);
+  }
+
   const ip = getClientIp(request, config, peerIp ?? null,);
   // BUG-demo-login-endpoint-bypasses-rate-limiter: enforce the same per-IP
   // gate as /api/auth/login. Without this, an attacker can spam session

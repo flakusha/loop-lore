@@ -1,0 +1,27 @@
+<div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
+<div x-show="loadingOlder" class="loading-older">
+  <span class="spinner"></span> {{{t("chats.loadingOlder")}}}
+</div>
+<template x-if="!activeChat">
+  <div class="empty-state">
+    <div class="icon">💬</div>
+    <div class="title">{{{t("chats.selectChat")}}}</div>
+    <div class="description">{{{t("chats.selectChatDescription")}}}</div>
+  </div>
+</template>
+<template x-if="activeChat && messages.length === 0 && !loadingMessages">
+  <div class="empty-state">
+    <div class="icon">💬</div>
+    <div class="title">{{{t("chats.noMessages")}}}</div>
+    <div class="description">{{{t("chats.noMessagesHint")}}}</div>
+  </div>
+</template>
+<template x-if="activeChat && loadingMessages">
+  <div class="empty-state">
+    <div class="icon">⏳</div>
+    <div class="title">{{{t("chats.loadingMessages")}}}</div>
+  </div>
+</template>
+<template x-if="activeChat && loadingError">
+  <div class="error-banner" x-text="loadingError"></div>
+</template>

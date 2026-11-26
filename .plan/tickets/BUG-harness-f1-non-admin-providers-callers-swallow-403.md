@@ -3,8 +3,8 @@
 
 # BUG: harness-f1-non-admin-providers-callers-swallow-403
 
-**Status:** Not Started
-**Blocker:** HELD — unlanded branch `harness-403-callers` (degraded-403 UI in `personas.ts`/`settings/general.ts` + shared `provider-list.ts`, 21 files). The admin-only contract stays decided (see the two Done BUGs in the ticket). Next: land the branch, then flip this ticket with the landing sha.
+**Status:** Done
+**Landing:** landed on dev in `43e1c3f6a` (degraded-403 UI for personas/settings general via shared `provider-list.ts`). Admin-only provider-list contract unchanged.
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-external-harness-acp
@@ -36,3 +36,5 @@ Parity matrix blocking-adjacent finding F1: the gate is correct, the callers are
 - [ ] Both callers handle 403 with an explicit degraded state (no silent swallow).
 - [ ] Stale `public` comments on the route corrected (or a pointer to the ticket that owns them).
 - [ ] Non-admin test: 403 → degraded UI, no unhandled rejection.
+
+**Resolved:** 2026-11-20 registry-driven close: git issue aac1498 (registry tip: 89c736ba5 Konstantin Fedotov Auto-closed: appended .md marker marks BUG-HARNESS-F1-NON-ADMIN-PROVIDE)

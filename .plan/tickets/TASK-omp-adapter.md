@@ -3,7 +3,8 @@
 
 # TASK: omp adapter
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** 2026-11-25 reconcile: the omp adapter shipped — `createOmpAdapter` (`src/integrations/harness/omp.ts:75`) is registered in the flavor→factory map (`src/integrations/harness/flavor-factories.ts:30`) and is the reference adapter. The filed premise (no omp adapter) was stale.
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp

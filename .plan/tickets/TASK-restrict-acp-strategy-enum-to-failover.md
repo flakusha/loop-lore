@@ -3,7 +3,8 @@
 
 # TASK: Restrict ACP strategy enum to failover
 
-**Status:** Not Started
+**Status:** Done
+**Status Note:** Shipped on dev — the harness strategy union is restricted to `failover` (`packages/core/src/config/schema/harness.ts:92-93`); the earlier `failover|best-of|split` union is gone from the schema and its mirrors.
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -11,7 +12,7 @@
 
 **Summary:**
 
-G10 (harness-acp-implementation-review-2026-11-03.md:191; plan §3.4): schema validates failover|best-of|split but only failover is implemented (packages/core/src/config/schema/harness.ts:68-69; src/integrations/harness/profile-selector.ts:20-21). Fix: restrict union to 'failover'; update schema-class and JSON-schema mirrors in same change. AC: strategy best-of fails validateProfile; failover configs unchanged. Un-restrict when best-of/split land (epic tasks).
+G10 (harness-acp-implementation-review-2026-11-03.md:191; plan §3.4) — shipped: the strategy union is restricted to `failover` (`packages/core/src/config/schema/harness.ts:92-93`); `best-of` and `split` are rejected by validation (`packages/core/src/config/sections/harness.test.ts:114-119`). AC: a `best-of`/`split` strategy fails `validateProfile`; `failover` configs are unchanged. Un-restrict when best-of/split land (epic tasks).
 
 **Context:**
 
@@ -19,6 +20,6 @@ G10 (harness-acp-implementation-review-2026-11-03.md:191; plan §3.4): schema va
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — strategy union restricted to `failover` (`packages/core/src/config/schema/harness.ts:92-93`)
+- [x] Tests passing — `best-of`/`split` rejection covered by `packages/core/src/config/sections/harness.test.ts:114-119`
+- [x] Documentation updated — no `best-of`/`split` value remains in the shipped harness schema or its mirrors

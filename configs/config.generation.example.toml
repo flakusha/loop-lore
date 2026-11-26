@@ -4,12 +4,46 @@
 [generation]
 defaultProvider = "" # e.g. "openaiCompatible"
 defaultModels = {} # { openaiCompatible = "gpt-4" }
+# autorouteScenario = "general" # optional: general|chat|coding|local|observed; ranks unassigned model roles from model_rankings
 
 [generation.providers]
 openaiCompatible = [] # list of { name, baseUrl, apiKey, models }
+# OpenRouter (OpenAI-compatible; any vendor/model id flows through verbatim):
+# { name = "openrouter", label = "OpenRouter", baseUrl = "https://openrouter.ai/api/v1", apiKey = "sk-or-...", model = "openai/gpt-4o-mini", timeout = 30000, retries = 3, allowUserApiKey = true }
+# Free-tier trial: same instance with a :free model id, e.g. model = "meta-llama/llama-3.3-70b-instruct:free"
+# (no code change needed — model is free text). Or skip files entirely:
+# LLM_PROVIDER_BASE_URL=https://openrouter.ai/api/v1 LLM_PROVIDER_API_KEY=sk-or-... bun run start
 # anthropic = { name = "anthropic", label = "Anthropic", apiKey = "sk-ant-...", model = "claude-3-5-sonnet-latest", timeout = 30000, retries = 3, allowUserApiKey = true }
+# Honkbox is a Custom provider: same OpenAI-compatible shape, capabilities are
+# probed at setup (never assumed). The base URL must include /v1.
+# { name = "honkbox", label = "Honkbox", baseUrl = "http://127.0.0.1:9010/v1", apiKey = "...", model = "local-chat", timeout = 60000, retries = 2, allowUserApiKey = true }
+# Alternative: let loop-lore spawn honkbox itself via [generation.autoStart.honkbox]
+# (see config.example.toml) — the provider above is then registered automatically.
 # sd = [] # stable diffusion providers; allowUserApiKey (default true) gates per-user BYOK keys
-# video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout }); localBox serializes one render per named box, omit = external (bypasses the gate)
+# video = [] # ComfyUI video workflow providers ({ name, baseUrl, apiFamily: comfyui, workflow, allowUserApiKey?, localBox?, timeout, generationTimeout, models? }); localBox serializes one render per named box, omit = external (bypasses the gate)
+# Model pins are optional: unset roles are filled from the engine's /models folders.
+# [[generation.providers.video]]
+# name = "h3-local"
+# baseUrl = "http://127.0.0.1:8188"
+# apiFamily = "comfyui"
+# workflow = "minimax-h3-t2v-fragment-v1"
+# timeout = 30000
+# generationTimeout = 600000
+# llama-swap proxy variant (model `comfyui_auto` in config.llama-swap.example.yaml):
+# baseUrl = "http://127.0.0.1:7180/upstream/comfyui_auto"
+# Workflow names stay placeholders until the H3 workflow export lands.
+# FL2VA/REF2VA video workflows rewrite prompts through AUX; configure
+# [generation.modelRoles.auxiliary] (provider + model) or those requests fail
+# closed with 422 when the role cannot be resolved.
+# [generation.providers.video.models]
+# clip = "umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+# diffusion = "MinimaxH3_i2v.safetensors"
+# vae = "h3_vae.safetensors" # omit when the model has no VAE; set noVae = true instead
+# Image providers use the same role pins plus checkpoint/clip_vision/loras:
+# [generation.providers.sd.models]
+# checkpoint = "model.safetensors"
+# clip_vision = "vit.safetensors"
+# loras = "style.safetensors"
 # Dedicated translation providers (model = default TARGET language; usable
 # as the `generation.modelRoles.translator` provider):
 # deepl = { name = "deepl", label = "DeepL", authKey = "your-key:fx", freeTier = true, model = "en-us", timeout = 30000, retries = 3, allowUserApiKey = true }

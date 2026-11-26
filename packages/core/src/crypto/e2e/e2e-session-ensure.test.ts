@@ -5,9 +5,9 @@
  * Unit tests for ensureActiveSession group + insert-race branches
  * (src/crypto/e2e/e2e-session.ts) with a stub database — no real DB.
  */
-import type { DB, } from "@/db/schema";
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import { ensureActiveSession, } from "./e2e-session";
 
 const PAIR_ROW = {

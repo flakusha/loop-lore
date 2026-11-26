@@ -8,6 +8,7 @@
  * generated assistant message.
  */
 import type { Kysely, } from "kysely";
+import { getConfigValue, } from "../../admin/config";
 import type { Config, } from "../../config/schema";
 import {
   ContentEncoding,
@@ -20,6 +21,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { extractAndStore, } from "../../game-state";
 import { getLogger, } from "../../logger";
+import { applyProfanityWritePolicy, } from "../../profanity/write-policy";
 import { indexMessageSearchTokens, } from "../../search";
 import { uid, } from "../../utils";
 import {
@@ -111,7 +113,10 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
   // BUG-regex-transform-runs-at-store-time-not-render-time: transforms
   // moved to render-time (resolveMessageContent). Stored text is the raw
   // LLM output.
-  const storedText = content;
+  // The same `profanity_filter` flag that governs user text governs
+  // generated assistant text: off stores the raw LLM output, on censors it.
+  const profanityEnabled = (await getConfigValue(database, "profanity_filter",)) === "true";
+  const storedText = applyProfanityWritePolicy(profanityEnabled, content,).text;
 
   // ── Encryption ────────────────────────────────────────────────
   const smk = d.getSmk() ?? undefined;
@@ -166,6 +171,7 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
             role: MessageRole.Assistant,
             content: encResult.storedContent,
             key_id: encResult.keyId,
+            content_plaintext: storedText,
             content_type: MessageContentType.Text,
             content_format: MessageContentFormat.Markdown,
             content_encoding: ContentEncoding.Identity,
@@ -200,13 +206,14 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     return { swipeIndex: outcome.value ?? null, };
   },);
 
-  // The row carries no plaintext mirror: index blind tokens for the token
-  // tier (no-op unless ENABLE_TOKEN_INDEXING=1).
+  // The mirror above feeds FTS5; blind tokens are only a fallback for rows
+  // without one (no-op unless ENABLE_TOKEN_INDEXING=1).
   await indexMessageSearchTokens(database, {
     messageId,
     chatId,
     plaintext: storedText,
     keyId: encResult.keyId,
+    plaintextMirror: storedText,
   },);
 
   // Game-state extraction (FEAT-game-state-extraction-and-analysis-pipeline):

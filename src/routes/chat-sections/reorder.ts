@@ -2,10 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
-import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, } from "../../validation/schemas";
-import { jsonResponse, requireUserId, } from "../http-utils";
-import { chatAccess, } from "./access";
+import { jsonResponse, } from "../http-utils";
+import { requireChatAccess, } from "./access";
 import { ChatSectionReorderBody, type HandlerOpts, } from "./types";
 
 /**
@@ -22,12 +21,9 @@ export function reorderRoutes(opts: HandlerOpts, prefix = "/api",) {
       .post(
         `${prefix}/chats/:id/sections/reorder`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
-          const chatId = ctx.params.id as string;
-          if (!(await chatAccess(database, chatId, userId, ctx.userRole as string | null,))) {
-            return notFound("Chat not found",);
-          }
+          const access = await requireChatAccess(ctx, database,);
+          if (access instanceof Response) { return access; }
+          const { chatId, } = access;
 
           const { sectionIds, } = ctx.body as { sectionIds: string[] };
           if (!Array.isArray(sectionIds,)) { return jsonResponse({ error: "sectionIds must be an array", }, 400,); }

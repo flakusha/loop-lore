@@ -52,8 +52,8 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
   return { ...base, ...overrides, };
 }
 
-function req(method: string, url: string,): Request {
-  return new Request(url, { method, },);
+function req(method: string, url: string, headers: Record<string, string> = {},): Request {
+  return new Request(url, { method, headers, },);
 }
 
 function res(status: number, headers: Record<string, string>, body: BodyInit | null = "",): Response {
@@ -364,6 +364,60 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
     expect(out.headers.get("Strict-Transport-Security",),).toBe(
       "max-age=63072000; includeSubDomains; preload",
     );
+  });
+
+  const hstsConfig = () =>
+    makeConfig({
+      hsts: { enabled: true, maxAge: 31536000, includeSubDomains: true, preload: false, },
+    },);
+
+  test("emits HSTS on internal HTTP with x-forwarded-proto: https when trusted", async () => {
+    const policy = new ResponseHeaderPolicy(hstsConfig(), { trustProxy: true, },);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({
+      request: req("GET", "http://x/", { "x-forwarded-proto": "https", },),
+      response,
+    },);
+
+    expect(out.headers.get("Strict-Transport-Security",),).toBe("max-age=31536000; includeSubDomains",);
+  });
+
+  test("omits HSTS on spoofed forwarded proto when trustProxy is false or absent", async () => {
+    const request = req("GET", "http://x/", { "x-forwarded-proto": "https", },);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    for (
+      const policy of [
+        new ResponseHeaderPolicy(hstsConfig(), { trustProxy: false, },),
+        new ResponseHeaderPolicy(hstsConfig(),),
+      ]
+    ) {
+      const out = policy.apply({ request, response, },);
+      expect(out.headers.get("Strict-Transport-Security",),).toBeNull();
+    }
+  });
+
+  test("uses the leftmost trimmed, lowercased forwarded proto entry when trusted", async () => {
+    const policy = new ResponseHeaderPolicy(hstsConfig(), { trustProxy: true, },);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    for (const proto of ["https, http", " HTTPS , http ",]) {
+      const out = policy.apply({
+        request: req("GET", "http://x/", { "x-forwarded-proto": proto, },),
+        response,
+      },);
+
+      expect(out.headers.get("Strict-Transport-Security",),).toBe("max-age=31536000; includeSubDomains",);
+    }
+  });
+
+  test("omits HSTS on forwarded http even when trusted", async () => {
+    const policy = new ResponseHeaderPolicy(hstsConfig(), { trustProxy: true, },);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({
+      request: req("GET", "http://x/", { "x-forwarded-proto": "http", },),
+      response,
+    },);
+
+    expect(out.headers.get("Strict-Transport-Security",),).toBeNull();
   });
 });
 

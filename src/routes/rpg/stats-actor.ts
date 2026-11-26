@@ -18,7 +18,7 @@ import {
 import { checkMechanicEnabled, checkRpgEnabled, RpgMechanic, } from "../../rpg/service/world-gate.js";
 import type { StatBlock, } from "../../rpg/stats.js";
 import { requireActorAccess, } from "../actor-auth.js";
-import { jsonCreated, jsonError, jsonResponse, notFoundResponse, } from "../http-utils.js";
+import { internalError, jsonCreated, jsonError, jsonResponse, notFoundResponse, } from "../http-utils.js";
 import { log, } from "./log.js";
 import { type HandlerOpts, StatsCreateBody, StatsUpdateBody, } from "./types.js";
 
@@ -56,8 +56,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonResponse(stats,);
           } catch (error) {
-            log().error("Failed to get character stats", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to get character stats", error,);
           }
         },
         {
@@ -117,8 +116,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
 
             return jsonCreated({ id: statsId, actorId: ctx.params.actorId, },);
           } catch (error) {
-            log().error("Failed to create character stats", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to create character stats", error,);
           }
         },
         {
@@ -186,8 +184,7 @@ export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
             const refreshed = await getCharacterStats(deps, ctx.params.actorId,);
             return jsonResponse(refreshed,);
           } catch (error) {
-            log().error("Failed to update character stats", error instanceof Error ? error : undefined,);
-            return jsonError("Internal server error", 500,);
+            return internalError(log(), "Failed to update character stats", error,);
           }
         },
         {

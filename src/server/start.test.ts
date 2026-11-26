@@ -9,7 +9,10 @@
 // free port. The server is verified with a real HTTP request.
 
 import { serve, } from "bun";
+import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 // ── Mutable config ───────────────────────────────────────────
@@ -31,6 +34,21 @@ const processOnCalls: [string, (...args: unknown[]) => void,][] = [];
 // Gate for the plugin loader: a test can hold `loadAllPlugins` open to observe
 // the boot window (traffic must stay gated until the plugins are loaded).
 let pluginGate: Promise<void> | undefined;
+let tlsProvisionFailure: Error | null = null;
+
+// Per-test owned seams for the boot capability assertion (set/restored in the test).
+let bootDb: Kysely<DB> | undefined;
+let bootScanProvider = "boot-scan-test-provider";
+let bootScanCalls: (Kysely<DB> | undefined)[] = [];
+let bootRegisteredProviders: string[] = [];
+let bootStoredProvider: string | undefined;
+let bootWarnings: { message: string; meta: Record<string, unknown> }[] = [];
+
+// Real seams captured BEFORE the module mocks below replace their specifiers.
+const { createSqliteDialect, } = await import("../db/index");
+const { runMigrations: realRunMigrations, } = await import("../db/migrate");
+const { upsertModelCapabilities, } = await import("../admin/model-capabilities");
+const { createLogger, } = await import("../logger");
 
 // ── Module mocks (everything except "bun") ──────────────────
 
@@ -39,7 +57,9 @@ if (ISOLATED) {
     trace: () => {},
     debug: () => {},
     info: () => {},
-    warn: () => {},
+    warn: (message: string | Record<string, unknown>, meta?: Record<string, unknown>,) => {
+      bootWarnings.push({ message: String(message,), meta: meta ?? {}, },);
+    },
     error: () => {},
     fatal: () => {},
     child: () => fakeLogger,
@@ -58,9 +78,20 @@ if (ISOLATED) {
   mock.module("../age-gate/controller", () => ({
     ageGateConfig: { update: () => {}, },
     initAgeGate: () => {},
+    // start() calls this on boot; importers link it under --isolate too.
+    applyStoredAgeGateConfig: async () => {},
   }),);
 
-  mock.module("../config/cert", () => ({ ensureTlsCerts: () => null, }),);
+  mock.module("../config/cert", () => ({
+    ensureTlsCerts: () => {
+      if (tlsProvisionFailure) {
+        throw tlsProvisionFailure;
+      }
+
+      return null;
+    },
+  }),);
+
   mock.module("../config/load", () => ({ loadConfig: () => currentConfig, }),);
   mock.module("../cron", () => ({ getScheduler: () => ({ stop: () => {}, }), }),);
   mock.module(
@@ -71,13 +102,29 @@ if (ISOLATED) {
       encryptMessageContent: async () => {
         throw new Error("not stubbed",);
       },
+      decryptMessageContent: async () => {
+        throw new Error("not stubbed",);
+      },
       getSmk: () => null,
       isEncryptionEnabled: () => false,
     }),
   );
 
-  mock.module("../db/index", () => ({ getDatabase: () => fakeDb, getSqliteDatabase: () => null, }),);
-  mock.module("../db/migrate", () => ({ runDataMigrations: async () => {}, runMigrations: async () => {}, }),);
+  mock.module("../db/index", () => ({
+    getDatabase: () => bootDb ?? fakeDb,
+    getSqliteDatabase: () => null,
+    createSqliteDialect,
+  }),);
+
+  // Real migrations for the owned boot DB: the scan must not run before
+  // model_capabilities exists. Other tests keep the fixed fake DB stub.
+  mock.module("../db/migrate", () => ({
+    runDataMigrations: async () => {},
+    runMigrations: async (db: Kysely<DB>,) => {
+      if (db === bootDb) { await realRunMigrations(db,); }
+    },
+  }),);
+
   mock.module("../db/seed", () => ({ seedDefaultActors: async () => {}, }),);
   mock.module(
     "../characters/services/emotion-avatar-service/restart-reconcile",
@@ -124,6 +171,13 @@ if (ISOLATED) {
     unloadAllPlugins: async () => {},
   }),);
 
+  // Design B stdio shim: the listener graph (serve → MCP/ACP mains → facade
+  // registry) is the slice's own surface with its own suite — a stub here
+  // keeps this boot suite on the HTTP path it owns.
+  mock.module("../integrations/inbound/stdio-proxy-listener", () => ({
+    maybeStartStdioProxyListener: async () => undefined,
+  }),);
+
   mock.module("../seeding", () => ({
     applyEnvironmentOverrides: (cfg: unknown,) => cfg,
     seedConfiguredContent: async () => {},
@@ -155,7 +209,36 @@ if (ISOLATED) {
     backendToConfig: () => ({}),
   }),);
 
-  mock.module("../admin/provider-health", () => ({ scanAllProviders: async () => [], }),);
+  // Provider discovery is stubbed; the capability write is the real upsert so
+  // a missing db argument (old boot wiring) leaves no rows and fails the test.
+  mock.module("../admin/provider-health", () => ({
+    scanAllProviders: async (db?: Kysely<DB>,) => {
+      bootScanCalls.push(db,);
+      if (db === bootDb && db) {
+        await upsertModelCapabilities(db, bootScanProvider, [
+          { id: "boot-scan-model", contextWindow: 4096, toolCalling: true, },
+        ],);
+      }
+
+      // The rescan runs after materialize; report the stored provider so the
+      // aggregated boot warning has to name it.
+      if (bootScanCalls.length === 2 && bootRegisteredProviders.length > 0) {
+        return bootRegisteredProviders.map((name,) => ({
+          name,
+          label: name,
+          status: "unreachable" as const,
+          models: [],
+          lastChecked: new Date().toISOString(),
+        }));
+      }
+
+      return [];
+    },
+    // The provider registry imports this alongside scanAllProviders; a
+    // partial mock breaks module linking for every importer under --isolate.
+    getUnhealthyProviders: () => [],
+  }),);
+
   // Only seedDefaults is CALLED here (dynamic import in start()), but the
   // graph statically links getConfigValue too — a mock without it breaks
   // module linking for every importer under --isolate.
@@ -168,7 +251,12 @@ if (ISOLATED) {
   // the provider registry and the crypto barrel behind it, so it is mocked
   // like the sibling dynamic imports below — the real module has its own suite.
   mock.module("../generation/providers/server-provider-store", () => ({
-    materializeServerProviders: async () => [],
+    materializeServerProviders: async () => {
+      // Register the stored provider only at materialize time, mirroring the
+      // real store — the rescan must observe it.
+      if (bootStoredProvider) { bootRegisteredProviders.push(bootStoredProvider,); }
+      return [];
+    },
   }),);
 
   mock.module("../logger/transports/db", () => ({ DBTransport: class {}, }),);
@@ -225,6 +313,7 @@ beforeEach(() => {
 
 afterEach(() => {
   process.on = originalOn;
+  tlsProvisionFailure = null;
 },);
 
 // ── Tests ────────────────────────────────────────────────────
@@ -248,6 +337,27 @@ describeOrSkip("start", () => {
     expect(events,).toContain("exit",);
     expect(events,).toContain("uncaughtException",);
     expect(events,).toContain("unhandledRejection",);
+  });
+
+  test("LOOP_LORE_WATCHDOG=1 skips crash handlers but keeps signal exits", async () => {
+    const previous = process.env.LOOP_LORE_WATCHDOG;
+    process.env.LOOP_LORE_WATCHDOG = "1";
+    try {
+      const port = findFreePort();
+      currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
+      await start();
+      const events = processOnCalls.map(([event,],) => event);
+      expect(events,).toContain("SIGTERM",);
+      expect(events,).toContain("SIGINT",);
+      expect(events,).not.toContain("uncaughtException",);
+      expect(events,).not.toContain("unhandledRejection",);
+    } finally {
+      if (previous === undefined) {
+        delete process.env.LOOP_LORE_WATCHDOG;
+      } else {
+        process.env.LOOP_LORE_WATCHDOG = previous;
+      }
+    }
   });
 
   test("gates traffic with 503 until the plugins are loaded", async () => {
@@ -292,6 +402,31 @@ describeOrSkip("start", () => {
     await expect(start(),).rejects.toThrow(/TLS certificates could not be provisioned/,);
   });
 
+  test("propagates the classified OpenSSL error and opens no listener", async () => {
+    const port = findFreePort();
+    const message =
+      "TLS certificate generation failed. OpenSSL is not installed (tried: openssl). Install OpenSSL or configure certs manually.";
+
+    tlsProvisionFailure = new Error(message,);
+    currentConfig = {
+      ...currentConfig,
+      server: {
+        port,
+        host: "127.0.0.1",
+        tls: { key: "/tmp/loop-lore-test/key.pem", cert: "/tmp/loop-lore-test/cert.pem", },
+      },
+    };
+
+    try {
+      await expect(start(),).rejects.toThrow(message,);
+      // A successful bind proves start() left no plaintext listener behind.
+      const probe = serve({ port, fetch: () => new Response("",), },);
+      probe.stop(true,);
+    } finally {
+      tlsProvisionFailure = null;
+    }
+  });
+
   test("exits non-zero on a crash-path shutdown and zero on a signal shutdown", async () => {
     const port = findFreePort();
     currentConfig = { ...currentConfig, server: { port, host: "127.0.0.1", tls: undefined, }, };
@@ -319,6 +454,82 @@ describeOrSkip("start", () => {
       expect(exitCodes.at(-1,),).toBe(0,);
     } finally {
       process.exit = originalExit;
+    }
+  });
+
+  test("boot scan persists capability rows through the server database", async () => {
+    // Owned: in-memory DB destroyed in finally; unique provider id; port 0
+    // listener; module-level config/db seams restored in finally. No fixed
+    // ports, paths, or global fetch stubs; process.on is restored by afterEach.
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    const provider = `boot-scan-${crypto.randomUUID()}`;
+    const previousConfig = currentConfig;
+    // Real migrations and the real upsert log through the real logger singleton.
+    try {
+      createLogger({ level: "error", },);
+    } catch { /* already initialized */ }
+
+    bootDb = db;
+    bootScanProvider = provider;
+    currentConfig = { ...previousConfig, server: { port: 0, host: "127.0.0.1", tls: undefined, }, };
+    try {
+      await start();
+      const rows = await db.selectFrom("model_capabilities",)
+        .where("provider_id", "=", provider,)
+        .selectAll()
+        .execute();
+
+      expect(rows.length,).toBe(1,);
+      expect(rows[0]!.model_id,).toBe("boot-scan-model",);
+    } finally {
+      bootDb = undefined;
+      bootScanProvider = "boot-scan-test-provider";
+      currentConfig = previousConfig;
+      await db.destroy();
+      sqlite.close();
+    }
+  });
+
+  test("rescan after materialization folds stored providers into one warning", async () => {
+    // Owned: in-memory DB destroyed in finally; unique provider id; ephemeral
+    // port; config/db/warning seams restored in finally. No mock.module or
+    // blanket clears; process.on is restored by afterEach.
+    const sqlite = new Database(":memory:",);
+    const db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
+    const storedProvider = `stored-scan-${crypto.randomUUID()}`;
+    const previousConfig = currentConfig;
+    try {
+      createLogger({ level: "error", },);
+    } catch { /* already initialized */ }
+
+    bootDb = db;
+    bootStoredProvider = storedProvider;
+    bootScanCalls = [];
+    bootRegisteredProviders = [];
+    bootWarnings = [];
+    currentConfig = { ...previousConfig, server: { port: 0, host: "127.0.0.1", tls: undefined, }, };
+    try {
+      await start();
+
+      expect(bootScanCalls.length,).toBe(2,);
+      expect(bootScanCalls[0],).toBe(db,);
+      expect(bootScanCalls[1],).toBe(db,);
+      expect(bootRegisteredProviders,).toContain(storedProvider,);
+
+      const warnings = bootWarnings.filter((w,) => w.message === "providers unreachable on startup");
+      expect(warnings.length,).toBe(1,);
+      expect(warnings[0]?.meta.module,).toBe("server",);
+      expect(warnings[0]?.meta.failedProviders,).toContain(storedProvider,);
+    } finally {
+      bootDb = undefined;
+      bootStoredProvider = undefined;
+      bootScanCalls = [];
+      bootRegisteredProviders = [];
+      bootWarnings = [];
+      currentConfig = previousConfig;
+      await db.destroy();
+      sqlite.close();
     }
   });
 },);

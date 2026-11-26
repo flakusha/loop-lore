@@ -71,10 +71,10 @@ describeOrSkip("messageSearch.runMessageSearch", () => {
   });
 
   test("maps results and totals on success", async () => {
-    mockFetch(200, { results: [{ messageId: "m1", }, { messageId: "m2", },], total: 2, },);
+    mockFetch(200, { messages: [{ messageId: "m1", }, { messageId: "m2", },], },);
     const ctx = searchCtx({ _msgSearchQuery: "hello", },);
     await messageSearch.runMessageSearch!.call(ctx,);
-    expect(fetchCalls[0]!.url,).toContain("/api/v1/messages/search?chatId=chat-1&q=hello&limit=50",);
+    expect(fetchCalls[0]!.url,).toContain("/api/v1/search?chatId=chat-1&q=hello&limit=50",);
     expect(ctx._msgSearchMatches,).toEqual(["m1", "m2",],);
     expect(ctx._msgSearchTotal,).toBe(2,);
     expect(ctx._msgSearchIndex,).toBe(0,);
@@ -84,7 +84,7 @@ describeOrSkip("messageSearch.runMessageSearch", () => {
   });
 
   test("defaults the total to the match count", async () => {
-    mockFetch(200, { results: [{ messageId: "m1", },], },);
+    mockFetch(200, { messages: [{ messageId: "m1", },], },);
     const ctx = searchCtx({ _msgSearchQuery: "x", },);
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(ctx._msgSearchTotal,).toBe(1,);
@@ -111,7 +111,7 @@ describeOrSkip("messageSearch.runMessageSearch", () => {
   });
 
   test("encodes chat ids and unicode queries", async () => {
-    mockFetch(200, { results: [], total: 0, },);
+    mockFetch(200, { messages: [], },);
     const ctx = searchCtx({ activeChat: "chat/1", _msgSearchQuery: "酒場", },);
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(fetchCalls[0]!.url,).toContain(`chatId=${encodeURIComponent("chat/1",)}`,);

@@ -1,0 +1,92 @@
+<!-- Overview Tab -->
+<div x-show="activeTab === 'overview'">
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-4); padding: var(--space-6)">
+    <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('users')">
+      <div class="admin-stat-value" x-text="stats.users">0</div>
+      <div class="admin-stat-label">Users</div>
+      <div
+        class="admin-stat-delta"
+        x-text="'+' + stats.deltas.users + ' today'"
+        x-show="stats.deltas.users > 0"
+        style="font-size: 11px; color: var(--color-success, #28a745)"
+      >
+      </div>
+    </div>
+    <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('chats')">
+      <div class="admin-stat-value" x-text="stats.chats">0</div>
+      <div class="admin-stat-label">Chats</div>
+      <div
+        class="admin-stat-delta"
+        x-text="'+' + stats.deltas.chats + ' today'"
+        x-show="stats.deltas.chats > 0"
+        style="font-size: 11px; color: var(--color-success, #28a745)"
+      >
+      </div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-value" x-text="stats.messages">0</div>
+      <div class="admin-stat-label">Messages</div>
+    </div>
+    <div class="admin-stat-card">
+      <div class="admin-stat-value" x-text="stats.characters">0</div>
+      <div class="admin-stat-label">Characters</div>
+    </div>
+    <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('chats')">
+      <div class="admin-stat-value" x-text="stats.assets">0</div>
+      <div class="admin-stat-label">Assets</div>
+      <div
+        class="admin-stat-delta"
+        x-text="'+' + stats.deltas.assets + ' today'"
+        x-show="stats.deltas.assets > 0"
+        style="font-size: 11px; color: var(--color-success, #28a745)"
+      >
+      </div>
+    </div>
+    <div class="admin-stat-card" style="cursor: pointer" @click="goToSection('worlds')">
+      <div class="admin-stat-value" x-text="stats.worlds">0</div>
+      <div class="admin-stat-label">Worlds</div>
+      <div
+        class="admin-stat-delta"
+        x-text="'+' + stats.deltas.worlds + ' today'"
+        x-show="stats.deltas.worlds > 0"
+        style="font-size: 11px; color: var(--color-success, #28a745)"
+      >
+      </div>
+    </div>
+  </div>
+  <div style="padding: 0 var(--space-6) var(--space-6)">
+    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Activity</h3>
+    <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-3)">
+      <input
+        class="form-input"
+        style="font-size: 12px; max-width: 240px"
+        placeholder="Filter by text…"
+        x-model="overviewActivityFilter"
+        @input.debounce.500ms="loadOverview()"
+      />
+      <select
+        class="form-input"
+        style="font-size: 12px; max-width: 180px"
+        x-model="overviewActivityType"
+        @change="loadOverview()"
+      >
+        <option value="">All event types</option>
+        <option value="auth">Auth</option>
+        <option value="chat">Chat</option>
+        <option value="admin">Admin</option>
+        <option value="nsfw">NSFW</option>
+        <option value="system">System</option>
+      </select>
+    </div>
+    <div x-show="recentEntries.length === 0" style="font-size: 13px; color: var(--text-secondary, #6c757d)">
+      No activity yet.
+    </div>
+    <template x-for="e in recentEntries" :key="e.id">
+      <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
+        <span x-text="formatDate(e.created_at)"></span>
+        <span style="margin: 0 4px">—</span>
+        <span x-text="e.message" style="color: var(--text-secondary, #6c757d)"></span>
+      </div>
+    </template>
+  </div>
+</div>

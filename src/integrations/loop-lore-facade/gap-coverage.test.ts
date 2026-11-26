@@ -138,6 +138,18 @@ describe("facade/video/messaging gap coverage", () => {
     expect(authorizeFacadeOp(nullScope, readOp(),)?.status,).toBe(403,);
   });
 
+  test("delegation domain admits users but refuses internal-service", () => {
+    const op: FacadeOp = { ...readOp(), domain: "delegation", };
+    expect(authorizeFacadeOp(userCtx("u1",), op,),).toBeNull();
+
+    const internal: FacadeContext = {
+      ...userCtx("svc-1",),
+      principal: { ...userCtx("svc-1",).principal, kind: principalKind("internal-service",), },
+    };
+
+    expect(authorizeFacadeOp(internal, op,)?.status,).toBe(403,);
+  });
+
   test("createFacadeRegistry manifest round-trips descriptors", () => {
     const registry = createFacadeRegistry();
     registry.register(readOp(),);

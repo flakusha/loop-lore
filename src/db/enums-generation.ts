@@ -112,3 +112,103 @@ export const WorkflowProbeStatus = {
 } as const;
 /** */
 export type WorkflowProbeStatus = (typeof WorkflowProbeStatus)[keyof typeof WorkflowProbeStatus];
+
+// ── IVSS scenario / fragment manifest ───────────────────────
+export const ScenarioStatus = {
+  Draft: "draft",
+  Active: "active",
+  Archived: "archived",
+} as const;
+/** */
+export type ScenarioStatus = (typeof ScenarioStatus)[keyof typeof ScenarioStatus];
+
+export const SceneMode = {
+  TextToVideo: "t2v",
+  ImageToVideoFirst: "i2v_ff",
+  ImageToVideoFirstLast: "i2v_flf",
+  VideoToVideoEdit: "v2v_edit",
+  Continuation: "continuation",
+  Image: "image",
+} as const;
+/** */
+export type SceneMode = (typeof SceneMode)[keyof typeof SceneMode];
+
+export const SceneStatus = {
+  Planned: "planned",
+  Rendering: "rendering",
+  Ready: "ready",
+  Failed: "failed",
+} as const;
+/** */
+export type SceneStatus = (typeof SceneStatus)[keyof typeof SceneStatus];
+
+export const CutType = {
+  HardCut: "hard_cut",
+  Crossfade: "crossfade",
+  Interpolated: "interpolated",
+} as const;
+/** */
+export type CutType = (typeof CutType)[keyof typeof CutType];
+
+export const FragmentOperation = {
+  Render: "render",
+  Rerender: "rerender",
+  Prompt: "prompt",
+  LatentSave: "latent_save",
+  LatentLoad: "latent_load",
+  Stitch: "stitch",
+  AudioFallback: "audio_fallback",
+  Postprocess: "postprocess",
+  Custom: "custom",
+} as const;
+/** */
+export type FragmentOperation = (typeof FragmentOperation)[keyof typeof FragmentOperation];
+
+export const FragmentStatus = {
+  Planned: "planned",
+  Queued: "queued",
+  Running: "running",
+  Completed: "completed",
+  Failed: "failed",
+  Cancelled: "cancelled",
+  Invalidated: "invalidated",
+} as const;
+/** */
+export type FragmentStatus = (typeof FragmentStatus)[keyof typeof FragmentStatus];
+
+// ── IVSS references, docs and annotations ──────────────────
+export const ReferenceScope = {
+  Scenario: "scenario",
+  Scene: "scene",
+  Shot: "shot",
+} as const;
+/** */
+export type ReferenceScope = (typeof ReferenceScope)[keyof typeof ReferenceScope];
+
+export const ReferenceLane = {
+  Image: "image",
+  Video: "video",
+  Audio: "audio",
+} as const;
+/** */
+export type ReferenceLane = (typeof ReferenceLane)[keyof typeof ReferenceLane];
+
+export const ScenarioDocKind = {
+  Scenario: "scenario",
+  Plot: "plot",
+  Synopsis: "synopsis",
+  Soundscape: "soundscape",
+  Music: "music",
+} as const;
+/** */
+export type ScenarioDocKind = (typeof ScenarioDocKind)[keyof typeof ScenarioDocKind];
+
+export const AnnotationTargetType = {
+  Scenario: "scenario",
+  Scene: "scene",
+  Shot: "shot",
+  Fragment: "fragment",
+  Asset: "asset",
+} as const;
+/** */
+export type AnnotationTargetType = (typeof AnnotationTargetType)[keyof typeof AnnotationTargetType];

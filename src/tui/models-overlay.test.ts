@@ -37,30 +37,32 @@ function ok<T,>(data: T,): Promise<FetchResult<T>> {
 }
 
 function route(): void {
-  setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-    calls.push({ url, options: options ?? {}, },);
-    if (url.endsWith("/admin/model-roles",)) {
-      return ok({ roles: ROLES, overrides: {}, validRoles: ["main", "aux",], } as T,);
-    }
+  setFetch(
+    <T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      calls.push({ url, options: options ?? {}, },);
+      if (url.endsWith("/admin/model-roles",)) {
+        return ok({ roles: ROLES, overrides: {}, validRoles: ["main", "aux",], } as T,);
+      }
 
-    if (url.endsWith("/rescan",)) {
-      return ok({ providers: PROVIDERS, } as T,);
-    }
+      if (url.endsWith("/rescan",)) {
+        return ok({ providers: PROVIDERS, } as T,);
+      }
 
-    if (url.endsWith("/admin/providers",)) {
-      return ok({ providers: PROVIDERS, } as T,);
-    }
+      if (url.endsWith("/admin/providers",)) {
+        return ok({ providers: PROVIDERS, } as T,);
+      }
 
-    if (url.includes("/models",)) {
-      return ok({ name: "openai", label: "OpenAI", models: [{ id: "gpt-x", }, { id: "mini", },], } as T,);
-    }
+      if (url.includes("/models",)) {
+        return ok({ name: "openai", label: "OpenAI", models: [{ id: "gpt-x", }, { id: "mini", },], } as T,);
+      }
 
-    if (url.endsWith("/test-connection",)) {
-      return ok({ ok: true, status: "reachable", latencyMs: 12, } as T,);
-    }
+      if (url.endsWith("/test-connection",)) {
+        return ok({ ok: true, status: "reachable", latencyMs: 12, } as T,);
+      }
 
-    return ok(true as T,);
-  },);
+      return ok(true as T,);
+    },
+  );
 }
 
 afterEach(() => {
@@ -172,8 +174,14 @@ describe("ModelsOverlay", () => {
   });
 
   it("a failed load renders the error in place of the rows", async () => {
-    setFetch(<T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
-      Promise.resolve({ ok: false, error: new Error("admin only",), status: 403, headers: new Headers(), },)
+    setFetch(
+      <T,>(_url: string, _options?: SafeFetchOptions,): Promise<FetchResult<T>> =>
+        Promise.resolve({
+          ok: false,
+          error: new Error("admin only",),
+          status: 403,
+          headers: new Headers(),
+        },),
     );
 
     const overlay = build();

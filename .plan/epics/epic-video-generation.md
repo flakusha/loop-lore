@@ -39,6 +39,13 @@ video target: its only video surface is an undocumented endpoint the repo
 never calls; its disposition is decided (opt-in lightweight fallback, see
 Decisions).
 
+The MiniMax H3 Director pack is an optional engine tier, not a control surface.
+Its 2026-11-19 review found maintenance churn and no precise cut/render-fragment
+control by design; custom workflow JSON may implement render, re-render, prompt,
+latent save/load and stitching with explicit cut windows through the existing
+`{{var}}` + `required_nodes` ingest contract. Workflow id, hash and version are
+the pinned unit — not a node pack.
+
 ## Engine / flow tiers
 
 All tiers land as workflow-library rows
@@ -70,7 +77,7 @@ build-time device assumption.
 
 - [ ] `TASK-video-template-schema` — video workflow template schema (duration→frames at the template's fps, output kind `video`)
 - [ ] `TASK-video-gen-route` — `/api/generation/video` route: submit, track, persist clip asset + playback
-- [ ] `TASK-video-provider-minimax-h3` — **rescoped by this filing**: local ComfyUI workflow runs (Director tier) replace the BYO-key API client as the default; the API tier moves behind BYOK
+- [ ] `TASK-video-provider-minimax-h3` — **rescoped**: a pinned local ComfyUI H3 workflow row (id, hash, required nodes), not a BYO-key API client and not a hard Director-node dependency; custom workflows with explicit cut windows are interchangeable
 - [ ] Wan family workflow rows with probes (t2v, i2v-ff, FLF2V, VACE-edit, camera-orbit)
 
 ### Phase B — post stages + Director tier
@@ -83,6 +90,14 @@ build-time device assumption.
 
 - [ ] Kling partner-node tier behind BYOK keys and explicit consent (in scope for the first release, consent gate required)
 - [ ] Veo-via-Gemini tier (later)
+
+### Deferred (low priority, revisit — filed 2026-11-19)
+
+- [ ] `TASK-hosted-video-and-audio-api-benchmark-tier` — Sora/Runway/Pika and Suno/Udio as benchmark-only tiers; Kling/Veo already scoped above
+- [ ] `TASK-live-and-reel-batch-production-tiers` — live stream, reels batch, multi-user render farm; unproven product need
+- [ ] `TASK-mid-sampler-resume-feasibility` — true mid-sampler checkpointing; existing resume is post-sampling/artifact-based
+- [ ] `TASK-ltx-foley-and-native-audio-alternatives` — LTX Foley V2A / Hunyuan-Foley / MMAudio matrix, gated on validation and territory licence
+- [ ] `TASK-quiet-hours-priority-render-scheduling` — quiet hours, priority and pause-with-saved-cache across limited/quota-bound swarms
 
 ## Key integrations
 

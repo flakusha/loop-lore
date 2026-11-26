@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { Database, } from "bun:sqlite";
 import fs from "node:fs";
 import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
+import { resolveDbPath, resolveInstanceSlug, type ServerBind, } from "../config/state-dir";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger";
+import { archiveDir, } from "./reinit-archive";
 
 /** Magic bytes every SQLite 3 database file starts with. */
 const SQLITE_HEADER = "SQLite format 3\0";
@@ -47,25 +49,23 @@ export interface RestoreDbBackupOpts {
 }
 
 /**
- * Resolve the backup directory for database snapshots. Reuses the reinit
- * archive root (backup-dir env override / data-dir sibling) under a `db/`
- * subtree so file archives and db snapshots never collide.
+ * Resolve the backup directory for database snapshots. Lives under this
+ * instance's archive root (backup-dir env override / instance-dir `backups/`)
+ * in a `db/` subtree so file archives and db snapshots never collide.
  * @returns the directory database backups are written to
  */
 export function dbBackupDir(): string {
-  const root = process.env["LOOP_LORE_BACKUP_DIR"] ??
-    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
-
-  return path.join(root, "db",);
+  return path.join(archiveDir(), "db",);
 }
 
 /**
  * Resolve the live database file path, mirroring `src/db/index.ts` singleton
- * resolution (path env override beats the data-dir default).
+ * resolution (explicit path env override beats the XDG per-instance default).
+ * @param server - resolved server bind (loaded config.server); omit when unconfigured
  * @returns the live SQLite database file path
  */
-export function liveDbPath(): string {
-  return process.env["LOOP_LORE_DB_PATH"] ?? path.resolve(DATA_DIR, "loop-lore.db",);
+export function liveDbPath(server?: ServerBind,): string {
+  return resolveDbPath(process.env, server,);
 }
 
 /**
@@ -85,6 +85,64 @@ export function hasSqliteHeader(p: string,): boolean {
   }
 }
 
+/** Thrown when a snapshot is structurally unusable for restore. */
+export class InvalidSnapshotError extends Error {
+  constructor(message: string,) {
+    super(message,);
+    this.name = "InvalidSnapshotError";
+  }
+}
+
+/**
+ * Stronger pre-restore validation than the magic-header check: require a
+ * passing `PRAGMA integrity_check`, at least one user table, and the loop-lore
+ * migration/chat/message tables so a foreign SQLite file cannot replace the
+ * live DB.
+ * @throws InvalidSnapshotError (path-free message) when the file is unusable
+ */
+export function validateSqliteSnapshot(p: string,): void {
+  let db: Database;
+  try {
+    db = new Database(p, { readonly: true, },);
+  } catch {
+    throw new InvalidSnapshotError("Snapshot is not a readable SQLite database",);
+  }
+
+  try {
+    const integrity = db.query<{ integrity_check: string }, []>("PRAGMA integrity_check;",).get();
+    if (integrity?.integrity_check !== "ok") {
+      throw new InvalidSnapshotError("Snapshot failed SQLite integrity check",);
+    }
+
+    const tables = new Set(
+      db.query<{ name: string }, []>(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';",
+      ).all().map((row,) => row.name),
+    );
+
+    if (tables.size === 0) {
+      throw new InvalidSnapshotError("Snapshot has no user tables",);
+    }
+
+    if (["kysely_migration", "chats", "messages",].some((name,) => !tables.has(name,))) {
+      throw new InvalidSnapshotError("Snapshot is not a loop-lore database",);
+    }
+
+    const applied = db.query<{ count: number }, []>(
+      "SELECT COUNT(*) AS count FROM kysely_migration;",
+    ).get()?.count ?? 0;
+
+    if (applied === 0) {
+      throw new InvalidSnapshotError("Snapshot has no applied migrations",);
+    }
+  } catch (err) {
+    if (err instanceof InvalidSnapshotError) { throw err; }
+    throw new InvalidSnapshotError("Snapshot is not a valid SQLite database",);
+  } finally {
+    db.close();
+  }
+}
+
 function log(): Logger {
   return getLogger().child({ module: "db-backup", },);
 }
@@ -101,11 +159,14 @@ export async function createDbBackup(opts: CreateDbBackupOpts,): Promise<CreateD
   const { sqlite, dir, } = opts;
   fs.mkdirSync(dir, { recursive: true, },);
   const stamp = (opts.now ?? new Date()).toISOString().replace(/[:.]/g, "-",);
-  let name = `loop-lore-${stamp}${BACKUP_EXTENSION}`;
+  // The slug keeps two instances' snapshots apart even when they share a
+  // backup volume.
+  const slug = resolveInstanceSlug(process.env,);
+  let name = `loop-lore-${slug}-${stamp}${BACKUP_EXTENSION}`;
   let seq = 0;
   while (fs.existsSync(path.join(dir, name,),)) {
     seq += 1;
-    name = `loop-lore-${stamp}-${String(seq,).padStart(2, "0",)}${BACKUP_EXTENSION}`;
+    name = `loop-lore-${slug}-${stamp}-${String(seq,).padStart(2, "0",)}${BACKUP_EXTENSION}`;
   }
 
   const target = path.join(dir, name,);
@@ -150,6 +211,32 @@ export function listDbBackups(dir: string,): BackupFileMeta[] {
 }
 
 /**
+ * Retention prune for file snapshots: keep the newest `keep` `.db` files in
+ * `dir` (by mtime then name, oldest first from {@link listDbBackups}) and
+ * delete the rest. Returns the number deleted. Missing dirs and files that
+ * vanish between listing and unlink are no-ops — pruning never breaks the
+ * host flow.
+ * @param dir - server-derived backup directory
+ * @param keep - maximum snapshots to retain; <= 0 deletes all
+ * @returns number of snapshot files removed
+ */
+export function pruneDbSnapshots(dir: string, keep: number,): number {
+  const backups = listDbBackups(dir,);
+  const stale = keep <= 0 ? backups : backups.slice(0, Math.max(backups.length - keep, 0,),);
+  let deleted = 0;
+  for (const entry of stale) {
+    try {
+      fs.unlinkSync(path.join(dir, entry.name,),);
+      deleted += 1;
+    } catch {
+      /* file vanished between list and unlink — nothing to do */
+    }
+  }
+
+  return deleted;
+}
+
+/**
  * Resolve `name` inside `dir`, rejecting path traversal: names must be bare
  * file names of existing files inside the backup directory.
  * @throws when the name escapes the directory or does not exist
@@ -159,16 +246,34 @@ export function resolveBackupPath(dir: string, name: string,): string {
     throw new Error("Invalid backup name",);
   }
 
+  const base = path.resolve(dir,);
   const resolved = path.resolve(dir, name,);
-  if (path.dirname(resolved,) !== path.resolve(dir,)) {
+  if (path.dirname(resolved,) !== base) {
     throw new Error("Invalid backup name",);
   }
 
-  if (!fs.existsSync(resolved,)) {
-    throw new Error(`Backup "${name}" not found`,);
+  // A bare name may still be a symlink pointing outside the backup directory.
+  // Resolve symlinks on both sides and re-check containment before returning.
+  let realBase: string;
+  let realTarget: string;
+  try {
+    realBase = fs.realpathSync(base,);
+    realTarget = fs.realpathSync(resolved,);
+  } catch (error) {
+    // ENOENT means missing; other FS errors are reported generically so raw
+    // absolute paths never reach callers.
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw new Error(`Backup "${name}" not found`,);
+    }
+
+    throw new Error("Invalid backup name",);
   }
 
-  return resolved;
+  if (path.dirname(realTarget,) !== realBase) {
+    throw new Error("Invalid backup name",);
+  }
+
+  return realTarget;
 }
 
 /**
@@ -180,7 +285,7 @@ export function resolveBackupPath(dir: string, name: string,): string {
  * destroyed connection; replacing the file while a connection is open leaves
  * that connection writing to the unlinked inode. The safe sequence here is:
  * 1. snapshot the CURRENT live db (rollback path),
- * 2. validate the target snapshot (SQLite magic header),
+ * 2. validate the target snapshot (SQLite magic header, integrity_check, user tables),
  * 3. close the live handles (checkpoint/flush),
  * 4. atomically rename the snapshot over the live path (stale `-wal`/`-shm`
  *    sidecars are removed first).
@@ -188,14 +293,16 @@ export function resolveBackupPath(dir: string, name: string,): string {
  * restarted to serve from the restored database (`restartRequired: true` in
  * the route response). This is an explicit, documented limitation — not a
  * silent fake success.
- * @throws when the target file is not a SQLite database
+ * @throws InvalidSnapshotError when the target snapshot fails validation
  * @throws when replacing the live file fails after the close
  */
 export async function restoreDbBackup(opts: RestoreDbBackupOpts,): Promise<{ preRestoreBackup: string }> {
   const { backupPath, livePath, sqlite, dir, closeDb, } = opts;
   if (!hasSqliteHeader(backupPath,)) {
-    throw new Error(`"${path.basename(backupPath,)}" is not a SQLite database file`,);
+    throw new InvalidSnapshotError("Snapshot is not a SQLite database file",);
   }
+
+  validateSqliteSnapshot(backupPath,);
 
   // Rollback path first: snapshot the current live data before touching it.
   const pre = await createDbBackup({ sqlite, dir, },);

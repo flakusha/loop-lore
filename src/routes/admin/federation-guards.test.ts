@@ -21,6 +21,7 @@ import { MAX_ABILITY_BONUS, } from "../../worlds/resource-core";
 import { requireFactionsInWorld, } from "../worlds/faction-routes-shared";
 import {
   auditFederationChange,
+  decodeOriginParam,
   federationOffResponse,
   isBudgetMode,
   isInstanceKind,
@@ -29,6 +30,16 @@ import {
 } from "./federation-shared";
 
 createLogger({ level: "error", },);
+
+describe("encoded origin path parameter", () => {
+  test("decodes an encoded origin and refuses malformed escapes", () => {
+    expect(decodeOriginParam("https%3A%2F%2Fgpu.example",),).toBe("https://gpu.example",);
+    expect(decodeOriginParam("https:%2F%2Fgpu.example",),).toBe("https://gpu.example",);
+    expect(decodeOriginParam("https://gpu.example",),).toBe("https://gpu.example",);
+    expect(decodeOriginParam("%ZZ",),).toBeNull();
+    expect(decodeOriginParam(42,),).toBeNull();
+  });
+});
 
 describe("federation-off gate", () => {
   test("an enabled surface is not refused", () => {

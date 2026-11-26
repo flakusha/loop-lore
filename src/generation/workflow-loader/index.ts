@@ -19,7 +19,17 @@ export { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader";
 export { loadComfyUIWorkflow, } from "./convenience";
 
 // ── Graph validation ───────────────────────────────────────
+export { Graph, } from "./graph-builder";
+export type { GraphFinishOptions, GraphOptions, GraphResult, } from "./graph-builder";
 export { findDeadNodes, isValidWorkflow, TERMINAL_SINK_CLASSES, } from "./workflow-validation";
+
+// ── Generated graph gate ───────────────────────────────────
+export {
+  assertGeneratedGraph,
+  type GeneratedGraphOptions,
+  type GeneratedGraphResult,
+  validateGeneratedGraph,
+} from "./generated-validation";
 
 // ── Public types ───────────────────────────────────────────
 export type { LoadWorkflowOptions, } from "./types";

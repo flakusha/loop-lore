@@ -83,6 +83,7 @@ export const ModelRole = {
   Summarization: "summarization",
   Classifier: "classifier",
   Translator: "translator",
+  Rerank: "rerank",
 } as const;
 /** */
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];

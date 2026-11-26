@@ -37,6 +37,17 @@ export interface HarnessRunSummary {
    * line written before turn correlation existed.
    */
   turnId: string | null;
+  /**
+   * External-harness profile that ran this turn; null for internal dispatches
+   * and legacy lines. Optional because older typed callers build summaries
+   * directly; the API mapper always fills it.
+   */
+  profile?: string | null;
+  /**
+   * Instance slug that recorded the run; null for lines written before
+   * per-instance attribution. Lets spend/attribution split per instance.
+   */
+  instanceId: string | null;
 }
 
 /**

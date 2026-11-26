@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// size-allow: 330
+// Single protocol adapter class; structural split tracked as size debt (see ticket).
+// size-allow: 565
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
@@ -13,6 +14,7 @@
  * adapter-types.ts.
  */
 
+import { isAbsolute, } from "node:path";
 import { getChildLogger, } from "../../logger";
 import { narrowSessionUpdate, } from "./acp-session-update";
 import {
@@ -30,10 +32,10 @@ import {
 } from "./adapter-types";
 import { JsonRpcProcess, JsonRpcRequestError, } from "./jsonrpc-process";
 import { advertisedPermissionOptions, answerCarriesDecision, wirePermissionOutcome, } from "./permission-outcome";
-import { TurnTranscriptCollector, } from "./turn-transcript";
+import { type HarnessTurnTranscript, TurnTranscriptCollector, } from "./turn-transcript";
 
-/** ACP protocol version the adapter speaks. */
-const PROTOCOL_VERSION = 1;
+/** ACP protocol version requested when a flavor does not configure one. */
+const DEFAULT_PROTOCOL_VERSION = 1;
 
 /** Logger; null-safe — the adapter must work before logger init. */
 const log = (): ReturnType<typeof getChildLogger> => getChildLogger("harness-acp",);
@@ -66,12 +68,56 @@ function sliceRequestedLines(text: string, line: unknown, limit: unknown,): stri
 }
 
 /**
+ * Resolve the extra workspace roots for `session/new`, rejecting a relative
+ * entry locally before the request goes out (a harness would resolve it
+ * against its own cwd — never what the profile meant).
+ * @param dirs - the profile-configured roots, when any
+ * @returns the roots, verbatim
+ * @throws {HarnessAcpError} kind `session` when an entry is not an absolute path.
+ */
+export function resolveAdditionalDirectories(dirs: string[] | undefined,): string[] {
+  const list = dirs ?? [];
+  for (const dir of list) {
+    if (typeof dir !== "string" || dir.trim() === "" || !isAbsolute(dir,)) {
+      throw new HarnessAcpError("session", `additionalDirectories must be absolute paths (got "${String(dir,)}")`,);
+    }
+  }
+
+  return [...list,];
+}
+
+/**
  * Options shared by every generic-ACP harness adapter: the spawn command
  * plus the per-connection knobs declared on {@link HarnessAdapterCommandOptions}.
  */
 export interface GenericAcpOptions extends HarnessAdapterCommandOptions {
   /** Spawn argv for the harness's ACP server. */
   command: string[];
+}
+
+/**
+ * The client's answer to an `elicitation/create` form ask: the human
+ * decision through the permission-queue seam, with approve accepting and
+ * deny declining. `content` stays omitted — the queue carries approve/deny,
+ * never form values.
+ */
+export type ElicitationAnswer = { action: "accept" | "decline" | "cancel" };
+
+/** Whether raw server-request params are an `elicitation/create` ask (it carries a `mode`; permission asks never do). */
+function isElicitationParams(params: unknown,): boolean {
+  return typeof (params as { mode?: unknown } | null)?.mode === "string";
+}
+
+/**
+ * Map a human decision onto the elicitation answer. Every decision is
+ * expressible (the spec's accept/decline needs no option ids), so this
+ * never refuses — approvals accept, everything else declines.
+ * @param outcome - the client's decision
+ */
+function elicitationAnswer(outcome: PermissionOutcome,): ElicitationAnswer {
+  return outcome.outcome === "allow_once" || outcome.outcome === "allow_always"
+    ? { action: "accept", }
+    : { action: "decline", };
 }
 
 /** Map a transport error to the adapter's typed error. */
@@ -121,6 +167,12 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   } | null = null;
   /** Resolves once the in-flight prompt request has been written to the wire; `cancel` orders on it. */
   private promptDispatched: Promise<void> = Promise.resolve();
+  /** The mode the session last confirmed via `session/set_mode`; null when never set. */
+  private modeId: string | null = null;
+  /** Protocol version the agent selected at initialize; null before the handshake. */
+  private version: number | null = null;
+  /** Agent capabilities from the initialize result; {} when the agent sent none. */
+  private agentCapabilities: Record<string, unknown> = {};
 
   /**
    * @param options - spawn argv + cwd; the handshake is lazy (typed probe failure).
@@ -219,6 +271,148 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   }
 
   /**
+   * The mode the session last confirmed via `session/set_mode`; null before
+   * the first successful call.
+   * @returns the confirmed mode id, or null.
+   */
+  currentModeId(): string | null {
+    return this.modeId;
+  }
+
+  /**
+   * Switch the session's mode (plan/act) via `session/set_mode`.
+   * @param modeId - the mode id, or omitted for the profile-configured default
+   * @returns the harness's reply (its confirmed mode when it echoes one)
+   * @throws {HarnessAcpError} kind `session` when no mode id is known or the harness rejects it
+   */
+  async setMode(modeId?: string,): Promise<unknown> {
+    const id = modeId ?? this.opts.mode;
+    if (!id) {
+      throw new HarnessAcpError("session", "no mode id: pass one or configure the profile's mode",);
+    }
+
+    try {
+      const sessionId = (await this.ensureSession()).sessionId;
+      const result = await this.rpc!.request("session/set_mode", { sessionId, modeId: id, },) as {
+        currentModeId?: unknown;
+      } | null;
+
+      const confirmed = result && typeof result.currentModeId === "string" && result.currentModeId !== ""
+        ? result.currentModeId
+        : id;
+
+      this.modeId = confirmed;
+      return result;
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Sessions the harness remembers, via `session/list`.
+   * @returns session ids with their cwd, when the harness reports one.
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async listSessions(): Promise<Array<{ sessionId: string; cwd: string | null }>> {
+    try {
+      await this.ensureTransport();
+      const result = await this.rpc!.request("session/list", {},) as {
+        sessions?: Array<{ sessionId?: unknown; cwd?: unknown }>;
+      } | null;
+
+      const sessions = Array.isArray(result?.sessions,) ? result.sessions : [];
+      return sessions.flatMap((entry,) =>
+        typeof entry?.sessionId === "string" && entry.sessionId !== ""
+          ? [{ sessionId: entry.sessionId, cwd: typeof entry.cwd === "string" ? entry.cwd : null, },]
+          : []
+      );
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Re-attach to a remembered session via `session/resume`, without replay:
+   * the transcript restarts empty and the next prompt continues the session.
+   * @param sessionId - the remembered session id
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async resumeSession(sessionId: string,): Promise<void> {
+    try {
+      await this.ensureTransport();
+      const result = await this.rpc!.request("session/resume", { sessionId, },);
+      this.transcript = new TurnTranscriptCollector();
+      this.session = { sessionId, options: result, };
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * Re-attach to a remembered session via `session/load`, replaying its
+   * history: the harness re-emits `session/update` notifications, which the
+   * engine folds into a fresh transcript.
+   * @param sessionId - the remembered session id
+   * @returns the replayed transcript
+   * @throws {HarnessAcpError} kind `session` on failure
+   */
+  async loadSession(sessionId: string,): Promise<HarnessTurnTranscript> {
+    try {
+      await this.ensureTransport();
+      // Bind the target id BEFORE the request: the replay notifications name
+      // it, and the foreign-session filter drops anything not naming the
+      // bound session. The previous binding is restored on failure.
+      const previous = this.session;
+      this.session = { sessionId, options: previous?.options ?? null, };
+      this.transcript = new TurnTranscriptCollector();
+      try {
+        const result = await this.rpc!.request("session/load", { sessionId, },);
+        this.session = { sessionId, options: result, };
+        return this.transcript.snapshot();
+      } catch (error) {
+        this.session = previous;
+        throw error;
+      }
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
+   * The protocol version the agent selected at initialize; null before the
+   * handshake. Read from the initialize RESULT, never from the request.
+   */
+  negotiatedProtocolVersion(): number | null {
+    return this.version;
+  }
+
+  /**
+   * Delete a remembered session via the v2-only `session/delete` method.
+   * ACP v2 gates this method on `capabilities.session.delete`; a v1 agent or
+   * one that did not advertise it never sees the request (version alone is
+   * NOT an invitation to assume the method exists).
+   * @param sessionId - the session to delete
+   * @throws {HarnessAcpError} kind `session` when unadvertised or rejected
+   */
+  async deleteSession(sessionId: string,): Promise<void> {
+    await this.ensureTransport();
+    const session = this.agentCapabilities["session"];
+    const advertised = session !== null && typeof session === "object"
+      ? (session as Record<string, unknown>)["delete"]
+      : undefined;
+
+    if (this.version !== 2 || advertised === undefined || advertised === null) {
+      throw new HarnessAcpError("session", "v2 session/delete is not advertised by this agent",);
+    }
+
+    try {
+      await this.rpc!.request("session/delete", { sessionId, },);
+    } catch (error) {
+      throw toAcpError("session", error,);
+    }
+  }
+
+  /**
    * Run one prompt turn and collect the response.
    * @throws {HarnessAcpError} kind `prompt` on failure
    */
@@ -275,12 +469,16 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     await this.promptDispatched;
     this.rpc.notify("session/cancel", { sessionId: this.session.sessionId, },);
 
-    // A cancelled turn MUST answer every pending permission ask with the
-    // protocol's cancelled outcome (vendored v1 schema, `RequestPermissionOutcome`).
+    // A cancelled turn MUST answer every parked ask with the protocol's
+    // cancelled outcome (vendored v1 schema, `RequestPermissionOutcome`) —
+    // or, for a parked form elicitation, the elicitation spec's `cancel`.
     const open = this.permission;
     if (open) {
       this.permission = null;
-      open.respond({ outcome: { outcome: "cancelled", }, },);
+      open.respond(
+        isElicitationParams(open.pending.params,) ? { action: "cancel", } : { outcome: { outcome: "cancelled", }, },
+      );
+
       this.opts.onPermissionWithdrawn?.();
     }
   }
@@ -309,6 +507,15 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     const open = this.permission;
     if (!open) { throw new PermissionAskGoneError(); }
     this.permission = null;
+    if (isElicitationParams(open.pending.params,)) {
+      // A parked form elicitation answers in its own spec shape, not the
+      // permission shape. The return keeps the declared type (the queue only
+      // logs it), while the wire carries the spec's accept/decline action.
+      const answer = elicitationAnswer(outcome,);
+      open.respond(answer,);
+      return answer as unknown as WirePermissionOutcome;
+    }
+
     const options = advertisedPermissionOptions(open.pending.params,);
     const answer = wirePermissionOutcome(outcome, options,);
     open.respond({ outcome: answer, },);
@@ -343,9 +550,20 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
   private dropTransportState(): void {
     this.rpc = null;
     this.session = null;
+    this.version = null;
+    this.agentCapabilities = {};
     const parked = this.permission !== null;
     this.permission = null;
     if (parked) { this.opts.onPermissionWithdrawn?.(); }
+  }
+
+  /**
+   * Ensure the transport is up without establishing a session: list/resume/
+   * load run against a REMEMBERED id, so they must not mint a fresh one.
+   * @throws {HarnessAcpError} on spawn/initialize failure
+   */
+  private async ensureTransport(): Promise<void> {
+    if (!this.rpc) { await this.ensureSession(); }
   }
 
   /**
@@ -397,15 +615,47 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
     },);
 
     try {
-      await this.rpc.request("initialize", {
-        protocolVersion: PROTOCOL_VERSION,
-        clientInfo: { name: "loop-lore", version: "1", },
-        clientCapabilities: { fs: { readTextFile: this.opts.readTextFile !== undefined, }, },
-      },);
+      const requestedVersion = this.opts.protocolVersion ?? DEFAULT_PROTOCOL_VERSION;
+      if (!Number.isInteger(requestedVersion,) || requestedVersion < 1) {
+        throw new HarnessAcpError("initialize", `invalid requested protocolVersion: ${requestedVersion}`,);
+      }
 
+      const init = await this.rpc.request("initialize", {
+        protocolVersion: requestedVersion,
+        clientInfo: { name: "loop-lore", version: "1", },
+        // Capabilities are advertised only when a handler exists: an omitted
+        // bridge reads as UNSUPPORTED, so a bridge without a handler must
+        // never be advertised.
+        clientCapabilities: {
+          fs: {
+            readTextFile: this.opts.readTextFile !== undefined,
+            writeTextFile: this.opts.writeTextFile !== undefined,
+          },
+        },
+      },) as { protocolVersion?: unknown; capabilities?: unknown } | null;
+
+      // The agent's answer is authoritative: v2-only methods are gated on
+      // what it selected AND advertised, never on what we requested.
+      const chosen = init && typeof init.protocolVersion === "number" && Number.isInteger(init.protocolVersion,)
+        ? init.protocolVersion
+        : requestedVersion;
+
+      if (chosen !== 1 && chosen !== 2) {
+        throw new HarnessAcpError("initialize", `unsupported ACP protocol version: ${chosen}`,);
+      }
+
+      this.version = chosen;
+      this.agentCapabilities = init && typeof init.capabilities === "object" && init.capabilities !== null
+        ? init.capabilities as Record<string, unknown>
+        : {};
+
+      // Absolute roots ride `session/new`; a relative entry is rejected
+      // locally before the request goes out.
+      const additionalDirectories = resolveAdditionalDirectories(this.opts.additionalDirectories,);
       const session = await this.rpc.request("session/new", {
         cwd: this.opts.cwd ?? process.cwd(),
-        mcpServers: [],
+        mcpServers: this.opts.mcpServers ?? [],
+        ...(additionalDirectories.length > 0 ? { additionalDirectories, } : {}),
       },) as {
         sessionId?: unknown;
       };
@@ -431,11 +681,13 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
 
   /**
    * Serve one server-originated request: permission asks park on the engine
-   * until `respondPermission`, fs-read asks go through the injected reader,
-   * anything else answers unsupported. The permission slot stays SINGLE per
-   * connection on purpose (harnesses serialize asks; a concurrent ask is
-   * refused with the protocol's `cancelled` outcome) — multiplexing across
-   * profiles is the runtime queue's job, not this engine's.
+   * until `respondPermission`, form elicitations park on the same single
+   * slot (approve accepts, deny declines), fs bridge asks go through the
+   * injected reader/writer, anything else answers unsupported. The single
+   * slot stays SINGLE per connection on purpose (harnesses serialize asks;
+   * a concurrent ask is refused with the protocol's `cancelled` outcome) —
+   * multiplexing across profiles is the runtime queue's job, not this
+   * engine's.
    * @param method - wire method the harness invoked
    * @param params - raw request params
    * @returns the response result payload.
@@ -472,6 +724,61 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       return promise;
     }
 
+    if (method === "elicitation/create") {
+      return this.serveElicitation(params,);
+    }
+
+    if (method === "fs/read_text_file" || method === "fs/write_text_file") {
+      return this.handleFsRequest(method, params,);
+    }
+
+    return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+  }
+
+  /**
+   * Serve an `elicitation/create` ask through the single human-decision
+   * slot: an elicitation carries no tool kind, so it always requires
+   * approval, and the human answer maps to accept/decline via
+   * {@link respondPermission}. Only `form` is attended — any other mode is
+   * an explicit -32602, never silence (an unanswered request would leave
+   * the agent waiting).
+   * @param params - the raw elicitation request params
+   */
+  private serveElicitation(params: unknown,): Promise<unknown> {
+    const mode = (params as { mode?: unknown } | null)?.mode;
+    if (mode !== "form") {
+      return Promise.reject(
+        new JsonRpcRequestError(
+          `unsupported elicitation mode: ${typeof mode === "string" ? mode : "none"}`,
+          -32602,
+        ),
+      );
+    }
+
+    if (this.permission) {
+      // One ask per connection, as with permission asks — the concurrent
+      // ask is cancelled in its own spec shape.
+      return Promise.resolve({ action: "cancel", } satisfies ElicitationAnswer,);
+    }
+
+    const { promise, resolve, } = Promise.withResolvers<unknown>();
+    const pending: PendingPermission = { params, kind: null, };
+    this.permission = { pending, respond: resolve, };
+    this.opts.onPermissionRequest?.(pending,);
+    return promise;
+  }
+
+  /**
+   * Serve one server-originated fs bridge request: reads go through the
+   * injected reader, writes through the injected writer. Either bridge
+   * answers `-32601` unsupported without its handler — the capability is
+   * advertised only when the handler exists, so this is the harness
+   * ignoring the contract, not a loop-lore gap.
+   * @param method - `fs/read_text_file` or `fs/write_text_file`
+   * @param params - raw request params
+   * @returns the response result payload.
+   */
+  private handleFsRequest(method: string, params: unknown,): Promise<unknown> {
     if (method === "fs/read_text_file") {
       const reader = this.opts.readTextFile;
       if (!reader) {
@@ -489,7 +796,24 @@ export abstract class GenericAcpAdapter implements HarnessAcpAdapter {
       }));
     }
 
-    return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+    const writer = this.opts.writeTextFile;
+    if (!writer) {
+      return Promise.reject(new JsonRpcRequestError(`unsupported server request: ${method}`, -32601,),);
+    }
+
+    const request = params as { path?: unknown; content?: unknown } | null;
+    const path = request?.path;
+    if (typeof path !== "string") {
+      return Promise.reject(new JsonRpcRequestError("fs/write_text_file missing path", -32602,),);
+    }
+
+    const content = request?.content;
+    if (typeof content !== "string") {
+      return Promise.reject(new JsonRpcRequestError("fs/write_text_file missing content", -32602,),);
+    }
+
+    // The spec's WriteTextFileResponse carries only `_meta`: success is `{}`.
+    return writer(path, content,).then(() => ({}));
   }
 
   /**

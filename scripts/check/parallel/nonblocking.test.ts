@@ -77,9 +77,9 @@ afterEach(() => {
   restoreSpawn();
 },);
 
-// ── Bug 1: version-drift — no v* tag → skipped note ─────────────
+// ── Bug 1: version-drift — no release tag → skipped note ─────────────
 
-test("version-drift: no v* tag emits a skipped note, not silence", async () => {
+test("version-drift: no release tag emits a skipped note, not silence", async () => {
   // Empty tag list + valid package version → hits the `else if (packageVersion)`
   // branch that was previously a no-op.
   stubSpawn([
@@ -91,10 +91,28 @@ test("version-drift: no v* tag emits a skipped note, not silence", async () => {
   await runNonBlockingChecks(notes,);
 
   const skipped = notes.filter(
-    (n,) => n.level === "skipped" && n.message.includes("no v* tag",),
+    (n,) => n.level === "skipped" && n.message.includes("no release tag",),
   );
   expect(skipped.length,).toBeGreaterThan(0,);
-  expect(skipped[0]!.message,).toContain("no v* tag found in repository",);
+  expect(skipped[0]!.message,).toContain("no release tag found in repository",);
+});
+// ── Staged candidates compare by base version ─────────────
+
+test("version-drift: rc tag compares by base version", async () => {
+  // An `-rc.N` tag against the same base in package.json is the normal
+  // staged state (package.json only moves at stable).
+  stubSpawn([
+    { pattern: "git tag --list", stdout: "0.1.0-rc.1", },
+    { pattern: 'require("fs")', stdout: "0.1.0", },
+  ],);
+
+  const notes: Array<{ level: string; message: string }> = [];
+  await runNonBlockingChecks(notes,);
+
+  const ok = notes.filter(
+    (n,) => n.level === "ok" && n.message.includes("Version in sync",),
+  );
+  expect(ok.length,).toBeGreaterThan(0,);
 });
 
 // ── Bug 2: markdown-links — broken targets → warn note ───────────
@@ -102,7 +120,7 @@ test("version-drift: no v* tag emits a skipped note, not silence", async () => {
 test("markdown-links: broken targets push a warn note, not only stdout", async () => {
   // Tag version matches → ok branch for version check; md:links returns broken.
   stubSpawn([
-    { pattern: "git tag --list", stdout: "v1.0.0", },
+    { pattern: "git tag --list", stdout: "1.0.0", },
     { pattern: 'require("fs")', stdout: "1.0.0", },
     {
       pattern: "md:links",
@@ -125,7 +143,7 @@ test("markdown-links: broken targets push a warn note, not only stdout", async (
 
 test("all checks push at least one note each", async () => {
   stubSpawn([
-    { pattern: "git tag --list", stdout: "v1.0.0", },
+    { pattern: "git tag --list", stdout: "1.0.0", },
     { pattern: 'require("fs")', stdout: "1.0.0", },
     { pattern: "md:links", stdout: "[] All links OK", },
     { pattern: "license:check", stdout: "[license] MIT License found", },

@@ -15,6 +15,33 @@
  */
 import { execFileSync, } from "node:child_process";
 import { randomUUID, } from "node:crypto";
+import { devNull, } from "node:os";
+
+/**
+ * Deterministic environment for the read-only git metadata calls below.
+ *
+ * Host config is dropped (aliases, credential helpers, hooksPath, gpg settings)
+ * as are the `GIT_*` vars that redirect git to a different repo or config
+ * layer — an inherited `GIT_DIR` would otherwise defeat an explicit `cwd`.
+ * Optional locks are off so a lookup never refreshes the index, and prompts
+ * are off so a failed lookup can never block on a terminal.
+ */
+const GIT_ENV: NodeJS.ProcessEnv = {
+  ...process.env,
+  GIT_DIR: undefined,
+  GIT_WORK_TREE: undefined,
+  GIT_INDEX_FILE: undefined,
+  GIT_COMMON_DIR: undefined,
+  GIT_OBJECT_DIRECTORY: undefined,
+  GIT_ALTERNATE_OBJECT_DIRECTORIES: undefined,
+  GIT_CONFIG_NOSYSTEM: "1",
+  GIT_CONFIG_GLOBAL: devNull,
+  GIT_CONFIG_SYSTEM: devNull,
+  GIT_CONFIG_COUNT: "0",
+  GIT_TERMINAL_PROMPT: "0",
+  GIT_OPTIONAL_LOCKS: "0",
+  LC_ALL: "C",
+};
 
 /** Cached `git rev-parse` output; null until first use, then the two values. */
 let cached: { branch: string | null; gitSha: string | null } | null = null;
@@ -23,11 +50,14 @@ let cached: { branch: string | null; gitSha: string | null } | null = null;
  * Run a `git` subcommand for exec-log metadata, with stderr discarded so a
  * failure can never scribble on the caller's console.
  * @param args - the git subcommand and its flags
+ * @param cwd - directory to run git in; defaults to the process cwd
  * @returns trimmed stdout.
  * @throws the underlying exec error when git fails or times out.
  */
-export function runGit(args: string[],): string {
+export function runGit(args: string[], cwd?: string,): string {
   return execFileSync("git", args, {
+    cwd,
+    env: GIT_ENV,
     encoding: "utf8",
     timeout: 5_000,
     stdio: ["ignore", "pipe", "ignore",],

@@ -23,3 +23,9 @@ Set cards plus 3D/splat preview cards integration (viewer component from the 3D 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Research addendum (2026-11-25)
+
+- 3D/splat cards consume typed `previewRef`/`posterRef` from `GalleryAssetItem`; never load full-size model bytes into a grid.
+- Web and egui modals each need a `model` branch; egui has no binary fetch path today, so that work is separately gated.
+- Facet filters use the one shared evaluator before new UI work; do not fork filter logic per frontend.

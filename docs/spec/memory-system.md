@@ -33,6 +33,19 @@ Secret memories (`privacy: secret`) evaluate shareability FIRST and skip the sco
 
 **Cross-chat event propagation** (`src/story/timeline/world-timeline.ts`): `orderAcrossSessions` (deterministic occurred_at/ingest ordering), `detectEventConflicts` (same actor + same `occurred_at` + divergent descriptions = `same_moment_divergent_description`), and `mergeTimelineEvents` (re-tag one timeline's events into another, dropping exact duplicates).
 
+### Isolation contract
+
+Viewer identity is mandatory: `ProvisionContext.viewerId` is a required `string`
+(`src/memory/provision.ts:21-23`), built from the active `ctx.actor.id` on the
+prompt path (`src/assistant/prompt/sections/memories.ts:44-49`). Each owner's rows
+are fetched by `actor_id` (`fetchActorMemories`,
+`src/assistant/prompt/sections/memories-helpers.ts:153-160`), then
+`checkScope`/`checkPrivacy` gate them against that viewer
+(`src/memory/provision.ts:161-235`): private and non-public character memories
+never reach another viewer. Timeline scoping additionally drops rows bound to a
+different timeline (see "Timeline binding" above). Every caller passes the
+viewer explicitly.
+
 ## Not implemented / aspirational
 
 - `src/generation/context-compressor/` — `strategies.ts` implements `truncateStrategy` + `slidingStrategy`; config-driven lifecycle (YAML `memory:` block) remains aspirational.

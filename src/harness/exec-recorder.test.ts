@@ -10,6 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, } from "node:fs";
 import { join, } from "node:path";
+import { resolveInstanceSlug, } from "../config/state-dir";
 import { callWithFailover, } from "../generation/providers/call-with-failover";
 import type { GenerateResponse, LLMProvider, } from "../generation/providers/types";
 import { INTERACTIVE_TURN, toTaskSignal, } from "../generation/routing/task-signal";
@@ -224,6 +225,81 @@ describe("harness exec recorder", () => {
       expect(parsed?.acpSessionId,).toBe("sess-42",);
       // Snake_case on disk.
       expect(line.includes('"acp_session_id":"sess-42"',),).toBe(true,);
+    });
+
+    it("stamps the instance slug so two instances' runs stay distinguishable", () => {
+      const { serializeRun, deserializeRun, } = typesWire;
+      const base = { taskType: "chat", model: "m", runMs: 1, result: "ok", } as const;
+      const a = buildRunRecord({ ...base, instanceId: "port-4000", },);
+      const b = buildRunRecord({ ...base, instanceId: "port-5000", },);
+      const readA = deserializeRun(JSON.stringify(serializeRun(a,),),);
+      const readB = deserializeRun(JSON.stringify(serializeRun(b,),),);
+      expect(readA?.instanceId,).toBe("port-4000",);
+      expect(readB?.instanceId,).toBe("port-5000",);
+      // Snake_case on disk.
+      expect(JSON.stringify(serializeRun(a,),).includes('"instance_id":"port-4000"',),).toBe(true,);
+    });
+
+    it("defaults an omitted instanceId to this instance's slug", () => {
+      const r = buildRunRecord({ taskType: "chat", model: "m", runMs: 1, result: "ok", },);
+      // The ambient env decides the slug, and PORT=0 makes it undecidable:
+      // the recorder swallows that into null, so the expectation does too.
+      // Reading the SAME env on both sides keeps this independent of which
+      // file ran before it in this worker.
+      let expected: string | null = null;
+      try {
+        expected = resolveInstanceSlug();
+      } catch {
+        expected = null;
+      }
+
+      expect(r.instanceId,).toBe(expected,);
+    });
+
+    it("stamps the config-file port, not 'default', when the bind carries it", () => {
+      const savedPort = process.env.PORT;
+      const savedInstance = process.env.LOOP_LORE_INSTANCE;
+      const savedHost = process.env.HOST;
+      try {
+        // Config-file port with nothing in the environment: the bind wins.
+        process.env.PORT = "";
+        delete process.env.LOOP_LORE_INSTANCE;
+        delete process.env.HOST;
+        const base = { taskType: "chat", model: "m", runMs: 1, result: "ok", } as const;
+        expect(buildRunRecord({ ...base, }, { port: 7169, },).instanceId,).toBe("port-7169",);
+        // Omitted bind preserves the env-only behavior ("default" here).
+        expect(buildRunRecord({ ...base, },).instanceId,).toBe("default",);
+      } finally {
+        if (savedPort === undefined) { delete process.env.PORT; }
+        else { process.env.PORT = savedPort; }
+
+        if (savedInstance === undefined) { delete process.env.LOOP_LORE_INSTANCE; }
+        else { process.env.LOOP_LORE_INSTANCE = savedInstance; }
+
+        if (savedHost === undefined) { delete process.env.HOST; }
+        else { process.env.HOST = savedHost; }
+      }
+    });
+
+    it("stamps null, without throwing, when the slug is undeterminable", () => {
+      const savedPort = process.env.PORT;
+      const savedInstance = process.env.LOOP_LORE_INSTANCE;
+      try {
+        // Ephemeral port with no explicit instance: resolveInstanceSlug throws,
+        // the recorder swallows it into null (fire-and-forget must not break
+        // the egress call it logs).
+        process.env.PORT = "0";
+        delete process.env.LOOP_LORE_INSTANCE;
+        const base = { taskType: "chat", model: "m", runMs: 1, result: "ok", } as const;
+        expect(() => buildRunRecord({ ...base, },)).not.toThrow();
+        expect(buildRunRecord({ ...base, },).instanceId,).toBeNull();
+      } finally {
+        if (savedPort === undefined) { delete process.env.PORT; }
+        else { process.env.PORT = savedPort; }
+
+        if (savedInstance === undefined) { delete process.env.LOOP_LORE_INSTANCE; }
+        else { process.env.LOOP_LORE_INSTANCE = savedInstance; }
+      }
     });
 
     it("coalesces missing/unknown profile fields to null like turnId", () => {

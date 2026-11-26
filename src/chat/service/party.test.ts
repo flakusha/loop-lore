@@ -5,8 +5,10 @@
  * group-chat VN narration (on/off), and error cases (missing chat,
  * leaving a chat you are not in).
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { type Kysely, sql, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { initSmk, } from "../../crypto/smk";
 import {
   ChatParticipantRole,
   MessageContentType,
@@ -22,6 +24,7 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import { joinParty, leaveParty, } from "./party";
+import { injectPartyNarration, } from "./party-narration";
 
 describe("party join/leave (C7)", () => {
   let db: Kysely<DB>;
@@ -216,5 +219,111 @@ describe("party join/leave (C7)", () => {
       const result = await leaveParty(db, { chatId: missingChatId, actorId: heroActorId, },);
       expect(result,).toEqual({ code: "not_found", message: "Chat not found", },);
     });
+  });
+});
+
+describe("CG-18 residual — injected narration is FTS-searchable", () => {
+  let db: Kysely<DB>;
+  let suffix: string;
+  let ownerId: string;
+  let narratorId: string;
+  let chatId: string;
+
+  beforeEach(async () => {
+    suffix = randomUUID().replaceAll("-", "",);
+    ownerId = `u-${suffix}`;
+    narratorId = `n-${suffix}`;
+    chatId = `c-${suffix}`;
+    ({ db, } = await createTestDb());
+
+    await insertUsers(db, `narration-${suffix}`, "Narration User", {
+      id: ownerId,
+      encryption_secret: "9".repeat(64,),
+    } as never,);
+
+    await insertActors(db, "Narrator", {
+      id: narratorId,
+      actor_type: "narrator",
+      agent_type: "narrator",
+    } as never,);
+
+    await insertChats(db, "Narration Chat", ownerId, {
+      id: chatId,
+      type: "group",
+      mode: "group",
+      encryption_level: "standard",
+    } as never,);
+  },);
+
+  afterEach(async () => {
+    await db.destroy();
+  },);
+
+  test("encryption off: narration row carries content_plaintext and FTS MATCH finds it", async () => {
+    const token = `cg18narr${suffix}`;
+    const text = `watchword ${token} end`;
+    await injectPartyNarration(db, chatId, text,);
+
+    const row = await db
+      .selectFrom("messages",)
+      .select(["id", "content_plaintext",],)
+      .where("chat_id", "=", chatId,)
+      .where("content_type", "=", "narration",)
+      .executeTakeFirstOrThrow();
+
+    expect(row.content_plaintext,).toBe(text,);
+
+    const match = await sql<
+      { message_id: string }
+    >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${token}`.execute(db,);
+
+    expect(match.rows.map((r,) => r.message_id),).toContain(row.id,);
+  });
+
+  test("encryption on: encrypted narration stays FTS-searchable without blind tokens", async () => {
+    const token = `cg18narrenc${suffix}`;
+    const text = `watchword ${token} end`;
+    await initSmk({
+      serverEncryptionKey: "b".repeat(64,),
+      required: false,
+      compressThreshold: 1024,
+      compressAlgorithm: "gzip",
+    },);
+
+    process.env.ENABLE_TOKEN_INDEXING = "1";
+    try {
+      await injectPartyNarration(db, chatId, text,);
+
+      const row = await db
+        .selectFrom("messages",)
+        .select(["id", "content", "content_plaintext",],)
+        .where("chat_id", "=", chatId,)
+        .where("content_type", "=", "narration",)
+        .executeTakeFirstOrThrow();
+
+      expect(row.content,).not.toBe(text,);
+      expect(row.content_plaintext,).toBe(text,);
+
+      const match = await sql<
+        { message_id: string }
+      >`SELECT message_id FROM messages_fts WHERE messages_fts MATCH ${token}`.execute(db,);
+
+      expect(match.rows.map((r,) => r.message_id),).toContain(row.id,);
+
+      const blind = await db
+        .selectFrom("message_search_tokens",)
+        .select("term",)
+        .where("message_id", "=", row.id,)
+        .execute();
+
+      expect(blind,).toHaveLength(0,);
+    } finally {
+      delete process.env.ENABLE_TOKEN_INDEXING;
+      await initSmk({
+        required: false,
+        compressThreshold: 1024,
+        compressAlgorithm: "gzip",
+      },);
+    }
   });
 });

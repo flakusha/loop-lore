@@ -13,6 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
+import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { calculateAge, parseExpiryMs, toDate, } from "../utils/date";
 
@@ -74,6 +75,21 @@ export interface AcceptAgeGateOpts {
 // ── Service ──────────────────────────────────────────────────
 
 /**
+ * Modes with a real implementation. The config schema still lists
+ * `verification`, but no distinct verification path exists — accepting it
+ * would silently self-declare, so config boundaries reject it instead.
+ */
+export const SUPPORTED_AGE_GATE_MODES: readonly AgeGateConfig["mode"][] = [
+  AgeGateMode.None,
+  AgeGateMode.SelfDeclaration,
+];
+
+/** True when the mode has a real implementation. */
+export function isSupportedAgeGateMode(mode: AgeGateConfig["mode"],): boolean {
+  return SUPPORTED_AGE_GATE_MODES.includes(mode,);
+}
+
+/**
  * Check the age gate status for a given user.
  *
  * When age gate is disabled (`enabled=false` or `mode="none"`),
@@ -120,20 +136,14 @@ export function getStatus(
  * @returns {void}
  */
 export function validateAge(birthDate: string, minimumAge: number,): void {
-  const parsed = parseExpiryMs(birthDate,);
-  if (parsed === null) {
+  if (parseExpiryMs(birthDate,) === null) {
     throw new AgeGateError("Invalid birth date. Expected YYYY-MM-DD format.",);
   }
 
-  const birth = toDate(parsed,);
-  const today = new Date();
-
-  // Calculate age in years relative to today
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-  const dayDiff = today.getDate() - birth.getDate();
-  if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-    age--;
+  // One age verdict for accept and for every later check (RA-14).
+  const age = calculateAge(birthDate,);
+  if (age === null) {
+    throw new AgeGateError("Invalid birth date. Expected YYYY-MM-DD format.",);
   }
 
   if (age < minimumAge) {
@@ -158,14 +168,17 @@ export async function acceptAgeGate({ database, config, userId, input, }: Accept
     return;
   }
 
-  validateAge(input.birthDate, config.minimumAge,);
+  // Normalise once at the write: a client-supplied offset would otherwise be
+  // re-parsed on every later check and could shift the calendar day (RA-14).
+  const canonicalBirthDate = toDate(input.birthDate,).toISOString().slice(0, 10,);
+  validateAge(canonicalBirthDate, config.minimumAge,);
 
   const now = new Date().toISOString();
 
   await database
     .updateTable("users",)
     .set({
-      birth_date: input.birthDate,
+      birth_date: canonicalBirthDate,
       age_gate_accepted_at: now,
     },)
     .where("id", "=", userId,)

@@ -27,7 +27,7 @@ import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { dot, embedText, resolveEmbedModel, } from "./embed-provider";
-import { fetchMemoryTexts, rerankViaLlamaCpp, } from "./rerank";
+import { fetchMemoryTexts, rerankViaLlamaCpp, resolveRerankModel, } from "./rerank";
 
 export { embedText, } from "./embed-provider";
 
@@ -40,10 +40,13 @@ export interface EmbeddedMemory {
   vector: Float32Array;
 }
 
-/** */
+/** A cosine-ranked candidate returned by semantic recall. */
 export interface SemanticMatch {
   memoryId: string;
+  /** Ordering score: cosine, or reranker relevance when the rerank stage ran. */
   score: number;
+  /** Original cosine similarity, preserved across rerank (not comparable to `score`). */
+  cosineScore: number;
 }
 
 // ── Storage ────────────────────────────────────────────────────────────────
@@ -124,7 +127,10 @@ export function rankBySimilarity(
   minScore = 0.5,
 ): SemanticMatch[] {
   return candidates
-    .map(({ memoryId, vector, },) => ({ memoryId, score: dot(queryVec, vector,), }))
+    .map(({ memoryId, vector, },) => {
+      const score = dot(queryVec, vector,);
+      return { memoryId, score, cosineScore: score, };
+    },)
     .filter((m,) => m.score >= minScore)
     .sort((a, b,) => b.score - a.score)
     .slice(0, topK,);
@@ -168,8 +174,9 @@ export async function getStoredVectors(
  *   3. rank by cosine similarity (minScore gates this stage)
  *   4. optional cross-encoder rerank of the shortlist (RERANK_MODEL)
  *
- * Returns ids sorted by relevance — cosine scores, or reranker relevance
- * scores when the rerank stage runs (the two are not comparable).
+ * Returns ids sorted by relevance. `score` is reranker relevance when the
+ * rerank stage runs; `cosineScore` always keeps the original cosine value (the
+ * two are not comparable — callers with a cosine floor must read `cosineScore`).
  * @param db
  * @param candidateIds
  * @param queryText
@@ -200,8 +207,11 @@ export async function semanticRecall(
 
   const ranked = rankBySimilarity(candidates, queryVec, topK, minScore,);
 
-  const rerankModel = process.env.RERANK_MODEL;
-  if (!rerankModel || ranked.length === 0) { return ranked; }
+  if (ranked.length === 0) { return ranked; }
+  const config = loadConfig();
+  // Explicit rerank role wins; env-only legacy setups keep working unchanged.
+  const rerankModel = (await resolveRerankModel(config, db,)) ?? process.env.RERANK_MODEL;
+  if (!rerankModel) { return ranked; }
 
   // Rerank stage: shortlist the top cosine matches, rerank via llama.cpp,
   // slice to topK.  Rerank scores are not comparable to cosine scores, so
@@ -210,18 +220,18 @@ export async function semanticRecall(
   try {
     const documents = await fetchMemoryTexts(db, shortlist.map((m,) => m.memoryId),);
     // `routing` lets the router order the rerank endpoint candidates for the
-    // `background` task signal; absent it, env precedence wins unchanged.
+    // `reranking` task signal; absent it, env precedence wins unchanged.
     const hits = await rerankViaLlamaCpp(queryText, documents, {
       model: rerankModel,
       topN: topK,
-      routing: loadConfig().generation.routing,
+      routing: config.generation.routing,
     },);
 
     const reordered: SemanticMatch[] = [];
     for (const { index, score, } of hits) {
       const match = shortlist[index];
       if (!match) { throw new Error(`Rerank index ${index} outside the shortlist.`,); }
-      reordered.push({ memoryId: match.memoryId, score, },);
+      reordered.push({ memoryId: match.memoryId, score, cosineScore: match.cosineScore, },);
     }
 
     return reordered.slice(0, topK,);

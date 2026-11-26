@@ -17,9 +17,9 @@ import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 
-import { createSqliteDialect, } from "@/db";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
+import { createSqliteDialect, } from "../../../../../src/db";
+import type { DB, } from "../../../../../src/db/schema";
+import { createLogger, } from "../../logger";
 import { ensureActiveSession, findSession, revokeSession, } from "./e2e-session";
 
 const OWNER = "cov-sess-owner";
@@ -37,7 +37,7 @@ const GROUP_CHAT_2 = "cov-sess-group-chat-2";
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const migrationDir = path.join(__dirname, "..", "..", "db", "migrations",);
+      const migrationDir = path.join(__dirname, "..", "..", "..", "..", "..", "src", "db", "migrations",);
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

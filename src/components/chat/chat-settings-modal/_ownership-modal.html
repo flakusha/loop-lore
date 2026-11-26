@@ -1,0 +1,83 @@
+<!-- Ownership Transfer Modal — confirmation + new-owner selector + reason -->
+<div
+  x-show="_ownershipModalOpen"
+  x-cloak
+  :class="{ open: _ownershipModalOpen }"
+  class="modal-overlay"
+  @click.self="closeOwnershipTransferModal()"
+  @keydown.escape.window="closeOwnershipTransferModal()"
+  data-testid="ownership-transfer-modal"
+>
+  <div class="modal" style="max-width: 380px">
+    <div class="modal-header">
+      <span class="title">Transfer Chat Ownership</span>
+      <button
+        class="btn-icon"
+        @click="closeOwnershipTransferModal()"
+        x-bind:aria-label="t('common.close')"
+        data-testid="ownership-transfer-close"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+        Choose a participant to take ownership. The previous owner will be notified and demoted to member.
+      </p>
+      <div class="form-group">
+        <label class="form-label" for="ownership-new-owner">New Owner</label>
+        <select
+          class="form-input"
+          id="ownership-new-owner"
+          x-model="_ownershipNewOwnerId"
+          data-testid="ownership-new-owner"
+        >
+          <option value="">— Select participant —</option>
+          <template x-for="p in _chatParticipants" :key="p.actor_id">
+            <option :value="p.actor_id" x-text="p.display_name || p.name"></option>
+          </template>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ownership-reason">Reason (optional)</label>
+        <textarea
+          class="form-input form-textarea"
+          id="ownership-reason"
+          rows="2"
+          maxlength="500"
+          x-model="_ownershipReason"
+          x-init="autoResize($el)"
+          @input="autoResize($el)"
+          placeholder="Why are you transferring ownership?"
+          data-testid="ownership-reason"
+        ></textarea>
+      </div>
+      <div
+        x-show="_ownershipError"
+        class="form-group"
+        style="color: var(--color-error, #c00); font-size: 13px"
+        data-testid="ownership-error"
+      >
+        <span x-text="_ownershipError"></span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="btn btn-ghost"
+        @click="closeOwnershipTransferModal()"
+        data-testid="ownership-transfer-cancel"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn btn-warning"
+        @click="submitOwnershipTransfer()"
+        :disabled="_ownershipSubmitting || !_ownershipNewOwnerId"
+        data-testid="ownership-transfer-submit"
+      >
+        <span x-show="!_ownershipSubmitting">Transfer</span>
+        <span x-show="_ownershipSubmitting">Transferring…</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -26,26 +26,28 @@ function ok<T,>(data: T,): Promise<FetchResult<T>> {
 }
 
 function route(): void {
-  setFetch(<T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
-    calls.push({ url, options: options ?? {}, },);
-    if (url.endsWith("/messages",)) {
-      return ok({ id: "m-1", assistantMessage: { id: "m-2", content: "hi", }, } as T,);
-    }
+  setFetch(
+    <T,>(url: string, options?: SafeFetchOptions,): Promise<FetchResult<T>> => {
+      calls.push({ url, options: options ?? {}, },);
+      if (url.endsWith("/messages",)) {
+        return ok({ id: "m-1", assistantMessage: { id: "m-2", content: "hi", }, } as T,);
+      }
 
-    if (url.includes("/commands",)) {
-      return ok({ data: [{ name: "help", }, { name: "halt", },], } as T,);
-    }
+      if (url.includes("/commands",)) {
+        return ok({ data: [{ name: "help", }, { name: "halt", },], } as T,);
+      }
 
-    if (url.endsWith("/generation/image",)) {
-      return ok({ data: [{ id: "a-1", filename: "out.png", },], } as T,);
-    }
+      if (url.endsWith("/generation/image",)) {
+        return ok({ data: [{ id: "a-1", filename: "out.png", },], } as T,);
+      }
 
-    if (url.endsWith("/assets",) && options?.method === "POST") {
-      return ok({ id: "up-1", } as T,);
-    }
+      if (url.endsWith("/assets",) && options?.method === "POST") {
+        return ok({ id: "up-1", } as T,);
+      }
 
-    return ok({} as T,);
-  },);
+      return ok({} as T,);
+    },
+  );
 }
 
 beforeEach(() => {

@@ -42,3 +42,6 @@ integration-facing slices; subsystem-level queue/orchestration work links here.
 - Operator lands `orchestration-queue` (or it is superseded with a note here).
 - Turn-queue ticket status reflects landed reality.
 - `bun run plan:validate` green.
+
+
+git issue: fbf71e8

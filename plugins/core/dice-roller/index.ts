@@ -1,16 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * Dice Module — Barrel exports (used by plugin.ts manifest)
- */
-
-export { rollDice, rollExpression, parseDiceNotation, parseTextCommand, isRollCommand } from "./engine";
-export { handleRoll } from "./routes";
-export type {
-  DiceRollResult,
-  DiceParseResult,
-  DiceError,
-  DiceOutcome,
-  RollTextCommand,
-} from "./types";
+export * from "@loop-lore/plugins/root/core/dice-roller/index";

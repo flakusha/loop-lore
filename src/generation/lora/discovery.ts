@@ -9,22 +9,16 @@
  * @module generation/lora/discovery
  */
 
+import {
+  cachedDiscovery,
+  cachedValues,
+  clearCachedDiscovery,
+  DISCOVERY_TTL_MS,
+  getCacheStatus as getSharedCacheStatus,
+} from "../discovery-cache";
 import { discoverComfyUILoras, } from "./discovery-comfyui";
 import { discoverSdCppLoras, } from "./discovery-sdserver";
 import type { LoRADiscoveryResult, LoRAModel, } from "./types";
-
-// ── Cache ────────────────────────────────────────────────
-
-interface CacheEntry {
-  result: LoRADiscoveryResult;
-  expiresAt: number;
-}
-
-/** Discovery cache (backend → result) */
-const discoveryCache = new Map<string, CacheEntry>();
-
-/** Default cache TTL (5 minutes) */
-const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000;
 
 // ── Discovery Functions ──────────────────────────────────
 
@@ -45,50 +39,34 @@ export async function discoverLoras(
     forceRefresh?: boolean;
   },
 ): Promise<LoRADiscoveryResult> {
-  const cacheKey = `${backend}:${baseUrl}`;
-  const ttl = options?.timeoutMs ?? DEFAULT_CACHE_TTL_MS;
+  return cachedDiscovery<LoRADiscoveryResult>(
+    `${backend}:${baseUrl}`,
+    async () => {
+      switch (backend) {
+        case "comfyui": {
+          return discoverComfyUILoras(baseUrl, options?.timeoutMs,);
+        }
 
-  // Check cache (unless forced refresh)
-  if (!options?.forceRefresh) {
-    const cached = discoveryCache.get(cacheKey,);
-    if (cached && cached.expiresAt > Date.now()) {
-      return cached.result;
-    }
-  }
+        case "sd-server": {
+          return discoverSdCppLoras(baseUrl, options?.timeoutMs,);
+        }
 
-  // Perform discovery
-  let result: LoRADiscoveryResult;
-
-  switch (backend) {
-    case "comfyui": {
-      result = await discoverComfyUILoras(baseUrl, options?.timeoutMs,);
-      break;
-    }
-
-    case "sd-server": {
-      result = await discoverSdCppLoras(baseUrl, options?.timeoutMs,);
-      break;
-    }
-
-    default: {
-      result = {
-        models: [],
-        backend,
-        timestamp: Date.now(),
-        error: `Unknown backend: ${backend as string}`,
-      };
-    }
-  }
-
-  // Cache successful results
-  if (!result.error) {
-    discoveryCache.set(cacheKey, {
-      result,
-      expiresAt: Date.now() + ttl,
-    },);
-  }
-
-  return result;
+        default: {
+          return {
+            models: [],
+            backend,
+            timestamp: Date.now(),
+            error: `Unknown backend: ${backend as string}`,
+          };
+        }
+      }
+    },
+    {
+      ttlMs: options?.timeoutMs ?? DISCOVERY_TTL_MS,
+      forceRefresh: options?.forceRefresh,
+      shouldCache: (result,) => !result.error,
+    },
+  );
 }
 
 /**
@@ -125,16 +103,10 @@ export async function discoverAllLoras(
  * @returns Array of cached LoRA models
  */
 export function getCachedLoras(): LoRAModel[] {
-  const models: LoRAModel[] = [];
-  const now = Date.now();
-
-  for (const entry of discoveryCache.values()) {
-    if (entry.expiresAt > now) {
-      models.push(...entry.result.models,);
-    }
-  }
-
-  return models;
+  return [
+    ...cachedValues<LoRADiscoveryResult>("comfyui:",),
+    ...cachedValues<LoRADiscoveryResult>("sd-server:",),
+  ].flatMap((result,) => result.models);
 }
 
 /**
@@ -143,15 +115,7 @@ export function getCachedLoras(): LoRAModel[] {
  * @returns {void}
  */
 export function clearDiscoveryCache(backend?: "comfyui" | "sd-server",): void {
-  if (backend) {
-    for (const key of discoveryCache.keys()) {
-      if (key.startsWith(`${backend}:`,)) {
-        discoveryCache.delete(key,);
-      }
-    }
-  } else {
-    discoveryCache.clear();
-  }
+  clearCachedDiscovery(backend ? `${backend}:` : undefined,);
 }
 
 /**
@@ -159,16 +123,5 @@ export function clearDiscoveryCache(backend?: "comfyui" | "sd-server",): void {
  * @returns Cache entry count and expiration info
  */
 export function getCacheStatus(): { entries: number; nextExpiration: number | null } {
-  let nextExpiration: number | null = null;
-
-  for (const entry of discoveryCache.values()) {
-    if (nextExpiration === null || entry.expiresAt < nextExpiration) {
-      nextExpiration = entry.expiresAt;
-    }
-  }
-
-  return {
-    entries: discoveryCache.size,
-    nextExpiration,
-  };
+  return getSharedCacheStatus();
 }

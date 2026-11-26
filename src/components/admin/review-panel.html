@@ -1,0 +1,84 @@
+<!-- Audit Tab -->
+<!-- Review Tab -->
+<div x-show="activeTab === 'review'">
+  <div style="padding: var(--space-6)">
+    <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+      <h3 style="font-size: 16px; font-weight: 600; margin-right: auto">Content Review</h3>
+      <select
+        class="form-input"
+        style="font-size: 12px; max-width: 160px"
+        x-model="reviewStatus"
+        @change="loadReview()"
+      >
+        <option value="pending">Pending</option>
+        <option value="under_review">Under review</option>
+        <option value="resolved">Resolved</option>
+        <option value="dismissed">Dismissed</option>
+        <option value="confirmed">Upheld</option>
+      </select>
+      <button class="btn btn-primary btn-xs" @click="loadReview()" :disabled="loadingReview">Refresh</button>
+    </div>
+    <!-- Stats cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-4)">
+      <div class="admin-stat-card">
+        <div class="admin-stat-value" x-text="reviewStats.pending">0</div>
+        <div class="admin-stat-label">Pending</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-value" x-text="reviewStats.total">0</div>
+        <div class="admin-stat-label">Total flags</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-value" x-text="reviewStats.falsePositiveRate + '%'">0</div>
+        <div class="admin-stat-label">False positive</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-value" x-text="reviewStats.dismissed">0</div>
+        <div class="admin-stat-label">Dismissed</div>
+      </div>
+    </div>
+    <div x-show="loadingReview" class="empty-state" style="padding: var(--space-8)">
+      <div class="icon">⏳</div>
+      <div class="title">Loading review queue…</div>
+    </div>
+    <template x-if="!loadingReview">
+      <div>
+        <div
+          x-show="reviewFlags.length === 0"
+          style="font-size: 13px; color: var(--text-secondary, #6c757d); padding: var(--space-4)"
+        >
+          No flags in this queue.
+        </div>
+        <template x-for="f in reviewFlags" :key="f.id">
+          <div style="padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
+            <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap">
+              <span style="font-weight: 500" x-text="f.contentType + ' · ' + f.contentId.slice(0, 8)"></span>
+              <span
+                x-text="f.status"
+                style="font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--bg-secondary, #f0f0f0)"
+              ></span>
+              <span style="color: var(--text-secondary, #6c757d)" x-text="f.flagReason"></span>
+            </div>
+            <div
+              x-show="f.description"
+              style="margin: 4px 0; color: var(--text-secondary, #6c757d)"
+              x-text="f.description"
+            >
+            </div>
+            <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: 6px">
+              <input
+                class="form-input"
+                style="font-size: 12px; flex: 1; max-width: 280px"
+                placeholder="Resolution note…"
+                x-model="reviewResolution[f.id]"
+              />
+              <button class="btn btn-success btn-xs" @click="resolveFlag(f.id, 'resolved')">Keep</button>
+              <button class="btn btn-warning btn-xs" @click="resolveFlag(f.id, 'confirmed')">Upheld</button>
+              <button class="btn btn-danger btn-xs" @click="resolveFlag(f.id, 'dismissed')">Dismiss</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</div>

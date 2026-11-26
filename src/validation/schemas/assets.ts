@@ -1,53 +1,76 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * Asset search validation schemas (unified-search gallery endpoint).
- */
-
 import { t, } from "elysia";
-import { AssetTypeSchema, AssetVisibilitySchema } from "./primitives";
-
-export const AssetSearchQuery = t.Object({
-  /** Fuzzy query over file name + description (required). */
-  q: t.String({ minLength: 1, maxLength: 200 }),
-  /** Restrict to one asset type. */
-  assetType: t.Optional(AssetTypeSchema),
-  /** Restrict to one visibility (non-admins only ever see their own + public). */
-  visibility: t.Optional(AssetVisibilitySchema),
-  /** Max hits per page. */
-  limit: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 20 })),
-  /** Result offset for pagination. */
-  offset: t.Optional(t.Numeric({ minimum: 0, default: 0 })),
-});
-
-export const AssetSearchResult = t.Object({
-  assetId: t.String(),
-  filename: t.String(),
-  altText: t.Nullable(t.String()),
-  assetType: t.String(),
-  mimeType: t.String(),
-  visibility: t.String(),
-  /** Fuzzy relevance in (0, 1]; higher is better. */
-  matchScore: t.Number(),
-});
-
-export const AssetSearchResponse = t.Object({
-  results: t.Array(AssetSearchResult),
-  total: t.Number(),
-  hasMore: t.Boolean(),
-  query: t.String(),
-});
 
 // ── Batch operations (gallery batch §7.7) ────────────────────────────────
 
 /**
  * Body for `POST /api/assets/batch-download` and `POST /api/assets/batch-delete`:
  * the gallery's selected asset ids. Capped at the gallery page-size ceiling (200)
- * so a single request cannot zip or delete an unbounded set.
+ * so a single request cannot zip or delete an unbounded set. The download route
+ * additionally accepts an optional chat context (decrypts chat-encrypted assets
+ * linked to that chat instead of skipping them) and a naming-mode override.
  */
 export const AssetBatchIdsBody = t.Object({
   ids: t.Array(t.String(), { minItems: 1, maxItems: 200, },),
+  chatId: t.Optional(t.String(),),
+  naming: t.Optional(t.Union([
+    t.Literal("raw",),
+    t.Literal("datetime",),
+    t.Literal("hash",),
+    t.Literal("datetime-hash",),
+  ],),),
+},);
+
+/**
+ * Body for `POST /api/assets/download-all`: the gallery's current search/filter
+ * set. Reuses the gallery grid visibility + linked-entity + tag filters, so the
+ * zip holds exactly what the requester sees. Hard-capped at 500 assets per
+ * request; the response carries `X-Download-Truncated: true` past the cap.
+ */
+export const AssetDownloadAllBody = t.Object({
+  q: t.Optional(t.String(),),
+  type: t.Optional(t.String(),),
+  entityType: t.Optional(t.String(),),
+  entityId: t.Optional(t.String(),),
+  tag: t.Optional(t.String(),),
+  chatId: t.Optional(t.String(),),
+  naming: t.Optional(t.Union([
+    t.Literal("raw",),
+    t.Literal("datetime",),
+    t.Literal("hash",),
+    t.Literal("datetime-hash",),
+  ],),),
+},);
+
+/**
+ * Body for `PUT /api/assets/preferences`: the caller's download-naming
+ * override. Null clears it back to the admin `assets.downloadNaming` default.
+ */
+export const AssetPreferencesBody = t.Object({
+  downloadNaming: t.Union([
+    t.Literal("raw",),
+    t.Literal("datetime",),
+    t.Literal("hash",),
+    t.Literal("datetime-hash",),
+    t.Null(),
+  ],),
+},);
+
+/**
+ * Response for `GET /api/assets/preferences` and `PUT /api/assets/preferences`:
+ * the caller's override (null follows the admin default).
+ */
+export const AssetPreferencesResponse = t.Object({
+  ok: t.Boolean(),
+  downloadNaming: t.Union([
+    t.Literal("raw",),
+    t.Literal("datetime",),
+    t.Literal("hash",),
+    t.Literal("datetime-hash",),
+    t.Null(),
+  ],),
 },);
 
 /**

@@ -17,6 +17,7 @@ export { DATABASE_DEFAULTS, databaseMeta, DatabaseSection, } from "./database";
 export { DOCS_DEFAULTS, docsMeta, DocsSection, } from "./docs";
 export { DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta, DynamicResponseSection, } from "./dynamic-response";
 export { ENCRYPTION_DEFAULTS, encryptionMeta, EncryptionSection, } from "./encryption";
+export { FEATURES_DEFAULTS, } from "./features";
 export { GENERATION_DEFAULTS, generationMeta, GenerationSection, } from "./generation";
 export {
   HARNESS_DEFAULTS,
@@ -33,6 +34,7 @@ export {
 } from "./integrations";
 export { ITEMS_DEFAULTS, itemsMeta, ItemsSection, } from "./items";
 export { LOGGING_DEFAULTS, loggingMeta, LoggingSection, } from "./logging";
+export { MCP_DEFAULTS, mcpMeta, validateMcpConfig, } from "./mcp";
 export { MESSAGES_DEFAULTS, messagesMeta, MessagesSection, } from "./messages";
 export { NSFW_DEFAULTS, nsfwMeta, NsfwSection, } from "./nsfw";
 export {

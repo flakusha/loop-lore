@@ -12,9 +12,18 @@
 // Production callers go through `src/db/index.ts` which still defaults to DATA_DIR for the
 // actual server, so this only affects test workers.
 if (typeof process !== "undefined" && !process.env.LOOP_LORE_DB_PATH) {
-  const { tmpdir, } = await import("node:os");
+  const { mkdtempSync, rmSync, } = await import("node:fs");
   const { join, } = await import("node:path");
-  process.env.LOOP_LORE_DB_PATH = join(tmpdir(), `loop-lore-test-${process.pid}-${Date.now()}.db`,);
+  const { appTmpRoot, } = await import("../src/test-utils/tmp-root");
+  const dir = mkdtempSync(join(appTmpRoot("test",), "db-",),);
+  process.env.LOOP_LORE_DB_PATH = join(dir, "loop-lore-test.db",);
+  process.on("exit", () => {
+    try {
+      rmSync(dir, { recursive: true, force: true, },);
+    } catch {
+      // Best-effort test scratch cleanup.
+    }
+  },);
 }
 if (typeof globalThis.document === "undefined") {
   (globalThis as any).document = {

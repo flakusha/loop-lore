@@ -13,9 +13,15 @@ import type { ApiFetchMock, } from "../../tests/test-types";
 
 // All five sub-states use the ambient `apiFetch` global (no htmx import), so
 // stub globalThis directly and restore afterwards — never mock.module i18n.
-const g = globalThis as unknown as { apiFetch?: ApiFetchMock; showToast?: (...args: unknown[]) => void };
+const g = globalThis as unknown as {
+  apiFetch?: ApiFetchMock;
+  showToast?: (...args: unknown[]) => void;
+  confirm?: (message: string,) => boolean;
+};
+
 const originalFetch = g.apiFetch;
 const originalToast = g.showToast;
+const originalConfirm = g.confirm;
 
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
@@ -37,11 +43,14 @@ beforeEach(() => {
   g.showToast = (type, message,) => {
     toasts.push({ type: type as string, message: message as string, },);
   };
+
+  g.confirm = () => true;
 },);
 
 afterEach(() => {
   g.apiFetch = originalFetch;
   g.showToast = originalToast;
+  g.confirm = originalConfirm;
 },);
 
 describe("capabilitiesState fetch", () => {
@@ -260,6 +269,105 @@ describe("pluginState fetch", () => {
     const ctx = { ...pluginState, loadPlugins: async () => {}, };
     await pluginState.togglePlugin!.call(ctx, "pl", false,);
     expect(toasts[0]?.type,).toBe("error",);
+  });
+
+  test("loadDiscover stores the list and clears loading", async () => {
+    mockFetch(200, [{ name: "new", origin: "community", version: "1.0.0", description: "d", author: "a", },],);
+    const ctx = { ...pluginState, discoverList: [], loadingDiscover: false, };
+    await pluginState.loadDiscover!.call(ctx,);
+    expect(ctx.discoverList,).toHaveLength(1,);
+    expect(ctx.loadingDiscover,).toBe(false,);
+  });
+
+  test("installPlugin posts the name and refreshes both lists", async () => {
+    mockFetch(200, { ok: true, },);
+    let loaded = 0;
+    let discovered = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {
+        discovered++;
+      },
+    };
+
+    await pluginState.installPlugin!.call(ctx, "pl",);
+    expect(calls[0]!.url,).toBe("/api/v1/plugins/install",);
+    expect(calls[0]!.opts.method,).toBe("POST",);
+    expect(String(calls[0]!.opts.body,),).toBe('{"name":"pl"}',);
+    expect(loaded,).toBe(1,);
+    expect(discovered,).toBe(1,);
+  });
+
+  test("installPlugin toasts the server error without refreshing", async () => {
+    mockFetch(409, { error: "Plugin already installed", },);
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.installPlugin!.call(ctx, "pl",);
+    expect(toasts[0],).toEqual({ type: "error", message: "Plugin already installed", },);
+    expect(loaded,).toBe(0,);
+  });
+
+  test("uninstallPlugin deletes by name and refreshes both lists", async () => {
+    mockFetch(200, { ok: true, },);
+    let loaded = 0;
+    let discovered = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {
+        discovered++;
+      },
+    };
+
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
+    expect(calls[0]!.url,).toBe("/api/v1/plugins/pl",);
+    expect(calls[0]!.opts.method,).toBe("DELETE",);
+    expect(loaded,).toBe(1,);
+    expect(discovered,).toBe(1,);
+  });
+
+  test("uninstallPlugin surfaces the disabled precondition message", async () => {
+    mockFetch(400, { error: "Plugin must be disabled before uninstalling", },);
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
+    expect(toasts[0],).toEqual({ type: "error", message: "Plugin must be disabled before uninstalling", },);
+    expect(loaded,).toBe(0,);
+  });
+
+  test("uninstallPlugin sends no DELETE when the operator cancels", async () => {
+    g.confirm = () => false;
+    let loaded = 0;
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        loaded++;
+      },
+      loadDiscover: async () => {},
+    };
+
+    await pluginState.uninstallPlugin!.call(ctx, "pl",);
+    expect(calls,).toHaveLength(0,);
+    expect(loaded,).toBe(0,);
   });
 });
 

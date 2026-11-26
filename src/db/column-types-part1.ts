@@ -133,13 +133,45 @@ export const PART_1: Record<string, Record<string, string>> = {
     "asset_class": "StorageBudgetScope",
     "eviction_policy": "StorageEvictionPolicy",
   },
-  // 095_integration_tokens (ADR-credentials-issuer-model admin-scoped slice)
+  // 097_integration_tokens (ADR-credentials-issuer-model admin-scoped slice)
   "IntegrationTokens": {
     "scopes": "IntegrationTokenScope",
+  },
+  // 114_rsi_agent_tokens (RSI agent API scope tiers)
+  "AgentTokens": {
+    "scope": "AgentTokenScope",
   },
   "GenerationAttempts": {
     "cancel_reason": "CancelReason",
     "cancel_source": "CancelSource",
     "status": "GenerationStatus",
+  },
+  // 107_ivss_scenario_fragments (workflow-agnostic director manifest)
+  "Scenarios": {
+    "status": "ScenarioStatus",
+  },
+  "ScenarioScenes": {
+    "mode": "SceneMode",
+    "status": "SceneStatus",
+  },
+  "ScenarioShots": {
+    "cut_type": "CutType",
+  },
+  "ScenarioFragments": {
+    "mode": "SceneMode",
+    "operation": "FragmentOperation",
+    "status": "FragmentStatus",
+    "transition": "CutType",
+  },
+  // 108_ivss_scenario_references_docs_annotations
+  "ScenarioReferences": {
+    "lane": "ReferenceLane",
+    "scope": "ReferenceScope",
+  },
+  "ScenarioDocs": {
+    "kind": "ScenarioDocKind",
+  },
+  "Annotations": {
+    "target_type": "AnnotationTargetType",
   },
 };

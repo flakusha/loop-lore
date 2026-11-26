@@ -3,8 +3,8 @@
 
 // src/config/schema/generation.ts — Generation config type
 
-import type { OutputStylePreset, } from "@/chat/output-style";
-import type { GenerationRoutingConfig, } from "@/generation/routing/routing-config";
+import type { OutputStylePreset, } from "../../../../../src/chat/output-style";
+import type { GenerationRoutingConfig, } from "../../../../../src/generation/routing/routing-config";
 import type { AutoStartConfig, } from "./auto-start";
 import type { GenerationProvidersConfig, } from "./providers";
 
@@ -103,6 +103,18 @@ export interface ImageRoutingConfig {
   comfyUiFirst?: boolean;
 }
 
+/** Use-case scenarios that can drive ranking-based model-role autoroute. */
+export const AUTOROUTE_SCENARIOS = [
+  "general",
+  "chat",
+  "coding",
+  "local",
+  "observed",
+] as const;
+
+/** One of {@link AUTOROUTE_SCENARIOS}. */
+export type AutorouteScenario = (typeof AUTOROUTE_SCENARIOS)[number];
+
 /** */
 export interface GenerationConfig {
   /** Provider configurations */
@@ -113,6 +125,9 @@ export interface GenerationConfig {
   defaultProvider: string;
   /** Default model per provider (providerName → modelId) */
   defaultModels: Record<string, string>;
+  /** Use-case scenario whose ranking rows select unassigned model roles.
+   * Unset (default) keeps the previous manual/default behavior. */
+  autorouteScenario?: AutorouteScenario;
   /** Auto-spawn external AI servers at startup (llama.cpp, sd.cpp) */
   autoStart?: AutoStartConfig;
   /** Default streaming mode when chat-level setting is null. null = use provider capability */
@@ -133,6 +148,8 @@ export interface GenerationConfig {
      * model — see resolveTranslatorProvider.
      */
     translator?: ModelRoleAssignment;
+    /** Dedicated cross-encoder rerank; unset falls back to RERANK_MODEL. */
+    rerank?: ModelRoleAssignment;
   };
   /** Model routing policy (see generation/routing/). Default is a no-op. */
   routing?: GenerationRoutingConfig;

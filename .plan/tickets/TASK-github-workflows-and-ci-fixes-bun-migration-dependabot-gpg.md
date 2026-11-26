@@ -14,10 +14,11 @@ CI failures: commit-check rejects Revert commits; dependabot misconfigured as np
 
 **Context:**
 
-(fill in before starting: why this change, constraints, alternatives considered.)
+CI currently assumes GPG credentials that CI runners do not necessarily have, checks Dependabot under the wrong ecosystem, and rejects valid git-generated revert subjects. This update scopes the existing ticket without changing its title: set or safely bypass the GPG precheck on CI gates, switch Dependabot to Bun, and accept `Revert "..."` first-line commit shapes.
 
 **Acceptance Criteria:**
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [ ] CI gates do not abort on a missing local GPG credential expectation.
+- [ ] Dependabot uses the repository's Bun ecosystem.
+- [ ] `commit-check` accepts git-generated `Revert "..."` subjects that are otherwise valid.
+- [ ] Relevant checks pass.

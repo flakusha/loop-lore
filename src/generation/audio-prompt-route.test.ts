@@ -6,16 +6,32 @@
  * request validation, and the success path (provider dispatch + asset
  * persistence).
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../config/load";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../test-utils/insert-helpers";
+import { ISOLATED, } from "../test-utils/isolate-only";
 import { uid, } from "../utils";
-import { handleAudioGeneration, } from "./audio-prompt-route";
-import type { AudioProvider, } from "./audio/types";
+import type * as audioPromptRoute from "./audio-prompt-route";
+import type { AudioGenRequest, AudioProvider, } from "./audio/types";
 import { registerAudioProvider, unregisterAudioProvider, } from "./audio/types";
+
+/** Stored audio workflow used by the resolver stub and the selection cases. */
+const STORED_AUDIO_WORKFLOW = "stored-audio-workflow";
+
+/** Route under test; loaded after the resolver stub registers under --isolate. */
+let handleAudioGeneration: typeof audioPromptRoute.handleAudioGeneration;
+
+if (ISOLATED) {
+  mock.module("./workflow-selection", () => ({
+    resolveWorkflowForUseCase: async () => STORED_AUDIO_WORKFLOW,
+  }),);
+}
+
+({ handleAudioGeneration, } = await import("./audio-prompt-route"));
 
 /** Fake provider so the success path runs without a ComfyUI server. */
 const fakeProvider: AudioProvider = {
@@ -107,5 +123,63 @@ describe("handleAudioGeneration", () => {
       .execute();
 
     expect(links.some((l,) => l.entity_type === "chat" && l.entity_id === chatId),).toBe(true,);
+  });
+
+  describe("workflow selection", () => {
+    const configuredWorkflow = "test-configured-audio-workflow";
+    let seen: Array<string | undefined> = [];
+    let selectedUserId = "";
+    const recordingProvider: AudioProvider = {
+      id: `comfyui:${configuredWorkflow}`,
+      async generate(request,) {
+        seen.push((request as AudioGenRequest & { workflow?: string }).workflow,);
+        return { ok: true, buffer: Buffer.from("recorded-audio",), mimeType: "audio/wav", };
+      },
+    };
+
+    const selectedWorkflow = STORED_AUDIO_WORKFLOW;
+
+    beforeAll(async () => {
+      selectedUserId = uid();
+      await insertUsers(db, `${selectedUserId}-user`, "Workflow User", {
+        id: selectedUserId,
+        settings: JSON.stringify({ workflowSelections: { "audio.generate": selectedWorkflow, }, },),
+      },);
+
+      registerAudioProvider(recordingProvider,);
+    },);
+
+    beforeEach(() => {
+      seen = [];
+    },);
+
+    afterAll(() => {
+      unregisterAudioProvider(recordingProvider.id,);
+    },);
+
+    test("an explicit body workflow wins over the stored selection", async () => {
+      const configBefore = JSON.stringify(loadConfig().generation.providers.audio,);
+      const res = await handleAudioGeneration(
+        { prompt: "rain", provider: recordingProvider.id, workflow: "body:audio-workflow", },
+        db,
+        selectedUserId,
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(seen,).toEqual(["body:audio-workflow",],);
+      expect(JSON.stringify(loadConfig().generation.providers.audio,),).toBe(configBefore,);
+    });
+
+    test("a stored selection reaches the provider when the body omits a workflow", async () => {
+      const res = await handleAudioGeneration(
+        { prompt: "rain", provider: recordingProvider.id, },
+        db,
+        selectedUserId,
+      );
+
+      expect(res.status,).toBe(200,);
+      expect(seen,).toEqual([selectedWorkflow,],);
+      expect(seen[0],).not.toBe(configuredWorkflow,);
+    });
   });
 });

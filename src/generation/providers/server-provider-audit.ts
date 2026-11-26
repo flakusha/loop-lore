@@ -33,6 +33,7 @@ export async function auditProviderStore(
 ): Promise<void> {
   const meta = safeJsonStringify({
     name: provider.name,
+    kind: provider.kind ?? "openai-compatible",
     baseUrl: provider.baseUrl,
     model: provider.model,
     allowedHosts: provider.allowedHosts,

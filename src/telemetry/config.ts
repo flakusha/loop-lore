@@ -33,6 +33,17 @@ function resolveFlag(env: string | undefined, devDefault: boolean,): boolean {
 }
 
 /**
+ * Resolve the retention window. Only finite positive integers are safe — a
+ * negative or zero window builds a future cutoff and deletes every row.
+ * @param env - raw TELEMETRY_RETENTION_DAYS value
+ * @returns the validated day count, or 90 for any invalid value.
+ */
+function resolveRetentionDays(env: string | undefined,): number {
+  const days = Number(env,);
+  return Number.isInteger(days,) && days > 0 ? days : 90;
+}
+
+/**
  * @returns the singleton telemetry config loaded from env vars.
  */
 export function loadTelemetryConfig(): TelemetryConfig {
@@ -44,8 +55,8 @@ export function loadTelemetryConfig(): TelemetryConfig {
     enabled: master,
     eventsEnabled: events,
     frontendEnabled: resolveFlag(process.env.TELEMETRY_FRONTEND_ENABLED, isDev,) && master,
-    retentionDays: Number(process.env.TELEMETRY_RETENTION_DAYS,) || 90,
-    playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,),
+    retentionDays: resolveRetentionDays(process.env.TELEMETRY_RETENTION_DAYS,),
+    playwrightEnabled: resolveFlag(process.env.TELEMETRY_PLAYWRIGHT_ENABLED, isDev,) && master,
     // Opt-in: off unless explicitly enabled, even in dev. Also off when the
     // events sink is off — counters with nowhere to flush only grow forever.
     regexPrecision: resolveFlag(process.env.TELEMETRY_REGEX_PRECISION, false,) && events,

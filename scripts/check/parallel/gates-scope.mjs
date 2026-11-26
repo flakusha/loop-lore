@@ -21,7 +21,7 @@ import { existsSync, } from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 import { PROJECT_ROOT, } from "./config.mjs";
-import { CHANGED_FILES, DIFF_BASE, } from "./context.mjs";
+import { CHANGED_FILES, DIFF_BASE, noopSkip, } from "./context.mjs";
 
 const FULL_ESLINT = "bun run lint:eslint";
 const FULL_MD_LINT = "bun run md:lint";
@@ -96,7 +96,7 @@ export function browserSpecPaths(specs,) {
 const onDisk = (f,) => existsSync(path.resolve(PROJECT_ROOT, f,),);
 
 /**
- * Narrow `lint - eslint` and `md - lint` to the diff, in place. No-op without
+ * Narrow the whole-tree static gates to the diff, in place. No-op without
  * `--diff-base`: plain runs keep the static registry commands verbatim.
  *
  * Measured on this host at the same commit (`bun .tmp/finalize-profile.ts
@@ -106,11 +106,17 @@ const onDisk = (f,) => existsSync(path.resolve(PROJECT_ROOT, f,),);
  * serializes gates by footprint and 19 GB is why eslint sits in it.
  *
  * @param checks - The assembled gate table; mutated in place.
+ * @param files - Changed paths; defaults to the diff scope (injected in tests).
+ * @param scoped - Whether `--diff-base` is set (injected in tests).
  * @throws When a plain-mode command was changed without a diff to justify it.
  */
-export function applyDiffScopedStaticGates(checks,) {
-  if (DIFF_BASE) {
-    const scopedLint = pickScopedFiles(CHANGED_FILES, /\.(ts|tsx|js|jsx|mjs|cjs|md)$/, onDisk,);
+export function applyDiffScopedStaticGates(
+  checks,
+  files = CHANGED_FILES,
+  scoped = Boolean(DIFF_BASE,),
+) {
+  if (scoped) {
+    const scopedLint = pickScopedFiles(files, /\.(ts|tsx|js|jsx|mjs|cjs|md)$/, onDisk,);
     // `--concurrency=4 --cache --cache-location .tmp/eslint.cache` mirror
     // package.json's `lint:eslint`; the file list is appended to the same
     // invocation, so the entry results are identical either way. The cache
@@ -122,7 +128,7 @@ export function applyDiffScopedStaticGates(checks,) {
         scopedLint.join(" ",)
       }`;
     }
-    const scopedMd = pickScopedFiles(CHANGED_FILES, /\.md$/, onDisk,);
+    const scopedMd = pickScopedFiles(files, /\.md$/, onDisk,);
     if (scopedMd) {
       // Called directly rather than through `bun run md:lint`, whose script
       // hard-codes the two tree globs — appending files to it lints the globs
@@ -132,12 +138,21 @@ export function applyDiffScopedStaticGates(checks,) {
       // both are scope breakers.
       checks["md - lint"] = `bunx markdownlint-cli2 ${scopedMd.join(" ",)}`;
     }
+
+    // Plan gates are advisory (~20 s in the finalize critical path) and have
+    // nothing to check on a code-only diff. A diff touching .plan/ keeps them:
+    // that is the only place their signal is meaningful.
+    if (!files.some((f,) => f.startsWith(".plan/",))) {
+      const reason = "no .plan/ files in diff";
+      checks["plan - validate"] = noopSkip(reason,);
+      checks["plan - ticket index (sync)"] = noopSkip(reason,);
+    }
   }
 
   // The plain-mode registry must be untouched. Run BEFORE the --gates filter
   // deletes gates the caller did not ask for, and throw rather than let a
   // silently half-scoped gate report as green.
-  if (!DIFF_BASE && (checks["lint - eslint"] !== FULL_ESLINT || checks["md - lint"] !== FULL_MD_LINT)) {
+  if (!scoped && (checks["lint - eslint"] !== FULL_ESLINT || checks["md - lint"] !== FULL_MD_LINT)) {
     throw new Error(
       "plain-mode lint/md:lint commands changed — the diff-scoped override must only run when DIFF_BASE is set",
     );

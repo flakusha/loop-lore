@@ -1,9 +1,6 @@
 /**
  * Tests for crypto/chat-keys.ts — Chat key derivation via HKDF
  */
-import { createSqliteDialect, } from "@/db/index";
-import type { DB, } from "@/db/schema";
-import { insertChats, } from "@/test-utils/insert-helpers";
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
@@ -11,6 +8,9 @@ import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { createSqliteDialect, } from "../../../../src/db/index";
+import type { DB, } from "../../../../src/db/schema";
+import { insertChats, } from "../../../../src/test-utils/insert-helpers";
 import { generateActorKey, loadActorKeys, } from "./actor-keys";
 import {
   deriveChatKey,
@@ -44,7 +44,7 @@ beforeAll(async () => {
     db,
     provider: {
       async getMigrations(): Promise<Record<string, Migration>> {
-        const dir = path.join(__dirname, "..", "db", "migrations",);
+        const dir = path.join(__dirname, "..", "..", "..", "..", "src", "db", "migrations",);
         const fileNames = readdirSync(dir,).filter((f,) => f.endsWith(".ts",)).sort();
         const migrations: Record<string, Migration> = {};
         for (const fileName of fileNames) {

@@ -109,11 +109,11 @@ export async function persistState(
     // 3. Serialize and CAS-write.
     const serialized = serializeState(host.state,);
     if (!serialized.ok) {
-      getLogger()
-        .child({ module: "turn-manager", },)
-        .error("persistState serialization failed", undefined, { error: serialized.error, },);
-
-      return;
+      // Surface the failure: a silent return left the caller believing its
+      // mutation landed (same contract as the CAS-conflict throw below).
+      throw new Error(
+        `persistState: failed to serialize story_state for chat ${host.chatId}: ${serialized.error.message}`,
+      );
     }
 
     const expected = committedRaw ?? null;

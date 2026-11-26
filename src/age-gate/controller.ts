@@ -15,11 +15,11 @@
  * Responses are JSON.
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { getConfigValue, setConfig, } from "../admin/config";
 import type { AgeGateConfig, } from "../config/schema";
 import { AgeGateSection, } from "../config/sections/age-gate";
-import { AgeGateMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
@@ -72,6 +72,45 @@ export const ageGateConfig = new AgeGateConfigStore();
  */
 export function initAgeGate(config: AgeGateConfig,): void {
   ageGateConfig.init(config,);
+}
+
+const AGE_GATE_ENABLED_KEY = "ageGate.enabled";
+const AGE_GATE_MIN_AGE_KEY = "ageGate.minimumAge";
+const AGE_GATE_MODE_KEY = "ageGate.mode";
+
+/**
+ * Overlay persisted admin overrides onto the runtime store. Mirrors
+ * applyStoredNsfwConfig: called after the DB is available so a toggle saved
+ * through the admin API survives a restart (RA-13).
+ * @param db
+ * @returns {Promise<void>}
+ */
+export async function applyStoredAgeGateConfig(db: Kysely<DB>,): Promise<void> {
+  const patch: Partial<AgeGateConfig> = {};
+
+  const enabledRaw = await getConfigValue(db, AGE_GATE_ENABLED_KEY,);
+  if (enabledRaw === "true") { patch.enabled = true; }
+  else if (enabledRaw === "false") { patch.enabled = false; }
+
+  const minAgeRaw = await getConfigValue(db, AGE_GATE_MIN_AGE_KEY,);
+  if (minAgeRaw !== undefined) {
+    const parsed = Number(minAgeRaw,);
+    if (Number.isFinite(parsed,) && parsed >= 1 && parsed <= 150) { patch.minimumAge = parsed; }
+  }
+
+  const modeRaw = await getConfigValue(db, AGE_GATE_MODE_KEY,);
+  if (modeRaw !== undefined) {
+    if (AgeGateService.isSupportedAgeGateMode(modeRaw as AgeGateConfig["mode"],)) {
+      patch.mode = modeRaw as AgeGateConfig["mode"];
+    } else {
+      // Verification has no distinct path; never silently self-declare.
+      getLogger().warn(
+        `Ignoring unsupported ageGate.mode=${modeRaw} from system_config: verification is not implemented`,
+      );
+    }
+  }
+
+  if (Object.keys(patch,).length > 0) { ageGateConfig.update(patch,); }
 }
 
 /**
@@ -204,7 +243,11 @@ export function handleAdminGetConfig(userRole: string | null | undefined,): Resp
  * @param body - Request body with config updates.
  * @returns JSON response with updated config.
  */
-export function handleAdminUpdateConfig(userRole: string | null | undefined, body: unknown,): Response {
+export async function handleAdminUpdateConfig(
+  database: Kysely<DB>,
+  userRole: string | null | undefined,
+  body: unknown,
+): Promise<Response> {
   if (!can(userRole, "admin.settings",)) {
     return jsonError("Forbidden", 403,);
   }
@@ -230,12 +273,29 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   }
 
   if (typeof input.mode === "string") {
-    const validModes = [AgeGateMode.None, AgeGateMode.SelfDeclaration, AgeGateMode.Verification,] as const;
-    if (!validModes.includes(input.mode as (typeof validModes)[number],)) {
-      return jsonError(`mode must be one of: ${validModes.join(", ",)}`, 400,);
+    const supportedModes: readonly string[] = AgeGateService.SUPPORTED_AGE_GATE_MODES;
+    if (!supportedModes.includes(input.mode,)) {
+      return jsonError(
+        `mode must be one of: ${supportedModes.join(", ",)}; verification mode is not supported`,
+        400,
+      );
     }
 
     updated.mode = input.mode as AgeGateConfig["mode"];
+  }
+
+  // Persist the override beside the runtime update — the NSFW twin survives
+  // restarts because it writes system_config; this gate must do the same.
+  if (typeof input.enabled === "boolean") {
+    await setConfig(database, AGE_GATE_ENABLED_KEY, String(input.enabled,), "Age gate enabled",);
+  }
+
+  if (typeof input.minimumAge === "number") {
+    await setConfig(database, AGE_GATE_MIN_AGE_KEY, String(updated.minimumAge,), "Age gate minimum age",);
+  }
+
+  if (typeof input.mode === "string") {
+    await setConfig(database, AGE_GATE_MODE_KEY, updated.mode, "Age gate mode",);
   }
 
   ageGateConfig.update(updated,);
@@ -255,7 +315,11 @@ export function ageGateRoutes({ database, }: { database: Kysely<DB> }, prefix = 
     .post(
       `${prefix}/age-gate/accept`,
       (ctx,) => handleAccept({ database, userId: (ctx as any).userId, body: ctx.body, },),
+      { body: t.Object({ birthDate: t.String({ pattern: "^\\d{4}-\\d{2}-\\d{2}$", },), },), },
     )
     .get(`${prefix}/admin/age-gate`, (ctx,) => handleAdminGetConfig((ctx as any).userRole,),)
-    .put(`${prefix}/admin/age-gate`, (ctx,) => handleAdminUpdateConfig((ctx as any).userRole, ctx.body,),);
+    .put(
+      `${prefix}/admin/age-gate`,
+      async (ctx,) => handleAdminUpdateConfig(database, (ctx as any).userRole, ctx.body,),
+    );
 }

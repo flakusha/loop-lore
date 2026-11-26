@@ -11,6 +11,7 @@
  * the discovery error, not guessed against.
  * @module routes/admin-comfyui-workflows/ui-ingest
  */
+import { verifyLiveSnapshot, } from "../../generation/comfyui-converter/schema-authority";
 import type {
   ConverterError,
   ObjectInfoSnapshot,
@@ -93,13 +94,21 @@ export function snapshotOf(info: Record<string, ComfyUINodeInfo>,): ObjectInfoSn
 
 /**
  * Fetch the live snapshot for a UI-format ingest, or explain why not.
+ * @param requiredNodes - Node classes the uploaded workflow needs
  * @returns {Promise<{ ok: true; snapshot: ObjectInfoSnapshot } | { ok: false; error: string }>}
  */
-export async function liveSnapshot(): Promise<
+export async function liveSnapshot(requiredNodes: readonly string[] = [],): Promise<
   { ok: true; snapshot: ObjectInfoSnapshot } | { ok: false; error: string }
 > {
   try {
     const info = await new ComfyUIEditProvider().getNodeInfo();
+    if (requiredNodes.length > 0) {
+      const compatible = await verifyLiveSnapshot(info, requiredNodes,);
+      if (!compatible.ok) {
+        return { ok: false, error: compatible.errors.join("; ",), };
+      }
+    }
+
     return { ok: true, snapshot: snapshotOf(info,), };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error,), };

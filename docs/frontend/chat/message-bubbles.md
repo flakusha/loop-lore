@@ -50,7 +50,7 @@ interface Message {
   tokens_per_second?: number;
   reactions?: Reaction[]; // P2 — emoji reactions
   is_pinned?: boolean; // P2 — pinned to chat top
-  attachments?: MessageAttachment[];
+  attachments: MessageAttachment[] | null; // null when the message carries none
 }
 
 interface MessageAttachment {
@@ -59,7 +59,7 @@ interface MessageAttachment {
   caption: string;
   label: string;
   url: string;
-  thumbUrl?: string;
+  thumbUrl: string;
   filename: string;
   mimeType: string;
   type: "image" | "audio" | "video" | "document" | "archive";

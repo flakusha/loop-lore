@@ -33,6 +33,19 @@ export interface NsfwConsent {
   blockReason: string | null;
 }
 
+/** One selectable workflow id for a use case. */
+export interface WorkflowSelectionOption {
+  id: string;
+  label: string;
+}
+
+/** One use-case row from GET /api/v1/workflow-selections. */
+export interface WorkflowCatalogEntry {
+  useCase: string;
+  selected: string;
+  supported: WorkflowSelectionOption[];
+}
+
 /**
  * Full shape of the settings page Alpine component. Sub-modules
  * (general/chat/api) are typed `Partial<SettingsState> & ThisType<SettingsState>`
@@ -80,6 +93,10 @@ export interface SettingsState {
   }[];
   backupNotice: string;
 
+  workflowUseCases: WorkflowCatalogEntry[];
+  /** Per-use-case chosen workflow id; persisted in users.settings. */
+  workflowSelections: Record<string, string>;
+
   // Restart-required banner (TASK-restart-required-indicator-on-system-config-changes)
   pendingRestartKeys: string[];
   pendingRestartBannerDismissed: boolean;
@@ -108,6 +125,10 @@ export interface SettingsState {
   deleteAllData(): Promise<void>;
 
   saveChat(): Promise<void>;
+
+  loadWorkflowSelections(): Promise<void>;
+  onWorkflowChange(useCase: string, workflowId: string,): Promise<void>;
+  workflowUseCaseLabel(useCase: string,): string;
 
   saveApi(): Promise<void>;
   testConnection(): Promise<void>;

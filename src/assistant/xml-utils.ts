@@ -77,9 +77,11 @@ function escapeFence(content: string,): { escaped: string; fenceLen: number } {
  * @returns void
  */
 function escapeSentinel(content: string, tag: string,): string {
+  // String needles: no RegExp metachar interpretation (kills the latent
+  // SyntaxError on regex-active tags) and no per-call compile.
   return content
-    .replaceAll(new RegExp(`<<${tag}>>`, "g",), () => `[${tag}]`,)
-    .replaceAll(new RegExp(`<</${tag}>>`, "g",), () => `[/${tag}]`,);
+    .replaceAll(`<<${tag}>>`, `[${tag}]`,)
+    .replaceAll(`<</${tag}>>`, `[/${tag}]`,);
 }
 
 /**

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "bindingPolicy": "augment",
+  "snapshot": {
+    "source": "src/generation/comfyui-converter/fixtures/object-info.json"
+  },
+  "workflows": {
+    "txt2img": {
+      "bindings": [
+        { "kind": "scalar", "parameter": "prompt", "target": { "node": "2", "input": "text" } }
+      ]
+    },
+    "img2img": {
+      "bindings": [
+        { "kind": "scalar", "parameter": "prompt", "target": { "node": "2", "input": "text" } },
+        { "kind": "scalar", "parameter": "input_image", "target": { "node": "4", "input": "image" } }
+      ]
+    }
+  }
+}

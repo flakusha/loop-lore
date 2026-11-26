@@ -12,7 +12,7 @@
 import { Elysia, t, } from "elysia";
 import { type EndingType, type ReplayabilityService, } from "../../rpg/replayability";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { forbiddenResponse, jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
+import { forbiddenResponse, internalError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import {
   completePlaythroughBody,
@@ -50,8 +50,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
         const playthrough = await svc().startPlaythrough(ctx.body as never,);
         return jsonResponse(playthrough, 201,);
       } catch (error) {
-        log().error("Failed to start playthrough", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to start playthrough", error,);
       }
     }, {
       body: playthroughBody,
@@ -72,8 +71,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
         if (playthrough.playerId !== userId) { return forbiddenResponse(); }
         return jsonResponse(playthrough,);
       } catch (error) {
-        log().error("Failed to get playthrough", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to get playthrough", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -93,8 +91,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
         const playthroughs = await svc().getPlayerPlaythroughs(ctx.params.playerId, worldId,);
         return jsonResponse({ playthroughs, },);
       } catch (error) {
-        log().error("Failed to list playthroughs", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to list playthroughs", error,);
       }
     }, {
       params: t.Object({ playerId: t.String(), },),
@@ -129,8 +126,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
 
         return jsonResponse(playthrough,);
       } catch (error) {
-        log().error("Failed to complete playthrough", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to complete playthrough", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -159,8 +155,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
         await svc().recordChoice(ctx.params.id,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to record choice", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to record choice", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),
@@ -183,8 +178,7 @@ export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, 
         await svc().recordSecretFound(ctx.params.id, body.secretId,);
         return jsonResponse({ ok: true, },);
       } catch (error) {
-        log().error("Failed to record secret", error instanceof Error ? error : undefined,);
-        return jsonError("Internal server error", 500,);
+        return internalError(log(), "Failed to record secret", error,);
       }
     }, {
       params: t.Object({ id: t.String(), },),

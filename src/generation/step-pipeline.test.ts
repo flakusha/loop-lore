@@ -6,13 +6,20 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:tes
 import { Kysely, } from "kysely";
 import { GenerationStatus, PolicyType, } from "../db/enums";
 import { createSqliteDialect, } from "../db/index";
-import { up as migrate, } from "../db/migrations/001_init";
+import { getMigrationFiles, } from "../db/migrate";
 import type { DB, } from "../db/schema";
 import type { ActiveGeneration, } from "./cancellation-tracker";
 import { activeGenerations, } from "./cancellation-tracker";
 import { StreamingRepetitionDetector, } from "./repetition-detector";
 import { completeStep, failStep, getPipelineState, } from "./step-pipeline";
 import { DEFAULT_REPETITION_DETECTION, } from "./types";
+
+/** Apply the consolidated 14-file baseline to the in-memory DB. */
+async function applyBaseline(database: Kysely<unknown>,): Promise<void> {
+  for (const migration of Object.values(await getMigrationFiles(),)) {
+    await migration.up(database,);
+  }
+}
 
 /**
  * Minimal ActiveGeneration factory for test mocks.
@@ -49,7 +56,7 @@ describe("step-pipeline", () => {
   beforeAll(async () => {
     const sqlite = new Database(":memory:",);
     db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
-    await migrate(db as unknown as Kysely<unknown>,);
+    await applyBaseline(db as unknown as Kysely<unknown>,);
 
     // createSqliteDialect enforces PRAGMA foreign_keys = ON, so the FK
     // parents of generation_attempts (user → chat/message/actor) must exist.

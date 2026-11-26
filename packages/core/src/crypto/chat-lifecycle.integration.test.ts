@@ -12,10 +12,6 @@
  *   8. Key rotation after expiry
  */
 
-import type { EncryptionLevel, } from "@/db/enums";
-import { createSqliteDialect, } from "@/db/index";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
@@ -23,6 +19,10 @@ import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import type { EncryptionLevel, } from "../../../../src/db/enums";
+import { createSqliteDialect, } from "../../../../src/db/index";
+import type { DB, } from "../../../../src/db/schema";
+import { createLogger, } from "../logger";
 import { generateActorKey, listActorKeys, } from "./actor-keys";
 import { decryptAtRest, encryptAtRest, needsEncryption, } from "./at-rest";
 import { getChatParticipantActorIds, } from "./chat-keys";
@@ -43,7 +43,7 @@ let db: Kysely<DB>;
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const dir = path.join(__dirname, "..", "db", "migrations",);
+      const dir = path.join(__dirname, "..", "..", "..", "..", "src", "db", "migrations",);
       const files = readdirSync(dir,)
         .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

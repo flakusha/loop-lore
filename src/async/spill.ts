@@ -5,18 +5,27 @@ import { createHash, } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { gunzipSync, gzipSync, } from "node:zlib";
+import { resolveInstanceDir, } from "../config/state-dir";
 import { safeFromString, } from "../utils/safe-buffer";
 
 /**
- * Repo-local root holding every spill namespace. Under the repo's `.tmp/` to
- * keep per-AGENTS.md scratch discipline; CWD-relative, so each worktree has
- * its own. The retention sweep scans this root, not the current namespace, so
- * files left behind by a dead process are still collected.
+ * Per-instance root holding every spill namespace. Resolved at call time:
+ * `setEffectiveServerBind()` runs after module import, so a module-level
+ * snapshot would pin config-file port instances to the `default` slug.
+ * @returns absolute path to this instance's spill root.
  */
-export const SPILL_ROOT = path.resolve(".tmp", "async-store",);
+function defaultSpillRoot(): string {
+  return path.join(resolveInstanceDir(), "spill",);
+}
 
 /**
- * This process's spill namespace under `SPILL_ROOT`.
+ * Import-time snapshot of the default root, for tests and the public barrel.
+ * Runtime code must use `spillRootDir()` so it sees the effective bind.
+ */
+export const SPILL_ROOT = defaultSpillRoot();
+
+/**
+ * This process's spill namespace under its instance root.
  *
  * BUG-async-spill-offload-dir-is-a-fixed-cwd-relative-path-shared-: the app,
  * every test file and every parallel test process used to share ONE flat
@@ -24,30 +33,30 @@ export const SPILL_ROOT = path.resolve(".tmp", "async-store",);
  * leaked residue into each other. The pid suffix makes the namespace unique
  * per process; tests override it with `setOffloadDir`.
  */
-const DEFAULT_DIR = path.join(SPILL_ROOT, String(process.pid,),);
-let spillDir = DEFAULT_DIR;
+let spillDirOverride: string | undefined;
 
 /**
- * Root the retention sweep scans. Equals `SPILL_ROOT` in production, so the
- * sweep reaches namespaces left by dead processes; `setOffloadDir` narrows it
- * so a test's sweep stays inside the directory that test owns.
+ * Root the retention sweep scans. Defaults to the instance's spill root, so
+ * the sweep reaches namespaces left by dead processes of THIS instance only;
+ * `setOffloadDir` narrows it to a test-owned directory.
  */
-let spillRoot = SPILL_ROOT;
+let spillRootOverride: string | undefined;
 
 /**
  * Directory this process spills into.
  * @returns absolute path to the current process spill namespace.
  */
 export function offloadDir(): string {
-  return spillDir;
+  return spillDirOverride ?? path.join(spillRootDir(), String(process.pid,),);
 }
 
 /**
- * Root directory the retention sweep scans, covering every process namespace.
+ * Root directory the retention sweep scans, covering every process namespace
+ * of this instance.
  * @returns absolute path to the sweep root.
  */
 export function spillRootDir(): string {
-  return spillRoot;
+  return spillRootOverride ?? defaultSpillRoot();
 }
 
 /**
@@ -59,8 +68,8 @@ export function spillRootDir(): string {
  * @param dir - absolute path to use as this process's spill area.
  */
 export function setOffloadDir(dir: string,): void {
-  spillDir = dir;
-  spillRoot = dir;
+  spillDirOverride = dir;
+  spillRootOverride = dir;
 }
 
 /**
@@ -70,8 +79,8 @@ export function setOffloadDir(dir: string,): void {
  * process's own namespace rather than at `SPILL_ROOT`.
  */
 export function resetOffloadDir(): void {
-  spillDir = DEFAULT_DIR;
-  spillRoot = SPILL_ROOT;
+  spillDirOverride = undefined;
+  spillRootOverride = undefined;
 }
 
 /**
@@ -104,7 +113,7 @@ export function spillFileStem(id: string,): string {
  * @throws If the body cannot be encoded, or the write fails.
  */
 export async function spill(id: string, body: string,): Promise<string> {
-  const filePath = path.join(spillDir, `${spillFileStem(id,)}.json.gz`,);
+  const filePath = path.join(offloadDir(), `${spillFileStem(id,)}.json.gz`,);
   const bufResult = safeFromString(body, "utf8",);
   if (!bufResult.ok) { throw bufResult.error; }
   const compressed = gzipSync(bufResult.buffer,);
@@ -125,11 +134,11 @@ export async function spill(id: string, body: string,): Promise<string> {
   // given directory at most once, and `recursive` recreates it. Only ENOENT
   // retries: ENOSPC/EACCES must surface rather than masquerade as a race.
   try {
-    fs.mkdirSync(spillDir, { recursive: true, },);
+    fs.mkdirSync(offloadDir(), { recursive: true, },);
     fs.writeFileSync(filePath, compressed,);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") { throw error; }
-    fs.mkdirSync(spillDir, { recursive: true, },);
+    fs.mkdirSync(offloadDir(), { recursive: true, },);
     fs.writeFileSync(filePath, compressed,);
   }
 
@@ -157,7 +166,7 @@ export function readOffloadedBody(filePath: string,): string | null {
  * @returns `true` when the file for that id exists in the process spill namespace.
  */
 export function offloadExists(id: string,): boolean {
-  return fs.existsSync(path.join(spillDir, `${spillFileStem(id,)}.json.gz`,),);
+  return fs.existsSync(path.join(offloadDir(), `${spillFileStem(id,)}.json.gz`,),);
 }
 
 /**
@@ -165,14 +174,14 @@ export function offloadExists(id: string,): boolean {
  * @returns sum of `*.json.gz` file sizes in the process spill namespace, or `0` when the directory does not exist.
  */
 export function offloadDiskBytes(): number {
-  if (!fs.existsSync(spillDir,)) { return 0; }
+  if (!fs.existsSync(offloadDir(),)) { return 0; }
   // Bun's `Glob` is overkill; a flat scan is fine for one process namespace
   // (only `*.json.gz` files directly inside it; no recursion).
   let total = 0;
-  for (const name of fs.readdirSync(spillDir,)) {
+  for (const name of fs.readdirSync(offloadDir(),)) {
     if (!name.endsWith(".json.gz",)) { continue; }
     try {
-      total += fs.statSync(path.join(spillDir, name,),).size;
+      total += fs.statSync(path.join(offloadDir(), name,),).size;
     } catch { /* raced with another writer */ }
   }
 

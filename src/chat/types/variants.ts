@@ -49,7 +49,7 @@ export const CHAT_VARIANTS = [
 
 export type GmConfig =
   | { moderation: { slow_mode_ms?: number; pinned?: string[]; lock?: boolean } }
-  | { validation: { harness: string; expected_outputs?: string[]; scoring?: string } }
+  | { validation: { harness: string } }
   | { gm_profile: { kind: "llm" | "user" | "hybrid"; persona_ref?: string; autonomy_level?: number } }
   | { cast: string[]; director?: string }
   | {

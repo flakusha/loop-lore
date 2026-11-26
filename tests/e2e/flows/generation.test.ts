@@ -6,6 +6,7 @@
  *   POST /api/v1/generation/cancel
  *   GET  /api/v1/generation/status/:chatId
  *   GET  /api/v1/generation/active
+ *   GET  /api/v1/generation/active/me
  *   POST /api/v1/generation/retry
  *   POST /api/v1/generation/regenerate
  *
@@ -276,6 +277,12 @@ describe("Generation E2E", () => {
     const res = await api.get("/api/v1/generation/active",);
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
+  });
+
+  test("GET /api/v1/generation/active/me is readable by a non-admin", async () => {
+    const res = await api.get<{ count: number }>("/api/v1/generation/active/me",);
+    expect(res.ok,).toBe(true,);
+    expect(typeof res.data!.count,).toBe("number",);
   });
 
   // ── Retry ───────────────────────────────────────────────

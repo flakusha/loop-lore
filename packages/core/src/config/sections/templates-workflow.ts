@@ -5,7 +5,7 @@
 // types (split from templates.ts; re-exported there so existing
 // ../sections/templates import paths keep working).
 
-import type { AssistantIntent, } from "@/regex/intent";
+import type { AssistantIntent, } from "../../../../../src/regex/intent";
 import type { MergeStrategy, } from "./templates";
 
 // ── Assistant Workflow Templates (epic-assistant-creative-studio-workflows) ──

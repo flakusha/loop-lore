@@ -11,7 +11,7 @@
  * In prod mode (no SMK + required=true), throws — startup failure.
  */
 
-import type { EncryptionConfig, } from "@/config/schema";
+import type { EncryptionConfig, } from "../config/schema";
 
 const SMK_SALT = "loop-lore-smk-v1";
 const SMK_INFO = "loop-lore-smk-derive";

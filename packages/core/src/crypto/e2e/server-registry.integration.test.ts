@@ -3,15 +3,15 @@
  * CRUD against an in-memory SQLite DB with all migrations applied.
  */
 
-import { createSqliteDialect, } from "@/db";
-import type { DB, } from "@/db/schema";
-import { createLogger, } from "@/logger";
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Kysely, sql, } from "kysely";
 import { type Migration, Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
+import { createSqliteDialect, } from "../../../../../src/db";
+import type { DB, } from "../../../../../src/db/schema";
+import { createLogger, } from "../../logger";
 import {
   getActivePublicKey,
   listActivePublicKeys,
@@ -28,7 +28,7 @@ const OTHER_USER_ID = "other-e2e-user-001";
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
-      const migrationDir = path.join(__dirname, "..", "..", "db", "migrations",);
+      const migrationDir = path.join(__dirname, "..", "..", "..", "..", "..", "src", "db", "migrations",);
       const migrationFiles = readdirSync(migrationDir,)
         .filter((f,) => f.endsWith(".ts",))
         .toSorted((a, b,) => a.localeCompare(b,));

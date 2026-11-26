@@ -5,11 +5,12 @@
 
 **Effort:** Medium
 **Summary:** Make workflows a first-class, operator-manageable library instead of hardcoded files in `configs/workflows/`.
-**Context:** `WorkflowLoader` scans a directory by mtime and derives the workflow name from the filename. No metadata, no DB, no way to categorize, enable, or version. ComfyUI is declared first-class citizen at the *backend* layer but not the *artifact* layer.
+**Context:** The DB-backed library shipped on dev, but not as the `comfy_workflows` table this ticket designed: the workflow registry reuses `prompt_templates` (migrations `022_prompt_templates_workflow_modality.ts`, `023_prompt_templates_workflow_columns.ts`, `086_prompt_templates_probe_checklist.ts`) with the seed in `src/generation/workflow-library/seed.ts:192` and ingest validation in `src/generation/workflow-library/validate.ts:160`; uploads are discoverable through `src/image-edit/routes.ts:359`.
 **Acceptance Criteria:** A `comfy_workflows` table, disk-seeded boot migration, and validation gates; uploaded workflows are discoverable through the existing template listing route.
 
 **Priority:** P1 — High
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Shipped under the epic's `prompt_templates` design (see Context for the file:line proof); this ticket's literal `comfy_workflows` table and `021_` migration design was superseded, so its AC boxes cannot be ticked as written. Formal closure of the superseded design is left to the epic owner.
 **Epic:** epic-comfyui-first-class-citizen
 **Depends on:** `TASK-comfyui-workflow-parameterization` (Defect 3 supplies the dead-node rule this validates with)
 

@@ -8,7 +8,13 @@
 
 import { describe, expect, test, } from "bun:test";
 import { Value, } from "@sinclair/typebox/value";
-import { AssetBatchDeleteResponse, AssetBatchIdsBody, } from "./assets";
+import {
+  AssetBatchDeleteResponse,
+  AssetBatchIdsBody,
+  AssetDownloadAllBody,
+  AssetPreferencesBody,
+  AssetPreferencesResponse,
+} from "./assets";
 
 const UUID_A = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -29,6 +35,57 @@ describe("AssetBatchIdsBody", () => {
 
   test("rejects non-string ids", () => {
     expect(Value.Check(AssetBatchIdsBody, { ids: [42], },),).toBe(false,);
+  });
+});
+
+describe("AssetDownloadAllBody", () => {
+  test("accepts an empty filter set", () => {
+    expect(Value.Check(AssetDownloadAllBody, {},),).toBe(true,);
+  });
+
+  test("accepts filters with chat context and a naming override", () => {
+    expect(Value.Check(AssetDownloadAllBody, {
+      q: "sunset",
+      type: "image",
+      entityType: "chat",
+      entityId: UUID_A,
+      tag: "cover",
+      chatId: UUID_A,
+      naming: "datetime-hash",
+    },),).toBe(true,);
+  });
+
+  test("rejects an unknown naming mode", () => {
+    expect(Value.Check(AssetDownloadAllBody, { naming: "fancy" },),).toBe(false,);
+  });
+});
+
+describe("AssetPreferencesBody", () => {
+  test("accepts every naming mode and null (clear)", () => {
+    for (const downloadNaming of ["raw", "datetime", "hash", "datetime-hash", null]) {
+      expect(Value.Check(AssetPreferencesBody, { downloadNaming },),).toBe(true,);
+    }
+  });
+
+  test("rejects an unknown mode and a missing key", () => {
+    expect(Value.Check(AssetPreferencesBody, { downloadNaming: "fancy" },),).toBe(false,);
+    expect(Value.Check(AssetPreferencesBody, {},),).toBe(false,);
+  });
+});
+
+describe("AssetPreferencesResponse", () => {
+  test("accepts ok plus a mode or null", () => {
+    expect(
+      Value.Check(AssetPreferencesResponse, { ok: true, downloadNaming: "hash" }),
+    ).toBe(true,);
+
+    expect(
+      Value.Check(AssetPreferencesResponse, { ok: true, downloadNaming: null }),
+    ).toBe(true,);
+  });
+
+  test("rejects a missing ok", () => {
+    expect(Value.Check(AssetPreferencesResponse, { downloadNaming: "raw" },),).toBe(false,);
   });
 });
 

@@ -6,8 +6,10 @@
  * GETs `/history/<prompt_id>` and resolves the terminal state, plus the
  * deadline-bounded wait loop on top of it.
  */
+import { proxyForUrl, safeFetch, } from "../../utils/safe-fetch";
 import type {
   ComfyUIExecutionStatus,
+  ComfyUINodeOutput,
   ComfyUIOutputFile,
   ComfyUIOutputKind,
 } from "./comfyui";
@@ -17,7 +19,81 @@ const NON_IMAGE_BUCKETS = [
   ["audio", "audio",],
   ["videos", "video",],
   ["gifs", "video",],
+  ["files", "other",],
 ] as const;
+
+/** Core SaveVideo emits `animated: (True,)`, which JSON serializes as [true]. */
+function isAnimatedMarker(value: unknown,): boolean {
+  if (value === true || value === "true") { return true; }
+  return Array.isArray(value,) && value.some((entry,) => entry === true || entry === "true");
+}
+
+const VIDEO_CONTAINER_RE = /\.(mp4|webm|mkv|mov)$/i;
+
+/** Directory name MiniMaxH3LQPackageSave stashes packages under (stash.py:25). */
+const H3_STASH_DIR = "h3_lq_stash/";
+/** Latent file name inside every H3 LQ package (stash.py:26). */
+const H3_LATENT_FILENAME = "latent.safetensors";
+
+/**
+ * Map a `package_path` string output into a `/view`-fetchable descriptor.
+ * `MiniMaxH3LQPackageSave` returns `str(package_dir.resolve())` — an absolute
+ * path to the package DIRECTORY under ComfyUI's output dir (stash.py:812).
+ * Accepts the absolute form (split on the `/output/` segment) and bare
+ * output-relative forms (`h3_lq_stash/...`, optionally `output/`-prefixed,
+ * ending at the package dir or at `latent.safetensors`). Anything else —
+ * arbitrary strings, other filenames — yields undefined.
+ */
+export function latentPackageDescriptor(
+  raw: unknown,
+): ComfyUIOutputFile | undefined {
+  const value = Array.isArray(raw,) ? raw[0] : raw;
+  if (typeof value !== "string") { return undefined; }
+  const normalized = value.trim().replaceAll("\\", "/",);
+  const withoutOutputDir = normalized.includes("/output/",)
+    ? normalized.slice(normalized.lastIndexOf("/output/",) + "/output/".length,)
+    : normalized.replace(/^output\//, "",);
+
+  if (!withoutOutputDir.startsWith(H3_STASH_DIR,)) { return undefined; }
+  const remainder = withoutOutputDir.slice(H3_STASH_DIR.length,);
+  if (!remainder) { return undefined; }
+  const subfolder = remainder.endsWith(`/${H3_LATENT_FILENAME}`,)
+    ? `${H3_STASH_DIR}${remainder.slice(0, -H3_LATENT_FILENAME.length - 1,)}`
+    : `${H3_STASH_DIR}${remainder}`;
+
+  return {
+    filename: H3_LATENT_FILENAME,
+    subfolder,
+    type: "output",
+  };
+}
+
+/** Classify an `images`-bucket entry; stock SaveVideo lands there with a marker. */
+function isVideoImage(file: ComfyUIOutputFile, animated: boolean,): boolean {
+  if (animated) { return true; }
+  if (typeof file.format === "string" && file.format.toLowerCase().startsWith("video/",)) { return true; }
+  return VIDEO_CONTAINER_RE.test(file.filename,);
+}
+
+/**
+ * Pick one deterministic video sink among classified refs. Preference order:
+ * real container (mp4/webm/mkv/mov), then video/* MIME, then any remaining
+ * video ref (animated webp and other marker-only sinks), else undefined.
+ * Pure — classification and the input array are untouched.
+ */
+export function pickVideoSink(
+  refs: readonly { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[],
+): { kind: ComfyUIOutputKind; file: ComfyUIOutputFile } | undefined {
+  const videos = refs.filter((ref,) => ref.kind === "video");
+  const withContainer = videos.find((ref,) => VIDEO_CONTAINER_RE.test(ref.file.filename,));
+  if (withContainer) { return withContainer; }
+
+  const withMime = videos.find(
+    (ref,) => typeof ref.file.format === "string" && ref.file.format.toLowerCase().startsWith("video/",),
+  );
+
+  return withMime ?? videos[0];
+}
 
 /** Terminal state of one prompt, or not-done-yet. */
 export interface ComfyUIPollResult {
@@ -30,6 +106,39 @@ export interface ComfyUIPollResult {
 /** Auth headers for proxy-fronted engines; empty for stock ComfyUI. */
 function authHeaders(apiKey: string | undefined,): Record<string, string> {
   return apiKey ? { authorization: `Bearer ${apiKey}`, } : {};
+}
+
+/** Flatten history node outputs into the kind-indexed file list pollers consume. */
+function collectOutputFiles(
+  outputs: Record<string, ComfyUINodeOutput> | undefined,
+): { images: ComfyUIOutputFile[]; files: Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }> } {
+  const images: ComfyUIOutputFile[] = [];
+  const files: Array<{ kind: ComfyUIOutputKind; file: ComfyUIOutputFile }> = [];
+  for (const nodeOutput of Object.values(outputs ?? {},)) {
+    const animated = isAnimatedMarker(nodeOutput.animated,);
+    for (const file of nodeOutput.images ?? []) {
+      images.push(file,);
+      files.push({ kind: isVideoImage(file, animated,) ? "video" : "image", file, },);
+    }
+
+    for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
+      for (const file of nodeOutput[bucket] ?? []) {
+        files.push({ kind, file, },);
+      }
+    }
+
+    // MiniMaxH3LQPackageSave is not an OUTPUT_NODE; when a history entry
+    // carries its package_path string anyway, expose the latent file as an
+    // "other" descriptor AFTER the bucket entries so bucket files keep
+    // precedence (operator option (b), 2026-11-19).
+    const packageFile = latentPackageDescriptor(
+      (nodeOutput as { package_path?: unknown }).package_path,
+    );
+
+    if (packageFile) { files.push({ kind: "other", file: packageFile, },); }
+  }
+
+  return { images, files, };
 }
 
 /**
@@ -47,45 +156,37 @@ export async function pollComfyResult(
 ): Promise<ComfyUIPollResult> {
   const url = `${baseUrl}/history/${promptId}`;
 
-  const resp = await fetch(url, {
+  const result = await safeFetch<Record<string, ComfyUIExecutionStatus>>(url, {
     headers: authHeaders(apiKey,),
-    signal: AbortSignal.timeout(10_000,),
+    timeout: 10_000,
+    handle401: false,
+    proxy: proxyForUrl(url,),
   },);
 
-  if (!resp.ok) {
-    throw new Error(`ComfyUI history fetch failed [${resp.status}]`,);
+  if (!result.ok) {
+    if (result.status === undefined) { throw result.error; }
+    throw new Error(`ComfyUI history fetch failed [${result.status}]`,);
   }
 
-  const data = (await resp.json()) as Record<string, ComfyUIExecutionStatus>;
+  const data = result.data;
   const entry = data[promptId];
 
   if (!entry) {
     return { done: false, };
   }
 
-  if (entry.status === "completed") {
-    const images: ComfyUIOutputFile[] = [];
-    const files: { kind: ComfyUIOutputKind; file: ComfyUIOutputFile }[] = [];
-    if (entry.outputs) {
-      for (const nodeOutput of Object.values(entry.outputs,)) {
-        for (const file of nodeOutput.images ?? []) {
-          images.push(file,);
-          files.push({ kind: "image", file, },);
-        }
+  // ComfyUI /history entries carry status as an object
+  // ({ status_str: "success" | "error", completed }) — normalize the
+  // legacy string form unit tests use into the same comparison.
+  const raw = entry.status;
+  const state = typeof raw === "string" ? raw : raw.status_str;
 
-        for (const [bucket, kind,] of NON_IMAGE_BUCKETS) {
-          for (const file of nodeOutput[bucket] ?? []) {
-            files.push({ kind, file, },);
-          }
-        }
-      }
-    }
-
-    return { done: true, images, files, };
+  if (state === "completed" || state === "success") {
+    return { done: true, ...collectOutputFiles(entry.outputs,), };
   }
 
-  if (entry.status === "failed" || entry.status === "cancelled") {
-    return { done: true, error: entry.error ?? `execution ${entry.status}`, };
+  if (state === "failed" || state === "error" || state === "cancelled") {
+    return { done: true, error: entry.error ?? `execution ${state}`, };
   }
 
   return { done: false, };

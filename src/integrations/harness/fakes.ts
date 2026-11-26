@@ -46,11 +46,13 @@ export interface FakeAdapterLog {
   permissions: PermissionOutcome[];
   /** How many times cancel() was called. */
   cancels: number;
+  /** How many times close() was called. */
+  closes: number;
 }
 
 /** Build an adapter + its call log for one spec. */
 export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapter; log: FakeAdapterLog } {
-  const log: FakeAdapterLog = { setModels: [], prompts: [], permissions: [], cancels: 0, };
+  const log: FakeAdapterLog = { setModels: [], prompts: [], permissions: [], cancels: 0, closes: 0, };
   const adapter: HarnessAcpAdapter = {
     enumerateModels: () => {
       if (spec.failProbe) { return Promise.reject(new HarnessAcpError("spawn", "spawn boom",),); }
@@ -77,7 +79,7 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
         usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15, },
         costUsd: null,
         acpSessionId: "fake-session",
-        transcript: { text, thinking: [], toolCalls: [], toolResults: [], },
+        transcript: { text, thinking: [], modes: [], toolCalls: [], toolResults: [], },
       };
 
       return Promise.resolve(result,);
@@ -107,7 +109,13 @@ export function fakeAdapter(spec: FakeAdapterSpec,): { adapter: HarnessAcpAdapte
 
       return answer;
     },
-    close: () => undefined,
+    close: () => {
+      log.closes += 1;
+    },
+    setMode: () => Promise.resolve({},),
+    listSessions: () => Promise.resolve([],),
+    resumeSession: () => Promise.resolve(),
+    loadSession: () => Promise.resolve({ text: "", thinking: [], modes: [], toolCalls: [], toolResults: [], },),
   };
 
   return { adapter, log, };

@@ -26,6 +26,7 @@ import { type ChildProcess, spawn, } from "node:child_process";
 import fs from "node:fs";
 import { delimiter, join, } from "node:path";
 import { safeJsonStringify, } from "../../utils";
+import { scrubEnv, } from "./env-scrub";
 
 /** Availability verdict for one profile's configured binary. */
 export type HarnessBinaryAvailability =
@@ -129,7 +130,7 @@ function probeVersion(binary: string, timeoutMs: number,): Promise<VersionProbeO
   };
 
   try {
-    child = spawn(binary, ["--version",], { stdio: ["ignore", "pipe", "pipe",], },);
+    child = spawn(binary, ["--version",], { stdio: ["ignore", "pipe", "pipe",], env: scrubEnv(), },);
   } catch (error) {
     done({ spawned: false, reason: `spawn failed: ${(error as Error).message}`, },);
     return promise;

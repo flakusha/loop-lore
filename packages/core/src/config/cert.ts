@@ -5,18 +5,18 @@
  * Self-signed TLS certificate generation.
  *
  * On first run (or when cert files are missing), generates ephemeral
- * development certificates using OpenSSL. Returns null when the
- * certificates cannot be provisioned — the caller decides whether to
- * continue without HTTPS.
+ * development certificates using OpenSSL. Throws a classified error when
+ * provisioning fails so boot can fail closed with an actionable message.
  *
  * Certificates are valid for 365 days and stored at the configured paths.
  */
 
-import { getLogger, } from "@/logger";
-import { existsSync, mkdirSync, } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, } from "node:fs";
 import { dirname, } from "node:path";
-import { platform, } from "node:process";
+import { getLogger, } from "../logger";
+import { resolveInstancePath, } from "./instance-path";
 import type { TlsConfig, } from "./schema";
+import { resolveInstanceDir, } from "./state-dir";
 
 /** */
 export type TlsFiles = TlsConfig;
@@ -29,28 +29,70 @@ function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
   return tlsLog;
 }
 
+/** Options for {@link ensureTlsCerts}. */
+export interface EnsureTlsCertsOptions {
+  /**
+   * Instance dir relative cert paths resolve against. Defaults to this
+   * instance's state dir.
+   */
+  instanceDir?: string;
+}
+
+/**
+ * Restrict a freshly generated private key. The reuse fast path never calls
+ * this, so pre-existing key modes are left untouched. POSIX enforces 0600;
+ * Windows chmod only toggles the read-only bit, so failure there is best-effort.
+ */
+function restrictGeneratedKeyMode(keyPath: string,): void {
+  try {
+    chmodSync(keyPath, 0o600,);
+  } catch (error) {
+    if (process.platform !== "win32") {
+      throw error;
+    }
+    getTlsLog().warn("Could not restrict generated TLS key permissions (best effort on Windows)",);
+  }
+}
+
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
+ * Relative paths resolve against the instance dir — never the process cwd, so
+ * the cert location does not depend on where the app was launched. A path
+ * anchored at the import-frozen DATA_DIR (the shipped default) is re-anchored
+ * onto the runtime instance dir; every other absolute path wins as-is.
  * @param configPath
- * @returns TlsFiles paths if available, null if TLS is unavailable.
+ * @param opts
+ * @throws Error when provisioning fails, with the reason and platform hint.
  */
-export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
+export function ensureTlsCerts(configPath: TlsFiles, opts?: EnsureTlsCertsOptions,): TlsFiles | null {
+  const base = opts?.instanceDir ?? resolveInstanceDir(process.env,);
+  const resolved: TlsFiles = {
+    key: resolveInstancePath(configPath.key, { instanceDir: base, },),
+    cert: resolveInstancePath(configPath.cert, { instanceDir: base, },),
+  };
+
   // Both exist — use as-is
-  if (existsSync(configPath.key,) && existsSync(configPath.cert,)) {
-    return configPath;
+  if (existsSync(resolved.key,) && existsSync(resolved.cert,)) {
+    return resolved;
   }
 
   // Ensure parent directory exists
-  mkdirSync(dirname(configPath.key,), { recursive: true, },);
-  mkdirSync(dirname(configPath.cert,), { recursive: true, },);
+  mkdirSync(dirname(resolved.key,), { recursive: true, },);
+  mkdirSync(dirname(resolved.cert,), { recursive: true, },);
 
   // Generate self-signed cert
   getTlsLog().info("Generating self-signed development certificate...",);
 
-  // On Windows, try openssl.exe as well
-  const opensslBin = platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
+  // On Windows, try openssl.exe as well. Read process.platform directly: the
+  // node:process named import is a static copy, so stubbing process.platform
+  // in tests would not change the candidate list.
+  const opensslBin = process.platform === "win32" ? ["openssl.exe", "openssl",] : ["openssl",];
+
+  type Attempt = { bin: string; missing: boolean };
+  const attempts: Attempt[] = [];
 
   for (const bin of opensslBin) {
+    // TODO(env): bun-only — Bun.spawnSync is a Bun API; add a node child_process shim when a node target lands.
     try {
       const result = Bun.spawnSync([
         bin,
@@ -62,9 +104,9 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
         "-newkey",
         "rsa:2048",
         "-keyout",
-        configPath.key,
+        resolved.key,
         "-out",
-        configPath.cert,
+        resolved.cert,
         "-subj",
         "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost",
         "-addext",
@@ -72,20 +114,31 @@ export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {
       ],);
 
       if (result.success) {
-        getTlsLog().info(`Certificate generated: ${configPath.cert}`,);
-        return configPath;
+        restrictGeneratedKeyMode(resolved.key,);
+        getTlsLog().info(`Certificate generated: ${resolved.cert}`,);
+        // The RESOLVED paths: the caller loads these files (Bun.file), and a
+        // relative config path would resolve against the cwd, not the
+        // instance dir the cert was just written to.
+        return resolved;
       }
-    } catch {
-      // Try next binary
+
+      attempts.push({ bin, missing: false, },);
+    } catch (error) {
+      attempts.push({
+        bin,
+        missing: (error as NodeJS.ErrnoException | undefined)?.code === "ENOENT",
+      },);
     }
   }
 
-  const platformHint = platform === "win32"
+  const platformHint = process.platform === "win32"
     ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
     : "Install OpenSSL or configure certs manually.";
 
-  getTlsLog().warn(`Failed to generate certificate. ${platformHint}`,);
-  getTlsLog().warn("TLS certificates unavailable — HTTPS cannot be served.",);
+  const tried = attempts.map(({ bin, missing, },) => `${bin} (${missing ? "not found" : "failed"})`).join(", ",);
+  const detail = attempts.some(({ missing, },) => !missing)
+    ? `OpenSSL ran but certificate generation failed (tried: ${tried}). Check the certificate paths and permissions, or configure certs manually.`
+    : `OpenSSL is not installed (tried: ${tried}). ${platformHint}`;
 
-  return null;
+  throw new Error(`TLS certificate generation failed. ${detail}`,);
 }

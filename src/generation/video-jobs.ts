@@ -15,6 +15,7 @@
  * worse failure. Settled eviction keeps the poll window for recent jobs
  * while a restart clears everything anyway (durable state is out of scope).
  */
+import { getStore, } from "../async/store-registry";
 import type { VideoProviderConfig, } from "../config/schema";
 import type { VideoGenRequest, } from "./video-engine";
 
@@ -50,6 +51,17 @@ export interface VideoJob {
   asset?: VideoJobAsset;
   error?: string;
   errorStatus?: number;
+  /** Set by the defer route; a deferred job is parked until scheduledFor. */
+  deferred?: boolean;
+  scheduledFor?: number | null;
+  /** Live IVSS run cancel closure, registered when the render starts. */
+  cancel?: () => void | Promise<void>;
+  /** Re-entry closure used by the lazy deferred pump. */
+  resume?: () => void;
+  /** New job id minted by a retry, so a second retry is a no-op. */
+  retryOf?: string;
+  /** True once the render closure entered the dispatch gate. */
+  started?: boolean;
 }
 
 /** In-memory job store. */
@@ -147,6 +159,85 @@ export function failVideoJob(jobId: string, error: string, errorStatus: number,)
   job.errorStatus = errorStatus;
   job.completedAt = Date.now();
   return true;
+}
+
+/**
+ * Mark a pending video job cancelled. The job store's public status set stays
+ * pending/done/failed; cancellation is a failed terminal with code 499 so the
+ * existing poll route needs no new branch. Ownership is checked here, not only
+ * at the route, so no caller can cancel a foreign job by id.
+ * @param jobId - the job to cancel
+ * @param ownerId - authenticated submitting user
+ * @param reason - human-readable cancellation reason
+ * @returns true when the job was pending, owned and is now terminal
+ */
+export function cancelVideoJob(jobId: string, ownerId: string, reason = "cancelled",): boolean {
+  const job = videoJobs.get(jobId,);
+  if (!job || job.ownerId !== ownerId || job.status !== "pending") { return false; }
+
+  job.status = "failed";
+  job.error = reason;
+  job.errorStatus = 499;
+  job.completedAt = Date.now();
+  return true;
+}
+
+/**
+ * Park a pending job until scheduledFor. Repeating a defer is a no-op so the
+ * route stays idempotent. The deadline moves by the deferral length: waiting
+ * must not consume the render's own timeout budget.
+ * @param jobId - the job to defer
+ * @param ownerId - authenticated submitting user
+ * @param scheduledFor - epoch ms when the job becomes due
+ * @returns true when the job was newly deferred
+ */
+export function deferVideoJob(jobId: string, ownerId: string, scheduledFor: number,): boolean {
+  const job = videoJobs.get(jobId,);
+  if (!job || job.ownerId !== ownerId || job.status !== "pending" || job.deferred) { return false; }
+
+  job.deferred = true;
+  job.scheduledFor = scheduledFor;
+  job.deadline += Math.max(0, scheduledFor - Date.now(),);
+  return true;
+}
+
+/** Due, parked jobs for the lazy pump. */
+export function listDueVideoJobs(now = Date.now(),): VideoJob[] {
+  return [...videoJobs.values(),]
+    .filter((job,) =>
+      job.status === "pending" && job.deferred && typeof job.scheduledFor === "number" && job.scheduledFor <= now
+    );
+}
+
+/** Clear a deferral. Returns false for a foreign job or a non-deferred one. */
+export function resumeVideoJob(jobId: string, ownerId: string,): boolean {
+  const job = videoJobs.get(jobId,);
+  if (!job || job.ownerId !== ownerId || !job.deferred) { return false; }
+
+  job.deferred = false;
+  job.scheduledFor = null;
+  return true;
+}
+
+/** Record the replacement job id so a repeated retry returns the same job. */
+export function markVideoJobRetried(jobId: string, ownerId: string, retryJobId: string,): void {
+  const job = videoJobs.get(jobId,);
+  if (job && job.ownerId === ownerId) { job.retryOf = retryJobId; }
+}
+
+/**
+ * Lazy pump: resume due deferred jobs through their stored render closure.
+ * Called on the next status read or submit, so no background daemon exists.
+ * @param now - current epoch ms (injectable for tests)
+ * @returns {void}
+ */
+export function pumpDueVideoJobs(now = Date.now(),): void {
+  for (const job of listDueVideoJobs(now,)) {
+    job.deferred = false;
+    job.scheduledFor = null;
+    getStore()?.resume?.(job.id, { userId: job.ownerId, },);
+    job.resume?.();
+  }
 }
 
 /**

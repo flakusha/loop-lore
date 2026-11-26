@@ -13,9 +13,11 @@
  *    unseeded store falls back to the file layer);
  * 2. role gate — `isAdminRole` (solo/admin), checked explicitly and NOT
  *    implied by any route's `auth.required`;
- * 3. profile allowlist — the executed profile must exist in the
- *    admin-owned `harness.acp.profiles` config, so the spawn argv is always
- *    the configured official binary command and never caller-supplied.
+ * 3. profile admission — a pinned name must exist in the admin-owned
+ *    `harness.acp.profiles` config, so the spawn argv is always the configured
+ *    official binary command and never caller-supplied. `default`, omitted and
+ *    empty names are UNPINNED: the selector's failover order decides, but only
+ *    when at least one profile is configured. No profile is ever synthesized.
  *
  * Config storage is the server-wide admin config section (`harness.acp`);
  * per-user overrides do not exist. Isolation follows from the verdict: one
@@ -33,12 +35,40 @@ import { getHarnessAdminSettings, isHarnessAdminSettingsSeeded, } from "./admin-
 export type HarnessIsolationVerdict =
   | {
     allowed: true;
+    /** No profile was pinned; the selector may walk its failover order. */
+    unpinned: true;
+    /** Never synthesized: an unpinned turn resolves its profile in the selector. */
+    profile: null;
+    /** The single principal this execution is attributed to. */
+    userId: string | null;
+  }
+  | {
+    allowed: true;
+    /** An exact admin-configured profile name was pinned. */
+    unpinned: false;
     /** The admin-configured profile; its `command` is the only spawn argv. */
     profile: AcpProfileConfig;
     /** The single principal this execution is attributed to. */
     userId: string | null;
   }
   | { allowed: false; code: "harness_disabled" | "role_denied" | "profile_unknown"; message: string };
+
+/** The normalized form of a caller's profile request. */
+export type HarnessProfilePin =
+  | { pinned: false }
+  | { pinned: true; name: string };
+
+/**
+ * Normalize a caller-supplied profile name before admission.
+ * `default`, omitted and empty ask for implicit failover; every other string
+ * is an exact pinned name and still goes through the allowlist.
+ * @returns a discriminated pin/unpin request; never a profile object.
+ */
+export function normalizeHarnessProfileName(name: string | undefined,): HarnessProfilePin {
+  return name === undefined || name === "" || name === "default"
+    ? { pinned: false, }
+    : { pinned: true, name, };
+}
 
 /** Input for the isolation gate. */
 export interface HarnessIsolationInput {
@@ -48,15 +78,18 @@ export interface HarnessIsolationInput {
   role: string | null;
   /** Authenticated user id the execution is attributed to; null = unattributed. */
   userId: string | null;
-  /** Name of the configured profile to execute. */
-  profileName: string;
+  /**
+   * Exact profile name to pin. Omit, pass empty, or pass `default` for an
+   * explicit unpinned request (selector failover), still gated by profile count.
+   */
+  profileName?: string;
 }
 
 /**
  * Decide whether external harness execution may start.
- * @param input - config, caller role, principal, and profile name
- * @returns the verdict; `allowed` carries the profile whose `command` is the
- * only argv the caller may spawn.
+ * @param input - config, caller role, principal, and optional profile name
+ * @returns a pinned allow carrying the one spawnable profile, or an unpinned
+ * allow carrying none and deferring selection to the selector
  * @throws {Error} never — every denial is a typed value.
  */
 export function assertHarnessExecution(input: HarnessIsolationInput,): HarnessIsolationVerdict {
@@ -87,14 +120,27 @@ export function assertHarnessExecution(input: HarnessIsolationInput,): HarnessIs
     };
   }
 
-  const profile = config.acp.profiles.find((p,) => p.name === profileName);
+  const pin = normalizeHarnessProfileName(profileName,);
+  if (!pin.pinned) {
+    if (config.acp.profiles.length === 0) {
+      return {
+        allowed: false,
+        code: "profile_unknown",
+        message: "no harness profiles configured — an unpinned dispatch needs at least one admin-configured profile",
+      };
+    }
+
+    return { allowed: true, unpinned: true, profile: null, userId, };
+  }
+
+  const profile = config.acp.profiles.find((p,) => p.name === pin.name);
   if (!profile) {
     return {
       allowed: false,
       code: "profile_unknown",
-      message: `no harness profile configured under name "${profileName}" — only admin-configured profiles may run`,
+      message: `no harness profile configured under name "${pin.name}" — only admin-configured profiles may run`,
     };
   }
 
-  return { allowed: true, profile, userId, };
+  return { allowed: true, unpinned: false, profile, userId, };
 }

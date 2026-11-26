@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 300
+// size-allow: 320
 
 // src/integrations/loop-lore-facade/ops/delegation.ts — the `delegate_task`
 // facade op (TASK-harness-subagent-delegation, slice 1).
@@ -34,6 +34,7 @@ import { chatPolicy, } from "../../../api-governance/rate-limiting/policies";
 import type { Config, } from "../../../config/schema";
 import type { DB, } from "../../../db/schema";
 import { recordExecRun, } from "../../../harness/exec-recorder";
+import { checkPromptInjection, } from "../../../validation/prompt-injection";
 import {
   cancelQueuedTurn,
   getQueuedTurn,
@@ -186,6 +187,23 @@ async function handleSpawn(opts: {
       status: 400,
       json: { error: "depth_exceeded", message: "a delegated child may not delegate further (depth 1 max)", },
     };
+  }
+
+  if (deps.config.hooks?.enableModerationHooks !== false) {
+    const injection = await checkPromptInjection(body.prompt, {
+      config: deps.config,
+      db: deps.database,
+      userId,
+      chatId: body.chatId,
+    },);
+
+    if (injection.verdict === "blocked") {
+      return {
+        ok: false,
+        status: 403,
+        json: { error: "injection_detected", message: "Delegation prompt rejected: prompt injection detected.", },
+      };
+    }
   }
 
   if (!(await callerOwnsActor({ database: deps.database, actorId: body.actorId, userId, },))) {

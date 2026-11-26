@@ -1,5 +1,45 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Workspaces are auto-detected from package.json. Root-level entry/project
+  // are ignored in a workspace project, so package reach needs its own block.
+  "workspaces": {
+    ".": {
+      "entry": [
+        "src/server/index.ts",
+        "src/tui/app.ts",
+        "src/db/migrations/*.ts",
+        "src/frontend/alpine-init.ts",
+        "src/frontend/pages.ts",
+        "src/frontend/chat-vendor.ts",
+        "src/frontend/chat-list.ts",
+        "src/frontend/locale-init.ts",
+        "src/frontend/egui-bridge.ts",
+        "src/frontend/wasm-loader.ts",
+        "src/frontend/terminal-xterm.ts",
+        "src/frontend/alpine/local-engine.worker.ts",
+        "src/frontend/alpine/wllama-engine.worker.ts",
+        "plugins/core/*/plugin.ts",
+        "plugins/core/*/index.ts",
+        "plugins/community/*/plugin.ts",
+        "scripts/backup-sqlite.ts",
+        "scripts/validate-backup-restore.ts",
+        "scripts/check-no-shell-refs.ts",
+        "scripts/check-migration-ordering.ts",
+        "bin/lolo.ts"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "scripts/**/*.ts",
+        "scripts/**/*.mjs",
+        "tests/**/*.ts",
+        "plugins/**/*.ts"
+      ]
+    },
+    "packages/*": {
+      "entry": ["src/index.ts", "**/plugin.ts"],
+      "project": ["src/**/*.ts"]
+    }
+  },
   "entry": [
     // The two app roots. knip hints "Remove redundant entry pattern" for them
     // (it dedupes them against `project`), but that is WRONG here: deleting them
@@ -83,7 +123,6 @@
     // no importer can honestly be cited for them.
 
     "htmx-ext-alpine-morph", // src/frontend/vendor.ts registers htmx-ext-sse + @alpinejs/morph directly; this extension has no registration site
-    "bun-plugin-html", // Bun html-bundler plugin; no Bun.plugin()/preload registration in bunfig.toml or scripts/build-frontend.mjs
     "@oh-my-pi/pi-tui", // TUI renderer; imported ONLY through package subpaths (./tui, ./terminal, ./keys, ./keybindings, ./utils, ./components/*) by src/tui/pi.ts — knip's specifier match misses subpath-only usage
     //
     // SRC-ONLY IMPORTERS (each cited below). Real import edges under src/ that
@@ -149,11 +188,18 @@
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
     "rustup", // Rust toolchain (scripts/build-native.ts) -- external, not npm
     "rustc", // native cdylib compile (scripts/build-native.ts) -- external, not npm
-    "wasm-bindgen" // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
+    "wasm-bindgen", // egui wasm glue (scripts/build-egui-wasm.ts) -- cargo-installed CLI, not npm
+    "verify", // status-tooling fixture argv (scripts/tooling/status.test.ts) -- a `run()` subcommand string, not a binary
+    "bogus" // status-tooling fixture argv (scripts/tooling/status.test.ts) -- the unknown-subcommand probe string, not a binary
   ],
   "ignore": [
     "src/**",
-    "packages/**",
+    // Package tests are discovered by bun, not import edges (same class as
+    // src/** above). Package source itself is PROJECT scope and gate-visible.
+    "packages/**/*.test.ts",
+    // Plugin shims re-export canonical code under packages/plugins;
+    // the loader reaches them through dynamic manifest imports knip cannot trace.
+    "plugins/**",
     // Build-time CLIs spawned as shell strings by scripts/build-frontend.mjs
     // (`await $`bun run src/build/copy-icons.ts`` / `... src/build/compress.ts`),
     // never statically imported — knip cannot follow a Bun shell template.
@@ -324,6 +370,11 @@
     "tests/e2e/flows/browser/chat-list-view.browser.ts",
     "tests/e2e/flows/browser/new-chat-advanced-fields.browser.ts",
     "tests/e2e/flows/browser/i18n-locale.browser.ts",
+    // Release-code-update coverage (2026-11-18): Playwright discovers by
+    // directory glob; knip cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/admin-db-backup.browser.ts",
+    "tests/e2e/flows/browser/admin-local-models.browser.ts",
+    "tests/e2e/flows/browser/new-chat-harness-variant.browser.ts",
 
     // Autonomy panel coverage (TASK-autonomy-config-surface). Same class
     // as the .browser.ts entries above: Playwright discovers by glob, knip
@@ -372,5 +423,9 @@
     // scripts/check/*.mjs entries above.
     "src/config/generate-domain-schemas.ts",
     "src/scripts/smoke-app.ts",
+    "scripts/publish-wiki.ts",
+    // Invoked directly by shell string in docs/guide/two-instance-federation.md
+    // (`bun scripts/dev/two-instance-harness.ts ...`), not import-reachable.
+    "scripts/dev/two-instance-harness.ts",
   ]
 }

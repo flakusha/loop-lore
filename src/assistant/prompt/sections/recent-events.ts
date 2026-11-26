@@ -12,6 +12,7 @@
  */
 import { NotificationService, } from "../../../notifications/service";
 import type { SectionBuilder, } from "../types";
+import { wrapUntrusted, } from "./system";
 
 export const recentEventsSection: SectionBuilder = {
   name: "recentEvents",
@@ -20,6 +21,12 @@ export const recentEventsSection: SectionBuilder = {
     const userId = ctx.params.userId;
     if (!userId) { return []; }
     const text = await new NotificationService(ctx.db,).buildRecentEventsContext(userId, ctx.chat.id,);
-    return text ? [{ role: "user", content: text, },] : [];
+    if (!text) { return []; }
+
+    // Quest titles / bodies are user-authored. Keep them inside the shared
+    // data-only boundary; neutralize a forged closing tag so text cannot
+    // escape the block and present itself as an instruction.
+    const scoped = text.replace(/<\/?untrusted_user_content\b/gi, (tag,) => tag.replace("<", "‹",),);
+    return [{ role: "user", content: wrapUntrusted("notifications.recent_events", scoped,), },];
   },
 };

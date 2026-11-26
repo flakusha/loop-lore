@@ -7,8 +7,9 @@
  * governanceGuard: cross-cutting hooks applied to every v1 route —
  * per-user rate limiting (policy chosen by route prefix) and request
  * metrics (status + latency) feeding the Prometheus export.
- * governanceEndpoints: GET /rate-limit/status (self, any user) and
- * GET /metrics (Prometheus exposition, admin-only).
+ * governanceEndpoints: GET /rate-limit/status (self, any user),
+ * GET /metrics (Prometheus exposition, admin-only), and the reserved
+ * OpenAPI/task stubs (truthful 501).
  */
 import { Elysia, } from "elysia";
 import { governanceRateLimiter, } from "../../api-governance/rate-limiting/instance";
@@ -17,6 +18,7 @@ import { metrics, } from "../../api-governance/telemetry/collector";
 import { renderPrometheus, } from "../../api-governance/telemetry/prometheus";
 import { can, } from "../../users/permissions";
 import { ErrorCode, extractAuth, HttpStatus, jsonError, requireUserId, } from "../http-utils";
+import { governanceStubRoutes, } from "./governance-stubs";
 
 /**
  * Collapse id-like path segments so labels stay low-cardinality.
@@ -164,5 +166,6 @@ export function governanceEndpoints(prefix = "/api/v1",) {
           },);
         },
       )
+      .use(governanceStubRoutes(prefix,),)
   );
 }

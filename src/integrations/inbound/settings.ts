@@ -66,7 +66,9 @@ interface InboundSettingsStoreState {
 class InboundSettingsStore {
   private state: InboundSettingsStoreState = {
     seeded: false,
-    file: { ...CODE_DEFAULTS, },
+    // The file layer is the full file-config section; the proxy listener's
+    // loopback bind rides here (the effective VIEW stays the 4-field shape).
+    file: { ...CODE_DEFAULTS, proxyBind: "127.0.0.1", },
     overrides: {},
   };
 
@@ -99,7 +101,7 @@ class InboundSettingsStore {
 
   /** Reset to unseeded defaults. Dev/test only. */
   reset(): void {
-    this.state = { seeded: false, file: { ...CODE_DEFAULTS, }, overrides: {}, };
+    this.state = { seeded: false, file: { ...CODE_DEFAULTS, proxyBind: "127.0.0.1", }, overrides: {}, };
   }
 }
 

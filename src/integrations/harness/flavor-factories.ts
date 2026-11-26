@@ -5,15 +5,15 @@
  * flavor-factories.ts — the flavor → adapter-factory map.
  *
  * Turns a `harness.acp.profiles[]` entry's `harness` flavor into the
- * {@link HarnessAdapterFactory} that ProfileRegistry consumes. There is no
- * composition root on dev yet (ProfileRegistry is only constructed in
- * tests), so this module is deliberately the ONE place a wiring slice has to
- * touch: resolve a profile via {@link resolveAdapterFactory} and inject the
- * result. New flavors register here — nothing else is flavor-aware.
+ * {@link HarnessAdapterFactory} that ProfileRegistry consumes. The composition
+ * root lives in `src/integrations/harness/runtime.ts` and boots from
+ * `src/server/start.ts`; this module stays the ONE flavor → factory map, so
+ * new flavors register here and callers resolve via {@link resolveAdapterFactory}.
  */
 
 import { type HarnessFlavor, } from "../../config/schema/harness";
 import { type HarnessAdapterFactory, type HarnessQuotaSurface, } from "./adapter-types";
+import { createAntigravityAdapter, } from "./antigravity";
 import { createClaudeCodeAdapter, } from "./claude-code";
 import { createCodexAdapter, } from "./codex";
 import { createHermesAdapter, } from "./hermes";
@@ -32,6 +32,7 @@ export const HARNESS_ADAPTER_FACTORIES: Record<HarnessFlavor, HarnessAdapterFact
   "claude-code": createClaudeCodeAdapter,
   hermes: createHermesAdapter,
   openclaw: createOpenClawAdapter,
+  antigravity: createAntigravityAdapter,
 };
 
 /**
@@ -48,6 +49,7 @@ export const FLAVOR_QUOTA_SURFACES: Record<HarnessFlavor, HarnessQuotaSurface> =
   "claude-code": "none",
   hermes: "none",
   openclaw: "none",
+  antigravity: "none",
 };
 /**
  * Resolve the adapter factory for a profile's `harness` flavor.

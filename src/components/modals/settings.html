@@ -114,6 +114,106 @@
               @change="save('api')"
             />
           </div>
+
+          <!-- ComfyUI video model selection (discovered from the engine) -->
+          <template x-if="comfyModels">
+            <fieldset style="margin-bottom: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: var(--space-2)">
+              <legend x-text="t('settings.comfyuiModels') || 'ComfyUI video models'"></legend>
+              <p style="font-size: var(--fs-xs); color: var(--text-secondary)">
+                <span x-text="comfyModels.provider"></span> — <span x-text="comfyModels.clipRole.source"></span>
+              </p>
+
+              <template x-if="comfyModels.checkpointRole">
+                <div class="form-group">
+                  <label class="form-label" for="settings-comfy-checkpoint">Checkpoint</label>
+                  <select
+                    id="settings-comfy-checkpoint"
+                    class="form-select"
+                    x-model="comfyModels.checkpointRole.selected"
+                    @change="saveComfyModels()"
+                    data-testid="comfy-model-checkpoint"
+                  >
+                    <option value="">First discovered model</option>
+                    <template x-for="name in comfyModels.checkpointRole.candidates" :key="name">
+                      <option :value="name" x-text="name"></option>
+                    </template>
+                  </select>
+                </div>
+              </template>
+              <template x-if="comfyModels.clipVisionRole">
+                <div class="form-group">
+                  <label class="form-label" for="settings-comfy-clip-vision">CLIP vision</label>
+                  <select
+                    id="settings-comfy-clip-vision"
+                    class="form-select"
+                    x-model="comfyModels.clipVisionRole.selected"
+                    @change="saveComfyModels()"
+                    data-testid="comfy-model-clip-vision"
+                  >
+                    <option value="">First discovered model</option>
+                    <template x-for="name in comfyModels.clipVisionRole.candidates" :key="name">
+                      <option :value="name" x-text="name"></option>
+                    </template>
+                  </select>
+                </div>
+              </template>
+              <div class="form-group">
+                <label class="form-label" for="settings-comfy-clip">Text encoder</label>
+                <select
+                  id="settings-comfy-clip"
+                  class="form-select"
+                  x-model="comfyModels.clipRole.selected"
+                  @change="saveComfyModels()"
+                  data-testid="comfy-model-clip"
+                >
+                  <option value="">First discovered model</option>
+                  <template x-for="name in comfyModels.clipRole.candidates" :key="name">
+                    <option :value="name" x-text="name"></option>
+                  </template>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="settings-comfy-diffusion">Diffusion model</label>
+                <select
+                  id="settings-comfy-diffusion"
+                  class="form-select"
+                  x-model="comfyModels.diffusionRole.selected"
+                  @change="saveComfyModels()"
+                  data-testid="comfy-model-diffusion"
+                >
+                  <option value="">First discovered model</option>
+                  <template x-for="name in comfyModels.diffusionRole.candidates" :key="name">
+                    <option :value="name" x-text="name"></option>
+                  </template>
+                </select>
+              </div>
+              <div class="form-group" x-show="!comfyModels.noVae">
+                <label class="form-label" for="settings-comfy-vae">VAE</label>
+                <select
+                  id="settings-comfy-vae"
+                  class="form-select"
+                  x-model="comfyModels.vaeRole.selected"
+                  @change="saveComfyModels()"
+                  data-testid="comfy-model-vae"
+                >
+                  <option value="">First discovered model</option>
+                  <template x-for="name in comfyModels.vaeRole.candidates" :key="name">
+                    <option :value="name" x-text="name"></option>
+                  </template>
+                </select>
+              </div>
+              <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
+                <span>No VAE model</span>
+                <label class="toggle"><input
+                    type="checkbox"
+                    x-model="comfyModels.noVae"
+                    @change="saveComfyModels()"
+                    data-testid="comfy-model-no-vae"
+                  /><span class="toggle-slider"></span></label>
+              </div>
+            </fieldset>
+          </template>
+
           <div class="form-group">
             <label class="form-label" for="settings-custom-instructions"
             >{{{ t("settings.customInstructions") }}}</label>

@@ -4,8 +4,8 @@
 /**
  * Auto-rotation orchestrator for all expired keys.
  */
-import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../../../../src/db/schema";
 import { getSmk, isEncryptionEnabled, } from "../smk";
 import { findExpiredKeys, } from "./find-expired";
 import { log, } from "./log";

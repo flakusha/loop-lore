@@ -183,6 +183,10 @@ export const chatInlineState: Record<string, unknown> & ThisType<ChatState & Alp
   _quickEmojis: [...DEFAULT_QUICK_EMOJIS,],
   // _draftBackup: chat-drafts sets it; default undefined to keep type stable for first-render reads.
   _draftBackup: undefined as string | undefined,
+  // Composer recall history (TASK-composer-up-down-recall-of-prior-typed-text).
+  _composerHistory: new Map<string, string[]>(),
+  _composerHistoryChat: null as string | null,
+  _composerHistoryCursor: 0,
   _searchResults: [] as {
     chatId: string;
     chatName: string;

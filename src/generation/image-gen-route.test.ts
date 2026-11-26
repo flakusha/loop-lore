@@ -20,12 +20,23 @@ import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
 // (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
 import type { Kysely, } from "kysely";
-import type { TemplateModality, } from "../db/enums";
+import { randomUUID, } from "node:crypto";
+import { AssetType, CancelReason, CancelSource, GenerationStatus, type TemplateModality, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertChats, } from "../test-utils/insert-helpers";
+import { insertAssets, insertChats, } from "../test-utils/insert-helpers";
+import { cancelGeneration, } from "./cancellation-actions/cancel";
+import { activeGenerations, chatToAttempt, } from "./cancellation-tracker";
+import type { ActiveGeneration, } from "./cancellation-tracker/types";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
+
+/** Selection the mocked resolver returns; undefined = no stored selection. */
+let resolvedWorkflowForTests: string | undefined;
+/** Resolver calls, for precedence assertions. */
+const workflowResolverCalls: Array<Record<string, unknown>> = [];
+/** Options handed to the failover engine, captured at the route boundary. */
+const failoverOptsCalls: Array<Record<string, unknown>> = [];
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
@@ -48,6 +59,8 @@ async function mockBindGeneratedAvatar(_db: unknown, opts: { actorId: string; as
 
 /** When set, mockGenerateImages fails with this outcome (provider-error path). */
 let generateError: { ok: false; error: string; status: number } | null = null;
+/** Invoked inside the engine stub to cancel the chat mid-generation. */
+let generateCancel: (() => void) | null = null;
 
 // ── Mock implementations ───────────────────────────────────────────────────────
 
@@ -60,6 +73,7 @@ async function mockGenerateImages(
   opts: Record<string, unknown>,
 ) {
   generateImagesCalls.push([_sdConfig, opts,],);
+  generateCancel?.();
   if (generateError) { return generateError; }
   return {
     ok: true,
@@ -130,46 +144,44 @@ const defaultConfig = {
 // `test:unit`) runs with `--isolate`, where each file gets its own module
 // registry and the mocks cannot leak.
 let handleImageGeneration: typeof imageGenRoute.handleImageGeneration;
+const realFailover = realImageEngine.generateImagesWithFailover;
 
 if (ISOLATED) {
   mock.module("../config/load", () => ({
     ...realConfigLoad,
-    // Merge test overrides over full schema defaults: a bare defaultConfig
-    // drops required sections (server, db, auth, byoKey, dynamicResponse)
-    // for every later file in the process (e2e server boot, handler
-    // policy wiring). Test behavior unchanged — assets/generation still
-    // come from defaultConfig.
     loadConfig: () => ({ ...structuredClone(createConfigSchema().defaults,), ...defaultConfig, }),
   }),);
 
   mock.module("./image-engine", () => ({
     ...realImageEngine,
     generateImages: mockGenerateImages,
+    generateImagesWithFailover: async (
+      ...args: Parameters<typeof realImageEngine.generateImagesWithFailover>
+    ) => {
+      failoverOptsCalls.push(args[2] as unknown as Record<string, unknown>,);
+      return realFailover(...args,);
+    },
   }),);
 
-  // Narrow mocks to the specific submodules the SUT imports. Mocking the
-  // whole `../assets/service` barrel would clobber
-  // detectAssetType/unlinkAsset/getAsset/etc.
   mock.module("../assets/service/persist-generated", () => ({
     ...realPersistGenerated,
     persistGeneratedImages: mockPersistGeneratedImages,
   }),);
 
-  // Avatar Dogfood slice 1: the binding op is mocked so the route tests
-  // exercise gating + plumbing; the op itself has its own real-DB suite
-  // (avatar-service/generated.test.ts).
   mock.module("../characters/services/avatar-service", () => ({
     ...realAvatarService,
     bindGeneratedActorAvatar: mockBindGeneratedAvatar,
   }),);
 
-  // No ../db/index stub (see NOTE above).
+  mock.module("./workflow-selection", () => ({
+    resolveWorkflowForUseCase: async (opts: Record<string, unknown>,) => {
+      workflowResolverCalls.push(opts,);
+      return resolvedWorkflowForTests;
+    },
+  }),);
 
-  // Dynamic import is required: mock.module must be registered BEFORE the
-  // SUT module is evaluated, which a static import cannot guarantee.
   ({ handleImageGeneration, } = await import("./image-gen-route"));
 }
-// ── Helpers ─────────────────────────────────────────────────────────────────────
 
 /**
  * A freshly MIGRATED test database for the cases that pass no explicit handle.
@@ -293,10 +305,37 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
-    expect(opts.lora,).toEqual(LORA_CONFIG,);
+    expect(opts.lora,).toEqual([LORA_CONFIG,],);
   });
 
-  // (3) Opt-in: ComfyUI backend selected + lora → passed through
+  it("normalizes a LoRA array and passes every entry through", async () => {
+    stubDiscoveryProbesHealthy();
+    const configs = [
+      { name: "first", strength: 0.5, backend: "sd-server", },
+      { name: "second", strength: 0.6, backend: "sd-server", },
+    ];
+
+    const body = makeBody({ prompt: "array lora prompt", lora: configs, },);
+    await handleImageGeneration(body, await migratedDb(), "test-user",);
+
+    expect(generateImagesCalls.length,).toBeGreaterThan(0,);
+    const [, opts,] = generateImagesCalls[0]!;
+    expect(opts.lora,).toEqual(configs,);
+  });
+
+  it("rejects an invalid LoRA strength with 400 before generation", async () => {
+    const body = makeBody({
+      prompt: "bad strength",
+      lora: [{ name: "char", strength: 2, backend: "sd-server", },],
+    },);
+
+    const res = await handleImageGeneration(body, await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(400,);
+    const json = await res.json() as { error: string };
+    expect(json.error,).toContain("strength must be between",);
+    expect(generateImagesCalls.length,).toBe(0,);
+  });
 
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
     mock.module("../config/load", () => ({
@@ -345,18 +384,24 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
-    expect((opts.lora as Record<string, unknown>).name,).toBe("style_lora",);
+    expect((opts.lora as { name: string }[])[0]?.name,).toBe("style_lora",);
   });
 
-  // (4) Missing prompt → HTTP 400
+  // (4) Missing or empty prompt → HTTP 400
 
-  it("returns HTTP 400 when prompt is missing", async () => {
-    const body = makeBody({ prompt: undefined, },);
-    const res = await handleImageGeneration(body, await migratedDb(), "test-user",);
+  it("returns HTTP 400 when prompt is missing or empty", async () => {
+    const db = await migratedDb();
+    try {
+      for (const prompt of [undefined, "",]) {
+        const res = await handleImageGeneration(makeBody({ prompt, },), db, "test-user",);
 
-    expect(res.status,).toBe(400,);
-    const json = await res.json() as { error: string };
-    expect(json.error,).toContain("prompt",);
+        expect(res.status,).toBe(400,);
+        const json = await res.json() as { error: string };
+        expect(json.error,).toContain("prompt",);
+      }
+    } finally {
+      await db.destroy();
+    }
   });
 
   // (5) No sd provider → HTTP 501
@@ -652,17 +697,18 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   });
 },);
 
-// ── /image ComfyUI-first opt-in routing (TASK-sd-cpp-provider) ──────────────
 describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
     persistGeneratedCalls.length = 0;
     generateError = null;
   },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
   },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   /** Config with an sdcpp provider listed AHEAD of a ComfyUI provider. */
   const sdThenComfyConfig = (comfyUiFirst: boolean | undefined,) => ({
@@ -771,6 +817,47 @@ describeOrSkip("handleImageGeneration — comfyUiFirst routing", () => {
       }),
     }),);
   },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
+
+  afterEach(() => {
+    // State restore for later suites: this file's mock.module registrations
+    // are process-global and cannot be unregistered, so the LAST loadConfig
+    // wins for everything that runs afterwards. Re-register the gate-free
+    // openai config (the state test (7) established before this describe
+    // existed) after each routing test.
+    mock.module("../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
+          providers: {
+            ...structuredClone(createConfigSchema().defaults,).generation.providers,
+            sd: [
+              {
+                name: "test-openai",
+                label: "Test OpenAI",
+                baseUrl: "http://127.0.0.1:8080/v1",
+                apiFamily: "openai",
+                purpose: "generate",
+                defaults: {
+                  width: 512,
+                  height: 512,
+                  steps: 20,
+                  cfgScale: 7,
+                  negativePrompt: "",
+                  sampler: "Euler",
+                },
+                timeout: 30_000,
+                generationTimeout: 120_000,
+              },
+            ],
+          },
+        },
+      }),
+    }),);
+  },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   it("knob ON orders the healthy ComfyUI instance ahead of the chain", async () => {
     stubDiscoveryProbesHealthy();
@@ -834,6 +921,7 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
     bindAvatarCalls.length = 0;
     bindError = null;
   },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
 
   it("binds persisted images as variants on an owned actor and returns avatarIds", async () => {
     const { db, } = await createTestDb();
@@ -921,5 +1009,267 @@ describeOrSkip("handleImageGeneration — bindActorAvatar (Avatar Dogfood slice 
     } finally {
       await db.destroy();
     }
+  });
+},);
+
+describeOrSkip("handleImageGeneration — setAsChatBackground", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    persistGeneratedCalls.length = 0;
+  },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
+
+  /** Seed a user + a chat owned by that user (passes checkChatAccess). */
+  async function seedBgChat(db: Kysely<DB>, userId: string, chatId: string,) {
+    await db.insertInto("users",).values({
+      id: userId,
+      username: userId,
+      display_name: "Bg User",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    await insertChats(db, "BG Chat", userId, { id: chatId, },);
+  }
+
+  it("leaves default generation unchanged (no catalog row or assignment)", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedBgChat(db, "bg-user", "bg-chat-default",);
+      const res = await handleImageGeneration(
+        makeBody({ chatId: "bg-chat-default", },),
+        db,
+        "bg-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      const backgrounds = await db.selectFrom("chat_backgrounds",).selectAll().execute();
+      const assignments = await db.selectFrom("chat_background_assignments",).selectAll().execute();
+      expect(backgrounds,).toHaveLength(0,);
+      expect(assignments,).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("flag creates a static catalog row + assignment using the first asset", async () => {
+    const { db, } = await createTestDb();
+    try {
+      await seedBgChat(db, "bg-user", "bg-chat-flag",);
+      // The mocked persist result is "asset-1"; asset_id has an FK to assets.
+      await insertAssets(
+        db,
+        "bg-user",
+        "generated-abc12345.png",
+        "image/png",
+        AssetType.Image,
+        1,
+        "/tmp/generated-abc12345.png",
+        {
+          id: "asset-1",
+        },
+      );
+
+      const res = await handleImageGeneration(
+        makeBody({ chatId: "bg-chat-flag", setAsChatBackground: true, },),
+        db,
+        "bg-user",
+      );
+
+      expect(res.status,).toBe(200,);
+      const bg = await db.selectFrom("chat_backgrounds",).selectAll().executeTakeFirst();
+      expect(bg,).toMatchObject({
+        name: "Generated image asset-1",
+        type: "static",
+        asset_id: "asset-1",
+      },);
+
+      const assignment = await db
+        .selectFrom("chat_background_assignments",)
+        .selectAll()
+        .where("chat_id", "=", "bg-chat-flag",)
+        .executeTakeFirst();
+
+      expect(assignment?.background_id,).toBe(bg!.id,);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("flag without chatId is a no-op", async () => {
+    const { db, } = await createTestDb();
+    try {
+      const res = await handleImageGeneration(makeBody({ setAsChatBackground: true, },), db, "bg-user",);
+
+      expect(res.status,).toBe(200,);
+      const backgrounds = await db.selectFrom("chat_backgrounds",).selectAll().execute();
+      const assignments = await db.selectFrom("chat_background_assignments",).selectAll().execute();
+      expect(backgrounds,).toHaveLength(0,);
+      expect(assignments,).toHaveLength(0,);
+    } finally {
+      await db.destroy();
+    }
+  });
+},);
+
+describeOrSkip("handleImageGeneration — prompt length bound", () => {
+  it("400s a prompt of 2001 characters with the bound message", async () => {
+    const db = await migratedDb();
+    try {
+      const res = await handleImageGeneration(
+        { prompt: "x".repeat(2_001,), },
+        db,
+        "prompt-bound-image-user",
+      );
+
+      expect(res.status,).toBe(400,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toBe("prompt must be 1..2000 characters",);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("passes a 2000-character prompt past the bound", async () => {
+    const db = await migratedDb();
+    try {
+      // Malformed size is the next gate after the prompt bound: reaching it
+      // proves the 2000-character body was accepted by the bound check.
+      const res = await handleImageGeneration(
+        { prompt: "x".repeat(2_000,), size: "bogus", },
+        db,
+        "prompt-bound-image-user",
+      );
+
+      expect(res.status,).toBe(400,);
+      const body = (await res.json()) as { error: string };
+      expect(body.error,).toBe(`Invalid size "bogus": expected "WIDTHxHEIGHT"`,);
+    } finally {
+      await db.destroy();
+    }
+  });
+},);
+
+describeOrSkip("handleImageGeneration — discard on cancel", () => {
+  it("409s without persisting when the chat is cancelled mid-generation", async () => {
+    persistGeneratedCalls.length = 0;
+    stubDiscoveryProbesHealthy();
+    const attemptId = randomUUID();
+    const chatId = randomUUID();
+    const userId = "discard-image-user";
+    const { db, } = await createTestDb();
+    const previousGen = activeGenerations.get(attemptId,);
+    const previousChat = chatToAttempt.get(chatId,);
+    // Only the fields cancelGeneration touches are needed; the cast keeps this
+    // route test independent of the full ActiveGeneration fixture.
+    const active = {
+      attemptId,
+      chatId,
+      status: GenerationStatus.Streaming,
+      abortController: new AbortController(),
+      repetitionDetector: { getBufferText: () => "", },
+      sideEffectJobs: undefined,
+      events: undefined,
+    } as unknown as ActiveGeneration;
+
+    try {
+      await db.insertInto("users",).values({
+        id: userId,
+        username: userId,
+        display_name: "Discard User",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },).execute();
+
+      await insertChats(db, "Discard Chat", userId, { id: chatId, },);
+      activeGenerations.set(attemptId, active,);
+      chatToAttempt.set(chatId, attemptId,);
+      generateCancel = () => {
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.UserCancel,
+          source: CancelSource.User,
+          detail: "stop",
+        },);
+      };
+
+      const res = await handleImageGeneration(makeBody({ chatId, },), db, userId,);
+      expect(res.status,).toBe(409,);
+      expect(await res.json(),).toEqual({ error: "Generation cancelled", status: 409, },);
+      expect(persistGeneratedCalls,).toHaveLength(0,);
+    } finally {
+      generateCancel = null;
+      if (previousGen === undefined) { activeGenerations.delete(attemptId,); }
+      else { activeGenerations.set(attemptId, previousGen,); }
+
+      if (previousChat === undefined) { chatToAttempt.delete(chatId,); }
+      else { chatToAttempt.set(chatId, previousChat,); }
+
+      globalThis.fetch = originalFetch;
+      await db.destroy();
+    }
+  });
+},);
+
+// ── Stored workflow selection (useCase: image.generate) ─────────────────────────
+
+describeOrSkip("handleImageGeneration — workflow selection", () => {
+  beforeEach(() => {
+    generateImagesCalls.length = 0;
+    workflowResolverCalls.length = 0;
+    failoverOptsCalls.length = 0;
+    resolvedWorkflowForTests = undefined;
+  },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    resolvedWorkflowForTests = undefined;
+  },);
+  // hint: Structural change (rename/retype). Check callers of this entity.
+
+  it("uses the resolved stored workflow when the body omits workflow", async () => {
+    stubDiscoveryProbesHealthy();
+    resolvedWorkflowForTests = "stored-image-wf";
+
+    const res = await handleImageGeneration(makeBody(), await migratedDb(), "test-user",);
+
+    expect(res.status,).toBe(200,);
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    expect(workflowResolverCalls[0],).toMatchObject({
+      userId: "test-user",
+      useCase: "image.generate",
+      fallback: undefined,
+    },);
+
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBe("stored-image-wf",);
+  });
+
+  it("keeps an explicit body workflow and skips the resolver", async () => {
+    stubDiscoveryProbesHealthy();
+    resolvedWorkflowForTests = "stored-image-wf";
+
+    await handleImageGeneration(
+      makeBody({ workflow: "explicit-image-wf", },),
+      await migratedDb(),
+      "test-user",
+    );
+
+    expect(workflowResolverCalls,).toHaveLength(0,);
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBe("explicit-image-wf",);
+  });
+
+  it("passes the resolver result through when nothing is stored", async () => {
+    stubDiscoveryProbesHealthy();
+
+    await handleImageGeneration(makeBody(), await migratedDb(), "test-user",);
+
+    expect(workflowResolverCalls,).toHaveLength(1,);
+    const opts = failoverOptsCalls[0]!;
+    expect(opts.workflow,).toBeUndefined();
   });
 },);

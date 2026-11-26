@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 285
 
 /**
  * Auth Routes
@@ -14,23 +15,79 @@
  * On failure: error HTML for htmx error swap.
  */
 
-import { Elysia, } from "elysia";
+import { Elysia, t, } from "elysia";
 import type { TranslatorFn, } from "../../i18n/types";
+import type { RateLimiter, } from "../../middleware/rate-limit";
+import { uid, } from "../../utils";
+import { unauthorized, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, VerifyFactorBody, } from "../../validation/schemas";
+import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { challengeRoute, } from "./challenge-routes";
 import { handleDemoLogin, handleLogin, } from "./login";
 import { handleRegister, } from "./register";
 import { handleLogout, handleMe, } from "./session";
+import { enrollLimiter, verifyLimiter, } from "./shared";
 import type { HandleOpts, } from "./types";
 import { handleVerifyFactor, } from "./verify";
 
 export {
   createDemoLoginLimiter,
+  createEnrollLimiter,
   createLoginLimiter,
   createRegisterLimiter,
+  createVerifyLimiter,
   resetDemoLoginRateLimiter,
+  resetEnrollRateLimiter,
   resetLoginRateLimiter,
   resetRegisterRateLimiter,
+  resetVerifyRateLimiter,
 } from "./shared";
+
+/** Deliverable MFA factor kinds accepted at enrollment. */
+type EnrollableKind = "email" | "messenger-matrix" | "messenger-im";
+
+/** Request body for `POST /auth/factors`. */
+const EnrollFactorBody = t.Object({
+  kind: t.UnionEnum(["email", "messenger-matrix", "messenger-im",],),
+  target: t.String({ minLength: 1, maxLength: 320, },),
+},);
+
+/**
+ * Enroll a delivery factor for the authenticated caller.
+ * @param options Database, derived identity, limiter and enrollment payload.
+ * @returns The new factor id, or 401/429.
+ * @throws {Error} When the database insert fails.
+ */
+async function handleEnrollFactor(options: {
+  database: HandleOpts["database"];
+  userId: string | null;
+  sessionId: string | null;
+  limiter: RateLimiter;
+  kind: EnrollableKind;
+  target: string;
+},): Promise<Response> {
+  const { database, userId, sessionId, limiter, kind, target, } = options;
+  if (!userId || !sessionId) { return unauthorized(); }
+
+  if (!limiter.consume(`mfa-enroll:${userId}`,).allowed) {
+    return jsonError({
+      message: "Too many enrollment attempts — try again shortly",
+      status: HttpStatus.TooManyRequests,
+    },);
+  }
+
+  const id = uid();
+  await database.insertInto("auth_factors",).values({
+    id,
+    user_id: userId,
+    kind,
+    target: target.trim(),
+    created_at: Date.now(),
+    verified_at: null,
+  },).execute();
+
+  return jsonResponse({ factorId: id, },);
+}
 
 // ── Public routes: auth runs but won't block ─────────────────
 
@@ -126,8 +183,44 @@ export function authPublicRoutes({ database, config, limiters, }: HandleOpts, pr
  * @param prefix
  * @returns {Elysia<"", { decorator: {}; store: {}; derive: {}; resolve: {}; }, { typebox: {}; error: {}; }, { schema: {}; standaloneSchema: {}; macro: {}; macroFn: {}; parser: {}; response: {}; }, {}, { derive: {}; resolve: {}; schema: {}; standaloneSchema: {}; response: {}; }, { ...; }>}
  */
-export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
+export function authProtectedRoutes({ database, config, bridge, limiters, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
+    .post(
+      `${prefix}/auth/factors`,
+      async ({ body, ...rest },) => {
+        const userId = "userId" in rest && typeof rest.userId === "string"
+          ? rest.userId
+          : null;
+
+        const sessionId = "sessionId" in rest && typeof rest.sessionId === "string"
+          ? rest.sessionId
+          : null;
+
+        const { kind, target, } = body as { kind: EnrollableKind; target: string };
+
+        return handleEnrollFactor({
+          database,
+          userId,
+          sessionId,
+          limiter: limiters?.enrollLimiter ?? enrollLimiter,
+          kind,
+          target,
+        },);
+      },
+      {
+        body: EnrollFactorBody,
+        response: {
+          200: SuccessResponse,
+          401: ErrorResponse,
+          429: ErrorResponse,
+        },
+        detail: {
+          summary: "Enroll MFA factor",
+          description: "Bind a delivery destination to the authenticated user's MFA factor.",
+          tags: ["Auth",],
+        },
+      },
+    )
     .post(
       `${prefix}/auth/logout`,
       async ({ request, ...rest },) => {
@@ -205,6 +298,7 @@ export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = 
           challengeId,
           code,
           purpose,
+          limiter: limiters?.verifyLimiter ?? verifyLimiter,
         },);
       },
       {
@@ -222,5 +316,6 @@ export function authProtectedRoutes({ database, config, }: HandleOpts, prefix = 
           tags: ["Auth",],
         },
       },
-    );
+    )
+    .use(challengeRoute({ database, bridge, }, prefix,),);
 }

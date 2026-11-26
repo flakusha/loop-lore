@@ -139,8 +139,31 @@
               <option value="rpg_group">{{{t("chats.variantRpgGroup")}}}</option>
             </select>
           </div>
+          <div class="form-group" id="validation-harness-group" style="display: none">
+            <label class="form-label" for="chat-validation-harness">{{{t("chats.validationHarness")}}}</label>
+            <input
+              type="text"
+              class="form-input"
+              id="chat-validation-harness"
+              name="validationHarness"
+              maxlength="2000"
+              data-testid="chat-validation-harness"
+            />
+          </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
+            <select
+              class="form-select"
+              id="participant-kind-filter"
+              data-testid="participant-kind-filter"
+              aria-label="{{{t('common.filter')}}}"
+              style="margin-bottom: var(--space-2)"
+            >
+              <option value="all">{{{t("chats.participantKindAll")}}}</option>
+              <option value="user">{{{t("chats.participantKindUser")}}}</option>
+              <option value="character">{{{t("chats.participantKindCharacter")}}}</option>
+              <option value="assistant">{{{t("chats.participantKindAssistant")}}}</option>
+            </select>
             <div style="position: relative">
               <input
                 type="text"
@@ -168,6 +191,12 @@
                 {{{t("chats.impersonateCharacter")}}}
               </label>
             </div>
+          </div>
+          <div class="form-group" id="greeting-group" style="display: none">
+            <label class="form-label" for="greeting-select">Greeting</label>
+            <select class="form-select" id="greeting-select" data-testid="greeting-select">
+              <option value="">Default greeting</option>
+            </select>
           </div>
           <div class="form-group">
             <label class="form-label" for="persona-select">{{{t("chats.yourPersona")}}}</label>

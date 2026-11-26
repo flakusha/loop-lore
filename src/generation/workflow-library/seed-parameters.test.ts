@@ -11,6 +11,7 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { Kysely, } from "kysely";
+import { readFile, } from "node:fs/promises";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
@@ -18,6 +19,7 @@ import { jsonStringifyOr, } from "../../utils";
 import type { ComfyUIWorkflow, } from "../providers/comfyui";
 import type { WorkflowPayload, } from "../template-types";
 import { deriveParameters, repairParameters, } from "./seed-parameters";
+import { validateWorkflowPayload, } from "./validate";
 
 let db: Kysely<DB>;
 let sqlite: Database;
@@ -133,7 +135,7 @@ describe("repairParameters", () => {
     expect((await storedPayload("plain-row",)).parameters,).toEqual([],);
   });
 
-  it("repairs a probe-ingested converted row in converted mode", async () => {
+  it("repairs a probe-ingested converted row with globally-live converter nodes", async () => {
     const body = {
       ...graphWith("input_image",),
       "9": { class_type: "DaSiWa_NodeStatusSwitch", inputs: { enabled: true, }, },
@@ -142,17 +144,83 @@ describe("repairParameters", () => {
     const broken = payloadText(body, [],);
     await insertRow("converted-row", broken,);
 
-    expect(await repairParameters(db, { payload: broken, }, "converted-row",),).toBe(false,);
-
-    const repaired = await repairParameters(
-      db,
-      { payload: broken, },
-      "converted-row",
-      { unreferencedLive: ["9",], },
-    );
+    // DaSiWa_NodeStatusSwitch is in UNREFERENCED_LIVE_CLASSES, which the
+    // sink registry treats as globally live — no converter report needed.
+    const repaired = await repairParameters(db, { payload: broken, }, "converted-row",);
 
     expect(repaired,).toBe(true,);
     expect((await storedPayload("converted-row",)).parameters.map((parameter,) => parameter.name),)
       .toEqual(["input_image",],);
+  });
+});
+
+/** Graphs whose ModelAttentionBackend input used to hardcode a literal. */
+const ATTENTION_GRAPHS = [
+  "anima-v1",
+  "krea2-v1",
+  "minimax-h3-video-fl2va-opt-v1",
+  "minimax-h3-video-fl2va-v1",
+  "minimax-h3-video-ref2va-opt-v1",
+  "minimax-h3-video-ref2va-v1",
+  "moss-v1",
+  "qwen-image-2-1-image-edit-v1",
+  "qwen-image-2-1-t2i-v1",
+] as const;
+
+/** Already dead on the base branch; the seed skips it before validation. */
+const PREEXISTING_DEAD_GRAPH = "qwen-image-2-1-image-edit-v1";
+
+/** Read one shipped API-format graph; the test runner cwd is the repo root. */
+async function shippedGraph(id: string,): Promise<ComfyUIWorkflow> {
+  return JSON.parse(await readFile(`./configs/workflows/${id}.json`, "utf8",),) as ComfyUIWorkflow;
+}
+
+describe("shipped graphs with a bindable attention input", () => {
+  it("holds exactly {{attention}} at every ModelAttentionBackend input", async () => {
+    for (const id of ATTENTION_GRAPHS) {
+      const graph = await shippedGraph(id,);
+      const nodes = Object.values(graph,).filter((node,) => node.class_type === "ModelAttentionBackend");
+      expect(nodes.length, `${id} attention node`,).toBe(1,);
+      expect(nodes[0]?.inputs?.attention, `${id} attention input`,).toBe("{{attention}}",);
+    }
+  });
+
+  it("derives an attention parameter from every touched graph", async () => {
+    for (const id of ATTENTION_GRAPHS) {
+      const graph = await shippedGraph(id,);
+      expect(deriveParameters(id, graph,).map((parameter,) => parameter.name), `${id}`,).toContain("attention",);
+    }
+  });
+
+  it("keeps the shipped attention literal as the derived default", async () => {
+    for (const id of ATTENTION_GRAPHS) {
+      const graph = await shippedGraph(id,);
+      const attention = deriveParameters(id, graph,).find((parameter,) => parameter.name === "attention");
+
+      expect(attention?.default, `${id}`,).toBe("comfy kitchen attention",);
+    }
+  });
+
+  it("passes seed validation with the newly declared placeholder", async () => {
+    for (const id of ATTENTION_GRAPHS) {
+      const graph = await shippedGraph(id,);
+      const result = validateWorkflowPayload({
+        body: graph,
+        category: "txt2img",
+        parameters: deriveParameters(id, graph,),
+        requiredNodes: [],
+      },);
+
+      if (id === PREEXISTING_DEAD_GRAPH) {
+        expect(result.ok,).toBe(false,);
+        if (!result.ok) {
+          expect(result.errors.join(" ",),).not.toContain("attention",);
+        }
+
+        continue;
+      }
+
+      expect(result.ok, `${id}: ${result.ok ? "" : result.errors.join("; ",)}`,).toBe(true,);
+    }
   });
 });

@@ -35,7 +35,7 @@ export async function dispatchGenerationAction(
   label: string,
   chatId: string,
   opts: { stream?: boolean } = {},
-) {
+): Promise<boolean> {
   const prompt = (body.prompt as string) ?? "";
   if (!prompt && !body.assetIds) {
     ctx.$dispatch?.("show-toast", {
@@ -43,7 +43,7 @@ export async function dispatchGenerationAction(
       message: t("toasts.actionNoInput", { action: label.toLowerCase(), },),
     },);
 
-    return;
+    return false;
   }
 
   try {
@@ -51,9 +51,19 @@ export async function dispatchGenerationAction(
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody(body,),
+      idempotencyKey: true,
     },);
 
     if (res.ok) {
+      // Give the video status panel the job id so its cancel/delay controls
+      // can act on this render without a full page reload.
+      if (endpoint === "/api/v1/generation/video") {
+        const submitted = await res.json() as { data?: { jobId?: string } };
+        if (submitted.data?.jobId) {
+          ctx.$dispatch?.("video-job-created", { jobId: submitted.data.jobId, },);
+        }
+      }
+
       ctx.$dispatch?.("show-toast", { type: "info", message: t("toasts.actionStarted", { action: label, },), },);
       // Image/caption POSTs never write the generation buffer — arming the
       // LLM stream here ends in a terminal "No active generation". Only
@@ -61,23 +71,31 @@ export async function dispatchGenerationAction(
       if (opts.stream === true) {
         ctx.connectGenerationSSE(chatId,);
       }
+
+      return true;
     } else if (res.status === 501) {
       ctx.$dispatch?.("show-toast", {
         type: "info",
         message: t("toasts.actionNotConfigured", { action: label, },),
       },);
+
+      return false;
     } else {
       const err = await res.json();
       ctx.$dispatch?.("show-toast", {
         type: "error",
         message: err.error || t("toasts.actionFailed", { action: label.toLowerCase(), },),
       },);
+
+      return false;
     }
   } catch {
     ctx.$dispatch?.("show-toast", {
       type: "error",
       message: t("toasts.actionNetworkError", { action: label.toLowerCase(), },),
     },);
+
+    return false;
   }
 }
 
@@ -117,6 +135,7 @@ export async function dispatchQuestAction(ctx: DispatchCtx, description: string,
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ chatId, description, },),
+      idempotencyKey: true,
     },);
 
     if (res.ok) {

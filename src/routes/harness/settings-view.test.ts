@@ -56,6 +56,8 @@ describe("settingsWithAvailability", () => {
       availability: { available: true, version: "1.2.3", },
     },);
 
+    expect(view.profiles[0]?.transport,).toBe("acp",);
+
     // The RSI repo-access tier switch is a separate store, default off.
     expect(view.repoAccessEnabled,).toBe(false,);
   });

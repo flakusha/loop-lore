@@ -10,11 +10,15 @@
  * reads the registry, the registry just needs to learn about DB rows.
  */
 import type { WorkflowProbeStatus, } from "../../db/enums-generation";
+import { parseLoraString, } from "../../image-edit/templates/builtin/lora";
 import type { WorkflowTemplate, } from "../../image-edit/types";
 import { jsonParseOr, } from "../../utils";
+import { applyLoraSlots, resolveLoraSlotNode, } from "../lora/apply-slots";
 import type { ComfyUINodeInfo, ComfyUIWorkflow, } from "../providers/comfyui";
-import type { WorkflowPayload, } from "../template-types";
+import type { LoraSlot, WorkflowPayload, } from "../template-types";
+import { assertGeneratedGraph, } from "../workflow-loader/generated-validation";
 import { collectPlaceholders, substituteWorkflow, type SubstitutionVars, } from "../workflow-substitutor";
+import { planWorkflowBindings, } from "./bindings";
 
 /** Probe gate state for a workflow library row. Re-exported from the DB enum. */
 export type { WorkflowProbeStatus, } from "../../db/enums-generation";
@@ -60,6 +64,58 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
 }
 
 /**
+ * Apply a workflow's declared LoRA slots after substitution. The declaration
+ * is the source of truth for which node may carry LoRAs: a slot naming a
+ * missing node or a non-slot node fails closed instead of silently rewiring
+ * an unrelated loader.
+ * @param graph - Substituted ComfyUI graph
+ * @param slots - Declared slots from the payload
+ * @param loraParam - Raw `loras` param (comma-separated full filenames + strength)
+ * @throws {Error} When a declared slot is unknown or has no slot-capable node
+ * @returns {ComfyUIWorkflow}
+ */
+function applyDeclaredLoraSlots(
+  graph: ComfyUIWorkflow,
+  slots: readonly LoraSlot[],
+  loraParam: string,
+): ComfyUIWorkflow {
+  const resolved = resolveLoraSlotNode(graph,);
+  if (!resolved) {
+    throw new Error("declared LoRA slots but graph has no slot-capable node",);
+  }
+
+  for (const slot of slots) {
+    const node = graph[slot.nodeId];
+    if (!node) {
+      throw new Error(`declared LoRA slot has no node ${slot.nodeId}`,);
+    }
+
+    if (node.class_type !== slot.classType) {
+      throw new Error(
+        `declared LoRA slot node ${slot.nodeId} is ${node.class_type}, expected ${slot.classType}`,
+      );
+    }
+
+    if (slot.nodeId !== resolved.nodeId) {
+      throw new Error(
+        `declared LoRA slot ${slot.nodeId} is not the slot node ${resolved.nodeId}`,
+      );
+    }
+  }
+
+  const requested = parseLoraString(loraParam,);
+  if (requested.length === 0) { return graph; }
+
+  const withLoras = applyLoraSlots(
+    graph,
+    resolved,
+    requested.map((entry,) => ({ filename: entry.path, strength: entry.strength, })),
+  );
+
+  return withLoras as ComfyUIWorkflow;
+}
+
+/**
  * Build the runnable graph for a workflow row.
  *
  * `build` is sync in the registry contract while substitution is pure, so no
@@ -71,6 +127,11 @@ export function rowToPayload(row: WorkflowRow,): WorkflowPayload | null {
  * substitution only accepts primitives, so non-primitive caller values are
  * dropped rather than stringified — a `{{width}}` must not become "[object
  * Object]".
+ *
+ * A declared parameter default fills only keys the caller omitted; an
+ * explicit caller value, even a falsy one, always wins. This keeps a restored
+ * placeholder such as `{{attention}}` at its shipped value when no request
+ * value is supplied.
  *
  * Unresolved placeholders are an error, not an empty string. A library row
  * that declares no parameters (every seeded row does) would otherwise reach
@@ -86,11 +147,26 @@ export function buildWorkflowGraph(
   payload: WorkflowPayload,
   params: Record<string, unknown>,
 ): ComfyUIWorkflow {
+  const effective: Record<string, unknown> = { ...params, };
+  for (const parameter of payload.parameters) {
+    if (Object.hasOwn(effective, parameter.name,) || parameter.default === undefined) { continue; }
+    effective[parameter.name] = parameter.default;
+  }
+
   const vars: SubstitutionVars = {};
-  for (const [key, value,] of Object.entries(params,)) {
+  for (const [key, value,] of Object.entries(effective,)) {
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       vars[key] = value;
     }
+  }
+
+  if (payload.bindings !== undefined) {
+    const planned = planWorkflowBindings(payload.bindings, payload.body, params,);
+    if (!planned.ok) {
+      throw new Error(`workflow bindings failed: ${planned.errors.join("; ",)}`,);
+    }
+
+    Object.assign(vars, planned.vars,);
   }
 
   // Resolve the needed set from the *body*, before substitution: the
@@ -102,10 +178,11 @@ export function buildWorkflowGraph(
   // zero-parameter template whose body has placeholders is a metadata gap, and
   // submitting it would send ComfyUI an empty prompt and return a blank image.
   //
-  // "Missing" means the caller passed no such key at all. A key that was
-  // supplied but held a non-primitive was deliberately dropped above, and that
-  // path already has its own contract — it must not be reported as missing.
-  const provided = new Set(Object.keys(params,),);
+  // "Missing" means neither the caller nor a declared default supplied the
+  // key. A key that was supplied but held a non-primitive was deliberately
+  // dropped above, and that path already has its own contract — it must not
+  // be reported as missing.
+  const provided = new Set([...Object.keys(effective,), ...Object.keys(vars,),],);
   const missing = [...collectPlaceholders(payload.body,),].filter((name,) => !provided.has(name,));
   if (payload.parameters.length === 0 && missing.length > 0) {
     throw new Error(
@@ -114,7 +191,20 @@ export function buildWorkflowGraph(
     );
   }
 
-  return substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
+  const graph = substituteWorkflow(payload.body, vars,) as ComfyUIWorkflow;
+  if (payload.bindings !== undefined) {
+    assertGeneratedGraph(graph,);
+  }
+
+  if (payload.loraSlots && payload.loraSlots.length > 0) {
+    return applyDeclaredLoraSlots(
+      graph,
+      payload.loraSlots,
+      typeof params.loras === "string" ? params.loras : "",
+    );
+  }
+
+  return graph;
 }
 
 /**

@@ -3,7 +3,8 @@
 
 # Epic: Database Backup & Recovery Infrastructure
 
-**Status:** Not Started
+**Status:** In Progress
+**Status Note:** Core shipped on dev — backup/restore (`src/db/backup-restore.ts`), the admin backup routes (`src/routes/admin/db-backup.ts`), the scheduler (`src/resource/backup-scheduler.ts`) and the admin panel (`src/frontend/alpine/admin-db-backup.ts`) are live. The download/upload, scheduling and admin-panel follow-up tail is tracked by `TASK-backup-download-upload-scheduling-and-admin-panel-follow-up.md`; the "Not Started" header was stale.
 **Priority:** medium
 **Effort:** Medium
 **Type:** epic

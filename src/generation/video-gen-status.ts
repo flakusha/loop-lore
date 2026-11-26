@@ -13,7 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { failVideoJob, getVideoJob, } from "./video-jobs";
+import { failVideoJob, getVideoJob, pumpDueVideoJobs, } from "./video-jobs";
 
 export function handleVideoGenerationStatus(
   jobId: string,
@@ -26,6 +26,10 @@ export function handleVideoGenerationStatus(
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
   }
+
+  // Lazy pump: a deferred job resumes through the existing gate when a status
+  // read (or a new submit) finds it due. No daemon or second queue involved.
+  pumpDueVideoJobs();
 
   const job = getVideoJob(jobId,);
   // 404 for foreign jobs too: confirming existence would leak another
@@ -51,5 +55,12 @@ export function handleVideoGenerationStatus(
     );
   }
 
-  return Response.json({ data: { jobId: job.id, status: "pending", }, },);
+  return Response.json({
+    data: {
+      jobId: job.id,
+      status: "pending",
+      deferred: job.deferred === true,
+      scheduledFor: job.scheduledFor ?? null,
+    },
+  },);
 }

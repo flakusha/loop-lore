@@ -22,6 +22,7 @@ import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
+import { FEATURES_DEFAULTS, } from "./features";
 import { FEDERATION_DEFAULTS, } from "./federation";
 import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
@@ -31,6 +32,7 @@ import { HOOKS_DEFAULTS, } from "./hooks";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { INTEGRATIONS_DEFAULTS, } from "./integrations";
 import { LOGGING_DEFAULTS, } from "./logging";
+import { MCP_DEFAULTS, } from "./mcp";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
 import { OBSERVABILITY_DEFAULTS, } from "./observability";
@@ -80,6 +82,7 @@ export const createConfigSchema = () => {
     auth: deepClone(AUTH_DEFAULTS,),
     transport: deepClone(TRANSPORT_DEFAULTS,),
     messages: deepClone(MESSAGES_DEFAULTS,),
+    mcp: deepClone(MCP_DEFAULTS,),
     nsfw: deepClone(NSFW_DEFAULTS,),
     observability: deepClone(OBSERVABILITY_DEFAULTS,),
     hooks: deepClone(HOOKS_DEFAULTS,),
@@ -91,6 +94,7 @@ export const createConfigSchema = () => {
     dynamicResponse: deepClone(DYNAMIC_RESPONSE_DEFAULTS,),
     frontend: deepClone(FRONTEND_DEFAULTS,),
     federation: deepClone(FEDERATION_DEFAULTS,),
+    features: deepClone(FEATURES_DEFAULTS,),
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
     integrations: deepClone(INTEGRATIONS_DEFAULTS,),
@@ -117,6 +121,7 @@ export const createConfigSchema = () => {
         auth: sections.auth,
         transport: sections.transport,
         messages: sections.messages,
+        mcp: sections.mcp,
         nsfw: sections.nsfw,
         observability: sections.observability,
         hooks: sections.hooks,
@@ -128,6 +133,7 @@ export const createConfigSchema = () => {
         dynamicResponse: sections.dynamicResponse,
         frontend: sections.frontend,
         federation: sections.federation,
+        features: sections.features,
         seeding: sections.seeding,
         cron: sections.cron,
         harness: sections.harness,

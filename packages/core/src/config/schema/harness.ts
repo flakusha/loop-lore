@@ -21,10 +21,24 @@ export const HARNESS_CAPABILITIES = ["tools", "thinking",] as const;
 export type HarnessCapability = (typeof HARNESS_CAPABILITIES)[number];
 
 /** ACP harness flavors loop-lore ships adapters for (runtime list: wire/validation cannot drift). */
-export const HARNESS_FLAVORS = ["omp", "opencode", "codex", "claude-code", "hermes", "openclaw",] as const;
+export const HARNESS_FLAVORS = [
+  "omp",
+  "opencode",
+  "codex",
+  "claude-code",
+  "hermes",
+  "openclaw",
+  "antigravity",
+] as const;
 
 /** Which shipped adapter speaks a profile's wire. */
 export type HarnessFlavor = (typeof HARNESS_FLAVORS)[number];
+
+/** Transports a profile may use (runtime list: wire/validation cannot drift). */
+export const HARNESS_TRANSPORTS = ["acp",] as const;
+
+/** Which driver speaks a profile transport. */
+export type HarnessTransport = (typeof HARNESS_TRANSPORTS)[number];
 
 /** One tier: the concrete model id plus what it is trusted to do. */
 export interface AcpTierConfig {
@@ -54,6 +68,26 @@ export interface AcpProfileHealth {
   cooldownMs?: number;
 }
 
+/**
+ * One MCP server handed to the harness agent via ACP `session/new` (stdio
+ * only — the passthrough is verbatim, so an http/sse entry has no wire
+ * mapping yet; add one when a profile needs it).
+ *
+ * This is the per-profile ACP passthrough, not the top-level
+ * `[mcp.servers.*]` section (`./mcp.ts`): entries here are sent verbatim to
+ * the agent; that section is loop-lore's own client config, validated at load.
+ */
+export interface McpServerConfig {
+  /** Server name, as the agent sees it. */
+  name: string;
+  /** Spawn argv head for a stdio server. */
+  command: string;
+  /** Spawn argv tail. */
+  args?: string[];
+  /** Environment entries for the spawned server. */
+  env?: Array<{ name: string; value: string }>;
+}
+
 /** One external harness profile: how to spawn it and what it offers. */
 export interface AcpProfileConfig {
   /** loop-lore-local identifier; unique across the profiles list. */
@@ -69,6 +103,11 @@ export interface AcpProfileConfig {
   strategy?: "failover";
   /** Which shipped adapter speaks this profile's wire. Default: `"omp"`. */
   harness?: HarnessFlavor;
+  /**
+   * Transport used to drive this profile. Only ACP stdio has a driver; sdk
+   * is rejected at config validation until a second driver exists.
+   */
+  transport?: HarnessTransport;
   /** Optional usage caps (rpm / tokensPerDay). */
   limits?: AcpProfileLimits;
   /** Optional breaker thresholds. */
@@ -79,11 +118,29 @@ export interface AcpProfileConfig {
    * directory; a path with `..` traversal is rejected at config load.
    */
   sandboxRoot?: string;
+  /** ACP protocol version to request at initialize (default 1; 2 for v2-capable agents). */
+  protocolVersion?: number;
+  /**
+   * MCP servers the agent connects to (ACP `session/new` `mcpServers`,
+   * verbatim). Absent/empty = the agent gets none.
+   */
+  mcpServers?: McpServerConfig[];
+  /**
+   * Extra workspace roots handed to the agent (ACP `session/new`
+   * `additionalDirectories`). Every entry must be absolute — a relative
+   * entry is rejected locally before the request goes out.
+   */
+  additionalDirectories?: string[];
+  /**
+   * Default mode id for ACP `session/set_mode` (e.g. omp plan/act). Absent
+   * = the adapter sends only an explicitly passed id.
+   */
+  mode?: string;
   /**
    * Explicit user acknowledgement that driving this profile for RPG/other
    * non-chat functionalities may conflict with the provider's ToS when the
    * profile is subscription-backed. Absent/false by default; records consent
-   * only — it does not gate dispatch (see the dispatch-guard ticket).
+   * and gates subscription-backed flavors at dispatch via the profile selector.
    */
   tosGrayzoneAcknowledged?: boolean;
 }

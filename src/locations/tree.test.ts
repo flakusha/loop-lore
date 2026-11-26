@@ -312,15 +312,60 @@ describe("LocationTreeService", () => {
       expect(nodes[0]!.children[0]!.children.map((c,) => c.id),).toEqual([alphaGrandchild,],);
       expect(nodes[0]!.children[0]!.children[0]!.children,).toEqual([],);
       expect(nodes[1]!.children.map((c,) => c.id),).toEqual([zetaChild,],);
-      // tree() stamps depth 0 and the node's own id as path.
-      expect(nodes[0]!.depth,).toBe(0,);
-      expect(nodes[0]!.path,).toBe(alpha,);
+      // tree() reports the materialized path and separator-derived depth.
+      expect(nodes[0]!.depth,).toBe(1,);
+      expect(nodes[0]!.path,).toBe(`/${alpha}/`,);
+    });
+
+    test("tree reports the materialized path and depth of a four-level chain", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const chainWorldId = await insertWorld("test-owner",);
+      const root = await insertLocation(chainWorldId, "Root",);
+      const region = await insertLocation(chainWorldId, "Region", root,);
+      const building = await insertLocation(chainWorldId, "Building", region,);
+      const room = await insertLocation(chainWorldId, "Room", building,);
+      const [level1,] = await svc.tree(chainWorldId,);
+      const level2 = level1?.children[0];
+      const level3 = level2?.children[0];
+      const level4 = level3?.children[0];
+      expect(level1?.path,).toBe(`/${root}/`,);
+      expect(level1?.depth,).toBe(1,);
+      expect(level1?.kind,).toBe("region",);
+      expect(level1?.mobility_mode,).toBe("static",);
+      expect(level1?.current_route_id,).toBeNull();
+      expect(level1?.travel_progress,).toBe(0,);
+      expect(level2?.path,).toBe(`/${root}/${region}/`,);
+      expect(level2?.depth,).toBe(2,);
+      expect(level3?.path,).toBe(`/${root}/${region}/${building}/`,);
+      expect(level3?.depth,).toBe(3,);
+      expect(level4?.path,).toBe(`/${root}/${region}/${building}/${room}/`,);
+      expect(level4?.depth,).toBe(4,);
+      expect(level4?.children,).toEqual([],);
     });
 
     test("moveSubtree rejects a move that would create a cycle", async () => {
       const svc = new LocationTreeService(testDb.db,);
       // roomId is a descendant of rootId — moving root under room is a cycle.
       await expect(svc.moveSubtree(rootId, roomId,),).rejects.toThrow("move would create a cycle",);
+    });
+
+    test("moveSubtree rejects a subtree that would exceed the depth ceiling", async () => {
+      const svc = new LocationTreeService(testDb.db,);
+      const moveWorldId = await insertWorld("test-owner",);
+      let parent: string | null = null;
+      for (let depth = 0; depth <= 5; depth += 1) {
+        parent = await insertLocation(moveWorldId, `parent-${depth}`, parent,);
+      }
+
+      let chainRoot: string | null = null;
+      let chainHead = "";
+      for (let depth = 0; depth <= 10; depth += 1) {
+        chainRoot = await insertLocation(moveWorldId, `chain-${depth}`, chainRoot,);
+        if (depth === 0) { chainHead = chainRoot; }
+      }
+
+      // Parent at depth 5 + height 10 = depth 16, beyond LOCATION_DEPTH_LIMIT.
+      await expect(svc.moveSubtree(chainHead, parent!,),).rejects.toThrow("depth limit",);
     });
 
     test("moveSubtree rejects unknown location or parent", async () => {

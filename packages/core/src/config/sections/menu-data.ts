@@ -8,6 +8,14 @@
  */
 import type { ConfigMenuField, } from "./menu";
 
+/** Flat system_config keys for the four admin-editable config fields. */
+export const EDITABLE_SYSTEM_CONFIG_KEYS = {
+  autorouteScenario: "autoroute_scenario",
+  modelRoles: "model_roles",
+  loreTokenBudget: "lore_token_budget",
+  memoryTokenBudget: "memory_token_budget",
+} as const;
+
 export const EDITABLE_KEY_MAP: Record<string, Record<string, string>> = {
   auth: {
     registrationOpen: "registration_open",
@@ -20,6 +28,12 @@ export const EDITABLE_KEY_MAP: Record<string, Record<string, string>> = {
   generation: {
     defaultProvider: "default_provider",
     defaultModels: "default_model",
+    autorouteScenario: EDITABLE_SYSTEM_CONFIG_KEYS.autorouteScenario,
+    modelRoles: EDITABLE_SYSTEM_CONFIG_KEYS.modelRoles,
+  },
+  prompt: {
+    loreTokenBudget: EDITABLE_SYSTEM_CONFIG_KEYS.loreTokenBudget,
+    memoryTokenBudget: EDITABLE_SYSTEM_CONFIG_KEYS.memoryTokenBudget,
   },
 };
 

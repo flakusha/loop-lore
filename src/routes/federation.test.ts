@@ -9,6 +9,7 @@
  * well-known discovery, and instance-state are served with no secret leakage.
  */
 import { describe, expect, test, } from "bun:test";
+import { getHealthCache, } from "../admin/provider-health";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
 import { initSmk, } from "../crypto/smk";
@@ -165,6 +166,51 @@ describe("federationRoutes — instance-state", () => {
   );
 });
 
+describe("federationRoutes — coarse state from provider health", () => {
+  // Owned resource: provider-health module cache. Seed one uniquely-named
+  // entry in place, then restore exact prior contents in finally — no
+  // blanket clear, safe under any test ordering.
+  const seed = (status: "healthy" | "unreachable",) => {
+    const cache = getHealthCache();
+    const saved = cache.slice();
+    cache.splice(0, cache.length, {
+      name: `coarse-${status}-${crypto.randomUUID()}`,
+      label: "coarse test",
+      status,
+      models: [],
+      lastChecked: new Date().toISOString(),
+    },);
+
+    return () => {
+      cache.splice(0, cache.length, ...saved,);
+    };
+  };
+
+  test("an unhealthy provider advertises degraded", async () => {
+    const restore = seed("unreachable",);
+    try {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as { state: string }).state,).toBe("degraded",);
+    } finally {
+      restore();
+    }
+  }, 15000,);
+
+  test("all-healthy providers advertise ok", async () => {
+    const restore = seed("healthy",);
+    try {
+      const app = await appFor(FED_ENABLED,);
+      const res = await app.handle(new Request("http://localhost/api/instance-state",),);
+      expect(res.status,).toBe(200,);
+      expect(((await res.json()) as { state: string }).state,).toBe("ok",);
+    } finally {
+      restore();
+    }
+  }, 15000,);
+});
+
 describe("federationRoutes — advertised workload capabilities", () => {
   const OFFLOAD_CONFIG = configWith({
     enabled: true,
@@ -284,12 +330,13 @@ describe("federationRoutes — mesh-deliver", () => {
   async function reserveFor(
     origin: string,
     sizeBytes: number,
+    contentHash = `hash-${origin}-${sizeBytes}`,
   ): Promise<string> {
     const db = await dbFor();
     await upsertPeer(db, { origin, state: "trusted", },);
     const body = {
       senderOrigin: origin,
-      contentHash: `hash-${origin}-${sizeBytes}`,
+      contentHash,
       sizeBytes,
     };
 
@@ -337,13 +384,14 @@ describe("federationRoutes — mesh-deliver", () => {
   test("valid envelope stores and verifies (A→B integrity)", async () => {
     // Deliver is now gated on a trusted peer that holds a reservation
     // (BUG-federation-authorization-who-may-publish-an-actor-undefined).
-    const reservationId = await reserveFor("https://a.example", 20,);
     const envelope = await sealContent({
       id: "route-content-1",
       origin: "https://a.example",
       content: "cross-server payload",
       cipher: routeCipher,
     },);
+
+    const reservationId = await reserveFor("https://a.example", envelope.size, envelope.hash,);
 
     const res = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(res.status,).toBe(200,);
@@ -423,21 +471,22 @@ describe("federationRoutes — mesh-deliver", () => {
   test("reserve → deliver confirms the reservation", async () => {
     const db = await dbFor();
     await upsertPeer(db, { origin: "https://route-peer.example", state: "trusted", },);
-    const reserve = await postSignedReserve({
-      senderOrigin: "https://route-peer.example",
-      contentHash: "route-hash-1",
-      sizeBytes: 18,
-    },);
-
-    expect(reserve.status,).toBe(200,);
-    const { reservationId, } = (await reserve.json()) as { reservationId: string };
-    expect(typeof reservationId,).toBe("string",);
     const envelope = await sealContent({
       id: "route-content-3",
       origin: "https://route-peer.example",
       content: "reserved payload!!",
       cipher: routeCipher,
     },);
+
+    const reserve = await postSignedReserve({
+      senderOrigin: "https://route-peer.example",
+      contentHash: envelope.hash,
+      sizeBytes: envelope.size,
+    },);
+
+    expect(reserve.status,).toBe(200,);
+    const { reservationId, } = (await reserve.json()) as { reservationId: string };
+    expect(typeof reservationId,).toBe("string",);
 
     const deliver = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
     expect(deliver.status,).toBe(200,);

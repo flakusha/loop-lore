@@ -3,7 +3,7 @@
 
 # BUG: stale hashed bundles in dist/public make the served page run old JS
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-e2e-integration-testing

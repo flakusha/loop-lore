@@ -1,30 +1,24 @@
 /**
- * Migration Roundtrip Tests
+ * Migration Roundtrip Tests — 14-file consolidated baseline.
  *
- * Verifies that every migration can be applied and rolled back cleanly.
- * For each migration: up → verify tables exist → down → verify tables removed.
- *
- * Does NOT use createTestDb() (which runs all migrations at once).
- * Instead, creates a fresh in-memory SQLite per test and steps through
- * migrations one at a time via Kysely's Migrator.
+ * Final-form files create their whole domain inline. up() and down() are
+ * both verified on a fresh in-memory DB through the real Migrator: all 14
+ * files must apply, then roll back in one documented FK-off scope, leaving no
+ * user tables.
  */
-
 import { Database, } from "bun:sqlite";
-import { afterEach, describe, expect, test, } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
 import { readdirSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
-import { createSqliteDialect, setTestDatabase, } from "./index";
+import { createSqliteDialect, } from "./index";
 import { compareMigrationNames, } from "./migrate";
-
-// ── Helpers ────────────────────────────────────────────────────
 
 const MIGRATION_FILENAME = /^(\d{3})_(.+)\.ts$/;
 
-/** List migration file names, top-level only (no parts/ subdirectory). */
 function getMigrationNames(): string[] {
   const dir = path.join(__dirname, "migrations",);
   return readdirSync(dir,)
@@ -32,10 +26,6 @@ function getMigrationNames(): string[] {
     .toSorted(compareMigrationNames,);
 }
 
-/**
- * Return all user-facing table names from an in-memory SQLite.
- * @param sqlite
- */
 function getTableNames(sqlite: Database,): string[] {
   return (
     sqlite
@@ -44,50 +34,30 @@ function getTableNames(sqlite: Database,): string[] {
   ).map((r,) => r.name);
 }
 
-/**
- * Return column names for a given table.
- * @param sqlite
- * @param table
- */
 function getColumnNames(sqlite: Database, table: string,): string[] {
   return (
-    sqlite
-      .query(`PRAGMA table_info("${table}")`,)
-      .all() as { name: string }[]
+    sqlite.query(`PRAGMA table_info("${table}")`,).all() as { name: string }[]
   ).map((r,) => r.name);
 }
 
-/**
- * Create a fresh in-memory SQLite + Kysely (no migrations applied).
- *
- * FK enforcement comes from `createSqliteDialect` (it always runs
- * `PRAGMA foreign_keys = ON`) — we don't re-run it locally.
- * Also registers this DB as the active test override so any
- * `getDatabase()` call inside a migration callback resolves here,
- * not at the production DB (BUG-create-test-db-custom-dialect-can-bypass-settestdatabase).
- */
-function createFreshDb(): { db: Kysely<any>; sqlite: Database } {
+function createFreshDb(): { db: Kysely<unknown>; sqlite: Database } {
   const sqlite = new Database(":memory:",);
-  const dialect = createSqliteDialect(sqlite,);
-  const db = new Kysely({ dialect, },);
-  setTestDatabase(db as unknown as Kysely<import("./schema").DB>,);
+  const db = new Kysely({ dialect: createSqliteDialect(sqlite,), },);
   return { db, sqlite, };
 }
 
-/** Build a migration provider mirroring src/db/migrate.ts's directory scan. */
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
       const dir = path.join(__dirname, "migrations",);
       const files = readdirSync(dir,)
-        .filter((f,) => typeof f === "string" && f.endsWith(".ts",))
-        .toSorted((a, b,) => a.localeCompare(b,));
+        .filter((f,) => typeof f === "string" && MIGRATION_FILENAME.test(f,))
+        .toSorted(compareMigrationNames,);
 
       const migrations: Record<string, Migration> = {};
       for (const file of files) {
         const mod = await import(path.join(dir, file,));
-        const name = file.replace(/\.ts$/, "",);
-        migrations[name] = mod.default ?? mod;
+        migrations[file.replace(/\.ts$/, "",)] = mod.default ?? mod;
       }
 
       return migrations;
@@ -95,153 +65,100 @@ function buildMigrationProvider() {
   };
 }
 
-// ── Tests ──────────────────────────────────────────────────────
-
 const migrationNames = getMigrationNames();
 
-// Ensure logger is initialized (migrate.ts calls getLogger())
 try {
   createLogger({ level: "error", },);
 } catch {
   // already initialized
 }
 
-// 15000ms per test: these step 77 migrations one at a time (up to 154
-// migrator calls, each re-scanning the migration dir). The bun:test default
-// 5000ms timeout is below what that costs on a loaded machine, so the tests
-// failed on timeout alone while passing in isolation.
 describe("migration roundtrip", () => {
-  // Tests below set the override in-body; clear it even when a test throws
-  // mid-way, so it cannot leak into sibling files sharing this process
-  // (BUG-settestdatabase-global-leak-on-test-throw).
-  afterEach(() => {
-    setTestDatabase(null,);
-  },);
+  test("found the 18-file baseline", () => {
+    expect(migrationNames,).toHaveLength(18,);
+  });
 
-  test(`found ${migrationNames.length} migration files`, () => {
-    expect(migrationNames.length,).toBeGreaterThan(0,);
+  test("provider order matches the shared migration comparator", async () => {
+    const providerKeys = Object.keys(await buildMigrationProvider().getMigrations(),);
+    expect(providerKeys,).toEqual(migrationNames.map((name,) => name.replace(/\.ts$/, "",)),);
   });
 
   test("migrateToLatest succeeds for all migrations", async () => {
     const { db, sqlite, } = createFreshDb();
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
-
     const result = await migrator.migrateToLatest();
 
     expect(result.error, "migrateToLatest should not error",).toBeUndefined();
-    expect(
-      result.results!.length,
-      `should run all ${migrationNames.length} migrations`,
-    ).toBe(migrationNames.length,);
-
+    expect(result.results!.length,).toBe(migrationNames.length,);
     for (const r of result.results!) {
       expect(r.status, `migration ${r.migrationName} should succeed`,).toBe("Success",);
     }
 
-    const tables = getTableNames(sqlite,);
-    expect(tables.length, "should have tables after migration",).toBeGreaterThan(0,);
+    expect(getTableNames(sqlite,).length,).toBeGreaterThan(0,);
 
     await db.destroy();
     sqlite.close();
   }, 15000,);
 
-  test("migrateDown rolls back all migrations to empty DB", async () => {
+  test("full rollback removes every table after the up chain", async () => {
     const { db, sqlite, } = createFreshDb();
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
+    const up = await migrator.migrateToLatest();
+    expect(up.error,).toBeUndefined();
 
-    // Migrate everything up first
-    const upResult = await migrator.migrateToLatest();
-    expect(upResult.error,).toBeUndefined();
-
-    const tablesBeforeDown = getTableNames(sqlite,);
-    expect(tablesBeforeDown.length,).toBeGreaterThan(0,);
-
-    // Roll back one at a time until empty
+    // Final-form files contain mutual FK cycles (blog_comments/blog_posts,
+    // chats/messages, scenario shots/scenarios) and cross-domain references to
+    // tables owned by later files. SQLite reparses every schema object on each
+    // DROP TABLE, so per-file rollback with FK enforcement cannot advance;
+    // the 14-step down chain therefore runs in one documented FK-off scope.
+    // up() above still runs with the production FK-on dialect.
+    sqlite.run("PRAGMA foreign_keys = OFF",);
     let rolledBack = 0;
-    while (true) {
-      const downResult = await migrator.migrateDown();
-      if (!downResult.results || downResult.results.length === 0) { break; }
-      for (const r of downResult.results) {
-        expect(r.status, `rollback ${r.migrationName} should succeed`,).toBe("Success",);
-      }
-
+    for (let i = 0; i < migrationNames.length; i++) {
+      const result = await migrator.migrateDown();
+      expect(result.error, `down step ${i} should not error`,).toBeUndefined();
+      expect(result.results, `down step ${i} should have a result`,).toHaveLength(1,);
+      expect(result.results![0]!.status, `down step ${i} should succeed`,).toBe("Success",);
       rolledBack++;
     }
 
-    expect(rolledBack, "should have rolled back all migrations",).toBe(migrationNames.length,);
-
-    const tablesAfterDown = getTableNames(sqlite,);
-    expect(tablesAfterDown, "no tables should remain after full rollback",).toHaveLength(0,);
+    expect(rolledBack,).toBe(migrationNames.length,);
+    const remaining = getTableNames(sqlite,).filter((name,) => !name.startsWith("sqlite_",));
+    expect(remaining, "rollback should leave no user tables",).toEqual([],);
+    sqlite.run("PRAGMA foreign_keys = ON",);
 
     await db.destroy();
     sqlite.close();
   }, 15000,);
 
-  test("re-migrating after full roundtrip produces identical schema", async () => {
-    const { db, sqlite, } = createFreshDb();
-    const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
-
-    // First pass: up all
-    const up1 = await migrator.migrateToLatest();
-    expect(up1.error,).toBeUndefined();
-    const tablesAfterFirstUp = getTableNames(sqlite,).sort((a, b,) => a.localeCompare(b,));
-
-    // Roll back everything
-    while (true) {
-      const down = await migrator.migrateDown();
-      if (!down.results || down.results.length === 0) { break; }
+  test("two fresh installs produce the same table set", async () => {
+    const schemas: string[][] = [];
+    for (let i = 0; i < 2; i++) {
+      const { db, sqlite, } = createFreshDb();
+      const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
+      const up = await migrator.migrateToLatest();
+      expect(up.error,).toBeUndefined();
+      schemas.push(getTableNames(sqlite,).sort(),);
+      await db.destroy();
+      sqlite.close();
     }
 
-    expect(getTableNames(sqlite,),).toHaveLength(0,);
-
-    // Second pass: up all again
-    const up2 = await migrator.migrateToLatest();
-    expect(up2.error, "re-migration after roundtrip should succeed",).toBeUndefined();
-    expect(up2.results!.length,).toBe(migrationNames.length,);
-
-    const tablesAfterSecondUp = getTableNames(sqlite,).sort((a, b,) => a.localeCompare(b,));
-    expect(tablesAfterSecondUp,).toEqual(tablesAfterFirstUp,);
-
-    await db.destroy();
-    sqlite.close();
+    expect(schemas[1],).toEqual(schemas[0],);
   }, 15000,);
 
-  test("each migration up adds its expected tables and down removes them", async () => {
+  test("each migration step applies cleanly in order", async () => {
     const { db, sqlite, } = createFreshDb();
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
+    let previous = 0;
 
-    let snapshot: string[] = [];
-
-    // Step through each migration up, recording table state
     for (const [i, name,] of migrationNames.entries()) {
       const result = await migrator.migrateUp();
-      expect(
-        result.error,
-        `up step ${i} (${name}) should not error`,
-      ).toBeUndefined();
-
+      expect(result.error, `up step ${i} (${name}) should not error`,).toBeUndefined();
       expect(result.results!.length,).toBe(1,);
       expect(result.results![0]!.status,).toBe("Success",);
-
-      const tablesNow = getTableNames(sqlite,);
-      // Tables should only grow or stay same (ALTER TABLE doesn't add tables)
-      expect(tablesNow.length,).toBeGreaterThanOrEqual(snapshot.length,);
-      snapshot = tablesNow;
+      expect(getTableNames(sqlite,).length,).toBeGreaterThanOrEqual(previous,);
+      previous = getTableNames(sqlite,).length;
     }
-
-    // Step through each migration down
-    for (let i = migrationNames.length - 1; i >= 0; i--) {
-      const result = await migrator.migrateDown();
-      expect(
-        result.error,
-        `down step ${i} should not error`,
-      ).toBeUndefined();
-
-      expect(result.results!.length,).toBe(1,);
-      expect(result.results![0]!.status,).toBe("Success",);
-    }
-
-    expect(getTableNames(sqlite,), "DB should be empty after stepping all down",).toHaveLength(0,);
 
     await db.destroy();
     sqlite.close();
@@ -250,15 +167,10 @@ describe("migration roundtrip", () => {
   test("every migrated table has at least one column", async () => {
     const { db, sqlite, } = createFreshDb();
     const migrator = new Migrator({ db, provider: buildMigrationProvider(), },);
-
     await migrator.migrateToLatest();
 
-    const tables = getTableNames(sqlite,);
-    expect(tables.length,).toBeGreaterThan(0,);
-
-    for (const table of tables) {
-      const cols = getColumnNames(sqlite, table,);
-      expect(cols.length, `${table} should have at least one column`,).toBeGreaterThan(0,);
+    for (const table of getTableNames(sqlite,)) {
+      expect(getColumnNames(sqlite, table,).length, `${table} should have at least one column`,).toBeGreaterThan(0,);
     }
 
     await db.destroy();

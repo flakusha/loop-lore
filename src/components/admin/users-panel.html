@@ -1,0 +1,138 @@
+<!-- Users Tab -->
+<div x-show="activeTab === 'users'">
+  <div x-show="loadingUsers" class="empty-state" style="padding: var(--space-12)">
+    <div class="icon">⏳</div>
+    <div class="title">Loading users...</div>
+  </div>
+  <template x-if="!loadingUsers">
+    <div style="padding: var(--space-6)">
+      <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
+        <input
+          class="form-input"
+          type="search"
+          placeholder="Search users..."
+          x-model="userSearch"
+          @input.debounce.300ms="searchUsers()"
+          style="flex: 1; min-width: 200px"
+        />
+        <select class="form-input" style="width: auto" x-model="userRoleFilter" @change="searchUsers()">
+          <option value="">All roles</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <select
+          class="form-input"
+          style="width: auto"
+          x-model="userStatusFilter"
+          @change="searchUsers()"
+        >
+          <option value="">All statuses</option>
+          <option value="active">Active</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <button
+          class="btn btn-secondary btn-xs"
+          x-show="userSearch || userRoleFilter || userStatusFilter"
+          @click="clearUserFilters()"
+        >
+          Clear
+        </button>
+      </div>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Display Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Last Seen</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody aria-busy="true">
+          <template x-if="users.length === 0">
+            <tr>
+              <td colspan="7" class="empty-state" style="padding: var(--space-8)">No users found</td>
+            </tr>
+          </template>
+          <template x-for="u in users" :key="u.id">
+            <tr>
+              <td x-text="u.username"></td>
+              <td x-text="u.display_name || '-'"></td>
+              <td>
+                <template x-if="editRoleUserId === u.id">
+                  <select
+                    x-model="editRoleValue"
+                    class="form-input"
+                    style="width: 100px; padding: 2px 6px; font-size: 13px"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                    <option value="viewer">Viewer</option>
+                  </select>
+                </template>
+                <template x-if="editRoleUserId !== u.id">
+                  <span :class="'role-badge role-' + u.role" x-text="u.role"></span>
+                </template>
+              </td>
+              <td :class="'status-badge status-' + u.status" x-text="u.status"></td>
+              <td x-text="formatDate(u.created_at)"></td>
+              <td x-text="formatDate(u.last_seen_at)"></td>
+              <td>
+                <template x-if="editRoleUserId === u.id">
+                  <div style="display: flex; gap: 4px">
+                    <button class="btn btn-primary btn-xs" @click="saveRole()">Save</button>
+                    <button class="btn btn-secondary btn-xs" @click="cancelEditRole()">Cancel</button>
+                  </div>
+                </template>
+                <template x-if="editRoleUserId !== u.id">
+                  <div style="display: flex; gap: 4px">
+                    <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">Role</button>
+                    <template x-if="confirmDeleteUser !== u.id">
+                      <button class="btn btn-danger btn-xs" @click="confirmDeleteUser = u.id">
+                        Delete
+                      </button>
+                    </template>
+                    <template x-if="confirmDeleteUser === u.id">
+                      <div style="display: flex; gap: 4px">
+                        <button class="btn btn-danger btn-xs" @click="deleteUser(u.id)">Confirm</button>
+                        <button class="btn btn-secondary btn-xs" @click="confirmDeleteUser = ''">
+                          Cancel
+                        </button>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div
+        x-show="userPages > 1"
+        style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
+      >
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="userPage === 1"
+          @click="goUsersPage(userPage - 1)"
+        >
+          Prev
+        </button>
+        <span
+          style="display: flex; align-items: center; font-size: 13px"
+          x-text="'Page ' + userPage + ' of ' + userPages"
+        ></span>
+        <button
+          class="btn btn-secondary btn-xs"
+          :disabled="userPage >= userPages"
+          @click="goUsersPage(userPage + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </template>
+</div>

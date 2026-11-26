@@ -12,9 +12,10 @@
  * resetHarnessAdminSettings + resetExecLogPath (the integration e2e's temp
  * exec-log). The queue's drain machinery is per-INSTANCE, so one instance's
  * parked gates cannot hang another's idle(); every test settles everything
- * it enqueues, so no gates leak into sibling tests. The one end-to-end test
- * runs the REAL dispatchHarnessTurn over in-memory fake adapters and a temp
- * exec-log file (reset afterwards). No child process, no ports, no fixed
+ * it enqueues, so no gates leak into sibling tests. The end-to-end and
+ * authorization tests run the REAL dispatchHarnessTurn over in-memory fake
+ * adapters and a temp exec-log file (reset afterwards). No child process,
+ * no ports, no fixed
  * paths — order-independent under the parallel runner.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -27,6 +28,7 @@ import { createTestDb, destroyTestDb, type TestDb, } from "../../test-utils/crea
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { initHarnessAdminSettings, resetHarnessAdminSettings, } from "./admin-settings";
 import {
+  dispatchHarnessTurn,
   type DispatchHarnessTurnOptions,
   type DispatchHarnessTurnOutcome,
   HarnessDispatchError,
@@ -43,7 +45,13 @@ import {
   resetHarnessTurnQueue,
 } from "./queue";
 import { insertQueuedTurns, } from "./queue-store";
-import { getHarnessRuntime, type HarnessRuntime, initHarnessRuntime, resetHarnessRuntime, } from "./runtime";
+import {
+  createHarnessRuntime,
+  getHarnessRuntime,
+  type HarnessRuntime,
+  initHarnessRuntime,
+  resetHarnessRuntime,
+} from "./runtime";
 
 let fixture: TestDb;
 let userId: string;
@@ -337,13 +345,27 @@ describe("cancel", () => {
 
     await flush();
 
-    // "head" is running (a live harness process — no interrupt seam), so its
-    // cancel reads not_cancellable; the still-queued "tail" cancels cleanly.
+    // "head" is running on a fake runtime with no registry session, so its
+    // cancel reads not_cancellable with a reason; the queued "tail" cancels.
     const [headId, tailId,] = batch.turnIds;
-    await expect(single.cancel("no-such-id",),).resolves.toEqual({ ok: false, code: "unknown_turn", },);
-    await expect(single.cancel(headId!,),).resolves.toEqual({ ok: false, code: "not_cancellable", },);
+    await expect(single.cancel("no-such-id",),).resolves.toEqual({
+      ok: false,
+      code: "unknown_turn",
+      reason: `queue turn "no-such-id" is unknown`,
+    },);
+
+    await expect(single.cancel(headId!,),).resolves.toEqual({
+      ok: false,
+      code: "not_cancellable",
+      reason: "the running turn has no live harness session on this instance",
+    },);
+
     await expect(single.cancel(tailId!,),).resolves.toEqual({ ok: true, },);
-    await expect(single.cancel(tailId!,),).resolves.toEqual({ ok: false, code: "not_cancellable", },);
+    await expect(single.cancel(tailId!,),).resolves.toEqual({
+      ok: false,
+      code: "not_cancellable",
+      reason: "the turn is already cancelled",
+    },);
 
     stub.settle("head", "msg-head",);
     await single.idle();
@@ -351,6 +373,39 @@ describe("cancel", () => {
     const rows = await rowsByPrompt();
     expect(rows.get("head",)?.status,).toBe("completed",);
     expect(rows.get("tail",)?.status,).toBe("cancelled",);
+  });
+
+  it("interrupts a running turn through the live harness session", async () => {
+    const acp = acpConfig();
+    acp.profiles[0]!.name = "p1";
+    const { factory, logs, } = fakeFactory({ p1: { models: ["zai/flash",], }, },);
+    const runtime = createHarnessRuntime({ acp, factory, },);
+    await runtime.registry.ensureProbed("p1",);
+
+    const single = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: () => runtime,
+      dispatch: stub.dispatch,
+      maxConcurrent: 1,
+    },);
+
+    const batch = await single.enqueue({
+      requestedBy: userId,
+      requestedRole: "admin",
+      turns: [spec("p1", "head",),],
+    },);
+
+    await flush();
+
+    await expect(single.cancel(batch.turnIds[0]!,),).resolves.toEqual({ ok: true, },);
+    expect(logs.get("p1",)?.cancels,).toBe(1,);
+    expect((await rowsByPrompt()).get("head",)?.status,).toBe("cancelled",);
+
+    // The real dispatch may still settle after the cancel: its late completion
+    // must not overwrite the cancelled row.
+    stub.settle("head", "msg-head",);
+    await single.idle();
+    expect((await rowsByPrompt()).get("head",)?.status,).toBe("cancelled",);
   });
 });
 
@@ -385,6 +440,7 @@ describe("recoverAndPump", () => {
     await fixture.db.updateTable("harness_queue_turns",).set({
       status: "running",
       started_at: "2026-01-01T00:00:00.500Z",
+      owner_slug: "instance-a",
     },).where("id", "=", "t-crash",).execute();
 
     // The NEW process's queue: recovery runs before the first pump.
@@ -392,6 +448,7 @@ describe("recoverAndPump", () => {
       database: fixture.db,
       runtime: () => FAKE_RUNTIME,
       dispatch: stub.dispatch,
+      instanceSlug: "instance-a",
     },);
 
     const interrupted = await next.recoverAndPump();
@@ -439,5 +496,149 @@ describe("end to end through the real dispatch", () => {
     expect(queued?.status,).toBe("completed",);
     expect(queued?.result_message_id,).toBe(rows[0]?.id,);
     expect(existsSync(execLog,),).toBe(true,);
+  });
+});
+
+describe("authorization at admission", () => {
+  /**
+   * Real dispatch throughout this block: only the production gate can prove
+   * what role a turn ran under. Seeds admin settings, a temp exec log and a
+   * composed runtime; queues run production dispatch by default.
+   */
+  function setupAuthRuntime(): void {
+    execLog = join(mkdtempSync(join(tmpdir(), "harness-queue-auth-",),), "executions.jsonl",);
+    setExecLogPath(execLog,);
+    initHarnessAdminSettings(acpConfig(),);
+    const { factory, } = fakeFactory({ omp: { models: ["zai/flash",], reply: "queued answer", }, },);
+    initHarnessRuntime(acpConfig(), factory,);
+  }
+
+  it("refuses a queued turn when the caller is demoted before the pump", async () => {
+    // A zero-cap queue enqueues without claiming: the demotion lands before
+    // any pump resolves the role, so no timing race is involved.
+    setupAuthRuntime();
+    const parked = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: getHarnessRuntime,
+      maxConcurrent: 0,
+    },);
+
+    await parked.enqueue({
+      requestedBy: userId,
+      requestedRole: "solo",
+      turns: [spec("omp", "stale-role",),],
+    },);
+
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: getHarnessRuntime,
+    },);
+
+    await active.recoverAndPump();
+    await active.idle();
+
+    // The enqueue-time snapshot reached dispatch but authorized nothing: the
+    // gate judged the live (demoted) role and the row records why.
+    expect((await rowsByPrompt()).get("stale-role",),).toMatchObject({
+      status: "failed",
+      error_code: "role_denied",
+      result_message_id: null,
+    },);
+
+    const staleMessages = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(staleMessages,).toHaveLength(0,);
+  });
+
+  it("runs a demotion inside the claim-to-admission window at the new role", async () => {
+    // Demote exactly where the old queue-side check used to sit: after the
+    // claim, before admission. The gate must still fail the turn closed.
+    setupAuthRuntime();
+    const demoteThenDispatch: HarnessQueueDispatch = async (options,) => {
+      await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+      const runtime = getHarnessRuntime();
+      if (!runtime) { throw new Error("auth test runtime not composed",); }
+      return dispatchHarnessTurn({ ...options, runtime, },);
+    };
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: getHarnessRuntime,
+      dispatch: demoteThenDispatch,
+    },);
+
+    await active.enqueue({
+      requestedBy: userId,
+      requestedRole: "solo",
+      turns: [spec("omp", "window-demotion",),],
+    },);
+
+    await active.idle();
+
+    expect((await rowsByPrompt()).get("window-demotion",),).toMatchObject({
+      status: "failed",
+      error_code: "role_denied",
+      result_message_id: null,
+    },);
+
+    const messages = await fixture.db.selectFrom("messages",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(messages,).toHaveLength(0,);
+  });
+
+  it("keeps pumping other callers after refusing a demoted turn", async () => {
+    const healthyId = `user-harness-queue-${tag}-healthy`;
+    await fixture.db.insertInto("users",).values({
+      id: healthyId,
+      username: `harness-queue-${tag}-healthy`,
+      display_name: "Harness Queue Healthy",
+      role: "solo",
+      status: "active",
+      settings: "{}",
+    },).execute();
+
+    // Both rows are queued before any queue pumps; only the first caller is
+    // demoted, so the second turn must still run.
+    await insertQueuedTurns(fixture.db, [
+      {
+        id: "t-stale",
+        batchId: "b-auth",
+        profile: "omp",
+        prompt: "stale",
+        chatId,
+        actorId,
+        requestedBy: userId,
+        requestedRole: "solo",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+      {
+        id: "t-live",
+        batchId: "b-auth",
+        profile: "omp",
+        prompt: "live",
+        chatId,
+        actorId,
+        requestedBy: healthyId,
+        requestedRole: "solo",
+        createdAt: "2026-01-01T00:00:01.000Z",
+      },
+    ],);
+
+    setupAuthRuntime();
+
+    await fixture.db.updateTable("users",).set({ role: "user", },).where("id", "=", userId,).execute();
+
+    const active = createHarnessTurnQueue({
+      database: fixture.db,
+      runtime: getHarnessRuntime,
+    },);
+
+    await active.recoverAndPump();
+    await active.idle();
+
+    const rows = await rowsByPrompt();
+    expect(rows.get("stale",),).toMatchObject({ status: "failed", error_code: "role_denied", },);
+    expect(rows.get("live",),).toMatchObject({ status: "completed", },);
+    expect(rows.get("live",)?.result_message_id,).not.toBeNull();
   });
 });

@@ -3,75 +3,54 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * API reference drift gate — `docs/reference/api.md` vs the generated spec.
+ * API reference freshness gate — `docs/reference/api.md` vs the generated spec.
  *
- * Two independent descriptions of one surface, maintained by hand and by
- * generator, with nothing reconciling them. Measured on 2026-10-07: api.md
- * documented 147 operations, of which 14 did not exist in the spec — the
- * correcting diff is 9 insertions against 29 deletions, and those two numbers
- * are the whole shape of the damage. Nine were the WRONG HTTP VERB on a path
- * that does exist (`PUT /messages/:id/archive` where the server serves `POST`),
- * which sends a consumer following the reference to a 405, and each is exactly
- * one of the nine inserted lines. Five were not routes at all (`GET
- * /chats/:id/vn-choices/history` among them) and vanished as whole sections.
- * Nothing caught any of it: the generator only ran when someone typed
- * `bun run openapi`.
+ * api.md is generated now: `docs/reference/openapi.json` (gitignored, written
+ * by scripts/generate-openapi.ts) is the source and scripts/generate-api-md.ts
+ * renders the tables. This gate regenerates both and fails when the committed
+ * api.md differs — the same regenerate-and-diff shape as the other generated
+ * artifact gates. Two invariants survive from the old hand-maintained gate:
  *
- * Three invariants, all BLOCKING:
+ *   1. No phantom. Every `METHOD /api/...` operation named in the markdown must
+ *      exist in the spec at the same method AND path. The table is generated,
+ *      so this passes by construction — but it still catches a hand-edit that
+ *      smuggles a fictitious route into the preserved prose region.
+ *   2. OpenAPI validity. The regenerated spec must be well-formed OpenAPI 3.1
+ *      with at least one path. A malformed or empty spec would render an empty
+ *      table and could otherwise pass a pure diff unnoticed.
  *
- *   1. No phantom. Every operation api.md documents must exist in the spec at
- *      the same method AND path. This is the direction that is actually
- *      enforceable — it is bounded by the doc's own size, and it is the one
- *      that breaks callers.
- *   2. Ratchet. The set of spec paths api.md covers may only grow: every path
- *      in `api-doc-drift-baseline.json` must still be documented. Without this,
- *      deleting a section is indistinguishable from fixing drift, and coverage
- *      erodes silently. Regenerate with `--update-baseline` after documenting
- *      more surface.
- *   3. OpenAPI validity. The regenerated spec must be a well-formed OpenAPI 3.1
- *      document with at least one path. A malformed or empty spec passes the
- *      ratchet silently and would produce a broken client on generation.
+ * The coverage ratchet is gone: api.md no longer curates a subset of the spec,
+ * so "documented paths may only grow" has nothing left to measure. Operations
+ * without a summary/description are counted in the output, never papered over.
  *
- * The reverse direction (spec operations with no api.md section — 660 of 807 at
- * the time of writing) is REPORTED, never enforced: it is a 492-path backlog,
- * not a regression, and a gate that starts red is a gate that gets ignored.
- * That backlog is the honest cost of keeping the prose; closing it is the epic's
- * own work, not this gate's.
- *
- * Path syntax differs between the two documents and must be normalised before
- * comparing: Elysia registers `:id`, OpenAPI emits `{id}`.
- *
- * Usage: bun run scripts/check/api-doc-drift.mjs [--update-baseline]
+ * Usage: bun run scripts/check/api-doc-drift.mjs
  *
  * Exit codes: 0 in sync, 1 drift found, 2 tooling failure.
  */
 import path from "node:path";
-import { flag, object, runScript, withDefault, } from "../../src/cli/parser";
+import { object, runScript, } from "../../src/cli/parser";
 
 const PROJECT_ROOT = path.resolve(import.meta.dir, "..", "..",);
 const SPEC_REL = "docs/reference/openapi.json";
 const DOC_REL = "docs/reference/api.md";
-const BASELINE_REL = "scripts/check/api-doc-drift-baseline.json";
-const METHODS = ["get", "post", "put", "patch", "delete", "head", "options",];
-const UPDATE_BASELINE = runScript(
-  object({ updateBaseline: withDefault(flag("--update-baseline",), false,), },),
-  {
-    programName: "api-doc-drift",
-    brief: "Fail when docs/reference/api.md and the generated OpenAPI spec disagree.",
-    help: "option",
-  },
-).updateBaseline;
+const METHODS = ["get", "post", "put", "patch", "delete", "head", "options", "trace",];
 
-/** `GET /api/v1/chats/:id/messages` -> `GET /api/v1/chats/{id}/messages`. */
+runScript(object({},), {
+  programName: "api-doc-drift",
+  brief: "Fail when docs/reference/api.md is stale versus the generated OpenAPI spec.",
+  help: "option",
+},);
+
+/** Elysia emits `{id}` where the old prose wrote `:id`. */
 const normalize = (p,) => p.replace(/:([A-Za-z0-9_]+)/g, "{$1}",);
 
-/** Every `METHOD /api/v1/...` endpoint named in the markdown, normalized. */
+/** Every `METHOD /api/...` endpoint named in the markdown, normalized. */
 function documentedOperations(markdown,) {
   const found = new Map();
-  const re = /\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(\/api\/v1\/[^\s`"')|]*)/g;
+  const re = /\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s*\|?\s*(\/api\/[^\s`"')|]*)/g;
   for (const [, method, raw,] of markdown.matchAll(re,)) {
     const apiPath = normalize(raw.split("?",)[0].replace(/[.,;`]+$/, "",),);
-    if (apiPath === "/api/v1") { continue; }
+    if (apiPath === "/api") { continue; }
     found.set(`${method} ${apiPath}`, apiPath,);
   }
   return found;
@@ -98,10 +77,23 @@ async function generateSpec() {
   return file.json();
 }
 
+/** Render api.md from the freshly generated spec before diffing it. */
+function generateDoc() {
+  const proc = Bun.spawnSync(
+    ["bun", "run", "scripts/generate-api-md.ts",],
+    { cwd: PROJECT_ROOT, stdout: "pipe", stderr: "pipe", },
+  );
+  if (proc.exitCode !== 0) {
+    throw new Error(
+      `generate-api-md.ts exited ${proc.exitCode}: ${new TextDecoder().decode(proc.stderr,).trim()}`,
+    );
+  }
+}
+
 async function main() {
   const spec = await generateSpec();
 
-  // Invariant 3: the spec must be valid OpenAPI 3.1 with at least one path.
+  // Invariant 2: valid OpenAPI 3.1 with at least one path.
   if (
     !spec.openapi?.startsWith("3.1",) || typeof spec.paths !== "object" || spec.paths === null ||
     Object.keys(spec.paths,).length === 0
@@ -113,72 +105,57 @@ async function main() {
     process.exit(1,);
   }
 
-  const markdown = await Bun.file(path.join(PROJECT_ROOT, DOC_REL,),).text();
-  const documented = documentedOperations(markdown,);
-
   const specPaths = new Map();
   for (const [p, item,] of Object.entries(spec.paths ?? {},)) {
-    if (p.startsWith("/api/v1",)) { specPaths.set(p, METHODS.filter((m,) => item[m]),); }
+    specPaths.set(p, METHODS.filter((m,) => item[m]),);
   }
 
+  // Invariant 1: no phantom operations in the prose or the generated table.
+  const markdown = await Bun.file(path.join(PROJECT_ROOT, DOC_REL,),).text();
+  const documented = documentedOperations(markdown,);
   const missing = [];
   for (const op of documented.keys()) {
     const sp = op.indexOf(" ",);
     const opPath = op.slice(sp + 1,);
-    const specPath = specPaths.get(opPath,);
-    if (!specPath) { missing.push(`${op}  — path not served`,); }
-    else if (!specPath.includes(op.slice(0, sp,).toLowerCase(),)) {
-      missing.push(`${op}  — path serves [${specPath.join(", ",)}]`,);
+    const served = specPaths.get(opPath,);
+    if (!served) { missing.push(`${op}  — path not served`,); }
+    else if (!served.includes(op.slice(0, sp,).toLowerCase(),)) {
+      missing.push(`${op}  — path serves [${served.join(", ",)}]`,);
     }
   }
-
-  const covered = new Set([...documented.values(),].filter((p,) => specPaths.has(p,)),);
-  const baselinePath = path.join(PROJECT_ROOT, BASELINE_REL,);
-  const baselineFile = Bun.file(baselinePath,);
-  // Fail closed on a missing baseline. Treating it as an empty baseline would
-  // pass with `ratchet baseline 0`, silently disabling invariant 2 — deleting
-  // the file would turn the coverage check off, which is the same "gate that
-  // cannot fail" this gate exists to prevent. Only --update-baseline may
-  // create it.
-  if (!(await baselineFile.exists()) && !UPDATE_BASELINE) {
-    throw new Error(`${BASELINE_REL} is missing — create it with --update-baseline`,);
-  }
-  const baseline = await baselineFile.exists()
-    ? [...JSON.parse(await baselineFile.text(),).coveredPaths,]
-    : [];
-  const regressed = baseline.filter((p,) => !covered.has(p,)).sort();
-
-  console.log(
-    `api - doc drift: ${documented.size} documented operations; ` +
-      `${covered.size}/${specPaths.size} /api/v1 spec paths documented ` +
-      `(ratchet baseline ${baseline.length})`,
-  );
-
-  if (UPDATE_BASELINE) {
-    await Bun.write(
-      baselinePath,
-      `${JSON.stringify({ coveredPaths: [...covered,].sort(), }, null, 2,)}\n`,
-    );
-    console.log(`  baseline updated: ${covered.size} paths -> ${BASELINE_REL}`,);
-  }
-
-  const failed = missing.length > 0 || regressed.length > 0;
   if (missing.length > 0) {
-    console.log(`  ${missing.length} operation(s) documented in ${DOC_REL} but absent from the spec:`,);
+    console.log(`  ${missing.length} operation(s) named in ${DOC_REL} but absent from the spec:`,);
     for (const line of missing) { console.log(`    ${line}`,); }
-  }
-  if (regressed.length > 0) {
-    console.log(`  ${regressed.length} path(s) lost documented coverage:`,);
-    for (const p of regressed) { console.log(`    ${p}`,); }
-  }
-  if (failed) {
-    console.log(
-      "Fix the doc entries above (or remove routes that no longer exist). " +
-        "If the removal was intended, run with --update-baseline.",
-    );
     process.exit(1,);
   }
-  console.log("  no drift",);
+
+  // Freshness: regenerate from that same spec and diff against the committed file.
+  generateDoc();
+  const diff = Bun.spawnSync(
+    ["git", "diff", "--exit-code", "--", DOC_REL,],
+    { cwd: PROJECT_ROOT, stdout: "pipe", stderr: "pipe", },
+  );
+  if (diff.exitCode !== 0) {
+    console.error(`api - doc drift: ${DOC_REL} is stale — regenerated copy differs from HEAD.`,);
+    console.error("Run `bun run openapi && bun run openapi:md` and commit the result.",);
+    if (diff.exitCode === 1) { console.error(new TextDecoder().decode(diff.stdout,).trim(),); }
+    process.exit(1,);
+  }
+
+  let hollow = 0;
+  let operations = 0;
+  for (const item of Object.values(spec.paths ?? {},)) {
+    for (const method of METHODS) {
+      const op = item[method];
+      if (!op) { continue; }
+      operations++;
+      if (!op.summary?.trim() && !op.description?.trim()) { hollow++; }
+    }
+  }
+  console.log(
+    `api - doc drift: ${operations} spec operations (${hollow} without summary/description); ` +
+      `${specPaths.size} paths; ${documented.size} operations named in ${DOC_REL}; no drift`,
+  );
 }
 
 try {

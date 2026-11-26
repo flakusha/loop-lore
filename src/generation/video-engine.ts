@@ -17,6 +17,8 @@ import { mimeFromExtension, } from "../assets/service/detect";
 import type { VideoProviderConfig, } from "../config/schema";
 import { getChildLogger, } from "../logger";
 import { ComfyUIClient, } from "./providers/comfyui";
+import type { ComfyUIModelOverrides, } from "./providers/comfyui-model-discovery";
+import { pickVideoSink, } from "./providers/comfyui-poll";
 import { loadComfyUIWorkflow, } from "./workflow-loader";
 
 /** Resolver for a provider's BYO API key, keyed by provider NAME — a key
@@ -42,6 +44,20 @@ export interface VideoGenRequest {
   frames?: number;
   width?: number;
   height?: number;
+
+  /** ComfyUI sampling controls; fall back to workflow defaults when absent. */
+  steps?: number;
+  cfgScale?: number;
+  sampler?: string;
+  scheduler?: string;
+  /** Picked model roles; fall back to persisted pins then config pins. */
+  model?: string;
+  diffusion?: string;
+  clip?: string;
+  vae?: string;
+  clipVision?: string;
+  /** Persisted pins keyed by provider name; request fields win. */
+  modelPins?: Record<string, ComfyUIModelOverrides>;
 }
 
 const log = getChildLogger("video-comfyui",);
@@ -110,6 +126,9 @@ async function runCandidate(
     apiKey,
   },);
 
+  const pins = request.modelPins?.[candidate.name];
+  const models = candidate.models;
+
   let workflow;
   try {
     workflow = await loadWorkflow(candidate.workflow, {
@@ -120,6 +139,16 @@ async function runCandidate(
       frames: request.frames,
       width: request.width,
       height: request.height,
+
+      steps: request.steps,
+      cfgScale: request.cfgScale,
+      sampler: request.sampler,
+      scheduler: request.scheduler,
+      model: request.model ?? pins?.checkpoint ?? models?.checkpoint,
+      diffusion: request.diffusion ?? pins?.diffusion ?? models?.diffusion,
+      clip: request.clip ?? pins?.clip ?? models?.clip,
+      vae: request.vae ?? pins?.vae ?? models?.vae,
+      clip_vision: request.clipVision ?? pins?.clip_vision ?? models?.clip_vision,
     },);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error,);
@@ -136,7 +165,7 @@ async function runCandidate(
     // determines the mime type (mp4/webm/mkv differ per node pack).
     const { prompt_id, } = await client.submitWorkflow(workflow,);
     const refs = await client.waitForFiles(prompt_id,);
-    const clip = refs.find((f,) => f.kind === "video");
+    const clip = pickVideoSink(refs,);
     if (!clip) {
       return failure("ComfyUI workflow produced no video output", 503,);
     }

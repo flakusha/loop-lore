@@ -9,7 +9,8 @@ import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
 import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
 import type { LLMProvider, } from "../generation/providers/types";
-import { createLogger, } from "../logger";
+import { createLogger, getLogger, setGlobalLogger, } from "../logger";
+import { recordRanking, } from "../models/rankings";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
   clearModelRoleOverride,
@@ -141,6 +142,33 @@ describeReal("model-roles", () => {
       expect(resolved.model,).toBe("",);
     });
 
+    test("falls back to config without throwing when system_config and logger are unavailable", async () => {
+      // Strict-review falsifying probe: a DB missing system_config used to throw
+      // from the two getConfigValue reads, breaking the file-header no-throw
+      // contract. PF-9 also removed the root logger, so the warn guard is covered.
+      const unavailableDb = {
+        selectFrom: (table: string,) => {
+          if (table === "system_config") { throw new Error("no such table: system_config",); }
+          return db.selectFrom(table as keyof DB,);
+        },
+      } as unknown as Kysely<DB>;
+
+      const config = makeConfig({
+        modelRoles: { [ModelRole.Main]: { provider: "cfg-provider", model: "cfg-model", }, },
+      },);
+
+      const previousLogger = getLogger();
+      setGlobalLogger(null as unknown as ReturnType<typeof getLogger>,);
+      try {
+        const resolved = await resolveModelRole(ModelRole.Main, config, unavailableDb,);
+        expect(resolved.source,).toBe("config",);
+        expect(resolved.provider,).toBe("cfg-provider",);
+        expect(resolved.model,).toBe("cfg-model",);
+      } finally {
+        setGlobalLogger(previousLogger,);
+      }
+    });
+
     test("throws for a role outside VALID_ROLES", async () => {
       await expect(resolveModelRole(ModelRole.Moderation, makeConfig(), db,),).rejects.toThrow();
     });
@@ -154,6 +182,66 @@ describeReal("model-roles", () => {
       expect(resolved.source,).toBe("config",);
       expect(resolved.provider,).toBe("cfg-provider",);
       expect(resolved.model,).toBe("cfg-model",);
+    });
+
+    test("scenario ranking selects a default model; an explicit config still bypasses it", async () => {
+      await recordRanking(db, {
+        scope: "global",
+        scopeKey: "",
+        subjectKey: "hf:org/ranked-model",
+        metric: "quality_score",
+        value: 0.9,
+        basis: "imported",
+        source: "livebench",
+        observedAt: "2026-11-01T00:00:00.000Z",
+      },);
+
+      const config = makeConfig({
+        defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+      },);
+
+      const ranked = await resolveModelRole(ModelRole.Main, config, db, { scenario: "general", },);
+      expect(ranked.source,).toBe("ranking",);
+      expect(ranked.model,).toBe("ranked-model",);
+
+      const bypassed = await resolveModelRole(
+        ModelRole.Main,
+        makeConfig({
+          defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+          modelRoles: { [ModelRole.Main]: { provider: "cfg-provider", model: "cfg-model", }, },
+        },),
+        db,
+        { scenario: "general", },
+      );
+
+      expect(bypassed.source,).toBe("config",);
+      expect(bypassed.model,).toBe("cfg-model",);
+
+      const configured = await resolveModelRole(
+        ModelRole.Main,
+        makeConfig({
+          defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+          autorouteScenario: "general",
+        },),
+        db,
+      );
+
+      expect(configured.source,).toBe("ranking",);
+      expect(configured.model,).toBe("ranked-model",);
+
+      await setModelRoleOverride(ModelRole.Main, TEST_PROVIDER, "db-model", db,);
+
+      const dbWins = await resolveModelRole(
+        ModelRole.Main,
+        makeConfig({
+          defaultModels: { [TEST_PROVIDER]: "ranked-model", },
+          autorouteScenario: "general",
+        },),
+        db,
+      );
+
+      expect(dbWins.source,).toBe("db",);
+      expect(dbWins.model,).toBe("db-model",);
     });
   });
 

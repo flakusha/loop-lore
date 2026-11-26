@@ -155,7 +155,7 @@ describe("widget mapping", () => {
 });
 
 describe("pruning and report", () => {
-  it("excludes muted/bypassed nodes and prunes dangling inputs", () => {
+  it("mode 2 mutes, mode 4 bypasses, and both prune dangling inputs", () => {
     const workflow: UiWorkflow = {
       nodes: [
         { id: 1, type: "CheckpointLoader", widgets_values: ["a.ckpt",], },
@@ -169,7 +169,7 @@ describe("pruning and report", () => {
         {
           id: 3,
           type: "KSampler",
-          mode: 8,
+          mode: 4,
           inputs: [{ name: "model", type: "MODEL", link: 5, },],
           widgets_values: ["fixed", 3, 4,],
         },
@@ -235,6 +235,15 @@ describe("error paths", () => {
   it("rejects malformed workflows", () => {
     const workflow = { nodes: {}, } as unknown as UiWorkflow;
     expect(failureOf(() => convertWorkflow(workflow, SNAPSHOT,)),).toBe("malformed-workflow",);
+  });
+
+  it("rejects unknown modes including legacy mode 8", () => {
+    const workflow: UiWorkflow = {
+      nodes: [{ id: 1, type: "CheckpointLoader", mode: 8, widgets_values: ["a.ckpt",], },],
+    };
+
+    expect(failureOf(() => convertWorkflow(workflow, SNAPSHOT,)),).toBe("unknown-mode",);
+    expect(() => convertWorkflow(workflow, SNAPSHOT,)).toThrow(/unknown-mode/,);
   });
 
   it("rejects unresolvable subgraph references", () => {

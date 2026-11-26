@@ -61,6 +61,9 @@ export async function insertResultRows(
             role: row.role as never,
             content: row.storedContent,
             key_id: row.storedKeyId,
+            // Mirror from prepareContentStorage, the shared encoder; FTS5
+            // indexes this column, never the stored (compressed/encrypted) bytes.
+            content_plaintext: row.storedPlaintext,
             content_encoding: row.contentEncoding as never,
             idempotency_key: idempotencyKey,
             merge_id: mergeId,

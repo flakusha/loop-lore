@@ -117,6 +117,35 @@ describe("integration-token admin CRUD — admin lifecycle", () => {
     expect(res.status,).toBe(400,);
   });
 
+  test("mint always stamps a bounded expiresAt (default 24h, max 7d)", async () => {
+    const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
+    const before = Date.now();
+    const res = await handle(app, "POST", `${PREFIX}/admin/integration-tokens`, {
+      name: "ttl-default",
+      scopes: "read",
+    },);
+
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { id: string; expiresAt: string } };
+    const row = await db.selectFrom("integration_tokens",).select("expires_at",).where("id", "=", body.data.id,)
+      .executeTakeFirst();
+
+    expect(row!.expires_at,).toBe(body.data.expiresAt,);
+    const ms = Date.parse(body.data.expiresAt,);
+    expect(ms,).toBeGreaterThan(before,);
+    expect(ms,).toBeLessThanOrEqual(before + 24 * 60 * 60 * 1000 + 1000,);
+
+    const far = await handle(app, "POST", `${PREFIX}/admin/integration-tokens`, {
+      name: "ttl-clamped",
+      scopes: "read",
+      expiresAt: new Date(before + 365 * 24 * 60 * 60 * 1000,).toISOString(),
+    },);
+
+    expect(far.status,).toBe(200,);
+    const farBody = await far.json() as { data: { expiresAt: string } };
+    expect(Date.parse(farBody.data.expiresAt,),).toBeLessThanOrEqual(before + 7 * 24 * 60 * 60 * 1000 + 1000,);
+  });
+
   test("the list is secret-free: no token_hash, no raw token", async () => {
     const app = makeApp({ userId: ADMIN, userRole: UserRole.Admin, },);
     const { token, } = await mint(app, "agent-b",);

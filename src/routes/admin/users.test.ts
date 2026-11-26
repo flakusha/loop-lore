@@ -9,6 +9,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
+import { REDACTED_MARKER, } from "../../integrations/secrets";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { usersRoutes, } from "./users";
@@ -147,5 +148,58 @@ describe("admin users routes", () => {
     );
 
     expect(res.status,).toBe(403,);
+  });
+
+  test("PATCH role refuses to demote the last admin", async () => {
+    const tdb = await createTestDb();
+    try {
+      const target = await insertUsers(tdb.db, "only-admin", "Only Admin", { role: "admin", },);
+      const res = await makeApp(tdb.db, "admin",).handle(
+        new Request(`http://localhost/api/admin/users/${target}/role`, {
+          method: "PATCH",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ role: "user", },),
+        },),
+      );
+
+      expect(res.status,).toBe(400,);
+      const row = await tdb.db.selectFrom("users",).select("role",).where("id", "=", target,).executeTakeFirst();
+      expect(row?.role,).toBe("admin",);
+    } finally {
+      tdb.sqlite.close();
+    }
+  });
+
+  test("GET /api/admin/users/:id redacts a BYO apiKey from settings", async () => {
+    // Own DB per test: the suite's beforeAll rows are shared by older tests.
+    const tdb = await createTestDb();
+    try {
+      const target = await insertUsers(tdb.db, "byo-user", "BYO", {
+        settings: JSON.stringify({
+          provider: "openai",
+          apiKey: "sk-plain-secret",
+          theme: "dark",
+        },),
+      },);
+
+      const res = await makeApp(tdb.db, "admin",).handle(
+        new Request(`http://localhost/api/admin/users/${target}`,),
+      );
+
+      expect(res.status,).toBe(200,);
+
+      const raw = await res.text();
+      expect(raw,).not.toContain("sk-plain-secret",);
+      const body = JSON.parse(raw,) as { settings: string | Record<string, unknown> };
+      const settings = typeof body.settings === "string"
+        ? JSON.parse(body.settings,) as Record<string, unknown>
+        : body.settings;
+
+      expect(settings.apiKey,).toBe(REDACTED_MARKER,);
+      expect(settings.provider,).toBe("openai",);
+      expect(settings.theme,).toBe("dark",);
+    } finally {
+      tdb.sqlite.close();
+    }
   });
 });

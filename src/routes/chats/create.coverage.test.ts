@@ -162,6 +162,25 @@ describe("chats/create — variant taxonomy wiring", () => {
     await db.destroy();
   });
 
+  test("llm_only variant accepts an operator validation harness", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "LLM validation",
+      variant: "llm_only",
+      gmConfig: { validation: { harness: "stay in character", }, },
+    },);
+
+    expect(res.status,).toBe(201,);
+    const chat = await loadChat(db, "LLM validation",);
+    expect(
+      (JSON.parse(chat!.gm_config!,) as { validation?: { harness?: string } }).validation?.harness,
+    ).toBe("stay in character",);
+
+    await db.destroy();
+  });
+
   test("a conflicting explicit triple is rejected with the expected value", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
@@ -221,6 +240,118 @@ describe("chats/create — variant taxonomy wiring", () => {
 
     expect(res.status,).toBe(201,);
     expect(messages,).toEqual([{ actor_id: "greeter-actor", content: "Hello!", },],);
+    await db.destroy();
+  });
+
+  test("an explicit greeting index seeds the selected alternate", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertActors(db, "Greeter", {
+      id: "greeter-actor",
+      owner_id: USER_ID,
+      welcome_message: "Primary!",
+      alternate_greetings: '["Hi!","Hello!"]',
+    } as never,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Alternate greeting",
+      participantIds: ["greeter-actor",],
+      greetingIndex: 1,
+    },);
+
+    const created = await res.json() as { id?: string };
+    const messages = await db
+      .selectFrom("messages",)
+      .select(["actor_id", "content",],)
+      .where("chat_id", "=", created.id!,)
+      .execute();
+
+    expect(res.status,).toBe(201,);
+    expect(messages,).toEqual([{ actor_id: "greeter-actor", content: "Hello!", },],);
+    await db.destroy();
+  });
+
+  test("absent and out-of-range indexes both fall back to primary", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    for (
+      const [name, id, index,] of [
+        ["Default greeting", "greeter-default", undefined,],
+        ["Out of range", "greeter-range", 9,],
+      ] as const
+    ) {
+      await insertActors(db, "Greeter", {
+        id,
+        owner_id: USER_ID,
+        welcome_message: "Primary!",
+        alternate_greetings: '["Hi!"]',
+      } as never,);
+
+      const res = await postChat(makeApp(db, USER_ID,), {
+        name,
+        participantIds: [id,],
+        ...(index === undefined ? {} : { greetingIndex: index, }),
+      },);
+
+      const created = await res.json() as { id?: string };
+      const messages = await db
+        .selectFrom("messages",)
+        .select("content",)
+        .where("chat_id", "=", created.id!,)
+        .execute();
+
+      expect(res.status,).toBe(201,);
+      expect(messages,).toEqual([{ content: "Primary!", },],);
+    }
+
+    await db.destroy();
+  });
+
+  test("each character seeds its own selected-or-primary greeting", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertActors(db, "Alice", {
+      id: "alice",
+      owner_id: USER_ID,
+      welcome_message: "Alice primary",
+      alternate_greetings: '["Alice alt"]',
+    } as never,);
+
+    await insertActors(db, "Bob", {
+      id: "bob",
+      owner_id: USER_ID,
+      welcome_message: "Bob primary",
+      alternate_greetings: '["Bob alt"]',
+    } as never,);
+
+    await insertActors(db, "Carol", {
+      id: "carol",
+      owner_id: USER_ID,
+      welcome_message: "Carol primary",
+    } as never,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Many greetings",
+      participantIds: ["alice", "bob", "carol",],
+      greetingIndex: 0,
+    },);
+
+    const created = await res.json() as { id?: string };
+    const messages = await db
+      .selectFrom("messages",)
+      .select(["actor_id", "content",],)
+      .where("chat_id", "=", created.id!,)
+      .orderBy("actor_id",)
+      .execute();
+
+    expect(res.status,).toBe(201,);
+    expect(messages,).toEqual([
+      { actor_id: "alice", content: "Alice alt", },
+      { actor_id: "bob", content: "Bob alt", },
+      { actor_id: "carol", content: "Carol primary", },
+    ],);
+
     await db.destroy();
   });
 

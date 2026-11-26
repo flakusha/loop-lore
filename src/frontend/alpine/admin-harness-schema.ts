@@ -51,6 +51,9 @@ export const HarnessRunSummarySchema = Type.Object({
   // Turn correlation id; null on every line written before turns were
   // correlated, and on paths with no turn in scope (an initial greeting).
   turnId: Type.Union([Type.String(), Type.Null(),],),
+  // Instance slug that recorded the run; null on every line written before
+  // per-instance attribution existed.
+  instanceId: Type.Union([Type.String(), Type.Null(),],),
 },);
 
 /**
@@ -193,6 +196,8 @@ export const HarnessProfileSettingsSchema = Type.Object({
   name: Type.String(),
   /** `harness` flavor, defaulted to `"omp"` when the profile omitted it. */
   flavor: Type.String(),
+  /** Transport driving the profile (only ACP stdio is implemented). */
+  transport: Type.Literal("acp",),
   usageClasses: Type.Array(Type.String(),),
   subscriptionBacked: Type.Boolean(),
   /** Locale key (`harness.tos.note.*`) of the provider ToS note. */
@@ -390,3 +395,42 @@ export const HarnessQueueEnqueueResponse = Type.Object({
 export const HarnessQueueCancelResponse = Type.Object({
   ok: Type.Boolean({},),
 },);
+
+// ── Usage ledger + admin metrics ───────────────────────────────────────────
+
+/** One row of `GET /api/v1/harness/ledger` (the raw ledger snapshot). */
+export const HarnessLedgerRowSchema = Type.Object({
+  profile: Type.String(),
+  dispatchesInWindow: Type.Number(),
+  tokensInDay: Type.Number(),
+  quotaResetAt: Type.Union([Type.Number(), Type.Null(),],),
+},);
+
+/** `GET /api/v1/harness/ledger` body. */
+export const HarnessLedgerResponse = Type.Object({
+  items: Type.Array(HarnessLedgerRowSchema,),
+},);
+
+/** Static view of one ledger row, for typed table shaping. */
+export type HarnessLedgerRow = Static<typeof HarnessLedgerRowSchema>;
+
+/**
+ * Admin-only Prometheus families that `/harness/metrics` adds over the public
+ * scrape. The shared families are already covered by the stats cards.
+ */
+const HARNESS_ADMIN_FAMILIES = [
+  "loop_lore_harness_dispatch_total",
+  "loop_lore_harness_profile_dispatch_total",
+  "loop_lore_harness_profile_quota_reset_epoch_seconds",
+  "loop_lore_harness_profile_info",
+  "loop_lore_harness_profile_available",
+] as const;
+
+/**
+ * Pull the admin-only sample lines out of a Prometheus exposition body.
+ * @param text - raw `GET /api/v1/harness/metrics` response text
+ * @returns the sample lines (HELP/TYPE metadata lines excluded)
+ */
+export function decodeHarnessAdminSignals(text: string,): string[] {
+  return text.split("\n",).filter((line,) => HARNESS_ADMIN_FAMILIES.some((family,) => line.startsWith(`${family}{`,)));
+}

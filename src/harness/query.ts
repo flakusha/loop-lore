@@ -8,13 +8,14 @@
  * loading the file whole: the log is append-only and grows without bound, and
  * a dashboard endpoint must not turn a long-running process into an OOM.
  *
- * ponytail: {@link READ_WINDOW_BYTES} of tail (≈ 10k records at ~400 B/line) and
- * at most {@link MAX_LINES} parsed records. Upgrade path when that ceiling
- * bites: an offset index sidecar (`.harness/executions.idx`) or a SQLite
- * mirror, both behind these same three exported functions — no caller changes.
+ * ponytail: when a valid `executions.idx` sidecar exists, the window starts at
+ * the record {@link MAX_LINES} from the end instead of {@link READ_WINDOW_BYTES}
+ * from the end. Otherwise the capped tail scan below is the fallback. A SQLite
+ * mirror remains a non-goal; both paths sit behind these same three exports.
  */
-import { type FileHandle, open, } from "node:fs/promises";
-import { getExecLogPath, } from "./exec-log";
+import { type FileHandle, open, readFile, } from "node:fs/promises";
+import { parseExecIndex, } from "./exec-index";
+import { getExecIndexPath, getExecLogPath, } from "./exec-log";
 import { rollupStats, } from "./stats";
 import {
   deserializeRun,
@@ -30,8 +31,9 @@ import {
 export const MAX_LINES = 20_000;
 
 /**
- * Hard ceiling on BYTES read from the end of the log per query. This is the
- * real memory bound — MAX_LINES only caps what survives parsing.
+ * Hard ceiling on BYTES read from the end of the log by the fallback tail
+ * scan. A valid sidecar removes this cap and bounds the read by MAX_LINES
+ * records instead, so this is not the memory bound for indexed logs.
  */
 export const READ_WINDOW_BYTES = 4 * 1024 * 1024;
 
@@ -58,6 +60,41 @@ function matches(record: HarnessRunRecord, filter: HarnessRunFilter,): boolean {
 }
 
 /**
+ * Sidecar fast path: start at the record MAX_LINES from the end instead of
+ * READ_WINDOW_BYTES from the end. Returns null to signal "fall back to the
+ * tail scan" — the sidecar is advisory, never authoritative.
+ *
+ * ponytail: reads the whole sidecar (33 B/record, ~33 MB at 1M records).
+ * Upgrade path: seek to just the last MAX_LINES entries if logs reach that
+ * scale; the current cap stays bounded by record count, not file bytes.
+ */
+async function readIndexed(handle: FileHandle, size: number,): Promise<HarnessRunRecord[] | null> {
+  const idxPath = getExecIndexPath();
+  if (idxPath === null) { return null; }
+  try {
+    const entries = parseExecIndex(await readFile(idxPath,), size,);
+    if (entries === null || entries.length === 0) { return null; }
+    const from = entries[Math.max(0, entries.length - MAX_LINES,)]!.offset;
+    const length = size - from;
+    const buf = Buffer.alloc(length,);
+    await handle.read(buf, 0, length, from,);
+    const out: HarnessRunRecord[] = [];
+    for (const line of buf.toString("utf8",).split("\n",)) {
+      if (line.trim().length === 0) { continue; }
+      const record = deserializeRun(line,);
+      if (record !== null) { out.push(record,); }
+      if (out.length >= MAX_LINES) { break; }
+    }
+
+    out.reverse();
+    return out;
+  } catch {
+    // Unreadable sidecar or range: fall back, never return a guess.
+    return null;
+  }
+}
+
+/**
  * Stream up to {@link MAX_LINES} records from the tail of the log, newest first.
  * @returns Parsed records, newest first. Empty when the log is missing.
  */
@@ -65,13 +102,6 @@ async function streamNewestFirst(): Promise<HarnessRunRecord[]> {
   const path = getExecLogPath();
   if (path === null) { return []; }
 
-  // ponytail: reads at most READ_WINDOW_BYTES + 1 from the END of the file, not
-  // the whole thing — the log is append-only and unbounded, and a dashboard
-  // poll must not turn a long-running process into an OOM. Seeks to the tail
-  // (not the head) because callers want the newest runs, not the oldest.
-  // Upgrade path when 4 MB of history is too little: an offset index sidecar
-  // (`.harness/executions.idx`) or a SQLite mirror, both behind the same three
-  // exported functions — no caller changes.
   let handle: FileHandle;
   try {
     handle = await open(path, "r",);
@@ -83,6 +113,13 @@ async function streamNewestFirst(): Promise<HarnessRunRecord[]> {
   try {
     const { size, } = await handle.stat();
     if (size === 0) { return []; }
+    const indexed = await readIndexed(handle, size,);
+    if (indexed !== null) { return indexed; }
+
+    // ponytail: without a usable sidecar, read at most READ_WINDOW_BYTES + 1
+    // from the END of the file, not the whole thing — the log is append-only
+    // and unbounded, and a dashboard poll must not turn a long-running process
+    // into an OOM. Seeks to the tail (not the head) for the newest runs.
     const start = size > READ_WINDOW_BYTES ? size - READ_WINDOW_BYTES : 0;
     // Start one byte EARLIER so a seek that happens to land on a record
     // boundary includes that newline: the split then yields a leading ""

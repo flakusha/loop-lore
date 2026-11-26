@@ -52,21 +52,36 @@
   }
 }
 
-/* ── Reduced motion (global floor) ─────────────────────────
-   Umbrella over the per-component `transition: none` blocks
-   already in app.css / vn.css / info-bubble.css: also stops
-   animations they do not cover (spinner, typing dots). The
-   0.01ms pattern keeps transitionend/animationend firing so
-   JS listeners stay correct — animations effectively freeze
-   after one frame instead of being removed. */
+/* ── Reduced motion (per rule) ─────────────────────────────
+   Component-scoped blocks in app.css / vn.css / story.css /
+   info-bubble.css stay authoritative; those opt-outs (e.g.
+   .info-bubble-no-anim, .vn-counter, .battle-dice-rolling, fx-*)
+   no longer fight a global `!important` floor. Only the animated
+   rules without their own reduced-motion block are listed here.
+   Entrance fades simply stop; no JS listens for their end events,
+   and VN transitions keep their timeout fallback (transition-engine.ts). */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html {
+    scroll-behavior: auto;
+  }
+
+  .location-header,
+  .section-transfer-fx,
+  .message,
+  .modal-overlay,
+  .modal,
+  .toast,
+  [data-testid="branch-panel"] .modal-panel,
+  .panel-enter,
+  .panel-leave,
+  .typing-indicator .dot,
+  .spinner,
+  .htmx-indicator,
+  .skeleton::after,
+  .badge.unread,
+  .mood-loading-spinner,
+  .gm-running-dot.is-running {
+    animation: none;
   }
 }
 
