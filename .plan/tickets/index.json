@@ -5916,6 +5916,20 @@
     "source": ".plan/tickets/BUG-HELP.md",
     "status": "open"
   },
+  "BUG-HONKBOX-UPLOAD-DROPS-ARTIFACT-MIME-METADATA": {
+    "hash": "3e5f3ce",
+    "git_issue": "3e5f3ce",
+    "extid": "BUG-HONKBOX-UPLOAD-DROPS-ARTIFACT-MIME-METADATA",
+    "type": "BUG",
+    "title": "Honkbox upload drops artifact MIME metadata",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-platform-integrations",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-honkbox-upload-drops-artifact-mime-metadata.md",
+    "status": "in_progress"
+  },
   "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C": {
     "epic": "",
     "extid": "BUG-HOT-RELOAD-TEST-TS-ASSERTS-TRIVIALLY-TRUE-ON-EMFILE-ENOENT-C",

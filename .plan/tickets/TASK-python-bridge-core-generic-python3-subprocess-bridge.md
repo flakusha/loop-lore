@@ -3,7 +3,7 @@
 
 # TASK: Python bridge core: generic python3 subprocess bridge
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-external-harness-acp
@@ -23,3 +23,5 @@ Provenance bug found during DCC research: `runPythonJob` hashes `spec.scriptPath
 - [x] Return `invalid` with `Cannot read recipe:` when unreadable, without spawning
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue 2767f47 (registry tip: a8b03bcb2 Konstantin Fedotov Auto-closed: appended .md marker marks TASK-PYTHON-BRIDGE-CORE-GENERIC-)
