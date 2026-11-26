@@ -29,6 +29,7 @@ import {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { assertValidWrite, } from "../../db/validators/enforce";
+import { sanitizeToolOutput, } from "../../generation/generate-route/tool-execution";
 import { encryptStoredContent, } from "../../generation/generate-route/tool-result-persist";
 import { findByIdempotencyKey, isIdempotencyUniqueViolation, } from "../../routes/messages/swipe-race-insert";
 import { indexMessageSearchTokens, } from "../../search";
@@ -133,13 +134,16 @@ export async function persistHarnessTurn(
     plaintext: transcript.text,
   },);
 
+  // Tool output is untrusted. Scrub it once here so the encrypted row, its
+  // plaintext mirror, and the search index never disagree about the content.
+  const safeContents = finished.map((result,) => sanitizeToolOutput(result.content,));
   const settled = await Promise.allSettled(
-    finished.map((result,) =>
+    safeContents.map((plaintext,) =>
       encryptStoredContent({
         database,
         chatId,
         actorId,
-        plaintext: result.content,
+        plaintext,
       },)
     ),
   );
@@ -208,6 +212,7 @@ export async function persistHarnessTurn(
       for (const [index, result,] of finished.entries()) {
         const id = randomUUID();
         const content = toolContents[index]!;
+        const safeContent = safeContents[index]!;
         await trx.insertInto("messages",).values({
           id,
           chat_id: chatId,
@@ -216,7 +221,7 @@ export async function persistHarnessTurn(
           role: MessageRole.Assistant,
           content: content.storedContent,
           key_id: content.storedKeyId,
-          content_plaintext: result.content,
+          content_plaintext: safeContent,
           content_format: MessageContentFormat.Markdown,
           content_type: MessageContentType.ToolResult,
           content_encoding: ContentEncoding.Identity,
@@ -228,9 +233,9 @@ export async function persistHarnessTurn(
         await indexMessageSearchTokens(trx, {
           messageId: id,
           chatId,
-          plaintext: result.content,
+          plaintext: safeContent,
           keyId: content.storedKeyId,
-          plaintextMirror: result.content,
+          plaintextMirror: safeContent,
         },);
 
         ids.push(id,);

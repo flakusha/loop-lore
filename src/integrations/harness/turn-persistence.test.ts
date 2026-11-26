@@ -272,6 +272,32 @@ describe("persistHarnessTurn", () => {
     expect(meta.toolError,).toBe(false,);
   });
 
+  it("scrubs unsafe markup from a tool result before it reaches storage", async () => {
+    const dirty = `<script>alert(1)</script><img src=x onerror="steal()">keep me`;
+    const hostile: HarnessTurnTranscript = {
+      ...transcript(),
+      toolResults: [{ toolCallId: "tc-1", name: "grep", status: "completed", content: dirty, error: false, },],
+    };
+
+    await persistHarnessTurn({
+      database: fixture.db,
+      chatId,
+      actorId,
+      profile: "omp",
+      transcript: hostile,
+      turn: turn({ transcript: hostile, },),
+      turnKey: "turn-sanitize",
+    },);
+
+    const row = await fixture.db.selectFrom("messages",).selectAll()
+      .where("content_type", "=", "tool_result",).executeTakeFirstOrThrow();
+
+    expect(row.content,).not.toContain("<script",);
+    expect(row.content,).not.toContain("onerror",);
+    expect(row.content,).toContain("keep me",);
+    expect(row.content_plaintext,).toContain("keep me",);
+  });
+
   it("marks a failed tool result as an error for the readers", async () => {
     const failed: HarnessTurnTranscript = {
       ...transcript(),

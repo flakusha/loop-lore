@@ -13,7 +13,7 @@
  * Decrypts encrypted message bodies before feeding them to the LLM so prior
  * turns never reach the prompt as ciphertext (a data-leak + prompt-quality bug).
  */
-import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
+import { MessageContentType, MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import type { GenerationMessage, } from "../../../generation/gen-types-options";
 import { getChildLogger, } from "../../../logger";
 import { resolveMessageContent, } from "../../../routes/messages/helpers";
@@ -57,6 +57,10 @@ export const chatHistorySection: SectionBuilder = {
       .where("chat_id", "=", ctx.params.chatId,)
       .where("status", "=", MessageStatus.Confirmed,)
       .where("visibility", "=", MessageVisibility.Visible,)
+      // Tool results are untrusted provider/plugin output. They stay visible
+      // in the UI, but replaying them as assistant history would smuggle
+      // instructions into the next prompt — exclude them at the query.
+      .where("content_type", "!=", MessageContentType.ToolResult,)
       .where("role", "in", [
         MessageRole.User,
         MessageRole.Assistant,
