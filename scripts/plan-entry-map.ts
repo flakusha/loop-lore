@@ -219,7 +219,7 @@ export function render(
     for (const lane of report.lanes) {
       if (lane.claims.length === 0) { out.push(`| ${lane.lane} | _(none)_ | — |`,); }
       for (const claim of lane.claims) {
-        out.push(`| ${lane.lane} | ${claim.token} | ${claim.file ?? "⚠ unresolvable (warning)"} |`,);
+        out.push(`| ${lane.lane} | \`${claim.token}\` | ${claim.file ?? "⚠ unresolvable (warning)"} |`,);
       }
     }
     out.push("",);
@@ -240,7 +240,6 @@ export function render(
     out.push(`| ${file} | ${epic?.title ?? "⚠ missing file"} | ${epic?.status ?? "—"} |`,);
   }
   out.push("", "## Findings", "",);
-  for (const warn of report.warnings) { out.push(`- ⚠ warning: ${warn}`,); }
   for (const drift of report.drifts) {
     for (const problem of drift.problems) { out.push(`- ✗ drift: ${drift.file}: ${problem}`,); }
   }
