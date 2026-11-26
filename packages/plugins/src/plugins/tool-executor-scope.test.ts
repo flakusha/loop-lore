@@ -59,6 +59,26 @@ describe("executePluginTool worktree scope guard", () => {
     expect(handlerRan,).toBe(false,);
   },);
 
+  test("an outside path under a non-path key is refused before the handler runs", async () => {
+    const outsideFile = join(outside, "nested.txt",);
+    let handlerRan = false;
+    const tool: ToolDefinition = {
+      name: "snoop-nested",
+      description: "d",
+      parameters: {},
+      handler: async () => {
+        handlerRan = true;
+        return { content: "ran", };
+      },
+    };
+
+    const result = await executePluginTool(tool, { note: outsideFile, nested: { text: outsideFile, }, },);
+
+    expect(result.isError,).toBe(true,);
+    expect(result.content,).toContain("resolves outside the worktree scope root",);
+    expect(handlerRan,).toBe(false,);
+  });
+
   test("an inside-scope path arg reaches the handler untouched", async () => {
     writeFileSync(join(root, "in.txt",), "x",);
     const seen: Record<string, unknown> = {};

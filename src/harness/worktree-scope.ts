@@ -33,20 +33,7 @@ import { getChildLogger, type Logger, } from "../logger";
 import { resolveReal, } from "../utils/realpath-within";
 import { notifyScopeRootMetadata, resetMetadataHookForTests, } from "./project-metadata/audit";
 import { runGit, } from "./run-context";
-
-/** Parameter keys whose string values are treated as filesystem paths. */
-const PATH_PARAM_KEYS: Record<string, true> = {
-  path: true,
-  file: true,
-  filepath: true,
-  file_path: true,
-  filename: true,
-  file_name: true,
-  dir: true,
-  directory: true,
-  dirname: true,
-  dir_path: true,
-};
+import { walkStringLeaves, } from "./string-leaves";
 
 /**
  * A path argument resolves outside the harness worktree root and the call did
@@ -138,7 +125,7 @@ function assertInside(root: string, target: string,): void {
 export interface ScopeGuardInput {
   /** Tool name, for the escalation log line. */
   toolName: string;
-  /** Handler parameters; only path-named string values are inspected. */
+  /** Handler parameters; every string leaf is checked as a potential path. */
   params: Record<string, unknown>;
   /** Scope root. Defaults to the detected git worktree root; when detection
    * fails (no checkout, git unavailable) it falls back to the process cwd,
@@ -149,30 +136,44 @@ export interface ScopeGuardInput {
 }
 
 /**
- * Guard every path-bearing parameter of one tool invocation. Non-path
- * arguments (and path-named non-string values) are untouched.
+ * Guard every string leaf of one tool invocation as a potential path. A
+ * plugin handler can pass any argument to `fs`, so a key name is not a
+ * security boundary: `content`, `query`, and nested values are resolved too.
  * @param input - see {@link ScopeGuardInput}.
- * @throws {PathOutsideScopeError} When a path escapes the scope and the call
- *   did not set `requestRootChange`.
+ * @throws {PathOutsideScopeError} When a string escapes the scope, or the
+ *   params are too deep to verify, and the call did not set `requestRootChange`.
  */
 export async function assertParamsWithinScope(input: ScopeGuardInput,): Promise<void> {
   const root = input.root ?? detectScopeRoot();
+  const strings = walkStringLeaves(input.params, 6, false, false,);
+  if (strings.truncated) {
+    throw new PathOutsideScopeError(root, "params too deep to verify",);
+  }
+
   // Sequential BY DESIGN (not an async-parallelism miss): the FIRST offending
   // path must be the one reported, and escalation warnings keep their
   // parameter order — parallel rejections would make both nondeterministic.
-  for (const [key, value,] of Object.entries(input.params,)) {
-    if (PATH_PARAM_KEYS[key.toLowerCase()] !== true || typeof value !== "string") { continue; }
+  for (const value of strings.leaves) {
     try {
       await resolveWithinScope(root, value,);
     } catch (error) {
       if (input.requestRootChange === true) {
-        logEscalation(input.toolName, key, value,);
+        logEscalation(input.toolName, paramKeyFor(input.params, value,), value,);
         continue;
       }
 
       throw error;
     }
   }
+}
+
+/** Name the top-level key carrying `value` for the escalation log. */
+function paramKeyFor(params: Record<string, unknown>, value: string,): string {
+  for (const [key, candidate,] of Object.entries(params,)) {
+    if (candidate === value) { return key; }
+  }
+
+  return "param";
 }
 
 /** Memoized detected worktree root — the process never changes repos mid-run. */
