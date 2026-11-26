@@ -5801,6 +5801,20 @@
     "source": ".plan/tickets/BUG-harness-f1-non-admin-providers-callers-swallow-403.md",
     "status": "done"
   },
+  "BUG-HARNESS-FS-BRIDGE-SECRET-RECHECK-TOCTOU": {
+    "hash": "f436db0",
+    "git_issue": "f436db0",
+    "extid": "BUG-HARNESS-FS-BRIDGE-SECRET-RECHECK-TOCTOU",
+    "type": "BUG",
+    "title": "Harness fs bridge secret recheck TOCTOU",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-harness-fs-bridge-secret-recheck-toctou.md",
+    "status": "open"
+  },
   "BUG-HARNESS-QUEUE-BOOT-RECOVERY-FAILS-OTHER-INSTANCES-INFLIGHT-T": {
     "hash": "6887ad6",
     "git_issue": "6887ad6",
@@ -8437,7 +8451,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/BUG-plan-ticket-status-parses-inside-fenced-code-blocks.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-PLUGIN-APPROVAL-IS-KEYED-BY-NAME-ONLY-WITH-NO-ORIGIN-COLUMN-": {
     "hash": "5d27599",
@@ -41048,6 +41062,20 @@
     "title": "Effect v4 scoped concurrency and interruption spike",
     "type": "TASK"
   },
+  "TASK-EFFECTIVE-CONFIG-SECRET-PATTERN-MISSES-PASS-FIELDS": {
+    "hash": "c058164",
+    "git_issue": "c058164",
+    "extid": "TASK-EFFECTIVE-CONFIG-SECRET-PATTERN-MISSES-PASS-FIELDS",
+    "type": "TASK",
+    "title": "Effective config secret pattern misses Pass fields",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-effective-config-secret-pattern-misses-pass-fields.md",
+    "status": "open"
+  },
   "TASK-EGUI-BATTLE-DISPLAY-PANEL": {
     "hash": "532dd0e",
     "git_issue": "532dd0e",
@@ -46557,6 +46585,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-harness-inflight-job-handles.md",
     "status": "done"
+  },
+  "TASK-HARNESS-INJECTION-TRUST-BOUNDARIES": {
+    "hash": "e351b25",
+    "git_issue": "e351b25",
+    "extid": "TASK-HARNESS-INJECTION-TRUST-BOUNDARIES",
+    "type": "TASK",
+    "title": "Harness injection trust boundaries",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-security-sandboxing",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harness-injection-trust-boundaries.md",
+    "status": "open"
   },
   "TASK-HARNESS-IRC-TTSR": {
     "hash": "1bdc949",
@@ -53640,7 +53682,7 @@
     "project": "",
     "tags": [],
     "source": ".plan/tickets/TASK-normalize-epic-field-spelling-variants-in-linkage.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-NOTIFICATION-AND-TELEMETRY-SERVICE-NITS": {
     "hash": "2942731",
@@ -56550,6 +56592,20 @@
     "tags": [],
     "title": "Plugin Override System",
     "type": "TASK"
+  },
+  "TASK-PLUGIN-SCOPE-GUARD-JSON-STRING-LEAVES": {
+    "hash": "5645c3e",
+    "git_issue": "5645c3e",
+    "extid": "TASK-PLUGIN-SCOPE-GUARD-JSON-STRING-LEAVES",
+    "type": "TASK",
+    "title": "Plugin scope guard JSON-string leaves",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-plugin-system",
+    "project": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plugin-scope-guard-json-string-leaves.md",
+    "status": "open"
   },
   "TASK-PLUGIN-SECURITY-SANDBOXING": {
     "epic": "epic-plugin-system",

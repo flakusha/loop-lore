@@ -18,6 +18,7 @@ import { resolveSystemPrompt, } from "../../prompts";
 import { requireWorldAccess, } from "../../routes/worlds/access";
 import { type LoreTokenMatch, matchLoreEntriesByTokens, } from "../../search";
 import { quotaGate, } from "../quota/gate";
+import { wrapSection, } from "../xml-utils";
 import { type CommandResult, registerCommand, } from "./registry";
 
 interface LoreHit {
@@ -209,7 +210,9 @@ registerCommand("rag-ask", async (args, ctx,): Promise<CommandResult> => {
   const messages = [
     {
       role: "system" as const,
-      content: `${resolveSystemPrompt(config.templates?.llm, "ragAsk",)}\n\nContext:\n${context}`,
+      content: `${resolveSystemPrompt(config.templates?.llm, "ragAsk",)}\n\nContext:\n${
+        wrapSection("rag_context", context,)
+      }`,
     },
     { role: "user" as const, content: query, },
   ];

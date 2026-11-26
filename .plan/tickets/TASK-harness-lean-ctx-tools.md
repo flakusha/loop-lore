@@ -20,6 +20,7 @@
 - [ ] Capability catalog fronts the registered set: the agent enumerates tools by domain (structure / search / read / AST / LSP / patch / execute) and pulls per-domain usage detail on demand, instead of receiving every tool schema in the startup prompt.
 - [ ] Command→tool resolution is 1:1 through the wrapper seam: a harness command resolves to a registered `ToolDefinition` (or MCP tool) before execution; unmapped/unknown commands fail fast at the boundary and never reach a shell or a raw file write.
 - [ ] Role-gating (`gatePluginToolsByRole`), the `executePluginTool()` timeout/race, and sanitize + encrypted persist apply identically to catalog reads and tool calls.
+- [ ] E2E: `lolo` harness drives registered `ctx_read`/`ctx_patch` tools against a per-test sandbox through the real plugin registry; drifted anchored hash is rejected, role denial is typed, and filtered prompt savings are attributed on `harness.call_completed.savedTokens`.
 
 ## Related Files
 

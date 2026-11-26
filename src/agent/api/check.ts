@@ -9,6 +9,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { join, } from "node:path";
+import { scrubEnv, } from "../../integrations/harness/env-scrub";
 import {
   badRequestResponse,
   internalErrorResponse,
@@ -33,6 +34,7 @@ export function runBunCheck({ cwd, gates, }: { cwd: string; gates: string | unde
   const child = Bun.spawn({
     cmd: ["bun", ...args,],
     cwd,
+    env: scrubEnv(),
     stdin: "ignore",
     stdout: "pipe",
     stderr: "pipe",

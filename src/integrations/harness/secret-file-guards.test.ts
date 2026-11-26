@@ -10,11 +10,11 @@
  * under .tmp/, removed in afterEach. No ports, no subprocess, no shared state.
  */
 import { afterEach, describe, expect, it, } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { JsonRpcRequestError, } from "./jsonrpc-process";
 import { classifyPermission, } from "./permission-policy";
-import { readSandboxedText, } from "./runtime";
+import { readSandboxedText, writeSandboxedText, } from "./runtime";
 
 /** Scratch parent under the repo's .tmp/ (same convention as sibling tests). */
 const TMP_ROOT = ".tmp/harness-secret-guards";
@@ -62,5 +62,17 @@ describe("secret basenames never reach the read bridge", () => {
 
     await expect(readSandboxedText(root, "env.yaml",),).rejects.toBeInstanceOf(JsonRpcRequestError,);
     expect(await readSandboxedText(root, "notes.txt",),).toBe("hello",);
+  });
+
+  it("refuses a symlink alias to env.yaml on both bridges", async () => {
+    const root = sandbox();
+    writeFileSync(join(root, "env.yaml",), "s3cret",);
+    symlinkSync(join(root, "env.yaml",), join(root, "notes-link.txt",),);
+
+    await expect(readSandboxedText(root, "notes-link.txt",),).rejects.toBeInstanceOf(JsonRpcRequestError,);
+    await expect(writeSandboxedText(root, "notes-link.txt", "overwrite",),)
+      .rejects.toBeInstanceOf(JsonRpcRequestError,);
+
+    expect(readFileSync(join(root, "env.yaml",), "utf8",),).toBe("s3cret",);
   });
 });

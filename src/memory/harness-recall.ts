@@ -14,6 +14,7 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { wrapSection, } from "../assistant/xml-utils";
 import type { DB, } from "../db/schema";
 import type { HarnessRunRecord, } from "../harness/types";
 import { getLogger, } from "../logger";
@@ -166,5 +167,5 @@ export async function recallHarnessMemories(
 export function buildHarnessMemoryPrefix(memories: MemoryEntry[],): string {
   if (memories.length === 0) { return ""; }
   const lines = Array.from(memories, (m,) => `- ${m.content}`,).join("\n",);
-  return `<prior-harness-runs>\n${lines}\n</prior-harness-runs>`;
+  return wrapSection("prior-harness-runs", lines,);
 }

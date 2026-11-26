@@ -244,6 +244,8 @@ describe("rag commands", () => {
       expect(captured[0]!.role,).toBe("system",);
       expect(captured[0]!.content,).toContain("Drowned City",);
       expect(captured[0]!.content,).toContain("Iria",);
+      expect(captured[0]!.content,).toContain("<rag_context>",);
+      expect(captured[0]!.content,).toContain("</rag_context>",);
       expect(captured[1]!.role,).toBe("user",);
       expect(captured[1]!.content,).toBe("tide",);
     });

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 270
 
 /**
  * runtime.ts — the composition root for the outbound ACP stack
@@ -148,6 +149,19 @@ export async function readSandboxedText(root: string, path: string,): Promise<st
     );
   }
 
+  // ponytail: recheck narrows the symlink TOCTOU window; full closure needs
+  // openat2(RESOLVE_BENEATH) at the open call, not a pre-open path check.
+  try {
+    resolved = await resolveWithinScope(root, resolved,);
+  } catch {
+    throw new JsonRpcRequestError("the sandbox root could not be re-resolved", -32000,);
+  }
+
+  if (isSecretBasename(resolved,)) {
+    log()?.warn("harness fs read refused — resolved path is a secret file", { root, resolved, },);
+    throw new JsonRpcRequestError("the resolved file is a secret file and cannot be read", -32000,);
+  }
+
   try {
     // A silent 1 MiB slice would hand the agent a truncated file that looks
     // complete; refuse oversized reads so the agent can narrow its request.
@@ -210,6 +224,19 @@ export async function writeSandboxedText(root: string, path: string, content: st
       outside ? "path is outside the sandbox root" : "the sandbox root could not be resolved",
       -32000,
     );
+  }
+
+  // ponytail: recheck narrows the symlink TOCTOU window; full closure needs
+  // openat2(RESOLVE_BENEATH) at the write call, not a pre-open path check.
+  try {
+    resolved = await resolveWithinScope(root, resolved,);
+  } catch {
+    throw new JsonRpcRequestError("the sandbox root could not be re-resolved", -32000,);
+  }
+
+  if (isSecretBasename(resolved,)) {
+    log()?.warn("harness fs write refused — resolved path is a secret file", { root, resolved, },);
+    throw new JsonRpcRequestError("the resolved file is a secret file and cannot be written", -32000,);
   }
 
   try {

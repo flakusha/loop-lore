@@ -114,6 +114,8 @@ describe("groupParticipantsSection", () => {
     expect(content,).toContain("leader",);
     expect(content,).toContain("decisive",);
     expect(content,).toContain("trickster",);
+    expect(content,).toContain("<other_participants>",);
+    expect(content,).toContain("</other_participants>",);
   });
 
   test("name-only actor (no description / personality) renders a bare-name card", async () => {

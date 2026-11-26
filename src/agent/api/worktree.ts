@@ -12,6 +12,7 @@
 import { Elysia, t, } from "elysia";
 import { randomUUID, } from "node:crypto";
 import { resolve, } from "node:path";
+import { scrubEnv, } from "../../integrations/harness/env-scrub";
 import {
   badRequestResponse,
   internalErrorResponse,
@@ -54,6 +55,7 @@ export async function gitWorktreeAdd({ cwd, branch, base, path, }: SpawnArgs,): 
   const child = Bun.spawn({
     cmd: ["git", ...args,],
     cwd,
+    env: scrubEnv(),
     stdin: "ignore",
     stdout: "pipe",
     stderr: "pipe",
@@ -80,6 +82,7 @@ export async function gitWorktreeRemove({ cwd, path, }: RemoveArgs,): Promise<vo
   const child = Bun.spawn({
     cmd: ["git", "worktree", "remove", "--force", path,],
     cwd,
+    env: scrubEnv(),
     stdin: "ignore",
     stdout: "pipe",
     stderr: "pipe",

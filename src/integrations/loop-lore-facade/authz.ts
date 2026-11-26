@@ -33,6 +33,7 @@ const ADMITTED_PRINCIPAL_KINDS: Partial<Record<FacadeOp["domain"], readonly stri
   characters: ["user", "external-agent",],
   memory: ["user", "external-agent",],
   rpg: ["user", "external-agent",],
+  delegation: ["user", "external-agent",],
 };
 
 /**

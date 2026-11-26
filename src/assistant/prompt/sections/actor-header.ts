@@ -5,6 +5,7 @@
  * Actor header section — the generating character's card
  * (name / description / personality / appearance / outfit / scenario).
  */
+import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
 export const actorHeaderSection: SectionBuilder = {
@@ -28,6 +29,8 @@ export const actorHeaderSection: SectionBuilder = {
     if (actor.default_outfit) { headerParts.push(`\nOutfit: ${actor.default_outfit}`,); }
     if (actor.scenario) { headerParts.push(`\nScenario: ${actor.scenario}`,); }
 
-    return headerParts.length > 0 ? [{ role: "system", content: headerParts.join("",), },] : [];
+    return headerParts.length > 0
+      ? [{ role: "system", content: wrapSection("actor_header", headerParts.join("",),), },]
+      : [];
   },
 };

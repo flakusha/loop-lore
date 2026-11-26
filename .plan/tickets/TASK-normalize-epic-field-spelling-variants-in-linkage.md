@@ -3,7 +3,7 @@
 
 # TASK: normalize Epic field spelling variants in linkage
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-unified-spec-framework
@@ -22,3 +22,5 @@ The linkage gate only recognizes the **Epic:** spelling, so the **Epic**: varian
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue ee15807 (registry tip: 78e1bf20e Konstantin Fedotov Verified fixed in installed giwt: fence-aware status scan (linesOutside)

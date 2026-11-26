@@ -233,7 +233,7 @@ describe("assertParamsWithinScope", () => {
         tool: "writer",
         param: "file",
         path: outsideFile,
-        root: process.cwd(),
+        root,
       },);
     } finally {
       // Reinstate the module default — `() => null` would permanently

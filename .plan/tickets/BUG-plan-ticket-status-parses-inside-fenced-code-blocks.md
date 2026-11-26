@@ -3,7 +3,7 @@
 
 # BUG: plan ticket Status parses inside fenced code blocks
 
-**Status:** Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-unified-spec-framework
@@ -22,3 +22,5 @@ The ticket-markdown parser is fence-blind: it line-scans the 30-line header wind
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+**Resolved:** 2026-11-26 registry-driven close: git issue b45712e (registry tip: cec9032ad Konstantin Fedotov Verified fixed in installed giwt: fence-aware status scan (linesOutside)

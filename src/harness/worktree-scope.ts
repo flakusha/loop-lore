@@ -158,7 +158,7 @@ export async function assertParamsWithinScope(input: ScopeGuardInput,): Promise<
       await resolveWithinScope(root, value,);
     } catch (error) {
       if (input.requestRootChange === true) {
-        logEscalation(input.toolName, paramKeyFor(input.params, value,), value,);
+        logEscalation(input.toolName, paramKeyFor(input.params, value,), value, root,);
         continue;
       }
 
@@ -236,13 +236,13 @@ function detectScopeRoot(): string {
 }
 
 /** One structured warn per escalated path. Never console — the app logger. */
-function logEscalation(toolName: string, key: string, value: string,): void {
+function logEscalation(toolName: string, key: string, value: string, root: string,): void {
   const log = logSource();
   log?.warn("tool escalated outside worktree scope via requestRootChange", {
     tool: toolName,
     param: key,
     path: value,
-    root: process.cwd(),
+    root,
   },);
 }
 
