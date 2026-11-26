@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-25T02:13:10.293Z",
-  "count": 1391,
+  "generatedAt": "2026-11-26T14:28:16.111Z",
+  "count": 1390,
   "gaps": [
     "packages/assets/src/assets/base64url.ts#base64urlDecode",
     "packages/assets/src/assets/base64url.ts#base64urlEncode",
@@ -48,7 +48,6 @@
     "packages/core/src/config/schema-class/hooks.ts#HOOKS_DEFAULTS",
     "packages/core/src/config/schema-class/json-schema/dynamic-response.ts#dynamicResponse",
     "packages/core/src/config/schema-class/json-schema/frontend.ts#frontend",
-    "packages/core/src/config/schema-class/json-schema/idempotency.ts#idempotency",
     "packages/core/src/config/schema-class/observability.ts#OBSERVABILITY_DEFAULTS",
     "packages/core/src/config/schema-class/seeding.ts#SEEDING_DEFAULTS",
     "packages/core/src/config/schema/generation.ts#AUTOROUTE_SCENARIOS",
