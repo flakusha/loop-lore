@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 330
+// size-allow: 340
 // Cohesive loader module: scan, single load + rollback, approval state,
 // dispatch, shutdown.
 
@@ -33,6 +33,7 @@ import { characterCreationTool, } from "../../../../src/generation/tools/create-
 import { worldCreationTool, } from "../../../../src/generation/tools/create-world";
 import { locationCreationTool, } from "../../../../src/generation/tools/create-location";
 import { itemCreationTool, } from "../../../../src/generation/tools/create-item";
+import { ctxCallTool, externalToolsEnabled, rtkRunTool, } from "../../../../src/harness/external-tools";
 
 /** Ordered list of plugin names for shutdown (reverse) */
 const loadOrder: string[] = [];
@@ -97,13 +98,15 @@ export async function loadAllPlugins(
   }
 
   // Register builtin core tools (model-visible, executed with per-request ctx).
-  registry.addTools("core", [
+  const coreTools = [
     writeMemoryNoteTool,
     characterCreationTool,
     worldCreationTool,
     locationCreationTool,
     itemCreationTool,
-  ],);
+  ];
+  if (externalToolsEnabled()) { coreTools.push(rtkRunTool, ctxCallTool,); }
+  registry.addTools("core", coreTools,);
 
   // Routes are only registered by now, so this is the earliest point at which
   // the declared-but-unenforceable set is known.

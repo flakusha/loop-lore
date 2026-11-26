@@ -269,6 +269,8 @@ export const PRIORITY = {
   /** Behavior-critical for both static and dynamic characters. */
   actorGrowth: 1,
   pluginAgentRole: 0,
+  /** Opt-in rtk/lean-ctx catalog — behavior-critical when enabled. */
+  externalTools: 0,
   /** Assistant personality voice block — behavior-critical when set. */
   assistantPersonality: 0,
   chatHistory: 0,
@@ -342,4 +344,5 @@ export const SECTION_LOSSLESSNESS = {
   nsfwContext: "lossless",
   "output-style": "lossless",
   customInstructions: "lossless",
+  externalTools: "lossless",
 } as const satisfies Record<keyof typeof PRIORITY, Losslessness>;

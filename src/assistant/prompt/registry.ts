@@ -17,6 +17,7 @@ import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";
 import { examplesSection, } from "./sections/examples";
+import { externalToolsSection, } from "./sections/external-tools";
 import { gameStateSection, } from "./sections/game-state";
 import { gmNotesSection, } from "./sections/gm-notes";
 import { groupParticipantsSection, } from "./sections/group-participants";
@@ -58,6 +59,8 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   customInstructionsSection,
   actorHeaderSection,
   pluginAgentRoleSection,
+  // Opt-in rtk/lean-ctx catalog; emits nothing unless external tools are enabled.
+  externalToolsSection,
   // Assistant personality voice (epic-character-multi-personality). Sits with
   // the assistant-identity blocks so the chosen preset/character voice lands
   // next to the agent role it colors. Emits nothing for server-default chats.
